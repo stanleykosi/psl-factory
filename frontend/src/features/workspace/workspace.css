@@ -1,6 +1,9 @@
 /* Line workspace frame (PROPOSAL D-LINE-WORKSPACE). Token variables only. Sections follow the line boards'
    panels: a bordered box, an uppercase head, rows with the words on the left and the state in mono on the right. */
 
+/* tokens.css is generated from the design system and has no 30px; the reconcile button's padding on a phone lives here */
+:root { --space-bar-clear: 30px; }
+
 .ws { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .ws-stack { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 
@@ -159,9 +162,10 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-decide .ws-steps__buttons > span { flex: 1 1 120px; }
   .ws-decide .psl-btn { min-height: 44px; white-space: normal; }
   /* every step is off while the reconcile panel's own pinned button is shown: the Decide panel flows, and the page keeps that button's height (its control plus padding) clear below it */
-  .ws:has(.ws-decide--flow) { padding-bottom: calc(var(--control-lg) + 30px); }
-  html:has(.ws-decide--flow) { scroll-padding-bottom: calc(var(--control-lg) + 30px); }
-  .ws-decide.ws-decide--flow { position: static; }
+  .ws:has(.ws-decide--flow) { padding-bottom: calc(var(--control-lg) + var(--space-bar-clear)); }
+  html:has(.ws-decide--flow) { scroll-padding-bottom: calc(var(--control-lg) + var(--space-bar-clear)); }
+  /* a flex item honours z-index even when static: without auto the flowing panel would sit over the reconcile panel's pinned button */
+  .ws-decide.ws-decide--flow { position: static; z-index: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

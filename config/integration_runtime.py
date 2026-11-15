@@ -3,10 +3,9 @@ import argparse
 import json
 import os
 import re
-import stat
-from pathlib import Path
 from urllib.parse import urlsplit
 from uuid import UUID
+from .runtime_files import read_bounded_file
 
 MAX_BYTES = 1048576
 INVALID = 'Invalid integration registry references; credentials belong in the secret environment'
@@ -93,15 +92,7 @@ def _constant(value):
 
 def load_file(value):
     try:
-        path = Path(value)
-        require(path.is_absolute() and not path.is_symlink())
-        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
-        with os.fdopen(fd, 'rb') as source:
-            before = os.fstat(source.fileno())
-            require(stat.S_ISREG(before.st_mode) and before.st_size <= MAX_BYTES)
-            raw = source.read(MAX_BYTES + 1)
-            after = os.fstat(source.fileno())
-            require(len(raw) <= MAX_BYTES and after.st_size == len(raw) and before.st_mtime_ns == after.st_mtime_ns)
+        raw = read_bounded_file(value, MAX_BYTES)
     except (OSError, ValueError, TypeError, AttributeError):
         raise RuntimeError(FILE_INVALID) from None
     try:

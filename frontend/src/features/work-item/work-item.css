@@ -380,3 +380,19 @@
 
 /* a track the board does not draw stays for screen readers only, and never as a scroll area */
 .work-track.work-sr { overflow: hidden; }
+
+/* D-73: a work item with a line workspace, laid out as the line boards draw it */
+.work-header--line { margin-bottom: 0; }
+.work-header--line .ws-crumbs { margin: 0; }
+.work-header--line .work-crumbrow { align-items: center; }
+.work-linehistory { font-size: 13px; line-height: 15px; }
+.work-linehistory a { text-decoration: underline; text-underline-offset: 2px; }
+.work-lineend { display: flex; align-items: flex-start; gap: var(--space-2); align-self: flex-start; }
+.work-header--line .work-titleline { justify-content: space-between; }
+.work-linemeta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.work-overview--line { gap: 0; }
+@media (max-width: 719.98px) {
+  .work-header--line { gap: 9px; margin-top: -2px; }
+  .work-linemeta .work-sub { font-size: 12px; }
+  .work-linemeta .work-linehistory a { display: inline-flex; align-items: center; min-height: 24px; }
+}

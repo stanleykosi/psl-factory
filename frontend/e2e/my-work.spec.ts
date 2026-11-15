@@ -69,9 +69,12 @@ for (const [label, viewport] of [
       await expect(page.getByRole('button', { name: 'Show 4 more' })).toBeVisible();
       await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toBeVisible();
       expect(await noHorizontalScroll(page)).toBe(true);
+      // the boards draw every queue tab 44px high, on desktop and on the phone
+      expect(await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))).toEqual([44, 44, 44, 44]);
       if (phone) {
         const strip = await page.getByRole('tablist').evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth }));
         expect(strip.scroll).toBeGreaterThan(strip.client);
+        expect(await tabs.first().evaluate((el) => { const s = getComputedStyle(el); return [s.paddingLeft, s.fontSize]; })).toEqual(['14px', '15px']);
         expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
         const tabHeights = await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height));
         expect(new Set(tabHeights).size).toBe(1);

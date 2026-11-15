@@ -1,0 +1,2 @@
+SCR-34-desktop @1440: PASS  coverage 86.8% (33/38; 100% with exceptions)  visual 95.9
+SCR-34-mobile  @390: FAIL  coverage 15.4% (2/13; 100% with exceptions)  visual 83.3  (visual under 90; see build.md)

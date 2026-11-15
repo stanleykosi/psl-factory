@@ -3,26 +3,62 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-20",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "The Templates tab on Setup lists each document template and uploads a new version of one",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-SETUP-TEMPLATES"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop fidelity.** `SCR-34-desktop` passes at `--width 1440`: `report.json` has `pass: true`, `scores.coverageWithExceptions` = 100, `scores.visual` >= 90. \u2014 verify: the command, exit 0.",
+    "**Phone fidelity.** `SCR-34-mobile` passes at `--width 390` with the `psl_mock_templates=mobile` cookie, same thresholds. `round-<N>/fidelity/scores.txt` lists both boards with coverage, visual and pass. \u2014 verify: same command shape; rows in `scores.txt`.",
+    "**Exceptions are limited and explained.** Each entry of `fidelity-exceptions.json` has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until confirmed) and falls under a Conflicts item below. No entry covers a value the contract can supply. Frame exceptions (top bar persona text, Start work, More ways to start, the tab role) follow `delivery/features/F-11/fidelity-exceptions.json`. \u2014 verify: file content; build.md maps entries to Conflicts numbers.",
+    "**List from the API only.** On the desktop scenario the page shows the eight names and lines from E-TEMPLATES in the order returned, each with a \"TEST TEMPLATE\" tag; reordering the fixture reorders the page; a name not in the fixture appears nowhere. `kind`, `updated_by`, `updated_at` and `versions` show only on rows that return them and leave no empty element on rows that do not. \u2014 verify: component test on `desktop.json` and a variant with the optional fields removed (text absent from the DOM).",
+    "**Badge and copy follow `test_template`.** With every row `true` and no `next_cursor`, the banner and the phone line (with the correct count) show. With one row `false`, the banner and the \"All n\" line are absent, that row has no test tag and no text claiming it is PSL's own, and the others keep the tag. With `next_cursor` the banner is absent and the count reads \"SHOWN\". Nothing in `frontend/src` sets or defaults `test_template` to `false`. \u2014 verify: component tests on the three data shapes; `grep -rn \"test_template\" frontend/src/features/setup` shows reads only (no assignment to `false`).",
+    "**Upload gating.** The \"Upload PSL's version\" button exists only on rows with `template_id` and `can_upload === true`. On `readonly.json` no row has one, and the template with no `template_id` has no control and no placeholder, no disabled button. Persona `pm` or `none` gets the not-open view and no template call after the first 403. \u2014 verify: component tests; Playwright reads the buttons by role.",
+    "**Upload request.** With a chosen file and note, the POST goes to `/api/v1/setup/templates/{template_id}/versions` with the CSRF header and a body of exactly `expected_revision` (the row's `revision`, including `0`), `filename`, `content_base64` (decodes to the file's bytes) and `note`; a blank note is omitted; no other key. \u2014 verify: component test with a recording `fetch` asserting header and body, including a revision-0 row and a multi-byte file.",
+    "**Success.** On 200 the panel closes, one reload runs, the row shows the new version, \"updated by\" and day, and the badge exactly as the reload returns it. A stub returning `test_template: false` removes the test tag on that row and shows no extra claim; a stub returning `true` keeps it. Focus lands on the row name and the polite live region announces the new version. If the reload fails the row shows the 200's `version`/`test_template` and the \"Uploaded. We couldn\u2019t refresh the list.\" line. \u2014 verify: component tests (both badge values, reload failure); mock test that `versions` and `revision` rise by one.",
+    "**Stale (409).** The API message shows, one reload runs, the chosen file and note are cleared, the panel is closed, and the next press cannot send the old file: it sends nothing until the person chooses again, and then carries the reloaded `revision`. \u2014 verify: component test with a recording `fetch` (counts asserted); mock `stale` scenario.",
+    "**Invalid (422).** The fields named are marked (`aria-invalid`, message tied by `aria-describedby`), the message shows in a `role=\"alert\"` callout, entries are kept, no reload is needed for the next attempt. A note of 2001 characters and a zero-byte file are refused before any request. \u2014 verify: component tests; mock `invalid` scenario; fetch count 0 for the client-side refusals.",
+    "**Other failures.** 401 shows `SignedOutState` with `next` = `/setup/templates`; 403 and 404 on the read or the write show the not-open view with no template name in the page, tab title or phone bar; a network error or 5xx on the write shows the uncertain notice, reloads once and sends no second POST; if that reload also fails the upload control stays off and Try again only reads. \u2014 verify: component tests with `answers` stubs and a recording `fetch`.",
+    "**No double submit.** A double press (two clicks in one tick) sends one POST; while uploading the buttons are disabled and a second press sends nothing; opening a second row's panel while the first has a chosen file drops the first selection and sends nothing. \u2014 verify: component test with counts.",
+    "**Paging.** `Show more` appears only when `next_cursor` is present, sends `cursor` as returned, appends the next rows in order, and on a failed page keeps the shown rows and offers Show more again. After an upload the list reloads from the first page. \u2014 verify: component tests on `many.json`; mock test of the cursor.",
+    "**Empty and read-only people.** `empty.json` shows the empty state with no banner, count or table. A person whose rows are read-only sees the list and the badges with no upload control and no explanation text invented for it. \u2014 verify: component tests.",
+    "**Titles and the phone bar.** Desktop: one `h1` (`.setup-title`, computed 34px at 1440). Phone: one `h1` \"Templates\" (`.setup-phone-title`), the bar link named \"Setup\" via `useSetupPhoneBack`, and `main` has no back link of its own. The not-open page has one `h1` and no template name. \u2014 verify: Playwright reading `getComputedStyle` and the bar link at 1440 and 390.",
+    "**Tabs.** The Templates tab has `aria-current=\"page\"`, the other six tabs are unchanged, and no tab shows a badge on this page. Roles, Rules, Costing rule, Delegation, Payroll visibility and Staff accounts still render as before. \u2014 verify: component test; `frontend/e2e/setup.spec.ts` passes unchanged.",
+    "**The mock matches the contract.** `tests/setup-templates-mock.test.ts` checks: 200 replies validate against the generated schema for both operations; every fixture validates; 401/403/404/409/422 shapes; the check order; the persona rule; a write without CSRF gets 403; the upload bumps `versions` and `revision` and `/__mock/reset` clears it; the mock never returns `test_template: false`. \u2014 verify: `cd frontend && npx vitest run tests/setup-templates-mock.test.ts tests/setup-templates*.test.tsx`.",
+    "**Accessibility at both widths.** `e2e/setup-templates.spec.ts` shows no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 390 and 1440 on the list, the upload panel open with a file chosen, the 422 callout, the 409 notice, the empty state and the not-open state; no sideways scroll at 390 (the desktop table's own `overflow-x: auto` wrapper is the board's; the phone shows cards, not the table); visible focus rings; Tab order is tabs, search, then each row's Upload button, and inside an open panel File, Note, Upload version, Cancel; Escape closes the panel and returns focus to its button; 44px targets; the file input has a visible label; the status badge text is not the only signal (the word is in the tag); no animation under `reducedMotion: 'reduce'`; the live-region announcements appear. \u2014 verify: `cd frontend && E2E_PORT=4641 MOCK_PORT=4642 npx playwright test e2e/setup-templates.spec.ts e2e/setup.spec.ts` with `timezoneId: 'Africa/Lagos'`; output in build.md.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/setup/setup.css` returns nothing new, and no new colour or size appears outside the design-system tokens. \u2014 verify: the command and `git diff`.",
+    "**Existing behaviour is not weakened.** The existing Setup tests (`tests/setup-*`, `mock/fixtures/setup/*.test.*`) and `e2e/setup.spec.ts` pass unchanged. No removed `expect`, no loosened matcher. `git diff --stat` shows no edit to `frontend/src/shell/**`, `frontend/src/api/**`, `architecture/**`, `design/**`, `package.json`, the lock file, or `server.mjs` beyond the additive lines in Lanes. \u2014 verify: `delivery/checks.sh` and the diff.",
+    "**No new dependency; no hard-coded data.** No new npm package. `grep -rn \"Statement of work\\|Weekly client report\\|Closure report\" frontend/src` finds no template name outside tests and fixtures. \u2014 verify: the two commands.",
+    "**build.md evidence.** build.md contains `scores.txt` for both boards, `side-by-side.png` paths, the exception-to-Conflicts map, every shared-file edit (`SetupFrame.tsx`, `ReservedTab.tsx`, `M1_OPERATIONS`, `server.mjs` dispatch), every mismatch between the types and the boards or the proposal (including the undeclared `cursor` query) for the backend developer, and for each board under 90 the measured gap and cause. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The feature adds one write, a CSRF file upload that supplies the documents later sent to clients, and it depends on a still-proposed backend contract (D-TEMPLATES-VIEW r1 in architecture/model.json:1435). There is no money, identity, migration or authority change, and the 409 and `expected_revision` pattern from F-11 contains the concurrency risk. The `test_template` flag is a business fact the client cares about. The UI must not set it or imply that a test template is PSL's own. Surfaces are `ui`, `api`, `contract-change` (the proposed fields, which gate FE-CONNECT) and `product-decision` (the test-template wording). Product acceptance is required because the flow and copy are new and the client must see them."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-20/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,21 +71,62 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T11:33:24Z",
+      "seconds": 306.9,
+      "evidence_ref": "delivery/features/F-20/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T11:59:31Z",
+      "seconds": 273.3,
+      "evidence_ref": "delivery/features/F-20/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T12:17:36Z",
+      "seconds": 172.3,
+      "evidence_ref": "delivery/features/F-20/round-2/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delegated technical review",
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -59,17 +136,523 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-20/readiness.md",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delegated UX review",
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delegated UI review",
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-ui.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "backend/builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Revision 0 is sent as 0 in the UI (useTemplateUpload passes `input.revision` as read) as the spec asks, but the generated schema says minimum 1 and the mock rejects `expected_revision < 1` with a 422. The desktop fixture therefore carries revision >= 1 instead of the spec's 0. This is disclosed in build.md for the backend developer. It is worth settling in D-TEMPLATES-VIEW whether 0 is valid. Only a stub component test covers 0.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone fidelity visual is 83.3, below 90. This is recorded openly as an open design-engineer decision, not a technical defect. Desktop passes (95.9). Route this to the design review, not to a code fix.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone visual score is 83.3 (< 90) because the approved extras (line, version/kind meta, full-width 44px Upload button, eight cards) make each card about 180px against the board's 71px. The extras are approved in D-71, so this is not a deviation from approved behaviour. Decide whether to accept the score or trim the cards (for example, move Upload behind a tap). Spec criterion 2 asks for >= 90, so record the acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Desktop puts version and kind inline after the document name, and \"3 versions \u00b7 Changed by X, 12 Nov\" under the Upload link. Conflict 4 said lines under the name. The builder flagged this. It reads fine in the image; confirm the placement.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Version text reads \"Version 1 \u00b7 PDF\" where the spec says unprefixed. This is clearer for readers, and the builder noted it; the design engineer should confirm.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On phone the \"AS OF\" line sits after the last card, so it is easy to miss with long lists. It was placed there to keep the card positions. Consider placing it under the note if the design engineer accepts the score change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The phone back link reads \"Setup\" and goes to `/setup/roles`, as approved in follow-ups 02 and D-68(c). Its accessible name is \"Back to Setup\", which is fine. No action.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:17:36Z",
+          "refs": [
+            "left: no action needed per the review."
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "left: no action needed per the review."
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "design engineer",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone SCR-34 @390 visual 83.3 < 90, so the gate fails. What is forced: by my measurement from side-by-side.png, the line (about 22px), meta (about 22px) and full-width 44px Upload button (about 58px with margin) approved in Conflict 2 add about 100px to every card. That pushes card 2 down about 90px, card 3 about 180px, and so on. Conflict 7's three extra cards add only length below the board's frame. What is fixable: about 6px of padding per card, plus about 22px if the line and meta were joined into one muted line, e.g. \"Invoice preparation and delivery \u00b7 Version 1 \u00b7 PDF\". Neither change brings the cards back to the board's positions, so no compact card that still carries the approved elements reaches 90. The only way the builder could close the gap is a change the spec rejected or did not approve: drop the meta, or replace the full-width button with a link-height control on the tag row. Expected: the design engineer either (a) records a standing visual exception for SCR-34-mobile at 83.3, as was done for the SCR-01 phone gap, or (b) approves a compact card and the builder rebuilds it. A compact card would keep line + meta on one line and put a right-aligned \"Upload PSL's version\" link-button with a 44px target on the tag row. It could score in the high 80s, still unlikely to reach 90. I recommend (a). The builder should not be asked to keep cutting the approved elements to chase the score.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-15T12:23:12Z",
+          "refs": [
+            "delivery/OVERNIGHT-DECISIONS.md"
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": "SCR-34-mobile visual gap waived (D-78); signed in fidelity-exceptions.json"
+        }
+      ],
+      "risk_authority": "design engineer"
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Desktop: \"3 versions \u00b7 Changed by Ada Okafor, 12 Nov\" sits under \"Upload PSL's version\" in the action column (`setup-actioncell`, setup.css new block). In that column it reads as part of the action, not as the document's history. It is not where Conflict 4 (approved) puts it, and the board does not draw it there. It is also the only cause of the uneven Closure report row. Expected: keep version and kind inline after the name (see Notes), and put the history line as one muted `setup-meta` line under the name in the Document cell. Rows with `updated_by` grow by one line, which Conflict 4 accepted. Read-only rows (no Upload control) then show their history too. As built, history placed in the action column has no natural home on a read-only row; check `readonly.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:17:36Z",
+          "refs": [
+            "777d9a3f"
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:23:00Z",
+          "refs": [
+            "The \"N versions \u00b7 Changed by X, date\" line is now a block `setup-docname__history` under the name in the Document cell, and the action cell holds only the Upload control. The desktop score stayed at 95.9. The component test covers history on every row, including a read-only row, with no Upload control."
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "777d9a3f"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The \"N versions \u00b7 Changed by X, date\" line is now a block `setup-docname__history` under the name in the Document cell, and the action cell holds only the Upload control. The desktop score stayed at 95.9. The component test covers history on every row, including a read-only row, with no Upload control."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone \"AS OF 12 NOV, 10:40\" is at the end of the eight cards. Conflict 6 (approved) puts it under the note. At the end of the list, the time stamp for the data is about 1,500px below the first card. The builder's reason is that it moved the cards and lowered the score. Under UI-1-1 (a) the score is waived anyway, so I recommend putting it back under the note as approved. Under (b) the design engineer chooses.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:17:36Z",
+          "refs": [
+            "777d9a3f"
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:23:00Z",
+          "refs": [
+            "The phone As-of line sits directly under the note and before the cards (TemplatesView.tsx, report.json y=182). A component test covers the position."
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "777d9a3f"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The phone As-of line sits directly under the note and before the cards (TemplatesView.tsx, report.json y=182). A component test covers the position."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Fixtures carry `updated_by`/`updated_at` only on Closure report, set that way to protect the desktop score (build.md). Real rows will usually have them, so the scored page under-represents real row height. That is acceptable for the score, but the mixed-data component test should keep covering every row with history, so the layout from UI-1-2 is exercised.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:17:36Z",
+          "refs": [
+            "777d9a3f"
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:23:00Z",
+          "refs": [
+            "The new component test puts history on every row. The scored fixtures are unchanged."
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "777d9a3f"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The new component test puts history on every row. The scored fixtures are unchanged."
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**After a 422, keyboard focus drops to `<body>`.** \"Upload version\" gets `disabled={busy}` (`frontend/src/features/setup/TemplateUploadPanel.tsx:113`), so Chromium drops focus during the request. The 422 path does not move focus back (`TemplatesView.tsx:132-133`). This happened at 1440 and 390. The `role=\"alert\"` callout is still announced, so the result is not silent. A keyboard user must still Tab back into the panel. Expected: focus goes to the first invalid field or to the callout. Every other outcome moves focus. This is the same pattern as F-19 QA-2-2.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:31:38Z",
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**A 403 or 404 on the write that empties the list shows no message.** The `rejected` notice is rendered inside `notices`, and `notices` exists only in the non-empty branch (`TemplatesView.tsx:223-238`, `308-322`). In the browser I pressed Upload and the mock answered 404. The reload returned `items: []`, and the page silently became \"No templates to show.\". No alert appeared and focus went nowhere. This is an edge case, because the person's only template has to disappear. Expected: render `notices` in the empty branch too.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:31:38Z",
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The mock counts an unknown `versions` as zero.** `store()` uses `(row.versions ?? 0) + 1` (`frontend/mock/templates.mjs`, the `store` function). Only Closure report carries `versions` in `desktop.json`. After the first upload, Invoice reads \"Version 2 \u00b7 PDF 1 version \u00b7 Changed by Ada Okafor, 15 Nov\", which is wrong sample data. AGENTS.md says unknown values are not zero. Expected: leave `versions` out when it was unknown. The UI is correct, because it shows exactly what it is given. This affects mock data only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:31:38Z",
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delegated technical review",
+          "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+          "evidence_refs": [
+            "delivery/features/F-20/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-20/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delegated UX review",
+          "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+          "evidence_refs": [
+            "delivery/features/F-20/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delegated UI review",
+          "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+          "evidence_refs": [
+            "delivery/features/F-20/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -89,11 +672,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-SETUP-TEMPLATES",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
+    "task_branch": "fe-setup-templates-the-templates-tab-on-setup-lists-each-do",
+    "head_sha": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-20",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +686,32 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/setup-templates.spec.ts",
+      "frontend/e2e/setup.spec.ts",
+      "frontend/mock/fixtures/E-TEMPLATE-VERSION.json",
+      "frontend/mock/fixtures/E-TEMPLATES.json",
+      "frontend/mock/fixtures/templates/desktop.json",
+      "frontend/mock/fixtures/templates/empty.json",
+      "frontend/mock/fixtures/templates/many.json",
+      "frontend/mock/fixtures/templates/mobile.json",
+      "frontend/mock/fixtures/templates/readonly.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/templates.mjs",
+      "frontend/src/app/setup/templates/page.tsx",
+      "frontend/src/features/setup/SetupFrame.tsx",
+      "frontend/src/features/setup/TemplateUploadPanel.tsx",
+      "frontend/src/features/setup/TemplatesView.tsx",
+      "frontend/src/features/setup/api.ts",
+      "frontend/src/features/setup/format.ts",
+      "frontend/src/features/setup/icons.tsx",
+      "frontend/src/features/setup/setup.css",
+      "frontend/src/features/setup/useTemplateUpload.ts",
+      "frontend/src/features/setup/useTemplates.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/setup-templates-mock.test.ts",
+      "frontend/tests/setup-templates.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +744,91 @@
     }
   },
   "created_at": "2026-11-15T10:36:42Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-15T10:49:09Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T10:50:10Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T12:04:05Z",
+      "round": 1,
+      "head": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T12:07:16Z",
+      "round": 1,
+      "head": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T12:07:16Z",
+      "round": 2,
+      "head": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T12:17:36Z",
+      "round": 2,
+      "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-15T12:23:13Z",
+      "round": 2,
+      "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-15T12:31:42Z",
+      "round": 2,
+      "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-20/readiness.md",
+      "delivery/features/F-20/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "777d9a3f11f10544e6d43ffa7d52a86f7202df99"
   },
   "blocked": null
 }

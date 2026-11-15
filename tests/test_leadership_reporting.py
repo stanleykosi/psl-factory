@@ -218,12 +218,31 @@ class LeadershipReportTests(TestCase):
         self.assertIn('recovery remains pending', b.version.fields['critical_incidents']['text'])
 
     def test_later_shared_domain_link_also_restricts_historical_access(self):
+        from apps.core.read_budget import ReadBudget, ReadLimit
         from apps.pmo.issues import log_issue
+        from apps.documents import template_current
+        from apps.documents.template_access import visible_sources
+        from .test_template_current import claim, scope
+
         b = self.prepare()
         reports.binding_access(self.recipient, b.version)
+        source = template_current.capture_source(self.actor, self.case.pk, 'Private template rationale',
+                                                 'synthetic:leadership-template', rev(self.case))
+        applicability = scope(self.actor, self.case, source, document_type='status_report', audience='internal')
+        claim(self.actor, self.case, applicability, self.template, source, False)
+        Grant.objects.get_or_create(case=self.case, user=self.recipient, action='document.read')
+        self.assertTrue(visible_sources(self.recipient, self.case, source_id=source.pk).exists())
+        self.assertTrue(visible_sources(self.recipient, self.case, source_id=source.pk, budget=ReadBudget()).exists())
+        budget = ReadBudget()
+        budget.remaining = 1
+        with self.assertRaises(ReadLimit):
+            visible_sources(self.recipient, self.case, source_id=source.pk, budget=budget).exists()
         log_issue(self.actor, self.case.pk, 'LATER-ISSUE', 'Later shared source incident', 'Production',
                   self.actor.pk, 'Investigate shared evidence', self.notes.pk, 'Native source reuse', rev(self.case))
         with self.assertRaises(PermissionDenied): reports.binding_access(self.recipient, b.version)
+        self.assertFalse(visible_sources(self.recipient, self.case).filter(pk=source.pk).exists())
+        self.assertFalse(visible_sources(self.recipient, self.case, source_id=source.pk).exists())
+        self.assertFalse(visible_sources(self.recipient, self.case, source_id=source.pk, budget=ReadBudget()).exists())
 
     def escalation(self):
         from apps.pmo.issues import log_issue
