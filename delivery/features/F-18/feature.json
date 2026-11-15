@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-18",
   "outcome": "Team input and the RFP outcome are recorded inside the RFP frame, and the drafted follow-up goes only when a person sends it",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M2B-RFP"
   ],
@@ -97,6 +97,18 @@
       "protected_paths_changed": [],
       "at": "2026-11-15T07:37:51Z",
       "seconds": 86.6,
+      "evidence_ref": "delivery/features/F-18/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T07:40:16Z",
+      "seconds": 118.5,
       "evidence_ref": "delivery/features/F-18/round-2/checks.md"
     }
   ],
@@ -1072,6 +1084,14 @@
       "round": 2,
       "head": "352893425c8d197b3de15ab04eac6c68d1d05782",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T07:40:27Z",
+      "round": 2,
+      "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+      "reason": null
     }
   ],
   "routing": {
@@ -1089,8 +1109,8 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 1,
-    "verdict": "FAIL",
+    "attempts": 2,
+    "verdict": "PASS",
     "commit": "28c13dbcca5af9b6db6f276e2878c43a487a8958"
   },
   "blocked": null

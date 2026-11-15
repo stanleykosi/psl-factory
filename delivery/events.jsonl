@@ -1154,3 +1154,5 @@
 {"at":"2026-11-15T07:37:51Z","feature":"F-18","round":2,"kind":"finding","action":"fix","finding":"UI-1-5","by":"builder"}
 {"at":"2026-11-15T07:37:51Z","feature":"F-18","round":2,"kind":"finding","action":"fix","finding":"UI-1-6","by":"builder"}
 {"at":"2026-11-15T07:37:51Z","feature":"F-18","round":2,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":86.6,"commit":"28c13dbcca5a"}
+{"at":"2026-11-15T07:40:16Z","feature":"F-18","round":2,"kind":"gate","verdict":"PASS","attempt":2,"exit_code":0,"seconds":118.5,"commit":"28c13dbcca5a"}
+{"at":"2026-11-15T07:40:27Z","feature":"F-18","round":2,"kind":"transition","head":"28c13dbcca5a","from":"IMPLEMENTING","to":"IN_REVIEW"}
