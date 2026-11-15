@@ -189,10 +189,10 @@ describe('the nine section kinds, in returned order', () => {
   it('recipients: name, channel, receipt word and WAT time', async () => {
     await open(item('W-2001'));
     expect(rows('Who receives it').map(text)).toEqual([
-      'Dr Amaka ObiEmailReceived 12 Nov 2026 15:10 WAT',
+      'Dr Amaka ObiEmailReceived 12 Nov 15:10',
       'Lagoon Health projects inboxEmailNot yet',
-      'Chinedu EzeWhatsAppUncertain 12 Nov 2026 15:12 WAT',
-      'Lagoon Health board inboxEmailFailed 12 Nov 2026 15:13 WAT',
+      'Chinedu EzeWhatsAppUncertain 12 Nov 15:12',
+      'Lagoon Health board inboxEmailFailed 12 Nov 15:13',
       'Funke AdeEmailUnknown',
     ]);
   });
@@ -200,9 +200,9 @@ describe('the nine section kinds, in returned order', () => {
   it('timeline: WAT time, words, agent or owner, detail', async () => {
     await open(item('W-2001'));
     expect(rows('What happened').map(text)).toEqual([
-      'Approved by Kemi AdebayoKemi Adebayo12 Nov 2026 14:58 WAT',
-      'Emailed to Dr Amaka ObiTolaDelivered 15:1012 Nov 2026 15:10 WAT',
-      'Emailed to Lagoon Health projects inboxTola12 Nov 2026 15:11 WAT',
+      'Approved by Kemi AdebayoKemi Adebayo12 Nov 14:58',
+      'Emailed to Dr Amaka ObiTolaDelivered 15:1012 Nov 15:10',
+      'Emailed to Lagoon Health projects inboxTola12 Nov 15:11',
     ]);
   });
 
@@ -396,8 +396,8 @@ describe('as_of, coverage and sample', () => {
   it('W-2004 shows as_of in WAT and the coverage text; the record’s sample label shows when switched on', async () => {
     vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
     await open(item('W-2004'));
-    expect(text(section('Forecast · 6 months').querySelector('.ws-meta'))).toBe('As of 14 Nov 2026 10:40 WAT3 of 4 bank accounts reconciled');
-    expect(text(section('January').querySelector('.ws-meta'))).toBe('ChidiAs of 14 Nov 2026 10:40 WATReceipts from 11 of 12 clients');
+    expect(text(section('Forecast · 6 months').querySelector('.ws-meta'))).toBe('As of 14 Nov 10:40 WAT3 of 4 bank accounts reconciled');
+    expect(text(section('January').querySelector('.ws-meta'))).toBe('ChidiAs of 14 Nov 10:40 WATReceipts from 11 of 12 clients');
     expect(screen.getAllByText('SAMPLE DATA').length).toBeGreaterThan(0);
   });
 

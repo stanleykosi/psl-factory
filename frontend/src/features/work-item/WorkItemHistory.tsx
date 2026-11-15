@@ -4,10 +4,10 @@
 // Try again. Restricted entries show who and when only (INV-RESTRICTED).
 import { useState } from 'react';
 
-import { Button, Callout, EmptyState, formatDateTime, Panel, Segmented, Select, Table, Tag, type Column } from '@/components';
+import { Button, Callout, EmptyState, formatDayTime, Panel, Segmented, Select, Table, Tag, type Column } from '@/components';
 import { LoadingState } from '@/shell/FrameStates';
 
-import { ACTOR_TAGS, formatWat, HISTORY_FILTERS, HISTORY_LIMITS, type HistoryKind, type HistoryLimit } from './labels';
+import { ACTOR_TAGS, HISTORY_FILTERS, HISTORY_LIMITS, type HistoryKind, type HistoryLimit } from './labels';
 import type { BoardHistoryEntry, WorkItemPresentation } from './presentation';
 import { useWorkHistory } from './useWorkHistory';
 import { WorkErrorCard } from './WorkItemStates';
@@ -39,7 +39,7 @@ function historyColumns(inline: boolean): Column<BoardHistoryEntry>[] {
   // On the boards the detail continues the event's line ("Approved invoice v2 for ₦4,250,000.00").
   const detailClass = inline ? 'work-detail work-detail--inline' : 'work-detail';
   return [
-    { key: 'when', header: 'WHEN', mono: true, cell: (entry) => <time dateTime={entry.at}>{formatWat(entry.at)}</time> },
+    { key: 'when', header: 'WHEN', mono: true, cell: (entry) => <time dateTime={entry.at}>{formatDayTime(entry.at)}</time> },
     {
       key: 'what',
       header: 'WHAT HAPPENED',
@@ -87,7 +87,7 @@ function HistoryCard({ entry, board }: { entry: BoardHistoryEntry; board: boolea
   return (
     <div role="listitem" className="work-hcard">
       <span className="work-hcard__when">
-        <time dateTime={entry.at}>{formatWat(entry.at)}</time> · <span className="cmp-sr">Version: </span>
+        <time dateTime={entry.at}>{formatDayTime(entry.at)}</time> · <span className="cmp-sr">Version: </span>
         {(!entry.restricted && entry.version) || '—'}
       </span>
       <div className="work-who">
@@ -140,7 +140,7 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
       options={HISTORY_LIMITS.map((n) => ({ value: String(n), label: String(n) }))}
     />
   );
-  const asOf = ready && ready.items.length > 0 && !board && <p className="work-note">As of {formatDateTime(ready.asOf)}</p>;
+  const asOf = ready && ready.items.length > 0 && !board && <p className="work-note">As of {formatDayTime(ready.asOf)}</p>;
 
   let body;
   if (state.status === 'loading') body = <LoadingState />;

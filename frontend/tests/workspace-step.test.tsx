@@ -199,7 +199,7 @@ describe('the step form (AC 14, 15)', () => {
     expect(f.getByRole('radiogroup', { name: 'Status' })).toBeTruthy();
     expect(f.getByRole('combobox', { name: 'Project (optional)' })).toBeTruthy();
     expect(f.getByText('Choose Project first')).toBeTruthy();
-    expect(f.getByText('Supporting document')).toBeTruthy();
+    expect(f.getByRole('button', { name: /Add another file|Supporting document/ })).toBeTruthy();
     expect(f.getByText('RFP answer · test template v1')).toBeTruthy();
     expect(f.getByText('Restricted')).toBeTruthy();
     expect(document.body.textContent).not.toContain('HIDDEN-COST-CODE');
@@ -473,8 +473,7 @@ describe('effect_uncertain (AC 19, INV-RESEND)', () => {
     const callout = await screen.findByText('Delivery to Lagoon Health couldn’t be confirmed.');
     // an uncertain send is told in the page's live region, so it is announced where it appears (lane 1)
     expect(callout.closest('[role="status"]')).not.toBeNull();
-    // the reconcile choice is the shared RadioGroup (lane 2); integration verifies which role it exposes
-    await screen.findByRole('group', { name: 'Confirm what happened' });
+    await screen.findByRole('radiogroup', { name: 'Confirm what happened' });
     expect(itemReads()).toHaveLength(2);
     for (const b of within(document.querySelector('.ws-steps') as HTMLElement).getAllByRole('button')) expect(b.getAttribute('aria-disabled')).toBe('true');
     await press('Approve and send');
@@ -502,7 +501,7 @@ describe('effect_uncertain (AC 19, INV-RESEND)', () => {
     });
     expect(itemReads()).toHaveLength(3);
     expect(posts()).toHaveLength(1);
-    expect(screen.queryByRole('group', { name: 'Confirm what happened' })).toBeNull();
+    expect(screen.queryByRole('radiogroup', { name: 'Confirm what happened' })).toBeNull();
   });
 });
 

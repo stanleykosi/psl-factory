@@ -1,7 +1,7 @@
 // PROPOSAL (D-LINE-WORKSPACE, contract mock only): the `workspace` block's enum values to the words and classes
 // the frame draws. Presentation only: which sections and steps exist, their values and who may act are the
 // backend's. A value outside these lists is shown as it came, never hidden.
-import { formatDate, formatDateTime, type TagTone } from '@/components';
+import { formatDate, formatDayTime, type TagTone } from '@/components';
 import { formatAmount } from '@/features/decide/format';
 import type { WorkItem } from '@/features/work-item/labels';
 
@@ -77,8 +77,8 @@ export const WS_TEXT = {
   you: 'You',
 } as const;
 
-/** "As of 14 Nov 2026 10:40 WAT". */
-export const asOfLine = (value: string) => `As of ${formatDateTime(value)}`;
+/** "As of 14 Nov 10:40 WAT", as the line boards write it. */
+export const asOfLine = (value: string) => `As of ${formatDayTime(value)} WAT`;
 
 /** Money in the decide page's format; null when unknown or absent, so the caller draws Unknown (never 0). */
 export const moneyText = (money: Money) => formatAmount(money);

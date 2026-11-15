@@ -6,6 +6,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { formatClock, formatDayMonth } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
@@ -15,7 +16,7 @@ import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemState
 
 import type { Recorded, ResponseTask, ResponseWorkItem, TaskResponse } from './contract';
 import { CheckIcon, InfoIcon } from './icons';
-import { formatClock, formatDay, plural, RECORDABLE } from './labels';
+import { plural, RECORDABLE } from './labels';
 import { AgentAside, ClientResponseForm, SowSignatureForm } from './ResponseForm';
 import { TeamInputForm } from './TeamInputForm';
 import { findTask, teamInputOpen, useResponse, type Notice } from './useResponse';
@@ -127,7 +128,7 @@ function recordedSentence(recorded: Recorded, response: TaskResponse | undefined
   const channel = recorded.received_via
     ? (response?.channels?.find((c) => c.value === recorded.received_via)?.label ?? recorded.received_via).toLowerCase()
     : undefined;
-  const day = recorded.responded_at ? formatDay(recorded.responded_at) : undefined;
+  const day = recorded.responded_at ? formatDayMonth(recorded.responded_at) : undefined;
   const received = channel ? `received by ${channel}${day ? ` on ${day}` : ''}` : day ? `received on ${day}` : '';
   const by = `recorded by ${recorded.by.name} at ${formatClock(recorded.at)}`;
   const proof = recorded.proof_count !== undefined ? ` with ${plural(recorded.proof_count, 'proof file')}` : '';

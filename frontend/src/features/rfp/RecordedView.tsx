@@ -7,7 +7,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 import { InfoIcon } from '@/features/response/icons';
-import { formatClock, formatDay } from '@/features/response/labels';
+import { formatDayMonth, formatDayTime } from '@/components';
 import { useIsPhone } from '@/features/response/usePhone';
 
 import type { RecordedOutcome, RfpOutcome } from './contract';
@@ -96,10 +96,10 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
             <Panel title="What’s recorded" className="rfp-panel--rows">
               <ul className="rfp-rows">
                 {rows.map((r, i) => (
-                  <Row key={i} text={r.at ? `${r.label} · ${r.value}` : r.label} meta={r.at ? formatDay(r.at) : r.value} />
+                  <Row key={i} text={r.at ? `${r.label} · ${r.value}` : r.label} meta={r.at ? formatDayMonth(r.at) : r.value} />
                 ))}
                 {engagement && <Row text={`Engagement ${engagement.reference} created`} />}
-                {reminder && <Row text={`Reminder for ${reminder.holder.name}`} meta={`${formatDay(reminder.at)} ${formatClock(reminder.at)}`} />}
+                {reminder && <Row text={`Reminder for ${reminder.holder.name}`} meta={formatDayTime(reminder.at)} />}
               </ul>
             </Panel>
           )}

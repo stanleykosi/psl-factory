@@ -190,7 +190,7 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
   it('shows the coverage time from as_of', async () => {
     await open();
     const eyebrow = document.querySelector('.overview__eyebrow')!;
-    expect(eyebrow.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT');
+    expect(eyebrow.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT');
     expect(eyebrow.querySelector('time')!.getAttribute('datetime')).toBe('2026-11-14T15:40:00Z');
     expect(screen.getByRole('heading', { level: 1, name: 'Factory floor' })).toBeTruthy();
   });
@@ -278,7 +278,7 @@ describe('who may see it and what fails', () => {
     const alert = screen.getByRole('alert');
     expect(alert.textContent).toContain('We couldn’t load the factory floor.');
     expect(alert.textContent).toContain('We couldn’t load the factory floor. Your work is safe; nothing was changed.');
-    expect(alert.textContent).toContain('Last loaded 14 Nov 2026 16:40 WAT.');
+    expect(alert.textContent).toContain('Last loaded 14 Nov 16:40 WAT.');
     expect(alert.textContent).toMatch(/Reference (server_error|network_error) for support\./);
     expect(document.querySelector('dl')).toBeNull();
     expect(linesSection()).toBeNull();
@@ -361,7 +361,7 @@ describe('staying current (D-UPDATES r2)', () => {
     await until(() => expect(overviewCalls()).toHaveLength(4));
     for (let i = 0; i < 5; i++) await act(async () => new Promise((r) => realImmediate(r)));
     expect(tiles()[0]).toEqual(['IN PROGRESS', '99']);
-    expect(document.querySelector('.overview__eyebrow')!.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 2026 16:41 WAT');
+    expect(document.querySelector('.overview__eyebrow')!.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 16:41 WAT');
   });
 });
 
@@ -399,7 +399,7 @@ describe('the 3D option follows reduced motion, WebGL and width', () => {
     const h1 = screen.getByRole('heading', { level: 1 });
     expect(h1.closest('header')!.nextElementSibling!.textContent).toBe('18 in progress · 5 need a person');
     expect(tiles()).toHaveLength(0);
-    expect(linesSection()!.nextElementSibling!.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT');
+    expect(linesSection()!.nextElementSibling!.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT');
     expect(screen.queryByText(/Each square is a station/)).toBeNull();
     expect(rows()).toHaveLength(8);
   });

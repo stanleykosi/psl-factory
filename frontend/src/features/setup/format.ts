@@ -1,5 +1,5 @@
 // Display rules for Setup rows. A rule is Not set only when `set` is false; the value object is never read.
-import { formatDate } from '@/components';
+import { formatClock, formatDayMonth } from '@/components';
 
 import type { RuleRow } from './contract-proposal';
 
@@ -24,11 +24,22 @@ export async function fileToBase64(file: File): Promise<string> {
   return btoa(text);
 }
 
-/** "v2 · since 1 Oct 2026", "v2" without a date, null when not set. */
-export function versionText(row: RuleRow): string | null {
+/** "12 Nov", "01 Oct" in Africa/Lagos, as the Setup boards write it, with the year added outside the current Lagos year. */
+export function boardDay(value: string, now = new Date()): string {
+  const year = lagosParts(new Date(value)).year;
+  return year === lagosParts(now).year ? formatDayMonth(value) : `${formatDayMonth(value)} ${year}`;
+}
+
+/** "12 Nov, 10:40": the Templates board's as-of stamp. */
+export function boardStamp(value: string, now = new Date()): string {
+  return `${boardDay(value, now)}, ${formatClock(value)}`;
+}
+
+/** "v2 · since 01 Oct" (the year added outside the current Lagos year), "v2" without a date, null when not set. */
+export function versionText(row: RuleRow, now = new Date()): string | null {
   if (!row.set) return null;
   if (!row.effective_from) return `v${row.revision}`;
-  return `v${row.revision} · since ${formatDate(row.effective_from)}`;
+  return `v${row.revision} · since ${boardDay(row.effective_from, now)}`;
 }
 
 /** The value as text, or null for Not set. A set rule without display_value reads "Set". */

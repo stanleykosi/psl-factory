@@ -1,6 +1,6 @@
 // SCR-15 alerts: contract values to the words on the boards, the list view in the URL, and the settings PUT body.
 // Presentation only: a proposal field the API does not return is never defaulted, and nothing here decides access.
-import { AGENTS as AGENT_INFO, formatDate, formatTime } from '@/components';
+import { AGENTS as AGENT_INFO, formatClock, formatDayMonth } from '@/components';
 
 import type { Alert, AlertAgent, AlertPrefs, AlertQuery, AlertWithNeed, PrefsBody } from './types';
 
@@ -27,16 +27,16 @@ const DAY_MS = 86_400_000;
 /** "10:42 WAT" on the same WAT day as now, "yesterday" on the day before, else "12 Nov 2026". */
 export function dayWords(value: string, now: number): string {
   const day = WAT_DAY.format(new Date(value));
-  if (day === WAT_DAY.format(new Date(now))) return formatTime(value);
+  if (day === WAT_DAY.format(new Date(now))) return formatClock(value);
   if (day === WAT_DAY.format(new Date(now - DAY_MS))) return 'yesterday';
-  return formatDate(value);
+  return formatDayMonth(value);
 }
 
 /** "<Agent> · <how> · <when>", or "<Agent> · In app only (<reason>)". */
 export function metaLine(alert: Alert, now: number): string {
   const name = agentName(alert.agent);
   if (alert.in_app_reason) return `${name} · In app only (${alert.in_app_reason})`;
-  const when = alert.digest_at ? `${formatTime(alert.digest_at)} daily digest` : dayWords(alert.delivered_at ?? alert.at, now);
+  const when = alert.digest_at ? `${formatClock(alert.digest_at)} daily digest` : dayWords(alert.delivered_at ?? alert.at, now);
   return [name, alert.delivered_via && deliveryWords(alert.delivered_via), when].filter(Boolean).join(' · ');
 }
 

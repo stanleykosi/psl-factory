@@ -81,8 +81,6 @@
 .alerts-dstate { padding: var(--space-3) 0; }
 .alerts-titlecol { display: flex; flex-direction: column; gap: var(--space-20px); }
 
-/* phone settings title, as drawn beside the back link */
-.alerts-settitle .cmp-page-title { font-size: 24px; line-height: 28px; }
 .alerts-scroll { scroll-margin-bottom: var(--alerts-footer); }
 /* 44px close target on the phone sheet */
 @media (max-width: 719.98px) {

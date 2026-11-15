@@ -6,11 +6,10 @@
 // With a PROPOSAL `presentation` block (board fixtures only) the page follows the state's board: its section
 // order per viewport (LAYOUTS), the state card and the board's detail words. Without it, the F-03 layout.
 import Link from 'next/link';
-import { Fragment, useId, type ReactNode } from 'react';
+import { Fragment, useId, useState, type ReactNode } from 'react';
 
-import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, Panel, PersonAvatar, SampleLabel, Tag, useIsPhone } from '@/components';
+import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, DisclosureLink, FactsStrip as SharedFactsStrip, formatClock, Panel, PersonAvatar, SampleLabel, Tag, useIsPhone, type FactValue } from '@/components';
 import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
-import { formatClock } from '@/features/decide/format';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
@@ -21,84 +20,28 @@ import {
   AGENT_TAGS,
   agentPose,
   currentStationIndex,
-  formatWat,
   FACTS,
   nextStepKind,
   STATIONS,
   STEP_WORDS,
   stepKind,
-  type Fact,
   type FactName,
   type WorkItem,
   type WorkState,
 } from './labels';
 import { isAppPath, presentationOf, viewFor, type PanelLink, type PanelTone, type WorkItemPresentation } from './presentation';
 
-const FACT_WORDS: Record<Fact['status'], string> = { earned: 'Earned', current: 'In progress', not_yet: 'Not yet', unknown: 'Unknown' };
-
-function FactValue({ fact, detail }: { fact: Fact | undefined; detail?: string }) {
-  // INV-UNKNOWN: a fact the payload does not carry reads Unknown, never blank, zero or "No", whatever the detail says.
-  const status = fact?.status ?? 'unknown';
-  if (detail && status !== 'unknown') {
-    // The board's detail is shown; the contract word stays in the accessible text, beside it.
-    return (
-      <>
-        <span className="cmp-sr">{FACT_WORDS[status]}: </span>
-        <strong>{detail}</strong>
-      </>
-    );
-  }
-  if (status === 'earned') {
-    return (
-      <>
-        <strong>Earned</strong>
-        {fact?.at && <time dateTime={fact.at}>{formatWat(fact.at)}</time>}
-      </>
-    );
-  }
-  if (status === 'current') return <strong>In progress</strong>;
-  if (status === 'not_yet') {
-    return (
-      <>
-        <strong>—</strong>
-        <span className="cmp-sr">Not yet</span>
-      </>
-    );
-  }
-  return <strong>Unknown</strong>;
-}
-
-function factClass(fact: Fact | undefined, tone?: 'waiting' | 'signal'): string {
-  const status = fact?.status ?? 'unknown';
-  // the board's warning tint on a fact that has not happened ("Not found", "Not yet"); an unknown fact keeps its own
-  if (status === 'not_yet' && tone) return tone === 'waiting' ? 'psl-fact psl-fact--unknown' : 'psl-fact psl-fact--current';
-  if (status === 'earned') return fact?.name === 'verified' ? 'psl-fact psl-fact--verified' : 'psl-fact psl-fact--earned';
-  if (status === 'current') return 'psl-fact psl-fact--current';
-  if (status === 'unknown') return 'psl-fact psl-fact--unknown';
-  return 'psl-fact';
-}
-
 type FactsProps = { facts: WorkItem['facts']; details?: Partial<Record<FactName, string>>; tones?: Partial<Record<FactName, 'waiting' | 'signal'>>; paidNote?: boolean };
 
+/** The shared FactsStrip with the work item's facts, the board's detail words and tints. */
 export function FactsStrip({ facts, details, tones, paidNote = true }: FactsProps) {
-  return (
-    <div className="work-facts">
-      {/* div list: the boards draw the facts as boxes; the list roles keep them one list for screen readers */}
-      <div className="psl-facts" role="list" aria-label="Facts">
-        {FACTS.map(({ name, label, more }) => {
-          const fact = facts.find((f) => f.name === name);
-          return (
-            <div key={name} role="listitem" className={factClass(fact, tones?.[name])}>
-              <b>{label}</b>
-              {more && <span className="cmp-sr">{more}</span>}
-              <FactValue fact={fact} detail={details?.[name]} />
-            </div>
-          );
-        })}
-      </div>
-      {paidNote && <p className="work-note">Paid is a separate Finance fact and is not part of this line.</p>}
-    </div>
-  );
+  const values: Partial<Record<FactName, FactValue>> = {};
+  for (const { name } of FACTS) {
+    const fact = facts.find((f) => f.name === name);
+    // INV-UNKNOWN: a fact the payload does not carry reads Unknown, never blank, zero or "No", whatever the detail says.
+    if (fact) values[name] = { status: fact.status, at: fact.at, text: details?.[name], tone: tones?.[name] };
+  }
+  return <SharedFactsStrip facts={values} label="Facts" className="work-facts" paidNote={paidNote ? 'Paid is a separate Finance fact and is not part of this line.' : null} paidNoteClassName="work-note" />;
 }
 
 type TrackProps = { stations: WorkItem['stations']; state?: WorkState; details?: (string | null)[]; list?: boolean; quiet?: boolean; shown?: number };
@@ -270,6 +213,8 @@ function AgentSection({ agent, view }: { agent: WorkItem['agent']; view: WorkIte
 
 /** The phone boards' agent note: mascot, name and role, one line; "See his steps" shows the steps in place. */
 function AgentBox({ agent, view, text }: { agent: WorkItem['agent']; view: WorkItemPresentation['agent']; text?: string }) {
+  const [open, setOpen] = useState(false);
+  const stepsId = useId();
   const steps = agent.steps ?? [];
   // `plain`: the board draws the note alone, so the name and role stay for screen readers only.
   const plain = view?.plain;
@@ -286,12 +231,20 @@ function AgentBox({ agent, view, text }: { agent: WorkItem['agent']; view: WorkI
           {/* the phone boards draw no limits line; it stays for screen readers */}
           {text && ' '}
           <small className="cmp-sr">{CANNOT}</small>
+          {steps.length > 0 && (
+            <>
+              {' '}
+              <DisclosureLink open={open} onToggle={() => setOpen((v) => !v)} controls={stepsId} openLabel="Hide his steps">
+                See his steps
+              </DisclosureLink>
+            </>
+          )}
         </div>
       </div>
       {steps.length > 0 && (
-        <Disclosure summary="See his steps">
+        <div id={stepsId} hidden={!open}>
           <AgentSteps steps={steps} />
-        </Disclosure>
+        </div>
       )}
     </section>
   );
@@ -530,7 +483,7 @@ function PreviewSummary({ item, preview }: { item: WorkItem; preview: NonNullabl
           </span>
         )}
         <span>{preview.basis}</span>
-        <Disclosure summary="Preview the invoice">
+        <Disclosure look="link" summary="Preview the invoice" openSummary="Hide the invoice">
           <InvoicePreview preview={preview} />
         </Disclosure>
       </section>

@@ -333,7 +333,7 @@ describe('read only (AC 14) and no role guesses (AC 15)', () => {
   it('history: filter, rows per page and Show more send GETs only', async () => {
     await open('W-1705', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
-    fireEvent.click(screen.getByRole('radio', { name: 'Decisions2' }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Decisions 2' }));
     fireEvent.click(screen.getByRole('combobox', { name: 'Rows per page' }));
     fireEvent.click(screen.getByRole('option', { name: '10' }));
     await waitFor(() => expect(calls().filter((c) => c.url.pathname.endsWith('/history')).length).toBeGreaterThanOrEqual(3));
@@ -358,14 +358,16 @@ describe('phone disclosures', () => {
     phone();
     await open('W-1701');
     const before = calls().length;
-    const summary = screen.getByText('See his steps');
-    const details = summary.closest('details')!;
-    expect(details.open).toBe(false);
-    fireEvent.click(summary);
-    expect(details.open).toBe(true);
-    expect(within(details).getAllByRole('listitem')).toHaveLength(4);
-    fireEvent.click(summary);
-    expect(details.open).toBe(false);
+    const toggle = screen.getByRole('button', { name: 'See his steps' });
+    const steps = document.getElementById(toggle.getAttribute('aria-controls')!)!;
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(steps.hidden).toBe(true);
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(steps.hidden).toBe(false);
+    expect(within(steps).getAllByRole('listitem')).toHaveLength(4);
+    fireEvent.click(toggle);
+    expect(steps.hidden).toBe(true);
     expect(calls()).toHaveLength(before);
   });
 
@@ -423,8 +425,8 @@ describe('history on the boards (AC 18)', () => {
     await open('W-1705', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
     const tabs = within(screen.getByRole('tablist', { name: 'Work item' })).getAllByRole('tab');
-    expect(tabs.map((a) => a.textContent)).toEqual(['Overview', 'History7']);
-    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All7', 'Decisions2', 'Agent work2', 'Evidence1']);
+    expect(tabs.map((a) => a.textContent)).toEqual(['Overview', 'History 7']);
+    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All 7', 'Decisions 2', 'Agent work 2', 'Evidence 1']);
     expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual(['WHEN', 'WHAT HAPPENED', 'VERSION']);
     const rows = within(screen.getByRole('table')).getAllByRole('row').slice(1);
     expect(rows).toHaveLength(7);
@@ -448,7 +450,7 @@ describe('history on the boards (AC 18)', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History · INV-0412');
     expect(screen.getByText('HISTORY')).toBeTruthy();
     // the phone board's three segments, and the paging control the contract keeps
-    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All7', 'Decisions2', 'Agents2']);
+    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All 7', 'Decisions 2', 'Agents 2']);
     expect(screen.getByRole('combobox', { name: 'Rows per page' })).toBeTruthy();
     expect(screen.getByRole('tablist', { name: 'Work item' })).toBeTruthy();
     const cards = within(screen.getByRole('list', { name: 'History, newest first' })).getAllByRole('listitem');

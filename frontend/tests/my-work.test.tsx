@@ -126,13 +126,13 @@ describe('queue tabs (A-MYWORK)', () => {
     expect(tabs()[0].getAttribute('aria-controls')).toBe('my-work-panel');
     expect(panel().getAttribute('role')).toBe('tabpanel');
     expect(panel().getAttribute('aria-label')).toBe('Needs me');
-    expect(screen.getByText('44 records you can see · updated 10:42 WAT')).toBeTruthy();
+    expect(screen.getByText('44 records you can see · updated 10:42')).toBeTruthy();
   });
 
   it('without counts.unassigned there are three tabs and zero reads 0', async () => {
     persona = 'pm';
     await open();
-    expect(tabs().map((t) => t.textContent)).toEqual(['Needs me0', 'Waiting on others3', 'Done2']);
+    expect(tabs().map((t) => t.textContent)).toEqual(['Needs me 0', 'Waiting on others 3', 'Done 2']);
   });
 
   it('without counts no tab shows a badge, "Count unavailable" says so; never 0', async () => {
@@ -384,7 +384,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     expect(within(sheet.querySelector('.psl-sheet__head') as HTMLElement).getByRole('button', { name: 'Clear' })).toBeTruthy();
     expect(within(sheet).getByRole('button', { name: /^Show / }).className).toContain('psl-btn--xl psl-btn--block');
     expect(within(sheet).getByRole('button', { name: 'All 6 lines' })).toBeTruthy();
-    fireEvent.mouseDown(sheet.parentElement!);
+    fireEvent.click(document.querySelector('.cmp-layer > .psl-scrim')!);
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(filter);
   });
@@ -502,7 +502,7 @@ describe('staying current (D-UPDATES r2)', () => {
       return json(status, body);
     };
     await act(() => vi.advanceTimersByTimeAsync(15_000));
-    await until(() => expect(screen.getByText('45 records you can see · updated 10:57 WAT')).toBeTruthy());
+    await until(() => expect(screen.getByText('45 records you can see · updated 10:57')).toBeTruthy());
     expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20' });
     expect(rows()).toHaveLength(24);
     expect(rows()[0].querySelector('a')!.getAttribute('href')).toBe(firstId);
@@ -520,12 +520,12 @@ describe('staying current (D-UPDATES r2)', () => {
     await open();
     work = fail as () => Promise<Response>;
     await act(() => vi.advanceTimersByTimeAsync(15_000));
-    await until(() => expect(document.querySelector('.my-work__updated[role="status"]')!.textContent).toBe('44 records you can see · Couldn’t refresh · updated 10:42 WAT'));
+    await until(() => expect(document.querySelector('.my-work__updated[role="status"]')!.textContent).toBe('44 records you can see · Couldn’t refresh · updated 10:42'));
     expect(rows()).toHaveLength(20);
     expect(screen.queryByRole('alert')).toBeNull();
     work = (url) => mockResponse(url);
     await act(() => vi.advanceTimersByTimeAsync(15_000));
-    await until(() => expect(screen.getByText('44 records you can see · updated 10:42 WAT')).toBeTruthy());
+    await until(() => expect(screen.getByText('44 records you can see · updated 10:42')).toBeTruthy());
     expect(document.querySelector('.my-work__updated[role="status"]')).toBeNull();
   });
 
@@ -635,7 +635,7 @@ describe('screen states', () => {
     work = () => json(500, { code: 'server_error', message: 'x' });
     fireEvent.click(tabs()[2]);
     await until(() => expect(screen.getByRole('alert')).toBeTruthy());
-    expect(screen.getByRole('alert').querySelector('.shell-reference')!.textContent).toBe('Last loaded 10:42 WAT. Reference server_error for support.');
+    expect(screen.getByRole('alert').querySelector('.shell-reference')!.textContent).toBe('Last loaded 10:42. Reference server_error for support.');
   });
 
   it('401 shows the shell signed-out callout', async () => {

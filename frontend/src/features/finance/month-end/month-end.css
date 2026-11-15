@@ -59,6 +59,6 @@
 .monthend-tasks .psl-table th:nth-child(3) { width: 26.3%; }
 
 @media (max-width: 719.98px) {
-  /* the phone board's title size */
-  .monthend-head .cmp-page-title { font-size: 22px; line-height: 1.08; padding-right: 96px; }
+  /* room for the period switch beside the title */
+  .monthend-head .monthend-title { padding-right: 96px; }
 }

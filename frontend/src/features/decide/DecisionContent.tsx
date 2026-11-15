@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { TaskDecision, WorkItem } from '@/api/types';
-import { formatWat } from '@/features/work-item/labels';
-import { AgentAvatar, agentKey, Breadcrumb, MiniStationBar, PersonAvatar, Unknown, type StationStatus } from '@/components';
+import { AgentAvatar, agentKey, Breadcrumb, formatDayTime, MiniStationBar, PersonAvatar, Unknown, type StationStatus } from '@/components';
 import { showSampleLabel } from '@/shell/sample';
 import { SampleLabel } from '@/shell/SampleLabel';
 
@@ -14,7 +13,7 @@ import type { DecidePresentation } from './presentation';
 
 // The boards write these as "12 Nov 10:30" (no year, no WAT); the shared formatter's "12 Nov 2026 10:30 WAT" stays for the screens whose boards do not draw one.
 export function When({ at }: { at: string }) {
-  return <time dateTime={at}>{formatWat(at)}</time>;
+  return <time dateTime={at}>{formatDayTime(at)}</time>;
 }
 
 type HeaderProps = {

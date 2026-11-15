@@ -127,8 +127,8 @@ describe('list (SCR-15-desktop)', () => {
     expect(screen.getByText(', 1 unread').className).toBe('cmp-sr');
 
     expect(rows().map((r) => [r.querySelector('.alerts-text')!.textContent, r.querySelector('.alerts-meta')!.textContent, r.querySelector('.psl-tag')?.lastChild?.textContent ?? ''])).toEqual([
-      ['Invoice for Lagoon Health is waiting for your review', 'Chidi · WhatsApp and email · 10:42 WAT', 'NEW'],
-      ['The UAT response for Lagoon Health is due tomorrow', 'Tola · Email · 09:00 WAT daily digest', ''],
+      ['Invoice for Lagoon Health is waiting for your review', 'Chidi · WhatsApp and email · 10:42', 'NEW'],
+      ['The UAT response for Lagoon Health is due tomorrow', 'Tola · Email · 09:00 daily digest', ''],
       ['October payroll has 2 problems for HR', 'Zainab · In app only (you are not HR)', ''],
       ['Milestone 1 invoice was verified', 'Chidi · In app · yesterday', ''],
     ]);
@@ -139,8 +139,8 @@ describe('list (SCR-15-desktop)', () => {
     expect(rows()[0].querySelector('.psl-tag')!.className).toContain('psl-tag--neutral');
     const links = rows().map((r) => r.querySelector('a')!);
     expect(links.map((a) => a.getAttribute('href'))).toEqual(['/work/W-1001', '/work/W-1002', '/work/W-1099', '/work/W-1006']);
-    expect(links[0].textContent).toBe('Invoice for Lagoon Health is waiting for your review, Chidi · WhatsApp and email · 10:42 WAT, NEW');
-    expect(links[1].textContent).toBe('The UAT response for Lagoon Health is due tomorrow, Tola · Email · 09:00 WAT daily digest');
+    expect(links[0].textContent).toBe('Invoice for Lagoon Health is waiting for your review, Chidi · WhatsApp and email · 10:42, NEW');
+    expect(links[1].textContent).toBe('The UAT response for Lagoon Health is due tomorrow, Tola · Email · 09:00 daily digest');
   });
 
   it('the first read sends no limit and no other parameter', async () => {
@@ -156,7 +156,7 @@ describe('list (SCR-15-desktop)', () => {
     await open();
     expect(rows()[0].querySelector('.psl-avatar')!.className).toBe('psl-avatar psl-avatar--40');
     expect(rows()[0].querySelector('img')).toBeNull();
-    expect(rows()[0].querySelector('.alerts-meta')!.textContent).toMatch(/^kemi · \d\d:\d\d WAT$/);
+    expect(rows()[0].querySelector('.alerts-meta')!.textContent).toMatch(/^kemi · \d\d:\d\d$/);
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 ALERT');
     expect(screen.queryByText(/unread/)).toBeNull();
   });
@@ -307,7 +307,7 @@ describe('states', () => {
     hook = () => Promise.reject(new TypeError('offline'));
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'x' } });
     fireEvent.submit(screen.getByRole('search'));
-    await until(() => expect(screen.getByRole('alert').textContent).toMatch(/Last loaded \d+ Nov 2026 11:00 WAT\. Reference network_error for support\./));
+    await until(() => expect(screen.getByRole('alert').textContent).toContain('Last loaded 11:00. Reference network_error for support.'));
   });
 
   it('many: Show more loads rows 21-25 and goes; a failed Show more keeps the 20 rows', async () => {
@@ -336,7 +336,7 @@ describe('absent proposal fields are never invented (bare)', () => {
   it('no search, Filter, count or unread text; meta is agent and time', async () => {
     scenario = 'bare';
     await open();
-    expect(rows().map((r) => r.querySelector('.alerts-meta')!.textContent)).toEqual(['Chidi · 10:42 WAT', 'Tola · 08:30 WAT', 'Zainab · 08:10 WAT', 'Chidi · yesterday']);
+    expect(rows().map((r) => r.querySelector('.alerts-meta')!.textContent)).toEqual(['Chidi · 10:42', 'Tola · 08:30', 'Zainab · 08:10', 'Chidi · yesterday']);
     expect(screen.queryByRole('search')).toBeNull();
     expect(screen.queryByRole('button', { name: /Filter/ })).toBeNull();
     expect(document.body.textContent).not.toMatch(/ALERTS?|unread/);

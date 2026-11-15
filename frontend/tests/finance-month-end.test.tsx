@@ -114,8 +114,8 @@ describe('period, heading, as-of, counts and tags', () => {
   });
 
   it('as-of line from coverage and as_of, either alone, or none', () => {
-    expect(asOfLine({ coverage: 'FROM RECORDS YOU CAN SEE', as_of: '2026-11-14T09:42:00Z' })).toBe('FROM RECORDS YOU CAN SEE · UPDATED 10:42 WAT');
-    expect(asOfLine({ as_of: '2026-11-14T09:42:00Z' })).toBe('UPDATED 10:42 WAT');
+    expect(asOfLine({ coverage: 'FROM RECORDS YOU CAN SEE', as_of: '2026-11-14T09:42:00Z' })).toBe('FROM RECORDS YOU CAN SEE · UPDATED 10:42');
+    expect(asOfLine({ as_of: '2026-11-14T09:42:00Z' })).toBe('UPDATED 10:42');
     expect(asOfLine({ coverage: 'FROM RECORDS YOU CAN SEE' })).toBe('FROM RECORDS YOU CAN SEE');
     expect(asOfLine({})).toBeUndefined();
   });
@@ -153,7 +153,7 @@ describe('MonthEndView', () => {
     expect(urls().map((u) => u.pathname + u.search)).toEqual(['/api/v1/finance/month-end?period=2026-10']);
     expect(screen.getByText('FINANCE / MONTH-END')).toBeTruthy();
     expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('Month-end · October 2026');
-    expect(screen.getByText('FROM RECORDS YOU CAN SEE · UPDATED 10:42 WAT')).toBeTruthy();
+    expect(screen.getByText('FROM RECORDS YOU CAN SEE · UPDATED 10:42')).toBeTruthy();
     expect(strip()).toEqual(['2 of 7', '3', '2', '₦4.7M + Unknown']);
     const cash = screen.getByText('₦4.7M + Unknown');
     expect(document.getElementById(cash.getAttribute('aria-describedby')!)!.textContent).toBe(

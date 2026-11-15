@@ -1,6 +1,6 @@
 // E-EXCEPTIONS values to the words and tones of the state tags. Presentation only. The words come from the shared
 // state list (STATE_TAGS); "Blocked" is not on that list, so it keeps its own words in the person tone.
-import { formatDate, formatTime, STATE_TAGS, type TagTone } from '@/components';
+import { formatClock, formatDate, formatDayMonth, STATE_TAGS, type TagTone } from '@/components';
 
 import type { ExceptionKind, ExceptionsLimit } from './types';
 
@@ -17,8 +17,7 @@ export const KINDS = Object.keys(KIND_TAGS) as ExceptionKind[];
 
 export const EXCEPTIONS_LIMITS: readonly ExceptionsLimit[] = [10, 20, 50];
 
-/** "since 11:02 WAT" on the same Lagos day as `asOf`, otherwise "since 10 Nov 2026". */
+/** "since 11:02" on the same Lagos day as `asOf`, otherwise "since 10 Nov", as the SCR-10 boards write it. */
 export function sinceText(since: string, asOf: string): string {
-  const day = formatDate(since);
-  return `since ${day === formatDate(asOf) ? formatTime(since) : day}`;
+  return `since ${formatDate(since) === formatDate(asOf) ? formatClock(since) : formatDayMonth(since)}`;
 }

@@ -1,7 +1,7 @@
 // Contract values (E-WORK-ITEM, E-WORK-HISTORY) to the words and classes on the SCR-02 boards.
 // Presentation only: nothing here decides access or business state.
 import type { operations } from '@/api/schema';
-import { STATE_TAGS as SHARED_STATE_TAGS } from '@/components';
+import { formatWeekdayDayTime, STATE_TAGS as SHARED_STATE_TAGS } from '@/components';
 
 export type WorkItem = operations['E-WORK-ITEM']['responses'][200]['content']['application/json'];
 export type WorkState = WorkItem['state'];
@@ -128,35 +128,12 @@ export const ACTOR_TAGS: Record<HistoryEntry['actor_kind'], { text: string; tone
   factory: { text: 'FACTORY', tone: 'neutral' },
 };
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const WAT = new Intl.DateTimeFormat('en-GB', {
-  timeZone: 'Africa/Lagos',
-  day: 'numeric',
-  month: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  hourCycle: 'h23',
-});
-
-/** "12 Nov 16:40" in Africa/Lagos. What the work item boards write ("12 Nov 16:40"); the shared formatDateTime ("12 Nov 2026 16:40 WAT") is for screens whose boards draw no date. */
-export function formatWat(value: string | Date): string {
-  const parts = Object.fromEntries(WAT.formatToParts(new Date(value)).map((p) => [p.type, p.value]));
-  return `${parts.day} ${MONTHS[Number(parts.month) - 1]} ${parts.hour}:${parts.minute}`;
-}
-
-const WEEKDAY = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', weekday: 'short' });
-
-/** "Mon 10 Nov 14:05" in Africa/Lagos, for the header's started line (the boards write it this way). */
-export function formatWatDay(value: string): string {
-  return `${WEEKDAY.format(new Date(value))} ${formatWat(value)}`;
-}
-
 /** The header's started line from the contract: "Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2";
  *  "revision N" alone when the item does not say who started it. */
 export function startedLine(item: WorkItem): string {
   if (!item.started_by) return `revision ${item.revision}`;
   const { name, role } = item.started_by;
   const parts = [`Started by ${role ? `${name} (${role})` : name}`];
-  if (item.started_at) parts.push(formatWatDay(item.started_at));
+  if (item.started_at) parts.push(formatWeekdayDayTime(item.started_at));
   return [...parts, `revision ${item.revision}`].join(' · ');
 }

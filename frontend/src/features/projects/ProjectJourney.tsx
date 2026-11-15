@@ -186,7 +186,9 @@ function ProjectView({ journey, base, tab }: { journey: JourneyView; base: strin
         <div className="projects__crumb">
           <Breadcrumb items={[{ label: 'Projects', href: '/projects' }]} current={clientOf(journey)} />
         </div>
-        <PageTitle>{journey.title}</PageTitle>
+        <PageTitle size={36} phoneSize={22}>
+          {journey.title}
+        </PageTitle>
       </header>
       <ProjectTabs base={base} current={tab} counts={journey.tab_counts} />
       <div role="tabpanel" id={PANEL_ID} aria-label={PROJECT_TABS.find((t) => t.key === tab)?.label} className="projects__panel">

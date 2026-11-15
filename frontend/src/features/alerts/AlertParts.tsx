@@ -7,7 +7,7 @@ import { useCallback, useRef, type MouseEvent } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError } from '@/api/errors';
-import { AgentAvatar, agentKey, ErrorState, formatDateTime, VisuallyHidden } from '@/components';
+import { AgentAvatar, agentKey, ErrorState, formatClock, VisuallyHidden } from '@/components';
 
 import type { Alert } from './types';
 import { metaLine, workHref } from './model';
@@ -63,7 +63,7 @@ export function useOpenAlert(onRead?: (alert: Alert) => void, onError?: (error: 
 export function AlertsLoadError({ error, asOf, onRetry }: { error: ApiError; asOf?: string; onRetry: () => void }) {
   return (
     <ErrorState title="We couldn’t load your alerts." retryLabel="Try again" onRetry={onRetry}>
-      Your work is safe; nothing was changed. {asOf && `Last loaded ${formatDateTime(asOf)}. `}Reference {error.code} for support.
+      Your work is safe; nothing was changed. {asOf && `Last loaded ${formatClock(asOf)}. `}Reference {error.code} for support.
     </ErrorState>
   );
 }

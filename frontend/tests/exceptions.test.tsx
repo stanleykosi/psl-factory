@@ -75,7 +75,7 @@ describe('exceptions list', () => {
     expect(within(first).getByText('INV-0405').className).toBe('exc-ref');
     expect(screen.getByText('20 showing')).toBeTruthy();
     expect(screen.getByRole('radiogroup', { name: 'Rows per page' })).toBeTruthy();
-    expect(screen.getByText('As of 14 Nov 2026 11:05 WAT')).toBeTruthy();
+    expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.getByText(/^The factory never resends after an unknown outcome/)).toBeTruthy();
   });
 
@@ -111,18 +111,18 @@ describe('exceptions list', () => {
   });
 
   it('times: same Lagos day reads HH:mm WAT, an earlier day reads D Mon YYYY', async () => {
-    expect(sinceText('2026-11-14T10:02:00Z', '2026-11-14T10:05:00Z')).toBe('since 11:02 WAT');
-    expect(sinceText('2026-11-10T08:30:00Z', '2026-11-14T10:05:00Z')).toBe('since 10 Nov 2026');
+    expect(sinceText('2026-11-14T10:02:00Z', '2026-11-14T10:05:00Z')).toBe('since 11:02');
+    expect(sinceText('2026-11-10T08:30:00Z', '2026-11-14T10:05:00Z')).toBe('since 10 Nov');
     // 23:30Z on the 13th is 00:30 WAT on the 14th: the same Lagos day as as_of
-    expect(sinceText('2026-11-13T23:30:00Z', '2026-11-14T10:05:00Z')).toBe('since 00:30 WAT');
+    expect(sinceText('2026-11-13T23:30:00Z', '2026-11-14T10:05:00Z')).toBe('since 00:30');
     const rows = [fixture.items[0], { ...fixture.items[1], since: '2026-11-10T08:30:00Z' }];
     serve(() => json(200, { items: rows, as_of: fixture.as_of }));
     render(<ExceptionsList />);
     await settled();
     const times = screen.getByRole('table').querySelectorAll('time');
-    expect([...times].map((t) => [t.textContent, t.getAttribute('dateTime')])).toEqual([
-      ['since 11:02 WAT', '2026-11-14T10:02:00Z'],
-      ['since 10 Nov 2026', '2026-11-10T08:30:00Z'],
+    expect([...times].map((t) => [t.textContent, t.getAttribute('dateTime'), t.getAttribute('title')])).toEqual([
+      ['since 11:02', '2026-11-14T10:02:00Z', '14 Nov 11:02'],
+      ['since 10 Nov', '2026-11-10T08:30:00Z', '10 Nov 09:30'],
     ]);
   });
 
@@ -195,7 +195,7 @@ describe('exceptions list', () => {
     await settled();
     expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('No exceptions.');
     expect(screen.getByText('Everything is moving or verified.')).toBeTruthy();
-    expect(screen.getByText('As of 14 Nov 2026 11:05 WAT')).toBeTruthy();
+    expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.queryByRole('table')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     expect(screen.queryByText(/The factory never resends/)).toBeNull();
@@ -306,7 +306,7 @@ describe('exceptions list', () => {
     expect(screen.queryByRole('radiogroup')).toBeNull();
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.queryByText(/The factory never resends| showing|OPEN/)).toBeNull();
-    expect(screen.getByText('As of 14 Nov 2026 11:05 WAT')).toBeTruthy();
+    expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.getAllByRole('link', { name: 'See all exceptions' }).map((a) => a.getAttribute('href'))).toEqual(['/exceptions']);
     unmount();
 

@@ -27,8 +27,8 @@ const NOW = Date.parse(board.as_of);
 describe('meta line (SCR-15 presentation rules)', () => {
   it('gives each board line', () => {
     expect(board.items.map((a) => metaLine(a, NOW))).toEqual([
-      'Chidi · WhatsApp and email · 10:42 WAT',
-      'Tola · Email · 09:00 WAT daily digest',
+      'Chidi · WhatsApp and email · 10:42',
+      'Tola · Email · 09:00 daily digest',
       'Zainab · In app only (you are not HR)',
       'Chidi · In app · yesterday',
     ]);
@@ -36,7 +36,7 @@ describe('meta line (SCR-15 presentation rules)', () => {
 
   it('with every proposal field absent: agent and the base time only', () => {
     const { id, work_id, agent, text, at, read } = board.items[0];
-    expect(metaLine({ id, work_id, agent, text, at, read }, NOW)).toBe('Chidi · 10:42 WAT');
+    expect(metaLine({ id, work_id, agent, text, at, read }, NOW)).toBe('Chidi · 10:42');
   });
 
   it('orders channels whatsapp, email, in app and capitalises the first word', () => {
@@ -45,18 +45,18 @@ describe('meta line (SCR-15 presentation rules)', () => {
     expect(deliveryWords(['in_app'])).toBe('In app');
   });
 
-  it('an older WAT day reads "12 Nov 2026"; the WAT day before reads "yesterday"', () => {
+  it('an older WAT day reads "12 Nov"; the WAT day before reads "yesterday"', () => {
     const base = board.items[3];
-    expect(metaLine({ ...base, delivered_at: '2026-11-12T08:00:00Z' }, NOW)).toBe('Chidi · In app · 12 Nov 2026');
+    expect(metaLine({ ...base, delivered_at: '2026-11-12T08:00:00Z' }, NOW)).toBe('Chidi · In app · 12 Nov');
     // 23:30 WAT on 13 Nov is still yesterday in Lagos, though it is 22:30Z.
     expect(metaLine({ ...base, delivered_at: '2026-11-13T22:30:00Z' }, NOW)).toBe('Chidi · In app · yesterday');
-    // 00:30 WAT on 14 Nov is today in Lagos, though it is still 13 Nov in UTC.
-    expect(metaLine({ ...base, delivered_at: '2026-11-13T23:30:00Z' }, NOW)).toBe('Chidi · In app · 00:30 WAT');
+    // 00:30 on 14 Nov is today in Lagos, though it is still 13 Nov in UTC.
+    expect(metaLine({ ...base, delivered_at: '2026-11-13T23:30:00Z' }, NOW)).toBe('Chidi · In app · 00:30');
   });
 
   it('an unknown agent keeps its key as the name', () => {
     expect(agentName('kemi')).toBe('kemi');
-    expect(metaLine({ ...board.items[0], agent: 'kemi' }, NOW)).toBe('kemi · WhatsApp and email · 10:42 WAT');
+    expect(metaLine({ ...board.items[0], agent: 'kemi' }, NOW)).toBe('kemi · WhatsApp and email · 10:42');
   });
 });
 

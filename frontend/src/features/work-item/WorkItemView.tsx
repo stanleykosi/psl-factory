@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { Callout, formatDateTime, Tabs, Tag, useIsPhone } from '@/components';
+import { Breadcrumb, Callout, formatDayTime, Tabs, Tag, useIsPhone } from '@/components';
 import { PROJECT_TABS } from '@/features/projects/model';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
@@ -64,14 +64,15 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
   const crumb = base?.eyebrow ? (
     <p className="psl-crumb work-eyebrowline">{base.eyebrow}</p>
   ) : (
-    // Written out, not the Breadcrumb component: the boards' crumb reads as one line of text, and its aria-hidden
-    // separators make it read as separate pieces to the fidelity check (coverage 100% needs the one line).
-    <nav aria-label="Breadcrumb">
-      <p className="psl-crumb">
-        <Link href="/my-work">My work</Link> / {history && base?.back_label ? `${base.back_label} ·` : `${item.line} /`}{' '}
-        <span className="psl-mono">{item.reference}</span>
-      </p>
-    </nav>
+    <Breadcrumb
+      items={history && base?.back_label ? [{ label: 'My work', href: '/my-work' }] : [{ label: 'My work', href: '/my-work' }, { label: item.line }]}
+      current={
+        <>
+          {history && base?.back_label && `${base.back_label} · `}
+          <span className="psl-mono">{item.reference}</span>
+        </>
+      }
+    />
   );
   return (
     <>
@@ -181,11 +182,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
               </ol>
             </nav>
           ) : (
-            <nav aria-label="Breadcrumb">
-              <p className="psl-crumb">
-                <Link href="/my-work">My work</Link> / {item.line} / <span className="psl-mono">{item.reference}</span>
-              </p>
-            </nav>
+            <Breadcrumb items={[{ label: 'My work', href: '/my-work' }, { label: item.line }]} current={<span className="psl-mono">{item.reference}</span>} />
           )}
           {history}
         </div>
@@ -276,7 +273,7 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
         <WorkItemHeader item={shown} tab={tab} phone={phone} tabs={tabs} />
       )}
       {refreshFailed && (
-        <Callout kind="warning">We couldn&rsquo;t refresh this item. Showing what we had at {formatDateTime(loadedAt)}.</Callout>
+        <Callout kind="warning">We couldn&rsquo;t refresh this item. Showing what we had at {formatDayTime(loadedAt)}.</Callout>
       )}
       {tab === 'overview' ? (
         <WorkItemOverview id={id} item={shown} workspace={workspace.page} />

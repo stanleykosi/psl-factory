@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button, Callout, EmptyState, formatDateTime, Icon, ListToolbar, PageTitle, Segmented, ShowMore, Table, Tag, useIsPhone, type Column } from '@/components';
+import { Button, Callout, EmptyState, formatDayTime, Icon, ListToolbar, PageTitle, Segmented, ShowMore, Table, Tag, useIsPhone, type Column } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
@@ -36,7 +36,7 @@ function ExceptionsTable({ rows, asOf }: { rows: ExceptionRow[]; asOf: string })
       cell: (row) => (
         <>
           <KindTag row={row} />
-          <time className="exc-since" dateTime={row.since}>
+          <time className="exc-since" dateTime={row.since} title={formatDayTime(row.since)}>
             {sinceText(row.since, asOf)}
           </time>
         </>
@@ -137,7 +137,7 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
   } else if (state.status === 'loading') {
     body = <LoadingState />;
   } else {
-    const asOf = <p className="exc-note">As of {formatDateTime(state.asOf)}</p>;
+    const asOf = <p className="exc-note">As of {formatDayTime(state.asOf)}</p>;
     const seeAll = compact && (
       <p className="exc-seeall">
         <Link href={seeAllHref}>See all exceptions</Link>
@@ -179,7 +179,7 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
           ) : (
             <div className="exc-foot">
               <ShowMore className="exc-shown" shown={state.items.length} hasMore={Boolean(state.nextCursor)} busy={state.more === 'loading'} onMore={() => void showMore()} />
-              <span className="exc-note">As of {formatDateTime(state.asOf)}</span>
+              <span className="exc-note">As of {formatDayTime(state.asOf)}</span>
               <span className="exc-rows">
                 <span className="exc-rowslabel" aria-hidden="true">
                   ROWS PER PAGE

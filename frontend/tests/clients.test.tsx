@@ -116,7 +116,7 @@ describe('Clients list (SCR-35)', () => {
     ]);
     const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-client-link]')].map((a) => a.getAttribute('href'));
     expect(links).toEqual(['CL-3501', 'CL-3502', 'CL-3503', 'CL-3504', 'CL-3505', 'CL-3506'].map((id) => `/clients/${id}`));
-    expect(screen.getByText('6 clients as of 14 Nov 2026 10:00 WAT · 2 missing billing contact')).toBeTruthy();
+    expect(screen.getByText('6 clients as of 14 Nov, 10:00 · 2 missing billing contact')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     expect(screen.queryByRole('button', { name: /Filter/ })).toBeNull();
     const text = document.body.textContent ?? '';

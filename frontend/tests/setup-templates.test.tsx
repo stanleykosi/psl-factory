@@ -9,6 +9,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TemplatesPage, TemplateRow } from '@/features/setup/api';
+import { boardDay, boardStamp } from '@/features/setup/format';
 import { TemplatesPageView } from '@/features/setup/TemplatesView';
 import { AppShell } from '@/shell/AppShell';
 import { bellFeed, isBellFeed } from './bell-feed';
@@ -130,7 +131,7 @@ describe('the list (AC 4)', () => {
     expect(within(first).queryByText(/Changed/)).toBeNull();
     const sow = rowOf('Closure report');
     expect(within(sow).getByText('Version 3 · PDF')).toBeTruthy();
-    expect(within(sow).getByText('3 versions · Changed by Ada Okafor, 12 Nov 2026')).toBeTruthy();
+    expect(within(sow).getByText('3 versions · Changed by Ada Okafor, 12 Nov')).toBeTruthy();
     expect(desktop().getAllByText('TEST TEMPLATE')).toHaveLength(8);
     expect(desktop().getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['DOCUMENT', 'USED BY LINE', 'STATUS', 'Action']);
   });
@@ -149,7 +150,7 @@ describe('the list (AC 4)', () => {
 
   it('the phone as-of line sits under the note, before the cards', async () => {
     await open();
-    const asOf = phone().getByText('AS OF 12 NOV 2026 10:40 WAT');
+    const asOf = phone().getByText('AS OF 12 NOV, 10:40');
     const note = phone().getByText('All 8 are test templates until PSL supplies its own.');
     const list = phone().getByRole('list');
     expect(note.compareDocumentPosition(asOf) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -185,6 +186,9 @@ describe('the list (AC 4)', () => {
     await open();
     expect(within(rowOf('Invoice')).getByText(/^Version 2026\.2/)).toBeTruthy();
     expect(within(rowOf('Invoice')).getByText('Changed by Ada Okafor, 30 Jun 2025')).toBeTruthy();
+    expect(boardDay('2026-11-12T09:15:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('12 Nov');
+    expect(boardDay('2026-11-02T09:15:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('02 Nov');
+    expect(boardStamp('2026-11-12T10:40:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('12 Nov, 10:40');
   });
 
   it('the phone shows a card per row: name, tag, line, meta and the upload button', async () => {
@@ -192,7 +196,7 @@ describe('the list (AC 4)', () => {
     const card = cardOf('Closure report');
     expect(within(card).getByText('TEST TEMPLATE')).toBeTruthy();
     expect(within(card).getByText('Project closure')).toBeTruthy();
-    expect(within(card).getByText('3 versions · Changed by Ada Okafor, 12 Nov 2026')).toBeTruthy();
+    expect(within(card).getByText('3 versions · Changed by Ada Okafor, 12 Nov')).toBeTruthy();
     expect(within(card).getByRole('button', { name: UPLOAD })).toBeTruthy();
     expect(phone().getAllByRole('listitem')).toHaveLength(8);
   });
@@ -217,8 +221,8 @@ describe('badge and copy follow test_template (AC 5)', () => {
     expect(desktop().getByText('Every document currently uses a test template. When PSL supplies its real template, upload it here; documents already sent keep the template they were made with.')).toBeTruthy();
     expect(phone().getByText('All 8 are test templates until PSL supplies its own.')).toBeTruthy();
     expect(desktop().getByText('8 TEMPLATES · 8 TEST')).toBeTruthy();
-    expect(desktop().getByText('AS OF 12 NOV 2026 10:40 WAT')).toBeTruthy();
-    expect(phone().getByText('AS OF 12 NOV 2026 10:40 WAT')).toBeTruthy();
+    expect(desktop().getByText('AS OF 12 NOV, 10:40')).toBeTruthy();
+    expect(phone().getByText('AS OF 12 NOV, 10:40')).toBeTruthy();
   });
 
   it('with one row false: no banner and no "All n" line, that row has no tag and no claim, the others keep the tag', async () => {
@@ -402,7 +406,7 @@ describe('success (AC 8)', () => {
     expect(desktop().queryByRole('region', { name: /^Upload a version of/ })).toBeNull();
     const first = rowOf('Invoice');
     expect(within(first).getByText('Version 2 · PDF')).toBeTruthy();
-    expect(within(first).getByText('1 version · Changed by Ada Okafor, 14 Nov 2026')).toBeTruthy();
+    expect(within(first).getByText('1 version · Changed by Ada Okafor, 14 Nov')).toBeTruthy();
     expect(within(first).getByText('TEST TEMPLATE')).toBeTruthy();
     expect(document.activeElement?.textContent).toBe('Invoice');
     expect(document.activeElement?.getAttribute('data-name-for')).toBe('T-01');
@@ -745,9 +749,9 @@ describe('titles, phone bar and tabs (AC 15, 16)', () => {
   it('one h1 per width: the frame title on desktop, "Templates" on the phone, with the bar link named Setup', async () => {
     await open();
     expect(desktop().getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Roles, rules and delegation']);
-    expect(desktop().getByRole('heading', { level: 1 }).className).toBe('cmp-page-title');
+    expect(desktop().getByRole('heading', { level: 1 }).className).toBe('cmp-page-title cmp-page-title--34');
     expect(phone().getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Templates']);
-    expect(phone().getByRole('heading', { level: 1 }).className).toBe('cmp-page-title');
+    expect(phone().getByRole('heading', { level: 1 }).className).toBe('cmp-page-title cmp-page-title--p22');
     const back = await within(phoneBar()).findByRole('link', { name: 'Back to Setup' });
     expect(back.textContent).toBe('← Setup');
     expect(phone().queryByRole('link')).toBeNull();

@@ -160,8 +160,8 @@ test.describe('history on the boards (AC 18)', () => {
   test('W-1705 at 1440: History 7, the filter counts, 7 rows and About history', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await go(page, '/work/W-1705/history', 'finance_lead');
-    await expect(page.getByRole('tablist', { name: 'Work item' }).getByRole('tab')).toHaveText(['Overview', 'History7']);
-    await expect(page.getByRole('radio')).toHaveText(['All7', 'Decisions2', 'Agent work2', 'Evidence1']);
+    await expect(page.getByRole('tablist', { name: 'Work item' }).getByRole('tab')).toHaveText(['Overview', 'History 7']);
+    await expect(page.getByRole('radio')).toHaveText(['All 7', 'Decisions 2', 'Agent work 2', 'Evidence 1']);
     await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(7);
     await expect(page.getByRole('table').locator('tbody tr').first().locator('time')).toHaveText('12 Nov 16:40');
     await expect(page.getByRole('complementary', { name: 'About history' })).toBeVisible();

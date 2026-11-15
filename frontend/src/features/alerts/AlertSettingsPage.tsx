@@ -112,7 +112,7 @@ export function AlertSettingsPage() {
   // Phone: "← Notifications" sits level with the heading until the frame's phone bar has a back-link slot (D-19, D-13).
   const title = phone ? (
     <div className="alerts-head">
-      <PageTitle className="alerts-settitle">How you&rsquo;re alerted</PageTitle>
+      <PageTitle phoneSize={24}>How you&rsquo;re alerted</PageTitle>
       <Link href="/notifications" className="alerts-back">
         ← Notifications
       </Link>
@@ -120,7 +120,7 @@ export function AlertSettingsPage() {
   ) : (
     <>
       <p className="alerts-eyebrow">SETTINGS / ALERTS</p>
-      <PageTitle>How you&rsquo;re alerted</PageTitle>
+      <PageTitle size={36}>How you&rsquo;re alerted</PageTitle>
     </>
   );
 

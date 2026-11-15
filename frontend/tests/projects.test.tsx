@@ -130,9 +130,9 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     expect(document.querySelector('.projects__eyebrow')!.textContent).toBe('PROJECTS');
     expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeTruthy();
     expect(tabs().map((t) => [t.textContent, t.getAttribute('aria-selected')])).toEqual([
-      ['Active22', 'true'],
-      ['Closed2', 'false'],
-      ['All I can see24', 'false'],
+      ['Active 22', 'true'],
+      ['Closed 2', 'false'],
+      ['All I can see 24', 'false'],
     ]);
     expect(screen.getByRole('tabpanel', { name: 'Active' })).toBeTruthy();
     expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual([
@@ -254,7 +254,7 @@ describe('PROPOSAL fields in another shape (TECH-2-1)', () => {
       ['Alpha works', 'Ada Okafor', 'Planning', 'Unknown', 'Unknown', 'Unknown'],
       ['Beta works', 'Kunle Ade', 'Go-live', 'Go-live · due Unknown', '1', '0'],
     ]);
-    expect(tabs().map((t) => t.textContent)).toEqual(['Active', 'Closed3', 'All I can see']);
+    expect(tabs().map((t) => t.textContent)).toEqual(['Active', 'Closed 3', 'All I can see']);
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 shown');
   });
 });
@@ -278,7 +278,7 @@ describe('search', () => {
     expect(window.location.search).toBe('?q=lagoon');
     await until(() => expect(titles()).toEqual(['Lagoon Health · patient app']));
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
-    expect(tabs()[0].textContent).toBe('Active22');
+    expect(tabs()[0].textContent).toBe('Active 22');
 
     fireEvent.change(box, { target: { value: '' } });
     await act(() => vi.advanceTimersByTimeAsync(300));

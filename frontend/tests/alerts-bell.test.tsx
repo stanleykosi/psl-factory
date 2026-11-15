@@ -220,7 +220,7 @@ describe('the drawer', () => {
       'Milestone 1 invoice was verified',
       'Milestone 2 for Kestrel Logistics is complete',
     ]);
-    expect(rows[0].querySelector('.alerts-meta')!.textContent).toBe('Chidi · WhatsApp · 09:42 WAT');
+    expect(rows[0].querySelector('.alerts-meta')!.textContent).toBe('Chidi · WhatsApp · 09:42');
     expect(rows.map((r) => r.classList.contains('alerts-row--unread'))).toEqual([true, true, true, true, false, false]);
     expect(d.querySelector('.psl-tag')).toBeNull();
     expect(d.textContent).not.toContain('NEW');
@@ -496,7 +496,7 @@ describe('phone (below 720px)', () => {
     expect(d.querySelector('.psl-sheet__grab')).toBeTruthy();
     const tabs = within(d).getAllByRole('tab');
     expect(tabs.map((t) => [t.textContent, t.getAttribute('aria-selected')])).toEqual([
-      ['Needs you3', 'true'],
+      ['Needs you 3', 'true'],
       ['For your information', 'false'],
     ]);
     expect(openLinks().map((a) => a.getAttribute('href'))).toEqual(['/work/w-inv-lh-002', '/work/w-plan-kl-01', '/work/w-pay-oct']);

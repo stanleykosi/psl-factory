@@ -8,9 +8,10 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
-import { Button, Callout, EmptyState, formatDate, formatDateTime, PageTitle, SampleLabel, SearchField, VisuallyHidden } from '@/components';
+import { Button, Callout, EmptyState, PageTitle, SampleLabel, SearchField, VisuallyHidden } from '@/components';
 
 import type { TemplateRow } from './api';
+import { boardDay, boardStamp } from './format';
 import { OutcomeNotice, type Notice } from './SetRulePanel';
 import { RulesReadState, SetupFrame, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
 import { TemplateUploadPanel, type Invalid } from './TemplateUploadPanel';
@@ -32,7 +33,7 @@ const uploadLabel = (row: TemplateRow) => (isTest(row) ? "Upload PSL's version" 
 
 /** Muted text after the name: "Version 3 · DOCX", then "3 versions · Changed by Ada Okafor, 12 Nov"; each part only when the API returned it. */
 function metaParts(row: TemplateRow): { first: string; second: string } {
-  const day = row.updated_at ? formatDate(row.updated_at) : null;
+  const day = row.updated_at ? boardDay(row.updated_at) : null;
   const by = row.updated_by ? `by ${row.updated_by}` : null;
   const when = [by, day].filter(Boolean);
   return {
@@ -102,7 +103,7 @@ function TemplatesView() {
   const allTest = !empty && !state.nextCursor && testCount === rows.length;
   const needle = query.trim().toLowerCase();
   const matching = needle ? rows.filter((r) => r.name.toLowerCase().includes(needle) || r.line.toLowerCase().includes(needle)) : rows;
-  const asOf = state.asOf ? formatDateTime(state.asOf) : null;
+  const asOf = state.asOf ? boardStamp(state.asOf) : null;
 
   const close = (id: string, target: Focus['kind']) => {
     setOpen(null);
@@ -297,7 +298,7 @@ function TemplatesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <PageTitle>Templates</PageTitle>
+        <PageTitle phoneSize={22}>Templates</PageTitle>
         {empty ? (
           <EmptyState title="No templates to show.">Document templates your role may read will appear here.</EmptyState>
         ) : (

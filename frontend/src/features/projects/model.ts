@@ -1,6 +1,6 @@
 // Projects (SCR-22 list, SCR-07 journey): view state, the E-PROJECTS query and response checks. Pure functions only.
 import type { operations } from '@/api/schema';
-import { formatDate } from '@/components';
+import { formatDayMonth } from '@/components';
 import { AGENT_NAMES, formatAmount } from '@/features/decide/format';
 
 type ListOperation = operations['E-PROJECTS'];
@@ -108,12 +108,12 @@ const isObject = (value: unknown): value is Loose => typeof value === 'object' &
 export const textOf = (value: unknown) => (isText(value) ? (value as string) : undefined);
 export const countOf = (value: unknown) => (Number.isInteger(value) && (value as number) >= 0 ? (value as number) : undefined);
 
-/** "UAT sign-off · due 14 Nov 2026"; "· due Unknown" when the due date is unknown; undefined unless a name is sent. */
+/** "UAT sign-off · due 14 Nov" (the SCR-22 boards' format); "· due Unknown" when the due date is unknown; undefined unless a name is sent. */
 export function nextMilestoneText(value: unknown): string | undefined {
   if (!isObject(value) || !isText(value.name)) return undefined;
   const due = isObject(value.due) ? value.due : undefined;
   const date = due && !due.unknown && isText(due.date) && !Number.isNaN(new Date(`${due.date as string}T00:00:00Z`).getTime()) ? (due.date as string) : undefined;
-  if (date) return `${value.name as string} · due ${formatDate(date)}`;
+  if (date) return `${value.name as string} · due ${formatDayMonth(date)}`;
   if (due?.unknown === true) return `${value.name as string} · due Unknown`;
   return value.name as string;
 }

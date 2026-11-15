@@ -359,7 +359,7 @@ describe('history', () => {
     const events = shown.map((tr) => tr.querySelector('.work-event')!.textContent);
     expect(events).toContain('Returned v1');
     expect(events).toContain('Approved invoice v2');
-    expect(screen.getByText('As of 12 Nov 2026 16:45 WAT')).toBeTruthy();
+    expect(screen.getByText('As of 12 Nov 16:45')).toBeTruthy();
     expect(screen.getByText(/Nothing can be edited or deleted/)).toBeTruthy();
     expect(screen.queryByText(/CSV/)).toBeNull();
     expect(screen.getByRole('tab', { name: 'History' }).getAttribute('aria-selected')).toBe('true');
@@ -545,7 +545,7 @@ describe('updates (D-UPDATES r2)', () => {
     await openWithFakeTimers('W-1003');
     await advance(5000);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Delta Foods · Weekly client update');
-    expect(screen.getByText(/We couldn’t refresh this item\. Showing what we had at \d+ \w{3} 2026 \d\d:\d\d WAT\./)).toBeTruthy();
+    expect(screen.getByText(/We couldn’t refresh this item\. Showing what we had at \d\d \w{3} \d\d:\d\d\./)).toBeTruthy();
     await advance(5000);
     expect(itemUrls()).toHaveLength(3);
     expect(screen.queryByText(/We couldn’t refresh this item/)).toBeNull();

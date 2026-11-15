@@ -3,7 +3,7 @@
 
 .clients__plain { margin: 0; }
 .clients__page { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; }
-.clients__eyebrow { margin: 0; font-family: var(--font-mono); font-size: var(--text-eyebrow-size); line-height: var(--text-eyebrow-line); color: var(--ink-muted); }
+.clients__eyebrow { margin: 0; font-family: var(--font-mono); font-size: var(--text-eyebrow-size); line-height: normal; color: var(--ink-muted); }
 .clients__page .cmp-page-title { overflow-wrap: anywhere; }
 .clients__count { margin: 0; min-height: var(--control-md); display: flex; align-items: center; justify-content: flex-end; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 
@@ -15,7 +15,7 @@
 .psl .clients__panel .clients__name { font-weight: 600; }
 .clients__missing { color: var(--signal-ink); font-weight: 600; }
 .clients__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-.clients__card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); min-height: var(--control-md); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.clients__card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: var(--control-md); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
 /* the whole card opens the client */
 .psl .clients__card .clients__name { font-weight: 700; color: var(--ink); text-decoration: none; }
 .clients__card .clients__name::after { content: ""; position: absolute; inset: 0; }
@@ -28,7 +28,7 @@
 .psl .clients__crumb a { text-decoration: underline; text-underline-offset: 2px; }
 .clients__titlerow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 .clients__titlerow .shell-title { margin: 0; }
-.clients__body { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: flex-start; }
+.clients__body { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
 .clients__main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
 .clients__aside { flex: 1 1 320px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
 .clients__panelbody { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; }

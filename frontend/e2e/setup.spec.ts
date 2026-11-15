@@ -80,7 +80,7 @@ test.describe('desktop rules', () => {
     await expect(page.locator('.setup-eyebrow')).toHaveText('SETUP');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(['Roles, rules and delegation']);
     const tabs = page.getByRole('tablist', { name: 'Setup' }).getByRole('tab');
-    await expect(tabs).toHaveText(['Roles2', 'Rules8', 'Costing rule', 'Delegation', 'Payroll visibility', 'Staff accounts', 'Templates']);
+    await expect(tabs).toHaveText(['Roles 2', 'Rules 8', 'Costing rule', 'Delegation', 'Payroll visibility', 'Staff accounts', 'Templates']);
     expect(await tabs.evaluateAll((els) => els.map((el) => el.getAttribute('href')))).toEqual([
       '/setup/roles',
       '/setup/rules',
@@ -130,7 +130,7 @@ test.describe('desktop rules', () => {
       evidence_id: expect.stringMatching(/^EV-\d+$/),
     });
     await expect(row(page, 'Who may assign an RFP to a PM').locator('td')).toHaveText(['Who may assign an RFP to a PM', 'Pre-sale', 'PMO Lead', `v1 · since ${today()}`]);
-    await expect(page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: /^Rules/ })).toHaveText('Rules7');
+    await expect(page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: /^Rules/ })).toHaveText('Rules 7');
     await expect(page.getByText(/^7 rules aren’t set yet\./)).toBeVisible();
   });
 

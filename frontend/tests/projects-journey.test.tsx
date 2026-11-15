@@ -100,11 +100,11 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
     expect(projectTabs().map((t) => [t.textContent, t.getAttribute('href'), t.getAttribute('aria-selected')])).toEqual([
       ['Journey', '/projects/P-0101', 'true'],
-      ['Milestones4', '/projects/P-0101/milestones', 'false'],
-      ['Documents6', '/projects/P-0101/documents', 'false'],
+      ['Milestones 4', '/projects/P-0101/milestones', 'false'],
+      ['Documents 6', '/projects/P-0101/documents', 'false'],
       ['Money', '/projects/P-0101/money', 'false'],
-      ['Registers6', '/projects/P-0101/registers', 'false'],
-      ['Actions9', '/projects/P-0101/actions', 'false'],
+      ['Registers 6', '/projects/P-0101/registers', 'false'],
+      ['Actions 9', '/projects/P-0101/actions', 'false'],
     ]);
     expect(screen.getByRole('tabpanel', { name: 'Journey' })).toBeTruthy();
     expect(document.querySelector('.projects__route')!.textContent).toBe('PM Tunde Bello · Route A from RFP-0031 · 8 pieces of work across 6 lines');
@@ -189,7 +189,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(document.querySelector('.projects__route')!.textContent).toBe('1 piece of work across 1 line');
     expect(facts().map(([, value]) => value)).toEqual(Array(6).fill('Unknown'));
     expect(lineItems()[0].textContent).toBe('Prepare an invoiceStation 4 of 7 · Finance reviewWaiting');
-    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Milestones', 'Documents2', 'Money', 'Registers', 'Actions']);
+    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Milestones', 'Documents 2', 'Money', 'Registers', 'Actions']);
     expect(screen.getByRole('region', { name: /summary|agent/i }).textContent).toContain('Tola has not summarised this project yet.');
     expect(document.querySelector('main')!.textContent).not.toMatch(/undefined|object Object/);
   });
@@ -246,7 +246,7 @@ describe('tabs other than Journey (contents come with FE-M3-PROJECT-TABS)', () =
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
     expect(projectTabs()[index].getAttribute('aria-selected')).toBe('true');
     expect(projectTabs()[index].tabIndex).toBe(0);
-    const panel = screen.getByRole('tabpanel', { name: projectTabs()[index].textContent!.replace(/\d+$/, '') });
+    const panel = screen.getByRole('tabpanel', { name: projectTabs()[index].textContent!.replace(/ ?\d+$/, '') });
     expect(within(panel).getByRole('heading', { level: 3, name: heading })).toBeTruthy();
     expect(within(panel).getByRole('link', { name: 'Open the journey' }).getAttribute('href')).toBe('/projects/P-0101');
     expect(lineItems()).toHaveLength(0);

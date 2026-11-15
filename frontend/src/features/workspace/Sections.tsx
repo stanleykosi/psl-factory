@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import { Fragment, useId, type ReactNode } from 'react';
 
-import { Button, Callout, formatDateTime, Tag, Unknown as UnknownValue } from '@/components';
+import { Button, Callout, formatDayTime, Tag, Unknown as UnknownValue } from '@/components';
 import { isAppPath } from '@/features/work-item/presentation';
 
 import {
@@ -341,7 +341,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
               </span>,
               <>
                 {item.receipt && <StatusWord value={item.receipt} kind="receipt" />}
-                {item.at && <time dateTime={item.at}> {formatDateTime(item.at)}</time>}
+                {item.at && <time dateTime={item.at}> {formatDayTime(item.at)}</time>}
               </>,
             );
           case 'figures':
@@ -363,7 +363,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {(item.agent || item.owner) && <span className="ws-detail">{item.agent ? agentName(item.agent) : item.owner?.name}</span>}
                 <Detail text={item.detail} />
               </span>,
-              item.at ? <time dateTime={item.at}>{formatDateTime(item.at)}</time> : undefined,
+              item.at ? <time dateTime={item.at}>{formatDayTime(item.at)}</time> : undefined,
             );
           default:
             // `text` and any kind the frame does not know: the words and their cites

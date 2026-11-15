@@ -107,7 +107,7 @@ function RulesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <PageTitle>{notSet === undefined ? 'Rules' : `Rules · ${notSet} not set`}</PageTitle>
+        <PageTitle phoneSize={22}>{notSet === undefined ? 'Rules' : `Rules · ${notSet} not set`}</PageTitle>
         {empty ? (
           <RulesEmpty />
         ) : (

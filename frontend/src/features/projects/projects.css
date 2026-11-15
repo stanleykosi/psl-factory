@@ -6,7 +6,7 @@
 .projects__page, .projects__panel { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; }
 
 /* list: eyebrow, title, Active / Closed / All I can see, search and Filter with the total, the table or cards */
-.projects__eyebrow { margin: 0; font-family: var(--font-mono); font-size: var(--text-eyebrow-size); line-height: var(--text-eyebrow-line); color: var(--ink-muted); }
+.projects__eyebrow { margin: 0; font-family: var(--font-mono); font-size: var(--text-eyebrow-size); line-height: normal; color: var(--ink-muted); }
 .projects__listtabs { align-self: flex-start; }
 .projects__table .psl-table { min-width: 960px; }
 .projects__table td { vertical-align: middle; }
@@ -22,7 +22,7 @@
 .projects__attention { font-size: var(--text-small-size); font-weight: 600; color: var(--signal-ink); }
 
 /* footer: shown text, rows per page, Show more (D-PAGING) */
-.projects__foot { margin-top: calc(-1 * var(--space-20px)); border: var(--rule-strong) solid var(--ink); border-top: none; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); padding: var(--space-10px) var(--space-14px); background: var(--surface); font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
+.projects__foot { margin-top: -22px; border: var(--rule-strong) solid var(--ink); border-top: none; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); padding: var(--space-10px) var(--space-14px); background: var(--surface); font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 .projects__foot .projects__showmore { display: contents; }
 .projects__showmore > span { order: 0; }
 .projects__showmore > .psl-btn { order: 2; }
@@ -42,7 +42,7 @@
 .projects__route, .projects__phoneline { margin: 0; color: var(--ink-muted); }
 .projects__phoneline { display: none; }
 .projects__facts .psl-fact b { font-weight: 400; }
-.projects__body { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: flex-start; }
+.projects__body { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
 .projects__journey { flex: 999 1 600px; min-width: 0; }
 .projects__journeybody { padding: 0; }
 .projects__lines { list-style: none; margin: 0; padding: 0; }

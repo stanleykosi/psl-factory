@@ -144,7 +144,7 @@ export function ClientsList() {
   return (
     <div className="clients__page">
       <p className="clients__eyebrow">PROJECTS</p>
-      <PageTitle>Clients</PageTitle>
+      <PageTitle size={34} phoneSize={24}>Clients</PageTitle>
       {state.status === 'ready' && <p className="clients__count">{countLine(state.items, !state.nextCursor, state.asOf)}</p>}
       {body}
     </div>

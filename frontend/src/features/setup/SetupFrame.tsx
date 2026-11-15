@@ -32,7 +32,7 @@ export function SetupFrame({ current, rolesMissing, notSet }: { current: SetupTa
   return (
     <>
       <p className="psl-crumb setup-eyebrow">SETUP</p>
-      <PageTitle>Roles, rules and delegation</PageTitle>
+      <PageTitle size={34}>Roles, rules and delegation</PageTitle>
       <Tabs label="Setup" tabs={SETUP_TABS.map((tab) => ({ ...tab, count: badges[tab.key] }))} selected={current} className="setup-tabs" />
     </>
   );

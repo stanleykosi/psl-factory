@@ -95,7 +95,7 @@ for (const [label, viewport] of [
         ]);
       } else {
         await expect(page.locator('.projects__eyebrow')).toHaveText('PROJECTS');
-        await expect(page.getByRole('tab')).toHaveText(['Active22', 'Closed2', 'All I can see24']);
+        await expect(page.getByRole('tab')).toHaveText(['Active 22', 'Closed 2', 'All I can see 24']);
         await expect(page.locator('.psl-resultcount')).toHaveText('22 PROJECTS');
         await expect(page.getByRole('columnheader')).toHaveText(['PROJECT', 'PM', 'WHERE IT IS', 'NEXT MILESTONE', 'NEEDS A PERSON', 'STOPPED']);
         await expect(page.getByText('You see projects your roles cover. Open one for its journey, documents, money and registers.')).toBeVisible();
@@ -155,7 +155,7 @@ for (const [label, viewport] of [
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
       const tabs = projectTabs(page);
       // Phones draw the tabs without counts.
-      await expect(tabs).toHaveText(phone ? ['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions'] : ['Journey', 'Milestones4', 'Documents6', 'Money', 'Registers6', 'Actions9'], {
+      await expect(tabs).toHaveText(phone ? ['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions'] : ['Journey', 'Milestones 4', 'Documents 6', 'Money', 'Registers 6', 'Actions 9'], {
         useInnerText: phone,
       });
       await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');

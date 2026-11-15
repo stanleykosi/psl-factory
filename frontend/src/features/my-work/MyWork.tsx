@@ -268,10 +268,8 @@ export function MyWork() {
   const chipList = chipDefs.filter((chip): chip is ChipDef => chip !== undefined);
   const filterPanel = (
     <MyWorkFilter
-      phone={phone}
       lines={lines}
       applied={{ line: view.line, project: view.project, state: view.state, waiting: view.waiting }}
-      anchor={filterButton}
       preview={preview}
       onApply={applyFilters}
       onClose={closeFilter}

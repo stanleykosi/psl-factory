@@ -2,7 +2,7 @@
 // link comes from the response; nothing here counts tasks, buckets states, totals cash or picks a month.
 // Money is read from the decimal string (never a float) and unknown stays Unknown, never 0 (INV-UNKNOWN).
 import { formatAmount } from '@/features/decide/format';
-import { formatTime, STATE_TAGS, type TagTone } from '@/components';
+import { formatClock, STATE_TAGS, type TagTone } from '@/components';
 
 import type { AgentKey, MonthEnd, MonthEndTask, MonthEndTone } from './proposal';
 
@@ -23,9 +23,9 @@ export function periodNames(period: string): { long: string; short: string } | u
   return { long: `${month} ${period.slice(0, 4)}`, short: month.slice(0, 3) };
 }
 
-/** "FROM RECORDS YOU CAN SEE · UPDATED 10:42 WAT" (Africa/Lagos); either part alone when the other is missing. */
+/** "FROM RECORDS YOU CAN SEE · UPDATED 10:42" (Africa/Lagos, as the SCR-36 board writes it); either part alone when the other is missing. */
 export function asOfLine(body: Pick<MonthEnd, 'as_of' | 'coverage'>): string | undefined {
-  const parts = [body.coverage, body.as_of ? `UPDATED ${formatTime(body.as_of)}` : undefined].filter(Boolean);
+  const parts = [body.coverage, body.as_of ? `UPDATED ${formatClock(body.as_of)}` : undefined].filter(Boolean);
   return parts.length ? parts.join(' · ') : undefined;
 }
 

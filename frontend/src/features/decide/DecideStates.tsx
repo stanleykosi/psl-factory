@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { DecideResult, TaskDecision, WorkItem, WorkTask } from '@/api/types';
-import { Button, buttonClass, Callout, EmptyState, Panel, Tag, TextArea, Unknown, useIsPhone } from '@/components';
+import { Button, buttonClass, Callout, EmptyState, formatClock, Panel, Tag, TextArea, Unknown, useIsPhone } from '@/components';
 import { FactsStrip } from '@/features/work-item/WorkItemOverview';
 import { FACTS } from '@/features/work-item/labels';
 import { presentationOf } from '@/features/work-item/presentation';
 
 import { AmountValue, ApprovalChain, DecideHeader, When } from './DecisionContent';
-import { AGENT_NAMES, channelWords, formatAmount, formatClock, VERDICT_WORDS, type Asked, type CannotActReason, type Verdict } from './format';
+import { AGENT_NAMES, channelWords, formatAmount, VERDICT_WORDS, type Asked, type CannotActReason, type Verdict } from './format';
 import { nextDecision, type DecidePresentation } from './presentation';
 
 const workHref = (id: string) => `/work/${encodeURIComponent(id)}`;

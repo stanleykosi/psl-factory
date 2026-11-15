@@ -30,7 +30,7 @@ function DeliveryRulesView() {
     <>
       <div className="setup-page setup-desktop">
         <AreaCrumb area="DELIVERY" />
-        <PageTitle>Delivery rules</PageTitle>
+        <PageTitle size={32}>Delivery rules</PageTitle>
         {empty ? (
           <RulesEmpty />
         ) : (
@@ -62,7 +62,7 @@ function DeliveryRulesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <PageTitle className="setup-title--area">Delivery rules</PageTitle>
+        <PageTitle phoneSize={20}>Delivery rules</PageTitle>
         {empty ? (
           <RulesEmpty />
         ) : (

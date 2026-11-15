@@ -2,7 +2,7 @@
 
 import { useState, type ComponentType } from 'react';
 
-import { AgentAvatar, Callout, EmptyState, ErrorState, formatDateTime, Link, Loading, PageTitle, Segmented, Tag, useIsPhone, VisuallyHidden, When } from '@/components';
+import { AgentAvatar, Callout, EmptyState, ErrorState, formatDayTime, Link, Loading, PageTitle, Segmented, Tag, useIsPhone, VisuallyHidden, When } from '@/components';
 
 import { webglAvailable, type FloorProps } from '@/features/floor/support';
 import { useMe } from '@/shell/AppShell';
@@ -134,7 +134,7 @@ function FactoryFloor() {
       <div className="overview">
         {title}
         <ErrorState title="We couldn’t load the factory floor." retryLabel="Try again" onRetry={() => void retry()}>
-          Your work is safe; nothing was changed. {state.lastAsOf && `Last loaded ${formatDateTime(state.lastAsOf)}. `}Reference {state.error.code} for support.
+          Your work is safe; nothing was changed. {state.lastAsOf && `Last loaded ${formatDayTime(state.lastAsOf)} WAT. `}Reference {state.error.code} for support.
         </ErrorState>
       </div>
     );
@@ -147,7 +147,7 @@ function FactoryFloor() {
 
   const eyebrow = (
     <p className="overview__eyebrow">
-      FACTORY FLOOR · UPDATED <When value={data.as_of} show="datetime" />
+      FACTORY FLOOR · UPDATED <When value={data.as_of} show="daytime" /> WAT
     </p>
   );
   const viewSwitch = hasLines && can3d && <Segmented label="View" options={VIEWS} value={view} onChange={choose} />;

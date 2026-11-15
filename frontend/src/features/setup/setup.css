@@ -88,8 +88,3 @@
 /* the board draws the trail in plain grey */
 .setup-page .psl-crumb a { color: inherit; }
 
-/* the phone boards' title sizes */
-@media (max-width: 719.98px) {
-  .setup-phone .cmp-page-title { font-size: 22px; line-height: 1.08; }
-  .setup-phone .setup-title--area { font-size: 20px; }
-}

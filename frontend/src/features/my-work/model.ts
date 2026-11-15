@@ -1,6 +1,6 @@
 // My work (SCR-01): view state, the E-WORK-LIST query and display mappings. Pure functions only.
 import type { operations } from '@/api/schema';
-import { formatTime as formatWat, STATE_TAGS } from '@/components';
+import { formatClock, STATE_TAGS } from '@/components';
 
 type Operation = operations['E-WORK-LIST'];
 export type WorkQuery = Operation['parameters']['query'];
@@ -142,8 +142,8 @@ export function formatAge(seconds: number): string {
   return `${Math.floor(seconds / 86400)}d`;
 }
 
-/** "14:30 WAT", the README's time. */
-export const formatTime = formatWat;
+/** "10:42" in WAT, as the SCR-01 boards write it ("updated 10:42"). */
+export const formatTime = formatClock;
 
 const SEGMENT_BY_FAMILY: Record<Family, string> = { person: 'p', agent: 'a', waiting: 'w', done: '', neutral: '' };
 

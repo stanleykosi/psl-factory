@@ -67,7 +67,9 @@ function ClientView({ client, refresh, onSignedOut, onNoAccess }: { client: Clie
         <Breadcrumb items={[{ label: 'Clients', href: '/clients' }]} current={client.name} />
       </div>
       <div className="clients__titlerow">
-        <PageTitle>{client.name}</PageTitle>
+        <PageTitle size={34} phoneSize={22}>
+          {client.name}
+        </PageTitle>
         <SampleLabel show={client.sample} />
       </div>
       <div className="clients__body">

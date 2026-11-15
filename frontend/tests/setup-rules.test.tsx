@@ -120,9 +120,9 @@ describe('rules list (AC 2, 3, 4)', () => {
       .slice(1)
       .map((tr) => tr.querySelector('td')?.textContent);
     expect(names).toEqual(page.items.map((r) => r.name));
-    expect(rowCells('Who reviews client documents')).toEqual(['Who reviews client documents', 'All lines', 'PMO Lead', 'v2 · since 1 Oct 2026']);
+    expect(rowCells('Who reviews client documents')).toEqual(['Who reviews client documents', 'All lines', 'PMO Lead', 'v2 · since 01 Oct']);
     expect(rowCells('Who may assign an RFP to a PM')).toEqual(['Who may assign an RFP to a PM', 'Pre-sale', 'Not set', 'HOLDS WORK']);
-    expect(rowCells('Invoice payment terms default')).toEqual(['Invoice payment terms default', 'Finance', 'From each signed SOW', 'v1 · since 30 Jun 2026']);
+    expect(rowCells('Invoice payment terms default')).toEqual(['Invoice payment terms default', 'Finance', 'From each signed SOW', 'v1 · since 30 Jun']);
     expect(desktop().getAllByText('Not set')[0].className).toBe('setup-notset');
     expect(desktop().getByRole('link', { name: 'PSL standard pricing v4' }).getAttribute('href')).toBe('/setup/costing-rule');
     expect(desktop().getAllByRole('link', { name: 'Finance' })[0].getAttribute('href')).toBe('/setup/rules/finance');
@@ -142,15 +142,15 @@ describe('rules list (AC 2, 3, 4)', () => {
     await open();
     const tabs = within(screen.getByRole('tablist', { name: 'Setup' })).getAllByRole('tab');
     expect(tabs.map((t) => [t.textContent, t.getAttribute('href')])).toEqual([
-      ['Roles2', '/setup/roles'],
-      ['Rules8', '/setup/rules'],
+      ['Roles 2', '/setup/roles'],
+      ['Rules 8', '/setup/rules'],
       ['Costing rule', '/setup/costing-rule'],
       ['Delegation', '/setup/delegation'],
       ['Payroll visibility', '/setup/payroll-visibility'],
       ['Staff accounts', '/setup/staff'],
       ['Templates', '/setup/templates'],
     ]);
-    expect(tabs.filter((t) => t.getAttribute('aria-selected') === 'true').map((t) => t.textContent)).toEqual(['Rules8']);
+    expect(tabs.filter((t) => t.getAttribute('aria-selected') === 'true').map((t) => t.textContent)).toEqual(['Rules 8']);
   });
 
   it('without the count fields: no badges, no banner, phone h1 "Rules"; rows never make a count', async () => {
@@ -167,7 +167,7 @@ describe('rules list (AC 2, 3, 4)', () => {
   it('with not_set_count 0 the badge reads 0 and there is no banner; 1 reads "1 rule isn’t set yet"', async () => {
     answers.rules = () => json(200, { ...fixture('rules.desktop'), not_set_count: 0 });
     await open();
-    expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules0');
+    expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 0');
     expect(document.body.textContent).not.toContain('set yet');
   });
 
@@ -198,8 +198,9 @@ describe('rules list (AC 2, 3, 4)', () => {
 
   it('version text: Lagos date with the year, bare version without a date', () => {
     const row = { component: 'c', name: 'n', set: true, revision: 3 } as RuleRow;
-    expect(versionText({ ...row, effective_from: '2026-09-30T23:30:00Z' })).toBe('v3 · since 1 Oct 2026');
-    expect(versionText({ ...row, effective_from: '2025-06-30T00:00:00+01:00' })).toBe('v3 · since 30 Jun 2025');
+    const now = new Date('2026-11-14T09:00:00+01:00');
+    expect(versionText({ ...row, effective_from: '2026-09-30T23:30:00Z' }, now)).toBe('v3 · since 01 Oct');
+    expect(versionText({ ...row, effective_from: '2025-06-30T00:00:00+01:00' }, now)).toBe('v3 · since 30 Jun 2025');
     expect(versionText(row)).toBe('v3');
     expect(versionText({ ...row, set: false })).toBeNull();
   });
@@ -312,8 +313,8 @@ describe('first save (AC 8, 9, 15)', () => {
     expect(saves()).toHaveLength(1);
     expect(saves()[0]).toMatchObject({ path: '/api/v1/setup/rules/presale.rfp_assigner', csrf: 'mock-csrf-admin' });
     expect(saves()[0].body).toEqual({ expected_revision: 0, value: { roles: ['pmo_lead'] }, starts: '2026-11-14', reason: 'Agreed at the PSL leadership meeting', evidence_id: 'EV-1' });
-    expect(rowCells('Who may assign an RFP to a PM')).toEqual(['Who may assign an RFP to a PM', 'Pre-sale', 'PMO Lead', 'v1 · since 14 Nov 2026']);
-    expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules7');
+    expect(rowCells('Who may assign an RFP to a PM')).toEqual(['Who may assign an RFP to a PM', 'Pre-sale', 'PMO Lead', 'v1 · since 14 Nov']);
+    expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 7');
     expect(desktop().getByText(/^7 rules aren’t set yet/)).toBeTruthy();
     // Rebuilt from the reloaded row: next version, its selection, Why and Proof cleared; focus on the callout.
     expect(saveButton().textContent).toBe('Save as version 2');
@@ -657,7 +658,7 @@ describe('read states and paging (AC 14, 19, 21)', () => {
     // the button that was pressed is gone: focus goes to the end of the list instead of the page top (QA-3-1)
     expect(document.activeElement).toBe(desktop().getByText('All 55 rules are shown.'));
     expect(desktop().getAllByRole('row')[55].textContent).toContain('Sample rule 55');
-    expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules55');
+    expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 55');
   });
 
   it('empty keeps the frame and shows the empty pattern without banner or panel', async () => {

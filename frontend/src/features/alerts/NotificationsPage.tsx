@@ -200,7 +200,7 @@ function Notifications() {
       <div className="alerts-head">
         <div className="alerts-titlecol">
           {!phone && <p className="alerts-eyebrow">NOTIFICATIONS</p>}
-          <PageTitle>Notifications</PageTitle>
+          <PageTitle size={36}>Notifications</PageTitle>
         </div>
         {phone ? (
           <Link href="/" className="alerts-back">
