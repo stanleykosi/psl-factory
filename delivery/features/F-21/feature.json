@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-21",
   "outcome": "The weekly client report line: the PM writes four cited parts, Tola assembles, the PMO Lead reviews (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-LINE-WEEKLY"
   ],
@@ -145,8 +145,419 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Mock hook is scoped narrowly: `STEP_RECORD_FIELDS` is keyed on `weekly_report` and the four cite names, and `optionsField` falls back to it only after the intake lookup. Existing lines are unaffected. Records options and panel references agree by design. Backend must serve these through E-LINE-OPTIONS (already listed in build.md).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The new frame behaviours (text prefill, Escape inside a picker, 422 sentence told once, checklist `tag`) are tested only through `weekly.test.tsx` and e2e, not in the F-17 `workspace*.test.tsx` files. A future F-17 change could break them without a generic test failing. Consider a small generic test.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-2204's mock `approve_send` 200 message reads \"Lagoon Health received v1: emailed 12 Nov 15:10 to 2 contacts. Verified on the mock only.\" It is mock text and labelled as such, and no received page is drawn. The word \"received\" is close to the unbuilt received board, so keep it clearly sample.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The build.md claim \"No assertion removed or loosened\" is imprecise. The two weekly assertions (subtitle and status) were rewritten in commit 0036fe0a after the D-73 header move. The justification holds: exact text is still checked and a place check (outside `.ws`) was added. The `workspace.test.tsx` header changes and the `workspace-step` line 217 and 281 changes are not F-21's (merged frame and F-17 follow-up work). F-17's region driver was not re-run, as the builder said.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Open for the backend: whether the real 422 names a whole-form field (`parts`) as in W-2202 (D-74), and the idempotency promise stays unbuilt. Both are listed in build.md. The exceptions are the two D-85 items and the D-83 waivers, to be signed by the coordinator.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Saved cites are lost when the form opens. On W-2201 the four text areas prefill with the saved words, but all four \"Cites for ...\" pickers open empty. Pressing \"Save draft\" or \"Send to Tola to assemble\" then sends no `*_cites` at all (I recorded the W-2202 request: `inputs` holds only status, risks, timeline, next_steps). A PM who saved cited parts would silently erase the cites, and Send would draw a \"cite at least one record\" 422 for parts that were already cited. Spec AC 7 says the form shows \"the saved values\" for the cites too, and the page's own \"Your update\" text shows them as cited. build.md names this as a contract limit (records `value` is a string), but the fixture/mock path can still carry the cites (or the form must not offer a Save that drops them). Fix it in the frame (prefill from the item's saved cites) or put a visible line in the form saying the cites are kept, and record the decision. Without that, the journey \"write four cited parts, send\" is not usable.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Every field in the weekly form is labelled \"(optional)\" (\"Status (optional)\", \"Cites for risks (optional)\"), while the page note and the 422 say every part needs words and a cite. The two messages contradict each other. The spec set `required: false` on purpose so the server owns the rule, so this is the descriptor's label, not a bug. Suggest the fixture label drop \"(optional)\" for these eight fields, or the frame stop adding the word when the descriptor says nothing. Raise with the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Disabled primary buttons read as enabled and are unreadable. \"Send for PMO Lead review\" (W-2203) and \"Approve and send\" (W-2205, locked) show a solid dark green fill with near-invisible dark label text. `aria-disabled` and a reason sentence are present, so axe passes, but a sighted user sees a strong green button with no legible label. Disabled primary should look like the grey disabled Return button beside it (W-2205 shows both side by side).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Phone, form open (390): the sticky bar (\"Send to Tola to assemble\" and \"Save draft\", with the consequence sentence) stays fixed over the form, covers the Risks field while scrolling, and the form's own Send button repeats the same action at the bottom. Two Send buttons for one action on a narrow screen. Suggest the bar hides while the form is open, or the bar is the form's submit.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-2205 at 1440 (uncertain send): the reconcile panel sits in the right column with a large empty area to its left, then a full-width \"See all exceptions\" bar, then the report and the Decide panel below. The page works (all steps locked, the reason \"Confirm what happened first.\" shown) but the order is awkward: the report the PMO Lead is deciding on is pushed below the fold. This comes from the shared F-09/F-17 reconcile layout, so it is a note for the frame owner, not for F-21.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone titles and back links differ from the boards (\"Write this week's client update\" vs \"Client update\", \"Queue\" vs \"My work\"); \"Weekly client report \u00b7 5\u201311 Nov\" wraps to two lines on the phone review page. All were approved exceptions (D-71 Conflict 5). Noted only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The fixtures draw subtitle, byline and version rows on boards that do not have them, so every section sits lower than on the board. Desktop review: the board's section starts at y 270 straight under the tab bar. The page draws \"Lagoon Health \u00b7 week ending 11 Nov\" and then \"Written by Tunde Bello, assembled by Tola  Report v1\", so the section starts at y 342 (side-by-side SCR-25-desktop-review-1440). The byline also repeats the section title \"Report v1 \u00b7 written by Tunde Bello, assembled by Tola\" word for word. Desktop invalid: the board has no subtitle or byline, and \"Your update\" starts at y 228 on the board against y 348 on the page. Desktop assembling: the board has no subtitle, and the agent note starts at y 255 against y 292. Desktop default: the board has the subtitle but no \"Written by Tunde Bello\" row. The phone boards for default, invalid, assembling and review have neither row either. Expected: drop `byline` and `version` from `workspace` in mock/fixtures/work/W-2201, W-2202 and W-2204. Drop `subtitle` from W-2202, W-2203 and W-2204, whose boards draw none. A field the fixture leaves out draws nothing (AC 6). The spec's table gives these fields only as examples, not as required per state. Re-run the one fidelity pass and record the new scores. If the score falls, report that, but do not keep rows the boards do not draw as a spacer. The \"Tried for visual\" entry in build.md measured this on the old frame, which had no tab bar.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The review state shows long record labels where the board shows the short reference. On SCR-25-desktop-review and SCR-25-mobile-review, the board's references column reads \"2 RECORDS\", \"ISS-0233\", \"MIN-0141\" and \"2 ACTIONS\". The page reads \"ISS-0233 LOGIN FAILS ON OLDER ANDROID PHONES \u00b7 HIGH\" and \"WEEKLY SYNC WITH LAGOON HEALTH \u00b7 10 NOV\". At 390 these wrap to three lines and squeeze the part text. The fixture already has the field for this: P-1 and P-4 use `cite_label`. Expected: give P-2 `cite_label: \"ISS-0233\"` and P-3 `cite_label: \"MIN-0141\"` in mock/fixtures/work/W-2204.json. The builder noted that the board's MIN-0141 cites a minutes record while the fixture's reference is MTG-0140. Which record the timeline cites is for the backend or PMO to settle. The words drawn should follow the board.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "backend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Carried forward from SEC-5-C1 (F-17), not a defect in this diff. The frontend lock is a UI safeguard only. It cannot stop a second tab, a stale tab, a direct API call or another client. The real guard against a duplicate client email is server-side, and it is not built. It must be built and tested before any real weekly send is enabled. What the server must do is in Notes 1 to 3.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-2",
+      "round": 1,
+      "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "owner": "backend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "A cited record goes into a report that is sent outside PSL. The frontend only offers values that E-LINE-OPTIONS returns (`RecordPicker`), but a direct call to E-WORK-STEP can send any string in `inputs.*_cites`. Expected: on `send_to_tola` and `save_draft`, the server checks that every cited value is in the set the actor is allowed to see for this case and week. It answers 422 on the named field otherwise and never resolves a citation it did not authorise. E-LINE-OPTIONS must also be scoped to the actor, the tenant and this item's case. Today the mock hook (`frontend/mock/start-work.mjs:23-25,110-112`) is keyed by line and persona only, which is acceptable for a mock.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-15T14:17:43Z",
+          "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delegated technical review",
+          "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+          "evidence_refs": [
+            "delivery/features/F-21/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-21/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delegated UX review",
+          "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+          "evidence_refs": [
+            "delivery/features/F-21/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delegated UI review",
+          "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+          "evidence_refs": [
+            "delivery/features/F-21/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delegated security review",
+          "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+          "evidence_refs": [
+            "delivery/features/F-21/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -609,7 +1020,7 @@
     }
   },
   "created_at": "2026-11-15T10:36:42Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -635,6 +1046,22 @@
       "round": 1,
       "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T14:17:44Z",
+      "round": 1,
+      "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T14:17:44Z",
+      "round": 2,
+      "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+      "reason": null
     }
   ],
   "routing": {
@@ -651,10 +1078,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

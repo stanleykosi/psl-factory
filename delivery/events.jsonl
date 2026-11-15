@@ -1446,3 +1446,23 @@
 {"at":"2026-11-15T14:15:31Z","feature":"F-19","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"56ad6ecb54b5e2e4ca704ec1611cb9c577963d5b"}}
 {"at":"2026-11-15T14:15:31Z","feature":"F-19","round":3,"kind":"transition","head":"a4a906cadfba","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-15T14:15:31Z","feature":"F-19","round":3,"kind":"transition","head":"a4a906cadfba","from":"MERGED","to":"DONE"}
+{"at":"2026-11-15T14:15:54Z","feature":"F-21","round":1,"kind":"review","role":"ui","verdict":"CHANGES","reviewer":"reviewer-ui","commit":"0036fe0ae4ee","findings":{"UI-1-1":"medium","UI-1-2":"low"},"written_at":"2026-11-15T14:15:53Z"}
+{"at":"2026-11-15T14:15:54Z","feature":"F-21","round":1,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"0036fe0ae4ee","findings":{"SEC-1-1":"medium","SEC-1-2":"medium"},"written_at":"2026-11-15T14:15:04Z"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"review","role":"ux","verdict":"CHANGES","reviewer":"reviewer-ux","commit":"0036fe0ae4ee","findings":{"UX-1-1":"high","UX-1-2":"medium","UX-1-3":"medium","UX-1-4":"medium","UX-1-5":"low","UX-1-6":"low"},"written_at":"2026-11-15T14:17:24Z"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"TECH-1-1","by":"reviewer-technical","severity":"low","owner":"builder","blocking":false,"role":"technical"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"TECH-1-2","by":"reviewer-technical","severity":"low","owner":"builder","blocking":false,"role":"technical"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"TECH-1-3","by":"reviewer-technical","severity":"low","owner":"builder","blocking":false,"role":"technical"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"TECH-1-4","by":"reviewer-technical","severity":"low","owner":"builder","blocking":false,"role":"technical"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"TECH-1-5","by":"reviewer-technical","severity":"low","owner":"design engineer","blocking":false,"role":"technical"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"UX-1-1","by":"reviewer-ux","severity":"high","owner":"builder","blocking":true,"role":"ux"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"UX-1-2","by":"reviewer-ux","severity":"medium","owner":"builder","blocking":false,"role":"ux"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"UX-1-3","by":"reviewer-ux","severity":"medium","owner":"builder","blocking":false,"role":"ux"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"UX-1-4","by":"reviewer-ux","severity":"medium","owner":"builder","blocking":false,"role":"ux"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"UX-1-5","by":"reviewer-ux","severity":"low","owner":"builder","blocking":false,"role":"ux"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"UX-1-6","by":"reviewer-ux","severity":"low","owner":"builder","blocking":false,"role":"ux"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"UI-1-1","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"UI-1-2","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"SEC-1-1","by":"reviewer-security","severity":"medium","owner":"backend","blocking":false,"role":"security"}
+{"at":"2026-11-15T14:17:43Z","feature":"F-21","round":1,"kind":"finding","action":"add","finding":"SEC-1-2","by":"reviewer-security","severity":"medium","owner":"backend","blocking":false,"role":"security"}
+{"at":"2026-11-15T14:17:44Z","feature":"F-21","round":1,"kind":"transition","head":"0036fe0ae4ee","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-15T14:17:44Z","feature":"F-21","round":2,"kind":"transition","head":"0036fe0ae4ee","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
