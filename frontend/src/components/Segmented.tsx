@@ -2,7 +2,8 @@
 
 // Segmented (design/system/project/components/Segmented): a row of joined options for a short single choice. One
 // tab stop; arrows move and choose, Home and End go to the first and last, skipping disabled options. Each option
-// stays on one line; a count is the square badge after the label, never "· 4" text.
+// stays on one line; a count is the square badge after the label, never "· 4" text. Each option is named by its
+// label (and count), so it reads as "Flat" or "Waiting 4" wherever its name is taken from attributes.
 import { useRef, type KeyboardEvent } from 'react';
 
 import { CountBadge } from './CountBadge';
@@ -64,6 +65,7 @@ export function Segmented<T extends string>({ label, labelledBy, options, value,
           role="radio"
           className="psl-seg__opt"
           aria-checked={at === checked}
+          aria-label={option.count !== undefined ? `${option.label} ${option.count}` : option.label}
           aria-disabled={option.disabled || undefined}
           tabIndex={at === tabStop ? 0 : -1}
           onClick={() => {
@@ -72,7 +74,12 @@ export function Segmented<T extends string>({ label, labelledBy, options, value,
           onKeyDown={(event) => keys(event, at)}
         >
           {option.label}
-          {option.count !== undefined && <CountBadge count={option.count} />}
+          {option.count !== undefined && (
+            <>
+              {' '}
+              <CountBadge count={option.count} />
+            </>
+          )}
         </button>
       ))}
     </div>

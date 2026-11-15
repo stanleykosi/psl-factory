@@ -3,8 +3,9 @@
 // Drawer (design/system/project/components/Drawer): opens from the right over the page (500px), so people never
 // lose the queue. Head: mono eyebrow, display title, one line of context, close button; the body scrolls and the
 // footer stays. Modal: focus moves in and stays in, Esc, the close button and the scrim close it, and focus
-// returns to the opener. Below 720px it is a full-height sheet. "Needs fixing" puts a ValidationSummary first in
-// the body; "submitting" is a busy Button in the footer; "done" closes and shows a Toast (the consumer's).
+// returns to the opener. Below 720px it is a sheet that leaves the top of the page in view, with an 18px title, as
+// the boards draw it (D-93). "Needs fixing" puts a ValidationSummary first in the body; "submitting" is a busy
+// Button in the footer; "done" closes and shows a Toast (the consumer's).
 import { useId, useRef, type ReactNode, type RefObject } from 'react';
 
 import { IconButton } from './IconButton';

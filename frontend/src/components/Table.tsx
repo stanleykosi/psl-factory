@@ -4,9 +4,10 @@
 // sorted column is ink with an arrow and aria-sort. Amounts right-aligned in mono (use Money from Values.tsx with `sign` off, so
 // Unknown is the amber tag, never 0). Rows: selected (action-tint) and current or needs attention (orange left
 // edge). Select-all in the header is mixed when some rows are chosen; bulk actions appear above once anything is
-// chosen. Totals row in bold over a 2px rule. Empty is a sentence in the body, never a blank grid. The frame
-// scrolls sideways on phones and can take focus so keyboards can scroll it.
-import type { ReactNode } from 'react';
+// chosen. Totals row in bold over a 2px rule. Empty is a sentence in the body, never a blank grid. A row can open
+// a full-width row under it (`expanded`, e.g. the upload panel under a template). The frame scrolls sideways on
+// phones and can take focus so keyboards can scroll it.
+import { Fragment, type ReactNode } from 'react';
 
 import { Checkbox } from './Checkbox';
 import { Icon } from './Icon';
@@ -25,7 +26,7 @@ export type Column<R> = {
 
 export type Sort = { key: string; dir: 'ascending' | 'descending' };
 
-export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, selected, onSelect, rowLabel, rowState, bulkActions, footer, className }: {
+export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, selected, onSelect, rowLabel, rowState, expanded, bulkActions, footer, className, tableClassName }: {
   /** Names the table for screen readers (visually hidden). */
   caption: string;
   columns: Column<R>[];
@@ -41,11 +42,14 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
   /** Names a row's checkbox ("Select INV-0412"). */
   rowLabel?: (row: R) => string;
   rowState?: (row: R) => 'current' | undefined;
+  /** A full-width row drawn under the row (an inline panel), or null. */
+  expanded?: (row: R) => ReactNode;
   /** Shown above the table once a row is chosen. */
   bulkActions?: ReactNode;
   /** Totals row cells, one per column. */
   footer?: ReactNode[];
   className?: string;
+  tableClassName?: string;
 }) {
   const selectable = selected !== undefined && onSelect !== undefined;
   const chosen = selectable ? rows.filter((r) => selected.has(rowKey(r))).length : 0;
@@ -78,7 +82,7 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
       {/* The frame scrolls sideways on narrow screens; it takes focus so a keyboard can scroll it. */}
       {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
       <div className="psl-tablewrap" role="region" aria-label={caption} tabIndex={0}>
-        <table className="psl-table">
+        <table className={cx('psl-table', tableClassName)}>
           <caption className="cmp-sr">{caption}</caption>
           <thead>
             <tr>
@@ -113,19 +117,27 @@ export function Table<R>({ caption, columns, rows, rowKey, empty, sort, onSort, 
               rows.map((row) => {
                 const key = rowKey(row);
                 const isSelected = selectable && selected.has(key);
+                const more = expanded?.(row);
                 return (
-                  <tr key={key} className={cx(isSelected && 'is-selected', rowState?.(row) === 'current' && 'is-current') || undefined}>
-                    {selectable && (
-                      <td className="psl-check-cell">
-                        <Checkbox label={<span className="cmp-sr">{rowLabel ? rowLabel(row) : `Select ${key}`}</span>} checked={isSelected} onChange={() => toggle(key)} />
-                      </td>
+                  <Fragment key={key}>
+                    <tr className={cx(isSelected && 'is-selected', rowState?.(row) === 'current' && 'is-current') || undefined}>
+                      {selectable && (
+                        <td className="psl-check-cell">
+                          <Checkbox label={<span className="cmp-sr">{rowLabel ? rowLabel(row) : `Select ${key}`}</span>} checked={isSelected} onChange={() => toggle(key)} />
+                        </td>
+                      )}
+                      {columns.map((col) => (
+                        <td key={col.key} className={cx(col.num && 'num', col.mono && 'psl-mono') || undefined}>
+                          {col.cell(row)}
+                        </td>
+                      ))}
+                    </tr>
+                    {more && (
+                      <tr className="cmp-expanded">
+                        <td colSpan={span}>{more}</td>
+                      </tr>
                     )}
-                    {columns.map((col) => (
-                      <td key={col.key} className={cx(col.num && 'num', col.mono && 'psl-mono') || undefined}>
-                        {col.cell(row)}
-                      </td>
-                    ))}
-                  </tr>
+                  </Fragment>
                 );
               })
             )}

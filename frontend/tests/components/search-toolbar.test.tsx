@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -71,7 +71,11 @@ describe('ListToolbar and FilterPanel', () => {
     expect(screen.getByRole('button', { name: 'Remove Line filter' })).toBeTruthy();
     fireEvent.click(filter);
     const panel = screen.getByRole('dialog', { name: 'Filter' });
-    expect(document.activeElement).toBe(panel);
+    // focus moves to the panel's first field (the board's filter panel, D-93)
+    expect(document.activeElement).toBe(within(panel).getByRole('checkbox', { name: 'Invoice preparation and delivery' }));
+    // the board's foot: Clear beside the dark "Show N results"
+    expect(within(panel).getByRole('button', { name: 'Clear' }).className).toBe('psl-btn psl-btn--secondary psl-btn--lg psl-btn--block');
+    expect(within(panel).getByRole('button', { name: 'Show 4 results' }).className).toBe('psl-btn psl-btn--dark psl-btn--lg psl-btn--block');
     expect(await violations()).toEqual([]);
     fireEvent.keyDown(panel, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();

@@ -35,7 +35,28 @@ export function responderText(r: Responder, variant: ResponseVariant): string {
   return r.role ? `${r.role} · ${named}` : named;
 }
 
-/** A date and time (as WhenField joins them) read as WAT (UTC+1 all year): "2026-11-11T16:20" → "2026-11-11T16:20:00+01:00". */
+/** "184 KB" or "1.1 MB". */
+export function fileSize(bytes: number): string {
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const WAT_DAY = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'numeric' });
+const WAT_CLOCK = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+
+/** "11 Nov" in Africa/Lagos. */
+export function formatDay(value: string): string {
+  const parts = Object.fromEntries(WAT_DAY.formatToParts(new Date(value)).map((p) => [p.type, p.value]));
+  return `${parts.day} ${MONTHS[Number(parts.month) - 1]}`;
+}
+
+/** "16:20" in Africa/Lagos. */
+export function formatClock(value: string): string {
+  return WAT_CLOCK.format(new Date(value));
+}
+
+/** A datetime-local value read as WAT (UTC+1 all year): "2026-11-11T16:20" → "2026-11-11T16:20:00+01:00". */
 export function watIso(local: string): string {
   return `${local.length === 16 ? `${local}:00` : local.slice(0, 19)}+01:00`;
 }

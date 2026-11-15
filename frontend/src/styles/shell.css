@@ -32,7 +32,7 @@
 body { margin: 0; background: var(--steel); }
 .shell-topbar .psl-nav__in { max-width: 1320px; margin: 0 auto; }
 .shell-main { max-width: 1320px; margin: 0 auto; padding: var(--space-6) var(--space-6) calc(var(--space-6) * 2); display: flex; flex-direction: column; gap: var(--space-5); }
-.shell-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: var(--text-display-xl-size); line-height: 1.08; }
+.shell-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: var(--text-page-title-weight); font-size: var(--text-page-title-size); line-height: 1.08; }
 .shell-reference { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 /* STATES error card: white surface, 2px signal border, mono eyebrow, message, reference, Try again */
 .shell-errorcard { background: var(--surface); border: var(--rule-strong) solid var(--signal); padding: var(--space-14px); display: flex; flex-direction: column; gap: var(--space-2); }
@@ -41,7 +41,7 @@ body { margin: 0; background: var(--steel); }
 .shell-loading { display: flex; flex-direction: column; gap: var(--space-10px); }
 @media (max-width: 719.98px) {
   .shell-main { padding: var(--space-4); gap: var(--space-3); }
-  .shell-title { font-size: 26px; }
+  .shell-title { font-size: var(--text-page-title-phone-size); }
   .shell-errorcard__action { max-width: none; }
 }
 

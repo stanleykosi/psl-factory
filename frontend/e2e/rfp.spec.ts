@@ -2,17 +2,6 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
 // F-18: team input, the RFP outcome form and its recorded states, on the contract mock (D-RFP-OUTCOME r2, proposed).
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-/** A date field takes "11 Nov 2026"; a when field also has its time (WAT) beside it. */
-async function fillWhen(page: Page, label: string | RegExp, value: string) {
-  const [date, time] = value.split('T');
-  const [y, m, d] = date.split('-');
-  const box = page.getByLabel(label, { exact: typeof label === 'string' }).first();
-  await box.fill(`${Number(d)} ${MONTHS[Number(m) - 1]} ${y}`);
-  await box.blur();
-  if (time) await page.locator('.resp-when', { has: box }).getByLabel('At (WAT)').fill(time);
-}
-
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
@@ -29,7 +18,7 @@ async function expectNoAxeViolations(page: Page) {
 
 async function open(page: Page, path: string) {
   await page.goto(path);
-  await expect(page.getByText('Loading…')).toHaveCount(0);
+  await expect(page.getByRole('status').filter({ hasText: 'Loading…' })).toHaveCount(0);
   await expect(page.locator('main#main h1').first()).toBeVisible();
 }
 
@@ -81,8 +70,8 @@ for (const viewport of [DESKTOP, PHONE]) {
       await expect(h1).toHaveCount(1);
       const phone = viewport === PHONE;
       await expect(h1).toHaveText(phone ? state.title.phone : state.title.desktop);
-      expect(await h1.evaluate((el) => getComputedStyle(el).fontSize)).toBe(phone ? '26px' : '34px');
-      await expect(h1).toHaveClass(/cmp-page-title/);
+      expect(await h1.evaluate((el) => getComputedStyle(el).fontSize)).toBe(phone ? '26px' : '40px');
+      await expect(h1).toHaveClass(/shell-title/);
       const back = page.locator('.psl-phonebar').getByRole('link', { name: 'Back to RFP' });
       if (phone) {
         await expect(back).toHaveText('← RFP');
@@ -140,13 +129,13 @@ test('the frame tabs: only built screens are in the Tab order; the current tab i
 test('team input Tab order is Team, the fields, Proof and its confirmation, Received and the note, each with a focus ring', async ({ page }) => {
   await page.setViewportSize(DESKTOP);
   await open(page, TEAM);
-  await page.getByRole('radio', { name: 'Security' }).click();
+  await page.getByRole('radio', { name: 'Security, missing' }).click();
   await page.getByRole('heading', { level: 1 }).click();
   const order = [
-    page.getByRole('radio', { name: 'Security' }),
+    page.getByRole('radio', { name: 'Security, missing' }),
     page.getByLabel('Estimate (person-days)'),
     page.getByLabel('What they gave'),
-    page.locator('input[type="file"]').first(),
+    page.getByRole('button', { name: 'Choose a file' }),
     page.getByRole('checkbox'),
     page.getByLabel('Received'),
     page.getByLabel(/^Note/),
@@ -159,15 +148,15 @@ test('team input Tab order is Team, the fields, Proof and its confirmation, Rece
 
 test('team input records through the mock: claim, proof, record, success', async ({ page }) => {
   await open(page, TEAM);
-  await page.getByRole('radio', { name: 'Security' }).click();
+  await page.getByRole('radio', { name: 'Security, missing' }).click();
   await page.getByLabel('Estimate (person-days)').fill('18');
   await page.getByLabel('What they gave').fill('Security estimate and data-protection notes');
   await page.locator('input[type="file"]').setInputFiles(file('security-estimate-tamarind.xlsx', 64 * 1024));
   await expect(page.getByText('Uploaded · 64 KB')).toBeVisible();
-  await fillWhen(page, 'Received', '2026-11-12T15:10');
+  await page.getByLabel('Received').fill('2026-11-12T15:10');
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: 'Record input' }).click();
-  await expect(page.getByText('Response recorded.')).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: 'Response recorded.' })).toBeVisible();
 });
 
 test('at 390 the pinned Record is on screen, the size of F-09’s, and targets are at least 44px', async ({ page }) => {
@@ -202,10 +191,10 @@ test('the outcome records through the mock and shows the recorded state; the wor
   await expect(page).toHaveURL(/\/work\/W-2103\/outcome$/);
   await expect(page.getByRole('radiogroup', { name: 'Result' })).toBeVisible();
   await chooseResult(page, 'Pending');
-  await fillWhen(page, 'When you learned it', '2026-12-01T15:20');
+  await page.getByLabel('When you learned it').fill('2026-12-01T15:20');
   await page.locator('input[type="file"]').setInputFiles(file('tamarind-email-decision-delayed.pdf', 42 * 1024));
   await expect(page.getByText('Uploaded · 42 KB')).toBeVisible();
-  await page.getByRole('combobox', { name: 'You are recording as' }).click().then(() => page.getByRole('option').first().click());
+  await page.getByLabel('You are recording as').selectOption('relationship_owner');
   await page.getByRole('button', { name: 'Record pending' }).click();
   await expect(page.getByRole('heading', { level: 2, name: 'Decision pending' })).toBeVisible();
 });
@@ -226,7 +215,7 @@ test('the follow-up Edit and Send are reached by keyboard, and Send goes through
   expect(await tabTo(page, edit)).toBe(1);
   await page.keyboard.press('Shift+Tab');
   await page.keyboard.press('Enter');
-  await expect(page.getByText(/^Sent /)).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: /^Sent / })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Send follow-up' })).toHaveCount(0);
   expect(sent).toBe(1);
 });

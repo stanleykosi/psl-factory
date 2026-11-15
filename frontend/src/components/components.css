@@ -1,14 +1,19 @@
 /* Shared components (src/components): only what psl-bundle.css does not already draw. Tokens only, except the
-   phone breakpoint (custom properties cannot be used in @media) and the two type sizes the system has no token
-   for (marked). Every class here is cmp-*, or a psl-* class narrowed by a cmp-* one, so feature markup that
-   still uses the bundle by hand is not changed. */
+   phone breakpoint (custom properties cannot be used in @media), the page-title sizes the boards draw between the
+   text styles (36/32/30/28/22px, D-93) and the BottomSheet title size (marked). Every class here is cmp-*, or a
+   psl-* class narrowed by a cmp-* one, so feature markup that still uses the bundle by hand is not changed. */
 
 /* screen-reader-only text */
 .cmp-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
 
-/* page title (text style page-title) */
+/* page title (text style page-title, 1.08 line height as the boards draw it); smaller sizes where a board draws them */
 .cmp-pagehead { display: flex; flex-direction: column; gap: var(--space-1); }
-.cmp-page-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-size: var(--text-page-title-size); line-height: var(--text-page-title-line); font-weight: var(--text-page-title-weight); }
+.cmp-page-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-size: var(--text-page-title-size); line-height: 1.08; font-weight: var(--text-page-title-weight); }
+.cmp-page-title--36 { font-size: 36px; }
+.cmp-page-title--34 { font-size: var(--text-display-l-size); }
+.cmp-page-title--32 { font-size: 32px; }
+.cmp-page-title--30 { font-size: 30px; }
+.cmp-page-title--28 { font-size: 28px; }
 
 /* popovers: menus, select lists, date pickers, filter panels, tooltips */
 .cmp-anchor { position: relative; }
@@ -33,6 +38,12 @@
 .cmp-search::-webkit-search-cancel-button, .cmp-search::-webkit-search-decoration { appearance: none; -webkit-appearance: none; }
 .cmp-cal__row { display: contents; }
 
+/* the select's arrow: the boards' small ▾ (D-93), drawn by CSS so it is not part of the control's text */
+.cmp-selectarrow::before { content: "▾"; }
+
+/* text area drawn as one line (D-93); it grows with its text */
+.psl-input--area.cmp-area--line { min-height: var(--control-md); }
+
 /* radio groups */
 .cmp-fieldset { border: none; margin: 0; padding: 0; min-width: 0; }
 .cmp-fieldset > legend { padding: 0; margin-bottom: var(--space-1); }
@@ -49,18 +60,30 @@
 .psl-link.cmp-linkbutton { background: none; border: none; padding: 0; font: inherit; }
 .psl-link.cmp-linkbutton--small { font-size: var(--text-hint-size); }
 
+/* a panel head drawn as a heading keeps the head's look */
+.cmp-panelbox > .psl-panel__head:is(h2, h3, h4) { margin: 0; }
+
 /* panel tints the Panel page draws */
 .cmp-panelbox.psl-panel--agent > .psl-panel__head, .cmp-panelbox.psl-panel--agent > .psl-panel__body { color: var(--action-ink); }
 .cmp-panelbox.psl-panel--readonly > .psl-panel__head { border-bottom-color: var(--rule-soft); }
 .cmp-panelbox.psl-panel--readonly > .psl-panel__body { color: var(--ink-muted); }
 
+/* disclosure drawn as a link (D-93): no box and no triangle; the inline trigger keeps the sentence's line height */
+.cmp-disclosure--link > summary { list-style: none; display: inline; }
+.cmp-disclosure--link > summary::-webkit-details-marker { display: none; }
+.cmp-disclosure--link > div { margin-top: var(--space-2); }
+.psl-link.cmp-disclosurelink { background: none; border: none; padding: 0; font: inherit; }
+
 /* list toolbar and filter panel */
 .cmp-toolsearch { flex: 1 1 calc(var(--space-7) * 7); max-width: calc(var(--space-7) * 10 + var(--space-5)); }
 .cmp-chips { display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; margin-top: var(--space-10px); }
-.psl-pop.cmp-filter { width: calc(var(--space-3) * 30); }
-.cmp-filter__head { padding: var(--space-3) var(--space-4); border-bottom: var(--rule-strong) solid var(--ink); font-family: var(--font-display); font-weight: var(--text-panel-head-weight); font-size: var(--text-panel-head-size); text-transform: uppercase; }
-.cmp-filter__body { padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: var(--space-1); }
-.cmp-filter__foot { padding: var(--space-3) var(--space-4); border-top: var(--rule-strong) solid var(--ink); display: flex; justify-content: space-between; align-items: center; }
+/* 380px: the SCR-01 filter board's panel width */
+.psl-pop.cmp-filter { width: 380px; }
+.cmp-filter__head, .cmp-filter__title { font-family: var(--font-display); font-weight: var(--text-panel-head-weight); font-size: var(--text-panel-head-size); line-height: 1.25; text-transform: uppercase; }
+.cmp-filter__head { padding: var(--space-3) var(--space-4); border-bottom: var(--rule-strong) solid var(--ink); }
+.cmp-filter__body { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-14px); }
+.cmp-filter__foot { padding: var(--space-3) var(--space-4); border-top: var(--rule-strong) solid var(--ink); display: flex; gap: var(--space-10px); }
+.cmp-filtersheet .psl-sheet__body { gap: var(--space-3); }
 
 /* overlays: drawer, sheet, dialog over the scrim */
 .cmp-layer { position: fixed; inset: 0; z-index: var(--z-overlay); display: flex; justify-content: flex-end; }
@@ -70,10 +93,13 @@
 .cmp-panel { position: relative; outline: none; }
 .cmp-layer--drawer > .psl-drawer { height: 100%; }
 .cmp-layer--sheet > .psl-sheet { width: 100%; max-height: 100%; }
-.cmp-layer--sheet > .cmp-panel--full { height: 100%; }
+/* the drawer as a phone sheet leaves the top of the page in view: its top sits 70px under the phone bar, as
+   SCR-04-mobile draws it (D-93); 70px has no token */
+.cmp-layer--sheet > .cmp-panel--full { height: calc(100% - var(--control-md) - var(--space-3) - 70px); }
+.cmp-panel--full .psl-drawer__title { font-size: 18px; }
 .cmp-scroll { overflow: auto; flex: 1 1 auto; min-height: 0; }
 .cmp-swipe { touch-action: pan-x; }
-/* 18px: the BottomSheet page's title size; the system has no text style at 18px */
+/* 18px: the sheet title size (BottomSheet page, SCR-04-mobile); the system has no text style at 18px */
 .cmp-sheet-title { font-family: var(--font-display); font-weight: var(--text-drawer-title-weight); font-size: 18px; }
 
 /* toast */
@@ -100,8 +126,10 @@
 
 /* phones: every target at least 44px (D-92 c) */
 @media (max-width: 719.98px) {
-  /* 26px: page-title on phones, as its usage line says; the system has no token for it */
-  .cmp-page-title { font-size: 26px; line-height: var(--text-title-line); }
+  .cmp-page-title { font-size: var(--text-page-title-phone-size); }
+  .cmp-page-title.cmp-page-title--p24 { font-size: var(--text-title-size); }
+  .cmp-page-title.cmp-page-title--p22 { font-size: 22px; }
+  .cmp-page-title.cmp-page-title--p20 { font-size: var(--text-drawer-title-size); }
   .psl-btn.cmp-btn-sm { min-height: var(--control-md); }
   .psl-check.cmp-check, .psl-radio.cmp-check { min-height: var(--control-md); }
   .psl-link.cmp-linkbutton { display: inline-flex; align-items: center; min-height: var(--control-md); }

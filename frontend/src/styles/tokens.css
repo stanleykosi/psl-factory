@@ -80,9 +80,12 @@
   --text-display-l-size: 34px;
   --text-display-l-line: 36px;
   --text-display-l-weight: 800;
-  --text-page-title-size: 34px;
-  --text-page-title-line: 37px;
+  --text-page-title-size: 40px;
+  --text-page-title-line: 43px;
   --text-page-title-weight: 800;
+  --text-page-title-phone-size: 26px;
+  --text-page-title-phone-line: 28px;
+  --text-page-title-phone-weight: 800;
   --text-title-size: 24px;
   --text-title-line: 28px;
   --text-title-weight: 800;

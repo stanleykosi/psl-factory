@@ -80,29 +80,51 @@ export function ListToolbar({ search, filterCount, filterOpen, onFilterToggle, f
   );
 }
 
-/** The filter panel: a popover below the Filter button from 720px, a bottom sheet below. */
-export function FilterPanel({ title = 'Filter', children, applyLabel, onApply, onClear, onClose }: {
+/**
+ * The filter panel as the SCR-01 filter boards draw it (D-93): a popover below the Filter button from 720px, with
+ * the title in its head and Clear and the dark "Show N items" side by side in its foot; below 720px a bottom sheet
+ * with Clear in its head and the dark full-width "Show N items" in thumb reach. Focus moves to the first field on
+ * opening and back to the Filter button on closing; Esc and a press outside (or the scrim) close it unapplied.
+ */
+export function FilterPanel({ title = 'Filter', children, applyLabel, onApply, onClear, onClose, clearLabel = 'Clear', className }: {
   title?: string;
   children: ReactNode;
-  /** "Show 4 results": says how many will show. */
+  /** "Show 4 items": says how many will show. */
   applyLabel: string;
   onApply: () => void;
   onClear: () => void;
   onClose: () => void;
+  clearLabel?: string;
+  className?: string;
 }) {
   const phone = usePhone();
   const ref = useRef<HTMLDivElement>(null);
   // The anchor holds the Filter button too, so pressing it toggles rather than closing and reopening.
   const anchor = useRef<HTMLElement | null>(null);
+  const opener = useRef<HTMLElement | null>(null);
+  const closeRef = useRef(onClose);
+  useEffect(() => {
+    closeRef.current = onClose;
+  });
   useOutsidePress([anchor], !phone, onClose);
 
   useEffect(() => {
+    // The Filter button: the anchor's first button on desktop; on phones the sheet is portalled, so the button that
+    // had focus when it opened (a tap does not focus a button in every browser, so the anchor's is preferred).
+    opener.current = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : null;
     if (phone) return undefined;
     anchor.current = ref.current?.parentElement ?? null;
-    // Focus returns to the Filter button (the anchor's first button), which a click does not focus in every browser.
-    const back = anchor.current?.querySelector<HTMLElement>('button');
-    ref.current?.focus();
-    return () => back?.focus();
+    const back = anchor.current?.querySelector<HTMLElement>('button') ?? opener.current;
+    (ref.current?.querySelector<HTMLElement>('input:not([disabled]), select:not([disabled]), button:not([disabled])') ?? ref.current)?.focus();
+    // Esc closes it wherever focus is on the page (a click may have left focus outside the panel).
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeRef.current();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      back?.focus();
+    };
   }, [phone]);
 
   if (phone) {
@@ -110,15 +132,20 @@ export function FilterPanel({ title = 'Filter', children, applyLabel, onApply, o
       <BottomSheet
         title={title}
         onClose={onClose}
+        returnFocus={opener}
+        grab={false}
+        closeButton={false}
+        titleClassName="cmp-filter__title"
+        className={cx('cmp-filtersheet', className)}
+        headAction={
+          <button type="button" className="psl-link cmp-linkbutton" onClick={onClear}>
+            {clearLabel}
+          </button>
+        }
         footer={
-          <>
-            <Button size="xl" block onClick={onApply}>
-              {applyLabel}
-            </Button>
-            <Button kind="text" onClick={onClear}>
-              Clear all
-            </Button>
-          </>
+          <Button kind="dark" size="xl" block onClick={onApply}>
+            {applyLabel}
+          </Button>
         }
       >
         {children}
@@ -130,7 +157,7 @@ export function FilterPanel({ title = 'Filter', children, applyLabel, onApply, o
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       ref={ref}
-      className="psl-pop cmp-pop cmp-filter"
+      className={cx('psl-pop cmp-pop cmp-filter', className)}
       role="dialog"
       aria-label={title}
       tabIndex={-1}
@@ -143,10 +170,10 @@ export function FilterPanel({ title = 'Filter', children, applyLabel, onApply, o
       <div className="cmp-filter__head">{title}</div>
       <div className="cmp-filter__body">{children}</div>
       <div className="cmp-filter__foot">
-        <button type="button" className="psl-link cmp-linkbutton" onClick={onClear}>
-          Clear all
-        </button>
-        <Button size="sm" onClick={onApply}>
+        <Button kind="secondary" size="lg" block onClick={onClear}>
+          {clearLabel}
+        </Button>
+        <Button kind="dark" size="lg" block onClick={onApply}>
           {applyLabel}
         </Button>
       </div>

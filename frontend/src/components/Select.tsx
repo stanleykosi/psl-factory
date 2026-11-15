@@ -7,7 +7,6 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 
 import { FieldLabel, FieldMessage, useFieldIds, type FieldText } from './Field';
-import { Icon } from './Icon';
 import { cx, isTypeaheadKey, useOutsidePress, useTypeahead } from './internal';
 
 export type SelectOption = {
@@ -125,7 +124,8 @@ export function Select({ label, optional, hint, error, options, value, onChange,
           onKeyDown={keys}
         >
           <span>{chosen >= 0 ? options[chosen].label : placeholder}</span>
-          <Icon name="chev" className="psl-chev" />
+          {/* the boards' small ▾ (D-93); it turns when the list is open */}
+          <span className="psl-chev cmp-selectarrow" aria-hidden="true" />
         </button>
         {open && (
           <ul ref={listRef} id={listId} className={cx('psl-pop psl-listbox cmp-pop cmp-pop--fill', up && 'cmp-pop--up')} role="listbox" aria-labelledby={ids.label}>

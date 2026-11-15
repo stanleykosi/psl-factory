@@ -7,8 +7,8 @@
 import { useCallback, useId, useRef, useState } from 'react';
 
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, Panel, RadioGroup, useIsPhone, VisuallyHidden } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
+import { WarningIcon } from '@/shell/icons';
 import { NoAccessState } from '@/features/work-item/WorkItemStates';
 
 import { getWorkItem, workAction } from './api';
@@ -17,6 +17,7 @@ import { checksSentence, outcomeWords, plural, RESPONSE_LABELS, sentence } from 
 import { ProofField } from './ProofField';
 import { reloadPage } from './reload';
 import { useEvidenceUpload } from './useEvidenceUpload';
+import { useIsPhone } from './usePhone';
 
 import './response.css';
 
@@ -113,81 +114,93 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
   const checks = checksSentence(reconcile.checks);
   const resendNote = reconcile.resend_note ? ` ${sentence(reconcile.resend_note)}` : '';
 
-  const outcomeOptions = reconcile.outcomes.map((value) => {
-    const words = outcomeWords(value, reconcile);
-    return { value, label: words.lead, detail: words.rest };
-  });
-  const body = (
-    <div className="resp-reconcile__body" aria-busy={status.kind === 'busy'}>
-      {phone ? (
-        <Callout kind="warning">
-          {reconcile.checks ? `No receipt found after ${plural(reconcile.checks.count, 'check')}. ` : ''}Confirm what happened before anything is
-          resent.
-        </Callout>
-      ) : (
-        <p className="resp-plain">
-          {checks ? `${checks} ` : ''}The factory won&rsquo;t resend until a person confirms what happened, so the client is never invoiced
-          twice.
-        </p>
-      )}
-      <div ref={options}>
-        <RadioGroup
-          legend={<VisuallyHidden>Confirm what happened</VisuallyHidden>}
-          name={`${headId}-outcome`}
-          cards
-          className="resp-options"
-          options={outcomeOptions.map((o) => ({ ...o, disabledReason: undefined }))}
-          value={outcome ?? undefined}
-          onChange={(value) => !locked && setOutcome(value as ReconcileOutcome)}
-        />
-      </div>
-      {needsProof && <ProofField proof={proof} />}
-      {askFirst && asked && (
-        <div role="alert" className="resp-alert">
-          Choose what happened to continue.
-        </div>
-      )}
-      {status.kind === 'problem' && <Callout kind="problem">{status.message}</Callout>}
-      {(status.kind === 'stale' || status.kind === 'uncertain') && (
-        <div role="alert">
-          <Callout kind="warning">
-            {status.kind === 'stale'
-              ? 'This item changed. Reload it to see the latest.'
-              : 'We couldn’t confirm your answer. Reload the work item to see whether it was recorded.'}{' '}
-            <Button kind="secondary" size="sm" onClick={() => reloadPage()}>
-              Reload the work item
-            </Button>
-          </Callout>
-        </div>
-      )}
-      {status.kind === 'done' && <Callout kind="success">Recorded. Reloading the work item…</Callout>}
-      <div className="psl-actionbar resp-actionbar">
-        <Button
-          size="lg"
-          block
-          disabled={!ready && !askFirst && status.kind !== 'busy'}
-          busy={status.kind === 'busy'}
-          busyLabel={RESPONSE_LABELS.busy}
-          onClick={askFirst ? ask : () => void submit()}
-        >
-          Record and continue
-        </Button>
-      </div>
-      <p className="resp-footnote">Your choice is recorded with your name.{resendNote}</p>
-    </div>
-  );
-
   return (
     <div className="work-column">
-      {phone ? (
-        <aside className="resp-reconcile" aria-label="Confirm what happened">
-          {body}
-        </aside>
-      ) : (
-        <Panel kind="decide" head="Confirm what happened" className="resp-reconcile">
-          {body}
-        </Panel>
-      )}
+      <aside className="resp-reconcile" aria-labelledby={phone ? undefined : headId} aria-label={phone ? 'Confirm what happened' : undefined}>
+        {!phone && (
+          <h2 id={headId} className="resp-reconcile__head">
+            Confirm what happened
+          </h2>
+        )}
+        <div className="resp-reconcile__body" aria-busy={status.kind === 'busy'}>
+          {phone ? (
+            <div className="psl-callout psl-callout--warning">
+              <WarningIcon />
+              <span>
+                {reconcile.checks ? `No receipt found after ${plural(reconcile.checks.count, 'check')}. ` : ''}Confirm what happened before anything
+                is resent.
+              </span>
+            </div>
+          ) : (
+            <p className="resp-plain">
+              {checks ? `${checks} ` : ''}The factory won&rsquo;t resend until a person confirms what happened, so the client is never invoiced
+              twice.
+            </p>
+          )}
+          <div ref={options} role="radiogroup" aria-label="Confirm what happened" className="resp-options">
+            {reconcile.outcomes.map((value) => {
+              const words = outcomeWords(value, reconcile);
+              return (
+                <label key={value} className="resp-option">
+                  <input
+                    type="radio"
+                    name={`${headId}-outcome`}
+                    value={value}
+                    checked={outcome === value}
+                    disabled={locked}
+                    onChange={() => setOutcome(value)}
+                  />
+                  <span>
+                    <strong>{words.lead}</strong>
+                    {words.rest ? ` ${words.rest}` : ''}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+          {needsProof && <ProofField proof={proof} />}
+          {askFirst && asked && (
+            <div role="alert" className="resp-alert">
+              Choose what happened to continue.
+            </div>
+          )}
+          {status.kind === 'problem' && (
+            <div className="psl-callout psl-callout--problem" role="alert">
+              <WarningIcon />
+              <span>{status.message}</span>
+            </div>
+          )}
+          {(status.kind === 'stale' || status.kind === 'uncertain') && (
+            <div className="psl-callout psl-callout--warning resp-retry" role="alert">
+              <WarningIcon />
+              <span>
+                {status.kind === 'stale'
+                  ? 'This item changed. Reload it to see the latest.'
+                  : 'We couldn’t confirm your answer. Reload the work item to see whether it was recorded.'}
+              </span>
+              <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" onClick={() => reloadPage()}>
+                Reload the work item
+              </button>
+            </div>
+          )}
+          {status.kind === 'done' && (
+            <p className="psl-callout psl-callout--success" role="status">
+              <span>Recorded. Reloading the work item…</span>
+            </p>
+          )}
+          <div className="psl-actionbar resp-actionbar">
+            <button
+              type="button"
+              className="psl-btn psl-btn--lg psl-btn--block"
+              disabled={!ready && !askFirst}
+              onClick={askFirst ? ask : () => void submit()}
+            >
+              {status.kind === 'busy' ? RESPONSE_LABELS.busy : 'Record and continue'}
+            </button>
+          </div>
+          <p className="resp-footnote">Your choice is recorded with your name.{resendNote}</p>
+        </div>
+      </aside>
     </div>
   );
 }

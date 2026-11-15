@@ -22,7 +22,7 @@ describe('formatAmount and Money', () => {
     expect(formatAmount('4250000')).toBe('₦4,250,000.00');
     expect(formatAmount('4250000.5')).toBe('₦4,250,000.50');
     expect(formatAmount('0.125')).toBe('₦0.125');
-    expect(formatAmount(1500000)).toBe('₦1,500,000.00');
+    expect(formatAmount('1500000')).toBe('₦1,500,000.00');
     expect(formatAmount('0')).toBe('₦0.00');
     expect(formatAmount(null)).toBe('Unknown');
     expect(formatAmount(undefined)).toBe('Unknown');

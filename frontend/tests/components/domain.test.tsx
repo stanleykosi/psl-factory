@@ -33,10 +33,14 @@ describe('FactsStrip', () => {
   it('six separate facts in order; a fact the record lacks is Unknown; paid sits apart', async () => {
     render(<FactsStrip facts={{ drafted: { status: 'earned', text: '10 Nov' }, reviewed: { status: 'earned', text: '11 Nov' }, approved: { status: 'current', text: 'Needs you' }, sent: { status: 'not_yet' }, verified: { status: 'not_yet' } }} />);
     const items = within(screen.getByRole('list', { name: 'Facts earned' })).getAllByRole('listitem');
-    expect(items.map((i) => i.querySelector('b')?.textContent)).toEqual(['DRAFTED', 'REVIEWED', 'APPROVED', 'SENT', 'RECEIPT RECORDED', 'VERIFIED']);
+    expect(items.map((i) => i.querySelector('b')?.textContent)).toEqual(['DRAFTED', 'REVIEWED', 'APPROVED', 'SENT', 'RECEIPT', 'VERIFIED']);
+    // the boards write RECEIPT; screen readers hear RECEIPT RECORDED (D-93)
+    expect(items[4].textContent?.startsWith('RECEIPT RECORDED')).toBe(true);
     expect(items.map((i) => i.className)).toEqual(['psl-fact psl-fact--earned', 'psl-fact psl-fact--earned', 'psl-fact psl-fact--current', 'psl-fact', 'psl-fact psl-fact--unknown', 'psl-fact']);
     expect(items[4].querySelector('strong')?.textContent).toBe('Unknown');
-    expect(items[3].querySelector('strong')?.textContent).toBe('Not yet');
+    // not yet is the boards' "—", named "Not yet" for screen readers (D-93)
+    expect(items[3].querySelector('strong')?.textContent).toBe('—');
+    expect(items[3].textContent).toBe('SENT—Not yet');
     expect(items[0].textContent).toBe('DRAFTEDEarned: 10 Nov');
     expect(screen.getByText('Paid is tracked by Finance on the receipt, not here.').className).toBe('psl-doesnt cmp-paidnote');
     expect(await violations()).toEqual([]);

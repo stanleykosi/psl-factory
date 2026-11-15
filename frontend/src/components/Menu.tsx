@@ -81,7 +81,10 @@ export function Menu({ id, label, items, initial, onClose, triggerRef, header, a
     else if (event.key === 'ArrowUp') setActive((at) => (at <= 0 ? last : at - 1));
     else if (event.key === 'Home') setActive(0);
     else if (event.key === 'End') setActive(last);
-    else if (event.key === 'Escape') {
+    else if (event.key === ' ' && event.target instanceof HTMLAnchorElement) {
+      // A link item runs on Space too, as the menu pattern says (a native link takes only Enter).
+      event.target.click();
+    } else if (event.key === 'Escape') {
       event.stopPropagation();
       onClose(true);
     } else if (event.key === 'Tab') {

@@ -6,11 +6,14 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { Breadcrumb, Button, buttonClass, Callout, EmptyState, PageTitle, useIsPhone } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
+import { WarningIcon } from '@/shell/icons';
+import { useIsPhone } from '@/features/response/usePhone';
 import type { ResponseWorkItem } from '@/features/response';
 import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemStates';
+
+import { InfoIcon } from '@/features/response/icons';
 
 import { frameHeading, RESULT_LABELS, recordedHeading, resultNote } from './labels';
 import { FollowupCard } from './FollowupCard';
@@ -25,13 +28,12 @@ import './rfp.css';
 
 const work = (id: string) => `/work/${encodeURIComponent(id)}`;
 
-/** A warning that answers an action: announced when it appears. */
 function Warning({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
-    <div role="alert">
-      <Callout kind="warning">
-        {children} {action}
-      </Callout>
+    <div className="psl-callout psl-callout--warning resp-retry" role="alert">
+      <WarningIcon />
+      <span>{children}</span>
+      {action}
     </div>
   );
 }
@@ -47,9 +49,9 @@ function PageNotice({ notice, onRecheck }: { notice: OutcomeNotice | null; onRec
     return (
       <Warning
         action={
-          <Button kind="secondary" size="sm" busy={notice.checking} busyLabel="Checking…" onClick={onRecheck}>
-            Try again
-          </Button>
+          <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={notice.checking} onClick={onRecheck}>
+            {notice.checking ? 'Checking…' : 'Try again'}
+          </button>
         }
       >
         We couldn&rsquo;t confirm whether the outcome was recorded, and couldn&rsquo;t reload to check. Record stays off. Try again reloads the item;
@@ -61,22 +63,23 @@ function PageNotice({ notice, onRecheck }: { notice: OutcomeNotice | null; onRec
 }
 
 function Problem({ message }: { message: string }) {
-  return <Callout kind="problem">{message}</Callout>;
+  return (
+    <div className="psl-callout psl-callout--problem" role="alert">
+      <WarningIcon />
+      <span>{message}</span>
+    </div>
+  );
 }
 
 function NotOpen({ id }: { id: string }) {
   return (
-    <EmptyState
-      title="This outcome isn’t open here"
-      className="resp-notopen"
-      action={
-        <Link className={buttonClass('secondary')} href={work(id)}>
-          Open the work item
-        </Link>
-      }
-    >
-      It may have been recorded already, or you may not be able to record it. The work item shows where things stand.
-    </EmptyState>
+    <section className="psl-empty resp-notopen" aria-labelledby="rfp-notopen-title">
+      <h2 id="rfp-notopen-title">This outcome isn&rsquo;t open here</h2>
+      <p>It may have been recorded already, or you may not be able to record it. The work item shows where things stand.</p>
+      <Link className="psl-btn psl-btn--secondary" href={work(id)}>
+        Open the work item
+      </Link>
+    </section>
   );
 }
 
@@ -86,8 +89,10 @@ function Header({ id, item, title, phone }: { id: string; item: ResponseWorkItem
   if (item.rfp) return <RfpFrame id={id} item={item} rfp={item.rfp} fallback={title} />;
   return (
     <header className="resp-header">
-      <Breadcrumb items={[{ label: 'Queue', href: '/my-work' }]} current={`${item.line} / ${item.reference}`} />
-      <PageTitle className="resp-title">{title}</PageTitle>
+      <p className="psl-crumb resp-crumb">
+        <Link href="/my-work">QUEUE</Link> / {item.line.toUpperCase()} / {item.reference.toUpperCase()}
+      </p>
+      <h1 className="shell-title resp-title">{title}</h1>
     </header>
   );
 }
@@ -117,10 +122,12 @@ export function OutcomeView({ id }: { id: string }) {
     return (
       <div className="resp-page rfp-page">
         <Header id={id} item={current} title={recordedHeading(page.result)} phone={phone} />
-        {phone && <PageTitle>{recordedHeading(page.result)}</PageTitle>}
-        <Callout kind="success">
-          <strong>Outcome recorded.</strong> {RESULT_LABELS[page.result] ?? ''}
-        </Callout>
+        {phone && <h1 className="shell-title">{recordedHeading(page.result)}</h1>}
+        <div className="psl-callout psl-callout--success" role="status">
+          <span>
+            <strong>Outcome recorded.</strong> {RESULT_LABELS[page.result] ?? ''}
+          </span>
+        </div>
       </div>
     );
   }
@@ -149,7 +156,7 @@ export function OutcomeView({ id }: { id: string }) {
     return (
       <div className="resp-page rfp-page">
         <Header id={id} item={current} title="Record the outcome" phone={phone} />
-        {phone && <PageTitle>Record the outcome</PageTitle>}
+        {phone && <h1 className="shell-title">Record the outcome</h1>}
         <PageNotice notice={notice} onRecheck={recheck} />
         {page.kind === 'refused' && <Problem message={page.message} />}
         <NotOpen id={id} />
@@ -161,7 +168,7 @@ export function OutcomeView({ id }: { id: string }) {
   return (
     <div className={phone ? 'resp-page resp-page--phone rfp-page' : 'resp-page rfp-page'}>
       <Header id={id} item={current} title="Record the outcome" phone={phone} />
-      {phone && <PageTitle>Record the outcome</PageTitle>}
+      {phone && <h1 className="shell-title">Record the outcome</h1>}
       <PageNotice notice={notice} onRecheck={recheck} />
       <div className="resp-board">
         <div className="resp-main rfp-main">
@@ -181,10 +188,13 @@ export function OutcomeView({ id }: { id: string }) {
         </div>
         {!phone && (
           <aside className="resp-aside" aria-label="About recording the outcome">
-            <Callout kind="info">
-              The client doesn&rsquo;t log in. You record their decision with proof, such as the award or regret letter. Only roles PSL allows can
-              record outcomes.
-            </Callout>
+            <div className="psl-callout psl-callout--info">
+              <InfoIcon />
+              <span>
+                The client doesn&rsquo;t log in. You record their decision with proof, such as the award or regret letter. Only roles PSL allows can
+                record outcomes.
+              </span>
+            </div>
           </aside>
         )}
       </div>

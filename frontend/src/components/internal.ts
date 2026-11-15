@@ -41,10 +41,11 @@ const FOCUSABLE =
 
 /**
  * A modal surface (drawer, sheet, dialog): focus moves in on open (to `initial`, else the first field, else the
- * panel), Tab stays inside, Esc closes, and focus returns to whatever had it before the surface opened.
+ * panel), Tab stays inside, Esc closes, and focus returns to `returnTo` when given (the button that opened it, where
+ * a press may not focus it, as on touch), else to whatever had it before the surface opened.
  * Returns the keydown handler for the panel.
  */
-export function useModal(panel: RefObject<HTMLElement | null>, onClose: () => void, initial?: RefObject<HTMLElement | null>) {
+export function useModal(panel: RefObject<HTMLElement | null>, onClose: () => void, initial?: RefObject<HTMLElement | null>, returnTo?: RefObject<HTMLElement | null>) {
   const close = useRef(onClose);
   useIsoLayoutEffect(() => {
     close.current = onClose;
@@ -58,7 +59,10 @@ export function useModal(panel: RefObject<HTMLElement | null>, onClose: () => vo
       (initial?.current ?? field ?? root).focus();
     }
     return () => {
-      if (opener && document.contains(opener)) opener.focus();
+      // Read on closing, on purpose: the opener named by the caller is the one on the page now.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      const back = returnTo?.current ?? opener;
+      if (back && document.contains(back)) back.focus();
     };
     // Runs once per opening; the refs are stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps
