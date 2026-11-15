@@ -1238,3 +1238,5 @@
 {"at":"2026-11-15T08:56:58Z","feature":"F-17","round":5,"kind":"finding","action":"add","finding":"QA-5-3","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-15T08:56:58Z","feature":"F-17","round":5,"kind":"finding","action":"add","finding":"QA-5-4","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-15T08:57:10Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-15T09:12:38Z","feature":"F-18","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"9d0fc6688283","findings":{"PMO-3-1":"low"},"written_at":"2026-11-15T09:12:32Z"}
+{"at":"2026-11-15T09:12:38Z","feature":"F-18","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
