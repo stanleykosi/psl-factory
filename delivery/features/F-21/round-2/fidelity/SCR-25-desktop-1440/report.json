@@ -1,0 +1,2013 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T14:59:43.517Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-25-desktop.dc.html",
+  "boardName": "SCR-25-desktop.dc.html",
+  "pageUrl": "http://localhost:4743/frozen/default-1440.html",
+  "viewport": {
+    "width": 1440,
+    "height": 1180
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-21/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 72.8 is below 90.",
+    "19 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 46.8,
+    "coverageWithExceptions": 100,
+    "visual": 72.8
+  },
+  "visual": {
+    "score": 72.8,
+    "allCellsScore": 79.8,
+    "width": 1440,
+    "height": 1180,
+    "boardHeight": 1180,
+    "pageHeight": 1933,
+    "cell": 12,
+    "contentCells": 8799,
+    "mismatchedCells": 2395
+  },
+  "coverage": {
+    "total": 62,
+    "found": 29,
+    "coverage": 46.8,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1194,
+          "y": 9,
+          "w": 118,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 98,
+        "looks": [],
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1084,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 1029
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1876
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LAGOON HEALTH / WEEKLY CLIENT REPORT · WCR-0216",
+        "pageName": "WEEKLY CLIENT REPORT · WCR-0216",
+        "pageRole": "text",
+        "similarity": 86,
+        "looks": [
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 269,
+          "y": 85,
+          "w": 258,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Write this week's client update",
+        "pageName": "Write this week's client update",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 594,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Reviewed weekly client report · week 5–11 Nov · goes to Lagoon Health after PMO Lead review.",
+        "pageName": "Reviewed weekly client report · week 5–11 Nov · goes to Lagoon Health after PMO Lead review.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 176,
+          "w": 1264,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 243,
+          "w": 596,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Send to Tola to assemble",
+        "pageName": "Send to Tola to assemble",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #C8401C on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 108,
+          "y": 928,
+          "w": 340,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 1811,
+          "w": 198,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Save draft",
+        "pageName": "Save draft",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 458,
+          "y": 928,
+          "w": 170,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 553,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next: Tola assembles the report on the client template; the PMO Lead reviews it before it goes to Lagoon Health.",
+        "pageName": "Next: Tola assembles the report on the client template; the PMO Lead reviews it before it goes to Lagoon Health.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text size 12px on the board, 14px on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 108,
+          "y": 994,
+          "w": 862,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 692,
+          "w": 308,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Review and decide",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 214,
+          "w": 340,
+          "h": 537
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 363,
+          "w": 340,
+          "h": 1514
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MEETINGS",
+        "pageName": "MEETINGS",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Mono on the board, Archivo on the page",
+          "text size 11px on the board, 14px on the page",
+          "weight 400 on the board, 800 on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page",
+          "bar under it on the page (#1F2427), none on the board"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 262,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 638,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Weekly sync with Lagoon Health · 10 Nov",
+        "pageName": "Weekly sync with Lagoon Health · 10 Nov",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 1052,
+          "y": 282,
+          "w": 239,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 705,
+          "w": 266,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "UAT walkthrough · 11 Nov",
+        "pageName": "UAT walkthrough · 11 Nov",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 1052,
+          "y": 306,
+          "w": 151,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 745,
+          "w": 168,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MILESTONES COMPLETED",
+        "pageName": "Milestones",
+        "pageRole": "text",
+        "similarity": 80,
+        "looks": [
+          "font IBM Plex Mono on the board, IBM Plex Sans on the page",
+          "text size 11px on the board, 14px on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page",
+          "capitals on the board, not on the page",
+          "background none on the board, #FFFFFF on the page"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 345,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone 2 · UAT signed 11 Nov",
+        "pageName": "Milestone 2 · UAT signed 11 Nov",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 1052,
+          "y": 365,
+          "w": 188,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 874,
+          "w": 207,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTIONS",
+        "pageName": "Actions",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Mono on the board, IBM Plex Sans on the page",
+          "text size 11px on the board, 14px on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page",
+          "capitals on the board, not on the page",
+          "background none on the board, #FFFFFF on the page"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 404,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 556,
+          "y": 177,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client to send test accounts · due 13 Nov",
+        "pageName": "Client to send test accounts · due 13 Nov",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 1052,
+          "y": 448,
+          "w": 239,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1003,
+          "w": 264,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISSUES OPEN",
+        "pageName": "ISSUES OPEN",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Mono on the board, Archivo on the page",
+          "text size 11px on the board, 14px on the page",
+          "weight 400 on the board, 800 on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page",
+          "bar under it on the page (#1F2427), none on the board"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 487,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 1118,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0233 Login fails on older Android phones · High",
+        "pageName": "ISS-0233 Login fails on older Android phones · High",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 1051,
+          "y": 507,
+          "w": 285,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1185,
+          "w": 335,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CHANGES",
+        "pageName": "CHANGES",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Mono on the board, Archivo on the page",
+          "text size 11px on the board, 14px on the page",
+          "weight 400 on the board, 800 on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page",
+          "bar under it on the page (#1F2427), none on the board"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 562,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 1247,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CR-0031 Add SMS reminders · being assessed",
+        "pageName": "CR-0031 Add SMS reminders · being assessed",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 1052,
+          "y": 582,
+          "w": 270,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1314,
+          "w": 299,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent Since last week: 1 milestone completed, 3 actions now overdue, 1 new change request. I've listed the records; the words to the client are yours.",
+        "pageName": "Since last week: 1 milestone completed, 3 actions now overdue, 1 new change request. I've listed the records; the words to the client are yours.",
+        "pageRole": "text",
+        "similarity": 96,
+        "looks": [],
+        "boardBox": {
+          "x": 1072,
+          "y": 638,
+          "w": 266,
+          "h": 101
+        },
+        "pageBox": {
+          "x": 100,
+          "y": 318,
+          "w": 899,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "pageName": "Tola",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1072,
+          "y": 639,
+          "w": 27,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 100,
+          "y": 295,
+          "w": 899,
+          "h": 21
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "LAGOON HEALTH",
+        "key": "link: LAGOON HEALTH",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 94,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You write these four parts; the factory adds the summary and standard scope wording. Each part must cite at least one of this week's records. \"TBD\" or \"unknown\" aren't accepted.",
+        "key": "text: You write these four parts; the factory adds the summary and standard scope wording. Each part must cite at least one of this week's records. \"TBD\" or \"unknown\" aren't accepted.",
+        "container": "main",
+        "boardBox": {
+          "x": 148,
+          "y": 244,
+          "w": 810,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 7: the same words are on the page (the server's 422 message in the form's alert, per-part messages under their inputs, the week-end sentence in the section note, the saved parts in the form's text areas); the page draws them under a different role or inside a form control, and the two good parts stay in the form.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Status",
+        "key": "text: Status",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 312,
+          "w": 862,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone 2 is complete: Lagoon Health signed UAT on 11 Nov. Work on milestone 3 (go-live) has started.",
+        "key": "text: Milestone 2 is complete: Lagoon Health signed UAT on 11 Nov. Work on milestone 3 (go-live) has started.",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 336,
+          "w": 862,
+          "h": 88
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cites:",
+        "key": "text: Cites:",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 432,
+          "w": 31,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone 2 · UAT signed",
+        "key": "text: Milestone 2 · UAT signed",
+        "container": "main",
+        "boardBox": {
+          "x": 145,
+          "y": 430,
+          "w": 172,
+          "h": 20
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "UAT walkthrough",
+        "key": "text: UAT walkthrough",
+        "container": "main",
+        "boardBox": {
+          "x": 323,
+          "y": 430,
+          "w": 113,
+          "h": 20
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "+ cite a record",
+        "key": "link: + cite a record",
+        "container": "main",
+        "boardBox": {
+          "x": 442,
+          "y": 432,
+          "w": 77,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Risks",
+        "key": "text: Risks",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 466,
+          "w": 862,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Login fails on some older Android phones (high). A fix is in testing; go-live waits on it.",
+        "key": "text: Login fails on some older Android phones (high). A fix is in testing; go-live waits on it.",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 490,
+          "w": 862,
+          "h": 88
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cites:",
+        "key": "text: Cites:",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 586,
+          "w": 31,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0233",
+        "key": "text: ISS-0233",
+        "container": "main",
+        "boardBox": {
+          "x": 145,
+          "y": 584,
+          "w": 67,
+          "h": 20
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "+ cite a record",
+        "key": "link: + cite a record",
+        "container": "main",
+        "boardBox": {
+          "x": 217,
+          "y": 586,
+          "w": 77,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Timeline",
+        "key": "text: Timeline",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 620,
+          "w": 862,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Go-live remains planned for 4 Dec, subject to the login fix and test accounts from your team.",
+        "key": "text: Go-live remains planned for 4 Dec, subject to the login fix and test accounts from your team.",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 644,
+          "w": 862,
+          "h": 88
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cites:",
+        "key": "text: Cites:",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 740,
+          "w": 31,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Weekly sync · 10 Nov",
+        "key": "text: Weekly sync · 10 Nov",
+        "container": "main",
+        "boardBox": {
+          "x": 145,
+          "y": 738,
+          "w": 146,
+          "h": 20
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "+ cite a record",
+        "key": "link: + cite a record",
+        "container": "main",
+        "boardBox": {
+          "x": 297,
+          "y": 740,
+          "w": 77,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next steps",
+        "key": "text: Next steps",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 774,
+          "w": 862,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Your team: send test accounts by 13 Nov. Ours: finish the login fix and assess the SMS reminders change.",
+        "key": "text: Your team: send test accounts by 13 Nov. Ours: finish the login fix and assess the SMS reminders change.",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 798,
+          "w": 862,
+          "h": 88
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cites:",
+        "key": "text: Cites:",
+        "container": "main",
+        "boardBox": {
+          "x": 108,
+          "y": 894,
+          "w": 31,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Test accounts action",
+        "key": "text: Test accounts action",
+        "container": "main",
+        "boardBox": {
+          "x": 145,
+          "y": 892,
+          "w": 146,
+          "h": 20
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CR-0031",
+        "key": "text: CR-0031",
+        "container": "main",
+        "boardBox": {
+          "x": 297,
+          "y": 892,
+          "w": 60,
+          "h": 20
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "+ cite a record",
+        "key": "link: + cite a record",
+        "container": "main",
+        "boardBox": {
+          "x": 363,
+          "y": 894,
+          "w": 77,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "THIS WEEK'S RECORDS · 5–11 NOV",
+        "key": "text: THIS WEEK'S RECORDS · 5–11 NOV",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1014,
+          "y": 216,
+          "w": 336,
+          "h": 35
+        },
+        "exception": {
+          "reason": "Conflicts 4: the records panel is five facts sections after the form in the frame's main column; the board's panel title and right-hand column are not drawn.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Weekly sync with Lagoon Health · 10 Nov",
+        "key": "checkbox: Weekly sync with Lagoon Health · 10 Nov",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 284,
+          "w": 16,
+          "h": 16
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "UAT walkthrough · 11 Nov",
+        "key": "checkbox: UAT walkthrough · 11 Nov",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 308,
+          "w": 16,
+          "h": 16
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Milestone 2 · UAT signed 11 Nov",
+        "key": "checkbox: Milestone 2 · UAT signed 11 Nov",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 367,
+          "w": 16,
+          "h": 16
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "3 overdue · 1 without an owner",
+        "key": "checkbox: 3 overdue · 1 without an owner",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 426,
+          "w": 16,
+          "h": 16
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3 overdue · 1 without an owner",
+        "key": "text: 3 overdue · 1 without an owner",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1052,
+          "y": 424,
+          "w": 181,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Client to send test accounts · due 13 Nov",
+        "key": "checkbox: Client to send test accounts · due 13 Nov",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 450,
+          "w": 16,
+          "h": 16
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "ISS-0233 Login fails on older Android phones · High",
+        "key": "checkbox: ISS-0233 Login fails on older Android phones · High",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 509,
+          "w": 15,
+          "h": 16
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "CR-0031 Add SMS reminders · being assessed",
+        "key": "checkbox: CR-0031 Add SMS reminders · being assessed",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 584,
+          "w": 16,
+          "h": 16
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Tunde Bello · PMO\"",
+        "kind": "Text",
+        "name": "Tunde Bello · PMO",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1084,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Link \"Assistant\""
+        ]
+      },
+      {
+        "label": "Text \"LAGOON HEALTH / WEEKLY CLIENT REPORT · WCR-0216\"",
+        "kind": "Text",
+        "name": "LAGOON HEALTH / WEEKLY CLIENT REPORT · WCR-0216",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 269,
+          "y": 85,
+          "w": 258,
+          "h": 15
+        },
+        "reasons": [
+          "across the page: middle on the board (50% across), left on the page (28% across)",
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"MEETINGS\"",
+        "kind": "Text",
+        "name": "MEETINGS",
+        "boardBox": {
+          "x": 1028,
+          "y": 262,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 638,
+          "w": 898,
+          "h": 43
+        },
+        "reasons": [
+          "across the page: right on the board (82% across), middle on the page (37% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Weekly sync with Lagoon Health · 10 Nov\"",
+        "kind": "Text",
+        "name": "Weekly sync with Lagoon Health · 10 Nov",
+        "boardBox": {
+          "x": 1052,
+          "y": 282,
+          "w": 239,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 705,
+          "w": 266,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (81% across), left on the page (16% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"UAT walkthrough · 11 Nov\"",
+        "kind": "Text",
+        "name": "UAT walkthrough · 11 Nov",
+        "boardBox": {
+          "x": 1052,
+          "y": 306,
+          "w": 151,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 745,
+          "w": 168,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (78% across), left on the page (13% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"MILESTONES COMPLETED\"",
+        "kind": "Text",
+        "name": "MILESTONES COMPLETED",
+        "boardBox": {
+          "x": 1028,
+          "y": 345,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"UAT walkthrough · 11 Nov\"; on the page it comes after Heading \"Write this week's client update\"",
+          "across the page: right on the board (82% across), left on the page (16% across)",
+          "inside a side panel on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"Milestone 2 · UAT signed 11 Nov\"",
+        "kind": "Text",
+        "name": "Milestone 2 · UAT signed 11 Nov",
+        "boardBox": {
+          "x": 1052,
+          "y": 365,
+          "w": 188,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 874,
+          "w": 207,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (80% across), left on the page (14% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"ACTIONS\"",
+        "kind": "Text",
+        "name": "ACTIONS",
+        "boardBox": {
+          "x": 1028,
+          "y": 404,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 556,
+          "y": 177,
+          "w": 82,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Milestone 2 · UAT signed 11 Nov\"; on the page it comes after Text \"MILESTONES COMPLETED\"",
+          "across the page: right on the board (82% across), middle on the page (41% across)",
+          "inside a side panel on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"Client to send test accounts · due 13 Nov\"",
+        "kind": "Text",
+        "name": "Client to send test accounts · due 13 Nov",
+        "boardBox": {
+          "x": 1052,
+          "y": 448,
+          "w": 239,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1003,
+          "w": 264,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (81% across), left on the page (16% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"ISSUES OPEN\"",
+        "kind": "Text",
+        "name": "ISSUES OPEN",
+        "boardBox": {
+          "x": 1028,
+          "y": 487,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 1118,
+          "w": 898,
+          "h": 43
+        },
+        "reasons": [
+          "across the page: right on the board (82% across), middle on the page (37% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"ISS-0233 Login fails on older Android phones · High\"",
+        "kind": "Text",
+        "name": "ISS-0233 Login fails on older Android phones · High",
+        "boardBox": {
+          "x": 1051,
+          "y": 507,
+          "w": 285,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1185,
+          "w": 335,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (83% across), left on the page (19% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 1029
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1876
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"ISS-0233 Login fails on older Android phones · High\"; on the page it comes after Text \"Milestone 2 · UAT signed 11 Nov\""
+        ]
+      },
+      {
+        "label": "Text \"CHANGES\"",
+        "kind": "Text",
+        "name": "CHANGES",
+        "boardBox": {
+          "x": 1028,
+          "y": 562,
+          "w": 308,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 1247,
+          "w": 898,
+          "h": 43
+        },
+        "reasons": [
+          "across the page: right on the board (82% across), middle on the page (37% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"CR-0031 Add SMS reminders · being assessed\"",
+        "kind": "Text",
+        "name": "CR-0031 Add SMS reminders · being assessed",
+        "boardBox": {
+          "x": 1052,
+          "y": 582,
+          "w": 270,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1314,
+          "w": 299,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (82% across), left on the page (18% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Tola\"",
+        "kind": "Text",
+        "name": "Tola",
+        "boardBox": {
+          "x": 1072,
+          "y": 639,
+          "w": 27,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 100,
+          "y": 295,
+          "w": 899,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"CR-0031 Add SMS reminders · being assessed\"; on the page it comes after Text \"Reviewed weekly client report · week 5–11 Nov · goes to Lagoon Health after PMO Lead review.\"",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Tola · PMO agent Since last week: 1 milestone completed, 3 actions now overdue, 1 new change request. I've listed the records; the words to the client are yours.\"",
+        "kind": "Text",
+        "name": "Tola · PMO agent Since last week: 1 milestone completed, 3 actions now overdue, 1 new change request. I've listed the records; the words to the client are yours.",
+        "boardBox": {
+          "x": 1072,
+          "y": 638,
+          "w": 266,
+          "h": 101
+        },
+        "pageBox": {
+          "x": 100,
+          "y": 318,
+          "w": 899,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Tola\"; on the page it comes after Text \"Tola\"",
+          "across the page: right on the board (84% across), middle on the page (38% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Link \"Send to Tola to assemble\"",
+        "kind": "Link",
+        "name": "Send to Tola to assemble",
+        "boardBox": {
+          "x": 108,
+          "y": 928,
+          "w": 340,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 1811,
+          "w": 198,
+          "h": 50
+        },
+        "reasons": [
+          "across the page: left on the board (19% across), right on the page (78% across)",
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Save draft\"",
+        "kind": "Link",
+        "name": "Save draft",
+        "boardBox": {
+          "x": 458,
+          "y": 928,
+          "w": 170,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 553,
+          "w": 308,
+          "h": 50
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Send to Tola to assemble\"; on the page it comes after Text \"Tola · PMO agent Since last week: 1 milestone completed, 3 actions now overdue, 1 new change request. I've listed the records; the words to the client are yours.\"",
+          "across the page: middle on the board (38% across), right on the page (82% across)",
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Pagination \"Next: Tola assembles the report on the client template; the PMO Lead reviews it before it goes to Lagoon Health.\"",
+        "kind": "Pagination",
+        "name": "Next: Tola assembles the report on the client template; the PMO Lead reviews it before it goes to Lagoon Health.",
+        "boardBox": {
+          "x": 108,
+          "y": 994,
+          "w": 862,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 692,
+          "w": 308,
+          "h": 63
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Save draft\"; on the page it comes after Text \"Weekly sync with Lagoon Health · 10 Nov\"",
+          "across the page: middle on the board (37% across), right on the page (82% across)",
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1036,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 439,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LAGOON HEALTH",
+        "container": "navigation",
+        "pageBox": {
+          "x": 149,
+          "y": 85,
+          "w": 120,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION NEEDED",
+        "container": "main",
+        "pageBox": {
+          "x": 1239,
+          "y": 120,
+          "w": 113,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Project",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 550,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Journey",
+        "container": "navigation",
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Documents",
+        "container": "navigation",
+        "pageBox": {
+          "x": 279,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Money",
+        "container": "navigation",
+        "pageBox": {
+          "x": 386,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Registers",
+        "container": "navigation",
+        "pageBox": {
+          "x": 462,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "DECIDE",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1014,
+          "y": 365,
+          "w": 336,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next: Tola assembles the report on the client template; the PMO Lead reviews it before it goes to Lagoon Health.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 422,
+          "w": 308,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Send to Tola to assemble",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 495,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Form",
+        "role": "form",
+        "name": "Send to Tola to assemble",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1012,
+          "y": 633,
+          "w": 340,
+          "h": 1244
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "SEND TO TOLA TO ASSEMBLE",
+        "container": "form",
+        "pageBox": {
+          "x": 1014,
+          "y": 635,
+          "w": 336,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Cites for status (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 929,
+          "w": 308,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Records you cited in the saved draft stay on it until you choose new ones.",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 979,
+          "w": 308,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Cites for risks (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 1189,
+          "w": 308,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Records you cited in the saved draft stay on it until you choose new ones.",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 1239,
+          "w": 308,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Cites for timeline (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 1449,
+          "w": 308,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Records you cited in the saved draft stay on it until you choose new ones.",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 1499,
+          "w": 308,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "combobox",
+        "name": "Cites for next steps (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 1709,
+          "w": 308,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Records you cited in the saved draft stay on it until you choose new ones.",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 1759,
+          "w": 308,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Cancel",
+        "container": "form",
+        "pageBox": {
+          "x": 1235,
+          "y": 1811,
+          "w": 101,
+          "h": 50
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

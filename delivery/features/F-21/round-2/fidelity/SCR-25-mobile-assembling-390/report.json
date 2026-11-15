@@ -1,0 +1,353 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T15:00:07.251Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-25-mobile-assembling.dc.html",
+  "boardName": "SCR-25-mobile-assembling.dc.html",
+  "pageUrl": "http://localhost:4741/work/W-2203",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-21/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 76.9 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 42.9,
+    "coverageWithExceptions": 100,
+    "visual": 76.9
+  },
+  "visual": {
+    "score": 76.9,
+    "allCellsScore": 79.7,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2051,
+    "mismatchedCells": 474
+  },
+  "coverage": {
+    "total": 7,
+    "found": 3,
+    "coverage": 42.9,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WCR-0216",
+        "pageName": "WCR-0216",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Weekly report",
+        "pageName": "Weekly client report · 5–11 Nov",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Weekly report\" on the board, \"Weekly client report · 5–11 Nov\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Assembling the weekly report",
+        "pageName": "ASSEMBLING THE WEEKLY REPORT",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "capitals on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 74,
+          "y": 116,
+          "w": 188,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 285,
+          "w": 354,
+          "h": 37
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 64,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11 (and 5 for the phone back links): top bar, signed-in name and role, Setup nav and the phone back link belong to the frame, not to this feature.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent · step 3 of 4",
+        "key": "text: Tola · PMO agent · step 3 of 4",
+        "container": "page",
+        "boardBox": {
+          "x": 74,
+          "y": 152,
+          "w": 188,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 9: the page draws the agent name, \"PMO agent · step 3 of 4\" and the start time in the checklist section's note (backend-composed text); there is no field of its own for them.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WORKING",
+        "key": "text: WORKING",
+        "container": "page",
+        "boardBox": {
+          "x": 272,
+          "y": 131,
+          "w": 86,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Since the line layout (D-73) the work item page no longer draws the agent card, which used to say WORKING. The board draws it as the tag of its agent panel; the workspace has no section-level tag field, and the checklist's own rows already say Done and In progress.",
+          "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-83, D-85"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Started 12 Nov 09:05",
+        "key": "text: Started 12 Nov 09:05",
+        "container": "page",
+        "boardBox": {
+          "x": 18,
+          "y": 382,
+          "w": 354,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 9 and 5: the start time rides in the checklist note, one string; the phone board draws it as its own line.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"WCR-0216\"",
+        "kind": "Text",
+        "name": "WCR-0216",
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (88% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Text \"Assembling the weekly report\"",
+        "kind": "Text",
+        "name": "Assembling the weekly report",
+        "boardBox": {
+          "x": 74,
+          "y": 116,
+          "w": 188,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 285,
+          "w": 354,
+          "h": 37
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 240,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Start work",
+        "container": "page",
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ASSEMBLING",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 94,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 173,
+          "w": 334,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola doesn't write what the client reads about the project. She places your words on the template; the summary and scope wording are standard.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 196,
+          "w": 334,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

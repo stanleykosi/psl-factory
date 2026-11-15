@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-21",
   "outcome": "The weekly client report line: the PM writes four cited parts, Tola assembles, the PMO Lead reviews (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-LINE-WEEKLY"
   ],
@@ -90,6 +90,18 @@
       "at": "2026-11-15T14:12:56Z",
       "seconds": 104.7,
       "evidence_ref": "delivery/features/F-21/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T15:03:30Z",
+      "seconds": 113.6,
+      "evidence_ref": "delivery/features/F-21/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -274,14 +286,28 @@
         "delivery/features/F-21/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T14:17:43Z",
           "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T15:03:30Z",
+          "refs": [
+            "798c17f8"
+          ],
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "798c17f8"
       ]
     },
     {
@@ -343,14 +369,28 @@
         "delivery/features/F-21/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T14:17:43Z",
           "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T15:03:30Z",
+          "refs": [
+            "798c17f8"
+          ],
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "798c17f8"
       ]
     },
     {
@@ -412,14 +452,28 @@
         "delivery/features/F-21/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T14:17:43Z",
           "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T15:03:30Z",
+          "refs": [
+            "798c17f8"
+          ],
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "798c17f8"
       ]
     },
     {
@@ -435,14 +489,28 @@
         "delivery/features/F-21/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T14:17:43Z",
           "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T15:03:30Z",
+          "refs": [
+            "798c17f8"
+          ],
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "798c17f8"
       ]
     },
     {
@@ -580,7 +648,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
     "task_branch": "fe-line-weekly-the-weekly-client-report-line-the-pm-wri",
-    "head_sha": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
+    "head_sha": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-21",
     "pr_url": null,
     "pr_number": null,
@@ -1062,6 +1130,14 @@
       "round": 2,
       "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T15:03:30Z",
+      "round": 2,
+      "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+      "reason": null
     }
   ],
   "routing": {
@@ -1079,9 +1155,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4"
   },
   "blocked": null
 }

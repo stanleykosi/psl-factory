@@ -453,42 +453,42 @@
     {
       "board": "SCR-25-desktop",
       "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-83, D-85",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 75.3 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 72.8 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
     },
     {
       "board": "SCR-25-desktop-invalid",
       "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-83, D-85",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 78.3 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 79.9 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
     },
     {
       "board": "SCR-25-desktop-assembling",
       "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-83, D-85",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 77.0 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 73.7 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
     },
     {
       "board": "SCR-25-desktop-review",
       "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-83, D-85",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 75.5 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 76.6 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
     },
     {
       "board": "SCR-25-mobile",
       "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-83, D-85",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 70.8 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 72.9 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
     },
     {
       "board": "SCR-25-mobile-invalid",
       "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-83, D-85",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 76.5 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 79.0 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
     },
     {
       "board": "SCR-25-mobile-assembling",
       "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-83, D-85",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 76.3 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 76.9 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
     },
     {
       "board": "SCR-25-mobile-review",
       "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-83, D-85",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 80.4 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 80.3 (>= 70). The rest needs fields the API lacks (project tab counts, phone back label, per-section agent tag) or contradicts approved choices (the Decide panel, the open-on-press form D-69). Approved as an exception on this board."
     }
   ]
 }
