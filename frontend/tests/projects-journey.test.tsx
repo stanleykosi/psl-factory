@@ -247,7 +247,7 @@ describe('tabs other than Journey (contents come with FE-M3-PROJECT-TABS)', () =
     expect(projectTabs()[index].getAttribute('aria-selected')).toBe('true');
     expect(projectTabs()[index].tabIndex).toBe(0);
     const panel = screen.getByRole('tabpanel', { name: projectTabs()[index].textContent!.replace(/ ?\d+$/, '') });
-    expect(within(panel).getByRole('heading', { level: 3, name: heading })).toBeTruthy();
+    expect(within(panel).getByRole('heading', { level: 2, name: heading })).toBeTruthy();
     expect(within(panel).getByRole('link', { name: 'Open the journey' }).getAttribute('href')).toBe('/projects/P-0101');
     expect(lineItems()).toHaveLength(0);
     expect(calls).toHaveLength(1);

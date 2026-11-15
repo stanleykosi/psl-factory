@@ -41,10 +41,13 @@
 
 .projects__route, .projects__phoneline { margin: 0; color: var(--ink-muted); }
 .projects__phoneline { display: none; }
+.projects__facts { line-height: normal; }
 .projects__facts .psl-fact b { font-weight: 400; }
 .projects__body { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
 .projects__journey { flex: 999 1 600px; min-width: 0; }
 .projects__journeybody { padding: 0; }
+/* SCR-07's journey head: 15px caps, 12px by 16px */
+.projects__journey > .psl-panel__head { padding: var(--space-3) var(--space-4); font-size: 15px; font-weight: 700; letter-spacing: .04em; }
 .projects__lines { list-style: none; margin: 0; padding: 0; }
 .projects__line { position: relative; display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: var(--space-14px); align-items: center; padding: var(--space-3) var(--space-4); border-bottom: var(--rule-thin) solid var(--rule-soft); line-height: normal; }
 .projects__line:hover { background: var(--surface-subtle); }

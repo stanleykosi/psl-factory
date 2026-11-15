@@ -67,7 +67,10 @@ describe('ListToolbar and FilterPanel', () => {
     render(<Toolbar />);
     const filter = screen.getByRole('button', { name: /^Filter/ });
     expect(filter.querySelector('.psl-badge--signal')?.textContent).toBe('1');
-    expect(screen.getByRole('status').textContent).toBe('4 of 32');
+    // the count is a polite live region without the status role (it reads as the page's text, as the boards draw it)
+    const count = document.querySelector('.psl-resultcount') as HTMLElement;
+    expect(count.getAttribute('aria-live')).toBe('polite');
+    expect(count.textContent).toBe('4 of 32');
     expect(screen.getByRole('button', { name: 'Remove Line filter' })).toBeTruthy();
     fireEvent.click(filter);
     const panel = screen.getByRole('dialog', { name: 'Filter' });
@@ -84,7 +87,7 @@ describe('ListToolbar and FilterPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Show 4 results' }));
     expect(screen.queryByRole('dialog')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Remove Line filter' }));
-    expect(screen.getByRole('status').textContent).toBe('32 items');
+    expect(count.textContent).toBe('32 items');
     expect(screen.queryByRole('button', { name: 'Clear all' })).toBeNull();
   });
 });

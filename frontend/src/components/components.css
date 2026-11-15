@@ -41,6 +41,9 @@
 /* the select's arrow: the boards' small ▾ (D-93), drawn by CSS so it is not part of the control's text */
 .cmp-selectarrow::before { content: "▾"; }
 
+/* an empty state's heading looks the same at either level (18px, as the bundle draws the h3) */
+.psl-empty h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 18px; font-stretch: 112%; }
+
 /* text area drawn as one line (D-93); it grows with its text */
 .psl-input--area.cmp-area--line { min-height: var(--control-md); }
 
@@ -91,6 +94,9 @@
 .cmp-layer--sheet { align-items: flex-end; }
 .cmp-layer--center { align-items: center; justify-content: center; padding: var(--space-5); }
 .cmp-panel { position: relative; outline: none; }
+/* the drawer head's words stack: eyebrow, title, one line of context, at the page's line height (the boards) */
+.cmp-headtext { display: flex; flex-direction: column; min-width: 0; line-height: normal; }
+.cmp-headtext .psl-drawer__title { overflow-wrap: anywhere; }
 /* the close button keeps the head as tall as the boards draw it */
 .cmp-panel > .psl-drawer__head > .psl-iconbtn { margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0 0; }
 .cmp-layer--drawer > .psl-drawer { height: 100%; }

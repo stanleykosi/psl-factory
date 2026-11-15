@@ -170,6 +170,7 @@ function ComingNext({ tab, base }: { tab: ProjectTab; base: string }) {
   const label = PROJECT_TABS.find((t) => t.key === tab)?.label ?? '';
   return (
     <EmptyState
+      level={2}
       title={`${label} ${label.endsWith('s') ? 'come' : 'comes'} next`}
       className="projects__coming"
       action={<Link href={base}>Open the journey</Link>}

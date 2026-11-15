@@ -29,10 +29,12 @@ export function Skeleton({ widths = [70, 45, 60], className }: { widths?: number
   );
 }
 
-export function EmptyState({ title, children, action, className }: { title: string; children: ReactNode; action?: ReactNode; className?: string }) {
+/** `level`: the heading level that fits the page outline (2 straight under the page title, 3 inside a section). */
+export function EmptyState({ title, children, action, level = 3, className }: { title: string; children: ReactNode; action?: ReactNode; level?: 2 | 3; className?: string }) {
+  const Heading = level === 2 ? 'h2' : 'h3';
   return (
     <div className={cx('psl-empty', className)}>
-      <h3>{title}</h3>
+      <Heading>{title}</Heading>
       <p>{children}</p>
       {action}
     </div>

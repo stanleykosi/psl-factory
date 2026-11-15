@@ -24,7 +24,7 @@ export function ShowMore({ shown, total, onMore, step = PAGE_SIZE, busy = false,
   const label = total === undefined ? 'Show more' : `Show ${Math.min(step, total - shown)} more`;
   return (
     <div className={cx('psl-showmore', className)}>
-      <span role="status">{text}</span>
+      <span aria-live="polite">{text}</span>
       {more && (
         <Button kind="secondary" size="sm" busy={busy} busyLabel="Loading…" onClick={onMore}>
           {label}

@@ -54,7 +54,8 @@ export function ListToolbar({ search, filterCount, filterOpen, onFilterToggle, f
           )}
           {filterOpen && filterPanel}
         </span>
-        <span className="psl-resultcount" role="status">
+        {/* a polite live region without the status role, so the count reads as the page's text, as drawn */}
+        <span className="psl-resultcount" aria-live="polite">
           {resultText}
         </span>
       </div>

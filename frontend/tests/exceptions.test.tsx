@@ -193,7 +193,7 @@ describe('exceptions list', () => {
     serve(() => json(200, { items: [], as_of: fixture.as_of }));
     render(<ExceptionsList />);
     await settled();
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('No exceptions.');
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('No exceptions.');
     expect(screen.getByText('Everything is moving or verified.')).toBeTruthy();
     expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.queryByRole('table')).toBeNull();
@@ -253,7 +253,7 @@ describe('exceptions list', () => {
       render(<ExceptionsScreen />);
       await screen.findByText('This list is for Leads');
       expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('All exceptions');
-      expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('This list is for Leads');
+      expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('This list is for Leads');
       expect(screen.getByText('Your own exceptions appear in My work, under Needs me.')).toBeTruthy();
       expect(screen.getByRole('link', { name: 'Go to My work' }).getAttribute('href')).toBe('/my-work');
       expect(screen.queryByRole('table')).toBeNull();
@@ -319,12 +319,12 @@ describe('exceptions list', () => {
     serve(() => json(403, { code: 'forbidden', message: 'No.' }));
     const { unmount } = render(<ExceptionsList compact />);
     await screen.findByText('This list is for Leads');
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('This list is for Leads');
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('This list is for Leads');
     unmount();
     serve(() => json(200, { items: [], as_of: fixture.as_of }));
     render(<ExceptionsList compact />);
     await settled();
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('No exceptions.');
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('No exceptions.');
   });
 
   it('useExceptions is exported for reuse', () => {

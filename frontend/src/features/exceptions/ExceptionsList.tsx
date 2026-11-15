@@ -79,7 +79,7 @@ function ExceptionsCards({ rows }: { rows: ExceptionRow[] }) {
 
 function NoAccess() {
   return (
-    <EmptyState title="This list is for Leads" className="exc-empty" action={<Link href="/my-work">Go to My work</Link>}>
+    <EmptyState level={2} title="This list is for Leads" className="exc-empty" action={<Link href="/my-work">Go to My work</Link>}>
       Your own exceptions appear in My work, under Needs me.
     </EmptyState>
   );
@@ -147,7 +147,7 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
       body = (
         <>
           {narrowed && !compact ? (
-            <EmptyState
+            <EmptyState level={2}
               title="No exceptions match your search and filter."
               className="exc-empty"
               action={
@@ -161,7 +161,7 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
               Try other words, or clear them to see every exception.
             </EmptyState>
           ) : (
-            <EmptyState title="No exceptions." className="exc-empty">
+            <EmptyState level={2} title="No exceptions." className="exc-empty">
               Everything is moving or verified.
             </EmptyState>
           )}
