@@ -9,9 +9,8 @@
 
 /* queue tabs: buttons drawn as .psl-tab; on phones the strip scrolls sideways */
 .my-work__tabs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); min-width: 0; }
-.my-work__tab { border-top: none; border-left: none; border-bottom: none; font: inherit; font-weight: 500; }
-/* phone boards (SCR-01-mobile*): 15px words and 14px inside each tab */
-@media (max-width: 719.98px) { .my-work__tab { padding: 0 var(--space-14px); font-size: var(--text-body-phone-size); } }
+/* tabs: the joined 44px boxes come from the Tabs component; the phone boards (SCR-01-mobile*) set 15px words and 14px inside each tab */
+@media (max-width: 719.98px) { .my-work__tabs .psl-tab { padding: 0 var(--space-14px); font-size: var(--text-body-phone-size); } }
 .my-work__nocount { font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 
 /* toolbar: search, Filter, result count; chips beneath */

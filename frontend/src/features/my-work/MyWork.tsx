@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, ListToolbar, Loading, PageTitle, Segmented, Skeleton, Tabs, useIsPhone, type FilterChip } from '@/components';
+import { Button, Callout, EmptyState, ListToolbar, Loading, Segmented, Skeleton, Tabs, useIsPhone, type FilterChip } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { CaughtUp } from './CaughtUp';
@@ -368,7 +368,7 @@ export function MyWork() {
   return (
     <>
       <div className="my-work__head">
-        <PageTitle>My work</PageTitle>
+        <h1 className="shell-title">My work</h1>
         {asOf &&
           (refreshFailed ? (
             <p className="my-work__updated" role="status">

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 import type { Destination } from '@/api/types';
-import { EmptyState, PageTitle } from '@/components';
+import { EmptyState } from '@/components';
 
 import { useMe } from './AppShell';
 import { DESTINATIONS, visibleDestinations } from './destinations';
@@ -18,7 +18,7 @@ export function DestinationPage({ destination }: { destination: Destination }) {
   }
   return (
     <>
-      <PageTitle>{info.label}</PageTitle>
+      <h1 className="shell-title">{info.label}</h1>
       <EmptyState title={info.label}>This page is not built yet. It arrives in a later release.</EmptyState>
     </>
   );

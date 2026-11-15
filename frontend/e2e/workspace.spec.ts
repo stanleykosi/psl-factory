@@ -193,7 +193,7 @@ test('W-2007: queued is announced as Waiting; the 409 re-bases the next press on
   const form = page.getByRole('form', { name: 'Edit your update' });
   await form.getByLabel('Your update').fill('Login fix verified.');
   await form.getByRole('button', { name: 'Edit your update' }).click();
-  await expect(page.getByRole('alert').filter({ hasText: 'This changed while you were working. Showing version 5.' })).toBeVisible();
+  await expect(page.locator('.ws-notice').filter({ hasText: 'This changed while you were working. Showing version 5.' })).toBeVisible();
   await expect(form.getByLabel('Your update')).toHaveValue('Login fix verified.');
   await page.waitForTimeout(1000);
   expect((await log(request)).entries).toHaveLength(1);
@@ -262,7 +262,7 @@ test('W-2008: effect uncertain turns every step off; the reconcile answer goes o
   await page.setViewportSize(DESKTOP);
   await openItem(page, 'W-2008');
   await page.getByRole('button', { name: 'Approve and send' }).click();
-  await expect(page.getByRole('alert').filter({ hasText: 'Delivery to Lagoon Health couldn’t be confirmed.' })).toBeVisible();
+  await expect(page.locator('.ws-notice').filter({ hasText: 'Delivery to Lagoon Health couldn’t be confirmed.' })).toBeVisible();
   await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
   for (const b of await page.locator('.ws-steps button').all()) await expect(b).toHaveAttribute('aria-disabled', 'true');
   await page.getByRole('button', { name: 'Approve and send' }).click({ force: true });
@@ -279,7 +279,7 @@ test('W-2008 at 390: after the press the uncertain callout is on screen, clear o
   await page.setViewportSize(PHONE);
   await openItem(page, 'W-2008');
   await page.getByRole('button', { name: 'Approve and send' }).click();
-  const callout = page.getByRole('alert').filter({ hasText: 'Delivery to Lagoon Health couldn’t be confirmed.' });
+  const callout = page.locator('.ws-notice').filter({ hasText: 'Delivery to Lagoon Health couldn’t be confirmed.' });
   await expect(callout).toBeVisible();
   await expect.poll(async () => (await callout.boundingBox())!.y + (await callout.boundingBox())!.height).toBeLessThanOrEqual(PHONE.height);
   expect((await callout.boundingBox())!.y).toBeGreaterThanOrEqual(0);
