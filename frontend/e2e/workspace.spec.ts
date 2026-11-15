@@ -274,6 +274,17 @@ test('W-2008: effect uncertain turns every step off; the reconcile answer goes o
   expect(stepPosts()).toHaveLength(1);
 });
 
+test('W-2008 at 390: after the press the uncertain callout is on screen, clear of the pinned bar (QA-5-3)', async ({ page, context, baseURL }) => {
+  await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
+  await page.setViewportSize(PHONE);
+  await openItem(page, 'W-2008');
+  await page.getByRole('button', { name: 'Approve and send' }).click();
+  const callout = page.getByRole('alert').filter({ hasText: 'Delivery to Lagoon Health couldn’t be confirmed.' });
+  await expect(callout).toBeVisible();
+  await expect.poll(async () => (await callout.boundingBox())!.y + (await callout.boundingBox())!.height).toBeLessThanOrEqual(PHONE.height);
+  expect((await callout.boundingBox())!.y).toBeGreaterThanOrEqual(0);
+});
+
 test('W-2009: the decision step is a link to the decision page; following it opens the page and the workspace sent nothing', async ({ page }) => {
   await page.setViewportSize(DESKTOP);
   await openItem(page, 'W-2009');

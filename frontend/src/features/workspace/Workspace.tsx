@@ -104,9 +104,10 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   // A failure is told at the top of the page: bring it into view when the pressed control is somewhere else.
   const notices = useRef<HTMLDivElement>(null);
   const failure = flow.notice?.kind === 'failed' || flow.notice?.kind === 'problem' || flow.notice?.kind === 'uncertain' ? flow.notice : null;
+  // the re-read after the press can lay the page out again (the reconcile panel appears), so it looks again once that lands
   useEffect(() => {
     if (failure) notices.current?.querySelector('[role="alert"]')?.scrollIntoView?.({ block: 'nearest' });
-  }, [failure]);
+  }, [failure, workspace.revision]);
 
   const off = (step: Step) => flow.pending !== null || flow.allLocked || flow.locked.has(step.key) || page.refreshFailed;
 
@@ -312,7 +313,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                   {STEP_TEXT.decide}
                 </h2>
                 <div className="psl-panel__body ws-decide__body">
-                  <StepRow steps={workspaceSteps} hint={flow.allLocked ? STEP_TEXT.confirmFirst : undefined}>
+                  <StepRow steps={workspaceSteps} hint={flow.allLocked ? (item.reconcile && !hasReconcile ? STEP_TEXT.confirmFirstByOther : STEP_TEXT.confirmFirst) : undefined}>
                     {(s, describedBy) => control(s, `ws:${s.key}`, undefined, { describedBy })}
                   </StepRow>
                 </div>
