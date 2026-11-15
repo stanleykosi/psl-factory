@@ -1254,3 +1254,8 @@
 {"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
 {"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"MERGED","to":"DONE"}
+{"at":"2026-11-15T09:52:13Z","feature":"F-17","round":5,"kind":"finding","action":"reopen","finding":"QA-5-1","by":"qa"}
+{"at":"2026-11-15T09:52:13Z","feature":"F-17","round":5,"kind":"finding","action":"verify","finding":"QA-5-2","by":"qa"}
+{"at":"2026-11-15T09:52:13Z","feature":"F-17","round":5,"kind":"finding","action":"add","finding":"TECH-5-1","by":"reviewer-technical","severity":"low","owner":"builder","blocking":false,"role":"technical"}
+{"at":"2026-11-15T09:52:13Z","feature":"F-17","round":5,"kind":"finding","action":"add","finding":"QA-5-5","by":"qa","severity":"high","owner":"frontend","blocking":true,"role":"integrated_qa"}
+{"at":"2026-11-15T09:52:13Z","feature":"F-17","round":5,"kind":"finding","action":"fix","finding":"QA-5-5","by":"builder"}

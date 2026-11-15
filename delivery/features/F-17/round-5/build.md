@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 97574624fbd0843b80886ad80bd1d01fbb8e4e53
+COMMIT: ff48d19d80a904de760cf524166ad820107267dd
 BUILDER: builder
 LANE: records only
 
@@ -27,3 +27,7 @@ Validation:
 - Lock: `useWorkspaceStep` takes `awaitingReconcile` (= `Boolean(item.reconcile)`); `allLocked` = press lock OR that. Space: `.ws:has(.ws-decide--flow)` padding-bottom and html scroll-padding-bottom = `--control-lg` + 30px. F-09 code unchanged.
 - New e2e (390 and 320): press then scroll to bottom then Record and continue (200); press, reload, all steps aria-disabled, forced tap on Approve and send sends no POST, scroll to bottom, Record and continue (200). All 4 fail on af3b958 and pass now.
 - `bash delivery/checks.sh` exit 0. Playwright (workspace, response, work-item, work-item-board, decide, decide-board; E2E_PORT=4721 MOCK_PORT=4722, FRAME_FIXTURES=1): 155 passed, 0 failed. Design-fidelity not run (per instruction).
+
+### Base merge before final checks (coordinator)
+- Merged origin/dlv-00-delivery-setup (now including F-18, PR #29) at ff48d19d80a904de760cf524166ad820107267dd. Conflicts: WorkItemOverview.tsx imports (kept both: Workspace and RfpOutcomeLink) and F-17's own round-2 recipients-1440 fidelity report (kept the branch copy).
+- `bash delivery/checks.sh`: exit 0. Full Playwright suite (E2E_PORT=4841 MOCK_PORT=4842): 405 passed.
