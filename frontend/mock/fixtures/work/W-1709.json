@@ -80,6 +80,7 @@
         "Nothing is lost. The plan resumes at this station as soon as the role and rule exist."
       ],
       "note": "This is a business decision for PSL, not something the factory guesses.",
+      "note_first": true,
       "links": [
         {
           "label": "Open Setup",

@@ -23,12 +23,16 @@ export type Recorded = {
   summary?: string;
 };
 
-/** tasks[].response (openapi.json:1300-1593). F-09B's team_input fields (teams, blocking) are not read here. */
+export type ResponseTeam = { key: string; name: string; given: boolean; estimate_needed?: boolean };
+
+/** tasks[].response (openapi.json:1300-1593); teams and blocking are read by the team_input form (F-18). */
 export type TaskResponse = {
   variant: ResponseVariant;
   responders: Responder[];
   actions: ResponseAction[];
   versions?: ResponseVersion[];
+  teams?: ResponseTeam[];
+  blocking?: string;
   evidence_kind?: string;
   claim_required?: boolean;
   intro?: string;
@@ -73,7 +77,7 @@ export type ResponseWorkItem = Omit<WorkItem, 'tasks'> & {
 export type EvidenceUploadBody = { kind: string; filename: string; content_base64: string; case_revision: number };
 export type EvidenceUploadResult = { evidence_id: string; sha256: string; case_revision?: number };
 
-/** E-RESPONSE (openapi.json:4623-4984). team, estimate_person_days and what belong to F-09B and are never sent. */
+/** E-RESPONSE (openapi.json:4623-4984). team, estimate_person_days and what are sent by the team_input form only. */
 export type ResponseBody = {
   expected_revision: number;
   who: string;
@@ -86,6 +90,9 @@ export type ResponseBody = {
   evidence_ids?: string[];
   note?: string;
   received_via?: string;
+  team?: string;
+  estimate_person_days?: number;
+  what?: string;
 };
 export type ResponseResult = { task_id: string; work_state: WorkState; revision?: number; recorded?: Recorded; next?: string[] };
 

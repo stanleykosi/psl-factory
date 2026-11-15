@@ -2,13 +2,13 @@
 // recorded, by whom and with which options comes from the API; nothing here decides access.
 import type { AgentKey, ReconcileOutcome, Reconcile, Responder, ResponseTask, ResponseVariant, TaskResponse } from './contract';
 
-/** The variants this page records; the others (team input, go-live, handover) get the not-open state. */
-export const RECORDABLE: ReadonlySet<ResponseVariant> = new Set(['client_response', 'sow_signature']);
+/** The variants this page records; the others (go-live, handover) get the not-open state. */
+export const RECORDABLE: ReadonlySet<ResponseVariant> = new Set(['client_response', 'sow_signature', 'team_input']);
 
 export const RESPONSE_LABELS = {
   /** The SCR-02 waiting panel's link, in place of "Open the decision". */
-  entry: { client_response: 'Record the client’s response', sow_signature: 'Record the client’s signature' } as Partial<Record<ResponseVariant, string>>,
-  record: { client_response: 'Record response', sow_signature: 'Record signature' } as Partial<Record<ResponseVariant, string>>,
+  entry: { client_response: 'Record the client’s response', sow_signature: 'Record the client’s signature', team_input: 'Record team input' } as Partial<Record<ResponseVariant, string>>,
+  record: { client_response: 'Record response', sow_signature: 'Record signature', team_input: 'Record input' } as Partial<Record<ResponseVariant, string>>,
   busy: 'Recording…',
 };
 

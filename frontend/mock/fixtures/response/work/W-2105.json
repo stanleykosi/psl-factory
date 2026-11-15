@@ -1,0 +1,187 @@
+{
+  "id": "W-2105",
+  "title": "Tamarind Loans · loan origination RFP",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "state": "verified",
+  "revision": 7,
+  "stations": [
+    {
+      "name": "Requirements",
+      "status": "done"
+    },
+    {
+      "name": "Team input",
+      "status": "done"
+    },
+    {
+      "name": "Pricing",
+      "status": "done"
+    },
+    {
+      "name": "Submission",
+      "status": "done"
+    },
+    {
+      "name": "Outcome",
+      "status": "done"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "next_step": "The engagement EN-0042 takes over from this RFP.",
+  "sample": true,
+  "case_id": "C-2105",
+  "case_revision": 3,
+  "rfp": {
+    "reference": "TL-RFP-2026-014",
+    "title": "loan origination RFP",
+    "client": "Tamarind Loans",
+    "status": {
+      "kind": "won",
+      "label": "WON · 04 DEC",
+      "at": "2026-12-04T10:00:00Z"
+    },
+    "pm": {
+      "name": "Tunde Bello",
+      "role": "PM",
+      "is_you": true
+    },
+    "tabs": [
+      {
+        "key": "requirements",
+        "label": "Requirements",
+        "count": 64
+      },
+      {
+        "key": "team_input",
+        "label": "Team input",
+        "count": 4,
+        "of": 4
+      },
+      {
+        "key": "pricing",
+        "label": "Pricing"
+      },
+      {
+        "key": "submission",
+        "label": "Submission"
+      },
+      {
+        "key": "outcome",
+        "label": "Outcome",
+        "current": true
+      }
+    ]
+  },
+  "rfp_outcome": {
+    "submission": {
+      "id": "SUB-0031",
+      "label": "Submission pack v1 · emailed 26 Nov 15:42",
+      "sent_at": "2026-11-26T14:42:00Z",
+      "delivery": "delivery confirmed"
+    },
+    "results": [
+      "won",
+      "lost",
+      "pending",
+      "unknown"
+    ],
+    "reasons": [
+      {
+        "value": "price",
+        "label": "Price"
+      },
+      {
+        "value": "timeline",
+        "label": "Timeline"
+      },
+      {
+        "value": "scope_fit",
+        "label": "Scope fit"
+      },
+      {
+        "value": "other",
+        "label": "Other"
+      }
+    ],
+    "record_as": [
+      {
+        "value": "relationship_owner",
+        "label": "Relationship owner"
+      },
+      {
+        "value": "pm",
+        "label": "PM"
+      }
+    ],
+    "evidence_kind": "rfp_outcome_proof",
+    "lesson_categories": [
+      {
+        "value": "price",
+        "label": "Price"
+      },
+      {
+        "value": "timeline",
+        "label": "Timeline"
+      },
+      {
+        "value": "scope",
+        "label": "Scope"
+      },
+      {
+        "value": "strength",
+        "label": "Strength"
+      }
+    ],
+    "recorded": {
+      "result": "won",
+      "at": "2026-12-04T10:20:00Z",
+      "by": "Tunde Bello",
+      "rows": [
+        {
+          "label": "Outcome recorded",
+          "value": "Won · award letter attached",
+          "at": "2026-12-04T10:20:00Z"
+        }
+      ],
+      "engagement": {
+        "reference": "EN-0042",
+        "work_id": "W-1003"
+      },
+      "next": [
+        "When Tola is done, you'll confirm the PM and register the engagement."
+      ]
+    }
+  }
+}

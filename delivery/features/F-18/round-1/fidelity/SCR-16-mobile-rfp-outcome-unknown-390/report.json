@@ -1,0 +1,560 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T07:05:59.948Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-mobile-rfp-outcome-unknown.dc.html",
+  "boardName": "SCR-16-mobile-rfp-outcome-unknown.dc.html",
+  "pageUrl": "http://localhost:4653/frozen/rfp-outcome-unknown-390.html",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-18/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 89 is below 90.",
+    "6 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 53.8,
+    "coverageWithExceptions": 100,
+    "visual": 89
+  },
+  "visual": {
+    "score": 89,
+    "allCellsScore": 89.5,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2234,
+    "mismatchedCells": 246
+  },
+  "coverage": {
+    "total": 13,
+    "found": 7,
+    "coverage": 53.8,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OUTCOME",
+        "pageName": "OUTCOME",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 324,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 19,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Record the outcome",
+        "pageName": "Record the outcome",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 20px on the board, 26px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Result",
+        "pageName": "Result",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Last contact with the client",
+        "pageName": "Last contact with the client",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 191,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 201,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Remind me on",
+        "pageName": "Remind me on",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 276,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 288,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 361,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 375,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Save as unknown",
+        "pageName": "Save as unknown",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← RFP",
+        "key": "link: ← RFP",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 19: the frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to RFP\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link (as F-09, F-14, F-16).",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "26 Nov · submission email",
+        "key": "text: 26 Nov · submission email",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 216,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8: \"Last contact with the client\" is the learned_at input, empty until the person fills it; the board's fixed value has no field.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10 Dec 2026, 09:00",
+        "key": "text: 10 Dec 2026, 09:00",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 301,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"10 Dec 2026, 09:00\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "No proof needed. Nothing has been heard yet.",
+        "key": "text: No proof needed. Nothing has been heard yet.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 386,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 7 / D-60 (b): evidence_id is required by E-RFP-OUTCOME for every result, so the Proof field stays required on Unknown; the backend developer is asked about an optional evidence_id (r3).",
+          "approved_by": "design engineer, 14 Nov (D-60)"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next: The RFP stays open as \"Outcome unknown\". Tola can draft a follow-up email for you to send.",
+        "key": "text: What happens next: The RFP stays open as \"Outcome unknown\". Tola can draft a follow-up email for you to send.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 415,
+          "w": 358,
+          "h": 83
+        },
+        "exception": {
+          "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+          "approved_by": "design engineer, 14 Nov (D-60)"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next:",
+        "key": "text: What happens next:",
+        "container": "page",
+        "boardBox": {
+          "x": 28,
+          "y": 426,
+          "w": 130,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+          "approved_by": "design engineer, 14 Nov (D-60)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"OUTCOME\"",
+        "kind": "Text",
+        "name": "OUTCOME",
+        "boardBox": {
+          "x": 324,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 19,
+          "w": 50,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: right on the board (89% across), middle on the page (52% across)",
+          "inside the main area on the board, inside the top bar on the page"
+        ]
+      },
+      {
+        "label": "Text \"Result\"",
+        "kind": "Text",
+        "name": "Result",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 19
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Last contact with the client\"",
+        "kind": "Text",
+        "name": "Last contact with the client",
+        "boardBox": {
+          "x": 16,
+          "y": 191,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 201,
+          "w": 358,
+          "h": 19
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Remind me on\"",
+        "kind": "Text",
+        "name": "Remind me on",
+        "boardBox": {
+          "x": 16,
+          "y": 276,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 288,
+          "w": 358,
+          "h": 19
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Proof\"",
+        "kind": "Text",
+        "name": "Proof",
+        "boardBox": {
+          "x": 16,
+          "y": 361,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 375,
+          "w": 358,
+          "h": 19
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Save as unknown\"",
+        "kind": "Link",
+        "name": "Save as unknown",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to RFP",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 41,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 240,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Start work",
+        "container": "page",
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Last contact with the client",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 226,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Remind me on",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 313,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "You are recording as",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 499,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "A role PSL allows to record outcomes",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 553,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 53,
+          "y": 585,
+          "w": 67,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 324,
+          "y": 587,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 611,
+          "w": 358,
+          "h": 47
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

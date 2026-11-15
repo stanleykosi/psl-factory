@@ -1,0 +1,107 @@
+{
+  "id": "W-2109",
+  "title": "Tamarind Loans · loan origination RFP",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "state": "waiting",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Requirements",
+      "status": "done"
+    },
+    {
+      "name": "Team input",
+      "status": "done"
+    },
+    {
+      "name": "Pricing",
+      "status": "done"
+    },
+    {
+      "name": "Submission",
+      "status": "done"
+    },
+    {
+      "name": "Outcome",
+      "status": "current_person"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "next_step": "The client's decision is recorded by the relationship owner.",
+  "sample": true,
+  "case_id": "C-2109",
+  "case_revision": 3,
+  "rfp": {
+    "reference": "TL-RFP-2026-014",
+    "title": "loan origination RFP",
+    "client": "Tamarind Loans",
+    "status": {
+      "kind": "submitted",
+      "label": "SUBMITTED 26 NOV",
+      "at": "2026-11-26T14:42:00Z"
+    },
+    "pm": {
+      "name": "Tunde Bello",
+      "role": "PM",
+      "is_you": true
+    },
+    "tabs": [
+      {
+        "key": "requirements",
+        "label": "Requirements",
+        "count": 64
+      },
+      {
+        "key": "team_input",
+        "label": "Team input",
+        "count": 4,
+        "of": 4
+      },
+      {
+        "key": "pricing",
+        "label": "Pricing"
+      },
+      {
+        "key": "submission",
+        "label": "Submission"
+      },
+      {
+        "key": "outcome",
+        "label": "Outcome",
+        "current": true
+      }
+    ]
+  }
+}

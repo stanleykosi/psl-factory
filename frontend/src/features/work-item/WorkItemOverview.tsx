@@ -17,6 +17,7 @@ import { InfoIcon } from './InfoIcon';
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
 import { Workspace } from '@/features/workspace/Workspace';
+import { RfpOutcomeLink } from '@/features/rfp';
 
 import {
   AGENT_TAGS,
@@ -442,9 +443,10 @@ function StatePanel({ panel, children }: { panel: NonNullable<WorkItemPresentati
             ))}
           </dl>
         )}
-        {children}
+        {panel.note && panel.note_first && <p className="work-statepanel__note">{panel.note}</p>}
         {panel.links && <PanelLinks links={panel.links} tone={tone} />}
-        {panel.note && <p className="work-statepanel__note">{panel.note}</p>}
+        {children}
+        {panel.note && !panel.note_first && <p className="work-statepanel__note">{panel.note}</p>}
       </div>
     </aside>
   );
@@ -771,6 +773,7 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
           <ReconcilePanel id={id} item={asResponseItem(item)} />
           {aside}
           {item.tasks.length > 0 && <TaskPanels id={id} tasks={asResponseItem(item).tasks} />}
+          <RfpOutcomeLink id={id} item={item} />
           {view?.task_note && item.tasks.length > 0 && <p className="work-note">{view.task_note}</p>}
         </div>
       </div>

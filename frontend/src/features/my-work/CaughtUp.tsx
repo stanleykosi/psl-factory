@@ -81,10 +81,10 @@ export function CaughtUp({
       <div className="my-work__caughtup">
         <section aria-label="Nothing needs you" className="my-work__nothing">
           <Image
-            src={AGENT_AVATAR.tola.src}
-            alt="Tola, the PMO agent"
-            width={150}
-            height={150}
+            src="/agents/tola-done.png"
+            alt="Tola, the PMO agent, giving a thumbs up"
+            width={120}
+            height={170}
             className="my-work__mascot"
           />
           <div className="my-work__nothingtext">

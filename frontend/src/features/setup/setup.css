@@ -81,3 +81,5 @@
   .setup-title { font-size: 26px; }
   .setup-tabs { flex-wrap: nowrap; overflow-x: auto; }
 }
+
+.setup-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

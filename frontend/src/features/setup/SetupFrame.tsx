@@ -5,7 +5,7 @@
 // aria-current (Assumption A-7); badges show only the counts the API sends.
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { useMe, usePhoneBack } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
@@ -85,6 +85,13 @@ export function RulesEmpty() {
 
 /** Appends the next page; a failed page keeps the loaded rows and says so. */
 export function ShowMore({ state, onMore }: { state: RulesState; onMore: () => void }) {
+  const [pressed, setPressed] = useState(false);
+  const end = useRef<HTMLSpanElement>(null);
+  const last = state.status === 'ready' && !state.nextCursor;
+  // The last Show more unmounts its own button, which would drop focus to the page top; the end of the list takes it (QA-3-1).
+  useEffect(() => {
+    if (pressed && last) end.current?.focus();
+  }, [pressed, last]);
   if (state.status !== 'ready') return null;
   return (
     <>
@@ -97,10 +104,23 @@ export function ShowMore({ state, onMore }: { state: RulesState; onMore: () => v
       {state.nextCursor && (
         <div className="psl-showmore setup-showmore">
           <span>{state.items.length} shown</span>
-          <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={state.more === 'loading'} onClick={onMore}>
+          <button
+            type="button"
+            className="psl-btn psl-btn--secondary psl-btn--sm"
+            disabled={state.more === 'loading'}
+            onClick={() => {
+              setPressed(true);
+              onMore();
+            }}
+          >
             Show more
           </button>
         </div>
+      )}
+      {pressed && last && (
+        <span ref={end} tabIndex={-1} className="setup-sr">
+          All {state.items.length} rules are shown.
+        </span>
       )}
     </>
   );

@@ -250,7 +250,7 @@ test.describe('desktop 1440 details', () => {
     expect(new URL((await request).url()).search).toBe('?limit=20&q=lagoon');
     await expect(page).toHaveURL(/\/projects\?q=lagoon$/);
     await expect(projectLinks(page)).toHaveText(['Lagoon Health · patient app']);
-    await expect(page.locator('.psl-resultcount')).toHaveText('1 PROJECTS');
+    await expect(page.locator('.psl-resultcount')).toHaveText('1 PROJECT');
     await page.getByRole('searchbox', { name: 'Search' }).fill('zzz');
     await expect(page.getByRole('heading', { name: 'No projects match' })).toBeVisible();
     await page.getByRole('button', { name: 'Clear search' }).click();
