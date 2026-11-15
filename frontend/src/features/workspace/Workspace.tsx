@@ -54,6 +54,10 @@ function WorkspaceHeader({ workspace, itemTitle }: { workspace: WorkspaceData; i
   );
 }
 
+/** Suggestions sit in the side column; so does the checklist while the agent is working, as the boards draw the assembling panel (D-81). */
+const inSide = (item: WorkItem) => (section: Section) =>
+  section.kind === 'suggestions' || (section.kind === 'checklist' && item.agent.status === 'working');
+
 type Open = { token: string; step: Step; itemIds?: string[] };
 
 const scope = (step: Step) => step.applies_to ?? 'workspace';
@@ -221,8 +225,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     };
   }
 
-  const side = workspace.sections.filter((section) => section.kind === 'suggestions');
-  const main = workspace.sections.filter((section) => section.kind !== 'suggestions');
+  const side = workspace.sections.filter(inSide(item));
+  const main = workspace.sections.filter((section) => !inSide(item)(section));
   const notice = flow.notice;
   return (
     <>
@@ -331,15 +335,15 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
         <div className="ws-cols">
           <div className="ws-main">
             {workspace.sections
-              .filter((section) => section.kind !== 'suggestions')
+              .filter((section) => !inSide(item)(section))
               .map((section) => (
                 <SectionView key={section.key} section={section} level={titled ? 3 : 2} />
               ))}
           </div>
-          {workspace.sections.some((section) => section.kind === 'suggestions') && (
+          {workspace.sections.some(inSide(item)) && (
             <aside className="ws-side" aria-label="Review and decide">
               {workspace.sections
-                .filter((section) => section.kind === 'suggestions')
+                .filter(inSide(item))
                 .map((section) => (
                   <SectionView key={section.key} section={section} level={titled ? 3 : 2} />
                 ))}

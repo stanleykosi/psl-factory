@@ -107,6 +107,33 @@ describe('header from data', () => {
     expect(ws.queryByRole('heading', { name: data.title })).toBeNull();
   });
 
+  it('D-81: the project tab bar comes from the workspace project; only Journey is a link; phones and items without a project draw none', async () => {
+    const body = item('W-2001');
+    await open(body);
+    const bar = screen.getByRole('navigation', { name: 'Project' });
+    expect(within(bar).getAllByText(/./).map(text)).toEqual(['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
+    const links = within(bar).getAllByRole('link');
+    expect(links.map(text)).toEqual(['Journey']);
+    expect(links[0].getAttribute('href')).toBe('/projects/C-0211');
+    expect(bar.querySelectorAll('[tabindex]')).toHaveLength(0);
+  });
+
+  it('D-81: no project in the workspace context means no project tab bar', async () => {
+    await open(item('W-2005'));
+    expect(screen.queryByRole('navigation', { name: 'Project' })).toBeNull();
+  });
+
+  it('D-81: a checklist sits in the side column while the agent is working, and in the main column otherwise', async () => {
+    const body = item('W-2005');
+    body.agent = { ...body.agent, status: 'working' };
+    const { unmount } = await open(body);
+    const side = () => document.querySelector('.ws-side') as HTMLElement;
+    expect(side().contains(section(body.workspace!.sections[0].title!))).toBe(true);
+    unmount();
+    await open(item('W-2005'));
+    expect(document.querySelector('.ws-main')!.contains(section(body.workspace!.sections[0].title!))).toBe(true);
+  });
+
   it('W-2002 draws the workspace title as an h2 because it differs from the item title', async () => {
     await open(item('W-2002'));
     expect(within(workspace()).getByRole('heading', { level: 2, name: 'Requirements' })).toBeTruthy();
