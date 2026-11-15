@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 051ea680069845119aff88212c1b2779cde8bf9e
+COMMIT: 580d01c48d42682171b319290e2fb8c378ae0d35
 BUILDER: builder
 LANE: full
 
@@ -93,3 +93,36 @@ AC 10 wants the 422 `message` shown above the form together with field messages.
 
 ## D-LINE-WORKSPACE limits (binding on the PR description)
 D-LINE-WORKSPACE is `proposed`; F-21 consumes it only under the recorded exception (decisions-2026-11-15 items (g), (i)): contract mock only. The backend developer may change or refuse any field. Nothing is released; no real send, client template or recipient. The template is a test template. No claim of idempotency, a real backend, or a working weekly line.
+
+## Round 1, continued on the new frame
+Head 580d01c4 (merge of origin/dlv-00-delivery-setup, incl. D-73 line layout, into the branch; no conflicts, no package changes; pushed). No source change this round: the merge commit is the only new commit. STATUS stays READY only with the visual gap below named as open (design engineer decision); visual 90 is not reached on any board.
+
+Scores (production build, FRAME_FIXTURES=1, one final run on 8 boards; coverage with exceptions / visual):
+| board | before (frame builder) | after |
+| desktop default 1440 | 100 / 72.0 | 100 / 72.0 |
+| desktop invalid | 100 / 78.6 | 100 / 78.6 |
+| desktop assembling | 96.4 / 79.0 | 100 / 79.0 |
+| desktop review | 96.9 / 70.0 | 100 / 70.0 |
+| mobile default 390 | 100 / 71.0 | 100 / 71.0 |
+| mobile invalid | 100 / 76.8 | 100 / 76.8 |
+| mobile assembling | 85.7 / 78.1 | 100 / 78.1 |
+| mobile review | 100 / 80.6 | 100 / 80.6 |
+
+Coverage: the three fallen boards are back to 100 with 2 new exceptions in fidelity-exceptions.json (64 total), both `approved_by: "builder proposal, pending design engineer"`: "WORKING" (the board's agent-panel tag; the workspace has no section-level tag field and the old agent card that said it is gone) and the main-nav "Overview" link (frame; the board's persona is the PMO Lead). The contract has no field that could supply either.
+
+Tried for visual, measured, all reverted:
+- Removing the byline and version (default, invalid, review) and the subtitle (assembling, review): review fell 70.0 to 65.3, invalid 78.6 to 73.5. The boards have a project tab bar under the title that the frame does not draw; those rows act as the spacer that keeps the sections near the board's y. They stay.
+- Merging the five facts sections into one "This week's records" section (the board's one records panel): no gain (71.0 / 78.3) and desktop default coverage fell to 91.9. Reverted.
+- The agent note in the side column: only `suggestions` sections sit there, and a note is not a suggestion; not done.
+
+Remaining gaps and cause (none is F-21 data):
+1. Project tab bar (Journey ... Actions): frame/work item shell, no tab data in the contract; the largest gap (about 50px shift of all content on the desktop boards).
+2. Frame title 40px vs the board's about 35px, and the status tag's vertical position: frame (D-73); not changed as instructed.
+3. Assembling: the board puts the checklist in the right agent panel and has no Decide panel; the page keeps the checklist in the main column and the disabled step in a Decide panel (AC 11 needs it). Needs a section placement field or a frame rule.
+4. Default and invalid: the board draws the form open (Option B); D-69 chose form-on-press, kept.
+5. Review: board has no byline row (kept, see above); the board's "MIN-0141" is "MTG-0140" in the fixtures.
+6. Phone: back label per board, "+ Start" overlapping the bar word (TECH-3), per-part state tags (contract proposal 6).
+
+Kept: D-69, D-71 exceptions, F-17 uncertain-send lock (e2e green).
+
+Validation: `bash delivery/checks.sh` exit 0; Playwright weekly, workspace, start-work, work-item on 4741/4742: 95 passed; test-results deleted; servers on 4741 to 4743 stopped. round-1/fidelity/scores.txt holds the final run.

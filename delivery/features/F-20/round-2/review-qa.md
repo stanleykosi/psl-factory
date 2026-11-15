@@ -1,7 +1,14 @@
 VERDICT: PASS
-COMMIT: 777d9a3f11f10544e6d43ffa7d52a86f7202df99
+COMMIT: 1bf933da30fd5e895b5b35f48e89149984c4a305
 REVIEWER: qa
 AUTHORITY: integrated QA
+
+## Re-confirmed on the synced head
+- Head 1bf933da30fd5e895b5b35f48e89149984c4a305 (worktree confirmed with `git rev-parse HEAD`). The only change since 777d9a3f is the merge of origin/dlv-00-delivery-setup, and the only F-20 file it touched is `frontend/src/features/setup/SetupFrame.tsx`.
+- Ran `cd /Users/Hunchoo/psl-factory-worktrees/f-20/frontend && E2E_PORT=4671 MOCK_PORT=4672 npx playwright test e2e/setup-templates.spec.ts --reporter=line`: 11 passed (49.2s) in real Chromium against the contract mock. That includes phone test 9 (one h1 "Templates", the "← Setup" bar link named "Back to Setup", no link inside `main`, no side scroll, axe clean) and phone test 10 (upload works inside the card, axe clean). Desktop test 2 covers the upload 200: one POST, the new version, focus and the announcement.
+- "← Setup" destination: `useSetupPhoneBack` now sets `href: '/setup/rules'` (SetupFrame.tsx line 75), replacing `/setup/roles`. The e2e asserts the link label and role but not its href, so the destination is confirmed from the source, not by a click-through. The earlier "goes to /setup/roles" line below is superseded by this.
+- Cleanup: `test-results` deleted, worktree has no changes, and ports 4671 and 4672 are free.
+- Findings QA-2-1 to QA-2-3 are unchanged and non-blocking. The merge touched nothing they depend on.
 
 ## Summary
 - **What ran.** I made a production build in the worktree (`next build` with `FRAME_FIXTURES=1` and `API_ORIGIN=http://127.0.0.1:4672`) and served it with `next start -p 4671`. It ran against the contract mock (`MOCK_PORT=4672 node mock/server.mjs`). I drove 27 journeys in headless Chromium session `f-20-qa` (timezone Africa/Lagos) at 1440 and 390. All 27 passed. Script: `/private/tmp/claude-501/f20-qa/qa.mjs`. Output: `/private/tmp/claude-501/f20-qa/qa.out`. I also called the mock directly with `curl`: no-CSRF 403, unknown-id 404, empty-file 422 naming `filename` and `content_base64`, pm 403, wrong-revision 409, 200, a repeat 409, the list showing the bump, readonly 403, the cursor page and reset 204. `npx vitest run tests/setup-templates-mock.test.ts tests/setup-templates.test.tsx`: 54 passed. Disk had 5.2 GB free. I stopped my servers by PID (70476, 70401, 70057). The worktree is clean.

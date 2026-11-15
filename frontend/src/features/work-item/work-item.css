@@ -213,6 +213,9 @@
 .work-phonebar__note { margin: 0; font-size: 13px; color: var(--ink-muted); }
 .work-barref { position: absolute; top: 0; right: var(--space-4); height: 56px; display: flex; align-items: center; font-size: 12px; color: var(--on-strong); z-index: 1; }
 .work-eyebrowline { line-height: 15px; }
+/* the bar's bell and "+ Start" slot (134px, set in from the edge) takes the right end: the word sits just before it, not under it */
+body:has(.sw-phoneslot) .work-barref--line { right: calc(var(--space-4) + 134px + var(--space-2)); }
+@media (max-width: 379.98px) { body:has(.sw-phoneslot) .work-barref--line { right: calc(var(--space-2) + 134px + var(--space-2)); } }
 
 /* history */
 .work-historybar { display: flex; flex-direction: column; }
@@ -391,6 +394,12 @@
 .work-header--line .work-titleline { justify-content: space-between; }
 .work-linemeta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .work-overview--line { gap: 0; }
+/* D-81: the line title is the boards' ~35px (token); the project tab bar sits under it, its unbuilt tabs plain text */
+.work-header--line { --title-line: 35px; } /* local token: tokens.css is generated from the design system */
+@media (min-width: 720px) { .work-header--line .shell-title { font-size: var(--title-line); } }
+.work-projecttabs { align-self: flex-start; }
+.work-projecttab--plain { cursor: default; }
+.work-projecttab--plain:hover { background: var(--surface); }
 @media (max-width: 719.98px) {
   .work-header--line { gap: 9px; margin-top: -2px; }
   .work-linemeta .work-sub { font-size: 12px; }

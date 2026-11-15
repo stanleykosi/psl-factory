@@ -1,4 +1,17 @@
 VERDICT: PASS
+COMMIT: 1bf933da30fd5e895b5b35f48e89149984c4a305
+REVIEWER: reviewer-ui
+AUTHORITY: delegated UI review
+
+## Re-confirmed on the synced head
+
+Merge-only confirmation at 1bf933da; fidelity and build not re-run. `git diff --stat 777d9a3f 1bf933da -- frontend/src/features/setup frontend/src/styles frontend/src/shell` shows one file changed: frontend/src/features/setup/SetupFrame.tsx (2 insertions, 2 deletions). The change is the phone back link target in `useSetupPhoneBack` (`/setup/roles` to `/setup/rules`) plus its comment. No markup, class, token, style or layout change. Nothing under frontend/src/styles or frontend/src/shell changed, so the shell does not touch Setup and the new line-layout frame does not apply to Setup. The Setup Templates rendering is unchanged; the 777d9a3f result (desktop 95.9, phone 78.8 under the signed D-78 waiver) stands.
+
+---
+
+## Earlier review (at 777d9a3f)
+
+VERDICT: PASS
 COMMIT: 777d9a3f11f10544e6d43ffa7d52a86f7202df99
 REVIEWER: reviewer-ui
 AUTHORITY: delegated UI review

@@ -5,6 +5,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { PROJECT_TABS } from '@/features/projects/model';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
@@ -118,6 +119,28 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
  * workspace. The started line, the Overview / History tabs and the revision are not drawn; History stays one link in
  * the crumb line (desktop) or the meta line (phone), and the reference sits at the end of the phone bar and the status tag shares the meta line.
  */
+/**
+ * The project tab bar the line boards draw under the title (desktop), from the project the workspace names. Journey is
+ * the one built page, so it is the one link; the other tabs are plain text, never a dead link, as on the RFP frame.
+ */
+function ProjectBar({ caseId }: { caseId: string }) {
+  return (
+    <nav aria-label="Project" className="psl-tabs work-projecttabs">
+      {PROJECT_TABS.map((t) =>
+        t.key === 'journey' ? (
+          <Link key={t.key} className="psl-tab" href={`/projects/${encodeURIComponent(caseId)}`}>
+            {t.label}
+          </Link>
+        ) : (
+          <span key={t.key} className="psl-tab work-projecttab--plain">
+            {t.label}
+          </span>
+        ),
+      )}
+    </nav>
+  );
+}
+
 function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boolean; historyHref: string }) {
   const ws = item.workspace;
   const state = STATE_TAGS[item.state];
@@ -135,7 +158,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
   );
   return (
     <header className="work-header work-header--end work-header--line">
-      {phone && <span className="work-barref psl-mono">{item.reference}</span>}
+      {phone && <span className="work-barref work-barref--line psl-mono">{item.reference}</span>}
       {!phone && (
         <div className="work-crumbrow">
           {crumbs.length > 0 ? (
@@ -168,6 +191,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
           </span>
         )}
       </div>
+      {!phone && ws?.context?.project && <ProjectBar caseId={ws.context.project.case_id} />}
       {(phone || ws?.subtitle) && (
         <div className="work-linemeta">
           {ws?.subtitle && <p className="work-sub">{ws.subtitle}</p>}

@@ -34,7 +34,7 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 );
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
-const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1' };
+const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', template_id: 'T-01' };
 const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
@@ -43,6 +43,7 @@ const BODY: Record<string, unknown> = {
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
   'E-SETUP-RULE-SAVE': { expected_revision: 2, value: { roles: ['pmo_lead'] } },
   'E-EVIDENCE-UPLOAD': { kind: 'rule_proof', filename: 'minutes.pdf', content_base64: 'JVBERi0xLjQK', case_revision: 1 },
+  'E-TEMPLATE-VERSION': { expected_revision: 1, filename: 'invoice.pdf', content_base64: 'JVBERi0xLjQK' },
 };
 // Operations a persona may not use answer the declared status instead of 200 (Setup is for Leads and Admin; E-EXCEPTIONS is Leads only; E-MONTH-END Finance only).
 const PERSONA_STATUS: Record<string, Record<string, number>> = {
@@ -51,6 +52,8 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-SETUP-RULES': { pm: 403, none: 403 },
   'E-SETUP-RULE-SAVE': { pm: 403, none: 403 },
   'E-EVIDENCE-UPLOAD': { pm: 403, none: 403 },
+  'E-TEMPLATES': { pm: 403, none: 403 },
+  'E-TEMPLATE-VERSION': { pm: 403, none: 403 },
 };
 // Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06, F-10, F-11).
 const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
@@ -163,9 +166,9 @@ describe('mock server matches openapi.json', () => {
   });
 
   it('a non-M-1 operation gets 501 not_mocked', async () => {
-    const result = await request('E-TEMPLATES');
+    const result = await request('E-CONVERSATIONS');
     expect(result).toEqual({ status: 501, body: { code: 'not_mocked', message: 'Not available in the mock yet.' } });
-    expectValid('E-TEMPLATES', 501, result.body);
+    expectValid('E-CONVERSATIONS', 501, result.body);
   });
 
   it('refuses to start with NODE_ENV=production', () => {

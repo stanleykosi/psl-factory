@@ -13,7 +13,6 @@ const RESERVED = [
   ['Delegation', '/setup/delegation'],
   ['Payroll visibility', '/setup/payroll-visibility'],
   ['Staff accounts', '/setup/staff'],
-  ['Templates', '/setup/templates'],
 ] as const;
 
 async function setCookies(context: BrowserContext, cookies: Record<string, string>) {

@@ -1,0 +1,605 @@
+{
+  "items": [
+    {
+      "template_id": "T-01",
+      "name": "Sample template 1",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-02",
+      "name": "Sample template 2",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-03",
+      "name": "Sample template 3",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-04",
+      "name": "Sample template 4",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-05",
+      "name": "Sample template 5",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-06",
+      "name": "Sample template 6",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-07",
+      "name": "Sample template 7",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-08",
+      "name": "Sample template 8",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-09",
+      "name": "Sample template 9",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-10",
+      "name": "Sample template 10",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-11",
+      "name": "Sample template 11",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-12",
+      "name": "Sample template 12",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-13",
+      "name": "Sample template 13",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-14",
+      "name": "Sample template 14",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-15",
+      "name": "Sample template 15",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-16",
+      "name": "Sample template 16",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-17",
+      "name": "Sample template 17",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-18",
+      "name": "Sample template 18",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-19",
+      "name": "Sample template 19",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-20",
+      "name": "Sample template 20",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-21",
+      "name": "Sample template 21",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-22",
+      "name": "Sample template 22",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-23",
+      "name": "Sample template 23",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-24",
+      "name": "Sample template 24",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-25",
+      "name": "Sample template 25",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-26",
+      "name": "Sample template 26",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-27",
+      "name": "Sample template 27",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-28",
+      "name": "Sample template 28",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-29",
+      "name": "Sample template 29",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-30",
+      "name": "Sample template 30",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-31",
+      "name": "Sample template 31",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-32",
+      "name": "Sample template 32",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-33",
+      "name": "Sample template 33",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-34",
+      "name": "Sample template 34",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-35",
+      "name": "Sample template 35",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-36",
+      "name": "Sample template 36",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-37",
+      "name": "Sample template 37",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-38",
+      "name": "Sample template 38",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-39",
+      "name": "Sample template 39",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-40",
+      "name": "Sample template 40",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-41",
+      "name": "Sample template 41",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-42",
+      "name": "Sample template 42",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-43",
+      "name": "Sample template 43",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-44",
+      "name": "Sample template 44",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-45",
+      "name": "Sample template 45",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-46",
+      "name": "Sample template 46",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-47",
+      "name": "Sample template 47",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-48",
+      "name": "Sample template 48",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-49",
+      "name": "Sample template 49",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-50",
+      "name": "Sample template 50",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-51",
+      "name": "Sample template 51",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-52",
+      "name": "Sample template 52",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-53",
+      "name": "Sample template 53",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-54",
+      "name": "Sample template 54",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-55",
+      "name": "Sample template 55",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-56",
+      "name": "Sample template 56",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-57",
+      "name": "Sample template 57",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-58",
+      "name": "Sample template 58",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    },
+    {
+      "template_id": "T-59",
+      "name": "Sample template 59",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-60",
+      "name": "Sample template 60",
+      "line": "Sample line",
+      "version": "1",
+      "test_template": true,
+      "versions": 1,
+      "revision": 1,
+      "can_upload": false
+    }
+  ],
+  "as_of": "2026-11-12T10:40:00+01:00"
+}
