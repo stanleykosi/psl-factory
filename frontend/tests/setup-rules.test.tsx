@@ -126,7 +126,7 @@ describe('rules list (AC 2, 3, 4)', () => {
     expect(phone().getByRole('heading', { level: 1 }).textContent).toBe('Rules · 8 not set');
     const back = await within(phoneBar()).findByRole('link', { name: 'Back to Setup' });
     expect(back.textContent).toBe('← Setup');
-    expect(back.getAttribute('href')).toBe('/setup/roles');
+    expect(back.getAttribute('href')).toBe('/setup/rules');
     expect(phoneBar().querySelector('.shell-phonenote')).toBeNull();
     expect(phone().queryByRole('link', { name: /Setup/ })).toBeNull();
     expect(document.body.textContent).not.toContain('SAMPLE DATA');
@@ -702,7 +702,7 @@ describe('finance and delivery views (AC 16, 17)', () => {
 
     expect(phone().getByText('25 values Not set.')).toBeTruthy();
     expect(phone().getByText('+ 4 MORE LINES · OPEN ON DESKTOP')).toBeTruthy();
-    expect(within(phoneBar()).getByRole('link', { name: 'Back to Setup' }).getAttribute('href')).toBe('/setup/roles');
+    expect(within(phoneBar()).getByRole('link', { name: 'Back to Setup' }).getAttribute('href')).toBe('/setup/rules');
     expect(phoneBar().querySelector('.shell-phonenote')?.textContent).toBe('RULES');
   });
 
