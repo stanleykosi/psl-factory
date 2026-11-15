@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-19",
   "outcome": "A signed-in person sees the client register and each client's billing contact, projects and money, and can set the billing contact, on the contract mock",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CLIENTS"
   ],
@@ -67,7 +67,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T11:21:31Z",
+      "seconds": 166.2,
+      "evidence_ref": "delivery/features/F-19/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -138,7 +151,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
     "task_branch": "fe-clients-a-signed-in-person-sees-the-client-regis",
-    "head_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
+    "head_sha": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-19",
     "pr_url": null,
     "pr_number": null,
@@ -149,7 +162,37 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/clients.spec.ts",
+      "frontend/mock/clients.mjs",
+      "frontend/mock/fixtures/E-CLIENT-CONTACT.json",
+      "frontend/mock/fixtures/E-CLIENT.json",
+      "frontend/mock/fixtures/E-CLIENTS.json",
+      "frontend/mock/fixtures/clients/CL-3501.json",
+      "frontend/mock/fixtures/clients/CL-3502.json",
+      "frontend/mock/fixtures/clients/CL-3503.json",
+      "frontend/mock/fixtures/clients/CL-3507.json",
+      "frontend/mock/fixtures/clients/CL-3508.json",
+      "frontend/mock/fixtures/clients/CL-3508.next.json",
+      "frontend/mock/fixtures/clients/CL-3509.json",
+      "frontend/mock/fixtures/clients/list.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/clients/[clientId]/page.tsx",
+      "frontend/src/app/clients/page.tsx",
+      "frontend/src/features/clients/BillingContactForm.tsx",
+      "frontend/src/features/clients/ClientDetail.tsx",
+      "frontend/src/features/clients/ClientStates.tsx",
+      "frontend/src/features/clients/ClientsList.tsx",
+      "frontend/src/features/clients/api.ts",
+      "frontend/src/features/clients/clients.css",
+      "frontend/src/features/clients/index.ts",
+      "frontend/src/features/clients/labels.ts",
+      "frontend/src/features/clients/useClient.ts",
+      "frontend/src/features/clients/useClients.ts",
+      "frontend/tests/clients-mock.test.ts",
+      "frontend/tests/clients.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -200,6 +243,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T11:21:43Z",
+      "round": 1,
+      "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "reason": null
     }
   ],
   "routing": {
@@ -216,9 +267,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
   },
   "blocked": null
 }
