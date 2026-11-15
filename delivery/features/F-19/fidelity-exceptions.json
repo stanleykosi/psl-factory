@@ -177,6 +177,13 @@
     },
     {
       "role": "text",
+      "name": "Billing contact name",
+      "category": "text",
+      "reason": "Conflicts 7: the board draws a text label; the page's label belongs to the Billing contact name input, listed as a text field (same as Billing email). Round 1 matched it to the panel heading, which the phone page no longer draws (UI-1-4).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
       "name": "Billing email",
       "category": "text",
       "reason": "Conflicts 7: the board draws a text label; the page's label belongs to the Billing email input, listed as a text field.",

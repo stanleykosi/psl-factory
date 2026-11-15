@@ -1315,3 +1315,4 @@
 {"at":"2026-11-15T11:25:21Z","feature":"F-19","round":1,"kind":"finding","action":"add","finding":"UI-1-8","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
 {"at":"2026-11-15T11:25:29Z","feature":"F-19","round":1,"kind":"transition","head":"effdc3f55c82","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-15T11:25:35Z","feature":"F-19","round":2,"kind":"transition","head":"effdc3f55c82","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-15T11:33:24Z","feature":"F-20","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":306.9,"commit":"c218bf2480b8"}

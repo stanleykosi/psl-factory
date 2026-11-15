@@ -71,7 +71,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T11:33:24Z",
+      "seconds": 306.9,
+      "evidence_ref": "delivery/features/F-20/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -142,7 +155,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
     "task_branch": "fe-setup-templates-the-templates-tab-on-setup-lists-each-do",
-    "head_sha": null,
+    "head_sha": "c218bf2480b82e3753e88943e25b497f2e959e80",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-20",
     "pr_url": null,
     "pr_number": null,
@@ -153,7 +166,32 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/setup-templates.spec.ts",
+      "frontend/e2e/setup.spec.ts",
+      "frontend/mock/fixtures/E-TEMPLATE-VERSION.json",
+      "frontend/mock/fixtures/E-TEMPLATES.json",
+      "frontend/mock/fixtures/templates/desktop.json",
+      "frontend/mock/fixtures/templates/empty.json",
+      "frontend/mock/fixtures/templates/many.json",
+      "frontend/mock/fixtures/templates/mobile.json",
+      "frontend/mock/fixtures/templates/readonly.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/templates.mjs",
+      "frontend/src/app/setup/templates/page.tsx",
+      "frontend/src/features/setup/SetupFrame.tsx",
+      "frontend/src/features/setup/TemplateUploadPanel.tsx",
+      "frontend/src/features/setup/TemplatesView.tsx",
+      "frontend/src/features/setup/api.ts",
+      "frontend/src/features/setup/format.ts",
+      "frontend/src/features/setup/icons.tsx",
+      "frontend/src/features/setup/setup.css",
+      "frontend/src/features/setup/useTemplateUpload.ts",
+      "frontend/src/features/setup/useTemplates.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/setup-templates-mock.test.ts",
+      "frontend/tests/setup-templates.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -220,9 +258,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "c218bf2480b82e3753e88943e25b497f2e959e80"
   },
   "blocked": null
 }
