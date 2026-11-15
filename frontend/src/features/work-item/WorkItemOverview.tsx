@@ -15,6 +15,7 @@ import { WarningIcon } from '@/shell/icons';
 import { InfoIcon } from './InfoIcon';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
+import { RfpOutcomeLink } from '@/features/rfp';
 
 import {
   AGENT_TAGS,
@@ -770,6 +771,7 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
           <ReconcilePanel id={id} item={asResponseItem(item)} />
           {aside}
           {item.tasks.length > 0 && <TaskPanels id={id} tasks={asResponseItem(item).tasks} />}
+          <RfpOutcomeLink id={id} item={item} />
           {view?.task_note && item.tasks.length > 0 && <p className="work-note">{view.task_note}</p>}
         </div>
       </div>

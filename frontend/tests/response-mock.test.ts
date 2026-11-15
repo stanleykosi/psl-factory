@@ -110,7 +110,7 @@ describe('fixtures', () => {
     expect(M1_OPERATIONS).toEqual(expect.arrayContaining(['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE']));
     expect(M1_OPERATIONS).not.toContain('E-RESPONSE');
     expect(M1_OPERATIONS).not.toContain('E-WORK-ACTION');
-    expect(RESPONSE_OPERATIONS).toEqual(['E-EVIDENCE-UPLOAD', 'E-RESPONSE', 'E-WORK-ACTION']);
+    expect(RESPONSE_OPERATIONS).toEqual(['E-EVIDENCE-UPLOAD', 'E-RESPONSE', 'E-WORK-ACTION', 'E-RFP-OUTCOME', 'E-RFP-FOLLOWUP']);
     expect(readdirSync(join(__dirname, '../mock/fixtures/work')).filter((n) => n.startsWith('W-16'))).toEqual([]);
   });
 });

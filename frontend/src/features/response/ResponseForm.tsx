@@ -32,7 +32,7 @@ export type FormProps = {
 
 const CHOOSE = 'Choose…';
 
-function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; text: string }[] }) {
+export function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; text: string }[] }) {
   return (
     <label className="resp-field">
       <span className="resp-label">{label}</span>
@@ -48,7 +48,7 @@ function Select({ label, value, onChange, options }: { label: string; value: str
   );
 }
 
-function WhenField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+export function WhenField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <label className="resp-field">
       <span className="resp-label">{label}</span>
@@ -90,7 +90,7 @@ function Actions({ response, entries, setEntry, segmented }: Pick<FormProps, 're
   );
 }
 
-function Note({ entries, setEntry }: Pick<FormProps, 'entries' | 'setEntry'>) {
+export function Note({ entries, setEntry }: Pick<FormProps, 'entries' | 'setEntry'>) {
   const labelId = useId();
   const countId = useId();
   // One line high to start (no board draws it); it grows by dragging. The counter sits on the label line.
@@ -126,7 +126,7 @@ function Attest({ entries, setEntry, short }: Pick<FormProps, 'entries' | 'setEn
   );
 }
 
-function RecordRow({ props, ready, line, children }: { props: FormProps; ready: boolean; line: string | null; children?: ReactNode }) {
+export function RecordRow({ props, ready, line, children }: { props: FormProps; ready: boolean; line: string | null; children?: ReactNode }) {
   const text = props.busy ? RESPONSE_LABELS.busy : RESPONSE_LABELS.record[props.response.variant];
   const button = (
     <button type="button" className="psl-btn psl-btn--lg resp-record" disabled={!ready} onClick={props.onRecord}>

@@ -12,11 +12,23 @@ import { ApiError, networkError } from '@/api/errors';
 import { currentStationIndex } from '@/features/work-item/labels';
 
 import { claimTask, getWorkItem, recordResponse } from './api';
-import type { Recorded, ResponseBody, ResponseTask, ResponseWorkItem, TaskResponse } from './contract';
+import type { Recorded, ResponseActionValue, ResponseBody, ResponseTask, ResponseWorkItem, TaskResponse } from './contract';
 import { listWords, NOTE_MAX, watIso } from './labels';
 import { useEvidenceUpload } from './useEvidenceUpload';
 
-export type Entries = { who: string; when: string; action: string; version: string; channel: string; note: string; attested: boolean };
+export type Entries = {
+  who: string;
+  when: string;
+  action: string;
+  version: string;
+  channel: string;
+  note: string;
+  attested: boolean;
+  /** Team input (F-18): the team, its estimate in person-days and what it gave. */
+  team: string;
+  estimate: string;
+  what: string;
+};
 
 export type ResponseView =
   | { kind: 'loading' }
@@ -36,7 +48,7 @@ export type Notice =
   | { kind: 'problem'; message: string }
   | { kind: 'claim_failed' };
 
-const EMPTY: Entries = { who: '', when: '', action: '', version: '', channel: '', note: '', attested: false };
+const EMPTY: Entries = { who: '', when: '', action: '', version: '', channel: '', note: '', attested: false, team: '', estimate: '', what: '' };
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 const ACCESS_LOST = new Set<ApiError['kind']>(['unauthenticated', 'not_found']);
 
@@ -46,6 +58,28 @@ export function findTask(item: ResponseWorkItem, taskId: string | undefined): Re
 
 /** Actions the page offers: the API's, in order, and only those with a label to show. */
 export const offeredActions = (response: TaskResponse) => response.actions.filter((a) => a.label);
+
+/** Team input: the chosen team's estimate field shows only when the API says that team needs one. */
+export function estimateShown(e: Entries, response: TaskResponse): boolean {
+  return response.teams?.find((t) => t.key === e.team)?.estimate_needed === true;
+}
+
+/** Team input's action, which no board draws a control for: estimate when the estimate is asked and offered, else input. */
+export function teamAction(e: Entries, response: TaskResponse): ResponseActionValue | undefined {
+  const offered = (value: ResponseActionValue) => response.actions.some((a) => a.value === value);
+  if (estimateShown(e, response) && offered('estimate')) return 'estimate';
+  return offered('input') ? 'input' : undefined;
+}
+
+/** Team input is open only with teams to choose and an action the API accepts for them. */
+export const teamInputOpen = (response: TaskResponse) =>
+  (response.teams?.length ?? 0) > 0 && response.actions.some((a) => a.value === 'input' || a.value === 'estimate');
+
+/** A person-days estimate: a positive number, or undefined. */
+export function estimateDays(text: string): number | undefined {
+  const value = text.trim() === '' ? NaN : Number(text);
+  return Number.isFinite(value) && value > 0 ? value : undefined;
+}
 
 /**
  * The entries as they apply to this response: a choice the task no longer offers is cleared, and a list with
@@ -59,11 +93,13 @@ export function effectiveEntries(entries: Entries, response: TaskResponse): Entr
     version: pick(entries.version, (response.versions ?? []).map((v) => v.id)),
     channel: pick(entries.channel, (response.channels ?? []).map((c) => c.value)),
     action: offeredActions(response).some((a) => a.value === entries.action) ? entries.action : '',
+    team: (response.teams ?? []).some((t) => t.key === entries.team) ? entries.team : '',
   };
 }
 
 /** The alert beside a disabled Record, or null when nothing is missing. */
 export function missingLine(e: Entries, response: TaskResponse, proofCount: number): string | null {
+  if (response.variant === 'team_input') return teamMissingLine(e, response, proofCount);
   const parts: string[] = [];
   if (!e.who) parts.push('who responded');
   if (!e.when) parts.push('when');
@@ -71,6 +107,19 @@ export function missingLine(e: Entries, response: TaskResponse, proofCount: numb
   if ((response.versions?.length ?? 0) > 0 && !e.version) parts.push('which version');
   if ((response.channels?.length ?? 0) > 1 && !e.channel) parts.push('how they responded');
   if (parts.length) return `Choose ${listWords(parts)} to record this.`;
+  if (proofCount === 0 || !e.attested) return 'Add the proof and confirm it’s genuine to record this.';
+  return null;
+}
+
+function teamMissingLine(e: Entries, response: TaskResponse, proofCount: number): string | null {
+  const parts: string[] = [];
+  if (!e.team) parts.push('the team');
+  if (!e.who) parts.push('who gave it');
+  if (estimateShown(e, response) && estimateDays(e.estimate) === undefined) parts.push('the estimate');
+  if (!e.what.trim()) parts.push('what they gave');
+  if (!e.when) parts.push('when it was received');
+  if (parts.length) return `Add ${listWords(parts)} to record this.`;
+  if (e.team && !teamAction(e, response)) return 'This team’s input can’t be recorded here.';
   if (proofCount === 0 || !e.attested) return 'Add the proof and confirm it’s genuine to record this.';
   return null;
 }
@@ -214,14 +263,20 @@ export function useResponse(id: string, taskId: string | undefined) {
           return;
         }
       }
+      const team = response.variant === 'team_input';
       const body: ResponseBody = {
         expected_revision: expected,
         who: e.who,
-        action: offeredActions(response).find((a) => a.value === e.action)!.value,
+        action: team ? teamAction(e, response)! : offeredActions(response).find((a) => a.value === e.action)!.value,
         responded_at: watIso(e.when),
         evidence_id: ids[0],
         attested: true,
       };
+      if (team) {
+        body.team = e.team;
+        if (estimateShown(e, response)) body.estimate_person_days = estimateDays(e.estimate);
+        body.what = e.what.trim();
+      }
       if (ids.length > 1) body.evidence_ids = ids.slice(1);
       const caseRevision = proof.caseRevision();
       if (caseRevision !== undefined) body.case_revision = caseRevision;

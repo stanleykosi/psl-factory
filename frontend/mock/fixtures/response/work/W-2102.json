@@ -1,0 +1,166 @@
+{
+  "id": "W-2102",
+  "title": "Tamarind Loans · loan origination RFP",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "state": "waiting",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Requirements",
+      "status": "done"
+    },
+    {
+      "name": "Team input",
+      "status": "current_person"
+    },
+    {
+      "name": "Pricing",
+      "status": "not_started"
+    },
+    {
+      "name": "Submission",
+      "status": "not_started"
+    },
+    {
+      "name": "Outcome",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-2102",
+      "kind": "record_response",
+      "title": "Record team input",
+      "required_role": "PM",
+      "you_can_act": false,
+      "revision": 4,
+      "response": {
+        "variant": "team_input",
+        "responders": [
+          {
+            "id": "P-KA",
+            "name": "Kemi Adeyemi",
+            "role": "Security lead",
+            "organisation": "PSL"
+          }
+        ],
+        "actions": [
+          {
+            "value": "estimate",
+            "label": "Estimate"
+          },
+          {
+            "value": "input",
+            "label": "Input"
+          }
+        ],
+        "teams": [
+          {
+            "key": "engineering",
+            "name": "Engineering",
+            "given": true,
+            "estimate_needed": true
+          },
+          {
+            "key": "qa",
+            "name": "QA",
+            "given": true
+          },
+          {
+            "key": "security",
+            "name": "Security",
+            "given": false,
+            "estimate_needed": true
+          },
+          {
+            "key": "product",
+            "name": "Product",
+            "given": false
+          }
+        ],
+        "blocking": "Security and Product haven't given input yet. Review can't start until they do.",
+        "evidence_kind": "team_input_proof",
+        "claim_required": true,
+        "intro": "Engineering, QA, Security and Product don't log in. You record their input with proof, and the record keeps your name."
+      }
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "next_step": "A PM records each team's input with its proof.",
+  "sample": true,
+  "case_id": "C-2102",
+  "case_revision": 3,
+  "rfp": {
+    "reference": "TL-RFP-2026-014",
+    "title": "loan origination RFP",
+    "client": "Tamarind Loans",
+    "status": {
+      "kind": "deadline",
+      "label": "DEADLINE 28 NOV · 16 DAYS",
+      "at": "2026-11-28T16:00:00Z",
+      "days_left": 16
+    },
+    "pm": {
+      "name": "Tunde Bello",
+      "role": "PM",
+      "is_you": true
+    },
+    "tabs": [
+      {
+        "key": "requirements",
+        "label": "Requirements",
+        "count": 64
+      },
+      {
+        "key": "team_input",
+        "label": "Team input",
+        "count": 2,
+        "of": 4,
+        "current": true
+      },
+      {
+        "key": "pricing",
+        "label": "Pricing"
+      },
+      {
+        "key": "submission",
+        "label": "Submission"
+      },
+      {
+        "key": "outcome",
+        "label": "Outcome"
+      }
+    ]
+  }
+}
