@@ -1,11 +1,12 @@
-# Coordinator handoff (15 Nov 2026, end of day)
+# Coordinator handoff (15 Nov 2026, second session)
 
 Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-01…D-58). Feature state: `python3 /Users/Hunchoo/software-factory/packages/delivery/feature.py --project . status` and `next <F-id>`. Cost: `feature.py --project . cost`.
 
 ## Where things stand
-- F-01 … F-16 are all merged into `dlv-00-delivery-setup` and recorded DONE. No open PRs, no feature worktrees, no review copies running. `main` is untouched.
-- Merged today: #13 F-13 contract v7, #11 F-06 Exceptions, #14 F-08 Overview, #18 F-12 Alerts, #16 F-10 Finance month-end, #20 F-11 Setup rules, #21 F-09 Responses, #22 F-14 Work item, #23 F-05 Start work, #24 F-07 Projects, #25 e2e fixes, #26 F-15 Alert bell, #27 F-16 Decision page.
-- Local preview for the design engineer: `npm run dev -- -p 3000` in `frontend/` (mock on 4010). Restart it after merges.
+- F-01 … F-16 and the follow-up fixes (PR #28, D-61) are merged into `dlv-00-delivery-setup`. `main` is untouched.
+- **F-17 line workspace frame** (FE-WORKSPACE-FRAME, medium risk, contract proposal): round 5 of 5, IN_REVIEW, head f91bc63, worktree `../psl-factory-worktrees/f-17`. Design signed off at measured scores (D-59, D-62, D-63, D-65). Technical, UX and security passed in rounds 2–3; round 4 changed CSS only, round 5 changed records only.
+- **F-18 RFP team input and outcome** (FE-M2B-RFP, high risk, client email): round 3, IN_REVIEW, head 9d0fc66, worktree `../psl-factory-worktrees/f-18`. Design signed off at measured scores (D-60, D-65). Technical, UX and security passed in round 2; round 3 changed phone CSS and one card line only.
+- Local preview: `npm run dev -- -p 3000` in `frontend/` (mock on 4010).
 
 ## Rules in force
 - Cost policy (D-64, replaces D-39): features hold at most ~8 boards; builders run on Sonnet except the first build of a high-risk feature (Opus); a builder runs the fidelity check once at the end of its round and doesn't chase gaps the design reviewer confirms are forced; later rounds re-run only the review lenses the diff touches; design review on Opus for a screen's first review, Sonnet when verifying fixes; QA on Opus; readiness, spec, approver, technical, UX and PMO on Sonnet; security on Opus only for high risk and only when the diff touches it. Spec writers list layout conflicts too. 2–3 builders at a time. Hand over to a fresh coordinator session every 2–3 features.
@@ -23,15 +24,17 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 4. Start shared review copies with `FRAME_FIXTURES=1` (as playwright.config.ts does) or two frame e2e specs fail. Retry pushes; the network drops often.
 
 ## Next work, in order
-1. Small follow-ups (one Sonnet fix branch, low risk):
-   - F-16 UI-2-1: "Paid is tracked separately" twice on phone done.
-   - F-07: "1 PROJECTS" pluralisation; stale contract-body stripping in mock-contract.test.ts.
-   - F-15 TECH-2-1: focus flag after same-page navigation; narrow wordmark size below 380px.
-   - F-14 UI-4-1: secondary button above the main action (owner/setup-needed desktop); QA-4-1: W-1711 reconcile mock fixtures.
-   - F-12 QA-1-1: phone warning under the pinned Save bar. F-09 UX-3-2: proof box wording. F-11 TECH-3-1 / QA-3-1 / UX-3-1. D-21 Tola poses.
-2. Next v7 tasks with dependencies met (architecture/packages/v7/tasks.csv): FE-WORKSPACE-FRAME, FE-M2B-RFP, the Finance and Setup sub-slices, FE-ASSISTANT (F-05 is merged). Create features as capacity allows.
-3. DE-5 for the design engineer: the frame's "+ Start" in the phone bar costs about 1.7 visual points on every phone board.
+1. F-17 and F-18, lean (D-64): one Sonnet `reviewer-ui` per feature that only verifies F-17 UI-3-1 (round-4 fidelity files) and F-18 UI-2-1 and UX-2-1 (round-3 files), without re-running the full check. Re-use the passed technical/UX/security results; the tool lists them as pending on the new head, so tell each reviewer to read only the diff since its last pass and confirm. Then QA (Opus) and PMO acceptance (Sonnet), then the approver. Both wait for the design engineer's "merge" (F-17 has a contract proposal; F-18 is high risk). F-17 has no rounds left: anything blocking needs the design engineer to allow a 6th round or a follow-up.
+2. Merge order: F-17 first, then rebase or merge F-18 onto it (both touch `WorkItemOverview.tsx` with a few lines).
+3. Next v7 tasks with dependencies met, each kept to at most ~8 boards (split larger ones): FE-ASSISTANT, FE-SETUP-DELEGATION, FE-SETUP-TEMPLATES, FE-CLIENTS, FE-M3-PROJECT-TABS, FE-M3-REPORT; and, after F-17 merges, the line screens (FE-LINE-WEEKLY, FE-LINE-MINUTES, FE-ENGAGEMENT-PLANNING, FE-DELIVERY-*, FE-FIN-*).
+4. Follow-up batch (Sonnet): My work tabs 48px → 44px (boards); F-17 "UNKNOWN · Unknown" doubled in the checklist chip; and the phone "← Setup" target once the design engineer answers.
+
+## Waiting for the design engineer
+- "Go" on three follow-up recommendations: leave the wordmark under 380px, keep the board's proof box wording (F-09 UX-3-2), and point phone "← Setup" at Setup rules until a phone Setup home is drawn.
+- DE-5: the frame's "+ Start" in the phone bar (now also lowers SCR-22 phone and SCR-15 settings phone).
+- "Merge" for F-17 and F-18 once QA and PMO pass.
 
 ## Waiting on others
 - PSL: D-SIGNIN (sign-in, sign-out, account menu), D-ADMIN-AUTHORITY, D-PAYROLL-VISIBILITY, D-COSTING-RULE, D-CHANGE-DECIDERS, D-RECEIPT-ALLOCATION, D-SPEECH-INPUT, D-DECISION-VARIANTS (payment exception, CEO costing and CTO emergency decide boards).
 - Backend developer: `needs_you` on notifications (D-53); a `waiting` line-status tone (D-46); `recorded.station` on responses (D-38); idempotency for E-RESPONSE and for Start work after leaving (PMO-0-2); duplicate proof by sha256; upload limits; permission checks before field checks; the PROPOSAL `presentation` and `decide_presentation` blocks.
+- Backend developer, new from F-17/F-18: a section-page read for workspace paging; form prefill (current answer) and a deciding role on workspace steps; the "Try again" revision vs idempotency answer (F-17 TECH-1-4); a reused idempotency key with a different body must be refused; optional proof on "unknown" RFP outcomes; whether outcomes take several proof files; a colour field for row and lesson tags; the planning-packet agent; currency beyond NGN.
