@@ -1,0 +1,56 @@
+{
+  "region": "table",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-26-desktop-review.dc.html",
+  "page": "/work/W-2002",
+  "boardText": "SUGGESTED ANSWER",
+  "pageText": "Suggested answer",
+  "boardRegion": {
+    "width": 1316,
+    "height": 268
+  },
+  "pageRegion": {
+    "width": 1316,
+    "height": 299
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 90.9,
+    "coverageWithExceptions": 100,
+    "visual": 76.3
+  },
+  "missing": [
+    {
+      "role": "checkbox",
+      "name": "Select all 41 suggestions",
+      "exception": "Select all is not in the contract; the frame draws a checkbox per item offering the items step only."
+    }
+  ],
+  "misplaced": [
+    {
+      "name": ""
+    }
+  ],
+  "extra": [
+    {
+      "role": "region",
+      "name": "Table: Requirements"
+    },
+    {
+      "role": "columnheader",
+      "name": "SELECT"
+    }
+  ],
+  "visual": {
+    "score": 76.3,
+    "allCellsScore": 88.8,
+    "width": 1316,
+    "height": 268,
+    "boardHeight": 268,
+    "pageHeight": 299,
+    "cell": 12,
+    "contentCells": 1193,
+    "mismatchedCells": 283
+  },
+  "notes": []
+}

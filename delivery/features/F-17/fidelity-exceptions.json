@@ -1,0 +1,463 @@
+{
+  "about": "F-17 provisional exceptions for the region check (D-59). Region-check approval itself: design engineer, 14 Nov (D-59). Every entry below is a builder proposal until the design engineer confirms it. `regions` scopes an entry to the named regions.",
+  "exceptions": [
+    {
+      "role": "complementary",
+      "name": "",
+      "category": "frame layout",
+      "reason": "The boards put this area in the line page's side column; the frame draws every section in returned order in the Overview after the standard blocks (Conflicts 3). Where a line page puts it is that line task's board.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "steps",
+        "suggestions",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "DECIDE · PMO LEAD",
+      "category": "no field",
+      "reason": "The decide panel title names the deciding role; workspace.steps carries no panel title or role (contract proposal in build.md).",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "steps"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Note (needed to return or refuse)",
+      "category": "drawn on press",
+      "reason": "The note is a field of the Return step's form, drawn when Return is pressed (Contract: a step with fields opens its form).",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "steps"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "(needed to return or refuse)",
+      "category": "drawn on press",
+      "reason": "As the note label above.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "steps"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Open the report as the client will see it",
+      "category": "no field",
+      "reason": "No workspace field carries a client preview link (contract proposal).",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "text-cites"
+      ]
+    },
+    {
+      "role": "checkbox",
+      "name": "Select all 41 suggestions",
+      "category": "no field",
+      "reason": "Select all is not in the contract; the frame draws a checkbox per item offering the items step only.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "table"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "WHAT CLOSURE NEEDS",
+      "category": "anchor",
+      "reason": "The findings region is anchored on SCR-49's list (the spec's choice); the frame's findings section has its own returned title.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "findings"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "WHAT HAPPENED",
+      "category": "anchor",
+      "reason": "Recipients are anchored on SCR-25's What happened list; the frame's recipients section has its own returned title.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "recipients"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Delivered to 2 client contacts. Verified.",
+      "category": "phone composition",
+      "reason": "The phone received board draws only a one-line summary; the frame draws the returned section. The phone composition is the line task's board.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "recipients",
+        "timeline",
+        "notice-done"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦22.6M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦18.4M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦21.0M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦20.0M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦12.1M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦24.3M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦7.8M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦19.8M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "category": "amount format",
+      "reason": "Matched by position in the table pattern, not as a standalone label; the page draws Unknown in the same cells (tests/workspace.test.tsx INV-UNKNOWN).",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "R-07 · RFP p.6",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Loan officers approve applications above a set amount",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "From PSL's past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "From Harmattan Bank RFP 2025 · R-12",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Tola's suggested answer",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "REVIEW TOLA'S SUGGESTION",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Harmattan Bank RFP 2025 · R-12",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Write my own",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Edit",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Reject",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "1 of 41 · swipe for the next",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "heading",
+      "name": "Suggested by Tola41",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Accepting records your name. Tola's original suggestion stays in the history, so reviewers can see what was changed.",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Cancel keeps Tola's suggestion as it was. If you've typed changes, we ask before throwing them away.",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Cancel keeps Tola's suggestion. If you've typed changes, we ask first.",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Tola's version stays in the history.",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Your answer",
+      "category": "form layout",
+      "reason": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Editing in place. Your words replace Tola's once you save; Tola's version stays in the history.",
+      "category": "form layout",
+      "reason": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Status",
+      "category": "form layout",
+      "reason": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Save and accept",
+      "category": "form layout",
+      "reason": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Status",
+      "category": "form layout",
+      "reason": "The status choice is in the edit form, not in the review card.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "suggestions"
+      ]
+    },
+    {
+      "role": "section",
+      "name": "restricted section",
+      "category": "no board",
+      "reason": "No line board draws a restricted section label; the frame's restricted label is proven by tests/workspace.test.tsx (INV-RESTRICTED).",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "restricted"
+      ]
+    },
+    {
+      "role": "section",
+      "name": "waiting, uncertain and stale notices",
+      "category": "no board",
+      "reason": "No SCR-25 board draws these sentences; they are proven by tests/workspace-step.test.tsx and e2e.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "notice-queued-uncertain-stale"
+      ]
+    }
+  ]
+}

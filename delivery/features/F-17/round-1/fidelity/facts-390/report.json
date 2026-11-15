@@ -1,0 +1,42 @@
+{
+  "region": "facts",
+  "width": 390,
+  "board": "design/canvas/project/SCR-49-mobile-blocked.dc.html",
+  "page": "/work/W-2003",
+  "boardText": "Go-live accepted",
+  "pageText": "Criteria",
+  "boardRegion": {
+    "width": 386,
+    "height": 246
+  },
+  "pageRegion": {
+    "width": 386,
+    "height": 235
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 59.8
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [
+    {
+      "role": "heading",
+      "name": "CRITERIA"
+    }
+  ],
+  "visual": {
+    "score": 59.8,
+    "allCellsScore": 57,
+    "width": 386,
+    "height": 246,
+    "boardHeight": 246,
+    "pageHeight": 235,
+    "cell": 12,
+    "contentCells": 660,
+    "mismatchedCells": 265
+  },
+  "notes": []
+}

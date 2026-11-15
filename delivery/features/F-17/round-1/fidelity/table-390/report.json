@@ -1,0 +1,103 @@
+{
+  "region": "table",
+  "width": 390,
+  "board": "design/canvas/project/SCR-26-mobile-review.dc.html",
+  "page": "/work/W-2002",
+  "boardText": "Loan officers approve applications above a set amount",
+  "pageText": "Suggested answer",
+  "boardRegion": {
+    "width": 390,
+    "height": 844
+  },
+  "pageRegion": {
+    "width": 499,
+    "height": 606
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 33.3,
+    "coverageWithExceptions": 100,
+    "visual": 71.6
+  },
+  "missing": [
+    {
+      "role": "heading",
+      "name": "Suggested by Tola41",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    },
+    {
+      "role": "text",
+      "name": "R-07 · RFP p.6",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "From Harmattan Bank RFP 2025 · R-12",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "link",
+      "name": "Edit",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    },
+    {
+      "role": "link",
+      "name": "Reject",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    },
+    {
+      "role": "text",
+      "name": "1 of 41 · swipe for the next",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    }
+  ],
+  "misplaced": [
+    {
+      "name": "Loan officers approve applications above a set amount"
+    },
+    {
+      "name": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded."
+    },
+    {
+      "name": "Status"
+    }
+  ],
+  "extra": [
+    {
+      "role": "region",
+      "name": "Table: Requirements"
+    },
+    {
+      "role": "table",
+      "name": ""
+    },
+    {
+      "role": "columnheader",
+      "name": "SELECT"
+    },
+    {
+      "role": "columnheader",
+      "name": "#"
+    },
+    {
+      "role": "columnheader",
+      "name": "REQUIREMENT"
+    },
+    {
+      "role": "columnheader",
+      "name": "SUGGESTED ANSWER"
+    }
+  ],
+  "visual": {
+    "score": 71.6,
+    "allCellsScore": 84.8,
+    "width": 500,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 606,
+    "cell": 12,
+    "contentCells": 1522,
+    "mismatchedCells": 432
+  },
+  "notes": []
+}
