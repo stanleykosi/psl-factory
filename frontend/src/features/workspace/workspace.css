@@ -164,7 +164,8 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   /* every step is off while the reconcile panel's own pinned button is shown: the Decide panel flows, and the page keeps that button's height (its control plus padding) clear below it */
   .ws:has(.ws-decide--flow) { padding-bottom: calc(var(--control-lg) + var(--space-bar-clear)); }
   html:has(.ws-decide--flow) { scroll-padding-bottom: calc(var(--control-lg) + var(--space-bar-clear)); }
-  .ws-decide.ws-decide--flow { position: static; }
+  /* a flex item honours z-index even when static: without auto the flowing panel would sit over the reconcile panel's pinned button */
+  .ws-decide.ws-decide--flow { position: static; z-index: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

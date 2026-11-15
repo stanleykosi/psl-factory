@@ -10,7 +10,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import type { WorkItem } from '@/features/work-item/labels';
 import { WarningIcon } from '@/shell/icons';
 
-import { agentName, tagClass, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
+import { agentName, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { SectionView, type ItemControls } from './Sections';
 import { StepForm } from './StepForm';
 import { Consequence, StepControl, StepRow } from './Steps';
@@ -19,32 +19,21 @@ import { STEP_TEXT, useWorkspaceStep, type Attempt, type StepBody, type SubmitRe
 
 import './workspace.css';
 
-/** The header: the work item keeps the page's one h1, so the workspace title is an h2 only when it differs. */
+/**
+ * The header: the page's frame draws the crumbs, status and subtitle (D-73, as the line boards place them) and keeps
+ * the one h1, so the workspace title is an h2 only when it differs.
+ */
 function WorkspaceHeader({ workspace, itemTitle }: { workspace: WorkspaceData; itemTitle: string }) {
-  const { title, subtitle, status, byline, version, context, agent_note: note } = workspace;
-  const crumbs = context?.crumbs ?? [];
+  const { title, byline, version, agent_note: note } = workspace;
   const showTitle = title !== undefined && title !== itemTitle;
-  if (!showTitle && !subtitle && !status && !byline && !version && crumbs.length === 0 && !note) return null;
+  if (!showTitle && !byline && !version && !note) return null;
   return (
     <header className="ws-header">
-      {crumbs.length > 0 && (
-        <nav aria-label="Where this sits">
-          <ol className="psl-crumb ws-crumbs">
-            {crumbs.map((c, i) => (
-              <li key={`${c.value}-${i}`} aria-current={i === crumbs.length - 1 ? 'location' : undefined}>
-                {c.label}
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )}
-      {(showTitle || status) && (
+      {showTitle && (
         <div className="ws-titleline">
-          {showTitle && <h2 className="ws-title">{title}</h2>}
-          {status && <span className={`${tagClass(status.tone)} ws-status`}>{status.label}</span>}
+          <h2 className="ws-title">{title}</h2>
         </div>
       )}
-      {subtitle && <p className="ws-subtitle">{subtitle}</p>}
       {(byline || version) && (
         <p className="ws-byline">
           {byline && <span>{byline}</span>}
