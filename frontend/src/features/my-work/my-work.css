@@ -11,6 +11,8 @@
 /* queue tabs: buttons drawn as .psl-tab; on phones the strip scrolls sideways */
 .my-work__tabs { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); min-width: 0; }
 .my-work__tab { border-top: none; border-left: none; border-bottom: none; font: inherit; font-weight: 500; }
+/* phone boards (SCR-01-mobile*): 15px words and 14px inside each tab */
+@media (max-width: 719px) { .my-work__tab { padding: 0 14px; font-size: 15px; } }
 .my-work__nocount { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
 
 /* toolbar: search, Filter, result count; chips beneath */

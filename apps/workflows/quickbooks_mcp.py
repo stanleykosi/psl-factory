@@ -222,6 +222,35 @@ def status(actor, case_id, intent_id):
         'automatic_retry':False,'finance_verification':False}
 
 
+def _factory_intent(work):
+    reservation = Audit.objects.filter(case=work.case, action=PREFIX+'reserved',
+        data__factory_work=work.pk, data__factory_head=work.source_head_id).order_by('-pk').first()
+    if reservation is None:
+        return None
+    row, pins = authentic(work.case, reservation.data['intent'], INTENT)
+    if pins.get('factory_work') != work.pk or pins.get('factory_head') != work.source_head_id:
+        raise ValidationError('Factory MCP reservation binding differs')
+    return row, pins
+
+
+def factory_read_status(actor, work):
+    """Inspect the selected reservation independently of execution readiness."""
+    from . import readiness
+    from .factory import access
+
+    try:
+        access(actor, work.case, 'factory.read', work.definition)
+        readiness.readable(actor, work.case, private=True)
+        intent = _factory_intent(work)
+        if intent is None:
+            return None
+        row, pins = intent
+        readiness.contract_access(actor, readiness.contract_for(work.case, pins['contract']))
+        return status(actor, work.case_id, row.pk)
+    except (PermissionDenied, ValidationError):
+        return None
+
+
 @transaction.atomic
 def factory_state(work, lineage, reader=None):
     """Metadata only; discovery, remote content and agent proposals grant nothing."""
@@ -239,12 +268,9 @@ def factory_state(work, lineage, reader=None):
         return {'ready':False,'status':'configuration_or_current_authority_needed'}
     # An exact append-only reservation index prevents a bounded history scan
     # from accidentally hiding an older attempt and authorizing a replay.
-    reservation = Audit.objects.filter(case=work.case, action=PREFIX+'reserved',
-        data__factory_work=work.pk, data__factory_head=work.source_head_id).order_by('-pk').first()
-    if reservation:
-        row, value = authentic(work.case, reservation.data['intent'], INTENT)
-        if value.get('factory_work') != work.pk or value.get('factory_head') != work.source_head_id:
-            raise ValidationError('Factory MCP reservation binding differs')
+    intent = _factory_intent(work)
+    if intent:
+        row, _ = intent
         observed = status(actor, work.case_id, row.pk)
         return dict(observed, ready=False)
     return {'ready':True,'contract':selected.contract_id,'binding':pins['binding'],'status':'eligible_read_reservation'}

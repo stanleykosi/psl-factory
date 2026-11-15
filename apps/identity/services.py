@@ -11,3 +11,13 @@ def require(actor, case, action):
 
 def visible_cases(actor):
     return Case.objects.filter(grant__user=actor, grant__active=True, grant__action='case.read').distinct()
+
+
+def active_case_grants(actor, case_ids, *, actions=None):
+    """Current (case, action) pairs for the selected cases only."""
+    if not actor.is_authenticated or not actor.is_active or not case_ids:
+        return set()
+    grants = Grant.objects.filter(user=actor, user__is_active=True, case_id__in=case_ids, active=True)
+    if actions is not None:
+        grants = grants.filter(action__in=actions)
+    return set(grants.values_list('case_id', 'action'))

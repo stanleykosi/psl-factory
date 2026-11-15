@@ -344,7 +344,7 @@ test.describe('phone', () => {
   test('rules, finance and delivery as drawn, read-only, no side scroll, one h1, axe clean (AC 18, 24)', async ({ page, context }) => {
     await openAs(page, context, '/setup/rules', { psl_mock_setup: 'mobile' });
     const bar = page.locator('header.psl-phonebar');
-    await expect(bar.getByRole('link', { name: 'Back to Setup' })).toHaveAttribute('href', '/setup/roles');
+    await expect(bar.getByRole('link', { name: 'Back to Setup' })).toHaveAttribute('href', '/setup/rules');
     await expect(bar.getByRole('button', { name: 'Menu' })).toHaveCount(0);
     await expect(page.locator('.setup-phone').getByRole('link', { name: /Setup/ })).toHaveCount(0);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(['Rules · 6 not set']);
