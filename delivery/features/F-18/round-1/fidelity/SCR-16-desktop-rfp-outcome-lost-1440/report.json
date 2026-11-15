@@ -1,0 +1,1356 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T06:41:54.462Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-desktop-rfp-outcome-lost.dc.html",
+  "boardName": "SCR-16-desktop-rfp-outcome-lost.dc.html",
+  "pageUrl": "http://localhost:4623/frozen/rfp-outcome-lost-1440.html",
+  "viewport": {
+    "width": 1440,
+    "height": 1180
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-18/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 94.6 meets 90.",
+    "16 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 75,
+    "coverageWithExceptions": 100,
+    "visual": 94.6
+  },
+  "visual": {
+    "score": 94.6,
+    "allCellsScore": 97.1,
+    "width": 1440,
+    "height": 1212,
+    "boardHeight": 1212,
+    "pageHeight": 1216,
+    "cell": 12,
+    "contentCells": 6449,
+    "mismatchedCells": 347
+  },
+  "coverage": {
+    "total": 40,
+    "found": 30,
+    "coverage": 75,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1194,
+          "y": 9,
+          "w": 118,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 98,
+        "looks": [],
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1084,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 1156
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1159
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PRE-SALE / RFP · TL-RFP-2026-014",
+        "pageName": "PRE-SALE / RFP · TL-RFP-2026-014",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Tamarind Loans · loan origination RFP",
+        "pageName": "Tamarind Loans · loan origination RFP",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 744,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 837,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SUBMITTED 26 NOV",
+        "pageName": "SUBMITTED 26 NOV",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1101,
+          "y": 133,
+          "w": 129,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1101,
+          "y": 142,
+          "w": 129,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM TUNDE BELLO",
+        "pageName": "PM TUNDE BELLO",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1238,
+          "y": 133,
+          "w": 114,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1238,
+          "y": 142,
+          "w": 114,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Team input 4/4",
+        "pageName": "Team input 4/4",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 245,
+          "y": 176,
+          "w": 143,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 245,
+          "y": 177,
+          "w": 143,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECORD THE OUTCOME",
+        "pageName": "RECORD THE OUTCOME",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 244,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 245,
+          "w": 898,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What Tamarind Loans decided about our response.",
+        "pageName": "What Tamarind Loans decided about our response.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 295,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 296,
+          "w": 870,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Submission",
+        "pageName": "Submission",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 325,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 326,
+          "w": 870,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Submission pack v1 · emailed 26 Nov 15:42 · delivery confirmed",
+        "pageName": "Submission pack v1 · emailed 26 Nov 15:42 · delivery confirmed",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 349,
+          "w": 870,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 350,
+          "w": 870,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Result",
+        "pageName": "Result",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 409,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 410,
+          "w": 870,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "When you learned it",
+        "pageName": "When you learned it",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 495,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 494,
+          "w": 870,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Main reason they gave",
+        "pageName": "Main reason they gave",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 579,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 578,
+          "w": 870,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lessons (what we'd do differently)",
+        "pageName": "Lessons (what we’d do differently)",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 665,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 662,
+          "w": 870,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 813,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 810,
+          "w": 870,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "tamarind-regret-letter.pdf",
+        "pageName": "tamarind-regret-letter.pdf",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 146,
+          "y": 849,
+          "w": 170,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 146,
+          "y": 846,
+          "w": 780,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 96 KB",
+        "pageName": "Uploaded · 96 KB",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 146,
+          "y": 869,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 146,
+          "y": 864,
+          "w": 780,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You are recording as",
+        "pageName": "You are recording as",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 909,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 906,
+          "w": 870,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "A role PSL allows to record outcomes",
+        "pageName": "A role PSL allows to record outcomes",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 987,
+          "w": 870,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 984,
+          "w": 870,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record lost",
+        "pageName": "Record lost",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 1090,
+          "w": 320,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1096,
+          "w": 320,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "About recording the outcome",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 242,
+          "w": 340,
+          "h": 104
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 243,
+          "w": 340,
+          "h": 104
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The client doesn't log in. You record their decision with proof, such as the award or regret letter. Only roles PSL allows can record outcomes.",
+        "pageName": "The client doesn’t log in. You record their decision with proof, such as the award or regret letter. Only roles PSL allows can record outcomes.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1052,
+          "y": 252,
+          "w": 288,
+          "h": 84
+        },
+        "pageBox": {
+          "x": 1052,
+          "y": 253,
+          "w": 288,
+          "h": 84
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "RFP",
+        "key": "tablist: RFP",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 579,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 3: the frame's tabs are a <nav aria-label=\"RFP\"> of links with aria-current, not a role=\"tablist\" (a tablist needs panels). The nav is on the page under the same name.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Requirements 64",
+        "key": "tab: Requirements 64",
+        "container": "tablist",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 155,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Requirements 64\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Pricing",
+        "key": "tab: Pricing",
+        "container": "tablist",
+        "boardBox": {
+          "x": 389,
+          "y": 176,
+          "w": 78,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Pricing\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Submission",
+        "key": "tab: Submission",
+        "container": "tablist",
+        "boardBox": {
+          "x": 467,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Submission\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Outcome",
+        "key": "tab: Outcome",
+        "container": "tablist",
+        "boardBox": {
+          "x": 575,
+          "y": 176,
+          "w": 92,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Outcome\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "04 Dec 2026, 11:00",
+        "key": "text: 04 Dec 2026, 11:00",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 519,
+          "w": 870,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"04 Dec 2026, 11:00\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Our total was 18% above the winning bid; they wanted go-live in 10 weeks, we said 14. They rated our audit-trail answer highest.",
+        "key": "text: Our total was 18% above the winning bid; they wanted go-live in 10 weeks, we said 14. They rated our audit-trail answer highest.",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 689,
+          "w": 870,
+          "h": 112
+        },
+        "exception": {
+          "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"Our total was 18% above the winning bid; they wanted go-live in 10 weeks, we said 14. They rated our audit-trail answer highest.\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Relationship owner ▾",
+        "key": "text: Relationship owner ▾",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 933,
+          "w": 870,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"Relationship owner ▾\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next: The RFP is archived with these lessons. Nothing is deleted, and Tola uses the accepted answers as suggestions in future bids.",
+        "key": "text: What happens next: The RFP is archived with these lessons. Nothing is deleted, and Tola uses the accepted answers as suggestions in future bids.",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 1016,
+          "w": 870,
+          "h": 62
+        },
+        "exception": {
+          "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+          "approved_by": "design engineer, 14 Nov (D-60)"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next:",
+        "key": "text: What happens next:",
+        "container": "main",
+        "boardBox": {
+          "x": 116,
+          "y": 1027,
+          "w": 130,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+          "approved_by": "design engineer, 14 Nov (D-60)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Tunde Bello · PMO\"",
+        "kind": "Text",
+        "name": "Tunde Bello · PMO",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1084,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Link \"Assistant\""
+        ]
+      },
+      {
+        "label": "Tab \"Team input 4/4\"",
+        "kind": "Tab",
+        "name": "Team input 4/4",
+        "boardBox": {
+          "x": 245,
+          "y": 176,
+          "w": 143,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 245,
+          "y": 177,
+          "w": 143,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"RECORD THE OUTCOME\"",
+        "kind": "Text",
+        "name": "RECORD THE OUTCOME",
+        "boardBox": {
+          "x": 90,
+          "y": 244,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 245,
+          "w": 898,
+          "h": 37
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"What Tamarind Loans decided about our response.\"",
+        "kind": "Text",
+        "name": "What Tamarind Loans decided about our response.",
+        "boardBox": {
+          "x": 104,
+          "y": 295,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 296,
+          "w": 870,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Submission\"",
+        "kind": "Text",
+        "name": "Submission",
+        "boardBox": {
+          "x": 104,
+          "y": 325,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 326,
+          "w": 870,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Submission pack v1 · emailed 26 Nov 15:42 · delivery confirmed\"",
+        "kind": "Text",
+        "name": "Submission pack v1 · emailed 26 Nov 15:42 · delivery confirmed",
+        "boardBox": {
+          "x": 104,
+          "y": 349,
+          "w": 870,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 350,
+          "w": 870,
+          "h": 48
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Result\"",
+        "kind": "Text",
+        "name": "Result",
+        "boardBox": {
+          "x": 104,
+          "y": 409,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 410,
+          "w": 870,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"When you learned it\"",
+        "kind": "Text",
+        "name": "When you learned it",
+        "boardBox": {
+          "x": 104,
+          "y": 495,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 494,
+          "w": 870,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Main reason they gave\"",
+        "kind": "Text",
+        "name": "Main reason they gave",
+        "boardBox": {
+          "x": 104,
+          "y": 579,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 578,
+          "w": 870,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Lessons (what we'd do differently)\"",
+        "kind": "Text",
+        "name": "Lessons (what we'd do differently)",
+        "boardBox": {
+          "x": 104,
+          "y": 665,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 662,
+          "w": 870,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Proof\"",
+        "kind": "Text",
+        "name": "Proof",
+        "boardBox": {
+          "x": 104,
+          "y": 813,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 810,
+          "w": 870,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"tamarind-regret-letter.pdf\"",
+        "kind": "Text",
+        "name": "tamarind-regret-letter.pdf",
+        "boardBox": {
+          "x": 146,
+          "y": 849,
+          "w": 170,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 146,
+          "y": 846,
+          "w": 780,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Uploaded · 96 KB\"",
+        "kind": "Text",
+        "name": "Uploaded · 96 KB",
+        "boardBox": {
+          "x": 146,
+          "y": 869,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 146,
+          "y": 864,
+          "w": 780,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"You are recording as\"",
+        "kind": "Text",
+        "name": "You are recording as",
+        "boardBox": {
+          "x": 104,
+          "y": 909,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 906,
+          "w": 870,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"A role PSL allows to record outcomes\"",
+        "kind": "Text",
+        "name": "A role PSL allows to record outcomes",
+        "boardBox": {
+          "x": 104,
+          "y": 987,
+          "w": 870,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 984,
+          "w": 870,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Record lost\"",
+        "kind": "Link",
+        "name": "Record lost",
+        "boardBox": {
+          "x": 104,
+          "y": 1090,
+          "w": 320,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1096,
+          "w": 320,
+          "h": 48
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1036,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "RFP",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 580,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Requirements 64",
+        "container": "navigation",
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 155,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "64",
+        "container": "navigation",
+        "pageBox": {
+          "x": 202,
+          "y": 190,
+          "w": 25,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pricing",
+        "container": "navigation",
+        "pageBox": {
+          "x": 389,
+          "y": 177,
+          "w": 78,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Submission",
+        "container": "navigation",
+        "pageBox": {
+          "x": 467,
+          "y": 177,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Outcome",
+        "container": "navigation",
+        "pageBox": {
+          "x": 575,
+          "y": 177,
+          "w": 92,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "When you learned it",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 518,
+          "w": 870,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Lessons (what we’d do differently)",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 686,
+          "w": 870,
+          "h": 112
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "You are recording as",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 930,
+          "w": 870,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 138,
+          "y": 1014,
+          "w": 63,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 924,
+          "y": 1015,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 1039,
+          "w": 870,
+          "h": 45
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

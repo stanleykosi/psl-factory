@@ -1055,3 +1055,6 @@
 {"at":"2026-11-14T21:59:36Z","feature":"F-18","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-14T22:00:12Z","feature":"F-17","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-14T22:00:32Z","feature":"F-18","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-15T06:50:41Z","feature":"F-17","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":167.0,"commit":"1432023f9857"}
+{"at":"2026-11-15T06:50:50Z","feature":"F-17","round":1,"kind":"transition","head":"1432023f9857","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-15T06:50:50Z","feature":"F-17","round":1,"kind":"finding","action":"add","finding":"FID-1-1","by":"coordinator","severity":"high","owner":"frontend","blocking":true,"role":"fid"}

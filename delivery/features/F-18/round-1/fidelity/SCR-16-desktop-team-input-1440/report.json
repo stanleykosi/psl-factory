@@ -1,0 +1,1438 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T06:41:44.769Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-desktop-team-input.dc.html",
+  "boardName": "SCR-16-desktop-team-input.dc.html",
+  "pageUrl": "http://localhost:4623/frozen/team-input-1440.html",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-18/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 93.4 meets 90.",
+    "18 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 76.9,
+    "coverageWithExceptions": 100,
+    "visual": 93.4
+  },
+  "visual": {
+    "score": 93.4,
+    "allCellsScore": 96.8,
+    "width": 1440,
+    "height": 932,
+    "boardHeight": 932,
+    "pageHeight": 930,
+    "cell": 12,
+    "contentCells": 4512,
+    "mismatchedCells": 297
+  },
+  "coverage": {
+    "total": 39,
+    "found": 30,
+    "coverage": 76.9,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1194,
+          "y": 9,
+          "w": 118,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 98,
+        "looks": [],
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1084,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 876
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 873
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PRE-SALE / RFP · TL-RFP-2026-014",
+        "pageName": "PRE-SALE / RFP · TL-RFP-2026-014",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Tamarind Loans · loan origination RFP",
+        "pageName": "Tamarind Loans · loan origination RFP",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 744,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 837,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DEADLINE 28 NOV · 16 DAYS",
+        "pageName": "DEADLINE 28 NOV · 16 DAYS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1053,
+          "y": 133,
+          "w": 176,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1053,
+          "y": 142,
+          "w": 176,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM TUNDE BELLO",
+        "pageName": "PM TUNDE BELLO",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1238,
+          "y": 133,
+          "w": 114,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1238,
+          "y": 142,
+          "w": 114,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECORD TEAM INPUT",
+        "pageName": "RECORD TEAM INPUT",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 244,
+          "w": 720,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 245,
+          "w": 716,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "For the RFP response and the costing sheet.",
+        "pageName": "For the RFP response and the costing sheet.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 295,
+          "w": 692,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 296,
+          "w": 688,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Team",
+        "pageName": "Team",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 324,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 325,
+          "w": 688,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Engineering, given",
+        "pageName": "Engineering, given",
+        "pageRole": "radio",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 356,
+          "w": 197,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 357,
+          "w": 196,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "QA, given",
+        "pageName": "QA, given",
+        "pageRole": "radio",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 303,
+          "y": 356,
+          "w": 142,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 302,
+          "y": 357,
+          "w": 141,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Security, missing, blocks review",
+        "pageName": "Security, missing",
+        "pageRole": "radio",
+        "similarity": 81,
+        "looks": [],
+        "boardBox": {
+          "x": 445,
+          "y": 356,
+          "w": 177,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 443,
+          "y": 357,
+          "w": 176,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Product, missing, blocks review",
+        "pageName": "Product, missing",
+        "pageRole": "radio",
+        "similarity": 81,
+        "looks": [],
+        "boardBox": {
+          "x": 622,
+          "y": 356,
+          "w": 174,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 619,
+          "y": 357,
+          "w": 173,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Security and Product haven't given input yet. Review can't start until they do.",
+        "pageName": "Security and Product haven't given input yet. Review can't start until they do.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 410,
+          "w": 692,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 409,
+          "w": 688,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Estimate (person-days)",
+        "pageName": "Estimate (person-days)",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 439,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 438,
+          "w": 688,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Needed for the costing sheet. Shown for Engineering and Security.",
+        "pageName": "Needed for the costing sheet. Shown for Engineering and Security.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 517,
+          "w": 692,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 516,
+          "w": 688,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What they gave",
+        "pageName": "What they gave",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 546,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 546,
+          "w": 688,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 630,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 630,
+          "w": 336,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "security-estimate-tamarind.xlsx",
+        "pageName": "security-estimate-tamarind.xlsx",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 146,
+          "y": 666,
+          "w": 210,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 146,
+          "y": 666,
+          "w": 246,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 64 KB",
+        "pageName": "Uploaded · 64 KB",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 146,
+          "y": 686,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 146,
+          "y": 684,
+          "w": 246,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Received",
+        "pageName": "Received",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 726,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 726,
+          "w": 336,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record input",
+        "pageName": "Record input",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 810,
+          "w": 692,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 810,
+          "w": 688,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engineering, QA, Security and Product don't log in. You record their input with proof, and the record keeps your name.",
+        "pageName": "Engineering, QA, Security and Product don't log in. You record their input with proof, and the record keeps your name.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 890,
+          "y": 268,
+          "w": 300,
+          "h": 63
+        },
+        "pageBox": {
+          "x": 886,
+          "y": 269,
+          "w": 296,
+          "h": 63
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "RFP",
+        "key": "tablist: RFP",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 579,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 3: the frame's tabs are a <nav aria-label=\"RFP\"> of links with aria-current, not a role=\"tablist\" (a tablist needs panels). The nav is on the page under the same name.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Requirements 64",
+        "key": "tab: Requirements 64",
+        "container": "tablist",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 155,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Requirements 64\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Team input 2/4",
+        "key": "tab: Team input 2/4",
+        "container": "tablist",
+        "boardBox": {
+          "x": 245,
+          "y": 176,
+          "w": 143,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Team input 2/4\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Pricing",
+        "key": "tab: Pricing",
+        "container": "tablist",
+        "boardBox": {
+          "x": 389,
+          "y": 176,
+          "w": 78,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Pricing\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Submission",
+        "key": "tab: Submission",
+        "container": "tablist",
+        "boardBox": {
+          "x": 467,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Submission\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Outcome",
+        "key": "tab: Outcome",
+        "container": "tablist",
+        "boardBox": {
+          "x": 575,
+          "y": 176,
+          "w": 92,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Outcome\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "18",
+        "key": "text: 18",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 463,
+          "w": 692,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"18\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Security estimate and data-protection notes",
+        "key": "text: Security estimate and data-protection notes",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 570,
+          "w": 692,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"Security estimate and data-protection notes\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "12 Nov 2026, 15:10",
+        "key": "text: 12 Nov 2026, 15:10",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 750,
+          "w": 692,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"12 Nov 2026, 15:10\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Tunde Bello · PMO\"",
+        "kind": "Text",
+        "name": "Tunde Bello · PMO",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1084,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Link \"Assistant\""
+        ]
+      },
+      {
+        "label": "Text \"RECORD TEAM INPUT\"",
+        "kind": "Text",
+        "name": "RECORD TEAM INPUT",
+        "boardBox": {
+          "x": 90,
+          "y": 244,
+          "w": 720,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 245,
+          "w": 716,
+          "h": 37
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"For the RFP response and the costing sheet.\"",
+        "kind": "Text",
+        "name": "For the RFP response and the costing sheet.",
+        "boardBox": {
+          "x": 104,
+          "y": 295,
+          "w": 692,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 296,
+          "w": 688,
+          "h": 17
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Engineering, QA, Security and Product don't log in. You record their input with proof, and the record keeps your name.\"",
+        "kind": "Text",
+        "name": "Engineering, QA, Security and Product don't log in. You record their input with proof, and the record keeps your name.",
+        "boardBox": {
+          "x": 890,
+          "y": 268,
+          "w": 300,
+          "h": 63
+        },
+        "pageBox": {
+          "x": 886,
+          "y": 269,
+          "w": 296,
+          "h": 63
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Text \"Team\"",
+        "kind": "Text",
+        "name": "Team",
+        "boardBox": {
+          "x": 104,
+          "y": 324,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 325,
+          "w": 688,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Option \"Engineering, given\"",
+        "kind": "Option",
+        "name": "Engineering, given",
+        "boardBox": {
+          "x": 106,
+          "y": 356,
+          "w": 197,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 357,
+          "w": 196,
+          "h": 40
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Option \"QA, given\"",
+        "kind": "Option",
+        "name": "QA, given",
+        "boardBox": {
+          "x": 303,
+          "y": 356,
+          "w": 142,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 302,
+          "y": 357,
+          "w": 141,
+          "h": 40
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Option \"Security, missing, blocks review\"",
+        "kind": "Option",
+        "name": "Security, missing, blocks review",
+        "boardBox": {
+          "x": 445,
+          "y": 356,
+          "w": 177,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 443,
+          "y": 357,
+          "w": 176,
+          "h": 40
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Option \"Product, missing, blocks review\"",
+        "kind": "Option",
+        "name": "Product, missing, blocks review",
+        "boardBox": {
+          "x": 622,
+          "y": 356,
+          "w": 174,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 619,
+          "y": 357,
+          "w": 173,
+          "h": 40
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Security and Product haven't given input yet. Review can't start until they do.\"",
+        "kind": "Text",
+        "name": "Security and Product haven't given input yet. Review can't start until they do.",
+        "boardBox": {
+          "x": 104,
+          "y": 410,
+          "w": 692,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 409,
+          "w": 688,
+          "h": 17
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Estimate (person-days)\"",
+        "kind": "Text",
+        "name": "Estimate (person-days)",
+        "boardBox": {
+          "x": 104,
+          "y": 439,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 438,
+          "w": 688,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Needed for the costing sheet. Shown for Engineering and Security.\"",
+        "kind": "Text",
+        "name": "Needed for the costing sheet. Shown for Engineering and Security.",
+        "boardBox": {
+          "x": 104,
+          "y": 517,
+          "w": 692,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 516,
+          "w": 688,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"What they gave\"",
+        "kind": "Text",
+        "name": "What they gave",
+        "boardBox": {
+          "x": 104,
+          "y": 546,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 546,
+          "w": 688,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Proof\"",
+        "kind": "Text",
+        "name": "Proof",
+        "boardBox": {
+          "x": 104,
+          "y": 630,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 630,
+          "w": 336,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"security-estimate-tamarind.xlsx\"",
+        "kind": "Text",
+        "name": "security-estimate-tamarind.xlsx",
+        "boardBox": {
+          "x": 146,
+          "y": 666,
+          "w": 210,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 146,
+          "y": 666,
+          "w": 246,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Uploaded · 64 KB\"",
+        "kind": "Text",
+        "name": "Uploaded · 64 KB",
+        "boardBox": {
+          "x": 146,
+          "y": 686,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 146,
+          "y": 684,
+          "w": 246,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Received\"",
+        "kind": "Text",
+        "name": "Received",
+        "boardBox": {
+          "x": 104,
+          "y": 726,
+          "w": 692,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 726,
+          "w": 336,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Record input\"",
+        "kind": "Link",
+        "name": "Record input",
+        "boardBox": {
+          "x": 104,
+          "y": 810,
+          "w": 692,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 810,
+          "w": 688,
+          "h": 48
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1036,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "RFP",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 580,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Requirements 64",
+        "container": "navigation",
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 155,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "64",
+        "container": "navigation",
+        "pageBox": {
+          "x": 202,
+          "y": 190,
+          "w": 25,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Team input 2/4",
+        "container": "navigation",
+        "pageBox": {
+          "x": 245,
+          "y": 177,
+          "w": 143,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2/4",
+        "container": "navigation",
+        "pageBox": {
+          "x": 339,
+          "y": 190,
+          "w": 32,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pricing",
+        "container": "navigation",
+        "pageBox": {
+          "x": 389,
+          "y": 177,
+          "w": 78,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Submission",
+        "container": "navigation",
+        "pageBox": {
+          "x": 467,
+          "y": 177,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Outcome",
+        "container": "navigation",
+        "pageBox": {
+          "x": 575,
+          "y": 177,
+          "w": 92,
+          "h": 44
+        }
+      },
+      {
+        "kind": "spinbutton",
+        "role": "spinbutton",
+        "name": "Estimate (person-days)",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 462,
+          "w": 688,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "What they gave",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 570,
+          "w": 688,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Remove security-estimate-tamarind.xlsx",
+        "container": "form",
+        "pageBox": {
+          "x": 402,
+          "y": 672,
+          "w": 24,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "I confirm this input came from the team named above.",
+        "container": "form",
+        "pageBox": {
+          "x": 456,
+          "y": 667,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Received",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 750,
+          "w": 336,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 490,
+          "y": 726,
+          "w": 63,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 742,
+          "y": 727,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 456,
+          "y": 751,
+          "w": 336,
+          "h": 45
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "About team input",
+        "container": "main",
+        "pageBox": {
+          "x": 830,
+          "y": 243,
+          "w": 380,
+          "h": 115
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

@@ -1,0 +1,319 @@
+{
+  "exceptions": [
+    {
+      "role": "tablist",
+      "name": "RFP",
+      "category": "frame item",
+      "reason": "Conflicts 3: the frame's tabs are a <nav aria-label=\"RFP\"> of links with aria-current, not a role=\"tablist\" (a tablist needs panels). The nav is on the page under the same name.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "tab",
+      "name": "Requirements 64",
+      "category": "frame item",
+      "reason": "Conflicts 3 and 4: the board draws \"Requirements 64\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "tab",
+      "name": "Team input 2/4",
+      "category": "frame item",
+      "reason": "Conflicts 3 and 4: the board draws \"Team input 2/4\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "tab",
+      "name": "Team input 4/4",
+      "category": "frame item",
+      "reason": "Conflicts 3 and 4: the board draws \"Team input 4/4\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "tab",
+      "name": "Pricing",
+      "category": "frame item",
+      "reason": "Conflicts 3 and 4: the board draws \"Pricing\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "tab",
+      "name": "Submission",
+      "category": "frame item",
+      "reason": "Conflicts 3 and 4: the board draws \"Submission\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "tab",
+      "name": "Outcome",
+      "category": "frame item",
+      "reason": "Conflicts 3 and 4: the board draws \"Outcome\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "link",
+      "name": "← RFP",
+      "category": "frame item",
+      "reason": "Conflicts 1 and 19: the frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to RFP\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link (as F-09, F-14, F-16).",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "radio",
+      "name": "Eng., given",
+      "category": "text with no field",
+      "reason": "Conflicts 6: the phone board abbreviates Engineering; no field carries an abbreviation, so the page shows the returned name (\"Engineering, given\").",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "No proof needed. Nothing has been heard yet.",
+      "category": "contract disagreement",
+      "reason": "Conflicts 7 / D-60 (b): evidence_id is required by E-RFP-OUTCOME for every result, so the Proof field stays required on Unknown; the backend developer is asked about an optional evidence_id (r3).",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "26 Nov · submission email",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8: \"Last contact with the client\" is the learned_at input, empty until the person fills it; the board's fixed value has no field.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "18",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"18\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Security estimate and data-protection notes",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"Security estimate and data-protection notes\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "12 Nov 2026, 15:10",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"12 Nov 2026, 15:10\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "04 Dec 2026, 11:00",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"04 Dec 2026, 11:00\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "01 Dec 2026, 15:20",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"01 Dec 2026, 15:20\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "12 Dec 2026",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"12 Dec 2026\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "12 Dec 2026, 09:00",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"12 Dec 2026, 09:00\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "10 Dec 2026, 09:00",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"10 Dec 2026, 09:00\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "₦40,951,000.00",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"₦40,951,000.00\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Our total was 18% above the winning bid; they wanted go-live in 10 weeks, we said 14. They rated our audit-trail answer highest.",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"Our total was 18% above the winning bid; they wanted go-live in 10 weeks, we said 14. They rated our audit-trail answer highest.\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Relationship owner ▾",
+      "category": "typed value drawn as fixed text",
+      "reason": "Conflicts 8 (same cause): the board draws what the person typed or chose (\"Relationship owner ▾\") as fixed text; on the page it is the value of the input, select or text area the person fills (the frozen page carries it as the control's value), which the check does not read as text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "As stated in the award letter. If it differs from costing v2, we flag it for the PM before the engagement starts.",
+      "category": "copy with no field",
+      "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "What happens next:",
+      "category": "copy with no field",
+      "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "What happens next: An engagement starts on route A. The response, costing v2 and team estimates carry over, and Tola builds the planning packet.",
+      "category": "copy with no field",
+      "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "What happens next: The RFP is archived with these lessons. Nothing is deleted, and Tola uses the accepted answers as suggestions in future bids.",
+      "category": "copy with no field",
+      "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "What happens next: The RFP stays open as \"Decision pending\". You get a reminder on the date, and the outcome can be recorded any time before.",
+      "category": "copy with no field",
+      "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "What happens next: The RFP stays open as \"Outcome unknown\". Tola can draft a follow-up email for you to send.",
+      "category": "copy with no field",
+      "reason": "Conflicts 12 / D-60 (c): board copy that states what the system will do, with no contract field behind it; left out and logged for the backend developer (an r3 field such as rfp_outcome.consequences[]). The page keeps \"As stated in the award letter.\" as the field hint.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "heading",
+      "name": "Won · handed off to engagement",
+      "category": "text with no field",
+      "reason": "Conflicts 15: the recorded heading is the result word from recorded.result (\"Won\"); \"handed off to engagement\" has no field.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "heading",
+      "name": "Lost · archived with lessons",
+      "category": "text with no field",
+      "reason": "Conflicts 15: the recorded heading is the result word from recorded.result (\"Lost\"); the archive shows from archive_reference.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Lost · archived",
+      "category": "text with no field",
+      "reason": "Conflicts 15: the phone board's heading; the page shows the result word (\"Lost\").",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Won. The response, costing v2 and team estimates move with it, so nobody re-enters them.",
+      "category": "copy with no field",
+      "reason": "Conflicts 12: a recorded intro that states what the system does, with no field behind it; not built (an r3 field would carry it).",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Handed off to engagement EN-0042.",
+      "category": "copy with no field",
+      "reason": "Conflicts 12: the phone board's won intro; the engagement shows from recorded.engagement as \"Engagement EN-0042 created\".",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Tamarind Loans told us the decision is delayed to 12 Dec. The RFP stays open; nothing else changes.",
+      "category": "copy with no field",
+      "reason": "Conflicts 12: a recorded intro with no field; the expected date shows from recorded.rows.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Delayed to 12 Dec. The RFP stays open.",
+      "category": "copy with no field",
+      "reason": "Conflicts 12: the phone board's pending intro, as above.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Archived as ARC-0117. Nothing is deleted: the response, costing and lessons stay searchable, and Tola uses accepted answers as suggestions in future bids.",
+      "category": "copy with no field",
+      "reason": "D-60 (c): \"Nothing is deleted / Tola uses accepted answers\" has no field; the page shows \"Archived as ARC-0117.\" from archive_reference.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Archived as ARC-0117. Nothing is deleted.",
+      "category": "copy with no field",
+      "reason": "D-60 (c), the phone board's wording of the same line.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Lessons · recorded by Tunde Bello from the client's debrief",
+      "category": "copy with no field",
+      "reason": "Conflicts 12: \"from the client's debrief\" has no field; the page shows \"Lessons · recorded by Tunde Bello\" from lessons_by.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Lessons",
+      "category": "disagreement between boards",
+      "reason": "The phone board names the panel \"Lessons\", the desktop board \"Lessons · recorded by …\"; one panel serves both widths with lessons_by (Conflicts 12).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "HANDOFF",
+      "category": "text with no field",
+      "reason": "Conflicts 13: the won board titles its rows \"Handoff\" around the planning-packet card; the page titles recorded.rows \"What's recorded\" as the other recorded boards do.",
+      "approved_by": "coordinator, provisional (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Building the planning packet",
+      "category": "copy with no field",
+      "reason": "D-60 (c) / Conflicts 13: the won board's planning-packet agent card has no field (only engagement and recorded.next); left out and logged for the backend.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Tola · PMO agent · step 3 of 5",
+      "category": "copy with no field",
+      "reason": "D-60 (c) / Conflicts 13: part of the planning-packet card.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "WORKING",
+      "category": "copy with no field",
+      "reason": "D-60 (c) / Conflicts 13: part of the planning-packet card.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "text",
+      "name": "Started 14:02 · nothing is decided until you confirm Ask Tola",
+      "category": "copy with no field",
+      "reason": "D-60 (c) / Conflicts 13: part of the planning-packet card.",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    },
+    {
+      "role": "link",
+      "name": "Ask Tola",
+      "category": "dead control or prototype affordance",
+      "reason": "D-60 (c) / Conflicts 13: \"Ask Tola\" has no endpoint; no client-side assistant call is built (Out of scope).",
+      "approved_by": "design engineer, 14 Nov (D-60)"
+    }
+  ]
+}
