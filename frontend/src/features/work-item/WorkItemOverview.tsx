@@ -523,7 +523,7 @@ export const hasExceptionsLink = (item: WorkItem) => EXCEPTION_STATES.has(item.s
 /** `quiet`: the text only; the board page draws the exceptions link itself, visibly, where its board does. */
 export function NextStep({ item, quiet }: { item: WorkItem; quiet?: boolean }) {
   return (
-    <Callout kind={nextStepKind(item.state)} announce={false} className="work-next">
+    <Callout kind={nextStepKind(item.state)} announce={false} icon={false} className="work-next">
       <strong>Next step.</strong> {item.next_step}
       {!quiet && hasExceptionsLink(item) && (
         <>

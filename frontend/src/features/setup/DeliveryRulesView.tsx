@@ -38,6 +38,7 @@ function DeliveryRulesView() {
             <div className="setup-main">
               <Panel head={<h2>{head}</h2>}>
                 <Table
+                  className="setup-deliverytable"
                   caption="Delivery rules and where they are used"
                   columns={[
                     { key: 'rule', header: 'RULE', cell: (row) => row.name },

@@ -67,8 +67,9 @@ function AskedLine({ person }: { person: Asked }) {
   const channels = person.channels?.length ? ` by ${channelWords(person.channels)}` : '';
   return (
     <li>
-      {who} was alerted at <When at={person.alerted_at} />
-      {channels}
+      {/* the SCR-03 boards write the time alone and end the sentence: "alerted at 10:42 by WhatsApp and email." */}
+      {who} was alerted at <time dateTime={person.alerted_at}>{formatClock(person.alerted_at)}</time>
+      {channels}.
     </li>
   );
 }

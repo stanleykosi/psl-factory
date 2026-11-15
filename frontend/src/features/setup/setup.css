@@ -23,7 +23,9 @@
 .setup-aside--next { flex-basis: 340px; max-width: 440px; }
 
 /* rules table */
-.setup-table td { vertical-align: middle; }
+.setup-table td, .setup-deliverytable td { vertical-align: middle; }
+/* the SCR-13 boards draw table tags square, inline, at the cell's line height */
+.setup-table .psl-tag, .setup-deliverytable .psl-tag { display: inline-block; line-height: normal; border-radius: 0; }
 .setup-version { font-size: 12px; color: var(--ink-muted); }
 
 /* Set a rule: action-blue frame and head */

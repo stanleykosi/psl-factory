@@ -373,8 +373,8 @@ describe('cannot act (A-NOT-YOURS)', () => {
 
   it('copy follows cannot_act_reason, with who was asked', async () => {
     const cases: [string, string[]][] = [
-      ['W-1203', ['NOT YOUR DECISION', 'This decision needs a Finance Lead.', 'You can read it, but you can’t approve, return or reject it.', 'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:42 by WhatsApp and email', 'Waiting for Finance Lead', 'SOW v2 stage 2']],
-      ['W-1204', ['WAITING FOR REVIEW', 'You prepared Invoice v2, so someone else must review it.', 'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:20']],
+      ['W-1203', ['NOT YOUR DECISION', 'This decision needs a Finance Lead.', 'You can read it, but you can’t approve, return or reject it.', 'Ada Okafor (Finance Lead) was alerted at 10:42 by WhatsApp and email.', 'Waiting for Finance Lead', 'SOW v2 stage 2']],
+      ['W-1204', ['WAITING FOR REVIEW', 'You prepared Invoice v2, so someone else must review it.', 'Ada Okafor (Finance Lead) was alerted at 10:20.']],
       ['W-1205', ['ALREADY DECIDED', 'This decision has already been made.', 'Nothing more is needed from you here.', 'Nobody has been asked yet.']],
       ['W-1206', ['NOT YOUR TURN YET', 'This needs PMO Lead first.', 'You’ll be asked when it’s your turn.', 'Step 3 of 3', 'Ngozi Eze (PMO Lead) has been asked.', 'Waiting for CEO']],
     ];
@@ -387,7 +387,7 @@ describe('cannot act (A-NOT-YOURS)', () => {
       );
       await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
       for (const value of expected) expect(text(), `${id}: ${value}`).toContain(value);
-      expect(text()).not.toContain('was alerted at 12 Nov 10:20 by');
+      expect(text()).not.toContain('was alerted at 10:20 by');
       unmount();
     }
   });

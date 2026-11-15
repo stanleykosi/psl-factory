@@ -25,7 +25,7 @@ import './workspace.css';
  */
 function AgentNote({ note }: { note: NonNullable<WorkspaceData['agent_note']> }) {
   return (
-    <Callout kind="info" announce={false} className="ws-agentnote">
+    <Callout kind="info" announce={false} icon={false} className="ws-agentnote">
       <span className="ws-stack">
         <strong>{agentName(note.agent)}</strong>
         {note.lines.map((line, i) => (

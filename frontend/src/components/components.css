@@ -95,8 +95,8 @@
 .cmp-layer--sheet { align-items: flex-end; }
 .cmp-layer--center { align-items: center; justify-content: center; padding: var(--space-5); }
 .cmp-panel { position: relative; outline: none; }
-/* the drawer head's words stack: eyebrow, title, one line of context, at the page's line height (the boards) */
-.cmp-headtext { display: flex; flex-direction: column; min-width: 0; line-height: normal; }
+/* the drawer head's words stack: eyebrow, title, one line of context (the boards) */
+.cmp-headtext { display: flex; flex-direction: column; min-width: 0; }
 .cmp-headtext .psl-drawer__title { overflow-wrap: anywhere; }
 /* the close button keeps the head as tall as the boards draw it */
 .cmp-panel > .psl-drawer__head > .psl-iconbtn { margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0 0; }

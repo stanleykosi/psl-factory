@@ -34,7 +34,7 @@
       "role": "text",
       "name": "—",
       "reason": "Next milestone the response does not carry: the design system writes Unknown (amber Unknown tag), never a dash (D-92 content rule, README 'Unknown is written Unknown, never 0, never blank')",
-      "approved_by": "design engineer, 15 Nov 2026 — D-92/D-93"
+      "approved_by": "pending design engineer (D-92 Unknown vs board '—')"
     }
   ],
   "visual_waivers": [
