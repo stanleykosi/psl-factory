@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-19",
   "outcome": "A signed-in person sees the client register and each client's billing contact, projects and money, and can set the billing contact, on the contract mock",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CLIENTS"
   ],
@@ -103,15 +103,29 @@
       "at": "2026-11-15T12:04:03Z",
       "seconds": 261.7,
       "evidence_ref": "delivery/features/F-19/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T12:31:02Z",
+      "seconds": 171.5,
+      "evidence_ref": "delivery/features/F-19/round-3/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delegated technical review",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "evidence_refs": [
+        "delivery/features/F-19/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -137,18 +151,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delegated UX review",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "evidence_refs": [
+        "delivery/features/F-19/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delegated UI review",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "evidence_refs": [
+        "delivery/features/F-19/round-3/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -747,14 +765,28 @@
         "delivery/features/F-19/round-2/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-15T12:21:56Z",
           "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:31:02Z",
+          "refs": [
+            "95903eeb"
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "95903eeb"
       ]
     },
     {
@@ -770,14 +802,28 @@
         "delivery/features/F-19/round-2/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-15T12:21:56Z",
           "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:31:02Z",
+          "refs": [
+            "95903eeb"
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "95903eeb"
       ]
     },
     {
@@ -940,7 +986,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
     "task_branch": "fe-clients-a-signed-in-person-sees-the-client-regis",
-    "head_sha": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+    "head_sha": "95903eeb853bc2c9a244eb2e4d19174871d875de",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-19",
     "pr_url": null,
     "pr_number": null,
@@ -1090,6 +1136,14 @@
       "round": 3,
       "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T12:31:03Z",
+      "round": 3,
+      "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "reason": null
     }
   ],
   "routing": {
@@ -1106,9 +1160,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "95903eeb853bc2c9a244eb2e4d19174871d875de"
   },
   "blocked": null
 }

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-20",
   "outcome": "The Templates tab on Setup lists each document template and uploads a new version of one",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-SETUP-TEMPLATES"
   ],
@@ -120,11 +120,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -523,6 +525,75 @@
       "verification_refs": [
         "The new component test puts history on every row. The scored fixtures are unchanged."
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**After a 422, keyboard focus drops to `<body>`.** \"Upload version\" gets `disabled={busy}` (`frontend/src/features/setup/TemplateUploadPanel.tsx:113`), so Chromium drops focus during the request. The 422 path does not move focus back (`TemplatesView.tsx:132-133`). This happened at 1440 and 390. The `role=\"alert\"` callout is still announced, so the result is not silent. A keyboard user must still Tab back into the panel. Expected: focus goes to the first invalid field or to the callout. Every other outcome moves focus. This is the same pattern as F-19 QA-2-2.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:31:38Z",
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**A 403 or 404 on the write that empties the list shows no message.** The `rejected` notice is rendered inside `notices`, and `notices` exists only in the non-empty branch (`TemplatesView.tsx:223-238`, `308-322`). In the browser I pressed Upload and the mock answered 404. The reload returned `items: []`, and the page silently became \"No templates to show.\". No alert appeared and focus went nowhere. This is an edge case, because the person's only template has to disappear. Expected: render `notices` in the empty branch too.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:31:38Z",
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The mock counts an unknown `versions` as zero.** `store()` uses `(row.versions ?? 0) + 1` (`frontend/mock/templates.mjs`, the `store` function). Only Closure report carries `versions` in `desktop.json`. After the first upload, Invoice reads \"Version 2 \u00b7 PDF 1 version \u00b7 Changed by Ada Okafor, 15 Nov\", which is wrong sample data. AGENTS.md says unknown values are not zero. Expected: leave `versions` out when it was unknown. The UI is correct, because it shows exactly what it is given. This affects mock data only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:31:38Z",
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -728,6 +799,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-15T12:23:13Z",
+      "round": 2,
+      "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-15T12:31:42Z",
       "round": 2,
       "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
       "reason": null
