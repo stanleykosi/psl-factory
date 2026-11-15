@@ -88,7 +88,7 @@ function FinanceRulesView() {
       <div className="setup-page setup-desktop">
         <AreaCrumb area="FINANCE" />
         <PageTitle>Finance rules</PageTitle>
-        <p className="psl-hint">
+        <p className="psl-hint setup-lead">
           Every value the Finance lines need before they can run. Each is decided by PSL; the factory never guesses. A line stops at
           “Setup needed” only at the step that needs a missing value.
         </p>
@@ -146,7 +146,7 @@ function FinanceRulesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <PageTitle>Finance rules</PageTitle>
+        <PageTitle className="setup-title--area">Finance rules</PageTitle>
         {empty ? (
           <RulesEmpty />
         ) : (

@@ -31,7 +31,8 @@ export function SetupFrame({ current, rolesMissing, notSet }: { current: SetupTa
   const badges: Partial<Record<SetupTab, number | undefined>> = { roles: rolesMissing, rules: notSet };
   return (
     <>
-      <PageTitle above={<p className="psl-crumb setup-eyebrow">SETUP</p>}>Roles, rules and delegation</PageTitle>
+      <p className="psl-crumb setup-eyebrow">SETUP</p>
+      <PageTitle>Roles, rules and delegation</PageTitle>
       <Tabs label="Setup" tabs={SETUP_TABS.map((tab) => ({ ...tab, count: badges[tab.key] }))} selected={current} className="setup-tabs" />
     </>
   );

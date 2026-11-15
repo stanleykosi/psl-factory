@@ -35,7 +35,7 @@ function AreaText({ row }: { row: RuleRow }) {
 
 function ValueCell({ row }: { row: RuleRow }) {
   const text = valueText(row);
-  if (text === null) return <Tag tone="person">Not set</Tag>;
+  if (text === null) return <span className="setup-notset">Not set</span>;
   const href = linkHref(row);
   return href ? <Link href={href}>{text}</Link> : <>{text}</>;
 }

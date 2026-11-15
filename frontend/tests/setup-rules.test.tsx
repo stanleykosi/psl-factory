@@ -123,7 +123,7 @@ describe('rules list (AC 2, 3, 4)', () => {
     expect(rowCells('Who reviews client documents')).toEqual(['Who reviews client documents', 'All lines', 'PMO Lead', 'v2 · since 1 Oct 2026']);
     expect(rowCells('Who may assign an RFP to a PM')).toEqual(['Who may assign an RFP to a PM', 'Pre-sale', 'Not set', 'HOLDS WORK']);
     expect(rowCells('Invoice payment terms default')).toEqual(['Invoice payment terms default', 'Finance', 'From each signed SOW', 'v1 · since 30 Jun 2026']);
-    expect(desktop().getAllByText('Not set')[0].className).toBe('psl-tag psl-tag--person');
+    expect(desktop().getAllByText('Not set')[0].className).toBe('setup-notset');
     expect(desktop().getByRole('link', { name: 'PSL standard pricing v4' }).getAttribute('href')).toBe('/setup/costing-rule');
     expect(desktop().getAllByRole('link', { name: 'Finance' })[0].getAttribute('href')).toBe('/setup/rules/finance');
     expect(desktop().getAllByRole('link', { name: 'Delivery' })[0].getAttribute('href')).toBe('/setup/rules/delivery');

@@ -112,13 +112,16 @@ export function AlertSettingsPage() {
   // Phone: "← Notifications" sits level with the heading until the frame's phone bar has a back-link slot (D-19, D-13).
   const title = phone ? (
     <div className="alerts-head">
-      <PageTitle>How you&rsquo;re alerted</PageTitle>
+      <PageTitle className="alerts-settitle">How you&rsquo;re alerted</PageTitle>
       <Link href="/notifications" className="alerts-back">
         ← Notifications
       </Link>
     </div>
   ) : (
-    <PageTitle above={<p className="alerts-eyebrow">SETTINGS / ALERTS</p>}>How you&rsquo;re alerted</PageTitle>
+    <>
+      <p className="alerts-eyebrow">SETTINGS / ALERTS</p>
+      <PageTitle>How you&rsquo;re alerted</PageTitle>
+    </>
   );
 
   if (page.status === 'loading') return <LoadingState />;
@@ -159,7 +162,7 @@ export function AlertSettingsPage() {
         </Callout>
       )}
       {notice.kind === 'problem' && (
-        <div ref={problem}>
+        <div ref={problem} className="alerts-scroll">
           <Callout kind="problem">
             We couldn&rsquo;t save your settings. Nothing was changed. {notice.message} Reference {notice.code} for support.
           </Callout>

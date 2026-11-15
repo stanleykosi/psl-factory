@@ -61,3 +61,6 @@
   .overview-exceptions__head { flex-direction: column; gap: 6px; }
   .overview-exceptions h2 { font-size: 16px; }
 }
+
+/* the board's 40px page title */
+.overview__head .cmp-page-title { font-size: 40px; line-height: 1.08; }

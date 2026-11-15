@@ -50,3 +50,15 @@
   /* bottom action bar: pinned, full width over the frame's 16px page padding */
   .monthend-bar { position: sticky; bottom: 0; margin-top: auto; display: flex; flex-direction: column; gap: var(--space-2); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4)); margin-bottom: calc(-1 * var(--space-4)); padding: var(--space-3) var(--space-4) 18px; background: var(--surface); border-top: 2px solid var(--ink); }
 }
+
+/* the board centres cells vertically */
+.monthend-tasks .psl-table td { vertical-align: middle; }
+/* the board's column widths */
+.monthend-tasks .psl-table th:nth-child(1) { width: 36.7%; }
+.monthend-tasks .psl-table th:nth-child(2) { width: 27.2%; }
+.monthend-tasks .psl-table th:nth-child(3) { width: 26.3%; }
+
+@media (max-width: 719.98px) {
+  /* the phone board's title size */
+  .monthend-head .cmp-page-title { font-size: 22px; line-height: 1.08; padding-right: 96px; }
+}

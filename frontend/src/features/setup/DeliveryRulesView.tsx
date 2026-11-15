@@ -62,7 +62,7 @@ function DeliveryRulesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <PageTitle>Delivery rules</PageTitle>
+        <PageTitle className="setup-title--area">Delivery rules</PageTitle>
         {empty ? (
           <RulesEmpty />
         ) : (

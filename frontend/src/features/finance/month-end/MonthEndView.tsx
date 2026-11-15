@@ -169,8 +169,9 @@ function Board({ body }: { body: MonthEnd }) {
   return (
     <div className="monthend">
       <BackLink />
+      <p className="monthend-eyebrow">FINANCE / MONTH-END</p>
       <div className="monthend-head">
-        <PageTitle above={<p className="monthend-eyebrow">FINANCE / MONTH-END</p>}>
+        <PageTitle>
           Month-end · <span className="monthend-wide">{names?.long ?? body.period}</span>
           <span className="monthend-narrow">{names?.short ?? body.period}</span>
         </PageTitle>

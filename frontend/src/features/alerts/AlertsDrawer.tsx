@@ -142,7 +142,7 @@ function Rows({ items, now, primary, onOpen, empty }: RowsProps) {
           <AlertBody alert={alert} now={now} />
           <NextLink
             href={workHref(alert)}
-            className={buttonClass(primary ? 'primary' : 'secondary', 'sm')}
+            className={`${buttonClass(primary ? 'primary' : 'secondary', 'sm')} cmp-btn-sm`}
             aria-label={`Open: ${alert.text}`}
             onClick={(event) => onOpen(event, alert)}
           >

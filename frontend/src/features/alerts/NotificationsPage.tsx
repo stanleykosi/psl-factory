@@ -198,7 +198,10 @@ function Notifications() {
     <div className="alerts-page">
       {/* Phone: "← Home" sits level with the heading until the frame's phone bar has a back-link slot (D-19, D-13). */}
       <div className="alerts-head">
-        <PageTitle above={!phone && <p className="alerts-eyebrow">NOTIFICATIONS</p>}>Notifications</PageTitle>
+        <div className="alerts-titlecol">
+          {!phone && <p className="alerts-eyebrow">NOTIFICATIONS</p>}
+          <PageTitle>Notifications</PageTitle>
+        </div>
         {phone ? (
           <Link href="/" className="alerts-back">
             ← Home

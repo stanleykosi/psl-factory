@@ -45,7 +45,6 @@
 .alerts-save { max-width: 260px; }
 
 /* phone settings: one card per event, quiet hours as text, Save pinned to the bottom */
-.alerts-settitle { font-size: 24px; }
 .alerts-eventcard { line-height: normal; background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-3); display: flex; flex-direction: column; gap: 6px; }
 .alerts-eventlabel { font-weight: 600; }
 .alerts-eventswitches { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; font-size: 13px; }
@@ -59,6 +58,10 @@
 .alerts-footer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: var(--space-3) 16px 18px; background: var(--surface); border-top: var(--rule-strong) solid var(--ink); }
 
 @media (max-width: 719.98px) {
+  /* the phone board: search and Filter share a row, and the count is for screen readers only */
+  .alerts-page .psl-toolbar { flex-wrap: nowrap; }
+  .alerts-page .psl-toolbar .psl-search { flex: 1 1 0; min-width: 0; }
+  .alerts-page .psl-resultcount { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .alerts-page { gap: var(--space-3); }
   .alerts-head { flex-wrap: nowrap; align-items: center; }
   /* the 44px target overlaps the gaps around the heading row instead of making it taller */
@@ -76,3 +79,12 @@
 .alerts-drow { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: var(--space-3); align-items: start; padding: var(--space-3) 0; }
 .alerts-none { margin: 0; padding: var(--space-3) 0; color: var(--ink-muted); }
 .alerts-dstate { padding: var(--space-3) 0; }
+.alerts-titlecol { display: flex; flex-direction: column; gap: var(--space-20px); }
+
+/* phone settings title, as drawn beside the back link */
+.alerts-settitle .cmp-page-title { font-size: 24px; line-height: 28px; }
+.alerts-scroll { scroll-margin-bottom: var(--alerts-footer); }
+/* 44px close target on the phone sheet */
+@media (max-width: 719.98px) {
+  .alerts-drawer .psl-sheet__head .psl-iconbtn { min-width: var(--control-md); min-height: var(--control-md); }
+}

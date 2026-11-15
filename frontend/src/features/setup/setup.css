@@ -61,7 +61,7 @@
 .setup-docname { display: block; }
 .setup-docname .setup-meta { margin-left: 8px; white-space: nowrap; }
 .setup-docname .setup-docname__history { display: block; margin-left: 0; }
-.setup-actioncell .setup-linkbtn { white-space: nowrap; }
+.setup-actioncell .psl-btn { white-space: nowrap; margin: -14px 0; padding-left: 0; }
 .setup-table--templates th:nth-child(1) { width: 23%; }
 .setup-table--templates th:nth-child(2) { width: 34.4%; }
 .setup-table--templates th:nth-child(3) { width: 19.5%; }
@@ -79,3 +79,17 @@
 .setup-card .setup-meta { margin: 0; }
 .setup-card .setup-upload { margin-top: 6px; }
 .setup-card .psl-tag { align-self: flex-start; }
+.setup-notset { color: var(--waiting-ink); font-weight: 600; }
+/* the board's column widths for the rules list */
+.setup-main .setup-table .psl-table th:nth-child(1) { width: 42%; }
+.setup-main .setup-table .psl-table th:nth-child(2) { width: 12.5%; }
+.setup-main .setup-table .psl-table th:nth-child(3) { width: 27.5%; }
+.setup-lead { margin: 0; font-size: 14px; line-height: normal; color: var(--ink-muted); }
+/* the board draws the trail in plain grey */
+.setup-page .psl-crumb a { color: inherit; }
+
+/* the phone boards' title sizes */
+@media (max-width: 719.98px) {
+  .setup-phone .cmp-page-title { font-size: 22px; line-height: 1.08; }
+  .setup-phone .setup-title--area { font-size: 20px; }
+}
