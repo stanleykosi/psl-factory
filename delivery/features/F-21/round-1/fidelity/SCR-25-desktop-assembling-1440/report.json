@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T11:01:37.968Z",
+  "generatedAt": "2026-11-15T14:08:22.911Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-25-desktop-assembling.dc.html",
   "boardName": "SCR-25-desktop-assembling.dc.html",
   "pageUrl": "http://localhost:4741/work/W-2203",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 76.6 is below 90.",
-    "6 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Visual match 77 is below 90.",
+    "5 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 57.1,
     "coverageWithExceptions": 100,
-    "visual": 76.6
+    "visual": 77
   },
   "visual": {
-    "score": 76.6,
-    "allCellsScore": 87.2,
+    "score": 77,
+    "allCellsScore": 92.5,
     "width": 1440,
     "height": 800,
     "boardHeight": 800,
-    "pageHeight": 1095,
+    "pageHeight": 987,
     "cell": 12,
-    "contentCells": 4411,
-    "mismatchedCells": 1030
+    "contentCells": 2629,
+    "mismatchedCells": 605
   },
   "coverage": {
     "total": 28,
@@ -237,7 +237,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 1038
+          "h": 930
         }
       },
       {
@@ -258,9 +258,9 @@
         },
         "pageBox": {
           "x": 269,
-          "y": 597,
+          "y": 85,
           "w": 258,
-          "h": 18
+          "h": 15
         }
       },
       {
@@ -271,7 +271,7 @@
         "pageRole": "heading",
         "similarity": 100,
         "looks": [
-          "text size 32px on the board, 40px on the page"
+          "text size 32px on the board, 35px on the page"
         ],
         "boardBox": {
           "x": 88,
@@ -281,9 +281,9 @@
         },
         "pageBox": {
           "x": 88,
-          "y": 110,
-          "w": 682,
-          "h": 37
+          "y": 120,
+          "w": 596,
+          "h": 35
         }
       },
       {
@@ -301,10 +301,32 @@
           "h": 21
         },
         "pageBox": {
-          "x": 88,
-          "y": 623,
-          "w": 92,
+          "x": 1258,
+          "y": 120,
+          "w": 94,
           "h": 23
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
         }
       },
       {
@@ -323,9 +345,9 @@
         },
         "pageBox": {
           "x": 100,
-          "y": 716,
-          "w": 906,
-          "h": 21
+          "y": 318,
+          "w": 878,
+          "h": 42
         }
       },
       {
@@ -344,9 +366,9 @@
         },
         "pageBox": {
           "x": 1012,
-          "y": 761,
+          "y": 285,
           "w": 340,
-          "h": 149
+          "h": 646
         }
       },
       {
@@ -369,31 +391,10 @@
           "h": 36
         },
         "pageBox": {
-          "x": 90,
-          "y": 763,
-          "w": 898,
+          "x": 1014,
+          "y": 287,
+          "w": 336,
           "h": 43
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "WORKING",
-        "pageName": "WORKING",
-        "pageRole": "text",
-        "similarity": 100,
-        "looks": [],
-        "boardBox": {
-          "x": 1250,
-          "y": 269,
-          "w": 86,
-          "h": 21
-        },
-        "pageBox": {
-          "x": 914,
-          "y": 419,
-          "w": 74,
-          "h": 23
         }
       }
     ],
@@ -444,23 +445,6 @@
           "y": 174,
           "w": 654,
           "h": 48
-        },
-        "exception": {
-          "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
-          "approved_by": "design engineer, 15 Nov (D-71)"
-        }
-      },
-      {
-        "kind": "Tab",
-        "role": "tab",
-        "name": "Journey",
-        "key": "tab: Journey",
-        "container": "tablist",
-        "boardBox": {
-          "x": 90,
-          "y": 176,
-          "w": 86,
-          "h": 44
         },
         "exception": {
           "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
@@ -572,6 +556,23 @@
       {
         "kind": "Text",
         "role": "text",
+        "name": "WORKING",
+        "key": "text: WORKING",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1250,
+          "y": 269,
+          "w": 86,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Since the line layout (D-73) the work item page no longer draws the agent card, which used to say WORKING. The board draws it as the tag of its agent panel; the workspace has no section-level tag field, and the checklist's own rows already say Done and In progress.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
         "name": "Started 12 Nov 09:05 Ask Tola",
         "key": "text: Started 12 Nov 09:05 Ask Tola",
         "container": "complementary",
@@ -637,97 +638,73 @@
         },
         "pageBox": {
           "x": 269,
-          "y": 597,
+          "y": 85,
           "w": 258,
-          "h": 18
+          "h": 15
         },
         "reasons": [
-          "order: on the board it comes after Text \"Tunde Bello · PMO\"; on the page it comes after Main area \"\"",
           "across the page: middle on the board (50% across), left on the page (28% across)",
           "inside the main area on the board, inside the top navigation on the page"
         ]
       },
       {
-        "label": "Text \"ASSEMBLING\"",
-        "kind": "Text",
-        "name": "ASSEMBLING",
+        "label": "Heading \"Weekly client report · 5–11 Nov\"",
+        "kind": "Heading",
+        "name": "Weekly client report · 5–11 Nov",
         "boardBox": {
-          "x": 1260,
-          "y": 133,
-          "w": 92,
-          "h": 21
+          "x": 88,
+          "y": 119,
+          "w": 607,
+          "h": 35
         },
         "pageBox": {
           "x": 88,
-          "y": 623,
-          "w": 92,
-          "h": 23
+          "y": 120,
+          "w": 596,
+          "h": 35
         },
         "reasons": [
-          "across the page: right on the board (91% across), left on the page (9% across)"
+          "order: on the board it comes after Text \"PROJECTS / LAGOON HEALTH / WEEKLY CLIENT REPORT · WCR-0216\"; on the page it comes after Text \"ASSEMBLING\""
         ]
       },
       {
-        "label": "Text \"Assembling the weekly report\"",
-        "kind": "Text",
-        "name": "Assembling the weekly report",
+        "label": "Tab \"Journey\"",
+        "kind": "Tab",
+        "name": "Journey",
         "boardBox": {
-          "x": 1070,
-          "y": 254,
-          "w": 170,
-          "h": 36
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
         },
         "pageBox": {
           "x": 90,
-          "y": 763,
-          "w": 898,
-          "h": 43
-        },
-        "reasons": [
-          "across the page: right on the board (80% across), middle on the page (37% across)",
-          "inside a side panel on the board, inside the main area on the page"
-        ]
-      },
-      {
-        "label": "Text \"WORKING\"",
-        "kind": "Text",
-        "name": "WORKING",
-        "boardBox": {
-          "x": 1250,
-          "y": 269,
+          "y": 177,
           "w": 86,
-          "h": 21
-        },
-        "pageBox": {
-          "x": 914,
-          "y": 419,
-          "w": 74,
-          "h": 23
+          "h": 44
         },
         "reasons": [
-          "order: on the board it comes after Text \"Assembling the weekly report\"; on the page it comes after Heading \"Weekly client report · 5–11 Nov\"",
-          "across the page: right on the board (90% across), right on the page (66% across)",
-          "inside a side panel on the board, inside the main area on the page"
+          "inside the tabs on the board, inside the top navigation on the page"
         ]
       },
       {
-        "label": "Main area \"\"",
-        "kind": "Main area",
-        "name": "",
+        "label": "Text \"Tola doesn't write what the client reads about the project. She places your words on the template; the summary and scope wording are standard.\"",
+        "kind": "Text",
+        "name": "Tola doesn't write what the client reads about the project. She places your words on the template; the summary and scope wording are standard.",
         "boardBox": {
-          "x": 60,
-          "y": 56,
-          "w": 1320,
-          "h": 558
+          "x": 128,
+          "y": 252,
+          "w": 850,
+          "h": 42
         },
         "pageBox": {
-          "x": 60,
-          "y": 57,
-          "w": 1320,
-          "h": 1038
+          "x": 100,
+          "y": 318,
+          "w": 878,
+          "h": 42
         },
         "reasons": [
-          "order: on the board it comes after Text \"WORKING\"; on the page it comes after Text \"WORKING\""
+          "order: on the board it comes after Tab \"Journey\"; on the page it comes after Text \"Assembling the weekly report\""
         ]
       }
     ],
@@ -747,229 +724,13 @@
       {
         "kind": "Navigation area",
         "role": "navigation",
-        "name": "Breadcrumb",
-        "container": "main",
-        "pageBox": {
-          "x": 88,
-          "y": 85,
-          "w": 315,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "MY WORK / WEEKLY CLIENT REPORT / WCR-0216",
-        "container": "navigation",
-        "pageBox": {
-          "x": 88,
-          "y": 85,
-          "w": 315,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "MY WORK",
-        "container": "navigation",
-        "pageBox": {
-          "x": 88,
-          "y": 85,
-          "w": 54,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "revision 5",
-        "container": "main",
-        "pageBox": {
-          "x": 1131,
-          "y": 85,
-          "w": 57,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
-        "name": "Work item",
-        "container": "main",
-        "pageBox": {
-          "x": 1199,
-          "y": 77,
-          "w": 153,
-          "h": 32
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Overview",
-        "container": "navigation",
-        "pageBox": {
-          "x": 1201,
-          "y": 79,
-          "w": 82,
-          "h": 28
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "History",
-        "container": "navigation",
-        "pageBox": {
-          "x": 1283,
-          "y": 79,
-          "w": 69,
-          "h": 28
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "PROCESSING",
-        "container": "main",
-        "pageBox": {
-          "x": 784,
-          "y": 115,
-          "w": 98,
-          "h": 27
-        }
-      },
-      {
-        "kind": "list",
-        "role": "list",
-        "name": "Facts",
-        "container": "main",
-        "pageBox": {
-          "x": 88,
-          "y": 167,
-          "w": 1264,
-          "h": 63
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "DRAFTED",
-        "container": "main",
-        "pageBox": {
-          "x": 104,
-          "y": 181,
-          "w": 180,
-          "h": 14
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "In progress",
-        "container": "main",
-        "pageBox": {
-          "x": 104,
-          "y": 199,
-          "w": 180,
-          "h": 17
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "RECEIPT",
-        "container": "main",
-        "pageBox": {
-          "x": 944,
-          "y": 181,
-          "w": 180,
-          "h": 14
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Unknown",
-        "container": "main",
-        "pageBox": {
-          "x": 944,
-          "y": 199,
-          "w": 180,
-          "h": 17
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Paid is a separate Finance fact and is not part of this line.",
-        "container": "main",
-        "pageBox": {
-          "x": 88,
-          "y": 238,
-          "w": 1264,
-          "h": 18
-        }
-      },
-      {
-        "kind": "list",
-        "role": "list",
-        "name": "Stations in order",
-        "container": "main",
-        "pageBox": {
-          "x": 90,
-          "y": 282,
-          "w": 1260,
-          "h": 82
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Tola",
-        "container": "main",
-        "pageBox": {
-          "x": 146,
-          "y": 402,
-          "w": 156,
-          "h": 21
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Cannot approve, send or pay.",
-        "container": "main",
-        "pageBox": {
-          "x": 146,
-          "y": 423,
-          "w": 156,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "step 1 of 1",
-        "container": "main",
-        "pageBox": {
-          "x": 146,
-          "y": 441,
-          "w": 156,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
         "name": "Where this sits",
         "container": "main",
         "pageBox": {
           "x": 88,
-          "y": 597,
-          "w": 1264,
-          "h": 18
+          "y": 85,
+          "w": 439,
+          "h": 15
         }
       },
       {
@@ -979,9 +740,9 @@
         "container": "navigation",
         "pageBox": {
           "x": 88,
-          "y": 597,
+          "y": 85,
           "w": 61,
-          "h": 18
+          "h": 15
         }
       },
       {
@@ -991,9 +752,105 @@
         "container": "navigation",
         "pageBox": {
           "x": 149,
-          "y": 597,
+          "y": 85,
           "w": 120,
-          "h": 18
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Project",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 550,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestones",
+        "container": "navigation",
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Documents",
+        "container": "navigation",
+        "pageBox": {
+          "x": 279,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Money",
+        "container": "navigation",
+        "pageBox": {
+          "x": 386,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Registers",
+        "container": "navigation",
+        "pageBox": {
+          "x": 462,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Actions",
+        "container": "navigation",
+        "pageBox": {
+          "x": 556,
+          "y": 177,
+          "w": 82,
+          "h": 44
         }
       },
       {
@@ -1003,9 +860,9 @@
         "container": "main",
         "pageBox": {
           "x": 88,
-          "y": 654,
-          "w": 1264,
-          "h": 21
+          "y": 243,
+          "w": 229,
+          "h": 18
         }
       },
       {
@@ -1015,45 +872,9 @@
         "container": "main",
         "pageBox": {
           "x": 100,
-          "y": 693,
-          "w": 906,
+          "y": 295,
+          "w": 878,
           "h": 21
-        }
-      },
-      {
-        "kind": "Heading",
-        "role": "heading",
-        "name": "DECIDE",
-        "container": "complementary",
-        "pageBox": {
-          "x": 1014,
-          "y": 763,
-          "w": 336,
-          "h": 43
-        }
-      },
-      {
-        "kind": "Button",
-        "role": "button",
-        "name": "Send for PMO Lead review",
-        "container": "complementary",
-        "pageBox": {
-          "x": 1028,
-          "y": 820,
-          "w": 308,
-          "h": 50
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Tola is still placing your parts on the template.",
-        "container": "complementary",
-        "pageBox": {
-          "x": 1028,
-          "y": 874,
-          "w": 308,
-          "h": 20
         }
       }
     ],

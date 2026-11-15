@@ -49,7 +49,7 @@ Where to see the screens: the approved boards are in `design/canvas/project/` (m
    external effect is uncertain; idempotency keys looked up before revision and grant, same
    status on replay, a reused key with a different body refused; one fixed order of checks
    (authentication, permission, key, revision, body); idempotency on E-RESPONSE and the
-   revision-only writes; 422 `fields[]` on every write. Needed before any real send is switched on.
+   revision-only writes; 422 `fields[]` on every write. Needed before any real send is switched on. Also: every cited record in a client-bound report must be visible to this person for this case and week, and E-LINE-OPTIONS limited to person, tenant and case (F-21 SEC-1-2); approving sends exactly the version that was reviewed.
 2. **Workspace step fields carry the current value** on editable fields, not only display fields
    (prefilled drafts, accept-with-edit, cover letters, payment reminders, saved cites).
    SCR-25, 26, 27, 32, 40 and the F-17 frame.

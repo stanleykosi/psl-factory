@@ -21,6 +21,7 @@ import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { projects } from './projects.mjs';
+import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
@@ -36,7 +37,7 @@ import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog,
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', ...START_OPERATIONS];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', ...CLIENT_OPERATIONS, ...START_OPERATIONS];
 export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -236,6 +237,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetTemplates();
         alerts.reset();
         resetWorkspace();
+        resetClients();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
@@ -263,6 +265,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
+      if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EXCEPTIONS') { const r = exceptionsList({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-MONTH-END') { const r = monthEnd({ url, persona, cookies }); return send(res, r.status, r.body); }

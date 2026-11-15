@@ -1,0 +1,9 @@
+{
+  "client_id": "CL-3509",
+  "name": "Bare Client",
+  "revision": 1,
+  "billing_contact": {
+    "set": false
+  },
+  "projects": []
+}

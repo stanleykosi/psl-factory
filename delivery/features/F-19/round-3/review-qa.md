@@ -1,7 +1,14 @@
 VERDICT: PASS
-COMMIT: 95903eeb853bc2c9a244eb2e4d19174871d875de
+COMMIT: a4a906cadfbafced2c20f8535467cb32db06c3eb
 REVIEWER: qa
 AUTHORITY: integrated QA
+
+## Re-confirmed on the synced head
+
+Head a4a906ca differs from the earlier pass only by a merge of origin/dlv-00-delivery-setup (shared mock server conflict resolved; operations now include Clients and Templates). Ran `cd frontend && E2E_PORT=4661 MOCK_PORT=4662 npx playwright test e2e/clients.spec.ts --reporter=line`: 16 passed (desktop 1440 and phone 390: list, empty, Show more, signed-out/error, detail, 422, read-only, not-open). test-results deleted; ports 4661/4662 free. The earlier 140/140 result and its unproved items stand unchanged.
+
+---
+Earlier review (commit 95903eeb):
 
 ## Summary
 - **Scope.** This is a re-check after the fix. I tested only what round 3 changed (diff 41b4925c..95903eeb: `BillingContactForm.tsx`, `clients.css` and the component tests), plus a quick smoke test of the normal save.

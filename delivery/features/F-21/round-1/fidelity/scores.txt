@@ -1,9 +1,9 @@
 board	width	coverage	with-exceptions	visual	pass
-SCR-25-desktop-1440	1440	46.8	100	72	False
-SCR-25-desktop-invalid-1440	1440	51.6	100	78.6	False
-SCR-25-desktop-assembling-1440	1440	53.6	100	79	False
-SCR-25-desktop-review-1440	1440	50	100	70	False
-SCR-25-mobile-390	390	16.7	100	71	False
-SCR-25-mobile-invalid-390	390	22.2	100	76.8	False
-SCR-25-mobile-assembling-390	390	42.9	100	78.1	False
-SCR-25-mobile-review-390	390	80	100	80.6	False
+SCR-25-desktop-1440	1440	46.8	100	75.3	False
+SCR-25-desktop-invalid-1440	1440	54.8	100	78.3	False
+SCR-25-desktop-assembling-1440	1440	57.1	100	77	False
+SCR-25-desktop-review-1440	1440	53.1	100	75.5	False
+SCR-25-mobile-390	390	16.7	100	70.8	False
+SCR-25-mobile-invalid-390	390	22.2	100	76.5	False
+SCR-25-mobile-assembling-390	390	42.9	100	76.3	False
+SCR-25-mobile-review-390	390	80	100	80.4	False
