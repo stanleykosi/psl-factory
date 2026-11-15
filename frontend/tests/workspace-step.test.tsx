@@ -716,3 +716,22 @@ describe('a different item starts clean (TECH-1-1)', () => {
     expect(result.current.fresh).toBeNull();
   });
 });
+
+describe('a read that lands after the id changed (TECH-2-1)', () => {
+  it('is ignored', async () => {
+    let release: (r: Response) => void = () => {};
+    itemAnswers = [() => new Promise<Response>((resolve) => (release = resolve)) as unknown as Response];
+    const { result, rerender } = renderHook(({ id }) => useWorkspacePage(id), { initialProps: { id: 'W-2001' } });
+    let late: Promise<WorkItem | undefined> = Promise.resolve(undefined);
+    act(() => {
+      late = result.current.page.reload();
+    });
+    await waitFor(() => expect(itemReads()).toHaveLength(1));
+    rerender({ id: 'W-2002' });
+    await act(async () => {
+      release(json(200, item('W-2001')));
+      await late;
+    });
+    expect(result.current.fresh).toBeNull();
+  });
+});

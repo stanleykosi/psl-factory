@@ -220,16 +220,33 @@ describe('the nine section kinds, in returned order', () => {
     await open(item('W-2002'));
     const [s07, s08] = rows('Review Tola’s suggestion');
     expect(text(s07)).toBe(
-      'R-07 · RFP p.6 · Approvals above a configurable threshold go to a named loan officer; every decision is recorded.' +
-        'From PSL’s past answer: Harmattan Bank RFP 2025 · R-12 · that bid was wonSuggested by TolaSuggested by TolaRFP p.6' +
+      'R-07 · RFP p.6Approvals above a configurable threshold go to a named loan officer; every decision is recorded.' +
+        'From PSL’s past answer: Harmattan Bank RFP 2025 · R-12 · that bid was wonSuggested by Tola' +
         'Accept answerEdit answer',
     );
-    expect(within(s07).getAllByText('Suggested by Tola')[1].className).toContain('psl-tag--agent');
+    expect(within(s07).getByText('Suggested by Tola').className).toContain('psl-tag--agent');
     expect(text(s08)).toContain('Suggested by Tola');
     expect(section('Review Tola’s suggestion').querySelector('.ws-meta')?.textContent).toBe('Tola');
   });
 
-  it('checklist: status word and mark, owner, due and who holds it ("You" when it is you)', async () => {
+  it('suggestions: the reference, the answer box and the source beneath, nothing said twice (UI-2-6)', async () => {
+    await open(item('W-2002'));
+    const [s07] = rows('Review Tola’s suggestion');
+    expect(text(s07.querySelector('.ws-sugg__ref'))).toBe('R-07 · RFP p.6');
+    expect(text(s07.querySelector('.ws-sugg__answer'))).toContain('Approvals above a configurable threshold');
+    expect(within(s07).getAllByText(/RFP p\.6/)).toHaveLength(1);
+  });
+
+  it('a section note is an amber warning box under the section; money has no headline style (UI-2-7, D-63)', async () => {
+    await open(item('W-2004'));
+    const forecast = section('Forecast · 6 months');
+    const note = forecast.querySelector('.ws-note');
+    expect(note?.className).toContain('psl-callout--warning');
+    expect(forecast.lastElementChild?.lastElementChild).toBe(note);
+    expect(forecast.querySelector('.psl-amount')).toBeNull();
+  });
+
+  it('checklist: status word, owner, due and who holds it ("You" when it is you)', async () => {
     await open(item('W-2003'));
     expect(rows('What closure needs').map(text)).toEqual([
       'Go-live acceptedDone',
@@ -239,7 +256,8 @@ describe('the nine section kinds, in returned order', () => {
       'Retrospective savedHeld by YouNot yet · Due 14 May 2027',
       'Finance confirmationUnknown · Due Unknown',
     ]);
-    for (const li of rows('What closure needs')) expect(li.querySelector('.ws-mark[aria-hidden="true"]')).not.toBeNull();
+    // D-63: no check marks, the status stays in words
+    for (const li of rows('What closure needs')) expect(li.querySelector('.ws-mark')).toBeNull();
   });
 
   it('findings: words, detail, severity and cites', async () => {

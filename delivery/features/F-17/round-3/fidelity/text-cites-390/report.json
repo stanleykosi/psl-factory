@@ -1,0 +1,37 @@
+{
+  "region": "text-cites",
+  "width": 390,
+  "board": "design/canvas/project/SCR-25-mobile-review.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "Status · Milestone 2 complete; go-live work started",
+  "pageText": "Status · Milestone 2 complete; go-live work started",
+  "boardRegion": {
+    "width": 386,
+    "height": 164
+  },
+  "pageRegion": {
+    "width": 386,
+    "height": 163
+  },
+  "pass": true,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 100
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [],
+  "visual": {
+    "score": 100,
+    "allCellsScore": 100,
+    "width": 386,
+    "height": 164,
+    "boardHeight": 164,
+    "pageHeight": 163,
+    "cell": 12,
+    "contentCells": 232,
+    "mismatchedCells": 0
+  },
+  "notes": []
+}

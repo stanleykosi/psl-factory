@@ -5,7 +5,7 @@
 // Nothing here reads /me or decides who may act; the backend composes every section and step. Steps write through
 // E-WORK-STEP (useWorkspaceStep); a decision step links to the decision page; a reconcile goes to the existing
 // ReconcilePanel, which the page shows from the re-read item.
-import { useId, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 import type { WorkItem } from '@/features/work-item/labels';
 import { WarningIcon } from '@/shell/icons';
@@ -83,6 +83,30 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   const decideId = useId();
   const hasReconcile = Boolean(item.reconcile) && (item.allowed_actions ?? []).includes('reconcile');
+
+  // On a phone the Decide panel is pinned to the bottom: the page keeps its height clear below it (see workspace.css).
+  const decideRef = useRef<HTMLElement>(null);
+  const hasDecide = steps.some((s) => scope(s) === 'workspace');
+  useEffect(() => {
+    const bar = decideRef.current;
+    if (!bar) return;
+    const root = document.documentElement;
+    const measure = () => root.style.setProperty('--ws-bar-h', `${bar.offsetHeight}px`);
+    measure();
+    const watch = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
+    watch?.observe(bar);
+    return () => {
+      watch?.disconnect();
+      root.style.removeProperty('--ws-bar-h');
+    };
+  }, [hasDecide]);
+
+  // A failure is told at the top of the page: bring it into view when the pressed control is somewhere else.
+  const notices = useRef<HTMLDivElement>(null);
+  const failure = flow.notice?.kind === 'failed' || flow.notice?.kind === 'problem' || flow.notice?.kind === 'uncertain' ? flow.notice : null;
+  useEffect(() => {
+    if (failure) notices.current?.querySelector('[role="alert"]')?.scrollIntoView?.({ block: 'nearest' });
+  }, [failure]);
 
   const off = (step: Step) => flow.pending !== null || flow.allLocked || flow.locked.has(step.key) || page.refreshFailed;
 
@@ -212,6 +236,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const notice = flow.notice;
   return (
     <>
+      <div ref={notices} className="ws-notices">
       <div role="status" aria-live="polite" className="ws-live">
         {(notice?.kind === 'done' || notice?.kind === 'queued') && (
           <p className="psl-callout psl-callout--success">
@@ -260,6 +285,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           )}
         </div>
       )}
+      </div>
       {page.refreshFailed && (
         <p className="ws-reload">
           <button type="button" className="psl-btn psl-btn--secondary" onClick={() => void page.reload()}>
@@ -281,7 +307,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
               <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
             ))}
             {workspaceSteps.length > 0 && (
-              <section className="psl-panel psl-panel--decide ws-decide" aria-labelledby={`${decideId}-head`}>
+              <section ref={decideRef} className="psl-panel psl-panel--decide ws-decide" aria-labelledby={`${decideId}-head`}>
                 <h2 id={`${decideId}-head`} className="psl-panel__head psl-panel__head--decide ws-decide__head">
                   {STEP_TEXT.decide}
                 </h2>

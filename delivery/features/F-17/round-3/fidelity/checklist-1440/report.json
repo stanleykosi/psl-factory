@@ -1,0 +1,37 @@
+{
+  "region": "checklist",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-49-desktop-blocked.dc.html",
+  "page": "/work/W-2003",
+  "boardText": "What closure needs",
+  "pageText": "What closure needs",
+  "boardRegion": {
+    "width": 1320,
+    "height": 315
+  },
+  "pageRegion": {
+    "width": 1320,
+    "height": 362
+  },
+  "pass": true,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 91.9
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [],
+  "visual": {
+    "score": 91.9,
+    "allCellsScore": 91.9,
+    "width": 1320,
+    "height": 315,
+    "boardHeight": 315,
+    "pageHeight": 362,
+    "cell": 12,
+    "contentCells": 2970,
+    "mismatchedCells": 241
+  },
+  "notes": []
+}

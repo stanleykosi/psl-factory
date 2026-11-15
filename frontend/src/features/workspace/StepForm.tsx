@@ -317,7 +317,7 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
         )}
         {step.confirm && <p className="ws-confirm">{step.confirm}</p>}
         <div className="ws-form__actions">
-          <button type="submit" className={stepClass(step)} aria-disabled={pending || off || undefined}>
+          <button type="submit" className={submitClass(step)} aria-disabled={pending || off || undefined}>
             {pending ? `${step.label}…` : (submitLabel ?? step.label)}
           </button>
           <button type="button" className="psl-btn psl-btn--secondary" onClick={onClose}>
@@ -333,4 +333,9 @@ export function stepClass(step: Step): string {
   if (step.emphasis === 'primary') return 'psl-btn';
   if (step.emphasis === 'danger') return 'psl-btn psl-btn--reject';
   return 'psl-btn psl-btn--secondary';
+}
+
+/** A form's submit is its main action: filled, whatever the step that opened it looked like (danger stays red). */
+function submitClass(step: Step): string {
+  return step.emphasis === 'danger' ? 'psl-btn psl-btn--reject' : 'psl-btn';
 }

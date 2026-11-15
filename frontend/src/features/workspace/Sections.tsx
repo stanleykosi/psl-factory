@@ -52,7 +52,7 @@ export function Unknown() {
 
 function MoneyValue({ money }: { money: Money }) {
   const text = moneyText(money);
-  return text === null ? <Unknown /> : <span className="psl-amount">{text}</span>;
+  return text === null ? <Unknown /> : <span>{text}</span>;
 }
 
 function DateText({ value }: { value: DateValue }) {
@@ -96,6 +96,12 @@ function Cites({ item }: { item: Item }) {
     </span>
   );
 }
+
+/** The label already names every cited source ("R-07 · RFP p.6"): the cites are not drawn a second time. */
+const citedInLabel = (item: Item) => {
+  const cites = (item.cites ?? []).map(refText).filter(Boolean);
+  return cites.length > 0 && !item.cite_label && cites.every((c) => (item.label ?? '').toLowerCase().includes(c.toLowerCase()));
+};
 
 const Detail = ({ text }: { text?: string }) => (text ? <span className="ws-detail">{text}</span> : null);
 
@@ -270,7 +276,6 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
             return row(
               item,
               <>
-                <span className={`ws-mark ws-mark--${item.status ?? 'none'}`} aria-hidden="true" />
                 <span className="ws-stack">
                   <span>
                     <Lead item={item} />
@@ -309,16 +314,15 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
           case 'suggestions':
             return row(
               item,
-              <span className="ws-stack">
-                <span>
-                  <Lead item={item} />
-                </span>
+              <span className="ws-stack ws-sugg">
+                {item.label && item.text && <span className="ws-sugg__ref">{item.label}</span>}
+                <span className={item.label && item.text ? 'ws-sugg__answer' : undefined}>{item.text ?? item.label}</span>
                 <Detail text={item.detail} />
-                {item.agent && <span className="ws-detail">Suggested by {agentName(item.agent)}</span>}
+                {item.agent && !item.tag && <span className="ws-detail">Suggested by {agentName(item.agent)}</span>}
               </span>,
               <>
                 {item.tag && <span className={tagClass(item.tag.tone)}>{item.tag.label}</span>}
-                <Cites item={item} />
+                {!citedInLabel(item) && <Cites item={item} />}
               </>,
             );
           case 'recipients':
@@ -444,7 +448,6 @@ export function SectionView({ section, level, controls }: { section: Section; le
                 {section.coverage && <span>{section.coverage}</span>}
               </p>
             )}
-            {section.note && <p className="ws-note">{section.note}</p>}
             <Paging section={section} position="top" noteId={noteId} />
             {empty ? (
               <p className="ws-empty">{WS_TEXT.empty}</p>
@@ -457,6 +460,7 @@ export function SectionView({ section, level, controls }: { section: Section; le
             )}
             <Paging section={section} position="bottom" noteId={noteId} />
             {!empty && controls?.foot?.(section)}
+            {section.note && <p className="psl-callout psl-callout--warning ws-note">{section.note}</p>}
           </>
         )}
       </div>

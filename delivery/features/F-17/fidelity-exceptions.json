@@ -459,5 +459,91 @@
         "notice-queued-uncertain-stale"
       ]
     }
+  ],
+  "visual_exceptions": [
+    {
+      "region": "steps",
+      "width": 1440,
+      "category": "no field",
+      "reason": "The board panel holds an inline Note field and the head \"DECIDE · PMO LEAD\"; the contract opens a form on Return and has no deciding-role field. The fixture adds a disabled Refuse button with its reason.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "steps",
+      "width": 390,
+      "category": "frame layout",
+      "reason": "The phone bar keeps the consequence sentence (D-63) and the three buttons share rows to stay compact on a 375x667 phone; the board stacks two full-width buttons without the sentence.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "table",
+      "width": 1440,
+      "category": "line board",
+      "reason": "Board row height comes from a 40px row; the frame rows hold a 44px checkbox target. Remaining: the board has no per-row Edit/Accept buttons in the table.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "table",
+      "width": 390,
+      "category": "line board",
+      "reason": "SCR-26 mobile draws one suggestion as a swipe card, not a table.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "suggestions",
+      "width": 1440,
+      "category": "no field",
+      "reason": "The Status radio group, \"Write my own\", \"Tola's suggested answer\" label and the requirement title are not in the suggestion item (contract question for the backend developer).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "checklist",
+      "width": 390,
+      "category": "line board",
+      "reason": "The phone board omits owner, held-by and due lines and the section head; the frame draws them when returned.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "checklist-gates",
+      "width": 390,
+      "category": "line board",
+      "reason": "Same as checklist 390; fixture words differ (RUNNING / IN PROGRESS).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "findings",
+      "width": 1440,
+      "category": "no board",
+      "reason": "No board draws a findings list; anchored on SCR-49 \"What closure needs\".",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "findings",
+      "width": 390,
+      "category": "line board",
+      "reason": "The SCR-25 phone row is one line \"Risks · text (high)\" with a cite; the frame draws a detail line and a severity pill.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "unknown-money",
+      "width": 1440,
+      "category": "line board",
+      "reason": "SCR-56 draws compact left-aligned sans amounts and plain \"Unknown\"; the frame draws full amounts (D-63) in the design system number style with the amber Unknown chip. Compact figures are a line task.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "step-form",
+      "width": 1440,
+      "category": "no field",
+      "reason": "The contract has no prefill from the item's answer, no submit label (\"Save and accept\") and no item context in the form (contract question, D-63).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "region": "notice-done",
+      "width": 390,
+      "category": "line board",
+      "reason": "The phone board shows the short summary \"Delivered to 2 client contacts. Verified.\"; the frame shows the returned sentence.",
+      "approved_by": "builder proposal, pending design engineer"
+    }
   ]
 }

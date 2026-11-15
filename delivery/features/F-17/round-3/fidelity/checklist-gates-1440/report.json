@@ -1,0 +1,37 @@
+{
+  "region": "checklist-gates",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-44-desktop-readiness.dc.html",
+  "page": "/work/W-2003",
+  "boardText": "Release gates",
+  "pageText": "Release gates",
+  "boardRegion": {
+    "width": 1320,
+    "height": 233
+  },
+  "pageRegion": {
+    "width": 1320,
+    "height": 291
+  },
+  "pass": true,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 92
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [],
+  "visual": {
+    "score": 92,
+    "allCellsScore": 92,
+    "width": 1320,
+    "height": 233,
+    "boardHeight": 233,
+    "pageHeight": 291,
+    "cell": 12,
+    "contentCells": 2200,
+    "mismatchedCells": 175
+  },
+  "notes": []
+}
