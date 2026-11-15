@@ -28,7 +28,7 @@ class PolicyHold(ValidationError):
         super().__init__([f'{r.component}: {r.status} {r.reason}' for r in results])
 
 
-def validate_envelope(case, envelope, runtime=False):
+def validate_envelope(case, envelope, runtime=False, *, budget=None):
     errors = sorted(Draft202012Validator(envelope_schema(), format_checker=FormatChecker()).iter_errors(envelope), key=lambda e: str(e.path))
     if errors:
         raise ValidationError([f'{list(e.path)}: {e.message}' for e in errors])
@@ -62,19 +62,29 @@ def validate_envelope(case, envelope, runtime=False):
         return
     # Reference-backed values require a reviewed domain schema. Arbitrary text cannot execute rules.
     values = value if isinstance(value, list) else [value]
+    storage_rule = envelope['component_id'] == 'D11.template_storage_retention_rules'
     resolved_contents=[]
     for item in values:
         if isinstance(item, dict):
             ref, version = item['artifact_ref'], item['artifact_version']
         else:
             ref, version = item, 1
-        target = RegisteredReference.objects.filter(case=case, ref=ref, version=version).first()
+        targets = RegisteredReference.objects.filter(case=case, ref=ref, version=version)
+        if budget is not None:
+            targets = targets.defer('content')
+        target = targets.first()
         if not target:
             raise ValidationError('Registered domain reference is missing')
+        if budget is not None:
+            budget.load(target, 'content')
         resolved_contents.append(target.content)
         digest = hashlib.sha256(json.dumps(target.content, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
         if target.sha256 != digest or (isinstance(item, dict) and (item['sha256'] != digest or item['schema_ref'] != target.schema_ref)):
             raise ValidationError('Referenced content hash/schema does not match')
+        if storage_rule:
+            from .document_validators import validate_reference
+            validate_reference(envelope['component_id'], target, case, runtime=runtime)
+            continue
         from .clock_validators import SUPPORTED as CLOCK_COMPONENTS, validate_reference as validate_clock_reference
         from .document_validators import SUPPORTED, validate_reference
         from .revision_validators import SUPPORTED as REVISION_COMPONENTS, validate_reference as validate_revision_reference
@@ -198,18 +208,19 @@ def validate_envelope(case, envelope, runtime=False):
     if envelope['component_id']=='D05.role_principal_assignments':
         from .role_assignments import validate_collection as validate_role_collection
         validate_role_collection(resolved_contents)
-    from .d03_validators import validate_collection as validate_d03_collection
-    validate_d03_collection(envelope['component_id'],resolved_contents)
-    from .payment_validators import validate_collection as validate_payment_collection
-    validate_payment_collection(envelope['component_id'],resolved_contents)
-    from .partner_validators import validate_collection as validate_partner_collection
-    validate_partner_collection(envelope['component_id'],resolved_contents)
-    from .settlement_validators import SUPPORTED as SETTLEMENT_COMPONENTS,validate_collection as validate_settlement_collection
-    if envelope['component_id'] in SETTLEMENT_COMPONENTS:validate_settlement_collection(envelope['component_id'],resolved_contents)
-    from .billing_validators import SUPPORTED as BILLING_COMPONENTS,validate_collection as validate_billing_collection
-    if envelope['component_id'] in BILLING_COMPONENTS:validate_billing_collection(envelope['component_id'],resolved_contents)
-    from .finance_validators import SUPPORTED as FINANCE_COMPONENTS,validate_collection
-    if envelope['component_id'] in FINANCE_COMPONENTS:validate_collection(envelope['component_id'],resolved_contents)
+    if not storage_rule:
+        from .d03_validators import validate_collection as validate_d03_collection
+        validate_d03_collection(envelope['component_id'],resolved_contents)
+        from .payment_validators import validate_collection as validate_payment_collection
+        validate_payment_collection(envelope['component_id'],resolved_contents)
+        from .partner_validators import validate_collection as validate_partner_collection
+        validate_partner_collection(envelope['component_id'],resolved_contents)
+        from .settlement_validators import SUPPORTED as SETTLEMENT_COMPONENTS,validate_collection as validate_settlement_collection
+        if envelope['component_id'] in SETTLEMENT_COMPONENTS:validate_settlement_collection(envelope['component_id'],resolved_contents)
+        from .billing_validators import SUPPORTED as BILLING_COMPONENTS,validate_collection as validate_billing_collection
+        if envelope['component_id'] in BILLING_COMPONENTS:validate_billing_collection(envelope['component_id'],resolved_contents)
+        from .finance_validators import SUPPORTED as FINANCE_COMPONENTS,validate_collection
+        if envelope['component_id'] in FINANCE_COMPONENTS:validate_collection(envelope['component_id'],resolved_contents)
     if envelope['component_id'] in ['D01.change_type_catalogue','D11.adapter_configuration_refs']:
         if len(values)>100:
             raise ValidationError('Standard catalogue exceeds the 100-entry validation budget')
@@ -263,24 +274,37 @@ def transition(actor, config_id, state):
     return config
 
 
-def resolve(component, case, at=None, expected_revision=None):
+def _resolution_candidate(component, case):
+    """Select from local revision metadata before loading the chosen envelope."""
+    versions = Configuration.objects.filter(case=case, component=component).only(
+        'id', 'case_id', 'component', 'revision').order_by('-revision')
+    candidate = None
+    for config in versions.iterator(chunk_size=100):
+        # Keep the exhaustive state pass, including failures in older history.
+        state = config.states.order_by('-pk').first().state
+        if state in ['active', 'revoked', 'superseded'] and candidate is None:
+            candidate = config
+    return candidate
+
+
+def resolve(component, case, at=None, expected_revision=None, *, budget=None):
     at = at or timezone.now()
-    versions = Configuration.objects.filter(case=case, component=component).order_by('-revision')
-    candidates = [c for c in versions if c.states.order_by('-pk').first().state in ['active', 'revoked', 'superseded']]
-    if not candidates:
+    config = _resolution_candidate(component, case)
+    if config is None:
         return Resolution('MISSING', component, reason='No activated component version')
-    config = candidates[0]
     state = config.states.order_by('-pk').first().state
     if state == 'revoked':
         return Resolution('REVOKED', component)
     from .scopes import application_health
-    origin_status = application_health(config, at)
+    origin_status = application_health(config, at, budget=budget)
     if origin_status != 'ACTIVE':
         return Resolution(origin_status, component, reason='Explicit scoped source is unavailable; no fallback')
     if expected_revision is not None and config.revision != expected_revision:
         return Resolution('INVALID', component, reason='Stale policy revision')
     try:
-        validate_envelope(case, config.envelope, runtime=True)
+        if budget is not None and 'envelope' in config.get_deferred_fields():
+            budget.load(config, 'envelope')
+        validate_envelope(case, config.envelope, runtime=True, budget=budget)
     except (ValidationError, ValueError, KeyError) as exc:
         return Resolution('INVALID', component, reason=str(exc))
     start = datetime.fromisoformat(config.envelope['effective_from'])
@@ -328,19 +352,29 @@ def register_reference(actor, case_id, ref, schema_ref, content, evidence_id):
     return reference
 
 
-def active_component(component,case):
-    result=resolve(component,case)
+def active_component(component,case,*,budget=None):
+    result=resolve(component,case,budget=budget)
     if result.status!='ACTIVE':
         raise PolicyHold([result])
     return result.configuration
 
 
-def reference_values(configuration):
+def reference_values(configuration, *, budget=None):
+    if budget is not None and 'envelope' in configuration.get_deferred_fields():
+        budget.load(configuration, 'envelope')
     value=configuration.envelope['value']
     if isinstance(value,dict):
-        return [RegisteredReference.objects.get(case=configuration.case,ref=value['artifact_ref'],version=value['artifact_version']).content]
-    refs=[value] if isinstance(value,str) else value
-    return [RegisteredReference.objects.get(case=configuration.case,ref=ref,version=1).content for ref in refs]
+        refs = [(value['artifact_ref'], value['artifact_version'])]
+    else:
+        refs = [(ref, 1) for ref in ([value] if isinstance(value,str) else value)]
+    records = RegisteredReference.objects.filter(case_id=configuration.case_id)
+    if budget is not None:
+        records = records.defer('content')
+    values = []
+    for ref, version in refs:
+        record = records.get(ref=ref, version=version)
+        values.append(record.content if budget is None else budget.load(record, 'content'))
+    return values
 
 
 def decision_authority(actor,case,role,action='approve',delegated=False,delegation_context=None):

@@ -1,6 +1,6 @@
 # Resume from a GitHub checkout
 
-> Current handoff: read the 9 November 2026 section at the top of HANDOFF.md before historical instructions below. Latest snapshots remain nonapplied; no fresh native test or deployment acceptance is claimed. Do not replay broad historical commands automatically.
+> Read the local development checkpoint at the top of HANDOFF.md for the current branch, verified results and selected changes. The frozen snapshot chain remains under `backups/nonapplied/`. Use a fresh synthetic database for a new checkout.
 
 The repository is the source/build handoff for PSL's AI agent operations factory. Read root AGENTS.md, START-HERE.md, BUILD-STATE.md, HANDOFF.md and BUILD-BACKLOG.json before changing it. The user paused feature work on 6 November 2026 to make this initial GitHub handoff. Do not interpret this initial commit as product completion or production approval.
 
@@ -40,6 +40,12 @@ For numbered source/log evidence, use `python scripts/run_factory_tests.py <unus
 Broader operator/recovery suites require their documented isolated drill database and deployment/readiness fixture bindings. Recreate test-owned infrastructure from their fixtures/runbooks; never copy secret registries, credentials, source-machine database contexts or actual owner policies from another environment. Tests mock external providers where stated; they exercise native services and PostgreSQL.
 
 ## Resume the build
+
+### Deployment requirements reviewed locally
+
+The application uses `config.wsgi:application` and the `PG*` database variables documented above. A hosted build still needs an approved production WSGI server, static asset serving, isolated PostgreSQL, secret storage, a private worker configuration and a migration and recovery rehearsal. Confirm the proxy's HTTPS handling before selecting redirect and HSTS settings. A local `check --deploy --fail-level WARNING` with synthetic non-development settings reported `security.W004` and `security.W008`. The development check is separate from this deployment gate. [Railway Django guide](https://railway.com/guides/django)
+
+Railway CLI 5.68.0 was available on the local host on 9 November 2026. Hosting, service creation, access and spend require explicit user authorization. QuickBooks live setup requires the hosted pilot onboarding inputs in `quickbooks-mcp.md`. [Intuit hosted MCP pilot](https://intuitdeveloper.github.io/intuit-3p-ai-pilot/)
 
 Verify the latest source and test outcomes first. Next RFP work is source-specific branch/regression acceptance, preservation/fresh migration proof and a fresh synthetic native-browser journey. Then continue the connected Finance increment in HANDOFF.md/BUILD-BACKLOG.json.63 PMO+45 Finance remain the release scope;14 BaaS IDs remain preserved/deferred. Owner policy, real model evaluations, UAT and live integration remain separate from code and mock acceptance.
 

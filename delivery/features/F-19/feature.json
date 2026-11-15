@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-19",
   "outcome": "A signed-in person sees the client register and each client's billing contact, projects and money, and can set the billing contact, on the contract mock",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CLIENTS"
   ],
@@ -67,14 +67,65 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T11:21:31Z",
+      "seconds": 166.2,
+      "evidence_ref": "delivery/features/F-19/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T11:53:16Z",
+      "seconds": 539.4,
+      "evidence_ref": "delivery/features/F-19/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T12:04:03Z",
+      "seconds": 261.7,
+      "evidence_ref": "delivery/features/F-19/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T12:31:02Z",
+      "seconds": 171.5,
+      "evidence_ref": "delivery/features/F-19/round-3/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delegated technical review",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "evidence_refs": [
+        "delivery/features/F-19/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -100,22 +151,819 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delegated UX review",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "evidence_refs": [
+        "delivery/features/F-19/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delegated UI review",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "evidence_refs": [
+        "delivery/features/F-19/round-3/review-ui.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Tamarind Loans is `billing_contact_set: true`. The spec's fixture row says false, but acceptance 5 (\"2 missing\") needs true. The spec contradicts itself and the builder followed the acceptance criteria, so this is fine. The coordinator should correct the spec row. `frontend/mock/fixtures/clients/list.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The clients-specific `ClientNoAccess` replaces the shared `NoAccessState` (which says \"work item\"). This is a reasonable deviation, and it follows the F-07 `ProjectNoAccess` precedent. Nothing about the record is shown. `frontend/src/features/clients/ClientStates.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The saved state and the CL-3508 first-409 are kept per persona and client in module memory. That is a sensible adaptation to the five-persona generic test, and `resetClients()` clears both. Test-only coupling. `frontend/mock/clients.mjs:60-63`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The CL-3507 \"money absent\" variant is not built, and CL-3509 covers an absent `money`. The list table also shows \"Set\" twice per row (STATE and BILLING CONTACT columns). Both are recorded in build.md. No action needed beyond the design engineer's attention.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Save button restyled on both detail boards. Expected: SCR-35-desktop-detail and SCR-35-mobile-detail draw the Save as a blue primary button (`background:#2459D6`, white text, 50px), shown with the inputs empty. Actual: the button uses the shared disabled style (grey `--disabled` fill, muted text) until both inputs are filled, so on the drawn state it is grey (frontend/src/features/clients/BillingContactForm.tsx:225, `disabled={busy |  | !name.trim() |  | !email.trim()}`). The spec says \"off until both inputs are non-blank\" (spec.md line 48, acceptance 10), but that is not listed among the spec's Conflicts, so D-71 does not cover it. Fix: keep the button enabled and blue, and on a press with a blank input show the field message beside that input and focus it (the spec already has \"client-side checks refuse only blank values\", and the 422 path already draws per-field messages). Keep `disabled` only while busy. Spec line 48 and acceptance 10 then need the matching one-line change. The other option is for the design engineer to approve the grey disabled state as an exception.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T11:53:19Z",
+          "refs": [
+            "41b4925c"
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:05:50Z",
+          "refs": [
+            "Save is blue and enabled on both detail side-by-sides (round-2/fidelity/SCR-35-desktop-detail-1440 and SCR-35-mobile-detail-390); the blank-press path (message beside the field, no request, focus) is in the diff and in the updated component test. Spec line 48 / acceptance 10 are replaced by D-75a."
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "41b4925c"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Save is blue and enabled on both detail side-by-sides (round-2/fidelity/SCR-35-desktop-detail-1440 and SCR-35-mobile-detail-390); the blank-press path (message beside the field, no request, focus) is in the diff and in the updated component test. Spec line 48 / acceptance 10 are replaced by D-75a."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Empty contact inputs restyled. Expected: both boards draw \"Billing contact name\" and \"Billing email\" with a 2px `#C8401C` (`--signal`) border when no contact is set. Actual: plain ink border (`psl-input`) (BillingContactForm.tsx:184/209). The approved exception covers only the \"Not set\" placeholder text, not the border. The border is driven by the backend's `billing_contact.set === false`, the same flag that already shows the \"Needed before any invoice can start\" helper, so the page decides nothing. Fix: add a token-based modifier (border-color `var(--signal)`) while `set` is false and the field has no 422 error (the error style wins).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T11:53:19Z",
+          "refs": [
+            "41b4925c"
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:05:50Z",
+          "refs": [
+            "Both empty inputs draw the orange (--signal) border on desktop and phone, matching the boards."
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "41b4925c"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Both empty inputs draw the orange (--signal) border on desktop and phone, matching the boards."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone detail: Save is not in a sticky bottom bar. Expected: SCR-35-mobile-detail draws a white bar fixed at the bottom of the screen (`padding:12px 16px 18px`, `border-top:2px solid` ink) holding a full-width blue Save. Actual: Save sits inside the form card under the email input, and the bottom of the screen shows the Projects and Money panels. A precedent already exists: `.monthend-bar` in frontend/src/features/finance/month-end/month-end.css:63 (sticky, surface, ink top rule, same padding). Reuse that pattern below 720px. The status line, notice and errors stay in the form.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T11:53:19Z",
+          "refs": [
+            "41b4925c"
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:05:50Z",
+          "refs": [
+            "Phone detail shows a white bottom bar with an ink top rule and a full-width blue Save, like the board."
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "41b4925c"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Phone detail shows a white bottom bar with an ink top rule and a full-width blue Save, like the board."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone detail: the form is wrapped in a panel the board does not draw. Expected: SCR-35-mobile-detail puts the labels and inputs straight on the page under the banner, with no \"BILLING CONTACT\" panel head or frame. Actual: a `psl-panel` with an Archivo 800 capitals head and an ink bar (the tool flags it: \"font IBM Plex Sans on the board, Archivo on the page\u2026 bar under it on the page\"). Fix: below 720px, drop the panel border and head chrome (keep the h2 for screen readers, e.g. `clients__sr`) and use the board's 16px page gutter for the fields. Desktop keeps the panel, because the desktop board draws one.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T11:53:19Z",
+          "refs": [
+            "41b4925c"
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:05:50Z",
+          "refs": [
+            "Phone detail has no panel frame or head; labels and inputs sit on the page at the 16px gutter like the board."
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "41b4925c"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Phone detail has no panel frame or head; labels and inputs sit on the page at the 16px gutter like the board."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Project link colour on desktop detail. Expected: \"Patient app\" in the PROJECTS panel is a blue `#2459D6` (`--action`) link, weight 600, as the board draws it. Actual: ink `#1F2427`, because `.psl .clients__panel .clients__name { color: var(--ink) }` (frontend/src/features/clients/clients.css, list section) overrides the link colour. Fix: limit that rule to the list table and cards, and let panel project links keep the link colour.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T11:53:19Z",
+          "refs": [
+            "41b4925c"
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:05:50Z",
+          "refs": [
+            "\"Patient app\" is the blue link on desktop and phone."
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "41b4925c"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"Patient app\" is the blue link on desktop and phone."
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "\"Projects\" is not marked as the current top-bar link on /clients and /clients/[id]. Expected: both desktop boards draw \"Projects\" white with the orange `#C8401C` underline (the page sits under Projects; its eyebrow reads PROJECTS). Actual: the link is grey with no bar, and the tool flags \"text colour #FFFFFF on the board, #C8CDD0 on the page; coloured bar\u2026 none on the page\" on both desktop boards. Cause: `destinationForPath` (frontend/src/shell/destinations.ts:20) maps only `/projects\u2026`. Fix: also map `/clients` and `/clients/` paths to the `projects` destination. This is a small shell change, outside features/clients, so the coordinator should confirm it does not touch the SCR-22 results (it does not change /projects).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T11:53:19Z",
+          "refs": [
+            "41b4925c"
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:05:50Z",
+          "refs": [
+            "Desktop detail side-by-side shows Projects white with the orange underline; new destinationForPath test covers /clients, /clients/CL-3501 and not /clientsx."
+          ],
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "41b4925c"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Desktop detail side-by-side shows Projects white with the orange underline; new destinationForPath test covers /clients, /clients/CL-3501 and not /clientsx."
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Desktop list rhythm. The table starts about 6px lower than on the board and each row is about 2px taller (about 39px against 37px), so by the last row the drift is about 12px. That adds misaligned cells on top of the forced column shift. Check `.clients__table td { line-height: normal }` and the count row's `min-height: var(--control-md)` against the board's 37px rows and its table top at y=252.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Desktop panel heads are about 43px against the board's 37px (CLIENT DETAILS / PROJECTS). They use the shared `psl-panel__head`. Leave them as they are if other approved screens use this height; otherwise match the board.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T11:25:21Z",
+          "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Spec line 48 and AC 10 still say Save is disabled until both inputs are filled. D-75(a) replaces that rule, so the spec text should be updated to match. The carried-over TECH-1-1 fixture-row correction (Tamarind) is also still open in the spec.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T12:05:50Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Empty press: the message is set per field (\"Enter the billing contact name.\" / \"Enter the billing email.\") through the existing per-field path, nothing is sent, and focus goes to the first blank field. Clear for a PM and a Finance user. Orange borders on the empty inputs match the board. Keep the messages tied to the inputs by aria-describedby, as the 422 path does.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:05:50Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone sticky Save bar matches the board: blue full-width button, ink top rule, pinned at the bottom. The heading stays for screen readers. UX-1-2 is closed by D-75a. UX-1-3 stays as it was, and UX-1-4 is already true.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:05:50Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Scores under 90 (desktop 85.9, desktop-detail 80.3, mobile-detail 86.0; mobile 92.5 passes) are, in substance, forced by the approved omissions (D-71): Legal name, Billing address and Tax ID fields and the Save row below them, the Contacts panel, the Search/Filter row, the OWED column, the extra Money panel, the shorter data-driven banner sentence, the \"Save billing contact\" copy, the phone Billing address field, and the frame's bell/Start and 40px/26px titles. I find no blocking build-fixable gap left on the detail boards: the controls, colours, borders, link and bar states now match. A waiver for the residual scores is for the design engineer to decide; I do not block on them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:05:50Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Small gaps still fixable in the build, worth only a few points: desktop panel heads at about 43px against 37px (UI-1-8); content about 4-6px lower than the board on desktop detail and about 2px per row on the desktop list (UI-1-7). On the phone the helper \"Needed before any invoice can start\" shows under the name field where the phone board draws none; the spec keeps it as static copy (Conflicts 7), so leave it unless the design engineer wants it dropped on phone.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:05:50Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "New exception \"Billing contact name\" (Conflicts 7, pending design engineer): the label is drawn on the built phone page (visible in the side-by-side), so nothing is omitted. The tool lists it as missing only because its role-matching now sees the input label as a field, not text, once the panel heading is gone. It is a tool matching artefact and harmless; I recommend approving it, with the reason reworded as \"label present, matched as a field\" (it fits Conflicts 7 only loosely). It hides no real board difference, so it is not a way around a missing element. The design engineer signs it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:05:50Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**Some save results are never announced (WCAG 2.1 AA 4.1.3 Status Messages; A-ACCESSIBILITY).**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:21:56Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:31:02Z",
+          "refs": [
+            "95903eeb"
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "95903eeb"
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Focus is lost after each save press.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:21:56Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:31:02Z",
+          "refs": [
+            "95903eeb"
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "95903eeb"
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**With persona `none`, the clients no-access page never appears in a real browser.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:21:56Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delegated technical review",
+          "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+          "evidence_refs": [
+            "delivery/features/F-19/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-19/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delegated UX review",
+          "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+          "evidence_refs": [
+            "delivery/features/F-19/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delegated UI review",
+          "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+          "evidence_refs": [
+            "delivery/features/F-19/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delegated technical review",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "integrated QA",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-19/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delegated UX review",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delegated UI review",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -138,7 +986,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
     "task_branch": "fe-clients-a-signed-in-person-sees-the-client-regis",
-    "head_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
+    "head_sha": "95903eeb853bc2c9a244eb2e4d19174871d875de",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-19",
     "pr_url": null,
     "pr_number": null,
@@ -149,7 +997,39 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/clients.spec.ts",
+      "frontend/mock/clients.mjs",
+      "frontend/mock/fixtures/E-CLIENT-CONTACT.json",
+      "frontend/mock/fixtures/E-CLIENT.json",
+      "frontend/mock/fixtures/E-CLIENTS.json",
+      "frontend/mock/fixtures/clients/CL-3501.json",
+      "frontend/mock/fixtures/clients/CL-3502.json",
+      "frontend/mock/fixtures/clients/CL-3503.json",
+      "frontend/mock/fixtures/clients/CL-3507.json",
+      "frontend/mock/fixtures/clients/CL-3508.json",
+      "frontend/mock/fixtures/clients/CL-3508.next.json",
+      "frontend/mock/fixtures/clients/CL-3509.json",
+      "frontend/mock/fixtures/clients/list.json",
+      "frontend/mock/server.mjs",
+      "frontend/src/app/clients/[clientId]/page.tsx",
+      "frontend/src/app/clients/page.tsx",
+      "frontend/src/features/clients/BillingContactForm.tsx",
+      "frontend/src/features/clients/ClientDetail.tsx",
+      "frontend/src/features/clients/ClientStates.tsx",
+      "frontend/src/features/clients/ClientsList.tsx",
+      "frontend/src/features/clients/api.ts",
+      "frontend/src/features/clients/clients.css",
+      "frontend/src/features/clients/index.ts",
+      "frontend/src/features/clients/labels.ts",
+      "frontend/src/features/clients/useClient.ts",
+      "frontend/src/features/clients/useClients.ts",
+      "frontend/src/shell/destinations.ts",
+      "frontend/tests/clients-mock.test.ts",
+      "frontend/tests/clients.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/shell.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -182,7 +1062,7 @@
     }
   },
   "created_at": "2026-11-15T10:36:42Z",
-  "round": 1,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -200,6 +1080,70 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T11:21:43Z",
+      "round": 1,
+      "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T11:25:29Z",
+      "round": 1,
+      "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T11:25:35Z",
+      "round": 2,
+      "head": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T12:04:18Z",
+      "round": 2,
+      "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-15T12:05:55Z",
+      "round": 2,
+      "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T12:22:05Z",
+      "round": 2,
+      "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T12:22:05Z",
+      "round": 3,
+      "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T12:31:03Z",
+      "round": 3,
+      "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "reason": null
     }
   ],
   "routing": {
@@ -215,10 +1159,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 3,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "95903eeb853bc2c9a244eb2e4d19174871d875de"
   },
   "blocked": null
 }
