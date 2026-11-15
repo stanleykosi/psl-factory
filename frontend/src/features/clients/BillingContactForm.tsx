@@ -104,7 +104,12 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (pressed.current || !name.trim() || !email.trim()) return;
+    if (pressed.current) return;
+    // A blank input sends nothing: the message sits beside it and focus goes to the first one.
+    const blank: FieldMessage[] = [];
+    if (!name.trim()) blank.push({ name: 'name', message: 'Enter the billing contact name.' });
+    if (!email.trim()) blank.push({ name: 'email', message: 'Enter the billing email.' });
+    if (blank.length) return setNotice({ kind: 'invalid', message: '', fields: blank });
     pressed.current = true;
     setBusy(true);
     setNotice(null);
@@ -146,13 +151,14 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
   }
 
   const editable = client.can_change === true;
+  const needed = !contact.set;
 
   return (
-    <section className="psl-panel clients__panel" aria-labelledby="client-contact-title">
-      <h2 id="client-contact-title" className="psl-panel__head clients__h2">
+    <section className="psl-panel clients__panel clients__formpanel" aria-labelledby="client-contact-title">
+      <h2 id="client-contact-title" className="psl-panel__head clients__h2 clients__h2--panel">
         Billing contact
       </h2>
-      <div className="clients__panelbody">
+      <div className="clients__panelbody clients__formbody">
         {!editable ? (
           <>
             <ReadOnlyValue id="client-name-label" label="Billing contact name" value={contact.name} set={contact.set} />
@@ -181,7 +187,7 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
               <input
                 id="client-name"
                 ref={nameInput}
-                className="psl-input"
+                className={`psl-input${needed ? ' clients__needed' : ''}`}
                 value={name}
                 readOnly={unread}
                 autoComplete="off"
@@ -206,7 +212,7 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
               <input
                 id="client-email"
                 ref={emailInput}
-                className="psl-input"
+                className={`psl-input${needed ? ' clients__needed' : ''}`}
                 type="email"
                 value={email}
                 readOnly={unread}
@@ -222,9 +228,11 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
               )}
             </div>
             {!unread && (
-              <button type="submit" className="psl-btn psl-btn--lg clients__save" disabled={busy || !name.trim() || !email.trim()} aria-busy={busy}>
-                {busy ? 'Saving…' : 'Save billing contact'}
-              </button>
+              <div className="clients__bar">
+                <button type="submit" className="psl-btn psl-btn--lg clients__save" disabled={busy} aria-busy={busy}>
+                  {busy ? 'Saving…' : 'Save billing contact'}
+                </button>
+              </div>
             )}
           </form>
         )}

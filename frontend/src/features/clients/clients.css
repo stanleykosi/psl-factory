@@ -12,7 +12,8 @@
 .clients__table { min-width: 860px; }
 .clients__table td { vertical-align: middle; line-height: normal; }
 .clients__namecell { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
-.psl .clients__table .clients__name, .psl .clients__panel .clients__name { font-weight: 600; color: var(--ink); }
+.psl .clients__table .clients__name { font-weight: 600; color: var(--ink); }
+.psl .clients__panel .clients__name { font-weight: 600; }
 .clients__missing { color: var(--signal-ink); font-weight: 600; }
 .clients__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .clients__card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: var(--control-md); padding: var(--space-3); background: var(--surface); border: 2px solid var(--ink); line-height: 1.3; }
@@ -41,6 +42,8 @@
 .clients__current { font-size: 13px; color: var(--ink-muted); }
 .clients__block { display: block; }
 .clients__save { align-self: flex-start; min-width: 200px; }
+.psl .clients__needed { border-color: var(--signal); }
+.clients__bar { display: contents; }
 .clients__notice p, .clients__status { margin: 0; }
 .clients__notice { display: flex; flex-direction: column; gap: var(--space-1); padding: 10px 12px; background: var(--waiting-tint); color: var(--waiting-ink); }
 .clients__status:empty { display: none; }
@@ -63,4 +66,10 @@
   .clients__body, .clients__main { gap: var(--space-3); }
   .clients__aside { flex-basis: 100%; max-width: none; }
   .clients__save { width: 100%; }
+  /* the form sits straight on the page; the Save bar is pinned at the bottom (as .monthend-bar) */
+  .psl .clients__formpanel { border: 0; background: none; display: contents; }
+  .psl .clients__h2--panel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; border: 0; }
+  .clients__formbody, .clients__form, .clients__body, .clients__main { display: contents; }
+  .clients__page:has(.clients__bar) { min-height: calc(100dvh - 88px); }
+  .clients__bar { display: block; order: 1; position: sticky; bottom: 0; margin: auto calc(-1 * var(--space-4)) calc(-1 * var(--space-4)); padding: var(--space-3) var(--space-4) 18px; background: var(--surface); border-top: 2px solid var(--ink); }
 }

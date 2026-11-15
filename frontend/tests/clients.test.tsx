@@ -261,11 +261,22 @@ describe('Client detail (SCR-35 detail)', () => {
     expect(within(money).getAllByRole('definition').map((d) => d.textContent)).toEqual(['Unknown amount not known', 'Unknown amount not known', 'Unknown amount not known']);
   });
 
-  it('Save is off until both inputs are non-blank; one press sends exactly one PUT, then one reload shows the stored values', async () => {
+  it('a blank input sends nothing and shows its message beside it with focus on the first; one press sends exactly one PUT, then one reload shows the stored values', async () => {
     await openDetail('CL-3501');
-    expect(saveButton()!.disabled).toBe(true);
+    expect(saveButton()!.disabled).toBe(false);
+    expect(nameBox().className).toContain('clients__needed');
+    expect(emailBox().className).toContain('clients__needed');
+    await press();
+    expect(puts()).toHaveLength(0);
+    expect(screen.getByText('Enter the billing contact name.')).toBeTruthy();
+    expect(screen.getByText('Enter the billing email.')).toBeTruthy();
+    expect(document.activeElement).toBe(nameBox());
     fill('Ada Okoye', '   ');
-    expect(saveButton()!.disabled).toBe(true);
+    await press();
+    expect(puts()).toHaveLength(0);
+    expect(screen.queryByText('Enter the billing contact name.')).toBeNull();
+    expect(screen.getByText('Enter the billing email.')).toBeTruthy();
+    expect(document.activeElement).toBe(emailBox());
     fill('Ada Okoye', 'ada@lagoon.example');
     expect(saveButton()!.disabled).toBe(false);
     const button = saveButton()!;

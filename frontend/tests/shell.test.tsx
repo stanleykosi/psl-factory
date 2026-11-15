@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Destination } from '@/api/types';
 import { AppShell, usePhoneBack } from '@/shell/AppShell';
+import { destinationForPath } from '@/shell/destinations';
 import { DestinationPage, UnknownPage } from '@/shell/DestinationPage';
 import { HomeRedirect } from '@/shell/HomeRedirect';
 import { withoutBellFeed } from './bell-feed';
@@ -62,6 +63,13 @@ const who = () => {
 async function loaded() {
   await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
 }
+
+describe('destinationForPath', () => {
+  it('marks Projects current on the clients pages, and not on lookalike paths', () => {
+    for (const path of ['/clients', '/clients/CL-3501', '/projects', '/projects/P-1']) expect(destinationForPath(path)?.key).toBe('projects');
+    for (const path of ['/clientsx', '/client', '/my-work']) expect(destinationForPath(path)?.key).not.toBe('projects');
+  });
+});
 
 describe('navigation follows /me', () => {
   it('finance_lead sees all five destinations, the current one marked, and who is signed in', async () => {
