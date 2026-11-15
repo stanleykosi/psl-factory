@@ -69,6 +69,8 @@ export function AlertSettingsPage() {
 
   useEffect(() => {
     if (notice?.kind === 'stale' || notice?.kind === 'invalid') callout.current?.focus();
+    // a failed save's message can sit under the phone's pinned Save bar; the callout's scroll-margin keeps it clear of the bar
+    else if (notice?.kind === 'problem') callout.current?.scrollIntoView?.({ block: 'nearest' });
   }, [notice]);
 
   const edit = (change: (draft: Draft) => Draft) => {
@@ -173,7 +175,7 @@ export function AlertSettingsPage() {
         </div>
       )}
       {notice.kind === 'problem' && (
-        <div className="psl-callout psl-callout--problem" role="alert">
+        <div ref={callout} className="psl-callout psl-callout--problem" role="alert">
           We couldn&rsquo;t save your settings. Nothing was changed. {notice.message} Reference {notice.code} for support.
         </div>
       )}

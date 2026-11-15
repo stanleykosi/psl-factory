@@ -50,6 +50,8 @@ export type WorkItemPresentation = {
     note?: string;
     /** The board sets this card's heading larger, so it wraps in the narrow column. */
     large_title?: boolean;
+    /** The note is drawn before the links (setup-needed board) rather than after. */
+    note_first?: boolean;
     /** Phone: the board pins a bar here whose control belongs to another feature; the bar's room is kept. */
     bar_slot?: boolean;
     /** Phone: small print under the bar's buttons. */

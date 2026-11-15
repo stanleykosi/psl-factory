@@ -85,10 +85,14 @@ export function AppShell({ children }: { children: ReactNode }) {
   const leaving = useRef(false);
   const closeAlerts = useCallback(() => setAlertsAt(null), []);
   // Open and the footer links close the drawer and then change the page; the bar there is the one to take focus.
-  const leaveAlerts = useCallback(() => {
-    leaving.current = true;
-    setAlertsAt(null);
-  }, []);
+  // A link to the page already shown never changes the path, so it leaves the flag off and the close effect returns focus to the bell.
+  const leaveAlerts = useCallback(
+    (href: string) => {
+      leaving.current = href.split(/[?#]/)[0] !== pathname;
+      setAlertsAt(null);
+    },
+    [pathname],
+  );
   useEffect(() => {
     if (!leaving.current) return;
     leaving.current = false;

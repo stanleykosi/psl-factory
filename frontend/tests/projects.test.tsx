@@ -171,7 +171,7 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     expect(query(lastCall())).toEqual({ limit: '20', status: 'closed' });
     expect(window.location.search).toBe('?status=closed');
     expect([...rows()[0].querySelectorAll('td')].map((td) => td.textContent)).toEqual(['Sabi Market · web store', 'Kemi Adebayo', 'Closed 09 Nov', '—', '0', '0']);
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECTS');
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
     tabs()[1].focus();
     fireEvent.keyDown(tabs()[1], { key: 'ArrowRight' });
     await until(() => expect(rows()).toHaveLength(5));
@@ -272,7 +272,7 @@ describe('search', () => {
     expect(calls[1].search).toBe('?limit=20&q=lagoon');
     expect(window.location.search).toBe('?q=lagoon');
     await until(() => expect(titles()).toEqual(['Lagoon Health · patient app']));
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECTS');
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
     expect(tabs()[0].textContent).toBe('Active22');
 
     fireEvent.change(box, { target: { value: '' } });

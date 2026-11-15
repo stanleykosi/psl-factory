@@ -2,11 +2,10 @@
 // fixtures/projects/list.json; a journey comes from fixtures/projects/<case_id>.json (fixtures/E-PROJECT.json for ids
 // not in the list). P-0099 is the reserved no-access id. Sample data only; no business rules.
 //
-// PROPOSAL fields: the SCR-22 and SCR-07 boards draw values the loaded contract (v6) does not carry. The mock serves
-// them in the shapes architecture v7 drafts (D-PROJECTS-VIEW); PROPOSED_FIELDS lists them, and contractBody()
-// removes them where a test checks a body against the loaded openapi. `status` (active | closed | all) is the
-// proposed E-PROJECTS query parameter for the Active / Closed / All I can see tabs; without it the mock answers
-// Active, the tab the page opens on, and `total` counts the rows that match the status and q.
+// The SCR-22 and SCR-07 board values are in the loaded contract (architecture v7, D-PROJECTS-VIEW), so bodies are
+// served and checked in full. `status` (active | closed | all) is the E-PROJECTS query parameter for the Active /
+// Closed / All I can see tabs; without it the mock answers Active, the tab the page opens on, and `total` counts the
+// rows that match the status and q.
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,23 +24,6 @@ const journeys = Object.fromEntries(
 export const NO_ACCESS_CASE_ID = 'P-0099';
 const LIMITS = [10, 20, 50];
 const STATUSES = ['active', 'closed', 'all'];
-
-export const PROPOSED_FIELDS = {
-  list: ['counts', 'total'],
-  row: ['reference', 'next_milestone', 'needs_person', 'stopped'],
-  journey: ['revision', 'tab_counts', 'pm', 'route', 'work_count', 'line_count', 'facts', 'agent_summary', 'delivery'],
-  line: ['title', 'reference', 'detail', 'station', 'status_label', 'tone'],
-};
-
-const omit = (value, keys) => Object.fromEntries(Object.entries(value).filter(([key]) => !keys.includes(key)));
-
-/** A 200 body without the PROPOSAL fields, as the contract defines it. */
-export function contractBody(operationId, body) {
-  if (operationId === 'E-PROJECTS') {
-    return { ...omit(body, PROPOSED_FIELDS.list), items: body.items.map((item) => omit(item, PROPOSED_FIELDS.row)) };
-  }
-  return { ...omit(body, PROPOSED_FIELDS.journey), lines: body.lines.map((line) => omit(line, PROPOSED_FIELDS.line)) };
-}
 
 const INVALID_QUERY = { code: 'invalid_query', message: 'We could not read that list request.' };
 const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.' };

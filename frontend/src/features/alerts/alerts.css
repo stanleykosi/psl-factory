@@ -116,7 +116,10 @@
 .alerts-switchwrap { display: contents; }
 .alerts-timing { font-size: 12px; color: var(--ink-muted); }
 .alerts-quiet { margin: 0; line-height: normal; font-size: 13px; color: var(--ink-muted); }
-.alerts-footspace { height: 86px; flex: none; }
+.alerts-page { --alerts-footer: 86px; }
+.alerts-footspace { height: var(--alerts-footer); flex: none; }
+/* focus and scrollIntoView stop a message above the pinned Save bar, not under it */
+.alerts-page .psl-callout { scroll-margin-bottom: var(--alerts-footer); }
 .alerts-footer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 12px 16px 18px; background: var(--surface); border-top: 2px solid var(--ink); }
 
 @media (max-width: 719.98px) {
