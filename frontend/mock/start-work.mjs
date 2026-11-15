@@ -20,7 +20,9 @@ const readJson = (path) => JSON.parse(readFileSync(join(dir, path), 'utf8'));
 const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none'];
 const LIMITS = [10, 20, 50];
 // Fields whose options share a file with another field's name.
-const OPTION_FILES = { from_issue: 'issue' };
+const OPTION_FILES = { from_issue: 'issue', status_cites: 'records', risks_cites: 'records', timeline_cites: 'records', next_steps_cites: 'records' };
+// F-21: the weekly report's cite fields are step fields of the work item, not intake fields; the mock lists this week's records for them.
+const STEP_RECORD_FIELDS = { weekly_report: ['status_cites', 'risks_cites', 'timeline_cites', 'next_steps_cites'] };
 // The work item each line's 201 answers with (fixtures/work/W-14xx.json, in fixture table order).
 const WORK_IDS = {
   invoice: 'W-1401',
@@ -105,7 +107,9 @@ export function createStartWorkMock(openapi) {
   }
 
   const lineFor = (persona, key) => lines[persona].items.find((line) => line.key === key);
-  const optionsField = (line, name) => line.intake.find((f) => f.name === name && f.options_source === 'line_options');
+  const optionsField = (line, name) =>
+    line.intake.find((f) => f.name === name && f.options_source === 'line_options') ??
+    (STEP_RECORD_FIELDS[line.key]?.includes(name) ? { name, type: 'records', options_source: 'line_options' } : undefined);
 
   function options(url, persona) {
     const [, , , , lineKey, , fieldName] = url.pathname.split('/').map(decodePart);

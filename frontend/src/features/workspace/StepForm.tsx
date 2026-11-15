@@ -189,7 +189,10 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
   const headId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [values, setValues] = useState<Record<string, unknown>>({});
+  // A text or long text field opens with the words the descriptor carries (a saved draft); the person edits from there.
+  const [values, setValues] = useState<Record<string, unknown>>(() =>
+    Object.fromEntries(fields.filter((f) => (f.type === 'text' || f.type === 'long_text') && !f.restricted && f.value !== undefined).map((f) => [f.name, f.value])),
+  );
   const [evidence, setEvidence] = useState<Record<string, string[]>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [messages, setMessages] = useState<string[]>([]);
@@ -204,6 +207,8 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
     const el = formRef.current;
     const onKey = (event: globalThis.KeyboardEvent) => {
       if (event.key !== 'Escape') return;
+      // Escape inside an open record picker closes the picker's list only (RecordPicker handles it); the form stays.
+      if (event.target instanceof Element && event.target.closest('.sw-picker__pop')) return;
       event.preventDefault();
       onClose();
     };
@@ -246,7 +251,8 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
     // A message for a field the form doesn't show still reaches the person, at the top.
     const unmatched = Object.entries(result.fields).filter(([name]) => !known.includes(name)).map(([, text]) => text);
     const unnamed = Object.keys(result.fields).length === 0 || unmatched.length > 0;
-    setMessages(unnamed ? [result.message, ...unmatched].filter((m): m is string => Boolean(m)) : []);
+    // The same sentence is told once (a server may name a whole-form problem as a field the form doesn't show and in `message`).
+    setMessages(unnamed ? [...new Set([result.message, ...unmatched].filter((m): m is string => Boolean(m)))] : []);
     if (known.length > 0) focusFirst(known);
   };
 

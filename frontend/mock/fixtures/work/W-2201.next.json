@@ -1,0 +1,146 @@
+{
+  "id": "W-2201",
+  "title": "Weekly client report · 5–11 Nov",
+  "line": "Weekly client report",
+  "reference": "WCR-0216",
+  "revision": 5,
+  "tasks": [],
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "state": "processing",
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "current_agent"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Placing your parts on the client template",
+        "status": "working"
+      }
+    ]
+  },
+  "workspace": {
+    "line_key": "weekly_report",
+    "screen": "SCR-25",
+    "view": "assembling",
+    "subtitle": "Lagoon Health · week ending 11 Nov",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "WCR-0216",
+          "label": "Weekly client report · WCR-0216"
+        }
+      ]
+    },
+    "revision": 5,
+    "title": "Weekly client report · 5–11 Nov",
+    "status": {
+      "label": "Assembling",
+      "tone": "agent"
+    },
+    "agent_note": {
+      "agent": "tola",
+      "lines": [
+        "Tola doesn't write what the client reads about the project. She places your words on the template; the summary and scope wording are standard."
+      ]
+    },
+    "sections": [
+      {
+        "key": "assembly",
+        "kind": "checklist",
+        "title": "Assembling the weekly report",
+        "agent": "tola",
+        "note": "PMO agent · step 3 of 4. Started 12 Nov 09:05.",
+        "items": [
+          {
+            "id": "A-1",
+            "text": "Collected the week's records",
+            "detail": "3 MEETINGS · 9 ACTIONS · 1 MILESTONE · 2 ISSUES",
+            "status": "done"
+          },
+          {
+            "id": "A-2",
+            "text": "Took your four parts as written",
+            "detail": "STATUS · RISKS · TIMELINE · NEXT STEPS",
+            "status": "done"
+          },
+          {
+            "id": "A-3",
+            "text": "Placing them on the client template",
+            "status": "now",
+            "tag": {
+              "label": "TEST TEMPLATE",
+              "tone": "neutral"
+            }
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "send_for_review",
+        "label": "Send for PMO Lead review",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "disabled_reason": "Tola is still placing your parts on the template."
+      }
+    ]
+  }
+}
