@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-20",
   "outcome": "The Templates tab on Setup lists each document template and uploads a new version of one",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-SETUP-TEMPLATES"
   ],
@@ -82,6 +82,18 @@
       "protected_paths_changed": [],
       "at": "2026-11-15T11:33:24Z",
       "seconds": 306.9,
+      "evidence_ref": "delivery/features/F-20/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T11:59:31Z",
+      "seconds": 273.3,
       "evidence_ref": "delivery/features/F-20/round-1/checks.md"
     }
   ],
@@ -242,6 +254,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T12:04:05Z",
+      "round": 1,
+      "head": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "reason": null
     }
   ],
   "routing": {
@@ -258,8 +278,8 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 1,
-    "verdict": "FAIL",
+    "attempts": 2,
+    "verdict": "PASS",
     "commit": "c218bf2480b82e3753e88943e25b497f2e959e80"
   },
   "blocked": null
