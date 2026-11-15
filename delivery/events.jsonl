@@ -1472,3 +1472,15 @@
 {"at":"2026-11-15T15:03:30Z","feature":"F-21","round":2,"kind":"finding","action":"fix","finding":"UI-1-2","by":"builder"}
 {"at":"2026-11-15T15:03:30Z","feature":"F-21","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":113.6,"commit":"798c17f8b0b3"}
 {"at":"2026-11-15T15:03:30Z","feature":"F-21","round":2,"kind":"transition","head":"798c17f8b0b3","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-15T15:04:53Z","feature":"F-21","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"798c17f8b0b3","findings":{"TECH-2-1":"low","TECH-2-2":"low"},"written_at":"2026-11-15T15:04:20Z"}
+{"at":"2026-11-15T15:04:53Z","feature":"F-21","round":2,"kind":"review","role":"ux","verdict":"CHANGES","reviewer":"reviewer-ux","commit":"798c17f8b0b3","findings":{"UX-2-1":"high"},"written_at":"2026-11-15T15:04:39Z"}
+{"at":"2026-11-15T15:04:53Z","feature":"F-21","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"798c17f8b0b3","written_at":"2026-11-15T15:04:20Z"}
+{"at":"2026-11-15T15:04:53Z","feature":"F-21","round":2,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"798c17f8b0b3","written_at":"2026-11-15T15:04:36Z"}
+{"at":"2026-11-15T15:05:31Z","feature":"F-21","round":2,"kind":"finding","action":"verify","finding":"UX-1-4","by":"reviewer-ux"}
+{"at":"2026-11-15T15:05:31Z","feature":"F-21","round":2,"kind":"finding","action":"verify","finding":"UI-1-1","by":"reviewer-ui"}
+{"at":"2026-11-15T15:05:31Z","feature":"F-21","round":2,"kind":"finding","action":"verify","finding":"UI-1-2","by":"reviewer-ui"}
+{"at":"2026-11-15T15:05:31Z","feature":"F-21","round":2,"kind":"finding","action":"add","finding":"TECH-2-1","by":"reviewer-technical","severity":"low","owner":"backend/coordinator","blocking":false,"role":"technical"}
+{"at":"2026-11-15T15:05:31Z","feature":"F-21","round":2,"kind":"finding","action":"add","finding":"TECH-2-2","by":"reviewer-technical","severity":"low","owner":"builder","blocking":false,"role":"technical"}
+{"at":"2026-11-15T15:05:31Z","feature":"F-21","round":2,"kind":"finding","action":"add","finding":"UX-2-1","by":"reviewer-ux","severity":"high","owner":"builder","blocking":true,"role":"ux"}
+{"at":"2026-11-15T15:05:31Z","feature":"F-21","round":2,"kind":"transition","head":"798c17f8b0b3","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-15T15:05:31Z","feature":"F-21","round":3,"kind":"transition","head":"798c17f8b0b3","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}

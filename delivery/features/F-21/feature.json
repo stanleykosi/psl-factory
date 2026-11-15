@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-21",
   "outcome": "The weekly client report line: the PM writes four cited parts, Tola assembles, the PMO Lead reviews (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-LINE-WEEKLY"
   ],
@@ -369,7 +369,7 @@
         "delivery/features/F-21/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -386,11 +386,25 @@
           ],
           "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T15:05:31Z",
+          "refs": [
+            "Read from the diff and the component, not walked in a browser. `data-form-open` is set on the Decide panel only while a `ws:` step form is open, and the CSS hides it inside the phone media block only. The step forms are rendered after the panel, outside it (`workspaceSteps.map(form)`), so hiding the panel does not hide the form, and the form's own Send is the single action. Desktop is unaffected. Small note: the opener button is hidden while the form is open, so focus return on Escape depends on the panel being shown again in the same render; the existing Escape e2e tests passed per build.md."
+          ],
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "798c17f8"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Read from the diff and the component, not walked in a browser. `data-form-open` is set on the Decide panel only while a `ws:` step form is open, and the CSS hides it inside the phone media block only. The step forms are rendered after the panel, outside it (`workspaceSteps.map(form)`), so hiding the panel does not hide the form, and the form's own Send is the single action. Desktop is unaffected. Small note: the opener button is hidden while the form is open, so focus return on Escape depends on the panel being shown again in the same render; the existing Escape e2e tests passed per build.md."
       ]
     },
     {
@@ -452,7 +466,7 @@
         "delivery/features/F-21/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -469,11 +483,25 @@
           ],
           "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T15:05:31Z",
+          "refs": [
+            "Fixtures W-2201, W-2202, W-2204 no longer carry `byline`/`version`, and W-2202, W-2203, W-2204 no longer carry `subtitle` (diff 0036fe0a..798c17f8, build.md). In side-by-side SCR-25-desktop-assembling the intro band now sits at y ~255, where the board has it (round 1: 292). The default board keeps its subtitle and now has no \"Written by\" row. A test pins rows present/absent per state. I read the default and assembling side-by-sides; I did not re-run the check."
+          ],
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "798c17f8"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Fixtures W-2201, W-2202, W-2204 no longer carry `byline`/`version`, and W-2202, W-2203, W-2204 no longer carry `subtitle` (diff 0036fe0a..798c17f8, build.md). In side-by-side SCR-25-desktop-assembling the intro band now sits at y ~255, where the board has it (round 1: 292). The default board keeps its subtitle and now has no \"Written by\" row. A test pins rows present/absent per state. I read the default and assembling side-by-sides; I did not re-run the check."
       ]
     },
     {
@@ -489,7 +517,7 @@
         "delivery/features/F-21/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -506,11 +534,25 @@
           ],
           "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T15:05:31Z",
+          "refs": [
+            "W-2204 P-2 and P-3 now have `cite_label` \"ISS-0233\" and \"MIN-0141\", the words the board draws. The MIN-0141 vs MTG-0140 question stays open for backend/PMO; it does not change what is drawn."
+          ],
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "798c17f8"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2204 P-2 and P-3 now have `cite_label` \"ISS-0233\" and \"MIN-0141\", the words the board draws. The MIN-0141 vs MTG-0140 question stays open for backend/PMO; it does not change what is drawn."
       ]
     },
     {
@@ -556,6 +598,75 @@
           "by": "reviewer-security",
           "at": "2026-11-15T14:17:43Z",
           "head": "0036fe0ae4ee5811edd8976e0afaebe310552f44"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+      "owner": "backend/coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The omitted-cites behaviour is safe on the frontend. The frame sends no `*_cites` key and no empty list when untouched, and the new test pins both. The hint \"saved cites stay\" is a server claim (omitted = keep) that the backend must confirm. Send on a saved draft without re-picking cites still returns 422 until `records` fields can prefill. This is the builder's own contract question for the coordinator, not a blocker.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T15:05:31Z",
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`data-form-open` is set only while a `ws:` form is open, and the form renders in the aside outside the Decide panel (Workspace.tsx:324). So `display:none` cannot hide the form. The form has its own submit and close, and a reconcile step uses the same `ws:` path, so no action or reconcile path is lost. Closing re-shows the bar, and the focus-return runs in rAF after the state change. The rule applies only in the phone media block. The bar's own \"confirm first\" hint is not shown while the form is open, which is acceptable.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T15:05:31Z",
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+      "owner": "builder",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The cite hint promises server behaviour that is unconfirmed, and contradicts the Send 422. Decision: it is not honest as worded, and the empty pickers beside it leave the PM unable to tell what is saved. I would accept a hint that promises nothing about the server and tells the PM what to do on this page, on all eight cite fields (W-2201 has two sets): \"Saved records are not shown here. Choose at least one record for this part before you send.\" Also acceptable: drop the hint and keep the existing \"Your update\" section above, which already lists the saved cites, plus a single line under the form heading with the same sentence. Do not say \"stay on it\" or \"kept\" until the backend confirms that omitted cites are kept on Save draft and counted on Send; if the backend confirms both, the original sentence is then fine and Send on a saved draft no longer 422s. Update the hint test to assert the new sentence. Also record the list-valued `records` `value` contract question for the coordinator as the real fix (prefill), so the hint can be removed later.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T15:05:31Z",
+          "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4"
         }
       ]
     }
@@ -621,6 +732,70 @@
           "snapshot_ref": "0036fe0ae4ee5811edd8976e0afaebe310552f44",
           "evidence_refs": [
             "delivery/features/F-21/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delegated technical review",
+          "snapshot_ref": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "evidence_refs": [
+            "delivery/features/F-21/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-21/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delegated UX review",
+          "snapshot_ref": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "evidence_refs": [
+            "delivery/features/F-21/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delegated UI review",
+          "snapshot_ref": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "evidence_refs": [
+            "delivery/features/F-21/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delegated security review",
+          "snapshot_ref": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+          "evidence_refs": [
+            "delivery/features/F-21/round-2/review-security.md"
           ]
         }
       }
@@ -1088,7 +1263,7 @@
     }
   },
   "created_at": "2026-11-15T10:36:42Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -1138,6 +1313,22 @@
       "round": 2,
       "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T15:05:31Z",
+      "round": 2,
+      "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T15:05:31Z",
+      "round": 3,
+      "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+      "reason": null
     }
   ],
   "routing": {
@@ -1154,10 +1345,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
