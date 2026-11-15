@@ -49,6 +49,8 @@
 .sw-field { margin: 0; padding: 0; border: none; }
 .sw-field legend { padding: 0; margin-bottom: 6px; }
 .sw-range { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+/* the board draws the week as one row of two boxes under "Week": From and To are named for screen readers only */
+.sw-range .psl-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .sw-display { overflow-wrap: anywhere; }
 .sw-seg { display: flex; width: 100%; }
 .sw-proof { display: flex; align-items: center; gap: var(--space-10px); padding: var(--space-10px) var(--space-3); border: var(--rule-strong) dashed var(--ink); background: var(--steel); color: var(--ink-muted); cursor: not-allowed; }

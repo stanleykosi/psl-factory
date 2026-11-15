@@ -56,9 +56,9 @@ Foundations (the audit's step 1), not design-system components of their own:
 
 | Export | What | Test file |
 |---|---|---|
-| `formatDate`, `formatTime`, `formatDateTime`, `formatAmount`, `groupDigits`, `UNKNOWN` (`format.ts`) | "17 Nov 2026", "14:30 WAT", "₦4,250,000.00"; missing is "Unknown", never 0 | date-field, money-field |
-| `Money`, `When`, `Unknown` (`Values.tsx`) | the same in mono, with the amber Unknown tag | money-field, lists-and-states |
-| `PageTitle` | the `page-title` text style | lists-and-states.test.tsx |
+| `formatDayTime`, `formatWeekdayDayTime`, `formatClock`, `formatDayMonth`, `formatTime`, `formatDate`, `formatDateTime`, `formatAmount`, `groupDigits`, `UNKNOWN` (`format.ts`) | the boards' formats where a board draws one ("12 Nov 16:40", "Mon 10 Nov 14:05", "10:47", "01 Oct", "14:30 WAT"); "17 Nov 2026" and "17 Nov 2026 · 14:30 WAT" only where no board draws a date; a calendar date is never shown as a time; "₦4,250,000.00" from a decimal string; missing is "Unknown", never 0 | date-field, money-field, board-alignment |
+| `Money`, `When` (`show`: date, time, datetime, daytime, weekdaytime, clock, daymonth), `Unknown` (`Values.tsx`) | the same in mono, with the amber Unknown tag | money-field, lists-and-states, board-alignment |
+| `PageTitle` | the `page-title` text style: 40px (26px on phones) or the board's own size (`size`, `phoneSize`) | lists-and-states, board-alignment |
 | `VisuallyHidden` (`cmp-sr`) | screen-reader-only text | lists-and-states.test.tsx |
 | `useIsPhone` | below `bp-phone` (720px) | overlays.test.tsx (Drawer as sheet) |
 
@@ -71,6 +71,8 @@ Rules the components hold for every caller:
 
 - Tags use the five families only and always carry words; state words come only from `STATE_TAGS`.
 - Unknown is written "Unknown" (the amber tag); `MoneyField` keeps `null` for Unknown and `''` for empty.
+- Money is the decimal string the API sends ("4250000.00"). Never pass a number worked out in the browser to `formatAmount`, `Money` or `MoneyField` (DSC-3); the types refuse it.
+- D-93: where the design-system pages and the client-approved boards disagree, these components take the boards' look; `design/system/project` is updated to match.
 - Agents never get Approve, Send or Pay: `AgentChecklist` has no decision buttons.
 - Busy buttons keep their width, show the three squares and ignore presses; disabled ones carry a reason.
 - Modal surfaces trap focus, close on Esc and return focus; menus and lists return focus to their control.

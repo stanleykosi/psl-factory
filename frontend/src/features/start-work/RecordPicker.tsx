@@ -5,7 +5,7 @@
 // the reason and can't be chosen. Search waits 250 ms; "Show more" appends the next page while next_cursor is present.
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 
-import { Button, Icon, Loading, SearchField, ShowMore } from '@/components';
+import { Button, Loading, SearchField, ShowMore } from '@/components';
 
 import { fetchOptions } from './useStartWork';
 import type { Field, LineOption } from './types';
@@ -141,7 +141,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
         onClick={() => (open ? close() : setOpen(true))}
       >
         <span className="sw-picker__value">{shown || placeholder}</span>
-        <Icon name="chev" className="psl-chev" />
+        <span className="psl-chev cmp-selectarrow" aria-hidden="true" />
       </button>
       {open && (
         // The popup only catches Esc for its own controls; it is not itself interactive.

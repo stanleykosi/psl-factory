@@ -9,13 +9,13 @@
 
 /* list */
 .clients__table .psl-table { min-width: 860px; }
-.clients__table td { vertical-align: middle; }
+.clients__table td { vertical-align: middle; line-height: normal; }
 .clients__namecell { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .psl .clients__table .clients__name { font-weight: 600; color: var(--ink); }
 .psl .clients__panel .clients__name { font-weight: 600; }
 .clients__missing { color: var(--signal-ink); font-weight: 600; }
 .clients__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-.clients__card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: var(--control-md); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.clients__card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: var(--control-md); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); line-height: 1.3; }
 /* the whole card opens the client */
 .psl .clients__card .clients__name { font-weight: 700; color: var(--ink); text-decoration: none; }
 .clients__card .clients__name::after { content: ""; position: absolute; inset: 0; }

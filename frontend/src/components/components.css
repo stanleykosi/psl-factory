@@ -91,6 +91,8 @@
 .cmp-layer--sheet { align-items: flex-end; }
 .cmp-layer--center { align-items: center; justify-content: center; padding: var(--space-5); }
 .cmp-panel { position: relative; outline: none; }
+/* the close button keeps the head as tall as the boards draw it */
+.cmp-panel > .psl-drawer__head > .psl-iconbtn { margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0 0; }
 .cmp-layer--drawer > .psl-drawer { height: 100%; }
 .cmp-layer--sheet > .psl-sheet { width: 100%; max-height: 100%; }
 /* the drawer as a phone sheet leaves the top of the page in view: its top sits 70px under the phone bar, as

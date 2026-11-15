@@ -5,6 +5,8 @@
 .monthend-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
 .monthend-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-3); }
 .monthend-asof { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+/* the SCR-36 boards draw square tags at the page's line height */
+.monthend .psl-tag { border-radius: 0; line-height: normal; }
 
 /* the strip: four cells, values as returned */
 .monthend-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 2px solid var(--ink); background: var(--surface); }

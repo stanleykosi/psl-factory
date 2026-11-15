@@ -7,4 +7,5 @@ The basic container: `surface` with a 2px `ink` border and square corners, on th
 - **Agent:** `action` border; only for agent work (see Agent at work).
 - **Dark header:** for a summary that the panel's content explains (totals, the record).
 - **Read-only:** `rule-soft` border for context that cannot be acted on.
-- Padding `space-4` (14–16px), gap 12px.
+- Padding as the boards draw it: head 10px 14px, body 14px with a 12px gap.
+- The head can be a heading (h2, h3) where the page outline needs one; it keeps the head's look.
