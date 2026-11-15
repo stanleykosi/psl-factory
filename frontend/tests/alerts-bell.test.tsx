@@ -235,15 +235,16 @@ describe('the drawer', () => {
       ['See all alerts', '/notifications'],
       ['Alert settings', '/settings/alerts'],
     ]);
-    // The shared Drawer takes focus on the panel itself when it holds no field.
-    expect(d.contains(document.activeElement)).toBe(true);
+    // The shared Drawer takes focus on the panel itself when it holds no field (the trap starts there).
+    expect(document.activeElement).toBe(d);
     expect(document.querySelector('main')!.hasAttribute('inert')).toBe(true);
   });
 
   it('Escape, Close and the scrim close it and focus goes back to the bell', async () => {
     await mount();
     for (const close of [
-      () => fireEvent.keyDown(dialog()!, { key: 'Escape' }),
+      // Escape is pressed where focus is, as a keyboard user does
+      () => fireEvent.keyDown(document.activeElement!, { key: 'Escape' }),
       () => fireEvent.click(within(dialog()!).getByRole('button', { name: 'Close' })),
       () => fireEvent.click(document.querySelector('.psl-scrim')!),
     ]) {

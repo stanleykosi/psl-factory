@@ -132,7 +132,7 @@ describe('period, heading, as-of, counts and tags', () => {
     const task = (extra: Partial<MonthEndTask>): MonthEndTask => ({ line: 'L', where: 'W', state: 'waiting', ...extra });
     expect(taskTag(task({}))).toEqual({ text: 'Waiting', tone: 'waiting' });
     expect(taskTag(task({ state: 'action_needed' })).text).toBe('Action needed');
-    const tones = { neutral: 'neutral', person: 'person', stopped: 'person', agent: 'agent', uncertain: 'waiting', restricted: 'neutral', verified: 'done' } as const;
+    const tones = { neutral: 'neutral', person: 'person', stopped: 'person', agent: 'agent', uncertain: 'waiting', restricted: 'waiting', verified: 'done' } as const;
     for (const [tone, cls] of Object.entries(tones)) {
       expect(taskTag(task({ tone: tone as MonthEndTask['tone'], status_label: 'X' }))).toEqual({ text: 'X', tone: cls });
     }
@@ -170,7 +170,7 @@ describe('MonthEndView', () => {
     ]);
     expect(within(rows()[1]).getByText('NEEDS FINANCE DECISION').className).toBe('psl-tag psl-tag--person');
     expect(within(rows()[2]).getByText('DONE').className).toBe('psl-tag psl-tag--done');
-    expect(within(rows()[6]).getByText('WAITING ON HR').className).toBe('psl-tag psl-tag--neutral');
+    expect(within(rows()[6]).getByText('WAITING ON HR').className).toBe('psl-tag psl-tag--waiting');
     expect(within(rows()[6]).queryByRole('link')).toBeNull();
     expect(rows().slice(0, 6).map((row) => within(row).getByRole('link').getAttribute('href'))).toEqual(
       ['W-1601', 'W-1602', 'W-1603', 'W-1604', 'W-1605', 'W-1606'].map((id) => `/work/${id}`),

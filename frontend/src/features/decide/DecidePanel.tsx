@@ -41,6 +41,8 @@ export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRet
     if (problem) {
       setNoteError(problem);
       noteRef.current?.focus();
+      // on a phone the note sits behind the pinned action bar: bring it (and its message) above the bar
+      noteRef.current?.scrollIntoView?.({ block: 'nearest' });
       return;
     }
     setNoteError(null);

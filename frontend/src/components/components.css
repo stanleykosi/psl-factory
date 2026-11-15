@@ -1,6 +1,5 @@
 /* Shared components (src/components): only what psl-bundle.css does not already draw. Tokens only, except the
-   phone breakpoint (custom properties cannot be used in @media), the page-title sizes the boards draw between the
-   text styles (36/32/30/28/22px, D-93) and the BottomSheet title size (marked). Every class here is cmp-*, or a
+   phone breakpoint (custom properties cannot be used in @media). Every class here is cmp-*, or a
    psl-* class narrowed by a cmp-* one, so feature markup that still uses the bundle by hand is not changed. */
 
 /* screen-reader-only text */
@@ -9,11 +8,11 @@
 /* page title (text style page-title, 1.08 line height as the boards draw it); smaller sizes where a board draws them */
 .cmp-pagehead { display: flex; flex-direction: column; gap: var(--space-1); }
 .cmp-page-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-size: var(--text-page-title-size); line-height: 1.08; font-weight: var(--text-page-title-weight); }
-.cmp-page-title--36 { font-size: 36px; }
+.cmp-page-title--36 { font-size: var(--text-page-title-36-size); }
 .cmp-page-title--34 { font-size: var(--text-display-l-size); }
-.cmp-page-title--32 { font-size: 32px; }
-.cmp-page-title--30 { font-size: 30px; }
-.cmp-page-title--28 { font-size: 28px; }
+.cmp-page-title--32 { font-size: var(--text-page-title-32-size); }
+.cmp-page-title--30 { font-size: var(--text-page-title-30-size); }
+.cmp-page-title--28 { font-size: var(--text-page-title-28-size); }
 
 /* popovers: menus, select lists, date pickers, filter panels, tooltips */
 .cmp-anchor { position: relative; }
@@ -42,8 +41,11 @@
 /* the select's arrow: the boards' small ▾ (D-93), drawn by CSS so it is not part of the control's text */
 .cmp-selectarrow::before { content: "▾"; }
 
-/* an empty state's heading looks the same at either level (18px, as the bundle draws the h3) */
-.psl-empty h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 18px; font-stretch: 112%; }
+/* an empty state's heading looks the same at either level (sheet-title, as the bundle draws the h3) */
+.psl-empty h2 { margin: 0; font-family: var(--font-display); font-weight: var(--text-sheet-title-weight); font-size: var(--text-sheet-title-size); font-stretch: 112%; }
+
+/* the filters-on count, ink as the boards draw it (D-93) */
+.psl-badge.cmp-badge--ink { background: var(--ink); color: var(--on-strong); }
 
 /* text area drawn as one line (D-93); it grows with its text */
 .psl-input--area.cmp-area--line { min-height: var(--control-md); }
@@ -58,7 +60,7 @@
 .psl-tab.cmp-tabbutton { font: inherit; font-weight: 500; border: none; border-right: var(--rule-strong) solid var(--ink); }
 
 /* restricted link: lock and words */
-.psl-link.cmp-restricted { display: inline-flex; gap: calc(var(--space-1) * 1.5); align-items: center; }
+.psl-link.cmp-restricted { display: inline-flex; gap: var(--space-6px); align-items: center; white-space: nowrap; }
 
 /* a button drawn as a link (Clear all, Clear selection) */
 .psl-link.cmp-linkbutton { background: none; border: none; padding: 0; font: inherit; }
@@ -81,8 +83,8 @@
 /* list toolbar and filter panel */
 .cmp-toolsearch { flex: 1 1 calc(var(--space-7) * 7); max-width: calc(var(--space-7) * 10 + var(--space-5)); }
 .cmp-chips { display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; margin-top: var(--space-10px); }
-/* 380px: the SCR-01 filter board's panel width */
-.psl-pop.cmp-filter { width: 380px; }
+/* the SCR-01 filter board's panel width */
+.psl-pop.cmp-filter { width: var(--filter-panel); }
 .cmp-filter__head, .cmp-filter__title { font-family: var(--font-display); font-weight: var(--text-panel-head-weight); font-size: var(--text-panel-head-size); line-height: 1.25; text-transform: uppercase; }
 .cmp-filter__head { padding: var(--space-3) var(--space-4); border-bottom: var(--rule-strong) solid var(--ink); }
 .cmp-filter__body { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-14px); }
@@ -103,14 +105,14 @@
 .cmp-layer--drawer > .psl-drawer { height: 100%; }
 .cmp-layer--sheet > .psl-sheet { width: 100%; max-height: 100%; }
 /* the drawer as a phone sheet: full height, or (keepTop) its top 70px under the phone bar so the page's top stays in
-   view, as SCR-04-mobile draws it (D-93); 70px has no token */
+   view, as SCR-04-mobile draws it (D-93) */
 .cmp-layer--sheet > .cmp-panel--full { height: 100%; }
-.cmp-layer--sheet > .cmp-panel--keeptop { height: calc(100% - var(--control-md) - var(--space-3) - 70px); }
-.cmp-panel--full .psl-drawer__title { font-size: 18px; }
+.cmp-layer--sheet > .cmp-panel--keeptop { height: calc(100% - var(--control-md) - var(--space-3) - var(--sheet-top-gap)); }
+.cmp-panel--full .psl-drawer__title { font-size: var(--text-sheet-title-size); }
 .cmp-scroll { overflow: auto; flex: 1 1 auto; min-height: 0; }
 .cmp-swipe { touch-action: pan-x; }
-/* 18px: the sheet title size (BottomSheet page, SCR-04-mobile); the system has no text style at 18px */
-.cmp-sheet-title { font-family: var(--font-display); font-weight: var(--text-drawer-title-weight); font-size: 18px; }
+/* the sheet title (BottomSheet page, SCR-04-mobile): text style sheet-title */
+.cmp-sheet-title { font-family: var(--font-display); font-weight: var(--text-drawer-title-weight); font-size: var(--text-sheet-title-size); }
 
 /* toast */
 .cmp-toasts { position: fixed; left: 50%; bottom: var(--space-5); transform: translateX(-50%); z-index: var(--z-toast); }
@@ -136,9 +138,12 @@
 
 /* phones: every target at least 44px (D-92 c) */
 @media (max-width: 719.98px) {
+  /* a link standing on its own (crumb, empty-state action, an inline disclosure, cmp-target) is a 44px target; the
+     extra height overlaps the line around it, so the text sits where the board draws it */
+  .psl-crumb a, .psl-empty > a, .psl-link.cmp-disclosurelink, .cmp-target { display: inline-block; padding-block: calc((var(--control-md) - 1lh) / 2); margin-block: calc((var(--control-md) - 1lh) / -2); }
   .cmp-page-title { font-size: var(--text-page-title-phone-size); }
   .cmp-page-title.cmp-page-title--p24 { font-size: var(--text-title-size); }
-  .cmp-page-title.cmp-page-title--p22 { font-size: 22px; }
+  .cmp-page-title.cmp-page-title--p22 { font-size: var(--text-page-title-phone-22-size); }
   .cmp-page-title.cmp-page-title--p20 { font-size: var(--text-drawer-title-size); }
   .psl-btn.cmp-btn-sm { min-height: var(--control-md); }
   .psl-check.cmp-check, .psl-radio.cmp-check { min-height: var(--control-md); }

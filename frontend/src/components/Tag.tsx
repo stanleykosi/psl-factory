@@ -53,10 +53,11 @@ type ContractState = operations['E-WORK-ITEM']['responses'][200]['content']['app
 /** The contract's work states plus the two README states the contract does not carry yet. */
 export type FactoryState = ContractState | 'awaiting_finance_decision' | 'cancellation_requested';
 
-/** The state words and their one colour family, as the StateTag page draws them; Effect uncertain is amber
- *  (waiting) everywhere by the design engineer's call D-92(b), where the StateTag page draws it orange. */
+/** The state words and their one colour family, as the StateTag page lists them: Ready to continue is orange (a
+ *  person must act, as the boards draw it); Effect uncertain is amber (waiting) everywhere (D-92b); green is for
+ *  verified outputs only. */
 export const STATE_TAGS: Record<FactoryState, { text: string; tone: TagTone }> = {
-  ready: { text: 'Ready to continue', tone: 'done' },
+  ready: { text: 'Ready to continue', tone: 'person' },
   processing: { text: 'Processing', tone: 'agent' },
   waiting: { text: 'Waiting', tone: 'waiting' },
   awaiting_finance_decision: { text: 'Awaiting Finance decision', tone: 'person' },

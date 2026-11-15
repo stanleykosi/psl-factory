@@ -39,7 +39,7 @@ const item = (id: string, extra: Partial<WorkItem> = {}): WorkItem => ({
 
 describe('state words and families (CMP-05)', () => {
   it.each([
-    ['ready', 'Ready to continue', 'done'],
+    ['ready', 'Ready to continue', 'person'],
     ['processing', 'Processing', 'agent'],
     ['waiting', 'Waiting', 'waiting'],
     ['owner_needed', 'Owner needed', 'person'],

@@ -210,7 +210,7 @@ describe('rows', () => {
 
   it('renders every state with its words and family', async () => {
     const states = Object.entries({
-      ready: ['Ready to continue', 'done'],
+      ready: ['Ready to continue', 'person'],
       processing: ['Processing', 'agent'],
       waiting: ['Waiting', 'waiting'],
       owner_needed: ['Owner needed', 'person'],
@@ -334,7 +334,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', line: 'invoice', state: 'action_needed' }));
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(filter);
-    expect(filter.querySelector('.psl-badge--signal')!.textContent).toBe('2');
+    expect(filter.querySelector('.cmp-badge--ink')!.textContent).toBe('2');
     expect(new URLSearchParams(window.location.search).get('line')).toBe('invoice');
     expect(new URLSearchParams(window.location.search).get('state')).toBe('action_needed');
     const chips = [...document.querySelectorAll('.psl-chip')].map((c) => c.textContent);
@@ -342,7 +342,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove Line filter' }));
     await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', state: 'action_needed' }));
-    expect(filter.querySelector('.psl-badge--signal')!.textContent).toBe('1');
+    expect(filter.querySelector('.cmp-badge--ink')!.textContent).toBe('1');
     fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
     await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20' }));
     expect(filter.querySelector('.psl-badge')).toBeNull();

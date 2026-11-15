@@ -1,5 +1,6 @@
 // E-EXCEPTIONS values to the words and tones of the state tags. Presentation only. The words come from the shared
-// state list (STATE_TAGS); "Blocked" is not on that list, so it keeps its own words in the person tone.
+// state list (STATE_TAGS); `blocked` has no word of its own there and no board draws "Blocked", so it reads as
+// the README's "Action needed" (a person must act).
 import { formatClock, formatDate, formatDayMonth, STATE_TAGS, type TagTone } from '@/components';
 
 import type { ExceptionKind, ExceptionsLimit } from './types';
@@ -9,7 +10,7 @@ export const KIND_TAGS: Record<ExceptionKind, { words: string; tone: TagTone }> 
   effect_uncertain: { words: STATE_TAGS.effect_uncertain.text, tone: STATE_TAGS.effect_uncertain.tone },
   owner_needed: { words: STATE_TAGS.owner_needed.text, tone: STATE_TAGS.owner_needed.tone },
   setup_needed: { words: STATE_TAGS.setup_needed.text, tone: STATE_TAGS.setup_needed.tone },
-  blocked: { words: 'Blocked', tone: 'person' },
+  blocked: { words: STATE_TAGS.action_needed.text, tone: STATE_TAGS.action_needed.tone },
   followup_needed: { words: STATE_TAGS.followup_needed.text, tone: STATE_TAGS.followup_needed.tone },
 };
 

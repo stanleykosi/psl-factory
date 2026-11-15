@@ -97,7 +97,7 @@ describe('exceptions list', () => {
       effect_uncertain: ['Effect uncertain', 'psl-tag psl-tag--waiting'],
       owner_needed: ['Owner needed', 'psl-tag psl-tag--person'],
       setup_needed: ['Setup needed', 'psl-tag psl-tag--person'],
-      blocked: ['Blocked', 'psl-tag psl-tag--person'],
+      blocked: ['Action needed', 'psl-tag psl-tag--person'],
       followup_needed: ['Stopped: invoice follow-up needed', 'psl-tag psl-tag--person'],
     };
     const bodyRows = within(screen.getByRole('table')).getAllByRole('row').slice(1);
@@ -217,7 +217,7 @@ describe('exceptions list', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Filter' }));
     const dialog = screen.getByRole('dialog', { name: 'Filter' });
-    fireEvent.click(within(dialog).getByRole('radio', { name: 'Blocked' }));
+    fireEvent.click(within(dialog).getByRole('radio', { name: 'Action needed' }));
     fireEvent.click(within(dialog).getByRole('button', { name: 'Show results' }));
     await screen.findByText('No exceptions match your search and filter.');
     expect(urls()[2].search).toBe('?limit=20&q=Kora&what=blocked');

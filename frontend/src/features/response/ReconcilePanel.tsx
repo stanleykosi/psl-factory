@@ -4,6 +4,7 @@
 // the backend lists "reconcile" in allowed_actions; otherwise nothing renders and nothing is sent. The answer
 // goes through E-WORK-ACTION once per press; the page then reloads. Nothing here resends anything: a resend,
 // if the answer allows one, is the backend's step.
+import { useIsPhone } from '@/components';
 import { useCallback, useId, useRef, useState } from 'react';
 
 import { ApiError, networkError } from '@/api/errors';
@@ -17,7 +18,6 @@ import { checksSentence, outcomeWords, plural, RESPONSE_LABELS, sentence } from 
 import { ProofField } from './ProofField';
 import { reloadPage } from './reload';
 import { useEvidenceUpload } from './useEvidenceUpload';
-import { useIsPhone } from './usePhone';
 
 import './response.css';
 

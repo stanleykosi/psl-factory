@@ -109,7 +109,7 @@ describe('overview', () => {
     expect(within(crumb).getByRole('link', { name: 'My work' }).getAttribute('href')).toBe('/my-work');
     expect(crumb.querySelector('.psl-mono')!.textContent).toBe('INV-0419');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · Milestone 3 invoice');
-    expect(screen.getByText('Ready to continue').className).toBe('psl-tag psl-tag--done work-state');
+    expect(screen.getByText('Ready to continue').className).toBe('psl-tag psl-tag--person work-state');
     expect(screen.getByText('revision 4')).toBeTruthy();
     const tabs = within(screen.getByRole('tablist', { name: 'Work item' })).getAllByRole('tab');
     expect(tabs.map((a) => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-selected')])).toEqual([
@@ -139,7 +139,7 @@ describe('overview', () => {
   });
 
   const STATES: [WorkState, string, string][] = [
-    ['ready', 'Ready to continue', 'done'],
+    ['ready', 'Ready to continue', 'person'],
     ['processing', 'Processing', 'agent'],
     ['waiting', 'Waiting', 'waiting'],
     ['owner_needed', 'Owner needed', 'person'],

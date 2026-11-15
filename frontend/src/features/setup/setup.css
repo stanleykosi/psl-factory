@@ -4,7 +4,7 @@
 /* panel heads hold a heading: plain text in the panel head style */
 .setup-page .psl-panel__head > h2 { margin: 0; font: inherit; letter-spacing: inherit; }
 .setup-search { flex: 1 1 320px; max-width: 460px; }
-.setup-page { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.setup-page { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; }
 /* the boards set no line height outside callouts, so rows, labels and cards use the browser's normal */
 .setup-desktop, .setup-phone { line-height: normal; }
 .setup-plain { margin: 0; line-height: 1.5; }
@@ -17,7 +17,7 @@
 .setup-tabs .psl-tab[aria-current="page"]:focus-visible { outline-color: var(--focus-on-strong); }
 
 /* two columns that wrap like the board: the list, then the aside */
-.setup-columns { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+.setup-columns { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
 .setup-main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
 .setup-aside { flex: 1 1 320px; max-width: 420px; display: flex; flex-direction: column; gap: var(--space-14px); }
 .setup-aside--next { flex-basis: 340px; max-width: 440px; }
@@ -26,22 +26,22 @@
 .setup-table td, .setup-deliverytable td { vertical-align: middle; }
 /* the SCR-13 boards draw table tags square, inline, at the cell's line height */
 .setup-table .psl-tag, .setup-deliverytable .psl-tag { display: inline-block; line-height: normal; border-radius: 0; }
-.setup-version { font-size: 12px; color: var(--ink-muted); }
+.setup-version { font-size: var(--text-small-size); color: var(--ink-muted); }
 
 /* Set a rule: action-blue frame and head */
 .setup-roles { margin: 0; padding: 0; border: none; min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-.setup-roles legend { padding: 0; margin-bottom: 12px; }
+.setup-roles legend { padding: 0; margin-bottom: var(--space-3); }
 /* the board's fields are 44px inside a 2px frame */
 
-.setup-help { margin: 0; font-size: 13px; color: var(--ink-muted); }
+.setup-help { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 .setup-help--error { color: var(--signal-ink); }
-.setup-footnote { margin: 0; font-size: 12px; color: var(--ink-muted); }
+.setup-footnote { margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
 
 /* finance: group panels that wrap, row lists, the secondary Set … rules control */
 .setup-groups { display: flex; flex-wrap: wrap; gap: var(--space-4); }
 .setup-group { flex: 1 1 380px; min-width: 0; }
 .setup-list { list-style: none; margin: 0; padding: 0; }
-.setup-list li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-10px); min-height: 40px; border-top: var(--rule-thin) solid var(--rule-soft); font-size: 14px; }
+.setup-list li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-10px); min-height: var(--control-sm); border-top: var(--rule-thin) solid var(--rule-soft); font-size: var(--text-body-size); }
 .setup-list__value { text-align: right; }
 .setup-groupaction { max-width: 220px; }
 .setup-groupaction .psl-btn { white-space: nowrap; }
@@ -49,9 +49,9 @@
 /* phone (below 720px): read-only cards; the desktop tree is hidden and vice versa */
 .setup-phone { display: none; gap: var(--space-3); }
 .setup-cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-.setup-card { background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-3); display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
-.setup-card__line { font-size: 13px; color: var(--ink-muted); }
-.setup-more { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+.setup-card { background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-6px); font-size: var(--text-body-size); }
+.setup-card__line { font-size: var(--text-hint-size); color: var(--ink-muted); }
+.setup-more { margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 @media (max-width: 719.98px) {
   .setup-desktop { display: none; }
   .setup-phone { display: flex; flex-direction: column; }
@@ -61,32 +61,32 @@
 
 /* templates: the muted lines under a name, the link-style upload control, the inline upload panel */
 .setup-docname { display: block; }
-.setup-docname .setup-meta { margin-left: 8px; white-space: nowrap; }
+.setup-docname .setup-meta { margin-left: var(--space-2); white-space: nowrap; }
 .setup-docname .setup-docname__history { display: block; margin-left: 0; }
-.setup-actioncell .psl-btn { white-space: nowrap; margin: -14px 0; padding-left: 0; }
+.setup-actioncell .psl-btn { white-space: nowrap; margin: calc(var(--space-14px) * -1) 0; padding-left: 0; }
 .setup-table--templates th:nth-child(1) { width: 23%; }
 .setup-table--templates th:nth-child(2) { width: 34.4%; }
 .setup-table--templates th:nth-child(3) { width: 19.5%; }
 .setup-name:focus { outline: none; }
 .setup-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.setup-meta { font-size: 12px; line-height: 1.25; color: var(--ink-muted); }
-.setup-line { font-size: 13px; }
-.setup-counts { margin-left: auto; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.setup-meta { font-size: var(--text-small-size); line-height: 1.25; color: var(--ink-muted); }
+.setup-line { font-size: var(--text-hint-size); }
+.setup-counts { margin-left: auto; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-14px); }
 /* the board's link, as a button; the 44px target is carried by negative margins so the row keeps its height */
 .setup-upload { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-3); border: var(--rule-strong) solid var(--ink); background: var(--surface); }
 .setup-upload-row > td { background: var(--surface-subtle); }
-.setup-upload__head { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 16px; font-stretch: 112%; }
+.setup-upload__head { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: var(--text-lead-size); font-stretch: 112%; }
 .setup-upload__actions { display: flex; flex-wrap: wrap; gap: var(--space-10px); }
 .setup-card .psl-btn { align-self: stretch; }
 .setup-card .setup-meta { margin: 0; }
-.setup-card .setup-upload { margin-top: 6px; }
+.setup-card .setup-upload { margin-top: var(--space-6px); }
 .setup-card .psl-tag { align-self: flex-start; }
 .setup-notset { color: var(--waiting-ink); font-weight: 600; }
 /* the board's column widths for the rules list */
 .setup-main .setup-table .psl-table th:nth-child(1) { width: 42%; }
 .setup-main .setup-table .psl-table th:nth-child(2) { width: 12.5%; }
 .setup-main .setup-table .psl-table th:nth-child(3) { width: 27.5%; }
-.setup-lead { margin: 0; font-size: 14px; line-height: normal; color: var(--ink-muted); }
+.setup-lead { margin: 0; font-size: var(--text-body-size); line-height: normal; color: var(--ink-muted); }
 /* the board draws the trail in plain grey */
 .setup-page .psl-crumb a { color: inherit; }
 

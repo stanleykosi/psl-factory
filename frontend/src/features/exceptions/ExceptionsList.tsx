@@ -140,7 +140,9 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
     const asOf = <p className="exc-note">As of {formatDayTime(state.asOf)}</p>;
     const seeAll = compact && (
       <p className="exc-seeall">
-        <Link href={seeAllHref}>See all exceptions</Link>
+        <Link href={seeAllHref} className="cmp-target">
+          See all exceptions
+        </Link>
       </p>
     );
     if (state.items.length === 0) {

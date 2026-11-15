@@ -141,7 +141,11 @@ function Notifications() {
   const filterPanel = (
     <AlertsFilterPanel applied={{ agent: view.agent, unread: view.unread }} unreadCount={unreadCount} onApply={applyFilters} onClose={closeFilter} />
   );
-  const settingsLink = <Link href="/settings/alerts">Alert settings</Link>;
+  const settingsLink = (
+    <Link href="/settings/alerts" className="cmp-target">
+      Alert settings
+    </Link>
+  );
 
   let body;
   if (list.status === 'loading') {

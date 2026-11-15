@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { formatClock, formatDayMonth } from '@/components';
+import { formatClock, formatDayMonth, useIsPhone } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
@@ -20,7 +20,6 @@ import { plural, RECORDABLE } from './labels';
 import { AgentAside, ClientResponseForm, SowSignatureForm } from './ResponseForm';
 import { TeamInputForm } from './TeamInputForm';
 import { findTask, teamInputOpen, useResponse, type Notice } from './useResponse';
-import { useIsPhone } from './usePhone';
 
 import '@/features/work-item/work-item.css';
 import './response.css';

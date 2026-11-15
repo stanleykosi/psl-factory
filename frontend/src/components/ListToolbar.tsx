@@ -46,7 +46,7 @@ export function ListToolbar({ search, filterCount, filterOpen, onFilterToggle, f
               {filterCount > 0 && (
                 <>
                   {' '}
-                  <CountBadge count={filterCount} tone="signal" />
+                  <CountBadge count={filterCount} tone="ink" />
                   <span className="cmp-sr"> on</span>
                 </>
               )}

@@ -10,7 +10,7 @@
 /* layout, as the line boards share it (D-62): the sections in the main column; suggestions, the decision and the
    edit form in a side column, each with a coloured head. On a phone there are no panel borders and the steps pin
    to the bottom (see the media query at the end). */
-.ws-cols { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+.ws-cols { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
 .ws-main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
 .ws-side { flex: 1 1 340px; max-width: 440px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
 .ws-section--suggestions { border-color: var(--action); }
@@ -34,7 +34,7 @@
 .ws-decide .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):hover { background: var(--verified-strong); }
 .ws-hint { margin: 0; }
 /* a suggestion is the board's card: a mono reference, the answer in a tinted box, the source beneath */
-.ws-sugg { gap: 6px; }
+.ws-sugg { gap: var(--space-6px); }
 .ws-sugg__ref { font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 .ws-sugg__answer { padding: var(--space-2) var(--space-10px); border: var(--rule-strong) solid var(--action); background: var(--action-tint); }
 .ws-side .ws-row { padding: var(--space-3) 0; }
@@ -52,9 +52,9 @@
 /* header */
 .ws-header { display: flex; flex-direction: column; gap: var(--space-2); }
 .ws-crumbs { list-style: none; padding: 0; display: flex; flex-wrap: wrap; }
-.ws-crumbs li + li::before { content: '/'; padding: 0 6px; color: var(--ink-muted); }
+.ws-crumbs li + li::before { content: '/'; padding: 0 var(--space-6px); color: var(--ink-muted); }
 .ws-titleline { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
-.ws-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1.15; overflow-wrap: anywhere; }
+.ws-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: var(--text-page-title-phone-22-size); line-height: 1.15; overflow-wrap: anywhere; }
 .ws-status { align-self: flex-start; padding: 3px var(--space-2); font-size: var(--text-small-size); font-weight: 600; text-transform: uppercase; white-space: nowrap; }
 .ws-subtitle, .ws-byline { margin: 0; color: var(--ink-muted); }
 .ws-byline { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: baseline; }
@@ -72,7 +72,7 @@
 
 /* rows */
 .ws-rows { list-style: none; margin: 0; padding: 0; }
-.ws-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-10px); min-height: var(--control-sm); border-top: var(--rule-thin) solid var(--rule-soft); font-size: var(--text-body-size); padding: 6px 0; }
+.ws-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-10px); min-height: var(--control-sm); border-top: var(--rule-thin) solid var(--rule-soft); font-size: var(--text-body-size); padding: var(--space-6px) 0; }
 .ws-row__main { display: flex; gap: var(--space-10px); align-items: flex-start; flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; }
 .ws-row__end { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--space-2); flex: none; max-width: 50%; text-align: right; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 .ws-row__steps { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); flex: none; }
@@ -130,7 +130,7 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws-form__body { gap: var(--space-4); }
 .ws-form .psl-seg__opt, .ws-form .resp-filebtn { min-height: var(--control-md); }
 .ws-form__actions { display: flex; flex-wrap: wrap; gap: var(--space-10px); }
-.ws-checkwrap { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: var(--control-md); cursor: pointer; }
+.ws-checkwrap { display: inline-flex; align-items: center; justify-content: center; min-width: var(--control-md); min-height: var(--control-md); cursor: pointer; }
 .ws-check { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
 .ws-bulk { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-10px) var(--space-14px); }
 .ws-bulk .ws-steps { flex-direction: row; flex-wrap: wrap; align-items: center; }
@@ -144,12 +144,12 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   /* the columns collapse into one flow; each section stays a white box with the ink border (D-63) */
   .ws-cols, .ws-main, .ws-side { display: contents; }
   .ws-section, .ws-section--suggestions, .ws-form { border: var(--rule-strong) solid var(--ink); background: var(--surface); }
-  .ws-section__body, .ws-form__body { padding: 0 var(--space-14px) 6px; }
-  .ws-section > .psl-panel__head, .ws-section--suggestions > .psl-panel__head, .ws-form > .psl-panel__head { background: none; color: inherit; border-bottom: none; padding: var(--space-10px) var(--space-14px) 6px; }
+  .ws-section__body, .ws-form__body { padding: 0 var(--space-14px) var(--space-6px); }
+  .ws-section > .psl-panel__head, .ws-section--suggestions > .psl-panel__head, .ws-form > .psl-panel__head { background: none; color: inherit; border-bottom: none; padding: var(--space-10px) var(--space-14px) var(--space-6px); }
   /* the Decide panel is a fixed full-width bar; the page keeps its height clear below it and Tab focus scrolls above it */
   .ws { padding-bottom: var(--ws-bar-h, 0px); }
   html { scroll-padding-bottom: var(--ws-bar-h, 0px); }
-  .ws-decide { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; border: none; border-top: var(--rule-strong) solid var(--ink); background: var(--surface); padding: var(--space-10px) var(--space-4) var(--space-14px); }
+  .ws-decide { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); border: none; border-top: var(--rule-strong) solid var(--ink); background: var(--surface); padding: var(--space-10px) var(--space-4) var(--space-14px); }
   /* while a Decide step's own form is open its submit is the action: the pinned bar would repeat it over the fields */
   .ws-decide[data-form-open] { display: none; }
   .ws-decide__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
@@ -158,7 +158,7 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   /* the agent's checklist keeps its words and status on one line (the side column's stacked rows are for suggestions) */
   .ws-side .ws-rows--checklist .ws-row { flex-direction: row; align-items: flex-start; padding: var(--space-2) 0; }
   .ws-side .ws-rows--checklist .ws-row__end { max-width: none; justify-content: flex-end; text-align: right; }
-  .ws-decide .ws-steps { gap: 6px; }
+  .ws-decide .ws-steps { gap: var(--space-6px); }
   .ws-decide .ws-steps__buttons { flex-direction: row; flex-wrap: wrap; gap: var(--space-2); }
   .ws-decide .ws-steps__buttons > span { flex: 1 1 120px; }
   .ws-decide .psl-btn { min-height: var(--control-md); white-space: normal; }

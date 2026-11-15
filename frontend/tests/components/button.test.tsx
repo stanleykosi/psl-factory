@@ -81,7 +81,7 @@ describe('Button', () => {
 });
 
 describe('IconButton', () => {
-  it('names its action and puts a count in the label and the orange badge', async () => {
+  it('names its action and puts a count in the label and the ink badge (the boards)', async () => {
     render(
       <>
         <IconButton icon="close" label="Close" bare />
@@ -90,7 +90,7 @@ describe('IconButton', () => {
     );
     expect(screen.getByRole('button', { name: 'Close' }).className).toBe('psl-iconbtn psl-iconbtn--bare');
     const filter = screen.getByRole('button', { name: 'Filter, 2 on' });
-    expect(filter.querySelector('.psl-badge.psl-badge--signal')?.textContent).toBe('2');
+    expect(filter.querySelector('.psl-badge.cmp-badge--ink')?.textContent).toBe('2');
     expect(await violations()).toEqual([]);
   });
 });

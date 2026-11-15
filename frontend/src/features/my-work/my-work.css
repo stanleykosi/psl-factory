@@ -21,7 +21,7 @@
 
 /* filter fields (SCR-01-*-filter): Line checkboxes, then Project, State and Waiting on */
 .my-work__fieldset { margin: 0; padding: 0; border: none; display: flex; flex-direction: column; min-width: 0; }
-.my-work__field { display: flex; flex-direction: column; gap: 6px; }
+.my-work__field { display: flex; flex-direction: column; gap: var(--space-6px); }
 /* the board's small ▾ instead of the native arrow; kept over the bundle's hover and focus backgrounds */
 .my-work__field .my-work__select, .my-work__field .my-work__select:hover, .my-work__field .my-work__select:focus { min-height: var(--control-md); appearance: none; padding-right: 36px; background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 14px) 55%; background-size: 4px 4px; background-repeat: no-repeat; }
 
@@ -37,30 +37,30 @@
 .my-work__kind { display: inline-block; margin-bottom: var(--space-1); letter-spacing: .04em; }
 .my-work__tablewrap .psl-table .my-work__title { display: block; color: var(--ink); font-weight: 600; text-decoration: none; }
 .my-work__tablewrap .psl-table .my-work__title:hover { text-decoration: underline; }
-.my-work__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; font-size: var(--text-small-size); color: var(--ink-muted); }
+.my-work__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--space-6px); font-size: var(--text-small-size); color: var(--ink-muted); }
 .my-work__station { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
 .my-work__station .psl-mini__bar { gap: var(--space-1); }
 .my-work__station .psl-mini__bar i { width: 18px; height: 6px; }
 .my-work__station .psl-mini__text { white-space: normal; }
-.my-work__waiting { display: flex; align-items: center; gap: 6px; margin-top: var(--space-1); font-size: var(--text-small-size); color: var(--ink-muted); }
+.my-work__waiting { display: flex; align-items: center; gap: var(--space-6px); margin-top: var(--space-1); font-size: var(--text-small-size); color: var(--ink-muted); }
 .my-work__tablewrap .psl-table .my-work__age { font-family: var(--font-mono); color: var(--ink-muted); white-space: nowrap; vertical-align: middle; }
 
 /* phone cards (SCR-01-mobile): each its own bordered card */
 .my-work__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-body-phone-size); line-height: 1.3; }
-.my-work__cards .my-work__card { display: flex; flex-direction: column; gap: 6px; padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); color: var(--ink); text-decoration: none; }
+.my-work__cards .my-work__card { display: flex; flex-direction: column; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); color: var(--ink); text-decoration: none; }
 .my-work__cardtop { display: flex; justify-content: space-between; gap: var(--space-2); }
 .my-work__cardwork { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
 .my-work__cardwork .my-work__kind { margin-bottom: 0; }
 .my-work__cardtitle { font-weight: 600; color: var(--ink); }
-.my-work__cards .psl-tag { padding: 2px 6px; font-size: var(--text-label-size); line-height: 1.3; }
+.my-work__cards .psl-tag { padding: 2px var(--space-6px); font-size: var(--text-label-size); line-height: 1.3; }
 .my-work__card .my-work__age { font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); white-space: nowrap; }
 .my-work__cardbar { display: flex; gap: 3px; }
 .my-work__cardbar > i { flex: 1; width: auto; height: 6px; }
-.my-work__cardstate { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.my-work__cardstate { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6px); }
 .my-work__cardnote { font-size: var(--text-hint-size); color: var(--ink-muted); }
 
 /* phone, Waiting on others (SCR-01-mobile-my-work): title and what it waits on */
-.my-work__started { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.my-work__started { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
 .my-work__started .my-work__cardtitle { color: var(--ink); text-decoration: none; }
 .my-work__started .psl-tag { padding: 3px var(--space-2); font-size: var(--text-small-size); }
 
@@ -71,7 +71,7 @@
 .my-work__rowslabel { letter-spacing: .06em; }
 
 /* empty Needs me (SCR-01-*-empty): caught up, then where the person's started work is */
-.my-work__caughtwrap { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+.my-work__caughtwrap { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
 .my-work__caughtup { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-4); }
 
 /* "While you're free" (proposed suggestions field): agent tint, action outline */
@@ -80,13 +80,13 @@
 .my-work__freeavatar { width: 34px; height: 34px; object-fit: cover; }
 .my-work__freeitem { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3) var(--space-14px); line-height: 1.2; border-top: var(--rule-thin) solid color-mix(in srgb, var(--action) 20%, var(--action-tint)); font-size: var(--text-body-size); }
 .my-work__freedetail { font-size: var(--text-small-size); color: var(--ink-muted); }
-.my-work__freeactions { display: flex; gap: 6px; align-items: center; }
+.my-work__freeactions { display: flex; gap: var(--space-6px); align-items: center; }
 .my-work__free .my-work__freeaction { min-height: var(--control-sm); padding: 0 var(--space-3); font-size: var(--text-hint-size); }
 .my-work__free .my-work__notnow { padding: 0 var(--space-2); min-height: var(--control-sm); font-size: var(--text-hint-size); color: var(--ink-muted); }
 .my-work__nothing { display: flex; align-items: center; gap: var(--space-6); padding: var(--space-4) var(--space-6) 0; background: var(--mascot-tola-tint); border: var(--rule-strong) solid var(--ink); }
 .my-work__mascot { flex: none; width: auto; height: 170px; align-self: flex-end; } /* Tola's thumbs-up pose, as the SCR-01 empty boards draw it */
 .my-work__nothingtext { display: flex; flex-direction: column; gap: var(--space-10px); padding-bottom: var(--space-4); }
-.my-work__nothingtext h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 30px; line-height: 1.05; }
+.my-work__nothingtext h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: var(--text-page-title-30-size); line-height: 1.05; }
 .my-work__nothingtext p { margin: 0; color: var(--ink-muted); line-height: 1.5; }
 .my-work__nothingactions { display: flex; flex-wrap: wrap; gap: var(--space-10px); }
 .my-work__where { background: var(--surface); border: var(--rule-strong) solid var(--ink); }
@@ -116,7 +116,7 @@
   .my-work__nothing { flex-direction: column; align-items: center; gap: var(--space-10px); padding: var(--space-3) var(--space-14px) var(--space-4); }
   .my-work__mascot { height: 150px; align-self: center; }
   .my-work__nothingtext { align-items: center; gap: var(--space-3); padding-bottom: 0; text-align: center; }
-  .my-work__nothingtext h2 { font-size: 22px; }
+  .my-work__nothingtext h2 { font-size: var(--text-page-title-phone-22-size); }
   .my-work__nothingtext p { line-height: 1.55; }
   .my-work__nothingactions { flex-direction: column; }
   .my-work__nothingactions .psl-btn { min-height: var(--control-phone); }
@@ -136,6 +136,6 @@
 .my-work__check { display: flex; align-items: center; min-height: 36px; padding: 0; }
 .my-work__check input { margin: 0; }
 .my-work__fieldset .my-work__linkbutton { margin-top: var(--space-1); font-size: var(--text-hint-size); }
-.my-work__field { display: flex; flex-direction: column; gap: 6px; }
+.my-work__field { display: flex; flex-direction: column; gap: var(--space-6px); }
 .my-work__field .my-work__select, .my-work__field .my-work__select:hover, .my-work__field .my-work__select:focus { min-height: var(--control-md); appearance: none; padding-right: 36px; background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 14px) 55%; background-size: 4px 4px; background-repeat: no-repeat; }
 .my-work__linkbutton { align-self: flex-start; padding: 0; border: none; background: none; font: inherit; }

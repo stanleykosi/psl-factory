@@ -7,8 +7,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 import { InfoIcon } from '@/features/response/icons';
-import { formatDayMonth, formatDayTime } from '@/components';
-import { useIsPhone } from '@/features/response/usePhone';
+import { formatDayMonth, formatDayTime, useIsPhone } from '@/components';
 
 import type { RecordedOutcome, RfpOutcome } from './contract';
 import { recordedHeading } from './labels';

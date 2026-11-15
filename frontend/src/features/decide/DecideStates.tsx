@@ -314,19 +314,22 @@ export function StaleView({ replaced, current, agent, onReview }: StaleProps) {
   useEffect(() => head.current?.focus(), []);
   return (
     <section className="decide-stale" aria-labelledby="decide-stale-title">
-      {/* written out: the boards set this notice as running text with no icon (block flow, see decide.css) */}
-      <div className="psl-callout psl-callout--warning decide-stale__notice" role="alert">
-        <h2 id="decide-stale-title" ref={head} tabIndex={-1} className="decide-stale__head">
-          A newer version arrived while you were reading.
-        </h2>{' '}
-        <p className="decide-plain">
-          {current.version.drafted_at && (
-            <>
-              Version {newN} was drafted at <When at={current.version.drafted_at} />.{' '}
-            </>
-          )}
-          Version {oldN} can no longer be approved.
-        </p>
+      {/* the shared Callout as the boards set it: running text with no icon (block flow, see decide.css); the wrapper
+          announces it, as the page changed under the reader */}
+      <div role="alert">
+        <Callout kind="warning" icon={false} plain className="decide-stale__notice">
+          <h2 id="decide-stale-title" ref={head} tabIndex={-1} className="decide-stale__head">
+            A newer version arrived while you were reading.
+          </h2>{' '}
+          <p className="decide-plain">
+            {current.version.drafted_at && (
+              <>
+                Version {newN} was drafted at <When at={current.version.drafted_at} />.{' '}
+              </>
+            )}
+            Version {oldN} can no longer be approved.
+          </p>
+        </Callout>
       </div>
       <div className="decide-compare">
         <section className="decide-compare__old" aria-labelledby="decide-old-title">

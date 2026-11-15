@@ -1,8 +1,8 @@
 'use client';
 
 // IconButton (design/system/project/components/IconButton): a 44px square with an icon and no visible label, so it
-// always names its action with aria-label. A count (filters on) uses the orange count badge inside the button, as
-// psl-bundle.css places it; the label carries the count for screen readers.
+// always names its action with aria-label. A count (filters on) is the ink count badge inside the button, as the
+// boards draw it (D-93) and psl-bundle.css places it; the label carries the count for screen readers.
 import type { ComponentPropsWithRef } from 'react';
 
 import { Icon, type IconName } from './Icon';
@@ -23,7 +23,7 @@ export function IconButton({ icon, label, bare = false, count, className, ...res
     <button {...rest} type="button" className={cx('psl-iconbtn', bare && 'psl-iconbtn--bare', className)} aria-label={count !== undefined ? `${label}, ${count} on` : label}>
       <Icon name={icon} />
       {count !== undefined && (
-        <span className="psl-badge psl-badge--signal" aria-hidden="true">
+        <span className="psl-badge cmp-badge--ink" aria-hidden="true">
           {count}
         </span>
       )}

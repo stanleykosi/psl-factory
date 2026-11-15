@@ -66,7 +66,7 @@ describe('ListToolbar and FilterPanel', () => {
     vi.useRealTimers();
     render(<Toolbar />);
     const filter = screen.getByRole('button', { name: /^Filter/ });
-    expect(filter.querySelector('.psl-badge--signal')?.textContent).toBe('1');
+    expect(filter.querySelector('.cmp-badge--ink')?.textContent).toBe('1');
     // the count is a polite live region without the status role (it reads as the page's text, as the boards draw it)
     const count = document.querySelector('.psl-resultcount') as HTMLElement;
     expect(count.getAttribute('aria-live')).toBe('polite');

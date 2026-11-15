@@ -528,7 +528,9 @@ export function NextStep({ item, quiet }: { item: WorkItem; quiet?: boolean }) {
       {!quiet && hasExceptionsLink(item) && (
         <>
           {' '}
-          <Link href="/exceptions">See all exceptions</Link>
+          <Link href="/exceptions" className="cmp-target">
+            See all exceptions
+          </Link>
         </>
       )}
     </Callout>

@@ -20,9 +20,9 @@
   /* the title wraps before the tag and tabs leave its line */
   .work-titleline { flex-wrap: nowrap; }
   .work-titleline > .work-state, .work-titleline > .work-tabs { flex: none; }
-  .work-header { margin-bottom: -4px; }
+  .work-header { margin-bottom: calc(var(--space-1) * -1); }
   .work-header--end { margin-bottom: -5px; }
-  .work-header--history { margin-bottom: -8px; }
+  .work-header--history { margin-bottom: calc(var(--space-2) * -1); }
 }
 .work-header .psl-crumb { line-height: 15px; }
 .work-sub { line-height: 18px; }
@@ -39,7 +39,7 @@
 .work-crumbrow .work-sub { font-size: var(--text-hint-size); line-height: 15px; }
 /* the tabs close the crumb line without making it taller, so the boards' rhythm holds; the sub-line shares their group so they cannot overlap */
 .work-crumbright { display: flex; align-items: center; height: 15px; align-self: flex-start; gap: var(--space-3); margin-left: auto; }
-.work-crumbrow .work-tabs { margin: -8px 0 -9px; }
+.work-crumbrow .work-tabs { margin: calc(var(--space-2) * -1) 0 -9px; }
 .work-crumbrow .psl-tab { min-height: 28px; padding: 0 var(--space-3); font-size: var(--text-hint-size); }
 .work-titleline .work-tabs { margin-left: auto; align-self: center; }
 .work-header--end .work-titleline .work-state { margin-left: auto; }
@@ -81,8 +81,8 @@
 .work-aside:empty { display: none; }
 @media (min-width: 1080px) {
   .work-columns { grid-template-columns: minmax(0, 1fr) 324px; }
-  .work-board .work-columns { grid-template-columns: minmax(0, 1fr) 324px; gap: 22px; }
-  .work-columns--history { grid-template-columns: minmax(0, 1fr) 300px; gap: 22px; }
+  .work-board .work-columns { grid-template-columns: minmax(0, 1fr) 324px; gap: var(--space-22px); }
+  .work-columns--history { grid-template-columns: minmax(0, 1fr) 300px; gap: var(--space-22px); }
 }
 
 /* mascots */
@@ -104,7 +104,7 @@
 .work-agentsec__msg { padding: var(--space-14px) var(--space-4); display: flex; flex-direction: column; gap: var(--space-10px); color: var(--action-ink); line-height: 1.55; }
 .work-agentsec__msg p { margin: 0; }
 .work-agentsec__steps + .work-agentsec__msg { padding-top: 0; font-size: var(--text-hint-size); line-height: normal; }
-.work-board--row { gap: 22px; }
+.work-board--row { gap: var(--space-22px); }
 
 /* the ready board tints its current agent station and fact like a person's; the processing board in amber */
 .work-state--ready .work-track--list .psl-station--agent { background: var(--signal-tint); color: var(--signal-ink); }
@@ -139,7 +139,7 @@
 /* the board's state card */
 .work-statepanel { background: var(--surface); border: var(--rule-strong) solid var(--ink); }
 .work-statepanel h2 { margin: 0; padding: var(--space-3) var(--space-4); background: var(--ink); color: var(--on-strong); font-family: var(--font-display); font-weight: 800; font-size: var(--text-body-phone-size); letter-spacing: .08em; text-transform: uppercase; }
-.work-statepanel--large h2 { font-size: 18px; line-height: 16px; padding-block: 14px; }
+.work-statepanel--large h2 { font-size: var(--text-sheet-title-size); line-height: 16px; padding-block: var(--space-14px); }
 .work-statepanel--signal { border-color: var(--signal); }
 .work-statepanel--signal h2 { background: var(--signal); }
 .work-statepanel--waiting { border-color: var(--waiting); }
@@ -149,7 +149,7 @@
 .work-statepanel__body { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-10px); }
 .work-statepanel__body p { margin: 0; line-height: 1.5; }
 .work-statepanel__lead { font-weight: 600; }
-.work-statepanel__body dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px var(--space-3); }
+.work-statepanel__body dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-6px) var(--space-3); }
 .work-statepanel__body dl > div { display: contents; }
 .work-statepanel__body dt { color: var(--ink-muted); }
 .work-statepanel__body dd { margin: 0; overflow-wrap: anywhere; }
@@ -181,10 +181,10 @@
 @media (min-width: 1080px) {
   .work-board--issue .work-columns { grid-template-columns: 762px 443px; gap: var(--space-5); }
 }
-.work-invoice { max-width: 760px; background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: 22px 26px; display: flex; flex-direction: column; gap: var(--space-10px); }
+.work-invoice { max-width: 760px; background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-22px) 26px; display: flex; flex-direction: column; gap: var(--space-10px); }
 .work-invoice__top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3); }
 .work-invoice__brand { font-family: var(--font-display); font-stretch: 125%; font-weight: 800; font-size: var(--text-drawer-title-size); }
-.work-invoice__test { align-self: flex-start; padding: 3px 6px; font-family: var(--font-mono); font-size: var(--text-label-size); color: var(--waiting); border: 1.5px solid var(--waiting); }
+.work-invoice__test { align-self: flex-start; padding: 3px var(--space-6px); font-family: var(--font-mono); font-size: var(--text-label-size); color: var(--waiting); border: 1.5px solid var(--waiting); }
 .work-invoice__parties { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
 .work-invoice__parties > div { margin: 0; }
 .work-invoice__parties > div:last-child { text-align: right; }
@@ -197,12 +197,12 @@
 .work-invoice__detail { font-size: var(--text-small-size); color: var(--ink-muted); }
 .work-invoice__tax { color: var(--waiting-ink); font-weight: 600; font-family: var(--font-mono); }
 .work-invoice__foot { margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
-.work-invoicecard { background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-3); display: flex; flex-direction: column; align-items: flex-start; gap: 6px; font-size: var(--text-hint-size); }
+.work-invoicecard { background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-3); display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); font-size: var(--text-hint-size); }
 .work-invoicecard__ref { font-size: var(--text-small-size); color: var(--ink-muted); }
-.work-invoicecard__amount .psl-amount { font-size: 18px; font-weight: 400; }
+.work-invoicecard__amount .psl-amount { font-size: var(--text-sheet-title-size); font-weight: 400; }
 
 /* phone bottom bar: the state's way onward, pinned to the bottom of the screen as the phone boards draw it */
-.work-phonebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; margin: 0; padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); display: flex; flex-direction: column; gap: var(--space-2); }
+.work-phonebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); margin: 0; padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); display: flex; flex-direction: column; gap: var(--space-2); }
 .work-phonebar .psl-btn { display: flex; width: 100%; }
 /* the reference (or HISTORY) at the end of the frame's phone bar */
 .work-phonebar--slot { min-height: 84px; box-sizing: border-box; }
@@ -221,7 +221,7 @@ body:has(.sw-phoneslot) .work-barref--line { right: calc(var(--space-4) + 134px 
 .work-historymeta { display: flex; flex-direction: column; gap: var(--space-2); }
 .work-limit { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-hint-size); }
 .work-limit select { width: auto; }
-.work-who .psl-tag { padding: 1px 6px; font-family: var(--font-mono); font-size: 10px; font-weight: 400; border-radius: var(--radius-none); box-shadow: inset 0 0 0 1px var(--disabled); }
+.work-who .psl-tag { padding: 1px var(--space-6px); font-family: var(--font-mono); font-size: 10px; font-weight: 400; border-radius: var(--radius-none); box-shadow: inset 0 0 0 1px var(--disabled); }
 .work-history .psl-table td { padding: var(--space-3) var(--space-14px); line-height: 1.3; }
 /* the history board's WHEN and VERSION columns: 12px muted mono, fixed widths */
 @media (min-width: 720px) {
@@ -245,17 +245,17 @@ body:has(.sw-phoneslot) .work-barref--line { right: calc(var(--space-4) + 134px 
 /* the room the board draws for its second button and the audit line */
 @media (min-width: 720px) { .work-noaccess .psl-panel__body { padding-bottom: calc(var(--space-6) + var(--space-20px)); } }
 .work-noaccess .work-plain { color: var(--ink-muted); line-height: 1.3; }
-.work-noaccess .shell-title { margin: -4px 0 0; font-size: 33px; }
+.work-noaccess .shell-title { margin: calc(var(--space-1) * -1) 0 0; font-size: 33px; }
 .work-noaccess__tag { align-self: flex-start; }
 .work-noaccess__list { margin: -2px 0 2px; padding-left: var(--space-20px); line-height: 1.7; }
 /* the board pairs the way back with a second button of equal width; it takes its half */
 .work-noaccess .psl-panel__body p:last-child .psl-btn { width: calc(50% - 5px); }
 
 @media (max-width: 719.98px) {
-  .work-header .shell-title { font-size: 22px; white-space: pre-line; }
+  .work-header .shell-title { font-size: var(--text-page-title-phone-22-size); white-space: pre-line; }
   /* the pinned bar's room, and the default board's decision panel drawn as that bar: only the link shows */
   .work-board--phone { padding-bottom: 96px; }
-  .work-board--phone .work-aside > .psl-panel--decide { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; border: none; border-top: var(--rule-strong) solid var(--ink); background: var(--surface); padding: var(--space-3) var(--space-4) var(--space-18px); }
+  .work-board--phone .work-aside > .psl-panel--decide { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); border: none; border-top: var(--rule-strong) solid var(--ink); background: var(--surface); padding: var(--space-3) var(--space-4) var(--space-18px); }
   .work-board--phone .psl-panel--decide .psl-panel__head, .work-board--phone .psl-panel--decide .psl-panel__body > :not(a) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .work-board--phone .work-aside > .psl-panel--decide .psl-panel__body { padding: 0; }
   .work-board--phone .psl-panel--decide .psl-btn { display: flex; width: 100%; }
@@ -308,15 +308,15 @@ body:has(.sw-phoneslot) .work-barref--line { right: calc(var(--space-4) + 134px 
   .work-noaccess .shell-title { font-size: var(--text-title-size); }
   .work-noaccess .work-plain { font-size: var(--text-body-size); }
   .work-header--history .shell-title { font-size: var(--text-drawer-title-size); }
-  /* the tabs share the tag's line (title line on history) so the boards' vertical rhythm holds */
-  .work-tagline .work-tabs, .work-titleline .work-tabs { margin: -4px 0 -4px auto; }
-  .work-tabs .psl-tab { min-height: 24px; padding: 0 var(--space-10px); font-size: var(--text-hint-size); }
-  .work-titleline .work-tabs .psl-tab { min-height: 24px; padding: 0 6px; font-size: var(--text-small-size); gap: var(--space-1); }
+  /* the tabs share the tag's line; they are 44px targets (D-92c), so they overlap the line's gaps (the boards draw 24px) */
+  .work-tagline .work-tabs, .work-titleline .work-tabs { margin: calc(var(--space-10px) * -1) 0 calc(var(--space-10px) * -1) auto; }
+  .work-tabs .psl-tab { min-height: var(--control-md); padding: 0 var(--space-10px); font-size: var(--text-hint-size); }
+  .work-titleline .work-tabs .psl-tab { min-height: var(--control-md); padding: 0 var(--space-6px); font-size: var(--text-small-size); gap: var(--space-1); }
   .work-titleline .work-tabs .psl-badge { display: none; }
   .work-header--history .work-titleline { flex-wrap: nowrap; }
   .work-header--history .work-titleline .work-tabs { flex: none; }
   .work-limit select { min-height: 28px; padding-block: 0; }
-  .work-historybar .psl-seg__opt { flex: 1 1 0; min-width: 0; min-height: 42px; padding-inline: 4px; font-size: var(--text-hint-size); }
+  .work-historybar .psl-seg__opt { flex: 1 1 0; min-width: 0; min-height: 42px; padding-inline: var(--space-1); font-size: var(--text-hint-size); }
   .work-hcards { gap: var(--space-14px); }
   .work-hcard { gap: 0; padding: 11px var(--space-3); }
   .work-hcard .work-who { font-size: var(--text-small-size); line-height: 20px; }
@@ -368,7 +368,7 @@ body:has(.sw-phoneslot) .work-barref--line { right: calc(var(--space-4) + 134px 
 @media (min-width: 1080px) {
   .work-track:not(.work-track--list) { border: var(--rule-strong) solid var(--ink); background: var(--surface); }
   .work-track:not(.work-track--list) .psl-track { gap: 0; grid-auto-columns: minmax(120px, 1fr); }
-  .work-track:not(.work-track--list) .psl-station { min-height: 0; padding: var(--space-3); gap: 6px; border: none; border-right: var(--rule-strong) solid var(--ink); }
+  .work-track:not(.work-track--list) .psl-station { min-height: 0; padding: var(--space-3); gap: var(--space-6px); border: none; border-right: var(--rule-strong) solid var(--ink); }
   .work-track:not(.work-track--list) .psl-station b { line-height: 14px; }
   .work-track:not(.work-track--list) .psl-station strong { line-height: 17px; }
   .work-track:not(.work-track--list) .psl-station span { line-height: 15px; }

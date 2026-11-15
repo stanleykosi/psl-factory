@@ -99,7 +99,7 @@ const TONE: Record<MonthEndTone, TagTone> = {
   stopped: 'person',
   agent: 'agent',
   uncertain: 'waiting',
-  restricted: 'neutral',
+  restricted: 'waiting',
   verified: 'done',
 };
 

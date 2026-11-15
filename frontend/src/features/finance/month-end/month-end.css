@@ -1,10 +1,10 @@
 /* SCR-36 month-end layout, desktop and phone boards as drawn. Token variables where a token equals the board
    value; bundle classes (psl-tag, psl-btn, psl-empty, psl-panel) are composed, not restyled. */
 
-.monthend { display: flex; flex-direction: column; gap: 20px; line-height: normal; }
-.monthend-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+.monthend { display: flex; flex-direction: column; gap: var(--space-20px); line-height: normal; }
+.monthend-eyebrow { margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 .monthend-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-3); }
-.monthend-asof { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+.monthend-asof { font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 /* the SCR-36 boards draw square tags at the page's line height */
 .monthend .psl-tag { border-radius: 0; line-height: normal; }
 
@@ -14,19 +14,19 @@
 .monthend-cell:last-child { border-right: none; }
 .monthend-cell__value--waiting { color: var(--waiting-ink); }
 .monthend-cell__value--progress { color: var(--action-ink); }
-.monthend-cell__label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; }
-.monthend-cell__value { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
+.monthend-cell__label { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; }
+.monthend-cell__value { font-family: var(--font-display); font-weight: 700; font-size: var(--text-lead-size); }
 
 /* table and aside */
-.monthend-row { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
-.monthend-tasks, .monthend-empty { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-.monthend-detail { font-size: 12px; color: var(--ink-muted); }
-.monthend-aside { flex: 1 1 320px; max-width: 420px; display: flex; flex-direction: column; gap: 14px; }
-.monthend-note { display: flex; gap: 10px; align-items: flex-start; padding: 10px var(--space-3); background: var(--action-tint); border: 2px solid var(--action); }
-.monthend-note__text { font-size: 14px; color: var(--action-ink); line-height: 1.45; }
+.monthend-row { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
+.monthend-tasks, .monthend-empty { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
+.monthend-detail { font-size: var(--text-small-size); color: var(--ink-muted); }
+.monthend-aside { flex: 1 1 320px; max-width: 420px; display: flex; flex-direction: column; gap: var(--space-14px); }
+.monthend-note { display: flex; gap: var(--space-10px); align-items: flex-start; padding: var(--space-10px) var(--space-3); background: var(--action-tint); border: 2px solid var(--action); }
+.monthend-note__text { font-size: var(--text-body-size); color: var(--action-ink); line-height: 1.45; }
 
 /* phone-only parts, hidden on desktop */
-.psl a.monthend-back { min-height: var(--control-md); margin: -8px 0; display: none; align-items: center; align-self: flex-start; color: var(--ink); text-decoration: none; }
+.psl a.monthend-back { min-height: var(--control-md); margin: calc(var(--space-2) * -1) 0; display: none; align-items: center; align-self: flex-start; color: var(--ink); text-decoration: none; }
 .monthend-action { white-space: nowrap; }
 .monthend-narrow, .monthend-summary, .monthend-cards, .monthend-bar { display: none; }
 
@@ -38,19 +38,19 @@
   /* D-08: the board draws "← Finance" in the phone bar, which is the frame's; until the frame has a back-link slot
      (D-13) the page carries it at the top right of its own first line, so the page below starts where the board's does */
   .monthend { position: relative; }
-  .psl a.monthend-back { display: inline-flex; position: absolute; top: -10px; right: 0; margin: 0; padding: 0 var(--space-1); }
+  .psl a.monthend-back { display: inline-flex; position: absolute; top: calc(var(--space-10px) * -1); right: 0; margin: 0; padding: 0 var(--space-1); }
   .monthend-narrow { display: inline; }
-  .monthend-summary { display: block; font-size: 14px; }
+  .monthend-summary { display: block; font-size: var(--text-body-size); }
   .monthend-row { display: contents; }
   /* the row is gone, so the empty panel sits in the full-height column: keep it sized to its text */
   .monthend-empty { flex: none; }
   .monthend-cards { display: flex; flex-direction: column; gap: var(--space-3); }
-  .monthend-card { background: var(--surface); border: 2px solid var(--ink); padding: var(--space-3); display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+  .monthend-card { background: var(--surface); border: 2px solid var(--ink); padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-6px); font-size: var(--text-body-size); }
   .monthend-card__top { display: flex; justify-content: space-between; }
   .monthend-card__top .psl-tag { align-self: flex-start; }
-  .monthend-card__where { font-size: 13px; color: var(--ink-muted); }
+  .monthend-card__where { font-size: var(--text-hint-size); color: var(--ink-muted); }
   /* bottom action bar: pinned, full width over the frame's 16px page padding */
-  .monthend-bar { position: sticky; bottom: 0; margin-top: auto; display: flex; flex-direction: column; gap: var(--space-2); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4)); margin-bottom: calc(-1 * var(--space-4)); padding: var(--space-3) var(--space-4) 18px; background: var(--surface); border-top: 2px solid var(--ink); }
+  .monthend-bar { position: sticky; bottom: 0; margin-top: auto; display: flex; flex-direction: column; gap: var(--space-2); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4)); margin-bottom: calc(-1 * var(--space-4)); padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: 2px solid var(--ink); }
 }
 
 /* the board centres cells vertically */
