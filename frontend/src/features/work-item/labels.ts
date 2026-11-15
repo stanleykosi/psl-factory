@@ -1,6 +1,7 @@
 // Contract values (E-WORK-ITEM, E-WORK-HISTORY) to the words and classes on the SCR-02 boards.
 // Presentation only: nothing here decides access or business state.
 import type { operations } from '@/api/schema';
+import { formatDateTime, STATE_TAGS as SHARED_STATE_TAGS } from '@/components';
 
 export type WorkItem = operations['E-WORK-ITEM']['responses'][200]['content']['application/json'];
 export type WorkState = WorkItem['state'];
@@ -16,20 +17,22 @@ export type HistoryLimit = NonNullable<HistoryQuery['limit']>;
 
 type Tone = 'person' | 'waiting' | 'agent' | 'done' | 'neutral';
 
-/** CMP-05 state tag: wording and colour family per contract state. */
-export const STATE_TAGS: Record<WorkState, { text: string; tone: Tone }> = {
-  ready: { text: 'Ready to continue', tone: 'person' },
-  processing: { text: 'Processing', tone: 'agent' },
-  waiting: { text: 'Waiting', tone: 'waiting' },
-  owner_needed: { text: 'Owner needed', tone: 'person' },
-  setup_needed: { text: 'Setup needed', tone: 'person' },
-  action_needed: { text: 'Action needed', tone: 'person' },
-  effect_uncertain: { text: 'Effect uncertain', tone: 'waiting' },
-  awaiting_reconciliation: { text: 'Awaiting reconciliation', tone: 'waiting' },
-  verified: { text: 'Verified', tone: 'done' },
-  cancelled: { text: 'Cancelled', tone: 'neutral' },
-  followup_needed: { text: 'Stopped: invoice follow-up needed', tone: 'person' },
-};
+const CONTRACT_STATES: WorkState[] = [
+  'ready',
+  'processing',
+  'waiting',
+  'owner_needed',
+  'setup_needed',
+  'action_needed',
+  'effect_uncertain',
+  'awaiting_reconciliation',
+  'verified',
+  'cancelled',
+  'followup_needed',
+];
+
+/** CMP-05 state tag: the shared table's wording and colour family (README), for the contract's states. */
+export const STATE_TAGS = Object.fromEntries(CONTRACT_STATES.map((state) => [state, SHARED_STATE_TAGS[state]])) as Record<WorkState, { text: string; tone: Tone }>;
 
 /** The six facts in contract order (INV-FACTS: never merged into one status). The boards label the receipt fact
  *  RECEIPT; `more` completes the contract name for screen readers ("RECEIPT RECORDED"). */
@@ -85,26 +88,13 @@ export const STEP_WORDS: Record<StepKind, string> = {
   next: 'To do',
 };
 
-const AVATARS = new Set(['chidi', 'tola', 'zainab']);
-
-export function avatarClass(name: string | undefined): string {
-  const key = name?.toLowerCase();
-  return key && AVATARS.has(key) ? `psl-avatar psl-avatar--${key}` : 'psl-avatar';
-}
-
-/** The agent's mascot (public/agents, as on My work); undefined for an agent without one. */
-export function agentImage(name: string | undefined): string | undefined {
-  const key = name?.toLowerCase();
-  return key && AVATARS.has(key) ? `/agents/${key}.png` : undefined;
-}
-
 // The full-pose images the boards draw (public/agents): Tola waiting on the client, Chidi at work.
 const POSES = new Set(['tola-waiting', 'chidi-working']);
 
 /** A full-pose mascot where the boards draw one; the avatar otherwise. */
 export function agentPose(name: string | undefined, pose: 'waiting' | 'working'): string | undefined {
   const key = `${name?.toLowerCase()}-${pose}`;
-  return POSES.has(key) ? `/agents/${key}.png` : agentImage(name);
+  return POSES.has(key) ? `/agents/${key}.png` : undefined;
 }
 
 const WARNING_STATES = new Set<WorkState>([
@@ -132,10 +122,10 @@ export const HISTORY_FILTERS: readonly { kind: HistoryKind; label: string }[] = 
 
 export const HISTORY_LIMITS: readonly HistoryLimit[] = [10, 20, 50];
 
-export const ACTOR_TAGS: Record<HistoryEntry['actor_kind'], { text: string; className: string }> = {
-  person: { text: 'PERSON', className: 'psl-tag psl-tag--neutral' },
-  agent: { text: 'AGENT', className: 'psl-tag psl-tag--agent' },
-  factory: { text: 'FACTORY', className: 'psl-tag work-tag--outline' },
+export const ACTOR_TAGS: Record<HistoryEntry['actor_kind'], { text: string; tone: Tone }> = {
+  person: { text: 'PERSON', tone: 'neutral' },
+  agent: { text: 'AGENT', tone: 'agent' },
+  factory: { text: 'FACTORY', tone: 'neutral' },
 };
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -148,25 +138,18 @@ const WAT = new Intl.DateTimeFormat('en-GB', {
   hourCycle: 'h23',
 });
 
-/** "12 Nov 16:40" in Africa/Lagos (the boards say "Times are WAT"). */
+/** "12 Nov 16:40" in Africa/Lagos. Kept for the screens not yet moved to the shared formatDateTime ("12 Nov 2026 16:40 WAT"). */
 export function formatWat(value: string | Date): string {
   const parts = Object.fromEntries(WAT.formatToParts(new Date(value)).map((p) => [p.type, p.value]));
   return `${parts.day} ${MONTHS[Number(parts.month) - 1]} ${parts.hour}:${parts.minute}`;
 }
 
-const WEEKDAY = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', weekday: 'short' });
-
-/** "Mon 10 Nov 14:05" in Africa/Lagos, for the header's started line. */
-export function formatWatDay(value: string): string {
-  return `${WEEKDAY.format(new Date(value))} ${formatWat(value)}`;
-}
-
-/** The header's started line from the contract: "Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2";
+/** The header's started line from the contract: "Started by Tunde Bello (PMO) · 10 Nov 2025 14:05 WAT · revision 2";
  *  "revision N" alone when the item does not say who started it. */
 export function startedLine(item: WorkItem): string {
   if (!item.started_by) return `revision ${item.revision}`;
   const { name, role } = item.started_by;
   const parts = [`Started by ${role ? `${name} (${role})` : name}`];
-  if (item.started_at) parts.push(formatWatDay(item.started_at));
+  if (item.started_at) parts.push(formatDateTime(item.started_at));
   return [...parts, `revision ${item.revision}`].join(' · ');
 }

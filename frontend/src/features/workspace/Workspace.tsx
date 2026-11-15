@@ -7,8 +7,8 @@
 // ReconcilePanel, which the page shows from the re-read item.
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
+import { Button, Callout } from '@/components';
 import type { WorkItem } from '@/features/work-item/labels';
-import { WarningIcon } from '@/shell/icons';
 
 import { agentName, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { SectionView, type ItemControls } from './Sections';
@@ -25,14 +25,14 @@ import './workspace.css';
  */
 function AgentNote({ note }: { note: NonNullable<WorkspaceData['agent_note']> }) {
   return (
-    <div className="psl-callout psl-callout--info ws-agentnote">
+    <Callout kind="info" announce={false} className="ws-agentnote">
       <span className="ws-stack">
         <strong>{agentName(note.agent)}</strong>
         {note.lines.map((line, i) => (
           <span key={i}>{line}</span>
         ))}
       </span>
-    </div>
+    </Callout>
   );
 }
 
@@ -107,7 +107,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const failure = flow.notice?.kind === 'failed' || flow.notice?.kind === 'problem' || flow.notice?.kind === 'uncertain' ? flow.notice : null;
   // the re-read after the press can lay the page out again (the reconcile panel appears), so it looks again once that lands
   useEffect(() => {
-    if (failure) notices.current?.querySelector('[role="alert"]')?.scrollIntoView?.({ block: 'nearest' });
+    if (failure) notices.current?.querySelector('.ws-notice')?.scrollIntoView?.({ block: 'nearest' });
   }, [failure, workspace.revision]);
 
   const off = (step: Step) => flow.pending !== null || flow.allLocked || flow.locked.has(step.key) || page.refreshFailed;
@@ -239,60 +239,57 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   return (
     <>
       <div ref={notices} className="ws-notices">
-      <div role="status" aria-live="polite" className="ws-live">
-        {(notice?.kind === 'done' || notice?.kind === 'queued') && (
-          <p className="psl-callout psl-callout--success">
-            {notice.kind === 'done' && notice.label && <strong>{notice.label} </strong>}
-            <span>{notice.text}</span>
-          </p>
+        {/* One live region: a finished step, a queued one and an uncertain send are announced where they appear. */}
+        <div role="status" aria-live="polite" className="ws-live">
+          {(notice?.kind === 'done' || notice?.kind === 'queued') && (
+            <Callout kind="success" announce={false}>
+              {notice.kind === 'done' && notice.label && <strong>{notice.label} </strong>}
+              <span>{notice.text}</span>
+            </Callout>
+          )}
+          {notice?.kind === 'uncertain' && (
+            <Callout kind="warning" className="ws-notice">
+              <span className="ws-stack">
+                {notice.message && <span>{notice.message}</span>}
+                {!hasReconcile && <span>{STEP_TEXT.uncertainNoReconcile}</span>}
+              </span>
+              {!hasReconcile && (
+                <Button kind="secondary" onClick={() => void page.reload()}>
+                  Reload
+                </Button>
+              )}
+            </Callout>
+          )}
+          {notice?.kind === 'stale' && (
+            <Callout kind="warning" className="ws-notice">
+              {STEP_TEXT.stale(notice.revision)}
+            </Callout>
+          )}
+        </div>
+        {(notice?.kind === 'forbidden' || notice?.kind === 'problem' || notice?.kind === 'failed') && (
+          <Callout kind="problem" className="ws-notice">
+            <span className="ws-stack">
+              {notice.kind === 'failed' && <strong>{notice.label}</strong>}
+              <span>{notice.kind === 'forbidden' ? STEP_TEXT.forbidden : notice.kind === 'problem' ? notice.text : STEP_TEXT.failed}</span>
+            </span>
+            {notice.kind === 'failed' && !notice.sends && !open && (
+              <Button
+                kind="secondary"
+                onClick={() => {
+                  if (last.current?.token === notice.attempt) void run(last.current);
+                }}
+              >
+                Try again
+              </Button>
+            )}
+          </Callout>
         )}
-      </div>
-      {notice?.kind === 'uncertain' && (
-        <div className="psl-callout psl-callout--warning ws-notice" role="alert">
-          <WarningIcon />
-          <span className="ws-stack">
-            {notice.message && <span>{notice.message}</span>}
-            {!hasReconcile && <span>{STEP_TEXT.uncertainNoReconcile}</span>}
-          </span>
-          {!hasReconcile && (
-            <button type="button" className="psl-btn psl-btn--secondary" onClick={() => void page.reload()}>
-              Reload
-            </button>
-          )}
-        </div>
-      )}
-      {notice?.kind === 'stale' && (
-        <div className="psl-callout psl-callout--warning ws-notice" role="alert">
-          <WarningIcon />
-          <span>{STEP_TEXT.stale(notice.revision)}</span>
-        </div>
-      )}
-      {(notice?.kind === 'forbidden' || notice?.kind === 'problem' || notice?.kind === 'failed') && (
-        <div className="psl-callout psl-callout--problem ws-notice" role="alert">
-          <WarningIcon />
-          <span className="ws-stack">
-            {notice.kind === 'failed' && <strong>{notice.label}</strong>}
-            <span>{notice.kind === 'forbidden' ? STEP_TEXT.forbidden : notice.kind === 'problem' ? notice.text : STEP_TEXT.failed}</span>
-          </span>
-          {notice.kind === 'failed' && !notice.sends && !open && (
-            <button
-              type="button"
-              className="psl-btn psl-btn--secondary"
-              onClick={() => {
-                if (last.current?.token === notice.attempt) void run(last.current);
-              }}
-            >
-              Try again
-            </button>
-          )}
-        </div>
-      )}
       </div>
       {page.refreshFailed && (
         <p className="ws-reload">
-          <button type="button" className="psl-btn psl-btn--secondary" onClick={() => void page.reload()}>
+          <Button kind="secondary" onClick={() => void page.reload()}>
             Reload this item
-          </button>
+          </Button>
         </p>
       )}
       {/* The line boards' shared layout, by section kind and step type (D-62): suggestions and the workspace

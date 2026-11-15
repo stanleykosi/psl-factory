@@ -3,6 +3,7 @@
 import Link from 'next/link';
 
 import type { Destination } from '@/api/types';
+import { EmptyState, PageTitle } from '@/components';
 
 import { useMe } from './AppShell';
 import { DESTINATIONS, visibleDestinations } from './destinations';
@@ -17,11 +18,8 @@ export function DestinationPage({ destination }: { destination: Destination }) {
   }
   return (
     <>
-      <h1 className="shell-title">{info.label}</h1>
-      <div className="psl-empty">
-        <h3>{info.label}</h3>
-        <p>This page is not built yet. It arrives in a later release.</p>
-      </div>
+      <PageTitle>{info.label}</PageTitle>
+      <EmptyState title={info.label}>This page is not built yet. It arrives in a later release.</EmptyState>
     </>
   );
 }
@@ -30,11 +28,8 @@ export function DestinationPage({ destination }: { destination: Destination }) {
 export function UnknownPage() {
   const first = visibleDestinations(useMe().destinations)[0];
   return (
-    <div className="psl-empty">
-      <h3>This page doesn&rsquo;t exist.</h3>
-      <p>
-        <Link href={first.href}>Go to {first.label}</Link>
-      </p>
-    </div>
+    <EmptyState title="This page doesn&rsquo;t exist.">
+      <Link href={first.href}>Go to {first.label}</Link>
+    </EmptyState>
   );
 }

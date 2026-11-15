@@ -6,13 +6,10 @@
 // With a PROPOSAL `presentation` block (board fixtures only) the page follows the state's board: its section
 // order per viewport (LAYOUTS), the state card and the board's detail words. Without it, the F-03 layout.
 import Link from 'next/link';
-import { Fragment, useId, useState, type ReactNode } from 'react';
+import { Fragment, useId, type ReactNode } from 'react';
 
+import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, formatDateTime, formatTime, Panel, PersonAvatar, SampleLabel, Tag, useIsPhone } from '@/components';
 import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
-import { formatClock } from '@/features/decide/format';
-import { WarningIcon } from '@/shell/icons';
-
-import { InfoIcon } from './InfoIcon';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
@@ -21,12 +18,9 @@ import { RfpOutcomeLink } from '@/features/rfp';
 
 import {
   AGENT_TAGS,
-  agentImage,
   agentPose,
-  avatarClass,
   currentStationIndex,
   FACTS,
-  formatWat,
   nextStepKind,
   STATIONS,
   STEP_WORDS,
@@ -37,7 +31,6 @@ import {
   type WorkState,
 } from './labels';
 import { isAppPath, presentationOf, viewFor, type PanelLink, type PanelTone, type WorkItemPresentation } from './presentation';
-import { useIsPhone } from './usePhone';
 
 const FACT_WORDS: Record<Fact['status'], string> = { earned: 'Earned', current: 'In progress', not_yet: 'Not yet', unknown: 'Unknown' };
 
@@ -48,7 +41,7 @@ function FactValue({ fact, detail }: { fact: Fact | undefined; detail?: string }
     // The board's detail is shown; the contract word stays in the accessible text, beside it.
     return (
       <>
-        <span className="work-sr">{FACT_WORDS[status]}: </span>
+        <span className="cmp-sr">{FACT_WORDS[status]}: </span>
         <strong>{detail}</strong>
       </>
     );
@@ -57,7 +50,7 @@ function FactValue({ fact, detail }: { fact: Fact | undefined; detail?: string }
     return (
       <>
         <strong>Earned</strong>
-        {fact?.at && <time dateTime={fact.at}>{formatWat(fact.at)}</time>}
+        {fact?.at && <time dateTime={fact.at}>{formatDateTime(fact.at)}</time>}
       </>
     );
   }
@@ -66,7 +59,7 @@ function FactValue({ fact, detail }: { fact: Fact | undefined; detail?: string }
     return (
       <>
         <strong>—</strong>
-        <span className="work-sr">Not yet</span>
+        <span className="cmp-sr">Not yet</span>
       </>
     );
   }
@@ -95,7 +88,7 @@ export function FactsStrip({ facts, details, tones, paidNote = true }: FactsProp
           return (
             <div key={name} role="listitem" className={factClass(fact, tones?.[name])}>
               <b>{label}</b>
-              {more && <span className="work-sr">{more}</span>}
+              {more && <span className="cmp-sr">{more}</span>}
               <FactValue fact={fact} detail={details?.[name]} />
             </div>
           );
@@ -114,7 +107,7 @@ export function StationTrack({ stations, state, details, list, quiet, shown }: T
     // A row of boxes from 1080px (bp-desktop), a vertical list below (and on the boards that draw a list);
     // the region stays focusable for keyboard scrolling.
     <section
-      className={`${list ? 'work-track work-track--list' : 'work-track'}${shown === 0 ? ' work-sr' : ''}`}
+      className={`${list ? 'work-track work-track--list' : 'work-track'}${shown === 0 ? ' cmp-sr' : ''}`}
       aria-label="Stations"
       tabIndex={quiet || shown === 0 ? undefined : 0}
     >
@@ -125,14 +118,14 @@ export function StationTrack({ stations, state, details, list, quiet, shown }: T
           // the station whose effect is uncertain is a solid amber block in the row (design owner, 14 Nov 2026)
           const uncertain = i === current && state === 'effect_uncertain' ? ' work-station--uncertain' : '';
           // the phone boards draw only the first stations; the rest stay in the list for screen readers
-          const cut = shown !== undefined && i >= shown ? ' work-sr' : shown !== undefined && i === shown - 1 ? ' work-station--last' : '';
+          const cut = shown !== undefined && i >= shown ? ' cmp-sr' : shown !== undefined && i === shown - 1 ? ' work-station--last' : '';
           return (
             <div key={i} role="listitem" className={`psl-station psl-station--${modifier}${uncertain}${cut}`} aria-current={i === current ? 'step' : undefined}>
               <b>{String(i + 1).padStart(2, '0')}</b>
               <strong>{station.name}</strong>
               {detail ? (
                 <>
-                  <span className="work-sr">{text}: </span>
+                  <span className="cmp-sr">{text}: </span>
                   <span>{detail}</span>
                 </>
               ) : (
@@ -158,12 +151,12 @@ function AgentSteps({ steps }: { steps: NonNullable<WorkItem['agent']['steps']> 
             </span>
             <span className="psl-step__text">
               <span>
-                <span className="work-sr">{STEP_WORDS[kind]}: </span>
+                <span className="cmp-sr">{STEP_WORDS[kind]}: </span>
                 {step.text}
               </span>
               {step.source && (
                 <span className="psl-step__ref psl-mono">
-                  <span className="work-sr">Read: </span>
+                  <span className="cmp-sr">Read: </span>
                   {step.source}
                 </span>
               )}
@@ -190,9 +183,7 @@ export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
   return (
     <section className="psl-agent work-agent" aria-label="Agent at work">
       <div className="psl-agent__head">
-        <span className={avatarClass(agent.name)} aria-hidden="true">
-          {name.charAt(0).toUpperCase()}
-        </span>
+        <Mascot agent={agent} className="work-mascot work-mascot--32" />
         <span>
           <strong>{name}</strong>
           <small>Cannot approve, send or pay.</small>
@@ -202,7 +193,9 @@ export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
             </small>
           )}
         </span>
-        <span className={`psl-tag psl-tag--${tag.tone}`}>{tag.text}</span>
+        <Tag tone={tag.tone} pulse={agent.status === 'working'}>
+          {tag.text}
+        </Tag>
       </div>
       {steps.length > 0 && <AgentSteps steps={steps} />}
     </section>
@@ -210,17 +203,14 @@ export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
 }
 
 function Mascot({ agent, role, className, pose }: { agent: WorkItem['agent']; role?: string; className: string; pose?: 'waiting' | 'working' }) {
-  const src = pose ? agentPose(agent.name, pose) : agentImage(agent.name);
+  const src = pose ? agentPose(agent.name, pose) : undefined;
   const name = agent.name ?? 'Agent';
-  if (!src) {
-    return (
-      <span className={`${avatarClass(agent.name)} ${className}`} aria-hidden="true">
-        {name.charAt(0).toUpperCase()}
-      </span>
-    );
+  if (src) {
+    // eslint-disable-next-line @next/next/no-img-element -- a fixed small asset from public/agents, as on My work
+    return <img className={className} src={src} alt={role ? `${name}, ${role}` : name} />;
   }
-  // eslint-disable-next-line @next/next/no-img-element -- a fixed small asset from public/agents, as on My work
-  return <img className={className} src={src} alt={role ? `${name}, ${role}` : name} />;
+  const key = agentKey(agent.name);
+  return key ? <AgentAvatar agent={key} size={className.includes('32') ? 32 : 40} className={className} /> : <PersonAvatar name={name} className={className} />;
 }
 
 /** "Chidi · Finance agent": the name, then the role from the presentation block when it has one. */
@@ -248,7 +238,7 @@ function AgentSection({ agent, view }: { agent: WorkItem['agent']; view: WorkIte
           </span>
         </h2>
         {/* only the default board draws the limits line; the others keep it for screen readers */}
-        <small className={view?.limits ? undefined : 'work-sr'}>{view?.limits ?? CANNOT}</small>
+        <small className={view?.limits ? undefined : 'cmp-sr'}>{view?.limits ?? CANNOT}</small>
       </div>
       {steps.length > 0 && (
         <ol className="work-agentsec__steps">
@@ -256,11 +246,11 @@ function AgentSection({ agent, view }: { agent: WorkItem['agent']; view: WorkIte
             <li key={i}>
               <span className="psl-mono">{String(i + 1).padStart(2, '0')}</span>
               <span>
-                <span className="work-sr">{STEP_WORDS[stepKind(step.status)]}: </span>
+                <span className="cmp-sr">{STEP_WORDS[stepKind(step.status)]}: </span>
                 <span className="work-agentsec__text">{step.text}</span>
                 {step.source && <span className="work-agentsec__src">Read: {step.source}</span>}
               </span>
-              {step.at ? <time className="psl-mono" dateTime={step.at}>{formatClock(step.at)}</time> : <span />}
+              {step.at ? <time className="psl-mono" dateTime={step.at}>{formatTime(step.at)}</time> : <span />}
             </li>
           ))}
         </ol>
@@ -278,8 +268,6 @@ function AgentSection({ agent, view }: { agent: WorkItem['agent']; view: WorkIte
 
 /** The phone boards' agent note: mascot, name and role, one line; "See his steps" shows the steps in place. */
 function AgentBox({ agent, view, text }: { agent: WorkItem['agent']; view: WorkItemPresentation['agent']; text?: string }) {
-  const [open, setOpen] = useState(false);
-  const stepsId = useId();
   const steps = agent.steps ?? [];
   // `plain`: the board draws the note alone, so the name and role stay for screen readers only.
   const plain = view?.plain;
@@ -288,28 +276,20 @@ function AgentBox({ agent, view, text }: { agent: WorkItem['agent']; view: WorkI
       <div className="work-agentbox__row">
         <Mascot agent={agent} role={view?.role} className="work-mascot" />
         <div className="work-agentbox__text">
-          <span className={plain ? 'work-sr' : undefined}>
+          <span className={plain ? 'cmp-sr' : undefined}>
             <AgentName agent={agent} role={view?.role} />
             <br />
           </span>
           {text}
           {/* the phone boards draw no limits line; it stays for screen readers */}
           {text && ' '}
-          <small className="work-sr">{CANNOT}</small>
-          {steps.length > 0 && (
-            <>
-              {' '}
-              <button type="button" className="work-disclosure" aria-expanded={open} aria-controls={stepsId} onClick={() => setOpen((v) => !v)}>
-                {open ? 'Hide his steps' : 'See his steps'}
-              </button>
-            </>
-          )}
+          <small className="cmp-sr">{CANNOT}</small>
         </div>
       </div>
       {steps.length > 0 && (
-        <div id={stepsId} hidden={!open}>
+        <Disclosure summary="See his steps">
           <AgentSteps steps={steps} />
-        </div>
+        </Disclosure>
       )}
     </section>
   );
@@ -335,7 +315,7 @@ function AgentBanner({ agent, view, phone }: { agent: WorkItem['agent']; view: W
           </>
         )}
         {/* the boards draw no limits line here; it stays for screen readers */}
-        <small className="work-sr">
+        <small className="cmp-sr">
           {agent.name ?? 'Agent'}
           {view?.role && ` · ${view.role}`} · {CANNOT}
         </small>
@@ -366,15 +346,19 @@ function AgentPanel({ agent, view, panel }: { agent: WorkItem['agent']; view: Wo
                 {view?.role && ` · ${view.role}`}
                 {agent.status === 'working' && now >= 0 && ` · step ${now + 1} of ${steps.length}`}
               </small>
-              <small className="work-sr">{CANNOT}</small>
+              <small className="cmp-sr">{CANNOT}</small>
             </span>
-            {tag && <span className={`psl-tag psl-tag--${tag.tone}`}>{tag.text}</span>}
+            {tag && (
+              <Tag tone={tag.tone} pulse={agent.status === 'working'}>
+                {tag.text}
+              </Tag>
+            )}
           </div>
           {steps.length > 0 && <AgentSteps steps={steps} />}
           {(agent.started_at || panel?.note || links.length > 0) && (
             <div className="work-agentpanel__foot">
               <span>
-                {agent.started_at && `Started ${formatClock(agent.started_at)}`}
+                {agent.started_at && `Started ${formatTime(agent.started_at)}`}
                 {agent.started_at && panel?.note && ' · '}
                 {panel?.note}
               </span>
@@ -392,17 +376,17 @@ function AgentPanel({ agent, view, panel }: { agent: WorkItem['agent']; view: Wo
 }
 
 const TONE_BUTTON: Record<PanelTone, string> = {
-  dark: 'psl-btn psl-btn--dark',
-  signal: 'psl-btn psl-btn--start',
-  waiting: 'psl-btn',
-  verified: 'psl-btn psl-btn--confirm',
+  dark: buttonClass('dark', 'lg'),
+  signal: buttonClass('start', 'lg'),
+  waiting: buttonClass('primary', 'lg'),
+  verified: buttonClass('confirm', 'lg'),
 };
 
 function PanelLinks({ links, tone }: { links: PanelLink[]; tone: PanelTone }) {
   return links
     .filter((l) => isAppPath(l.href))
     .map((l) => (
-      <Link key={l.href + l.label} className={`${l.primary ? TONE_BUTTON[tone] : 'psl-btn psl-btn--secondary'} psl-btn--lg`} href={l.href}>
+      <Link key={l.href + l.label} className={l.primary ? TONE_BUTTON[tone] : buttonClass('secondary', 'lg')} href={l.href}>
         {l.label}
       </Link>
     ));
@@ -456,10 +440,9 @@ function StatePanel({ panel, children }: { panel: NonNullable<WorkItemPresentati
 function PanelSummary({ summary }: { summary: NonNullable<NonNullable<WorkItemPresentation['panel']>['summary']> }) {
   if (!summary.kind) return <p className="work-summary">{summary.text}</p>;
   return (
-    <div className={`psl-callout psl-callout--${summary.kind}`}>
-      {summary.kind === 'info' ? <InfoIcon /> : <WarningIcon />}
-      <span>{summary.text}</span>
-    </div>
+    <Callout kind={summary.kind} announce={false}>
+      {summary.text}
+    </Callout>
   );
 }
 
@@ -533,13 +516,11 @@ function InvoicePreview({ preview }: { preview: NonNullable<WorkItemPresentation
 
 /** The issue phone board: the invoice in brief; "Preview the invoice" shows the full preview in place. */
 function PreviewSummary({ item, preview }: { item: WorkItem; preview: NonNullable<WorkItemPresentation['preview']> }) {
-  const [open, setOpen] = useState(false);
-  const previewId = useId();
   return (
     <>
       <section className="work-invoicecard" aria-label="Invoice">
         <span className="work-invoicecard__ref">
-          {item.reference} · {preview.version} · <span className="work-invoicecard__test">TEST TEMPLATE</span>
+          {item.reference} · {preview.version} · <SampleLabel kind="test" />
         </span>
         {item.amount && (
           <span className="work-invoicecard__amount">
@@ -547,35 +528,29 @@ function PreviewSummary({ item, preview }: { item: WorkItem; preview: NonNullabl
           </span>
         )}
         <span>{preview.basis}</span>
-        <button type="button" className="work-disclosure" aria-expanded={open} aria-controls={previewId} onClick={() => setOpen((v) => !v)}>
-          {open ? 'Hide the invoice' : 'Preview the invoice'}
-        </button>
+        <Disclosure summary="Preview the invoice">
+          <InvoicePreview preview={preview} />
+        </Disclosure>
       </section>
-      <div id={previewId} hidden={!open}>
-        <InvoicePreview preview={preview} />
-      </div>
     </>
   );
 }
 
 export function TaskPanels({ id, tasks }: { id: string; tasks: ResponseWorkItem['tasks'] }) {
   return tasks.map((task) => (
-    <section key={task.id} className={task.you_can_act ? 'psl-panel psl-panel--decide' : 'psl-panel'} aria-label="Current human task">
-      <h2 className={task.you_can_act ? 'psl-panel__head psl-panel__head--decide' : 'psl-panel__head'}>{task.title}</h2>
-      <div className="psl-panel__body">
-        <p className="work-plain">Only a {task.required_role} can decide.</p>
-        {task.you_can_act && <p className="work-plain">You are {task.required_role}.</p>}
-        {task.decision && <DecisionRows decision={task.decision} />}
-        {task.you_can_act &&
-          (responseOf(task) ? (
-            <ResponseEntryLink id={id} task={task} />
-          ) : (
-            <Link className="psl-btn" href={`/work/${encodeURIComponent(id)}/decide?task=${encodeURIComponent(task.id)}`}>
-              Open the decision
-            </Link>
-          ))}
-      </div>
-    </section>
+    <Panel key={task.id} kind={task.you_can_act ? 'decide' : 'default'} head={task.title}>
+      <p className="work-plain">Only a {task.required_role} can decide.</p>
+      {task.you_can_act && <p className="work-plain">You are {task.required_role}.</p>}
+      {task.decision && <DecisionRows decision={task.decision} />}
+      {task.you_can_act &&
+        (responseOf(task) ? (
+          <ResponseEntryLink id={id} task={task} />
+        ) : (
+          <Link className={buttonClass()} href={`/work/${encodeURIComponent(id)}/decide?task=${encodeURIComponent(task.id)}`}>
+            Open the decision
+          </Link>
+        ))}
+    </Panel>
   ));
 }
 
@@ -593,17 +568,15 @@ export const hasExceptionsLink = (item: WorkItem) => EXCEPTION_STATES.has(item.s
 /** `quiet`: the text only; the board page draws the exceptions link itself, visibly, where its board does. */
 export function NextStep({ item, quiet }: { item: WorkItem; quiet?: boolean }) {
   return (
-    <p className={`psl-callout psl-callout--${nextStepKind(item.state)} work-next`}>
-      <span>
-        <strong>Next step.</strong> {item.next_step}
-        {!quiet && hasExceptionsLink(item) && (
-          <>
-            {' '}
-            <Link href="/exceptions">See all exceptions</Link>
-          </>
-        )}
-      </span>
-    </p>
+    <Callout kind={nextStepKind(item.state)} announce={false} className="work-next">
+      <strong>Next step.</strong> {item.next_step}
+      {!quiet && hasExceptionsLink(item) && (
+        <>
+          {' '}
+          <Link href="/exceptions">See all exceptions</Link>
+        </>
+      )}
+    </Callout>
   );
 }
 
@@ -705,7 +678,7 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
           return panel ? (
             <StatePanel key={b} panel={panel}>
               {inPanel && (
-                <Link className="psl-btn psl-btn--secondary psl-btn--lg work-exceptions" href="/exceptions">
+                <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
                   See all exceptions
                 </Link>
               )}
@@ -736,7 +709,7 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
     main = (
       <>
         {order.main.map(block)}
-        {quiet.length > 0 && <div className="work-sr">{quiet.map(block)}</div>}
+        {quiet.length > 0 && <div className="cmp-sr">{quiet.map(block)}</div>}
       </>
     );
     aside = order.aside.map(block);
@@ -747,16 +720,16 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
       <>
         {nextDrawn ? (
           <p className="work-note">
-            <span className="work-sr">Next step. </span>
+            <span className="cmp-sr">Next step. </span>
             {item.next_step}
           </p>
         ) : (
-          <div className="work-sr">
+          <div className="cmp-sr">
             <NextStep item={item} quiet />
           </div>
         )}
         {hasExceptionsLink(item) && !inPanel && (
-          <Link className="psl-btn psl-btn--secondary psl-btn--lg work-exceptions" href="/exceptions">
+          <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
             See all exceptions
           </Link>
         )}
@@ -768,19 +741,19 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   // stay in the page for screen readers only (the contract data is never dropped), the way the state boards do.
   if (item.workspace) {
     before = (
-      <div className="work-sr">
+      <div className="cmp-sr">
         <FactsStrip facts={item.facts} paidNote={false} />
         <StationTrack stations={item.stations} state={item.state} />
       </div>
     );
     main = (
-      <div className="work-sr">
+      <div className="cmp-sr">
         <AgentCard agent={item.agent} />
         <NextStep item={item} quiet />
       </div>
     );
     after = hasExceptionsLink(item) ? (
-      <Link className="psl-btn psl-btn--secondary psl-btn--lg work-exceptions" href="/exceptions">
+      <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
         See all exceptions
       </Link>
     ) : null;

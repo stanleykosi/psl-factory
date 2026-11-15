@@ -376,7 +376,7 @@ describe('uncertain send keeps the lock (AC 16, INV-RESEND)', () => {
     await open(item('W-2204'));
     await press('Approve and send');
     await screen.findByText('We are checking what happened. Nothing was sent again.');
-    const callout = screen.getByText('We are checking what happened. Nothing was sent again.').closest('[role="alert"]') as HTMLElement;
+    const callout = screen.getByText('We are checking what happened. Nothing was sent again.').closest('.ws-notice') as HTMLElement;
     expect(within(callout).getAllByRole('button').map((b) => b.textContent)).toEqual(['Reload']);
     expect(posts()).toHaveLength(1);
   });

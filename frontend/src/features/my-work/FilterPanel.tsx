@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useState } from 'react';
 
 import { api, call } from '@/api/client';
+import { Checkbox, FilterPanel as Panel, Select } from '@/components';
 
 import { STATE_KEYS, STATES, WAITING_KEYS, WAITING_ON, type LineOption, type WaitingOn, type WorkState } from './model';
 
@@ -17,7 +18,6 @@ type Props = {
   phone: boolean;
   lines: LineOption[];
   applied: Filters;
-  anchor: RefObject<HTMLElement | null>;
   preview: (filters: Filters) => Promise<Preview>;
   onApply: (filters: Filters) => void;
   onClose: () => void;
@@ -44,33 +44,11 @@ function useProjects() {
  * phones. Line, Project, State and Waiting on edit a draft; "Show N items" applies it, where N comes from the
  * same list request with the draft. Esc or a click outside discards it.
  */
-export function FilterPanel({ phone, lines, applied, anchor, preview, onApply, onClose }: Props) {
+export function MyWorkFilter({ phone, lines, applied, preview, onApply, onClose }: Props) {
   const [draft, setDraft] = useState<Filters>(applied);
   const [allLines, setAllLines] = useState(false);
   const [count, setCount] = useState<Preview>();
   const projects = useProjects();
-  const panel = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    panel.current?.querySelector<HTMLElement>('input, select, button')?.focus();
-  }, []);
-
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    const onPointer = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (panel.current?.contains(target) || anchor.current?.contains(target)) return;
-      onClose();
-    };
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onPointer);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('mousedown', onPointer);
-    };
-  }, [anchor, onClose]);
 
   // "Show N items": counts the draft with one list request, a moment after the last change.
   useEffect(() => {
@@ -94,29 +72,27 @@ export function FilterPanel({ phone, lines, applied, anchor, preview, onApply, o
   const fields = (
     <>
       <fieldset className="my-work__fieldset">
-        <legend className="my-work__label">Line</legend>
+        <legend className="psl-label">Line</legend>
         {shownLines.map((line) => (
-          <label key={line.key} className="psl-check my-work__check">
-            <input type="checkbox" checked={draft.line === line.key} onChange={(e) => setDraft({ ...draft, line: e.target.checked ? line.key : undefined })} />
-            <span>{line.title}</span>
-          </label>
+          <Checkbox
+            key={line.key}
+            label={line.title}
+            checked={draft.line === line.key}
+            onChange={(e) => setDraft({ ...draft, line: e.target.checked ? line.key : undefined })}
+          />
         ))}
         {shownLines.length < lines.length && (
-          <button type="button" className="psl-link my-work__linkbutton" onClick={() => setAllLines(true)}>
+          <button type="button" className="psl-link cmp-linkbutton cmp-linkbutton--small" onClick={() => setAllLines(true)}>
             {phone ? `All ${lines.length} lines` : `Show all ${lines.length} lines`}
           </button>
         )}
       </fieldset>
-      <div className="my-work__field">
-        <span className="my-work__label" id="my-work-project-label">
+      {/* A project list is a record picker: Select has no search box yet (review-components.md), so the native list stays. */}
+      <div className="psl-field">
+        <label className="psl-label" htmlFor="my-work-project">
           Project
-        </span>
-        <select
-          aria-labelledby="my-work-project-label"
-          className="psl-input my-work__select"
-          value={draft.project ?? ''}
-          onChange={(e) => setDraft({ ...draft, project: e.target.value || undefined })}
-        >
+        </label>
+        <select id="my-work-project" className="psl-input my-work__select" value={draft.project ?? ''} onChange={(e) => setDraft({ ...draft, project: e.target.value || undefined })}>
           <option value="">Any project</option>
           {[...appliedProject, ...projects].map((p) => (
             <option key={p.case_id} value={p.case_id}>
@@ -125,83 +101,28 @@ export function FilterPanel({ phone, lines, applied, anchor, preview, onApply, o
           ))}
         </select>
       </div>
-      <div className="my-work__field">
-        <span className="my-work__label" id="my-work-state-label">
-          State
-        </span>
-        <select
-          id="my-work-state"
-          aria-labelledby="my-work-state-label"
-          className="psl-input my-work__select"
-          value={draft.state ?? ''}
-          onChange={(e) => setDraft({ ...draft, state: (e.target.value || undefined) as WorkState | undefined })}
-        >
-          <option value="">Any state</option>
-          {STATE_KEYS.map((key) => (
-            <option key={key} value={key}>
-              {STATES[key].words}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="my-work__field">
-        <span className="my-work__label" id="my-work-waiting-label">
-          Waiting on
-        </span>
-        <select
-          aria-labelledby="my-work-waiting-label"
-          className="psl-input my-work__select"
-          value={draft.waiting ?? ''}
-          onChange={(e) => setDraft({ ...draft, waiting: (e.target.value || undefined) as WaitingOn | undefined })}
-        >
-          <option value="">Anyone</option>
-          {WAITING_KEYS.map((key) => (
-            <option key={key} value={key}>
-              {WAITING_ON[key]}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Select
+        label="State"
+        placeholder="Any state"
+        value={draft.state ?? ''}
+        onChange={(value) => setDraft({ ...draft, state: (value || undefined) as WorkState | undefined })}
+        options={[{ value: '', label: 'Any state' }, ...STATE_KEYS.map((key) => ({ value: key, label: STATES[key].words }))]}
+      />
+      <Select
+        label="Waiting on"
+        placeholder="Anyone"
+        value={draft.waiting ?? ''}
+        onChange={(value) => setDraft({ ...draft, waiting: (value || undefined) as WaitingOn | undefined })}
+        options={[{ value: '', label: 'Anyone' }, ...WAITING_KEYS.map((key) => ({ value: key, label: WAITING_ON[key] }))]}
+      />
     </>
   );
 
-  const clear = () => setDraft({});
-  const apply = () => onApply(draft);
   const showLabel = count ? `Show ${count.count}${count.more ? '+' : ''} ${count.count === 1 && !count.more ? 'item' : 'items'}` : 'Show results';
 
-  if (phone) {
-    return (
-      <div className="psl-scrim my-work__scrim">
-        <div ref={panel} className="psl-sheet my-work__sheet" role="dialog" aria-label="Filter">
-          <div className="psl-sheet__head">
-            <strong className="my-work__sheettitle">Filter</strong>
-            <button type="button" className="psl-link my-work__linkbutton" onClick={clear}>
-              Clear
-            </button>
-          </div>
-          <div className="psl-sheet__body my-work__sheetbody">{fields}</div>
-          <div className="psl-sheet__foot">
-            <button type="button" className="psl-btn psl-btn--dark psl-btn--xl psl-btn--block" onClick={apply}>
-              {showLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div ref={panel} className="psl-pop my-work__pop" role="dialog" aria-label="Filter">
-      <div className="my-work__pophead">Filter</div>
-      <div className="my-work__popbody">{fields}</div>
-      <div className="my-work__popfoot">
-        <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" onClick={clear}>
-          Clear
-        </button>
-        <button type="button" className="psl-btn psl-btn--dark psl-btn--lg psl-btn--block" onClick={apply}>
-          {showLabel}
-        </button>
-      </div>
-    </div>
+    <Panel applyLabel={showLabel} onApply={() => onApply(draft)} onClear={() => setDraft({})} onClose={onClose}>
+      {fields}
+    </Panel>
   );
 }

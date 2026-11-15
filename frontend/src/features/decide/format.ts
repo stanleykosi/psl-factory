@@ -23,7 +23,7 @@ export function formatAmount(amount: Amount): string | null {
 
 const HHMM = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 
-/** "10:47" in Africa/Lagos, for the done eyebrow only. */
+/** "10:47" in Africa/Lagos, still used by the alerts and month-end screens; the decision screens write "10:47 WAT" with formatTime. */
 export function formatClock(value: string): string {
   return HHMM.format(new Date(value));
 }

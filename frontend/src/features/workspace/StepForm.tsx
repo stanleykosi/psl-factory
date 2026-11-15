@@ -14,7 +14,7 @@ import { buildIntake, dependentsOf, parentValue, type FieldValue, type Values } 
 import { IntakeField } from '@/features/start-work/IntakeField';
 import type { Field, LineOption } from '@/features/start-work/types';
 import { api, call } from '@/api/client';
-import { WarningIcon } from '@/shell/icons';
+import { Button, Callout, MoneyField as MoneyInput, type ButtonKind } from '@/components';
 
 import type { Step } from './labels';
 import type { StepBody, SubmitResult } from './useWorkspaceStep';
@@ -107,37 +107,16 @@ function Restricted({ field }: { field: StepField }) {
 }
 
 function MoneyField({ field, value, onChange, error }: { field: StepField; value: MoneyValue | undefined; onChange: (v: MoneyValue) => void; error?: string }) {
-  const id = useId();
-  const described = [field.help && `${id}-help`, error && `${id}-error`].filter(Boolean).join(' ') || undefined;
   return (
-    <div className="psl-field sw-field" data-field={field.name}>
-      <label className="psl-label" htmlFor={`${id}-control`}>
-        {field.required ? field.label : `${field.label} (optional)`}
-      </label>
-      <span className="psl-input psl-input--money ws-money">
-        <span aria-hidden="true">₦</span>
-        <input
-          id={`${id}-control`}
-          inputMode="decimal"
-          placeholder={field.placeholder}
-          value={value?.amount ?? ''}
-          aria-required={field.required}
-          aria-invalid={error ? true : undefined}
-          aria-describedby={described}
-          onChange={(event) => onChange({ amount: event.target.value })}
-        />
-      </span>
-      {field.help && (
-        <span className="psl-hint" id={`${id}-help`}>
-          {field.help}
-        </span>
-      )}
-      {error && (
-        <span className="psl-error" id={`${id}-error`}>
-          {error}
-        </span>
-      )}
-    </div>
+    <MoneyInput
+      fieldClassName="sw-field"
+      label={field.label}
+      optional={!field.required}
+      hint={field.help}
+      error={error}
+      value={value?.amount ?? ''}
+      onChange={(amount) => onChange({ amount: amount ?? '' })}
+    />
   );
 }
 
@@ -273,14 +252,13 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
       <div className="psl-panel__body ws-form__body">
         {consequence}
         {messages.length > 0 && (
-          <div className="psl-callout psl-callout--problem" role="alert">
-            <WarningIcon />
+          <Callout kind="problem">
             <span className="ws-stack">
               {messages.map((m, i) => (
                 <span key={i}>{m}</span>
               ))}
             </span>
-          </div>
+          </Callout>
         )}
         {fields.map((field) => {
           if (field.restricted) return <Restricted key={field.name} field={field} />;
@@ -318,25 +296,21 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
         })}
         {step.confirm && <p className="ws-confirm">{step.confirm}</p>}
         <div className="ws-form__actions">
-          <button type="submit" className={submitClass(step)} aria-disabled={pending || off || undefined}>
-            {pending ? `${step.label}…` : (submitLabel ?? step.label)}
-          </button>
-          <button type="button" className="psl-btn psl-btn--secondary" onClick={onClose}>
+          <Button type="submit" kind={step.emphasis === 'danger' ? 'reject' : 'primary'} busy={pending} busyLabel={`${step.label}…`} aria-disabled={pending || off || undefined}>
+            {submitLabel ?? step.label}
+          </Button>
+          <Button kind="secondary" onClick={onClose}>
             {FORM_TEXT.cancel}
-          </button>
+          </Button>
         </div>
       </div>
     </form>
   );
 }
 
-export function stepClass(step: Step): string {
-  if (step.emphasis === 'primary') return 'psl-btn';
-  if (step.emphasis === 'danger') return 'psl-btn psl-btn--reject';
-  return 'psl-btn psl-btn--secondary';
-}
-
-/** A form's submit is its main action: filled, whatever the step that opened it looked like (danger stays red). */
-function submitClass(step: Step): string {
-  return step.emphasis === 'danger' ? 'psl-btn psl-btn--reject' : 'psl-btn';
+/** A step's button kind from its emphasis: a form's submit is filled whatever opened it (danger stays red). */
+export function stepKind(step: Step): ButtonKind {
+  if (step.emphasis === 'primary') return 'primary';
+  if (step.emphasis === 'danger') return 'reject';
+  return 'secondary';
 }
