@@ -111,5 +111,12 @@
       "recorded_at": "2026-11-13T15:33:13Z"
     }
   ],
-  "exceptions": []
+  "exceptions": [
+    {
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "authorized_by": "design engineer (hunchoweb), 15 Nov 2026 \u2014 D-89",
+      "reason": "Frame change only: the '+ Start' (Start work) button is drawn in the top bar on every phone screen board (253 boards on the main and Finance and Payroll canvases), matching the built app; nothing else on any board changed. The 13 Nov client approval (version 1794581312-b166) covers everything else; PSL sees this at the next design review.",
+      "recorded_at": "2026-11-15T16:58:04Z"
+    }
+  ]
 }

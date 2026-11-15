@@ -1,0 +1,586 @@
+board,canvas,width,variant,had_start,changed
+AGENT-concepts.dc.html,main,1440,skip: concept,no,no
+DELIVERY-flow-desktop.dc.html,main,1440,skip: flow overview,no,no
+FINANCE-moved-desktop.dc.html,main,1440,skip: flow overview,no,no
+J04-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+J04-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+LINE-commercial-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-delivery-archive-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-delivery-closure-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-delivery-go-live-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-delivery-handover-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-delivery-hypercare-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-delivery-release-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-engagement-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-planning-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-pmo-change-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-pmo-emergency-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-pmo-escalation-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-pmo-finance-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-pmo-issues-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-pmo-leadership-report-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-pmo-minutes-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-pmo-weekly-report-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINE-rfp-response-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+LINES-desktop.dc.html,main,1440,skip: reference line flow (not a platform screen),no,no
+MYWORK-queue-concepts.dc.html,main,1440,skip: concept,no,no
+Main.dc.html,main,1280,skip: pointer,no,no
+NAV-concepts.dc.html,main,1440,skip: concept,yes,no
+PMO-flow-desktop.dc.html,main,1440,skip: flow overview,no,no
+PRESALE-flow-desktop.dc.html,main,1440,skip: flow overview,no,no
+SCR-01-desktop-empty.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-01-desktop-filter.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-01-desktop-my-work.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-01-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-01-empty-concepts.dc.html,main,1440,skip: concept,no,no
+SCR-01-floor-concepts.dc.html,main,1440,skip: concept,no,no
+SCR-01-mobile-empty.dc.html,main,390,phone wordmark bar,yes,no
+SCR-01-mobile-filter.dc.html,main,390,phone wordmark bar,yes,no
+SCR-01-mobile-lead.dc.html,main,390,phone wordmark bar,yes,no
+SCR-01-mobile-my-work.dc.html,main,390,phone wordmark bar,yes,no
+SCR-01-mobile.dc.html,main,390,phone wordmark bar,yes,no
+SCR-02-desktop-awaiting-reconciliation.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-cancelled.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-effect-uncertain.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-history.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-issue.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-owner-needed.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-permission.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-processing.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-ready.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-setup-needed.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-verified.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-waiting.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-02-mobile-awaiting-reconciliation.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-cancelled.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-effect-uncertain.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-history.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-issue.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-owner-needed.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-permission.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-processing.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-ready.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-setup-needed.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-verified.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-waiting.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-02-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-03-desktop-ceo-costing.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-03-desktop-cto-emergency.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-03-desktop-done.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-03-desktop-not-yours.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-03-desktop-payment-exception.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-03-desktop-stale.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-03-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-03-mobile-ceo-costing.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-03-mobile-cto-emergency.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-03-mobile-done.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-03-mobile-not-yours.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-03-mobile-payment-exception.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-03-mobile-stale.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-03-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-desktop-accounts.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-bu.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-change.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-escalation.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-forecast.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-incident.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-issue.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-leadership.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-ledger.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-lines.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-minutes.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-payroll.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-ppe.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-schedules.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-validation.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop-weekly.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-04-mobile-accounts.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-bu.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-change.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-escalation.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-forecast.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-incident.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-issue.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-leadership.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-ledger.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-lines.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-minutes.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-payroll.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-ppe.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-schedules.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-validation.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile-weekly.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-04-progress-concepts.dc.html,main,1440,skip: concept,no,no
+SCR-04-start-concepts.dc.html,main,1440,skip: concept,no,no
+SCR-05-desktop-cant.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-05-desktop-draft-started.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-05-desktop-thread.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-05-desktop-working.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-05-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-05-mobile-cant.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-05-mobile-draft-started.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-05-mobile-thread.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-05-mobile-working.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-05-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-06-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-06-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-06-overview-concepts.dc.html,main,1440,skip: concept,no,no
+SCR-07-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-07-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-08-desktop-returned.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-08-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-08-mobile-returned.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-08-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-10-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-10-mobile.dc.html,main,390,phone back-link bar (no page word),no,yes
+SCR-11-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-11-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-12-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-12-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-13-desktop-delegation.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-13-desktop-delivery-rules.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-13-desktop-fields.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-13-desktop-finance-rules.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-13-desktop-permission.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-13-desktop-rules.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-13-desktop-validation.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-13-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-13-mobile-delegation.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-13-mobile-delivery-rules.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-13-mobile-fields.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-13-mobile-finance-rules.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-13-mobile-permission.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-13-mobile-rules.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-13-mobile-validation.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-13-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-14-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-14-mobile.dc.html,main,390,phone wordmark bar,yes,no
+SCR-15-desktop-account.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-15-desktop-email.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-15-desktop-settings.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-15-desktop-whatsapp.dc.html,main,1440,skip: WhatsApp message mock (not an app screen),no,no
+SCR-15-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-15-mobile-account.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-15-mobile-email.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-15-mobile-settings.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-15-mobile-whatsapp.dc.html,main,390,skip: WhatsApp message mock (not an app screen),no,no
+SCR-15-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-desktop-rfp-lost.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-rfp-outcome-lost.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-rfp-outcome-pending.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-rfp-outcome-unknown.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-rfp-outcome.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-rfp-pending.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-rfp-unknown.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-rfp-won.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-sow-signed.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-success.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-team-input.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop-validation.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-16-mobile-rfp-lost.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-rfp-outcome-lost.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-rfp-outcome-pending.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-rfp-outcome-unknown.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-rfp-outcome.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-rfp-pending.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-rfp-unknown.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-rfp-won.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-sow-signed.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-success.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-team-input.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-16-mobile-validation.dc.html,main,390,phone back-link bar (no page word),no,yes
+SCR-16-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-17-desktop-error.dc.html,main,1440,"skip: signed-out page (no session, no Start)",no,no
+SCR-17-desktop-reset.dc.html,main,1440,"skip: signed-out page (no session, no Start)",no,no
+SCR-17-desktop-setup.dc.html,main,1440,"skip: signed-out page (no session, no Start)",no,no
+SCR-17-desktop.dc.html,main,1440,"skip: signed-out page (no session, no Start)",no,no
+SCR-17-mobile-error.dc.html,main,390,"skip: signed-out page (no session, no Start)",no,no
+SCR-17-mobile-reset.dc.html,main,390,"skip: signed-out page (no session, no Start)",no,no
+SCR-17-mobile-setup.dc.html,main,390,"skip: signed-out page (no session, no Start)",no,no
+SCR-17-mobile.dc.html,main,390,"skip: signed-out page (no session, no Start)",no,no
+SCR-19-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-19-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-21-desktop-deactivate.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-21-desktop-invite.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-21-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-21-mobile-deactivate.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-21-mobile-invite.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-21-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-22-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-22-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-23-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-23-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-24-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-24-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-25-desktop-assembling.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-25-desktop-invalid.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-25-desktop-received.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-25-desktop-returned.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-25-desktop-review.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-25-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-25-mobile-assembling.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-25-mobile-invalid.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-25-mobile-received.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-25-mobile-returned.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-25-mobile-review.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-25-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-26-desktop-accepted.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-26-desktop-edit.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-26-desktop-reject.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-26-desktop-response-review.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-26-desktop-review.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-26-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-26-mobile-accepted.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-26-mobile-edit.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-26-mobile-reject.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-26-mobile-response-review.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-26-mobile-review.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-26-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-26-team-input-concepts.dc.html,main,1440,skip: concept,no,no
+SCR-27-desktop-adjust.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-27-desktop-approvals.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-27-desktop-ask.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-27-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-27-mobile-adjust.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-27-mobile-approvals.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-27-mobile-ask.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-27-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-28-desktop-drafted.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-28-desktop-internal.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-28-desktop-published.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-28-desktop-review.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-28-desktop-suggesting.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-28-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-28-mobile-drafted.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-28-mobile-internal.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-28-mobile-published.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-28-mobile-review.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-28-mobile-suggesting.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-28-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-29-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-29-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-30-desktop-no-owner.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-30-desktop-overdue.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-30-desktop-verified.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-30-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-30-mobile-no-owner.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-30-mobile-overdue.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-30-mobile-verified.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-30-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-31-desktop-authorise.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-31-desktop-closed.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-31-desktop-decision.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-31-desktop-execution.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-31-desktop-go-live-note.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-31-desktop-impact.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-31-desktop-notice.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-31-desktop-rejected.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-31-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-31-mobile-authorise.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-31-mobile-closed.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-31-mobile-decision.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-31-mobile-execution.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-31-mobile-go-live-note.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-31-mobile-impact.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-31-mobile-notice.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-31-mobile-rejected.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-31-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-33-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-33-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-34-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-34-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-35-desktop-detail.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-35-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-35-mobile-detail.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-35-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-38-desktop-changed.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-38-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-38-mobile-changed.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-38-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-39-desktop-example.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-39-desktop-review-own.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-39-desktop-review.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-39-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-39-mobile-example.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-39-mobile-review-own.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-39-mobile-review.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-39-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-40-desktop-draft.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-40-desktop-review.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-40-desktop-submitted-portal.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-40-desktop-submitted.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-40-mobile-draft.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-40-mobile-review.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-40-mobile-submitted-portal.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-40-mobile-submitted.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-41-desktop-register.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-41-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-41-mobile-register.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-41-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-42-desktop-held.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-42-desktop-readiness.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-42-desktop-ready.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-42-desktop-record.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-42-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-42-mobile-held.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-42-mobile-readiness.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-42-mobile-ready.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-42-mobile-record.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-42-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-43-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-43-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-44-desktop-decision.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-44-desktop-owner-needed.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-44-desktop-readiness.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-44-desktop-ready.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-44-desktop-returned.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-44-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-44-mobile-decision.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-44-mobile-owner-needed.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-44-mobile-readiness.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-44-mobile-ready.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-44-mobile-returned.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-44-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-45-desktop-accepted.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-45-desktop-changes.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-45-desktop-declined.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-45-desktop-signatures.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-45-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-45-mobile-accepted.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-45-mobile-changes.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-45-mobile-declined.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-45-mobile-signatures.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-45-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-46-desktop-evaluating.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-46-desktop-not-met.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-46-desktop-qualified.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-46-desktop-record.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-46-desktop-setup-needed.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-46-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-46-mobile-evaluating.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-46-mobile-not-met.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-46-mobile-qualified.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-46-mobile-record.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-46-mobile-setup-needed.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-46-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-47-desktop-uncertain.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-47-desktop-working.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-47-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-47-mobile-uncertain.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-47-mobile-working.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-47-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-48-desktop-gaps.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-48-desktop-received.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-48-desktop-record.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-48-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-48-mobile-gaps.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-48-mobile-received.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-48-mobile-record.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-48-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-49-desktop-blocked.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-49-desktop-closed.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-49-desktop-decision.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-49-desktop-returned.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-49-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-49-mobile-blocked.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-49-mobile-closed.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-49-mobile-decision.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-49-mobile-returned.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-49-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-50-desktop-record.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-50-desktop-refused.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-50-desktop-report.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-50-desktop-retro.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-50-desktop-review.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-50-mobile-record.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-50-mobile-refused.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-50-mobile-report.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-50-mobile-retro.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-50-mobile-review.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-51-desktop-decide.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-51-desktop-draft.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-51-desktop-investigating.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-51-desktop-not-escalated.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-51-desktop-received.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-51-desktop-review.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-51-mobile-decide.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-51-mobile-draft.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-51-mobile-investigating.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-51-mobile-not-escalated.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-51-mobile-received.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-51-mobile-review.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-52-desktop-drafting.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-52-desktop-received.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-52-desktop-review.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-52-desktop-setup.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-52-desktop-tuesday.dc.html,main,1440,desktop top bar (nav),yes,no
+SCR-52-mobile-drafting.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-52-mobile-received.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-52-mobile-review.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-52-mobile-setup.dc.html,main,390,phone back-link bar + page word,no,yes
+SCR-52-mobile-tuesday.dc.html,main,390,phone back-link bar + page word,no,yes
+SITEMAP-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+STATES-desktop.dc.html,main,1440,desktop top bar (nav),yes,no
+STATES-mobile.dc.html,main,390,phone back-link bar + page word,no,yes
+a-item.dc.html,main,1440,skip: concept,no,no
+a-phone.dc.html,main,390,skip: concept,no,no
+a-queue.dc.html,main,1440,skip: concept,no,no
+b-item.dc.html,main,1440,skip: concept,no,no
+b-phone.dc.html,main,390,skip: concept,no,no
+b-queue.dc.html,main,1440,skip: concept,no,no
+c-assistant.dc.html,main,1440,skip: concept,no,no
+c-item.dc.html,main,1440,skip: concept,no,no
+c-phone.dc.html,main,390,skip: concept,no,no
+c-queue.dc.html,main,1440,skip: concept,no,no
+d-item.dc.html,main,1440,skip: concept,no,no
+d-phone.dc.html,main,390,skip: concept,no,no
+d-queue.dc.html,main,1440,skip: concept,no,no
+mascot-family.dc.html,main,1440,skip: concept,no,no
+mascot-poses.dc.html,main,1440,skip: concept,no,no
+FINANCE-flow-desktop.dc.html,finance,1440,skip: flow overview,no,no
+LINE-finance-accounts-desktop.dc.html,finance,1440,skip: reference line flow (not a platform screen),no,no
+LINE-finance-bu-desktop.dc.html,finance,1440,skip: reference line flow (not a platform screen),no,no
+LINE-finance-forecast-desktop.dc.html,finance,1440,skip: reference line flow (not a platform screen),no,no
+LINE-finance-ledger-desktop.dc.html,finance,1440,skip: reference line flow (not a platform screen),no,no
+LINE-finance-payroll-desktop.dc.html,finance,1440,skip: reference line flow (not a platform screen),no,no
+LINE-finance-ppe-desktop.dc.html,finance,1440,skip: reference line flow (not a platform screen),no,no
+LINE-finance-schedules-desktop.dc.html,finance,1440,skip: reference line flow (not a platform screen),no,no
+Main.dc.html,finance,1440,skip: pointer,no,no
+SCR-02-desktop-evidence-asked.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-evidence-supplied.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-02-desktop-returned.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-02-mobile-evidence-asked.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-evidence-supplied.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-02-mobile-returned.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-03-desktop-own.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-03-mobile-own.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-09-desktop-error.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-09-desktop.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-09-mobile-error.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-09-mobile.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-18-desktop-permission.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-18-desktop.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-18-mobile-permission.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-18-mobile.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-20-desktop-record.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-20-desktop.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-20-mobile-record.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-20-mobile.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-32-desktop.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-32-mobile.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-36-desktop.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-36-mobile.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-37-desktop.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-37-mobile.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-desktop-drafting.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-investigating.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-owner-needed.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-publishing.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-quarantined.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-returned.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-reviews.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-setup-needed.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-uncertain.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-units.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-desktop-verified.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-53-mobile-drafting.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-investigating.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-owner-needed.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-publishing.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-quarantined.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-returned.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-reviews.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-setup-needed.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-uncertain.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-units.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-53-mobile-verified.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-54-desktop-export.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-54-desktop-held.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-54-desktop-investigating.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-54-desktop-returned.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-54-desktop-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-54-desktop-verified.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-54-desktop-withdrawn.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-54-mobile-export.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-54-mobile-held.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-54-mobile-investigating.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-54-mobile-returned.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-54-mobile-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-54-mobile-verified.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-54-mobile-withdrawn.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-55-desktop-calculating.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-55-desktop-date-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-55-desktop-investigating.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-55-desktop-register-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-55-desktop-returned.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-55-desktop-schedule-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-55-desktop-verified.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-55-mobile-calculating.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-55-mobile-date-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-55-mobile-investigating.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-55-mobile-register-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-55-mobile-returned.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-55-mobile-schedule-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-55-mobile-verified.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-56-desktop-actuals.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-56-desktop-group-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-56-desktop-group-rows.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-56-desktop-investigating.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-56-desktop-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-56-desktop-uncertain.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-56-desktop-verified.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-56-mobile-actuals.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-56-mobile-group-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-56-mobile-group-rows.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-56-mobile-investigating.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-56-mobile-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-56-mobile-uncertain.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-56-mobile-verified.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-57-desktop-held.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-57-desktop-investigating.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-57-desktop-publish.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-57-desktop-receipts.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-57-desktop-result-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-57-desktop-source-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-57-desktop-verified.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-57-mobile-held.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-57-mobile-investigating.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-57-mobile-publish.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-57-mobile-receipts.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-57-mobile-result-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-57-mobile-source-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-57-mobile-verified.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-58-desktop-duplicate.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-58-desktop-investigating.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-58-desktop-observe.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-58-desktop-rejected.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-58-desktop-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-58-desktop-verified.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-58-mobile-duplicate.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-58-mobile-investigating.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-58-mobile-observe.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-58-mobile-rejected.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-58-mobile-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-58-mobile-verified.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-59-desktop-combine-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-59-desktop-followup.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-59-desktop-input-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-59-desktop-match-held.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-59-desktop-match-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-59-desktop-publish.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-59-desktop-receipts.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-59-desktop-totals-review.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-59-desktop-verified.dc.html,finance,1440,desktop top bar (nav),yes,no
+SCR-59-mobile-combine-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-59-mobile-followup.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-59-mobile-input-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-59-mobile-match-held.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-59-mobile-match-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-59-mobile-publish.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-59-mobile-receipts.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-59-mobile-totals-review.dc.html,finance,390,phone back-link bar + page word,no,yes
+SCR-59-mobile-verified.dc.html,finance,390,phone back-link bar + page word,no,yes
