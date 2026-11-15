@@ -113,7 +113,9 @@ describe('default state from data (AC 6)', () => {
     await open(item('W-2201'));
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe("Write this week's client update");
     const text = document.querySelector('.ws')!.textContent!;
-    expect(text).toContain('Reviewed weekly client report · week 5–11 Nov · goes to Lagoon Health after PMO Lead review.');
+    // D-73: the frame's header, above the workspace, draws the subtitle
+    const subtitle = screen.getByText('Reviewed weekly client report · week 5–11 Nov · goes to Lagoon Health after PMO Lead review.');
+    expect(document.querySelector('.ws')!.contains(subtitle)).toBe(false);
     expect(text).toContain("Since last week: 1 milestone completed, 3 actions now overdue, 1 new change request.");
     expect(text).toContain('Login fails on some older Android phones (high).');
     const headings = within(document.querySelector('.ws') as HTMLElement).getAllByRole('heading', { level: 2 }).map((h) => h.textContent);
@@ -216,7 +218,9 @@ describe('422 per part (AC 10)', () => {
     const script = read('work/W-2202.steps.json').send_to_tola;
     stepAnswers = [json(422, script.body), json(422, script.body)];
     await open(item('W-2202'));
-    expect(ws().getByText('Needs fixing')).toBeTruthy();
+    // D-73: the status tag is drawn by the frame's header, not inside the workspace
+    const status = screen.getByText('Needs fixing');
+    expect(document.querySelector('.ws')!.contains(status)).toBe(false);
     expect(ws().getByText("The report can't start before the week has ended. This week ended 11 Nov.")).toBeTruthy();
     await press('Send to Tola to assemble');
     await submit('Send to Tola to assemble');
