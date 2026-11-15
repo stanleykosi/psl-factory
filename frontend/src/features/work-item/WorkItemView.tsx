@@ -158,7 +158,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
   );
   return (
     <header className="work-header work-header--end work-header--line">
-      {phone && <span className="work-barref psl-mono">{item.reference}</span>}
+      {phone && <span className="work-barref work-barref--line psl-mono">{item.reference}</span>}
       {!phone && (
         <div className="work-crumbrow">
           {crumbs.length > 0 ? (
@@ -191,6 +191,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
           </span>
         )}
       </div>
+      {!phone && ws?.context?.project && <ProjectBar caseId={ws.context.project.case_id} />}
       {(phone || ws?.subtitle) && (
         <div className="work-linemeta">
           {ws?.subtitle && <p className="work-sub">{ws.subtitle}</p>}
@@ -203,7 +204,6 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
           )}
         </div>
       )}
-      {!phone && ws?.context?.project && <ProjectBar caseId={ws.context.project.case_id} />}
       <div className="work-sr">
         <span>{startedLine(item)}</span>
       </div>
