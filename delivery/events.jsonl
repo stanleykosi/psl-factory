@@ -1284,3 +1284,6 @@
 {"at":"2026-11-15T10:32:47Z","feature":"F-17","round":5,"kind":"transition","head":"ff48d19d80a9","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
 {"at":"2026-11-15T10:32:48Z","feature":"F-17","round":5,"kind":"transition","head":"ff48d19d80a9","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-15T10:32:48Z","feature":"F-17","round":5,"kind":"transition","head":"ff48d19d80a9","from":"MERGED","to":"DONE"}
+{"at":"2026-11-15T10:36:42Z","feature":"F-19","round":0,"kind":"created","tasks":["FE-CLIENTS"]}
+{"at":"2026-11-15T10:36:42Z","feature":"F-20","round":0,"kind":"created","tasks":["FE-SETUP-TEMPLATES"]}
+{"at":"2026-11-15T10:36:42Z","feature":"F-21","round":0,"kind":"created","tasks":["FE-LINE-WEEKLY"]}
