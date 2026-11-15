@@ -303,6 +303,11 @@ describe('Client detail (SCR-35 detail)', () => {
     fill('Ada Okoye', 'ada@lagoon.example');
     await press();
     await screen.findByText('Saved. We couldn’t refresh the page; reload to see the latest.');
+    {
+      const box = screen.getByText('Saved. We couldn’t refresh the page; reload to see the latest.').closest('[role="alert"]') as HTMLElement;
+      expect(box).toBeTruthy();
+      expect(document.activeElement).toBe(box);
+    }
     expect(saveButton()).toBeNull();
     expect(nameBox().value).toBe('Ada Okoye');
     failReads = false;
@@ -318,6 +323,11 @@ describe('Client detail (SCR-35 detail)', () => {
     fill('Tolu B.', 'tolu.b@miletwelve.example');
     await press();
     await screen.findByText('This client changed while you were editing. Check the details and save again.');
+    {
+      const box = screen.getByText('This client changed while you were editing. Check the details and save again.').closest('[role="alert"]') as HTMLElement;
+      expect(box).toBeTruthy();
+      expect(document.activeElement).toBe(box);
+    }
     expect(puts()).toHaveLength(1);
     expect(reads()).toHaveLength(2);
     expect(nameBox().value).toBe('Tolu B.');
@@ -382,6 +392,11 @@ describe('Client detail (SCR-35 detail)', () => {
     };
     await press();
     await screen.findByText('Your role changed.');
+    {
+      const box = screen.getByText('Your role changed.').closest('[role="alert"]') as HTMLElement;
+      expect(box).toBeTruthy();
+      expect(document.activeElement).toBe(box);
+    }
     expect(reads()).toHaveLength(2);
     expect(puts()).toHaveLength(1);
     expect(document.querySelector('form')).toBeNull();
@@ -416,6 +431,11 @@ describe('Client detail (SCR-35 detail)', () => {
       override = (call) => (call.method === 'PUT' ? (failure() as Reply) : undefined);
       await press();
       await screen.findByText('We couldn’t confirm the change was saved.');
+      {
+        const box = screen.getByText('We couldn’t confirm the change was saved.').closest('[role="alert"]') as HTMLElement;
+        expect(box).toBeTruthy();
+        expect(document.activeElement).toBe(box);
+      }
       expect(puts()).toHaveLength(1);
       expect(reads()).toHaveLength(2);
       expect(nameBox().value).toBe('Ada');

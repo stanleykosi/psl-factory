@@ -54,6 +54,7 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
   const [unread, setUnread] = useState(false);
   const nameInput = useRef<HTMLInputElement>(null);
   const emailInput = useRef<HTMLInputElement>(null);
+  const noticeBox = useRef<HTMLDivElement>(null);
 
   const fieldMessages = new Map<string, string>();
   const summary: string[] = [];
@@ -70,6 +71,12 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
     // Focus moves once per 422, to the first input that has a message.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invalidKey]);
+
+  const showsNotice = notice !== null && notice.kind !== 'invalid' && notice.kind !== 'saved';
+  useEffect(() => {
+    // A failure notice is announced and takes focus once per press; its scroll-margin keeps it clear of the phone's Save bar.
+    if (showsNotice) noticeBox.current?.focus();
+  }, [notice, showsNotice]);
 
   const seed = (to: ClientDetail['billing_contact']) => {
     seeded.current = { name: to.name ?? '', email: to.email ?? '' };
@@ -236,8 +243,8 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
             )}
           </form>
         )}
-        {notice && notice.kind !== 'invalid' && (
-          <div className="clients__notice">
+        {notice && showsNotice && (
+          <div ref={noticeBox} tabIndex={-1} role="alert" className="clients__notice">
             {notice.kind === 'saved_unread' && <p>Saved. We couldn’t refresh the page; reload to see the latest.</p>}
             {notice.kind === 'stale' && <p>This client changed while you were editing. Check the details and save again.</p>}
             {notice.kind === 'stale' && notice.unread && <p>We couldn’t refresh the page, so nothing can be saved yet.</p>}

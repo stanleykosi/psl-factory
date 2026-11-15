@@ -46,6 +46,7 @@
 .clients__bar { display: contents; }
 .clients__notice p, .clients__status { margin: 0; }
 .clients__notice { display: flex; flex-direction: column; gap: var(--space-1); padding: 10px 12px; background: var(--waiting-tint); color: var(--waiting-ink); }
+.clients__notice { scroll-margin-bottom: 96px; outline-offset: 2px; }
 .clients__status:empty { display: none; }
 .clients__status { color: var(--verified-ink); font-weight: 600; }
 .clients__retry { align-self: flex-start; }
