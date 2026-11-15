@@ -92,7 +92,6 @@ export function FilterPanel({ title = 'Filter', children, applyLabel, onApply, o
 }) {
   const phone = usePhone();
   const ref = useRef<HTMLDivElement>(null);
-  const opener = useRef<HTMLElement | null>(null);
   // The anchor holds the Filter button too, so pressing it toggles rather than closing and reopening.
   const anchor = useRef<HTMLElement | null>(null);
   useOutsidePress([anchor], !phone, onClose);
@@ -100,9 +99,9 @@ export function FilterPanel({ title = 'Filter', children, applyLabel, onApply, o
   useEffect(() => {
     if (phone) return undefined;
     anchor.current = ref.current?.parentElement ?? null;
-    opener.current = document.activeElement as HTMLElement | null;
+    // Focus returns to the Filter button (the anchor's first button), which a click does not focus in every browser.
+    const back = anchor.current?.querySelector<HTMLElement>('button');
     ref.current?.focus();
-    const back = opener.current;
     return () => back?.focus();
   }, [phone]);
 
