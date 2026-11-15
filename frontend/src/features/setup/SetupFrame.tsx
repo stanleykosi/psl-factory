@@ -7,13 +7,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
+import type { ApiError } from '@/api/errors';
 import { useMe, usePhoneBack } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
-
-import type { RulesState } from './useSetupRules';
 
 import './setup.css';
 
@@ -57,8 +56,10 @@ export function SetupGate({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+type ReadState = { status: 'loading' | 'ready' } | { status: 'error'; error: ApiError };
+
 /** Loading and failed reads. 403 and 404 look the same, so nothing about a hidden rule shows (INV-ACCESS). */
-export function RulesReadState({ state, retry }: { state: RulesState; retry: () => void }) {
+export function RulesReadState({ state, retry, what = 'rules' }: { state: ReadState; retry: () => void; what?: string }) {
   const pathname = usePathname() ?? '/setup/rules';
   const me = useMe();
   if (state.status === 'loading') return <LoadingState />;
@@ -66,7 +67,7 @@ export function RulesReadState({ state, retry }: { state: RulesState; retry: () 
   const { error } = state;
   if (error.kind === 'unauthenticated') return <SignedOutState pathname={pathname} />;
   if (error.kind === 'forbidden' || error.kind === 'not_found') return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
-  return <WorkErrorCard message="We couldn’t load the rules. Your work is safe; nothing was changed." error={error} onRetry={retry} />;
+  return <WorkErrorCard message={`We couldn’t load the ${what}. Your work is safe; nothing was changed.`} error={error} onRetry={retry} />;
 }
 
 /** "← Setup" in the phone bar, to Setup rules until a phone Setup home is drawn (D-68(c)), with the board's mono note. */
@@ -83,8 +84,11 @@ export function RulesEmpty() {
   );
 }
 
+/** What ShowMore reads of a list state; rules and templates both fit it. */
+type PagedState = { status: 'loading' | 'error' } | { status: 'ready'; items: unknown[]; nextCursor?: string; more: 'idle' | 'loading' | 'failed' };
+
 /** Appends the next page; a failed page keeps the loaded rows and says so. */
-export function ShowMore({ state, onMore }: { state: RulesState; onMore: () => void }) {
+export function ShowMore({ state, onMore, noun = 'rules' }: { state: PagedState; onMore: () => void; noun?: string }) {
   const [pressed, setPressed] = useState(false);
   const end = useRef<HTMLSpanElement>(null);
   const last = state.status === 'ready' && !state.nextCursor;
@@ -98,7 +102,7 @@ export function ShowMore({ state, onMore }: { state: RulesState; onMore: () => v
       {state.more === 'failed' && (
         <div className="psl-callout psl-callout--warning" role="alert">
           <WarningIcon />
-          <span>We couldn’t load more rules. Choose Show more to try again.</span>
+          <span>We couldn’t load more {noun}. Choose Show more to try again.</span>
         </div>
       )}
       {state.nextCursor && (
@@ -119,7 +123,7 @@ export function ShowMore({ state, onMore }: { state: RulesState; onMore: () => v
       )}
       {pressed && last && (
         <span ref={end} tabIndex={-1} className="setup-sr">
-          All {state.items.length} rules are shown.
+          All {state.items.length} {noun} are shown.
         </span>
       )}
     </>
