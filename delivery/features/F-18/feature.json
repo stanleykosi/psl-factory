@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-18",
   "outcome": "Team input and the RFP outcome are recorded inside the RFP frame, and the drafted follow-up goes only when a person sends it",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M2B-RFP"
   ],
@@ -202,7 +202,7 @@
         "delivery/features/F-18/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -219,11 +219,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "`ProofField.tsx` card layout renders the picker only when `empty`. `OutcomeForm.tsx:211` uses `layout=\"card\"`. `outcomeBody` takes one `evidenceId`. No dropped files are reachable. No code change was needed."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`ProofField.tsx` card layout renders the picker only when `empty`. `OutcomeForm.tsx:211` uses `layout=\"card\"`. `outcomeBody` takes one `evidenceId`. No dropped files are reachable. No code change was needed."
       ]
     },
     {
@@ -377,7 +391,7 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -394,11 +408,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "after Send, document.activeElement is the .rfp-followup__status line (both widths)."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "after Send, document.activeElement is the .rfp-followup__status line (both widths)."
       ]
     },
     {
@@ -414,7 +442,7 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -431,11 +459,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "\"It goes only if you send it\" gone after Sent (count 0)."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "\"It goes only if you send it\" gone after Sent (count 0)."
       ]
     },
     {
@@ -474,7 +516,7 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -491,11 +533,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "W-2113 shows the reason line, no Send or Edit."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-2113 shows the reason line, no Send or Edit."
       ]
     },
     {
@@ -511,7 +567,7 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -528,11 +584,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "hint reads \"Choose the result, when you learned it and who you are recording as, and add the proof, to record this.\"; Record stays disabled until complete."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "hint reads \"Choose the result, when you learned it and who you are recording as, and add the proof, to record this.\"; Record stays disabled until complete."
       ]
     },
     {
@@ -548,7 +618,7 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -565,11 +635,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "W-2102 not-open page has an h1 (\"Record team input\") at both widths."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-2102 not-open page has an h1 (\"Record team input\") at both widths."
       ]
     },
     {
@@ -585,7 +669,7 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -602,11 +686,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "Production `next start` and `next dev` on 4651 (mock 4652, FRAME_FIXTURES=1), `/work/W-2101/respond?task=T-2101`: `.resp-form.resp-form--team` computes border 0 and padding 0 on both at 1440 and 390, and `.resp-aside--team` keeps its 2px ink frame and 14px padding. `/work/W-2103/outcome`: `.resp-form.rfp-form` is border 0 and padding 0 on both servers, at both widths. The selectors are now (0,2,0) against `response.css`'s (0,1,0), so load order no longer matters. The re-frozen pages from head are DOM-identical to the builder's; team-input 1440 scores 93.4."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Production `next start` and `next dev` on 4651 (mock 4652, FRAME_FIXTURES=1), `/work/W-2101/respond?task=T-2101`: `.resp-form.resp-form--team` computes border 0 and padding 0 on both at 1440 and 390, and `.resp-aside--team` keeps its 2px ink frame and 14px padding. `/work/W-2103/outcome`: `.resp-form.rfp-form` is border 0 and padding 0 on both servers, at both widths. The selectors are now (0,2,0) against `response.css`'s (0,1,0), so load order no longer matters. The re-frozen pages from head are DOM-identical to the builder's; team-input 1440 scores 93.4."
       ]
     },
     {
@@ -622,7 +720,7 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -639,11 +737,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "Desktop won has no NEXT panel: the `next[]` sentence, then \"Open engagement EN-0042\" as `psl-btn--secondary` (white, ink outline), in the right column at the board's x and width. The tool no longer reports the background or outline difference."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Desktop won has no NEXT panel: the `next[]` sentence, then \"Open engagement EN-0042\" as `psl-btn--secondary` (white, ink outline), in the right column at the board's x and width. The tool no longer reports the background or outline difference."
       ]
     },
     {
@@ -659,7 +771,7 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -676,11 +788,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "At 390, won and pending pin a single 50px button in a white bar with a 2px ink top rule, and the page has 110px bottom padding. Unknown shows \"Record the outcome\" in the flow as `psl-btn--secondary`, below the draft and above the pinned Send/Edit (screenshot at scroll end). Lost shows a quiet \"Back to projects\" link. No phone state draws a Next panel. Nothing scrolls sideways on W-2105, W-2106, W-2107, W-2108, W-2111 or W-2114 (scrollWidth 390)."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "At 390, won and pending pin a single 50px button in a white bar with a 2px ink top rule, and the page has 110px bottom padding. Unknown shows \"Record the outcome\" in the flow as `psl-btn--secondary`, below the draft and above the pinned Send/Edit (screenshot at scroll end). Lost shows a quiet \"Back to projects\" link. No phone state draws a Next panel. Nothing scrolls sideways on W-2105, W-2106, W-2107, W-2108, W-2111 or W-2114 (scrollWidth 390)."
       ]
     },
     {
@@ -696,7 +822,7 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -713,11 +839,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "Phone lost shows a muted `psl-hint` \"Archived as ARC-0117.\", not a callout. Its spacing is UI-2-1(b)."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Phone lost shows a muted `psl-hint` \"Archived as ARC-0117.\", not a callout. Its spacing is UI-2-1(b)."
       ]
     },
     {
@@ -733,7 +873,7 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -750,11 +890,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "The phone follow-up heading is IBM Plex Sans, sentence case, with no rule, and the tool no longer reports the font, case or bar. The remaining weight and padding difference is UI-2-1(d)."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The phone follow-up heading is IBM Plex Sans, sentence case, with no rule, and the tool no longer reports the font, case or bar. The remaining weight and padding difference is UI-2-1(d)."
       ]
     },
     {
@@ -770,7 +924,7 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -787,11 +941,25 @@
           ],
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:05:42Z",
+          "refs": [
+            "\"LOST \u00b7 04 DEC\" is neutral grey and \"OUTCOME UNKNOWN\" is amber (`labels.ts` `statusTone`); the tool reports no tag colour difference on either board. The builder records that this departs from the spec's colour table; the coordinator should update spec Contract 1 to match the boards."
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "28c13db"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"LOST \u00b7 04 DEC\" is neutral grey and \"OUTCOME UNKNOWN\" is amber (`labels.ts` `statusTone`); the tool reports no tag colour difference on either board. The builder records that this departs from the spec's colour table; the coordinator should update spec Contract 1 to match the boards."
       ]
     },
     {
@@ -862,6 +1030,98 @@
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
         }
       ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The new TECH-1-2 test does not fail on the old code (the builder says so). It guards the one-file rule and is still worth keeping. The contract question (should the outcome take several proof files?) is already in build.md for the backend developer. `frontend/tests/rfp.test.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T08:05:42Z",
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec colour table (lost red, unknown neutral) was changed to lost grey, unknown amber, following the boards. Disclosed in build.md. Update the spec or the design engineer's decision record so the two agree. `frontend/src/features/rfp/labels.ts`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T08:05:42Z",
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On W-2113 the card now shows both \"You can't send this follow-up...\" and the agent note \"It goes only if you send it\", which reads slightly contradictory for someone who cannot send. Hide the agent note when neither Send nor Edit is offered. `frontend/src/features/rfp/FollowupCard.tsx` (Checks showNote).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T08:05:42Z",
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone recorded states: spacing and heading restyle on top of the forced gap (SCR-16-mobile-rfp-lost 70.2, -unknown 86.1). I compared board and page geometry at 390 (`W-2106`, `W-2108`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:05:42Z",
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -925,6 +1185,70 @@
           "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
           "evidence_refs": [
             "delivery/features/F-18/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "evidence_refs": [
+            "delivery/features/F-18/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-18/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "evidence_refs": [
+            "delivery/features/F-18/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate)",
+          "snapshot_ref": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "evidence_refs": [
+            "delivery/features/F-18/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "security reviewer",
+          "snapshot_ref": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "evidence_refs": [
+            "delivery/features/F-18/round-2/review-security.md"
           ]
         }
       }
@@ -1042,7 +1366,7 @@
     }
   },
   "created_at": "2026-11-14T21:38:06Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -1092,6 +1416,22 @@
       "round": 2,
       "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T08:05:42Z",
+      "round": 2,
+      "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T08:05:42Z",
+      "round": 3,
+      "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+      "reason": null
     }
   ],
   "routing": {
@@ -1108,10 +1448,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 2,
-    "verdict": "PASS",
-    "commit": "28c13dbcca5af9b6db6f276e2878c43a487a8958"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

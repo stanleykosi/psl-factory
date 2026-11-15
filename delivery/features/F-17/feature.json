@@ -103,6 +103,18 @@
       "at": "2026-11-15T07:16:05Z",
       "seconds": 100.6,
       "evidence_ref": "delivery/features/F-17/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T08:05:41Z",
+      "seconds": 102.0,
+      "evidence_ref": "delivery/features/F-17/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -652,14 +664,42 @@
         "delivery/features/F-17/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T08:06:54Z",
+          "refs": [
+            "usePageReload.ts adds a `current` ref set in an effect, with the guard before `setFresh`/`setRefreshFailed`/`setLost` in both try and catch. The test \"a read that lands after the id changed\" in workspace-step.test.tsx covers it. checks.md shows the gate passed."
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "usePageReload.ts adds a `current` ref set in an effect, with the guard before `setFresh`/`setRefreshFailed`/`setLost` in both try and catch. The test \"a read that lands after the id changed\" in workspace-step.test.tsx covers it. checks.md shows the gate passed."
       ]
     },
     {
@@ -698,14 +738,28 @@
         "delivery/features/F-17/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
       ]
     },
     {
@@ -721,14 +775,28 @@
         "delivery/features/F-17/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
       ]
     },
     {
@@ -744,14 +812,28 @@
         "delivery/features/F-17/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
       ]
     },
     {
@@ -767,14 +849,28 @@
         "delivery/features/F-17/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
       ]
     },
     {
@@ -790,14 +886,28 @@
         "delivery/features/F-17/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
       ]
     },
     {
@@ -813,14 +923,28 @@
         "delivery/features/F-17/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
       ]
     },
     {
@@ -836,14 +960,28 @@
         "delivery/features/F-17/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
       ]
     },
     {
@@ -859,14 +997,28 @@
         "delivery/features/F-17/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
       ]
     },
     {
@@ -882,14 +1034,28 @@
         "delivery/features/F-17/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
       ]
     },
     {
@@ -905,13 +1071,50 @@
         "delivery/features/F-17/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:35:48Z",
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Table money doesn't match SCR-56. The board draws month and amounts left-aligned in the body sans, the table inset 16px inside the panel; the frame right-aligns amounts in mono (`.num`) and runs the table full width. The money size is now right (UI-2-7b fixed), but the alignment and face are a frame style, not a line's task (D-63 only decided full vs compact figures). Fix: in `.ws-table`, give money cells `text-align: left; font-family: var(--font-sans)` (header cells left too), and inset the table 16px inside its section panel. Also draw the unknown-money note's warning icon as the board does (the callout has no icon), and show the \"As of ... reconciled\" line below the table, or ask for an exception since the board has no such line. Expected: unknown-money 1440 from 72.3 to near 85. Do not use `.psl-unknown` chip inside the cell next to \"UNKNOWN\" text (checklist last row shows \"UNKNOWN \u00b7 Unknown\" twice, non-blocking).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:06:54Z",
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7"
         }
       ]
     }
@@ -1042,6 +1245,66 @@
           ]
         }
       }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "evidence_refs": [
+            "delivery/features/F-17/round-3/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-17/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (D-59 region check, D-62/D-63 layout), lean round per D-64",
+          "snapshot_ref": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "evidence_refs": [
+            "delivery/features/F-17/round-3/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        }
+      }
     }
   ],
   "run_controls": {
@@ -1066,7 +1329,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
     "task_branch": "fe-workspace-frame-the-work-item-page-renders-a-line-worksp",
-    "head_sha": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+    "head_sha": "d9cd1d2e011106564b113229ce15100497d81ca7",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-17",
     "pr_url": null,
     "pr_number": null,
@@ -1188,6 +1451,50 @@
       "delivery/features/F-17/round-2/fidelity/unknown-money-1440/side-by-side.png",
       "delivery/features/F-17/round-2/fidelity/unknown-money-390/report.json",
       "delivery/features/F-17/round-2/fidelity/unknown-money-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/checklist-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/checklist-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/checklist-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/checklist-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/checklist-gates-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/checklist-gates-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/checklist-gates-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/checklist-gates-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/facts-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/facts-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/findings-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/findings-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/findings-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/findings-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/notice-done-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/notice-done-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/notice-done-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/notice-done-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/recipients-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/recipients-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/region-check.mjs",
+      "delivery/features/F-17/round-3/fidelity/region-scores.txt",
+      "delivery/features/F-17/round-3/fidelity/step-form-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/step-form-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/steps-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/steps-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/steps-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/steps-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/suggestions-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/suggestions-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/table-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/table-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/table-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/table-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/text-cites-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/text-cites-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/text-cites-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/text-cites-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/timeline-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/timeline-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/unknown-money-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/unknown-money-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/unknown-money-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/unknown-money-390/side-by-side.png",
       "frontend/e2e/workspace.spec.ts",
       "frontend/mock/fixtures/response/W-2008.not_delivered.json",
       "frontend/mock/fixtures/response/W-2008.unknown.json",
@@ -1256,7 +1563,7 @@
     }
   },
   "created_at": "2026-11-14T21:38:05Z",
-  "round": 3,
+  "round": 4,
   "round_limit": 5,
   "history": [
     {
@@ -1322,6 +1629,30 @@
       "round": 3,
       "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T08:05:42Z",
+      "round": 3,
+      "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T08:06:54Z",
+      "round": 3,
+      "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T08:06:54Z",
+      "round": 4,
+      "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "reason": null
     }
   ],
   "routing": {
@@ -1338,7 +1669,7 @@
     ]
   },
   "gate": {
-    "round": 3,
+    "round": 4,
     "attempts": 0,
     "verdict": null,
     "commit": null
