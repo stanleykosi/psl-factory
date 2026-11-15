@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-18",
   "outcome": "Team input and the RFP outcome are recorded inside the RFP frame, and the drafted follow-up goes only when a person sends it",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M2B-RFP"
   ],
@@ -110,6 +110,18 @@
       "at": "2026-11-15T07:40:16Z",
       "seconds": 118.5,
       "evidence_ref": "delivery/features/F-18/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T08:14:25Z",
+      "seconds": 96.0,
+      "evidence_ref": "delivery/features/F-18/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -1090,14 +1102,28 @@
         "delivery/features/F-18/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T08:05:42Z",
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:14:25Z",
+          "refs": [
+            "9d0fc66"
+          ],
+          "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9d0fc66"
       ]
     },
     {
@@ -1113,14 +1139,28 @@
         "delivery/features/F-18/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T08:05:42Z",
           "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:14:25Z",
+          "refs": [
+            "9d0fc66"
+          ],
+          "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9d0fc66"
       ]
     }
   ],
@@ -1276,7 +1316,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
     "task_branch": "fe-m2b-rfp-team-input-and-the-rfp-outcome-are-recor",
-    "head_sha": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+    "head_sha": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-18",
     "pr_url": null,
     "pr_number": null,
@@ -1432,6 +1472,14 @@
       "round": 3,
       "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T08:14:26Z",
+      "round": 3,
+      "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "reason": null
     }
   ],
   "routing": {
@@ -1449,9 +1497,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "9d0fc66882834dc35d0116738d46c0bb5f12da58"
   },
   "blocked": null
 }
