@@ -1240,3 +1240,8 @@
 {"at":"2026-11-15T08:57:10Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
 {"at":"2026-11-15T09:12:38Z","feature":"F-18","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"9d0fc6688283","findings":{"PMO-3-1":"low"},"written_at":"2026-11-15T09:12:32Z"}
 {"at":"2026-11-15T09:12:38Z","feature":"F-18","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T09:16:59Z","feature":"F-17","round":5,"kind":"finding","action":"fix","finding":"QA-5-1","by":"builder"}
+{"at":"2026-11-15T09:16:59Z","feature":"F-17","round":5,"kind":"finding","action":"fix","finding":"QA-5-2","by":"builder"}
+{"at":"2026-11-15T09:17:54Z","feature":"F-17","round":5,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"af3b958cfa58","written_at":"2026-11-15T09:17:45Z"}
+{"at":"2026-11-15T09:18:26Z","feature":"F-17","round":5,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"af3b958cfa58","findings":{"TECH-5-1":"low"},"written_at":"2026-11-15T09:18:05Z"}
+{"at":"2026-11-15T09:27:54Z","feature":"F-17","round":5,"kind":"review","role":"integrated_qa","verdict":"CHANGES","reviewer":"qa","commit":"af3b958cfa58","findings":{"QA-5-1":"high","QA-5-5":"high","QA-5-3":"low","QA-5-4":"low"},"written_at":"2026-11-15T09:26:57Z"}

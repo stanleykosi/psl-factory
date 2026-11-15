@@ -1302,14 +1302,28 @@
         "delivery/features/F-17/round-5/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-15T08:56:58Z",
           "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T09:16:59Z",
+          "refs": [
+            "af3b958c"
+          ],
+          "head": "af3b958cfa5807108e940017aefdc04e60375b1b",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "af3b958c"
       ]
     },
     {
@@ -1325,14 +1339,28 @@
         "delivery/features/F-17/round-5/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-15T08:56:58Z",
           "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T09:16:59Z",
+          "refs": [
+            "af3b958c"
+          ],
+          "head": "af3b958cfa5807108e940017aefdc04e60375b1b",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "af3b958c"
       ]
     },
     {
@@ -1648,7 +1676,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
     "task_branch": "fe-workspace-frame-the-work-item-page-renders-a-line-worksp",
-    "head_sha": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+    "head_sha": "af3b958cfa5807108e940017aefdc04e60375b1b",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-17",
     "pr_url": null,
     "pr_number": null,
