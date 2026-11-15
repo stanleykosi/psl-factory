@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-17",
   "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-WORKSPACE-FRAME"
   ],
@@ -184,7 +184,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux",
-      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
       "evidence_refs": [
         "delivery/features/F-17/round-5/review-ux.md"
       ]
@@ -193,7 +193,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer (design-fidelity gate)",
-      "snapshot_ref": "af3b958cfa5807108e940017aefdc04e60375b1b",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
       "evidence_refs": [
         "delivery/features/F-17/round-5/review-ui.md"
       ]
@@ -1624,6 +1624,29 @@
           "head": "ff48d19d80a904de760cf524166ad820107267dd"
         }
       ]
+    },
+    {
+      "id": "UX-5-1",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "TECH-5-2 follow-up. A viewer without the `reconcile` grant on an item awaiting reconcile sees every step off and no reconcile button, with no sentence saying who can act. Locking is correct and safe. A short hint would help, for example \"Waiting for someone with reconcile access to confirm what happened.\" It can ship as a later follow-up and does not block the merge, because the person cannot act and the item's state panel still shows that it is waiting.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T10:32:47Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1878,9 +1901,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -2370,10 +2393,14 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": "BLOCKED",
+    "script_decision": "HUMAN_APPROVAL",
     "script_reasons": [
-      "ux review covers 'f91bc63ff41283e698faf47b356721f4ce2ec022', not head 'ff48d19d80a904de760cf524166ad820107267dd'",
-      "ui review covers 'af3b958cfa5807108e940017aefdc04e60375b1b', not head 'ff48d19d80a904de760cf524166ad820107267dd'"
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "443 changed files exceed the auto-merge limit of 15",
+      "finding FID-1-1 was accepted as a risk",
+      "approver recommendation is None, not 'AUTO_MERGE'"
     ],
     "decided_for_head_sha": "ff48d19d80a904de760cf524166ad820107267dd",
     "merged_by": null,
@@ -2526,6 +2553,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-15T10:32:02Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-15T10:32:47Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-15T10:32:47Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-15T10:32:48Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-15T10:32:48Z",
       "round": 5,
       "head": "ff48d19d80a904de760cf524166ad820107267dd",
       "reason": null

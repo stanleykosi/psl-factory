@@ -1276,3 +1276,11 @@
 {"at":"2026-11-15T10:32:02Z","feature":"F-17","round":5,"kind":"transition","head":"ff48d19d80a9","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
 {"at":"2026-11-15T10:32:02Z","feature":"F-17","round":5,"kind":"decision","decision":"BLOCKED","head":"ff48d19d80a9","reasons":["ux review covers 'f91bc63ff41283e698faf47b356721f4ce2ec022', not head 'ff48d19d80a904de760cf524166ad820107267dd'","ui review covers 'af3b958cfa5807108e940017aefdc04e60375b1b', not head 'ff48d19d80a904de760cf524166ad820107267dd'"]}
 {"at":"2026-11-15T10:32:02Z","feature":"F-17","round":5,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"9cfaa27eb5e7c9000fd4691d2125fe5b8467f7ee"}}
+{"at":"2026-11-15T10:32:41Z","feature":"F-17","round":5,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"ff48d19d80a9","written_at":"2026-11-15T10:32:39Z"}
+{"at":"2026-11-15T10:32:42Z","feature":"F-17","round":5,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"ff48d19d80a9","findings":{"UX-5-1":"low"},"written_at":"2026-11-15T10:32:41Z"}
+{"at":"2026-11-15T10:32:47Z","feature":"F-17","round":5,"kind":"finding","action":"add","finding":"UX-5-1","by":"reviewer-ux","severity":"low","owner":"builder","blocking":false,"role":"ux"}
+{"at":"2026-11-15T10:32:47Z","feature":"F-17","round":5,"kind":"decision","decision":"HUMAN_APPROVAL","head":"ff48d19d80a9","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'external-messaging' always needs a human","443 changed files exceed the auto-merge limit of 15","finding FID-1-1 was accepted as a risk","approver recommendation is None, not 'AUTO_MERGE'"]}
+{"at":"2026-11-15T10:32:47Z","feature":"F-17","round":5,"kind":"transition","head":"ff48d19d80a9","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-15T10:32:47Z","feature":"F-17","round":5,"kind":"transition","head":"ff48d19d80a9","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-15T10:32:48Z","feature":"F-17","round":5,"kind":"transition","head":"ff48d19d80a9","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-15T10:32:48Z","feature":"F-17","round":5,"kind":"transition","head":"ff48d19d80a9","from":"MERGED","to":"DONE"}

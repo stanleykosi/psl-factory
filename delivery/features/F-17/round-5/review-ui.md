@@ -1,14 +1,14 @@
 VERDICT: PASS
-COMMIT: af3b958cfa5807108e940017aefdc04e60375b1b
+COMMIT: ff48d19d80a904de760cf524166ad820107267dd
 REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer (design-fidelity gate)
 
 ## Summary
-Lean confirm (D-64, D-66 extra round) from `git diff f91bc63..af3b958 -- frontend/src`; no fidelity run, build or boards comparison needed.
-- Scope: both CSS additions are inside the existing `@media (max-width: 720px)` block, so desktop is untouched. The flow modifier `ws-decide--flow` is added only when `flow.allLocked && hasReconcile`; in every other state the pinned bar rules (D-63: fixed, borderless, full-width, 2px top rule, consequence sentence beside the buttons, `padding-bottom: var(--ws-bar-h)`) apply unchanged.
-- Flow state: `.ws-decide.ws-decide--flow { position: static }` keeps the remaining bar styling (surface, top rule, padding) and `.ws:has(...) { padding-bottom: 0 }` removes the now-unneeded bar clearance. The reconcile pinned button is no longer covered (QA-5-1).
-- Wrapping: `white-space: normal` is added to `.ws-decide .psl-btn` alongside the existing `min-height: 44px`. Wrapping only increases height, so the 44px target floor holds; widths are governed by the unchanged `flex: 1 1 120px` wrapper.
-- Note: the `white-space: normal` rule applies in the pinned state too, so a long label may now grow the bar; `--ws-bar-h` is measured from the element, so clearance follows.
+Lean confirm (D-64) on the final head from `git diff af3b958..9757462 -- frontend/src` and `git show ff48d19 -- WorkItemOverview.tsx`; no fidelity run, build or checkout.
+- Flow-mode padding: `.ws:has(.ws-decide--flow) { padding-bottom: calc(var(--control-lg) + 30px) }` and `html:has(.ws-decide--flow) { scroll-padding-bottom: ... }` both sit inside the existing `@media (max-width: 720px)` block and are selected only by `.ws-decide--flow`. Desktop is unchanged, and the pinned Decide bar (D-63) is unchanged in every state where flow mode is off. It uses the bar's own clearance (`--ws-bar-h`) as before.
+- The flow modifier is still added only when all steps are locked and a reconcile panel is shown. The lock now also follows `item.reconcile` (logic only, no markup or style change).
+- The padding uses the existing `--control-lg` token, so the reconcile panel's pinned button is no longer covered and the page can scroll to it.
+- Merge resolution in `WorkItemOverview.tsx` only adds imports (`Workspace`, `WorkspacePage`, `RfpOutcomeLink`). The RFP outcome link and the workspace are separate blocks with no shared positioning. QA confirmed no overlap at 390, 320 and 1440, and nothing in the diff contradicts that.
 
 ## Findings
 
@@ -17,3 +17,4 @@ Lean confirm (D-64, D-66 extra round) from `git diff f91bc63..af3b958 -- fronten
 
 ## Notes
 - Non-blocking follow-up: the checklist "UNKNOWN - Unknown" double label.
+- The `30px` in the flow padding is a literal and depends on the reconcile button's padding. A token would be better.

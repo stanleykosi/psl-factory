@@ -1,10 +1,10 @@
-# Coordinator handoff (15 Nov 2026, second session)
+# Coordinator handoff (15 Nov 2026, third session)
 
 Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-01…D-58). Feature state: `python3 /Users/Hunchoo/software-factory/packages/delivery/feature.py --project . status` and `next <F-id>`. Cost: `feature.py --project . cost`.
 
 ## Where things stand
-- F-01 … F-16, the follow-up fixes (PR #28, D-61) and **F-18** (PR #29, merged 15 Nov on the design engineer's "merge F-18 when ready") are merged into `dlv-00-delivery-setup`. `main` is untouched.
-- **F-17 line workspace frame**: READY_FOR_ACCEPTANCE at head ff48d19 (already includes F-18), PR #30 open against dlv-00, worktree `../psl-factory-worktrees/f-17`. Every review, QA (at ff48d19) and PMO passed. It ran a 6th round as a continuation of round 5 (D-66, D-67), which fixed QA-5-1 and QA-5-5 (the reload resend). It waits only for the design engineer's "merge F-17" (contract proposal). When that arrives: write round-5/acceptance-product.md quoting it, wait for GitGuardian on #30, `gh pr merge 30 --merge --match-head-commit ff48d19d80a904de760cf524166ad820107267dd`, remove the worktree, then run the tool steps from the merge recipe.
+- F-01 … F-18 and the follow-up fixes (PR #28) are merged into `dlv-00-delivery-setup` and DONE in the tool. F-18 is PR #29 and F-17 is PR #30 (merge commit 9cfaa27), both merged on 15 Nov on the design engineer's approval. `main` is untouched. There are no open worktrees.
+- F-17 took a 6th round as a continuation of round 5 (D-66, D-67). It fixed QA-5-1 (the phone Decide bar covered "Record and continue") and QA-5-5 (a reload during an uncertain send re-enabled "Approve and send"; the lock now comes from `item.reconcile`).
 - Local preview: `npm run dev -- -p 3000` in `frontend/` (mock on 4010).
 
 ## Rules in force
@@ -29,13 +29,12 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 0. Done 15 Nov: F-17/F-18 lean reviews, QA and PMO (below kept for reference).
 1. (done) F-17 and F-18, lean (D-64): one Sonnet `reviewer-ui` per feature that only verifies F-17 UI-3-1 (round-4 fidelity files) and F-18 UI-2-1 and UX-2-1 (round-3 files), without re-running the full check. Re-use the passed technical/UX/security results; the tool lists them as pending on the new head, so tell each reviewer to read only the diff since its last pass and confirm. Then QA (Opus) and PMO acceptance (Sonnet), then the approver. Both wait for the design engineer's "merge" (F-17 has a contract proposal; F-18 is high risk). F-17 has no rounds left: anything blocking needs the design engineer to allow a 6th round or a follow-up.
 2. Merge order: F-17 first, then rebase or merge F-18 onto it (both touch `WorkItemOverview.tsx` with a few lines).
-3. Next v7 tasks with dependencies met, each kept to at most ~8 boards (split larger ones): FE-ASSISTANT, FE-SETUP-DELEGATION, FE-SETUP-TEMPLATES, FE-CLIENTS, FE-M3-PROJECT-TABS, FE-M3-REPORT; and, after F-17 merges, the line screens (FE-LINE-WEEKLY, FE-LINE-MINUTES, FE-ENGAGEMENT-PLANNING, FE-DELIVERY-*, FE-FIN-*).
-4. Follow-up batch (Sonnet): My work tabs 48px → 44px (boards); F-17 "UNKNOWN · Unknown" doubled in the checklist chip; and the phone "← Setup" target once the design engineer answers.
+3. Next (start here): v7 tasks with dependencies met, each kept to at most ~8 boards (split larger ones): FE-ASSISTANT, FE-SETUP-DELEGATION, FE-SETUP-TEMPLATES, FE-CLIENTS, FE-M3-PROJECT-TABS, FE-M3-REPORT; and the line screens (F-17 is merged) (FE-LINE-WEEKLY, FE-LINE-MINUTES, FE-ENGAGEMENT-PLANNING, FE-DELIVERY-*, FE-FIN-*).
+4. Follow-up batch (Sonnet): My work tabs 48px → 44px (boards); F-17 "UNKNOWN · Unknown" doubled in the checklist chip; F-17 QA-5-3 (uncertain callout below the fold on phones), QA-5-4 (note-length message shown twice), UX-5-1/TECH-5-2 (a hint for a viewer who can't reconcile), the literal 30px in flow-mode padding (make it a token); and the phone "← Setup" target once the design engineer answers.
 
 ## Waiting for the design engineer
 - "Go" on three follow-up recommendations: leave the wordmark under 380px, keep the board's proof box wording (F-09 UX-3-2), and point phone "← Setup" at Setup rules until a phone Setup home is drawn.
 - DE-5: the frame's "+ Start" in the phone bar (now also lowers SCR-22 phone and SCR-15 settings phone).
-- "Merge F-17" (PR #30 is ready).
 
 ## Waiting on others
 - Backend developer, new from F-17 round 5: server-side refusal of a resend while delivery is uncertain, plus idempotency (SEC-5-C1), before any real send is switched on; confirm that a viewer without the reconcile grant should see every step off (TECH-5-2). The full list is in F-17 round-5/acceptance-pmo.md and PR #30.
