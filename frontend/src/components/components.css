@@ -1,0 +1,108 @@
+/* Shared components (src/components): only what psl-bundle.css does not already draw. Tokens only, except the
+   phone breakpoint (custom properties cannot be used in @media) and the two type sizes the system has no token
+   for (marked). Every class here is cmp-*, or a psl-* class narrowed by a cmp-* one, so feature markup that
+   still uses the bundle by hand is not changed. */
+
+/* screen-reader-only text */
+.cmp-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* page title (text style page-title) */
+.cmp-pagehead { display: flex; flex-direction: column; gap: var(--space-1); }
+.cmp-page-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-size: var(--text-page-title-size); line-height: var(--text-page-title-line); font-weight: var(--text-page-title-weight); }
+
+/* popovers: menus, select lists, date pickers, filter panels, tooltips */
+.cmp-anchor { position: relative; }
+.cmp-anchor--inline { display: inline-flex; }
+.psl-pop.cmp-pop { position: absolute; top: calc(100% + var(--space-1)); left: 0; z-index: var(--z-pop); }
+.psl-pop.cmp-pop--fill { min-width: 100%; }
+.psl-pop.cmp-pop--up { top: auto; bottom: calc(100% + var(--space-1)); }
+.psl-pop.cmp-pop--end { left: auto; right: 0; }
+
+/* menu: button items, the head, an inset focus ring with the keyboard-active edge */
+.cmp-menuhead { padding: var(--space-3) var(--space-14px); border-bottom: var(--rule-strong) solid var(--ink); }
+.cmp-menuhead strong { display: block; }
+.psl-menuitem.cmp-menubutton { width: 100%; border: none; background: none; font: inherit; text-align: left; }
+.cmp-menu .psl-menuitem:focus-visible { outline-offset: calc(var(--rule-strong) * -1); }
+
+/* inputs that wrap an <input> (money, date): the ring sits on the box */
+.psl-input.cmp-wrapped:focus-within { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); background: var(--surface); }
+.cmp-wrapped input:focus-visible { outline: none; }
+.psl-input.cmp-wrapped.is-readonly { background: var(--surface-subtle); border-color: var(--rule-soft); }
+.cmp-inputbtn.psl-iconbtn { width: calc(var(--control-md) - var(--space-2)); height: calc(var(--control-md) - var(--space-2)); margin-right: calc(var(--space-2) * -1); }
+.cmp-search { appearance: none; }
+.cmp-search::-webkit-search-cancel-button, .cmp-search::-webkit-search-decoration { appearance: none; -webkit-appearance: none; }
+.cmp-cal__row { display: contents; }
+
+/* radio groups */
+.cmp-fieldset { border: none; margin: 0; padding: 0; min-width: 0; }
+.cmp-fieldset > legend { padding: 0; margin-bottom: var(--space-1); }
+.cmp-choices { display: flex; flex-direction: column; }
+.cmp-choices--cards { gap: var(--space-2); }
+
+/* tabs drawn as buttons */
+.psl-tab.cmp-tabbutton { font: inherit; font-weight: 500; border: none; border-right: var(--rule-strong) solid var(--ink); }
+
+/* restricted link: lock and words */
+.psl-link.cmp-restricted { display: inline-flex; gap: calc(var(--space-1) * 1.5); align-items: center; }
+
+/* a button drawn as a link (Clear all, Clear selection) */
+.psl-link.cmp-linkbutton { background: none; border: none; padding: 0; font: inherit; }
+.psl-link.cmp-linkbutton--small { font-size: var(--text-hint-size); }
+
+/* panel tints the Panel page draws */
+.cmp-panelbox.psl-panel--agent > .psl-panel__head, .cmp-panelbox.psl-panel--agent > .psl-panel__body { color: var(--action-ink); }
+.cmp-panelbox.psl-panel--readonly > .psl-panel__head { border-bottom-color: var(--rule-soft); }
+.cmp-panelbox.psl-panel--readonly > .psl-panel__body { color: var(--ink-muted); }
+
+/* list toolbar and filter panel */
+.cmp-toolsearch { flex: 1 1 calc(var(--space-7) * 7); max-width: calc(var(--space-7) * 10 + var(--space-5)); }
+.cmp-chips { display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; margin-top: var(--space-10px); }
+.psl-pop.cmp-filter { width: calc(var(--space-3) * 30); }
+.cmp-filter__head { padding: var(--space-3) var(--space-4); border-bottom: var(--rule-strong) solid var(--ink); font-family: var(--font-display); font-weight: var(--text-panel-head-weight); font-size: var(--text-panel-head-size); text-transform: uppercase; }
+.cmp-filter__body { padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: var(--space-1); }
+.cmp-filter__foot { padding: var(--space-3) var(--space-4); border-top: var(--rule-strong) solid var(--ink); display: flex; justify-content: space-between; align-items: center; }
+
+/* overlays: drawer, sheet, dialog over the scrim */
+.cmp-layer { position: fixed; inset: 0; z-index: var(--z-overlay); display: flex; justify-content: flex-end; }
+.cmp-layer > .psl-scrim { position: absolute; inset: 0; }
+.cmp-layer--sheet { align-items: flex-end; }
+.cmp-layer--center { align-items: center; justify-content: center; padding: var(--space-5); }
+.cmp-panel { position: relative; outline: none; }
+.cmp-layer--drawer > .psl-drawer { height: 100%; }
+.cmp-layer--sheet > .psl-sheet { width: 100%; max-height: 100%; }
+.cmp-layer--sheet > .cmp-panel--full { height: 100%; }
+.cmp-scroll { overflow: auto; flex: 1 1 auto; min-height: 0; }
+.cmp-swipe { touch-action: pan-x; }
+/* 18px: the BottomSheet page's title size; the system has no text style at 18px */
+.cmp-sheet-title { font-family: var(--font-display); font-weight: var(--text-drawer-title-weight); font-size: 18px; }
+
+/* toast */
+.cmp-toasts { position: fixed; left: 50%; bottom: var(--space-5); transform: translateX(-50%); z-index: var(--z-toast); }
+.cmp-toast__action { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--on-strong); text-decoration: underline; cursor: pointer; }
+
+/* tooltip above its trigger */
+.psl-tip.cmp-tip { position: absolute; left: 0; bottom: calc(100% + var(--space-2)); z-index: var(--z-pop); width: max-content; }
+.psl-tip.cmp-tip[hidden] { display: none; }
+
+/* file upload */
+.psl-drop.cmp-drop:has(input:focus-visible) { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.cmp-drop__error { color: var(--signal-ink); }
+.psl-file.cmp-file--restricted { border-color: var(--rule-soft); }
+.psl-progress.cmp-progress { display: block; }
+
+/* table, loading, facts, agent steps */
+.cmp-bulk { display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; margin-bottom: var(--space-10px); }
+.psl-panel.cmp-skeleton { padding: var(--space-3); display: grid; gap: var(--space-10px); }
+.cmp-stack { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; }
+.cmp-progresstext { font-size: var(--text-small-size); color: var(--ink-muted); }
+.psl-doesnt.cmp-paidnote { margin: var(--space-2) 0 0; }
+.psl-step--done .psl-step__box .cmp-steptick { color: var(--on-strong); }
+
+/* phones: every target at least 44px (D-92 c) */
+@media (max-width: 719.98px) {
+  /* 26px: page-title on phones, as its usage line says; the system has no token for it */
+  .cmp-page-title { font-size: 26px; line-height: var(--text-title-line); }
+  .psl-btn.cmp-btn-sm { min-height: var(--control-md); }
+  .psl-check.cmp-check, .psl-radio.cmp-check { min-height: var(--control-md); }
+  .psl-link.cmp-linkbutton { display: inline-flex; align-items: center; min-height: var(--control-md); }
+}
