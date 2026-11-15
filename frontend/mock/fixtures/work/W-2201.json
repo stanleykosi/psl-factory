@@ -215,7 +215,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Saved records are not shown here. Choose at least one record for this part before you send."
           },
           {
             "name": "risks",
@@ -285,7 +286,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Saved records are not shown here. Choose at least one record for this part before you send."
           },
           {
             "name": "risks",

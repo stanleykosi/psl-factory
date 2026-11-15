@@ -35,7 +35,6 @@ const FORM_TEXT = {
   note: `Keep the note to ${NOTE_MAX} characters.`,
   cancel: 'Cancel',
   restricted: 'Restricted',
-  cites: 'Saved records are not shown here. Choose at least one record for this part before you send.',
 } as const;
 
 const isNote = (field: StepField) => field.name === 'note';
@@ -272,7 +271,6 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
         {step.label}
       </h3>
       <div className="psl-panel__body ws-form__body">
-        {fields.some((f) => f.type === 'records') && <p className="psl-hint">{FORM_TEXT.cites}</p>}
         {consequence}
         {messages.length > 0 && (
           <div className="psl-callout psl-callout--problem" role="alert">
