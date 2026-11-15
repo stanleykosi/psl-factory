@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-20",
   "outcome": "The Templates tab on Setup lists each document template and uploads a new version of one",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-SETUP-TEMPLATES"
   ],
@@ -111,11 +111,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delegated technical review",
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -141,18 +143,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delegated UX review",
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delegated UI review",
+      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -344,15 +350,26 @@
         "delivery/features/F-20/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T12:07:12Z",
           "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer (hunchoweb)",
+          "at": "2026-11-15T12:23:12Z",
+          "refs": [
+            "delivery/OVERNIGHT-DECISIONS.md"
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": "SCR-34-mobile visual gap waived (D-78); signed in fidelity-exceptions.json"
         }
-      ]
+      ],
+      "risk_authority": "design engineer"
     },
     {
       "id": "UI-1-2",
@@ -367,7 +384,7 @@
         "delivery/features/F-20/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -384,11 +401,25 @@
           ],
           "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:23:00Z",
+          "refs": [
+            "The \"N versions \u00b7 Changed by X, date\" line is now a block `setup-docname__history` under the name in the Document cell, and the action cell holds only the Upload control. The desktop score stayed at 95.9. The component test covers history on every row, including a read-only row, with no Upload control."
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "777d9a3f"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The \"N versions \u00b7 Changed by X, date\" line is now a block `setup-docname__history` under the name in the Document cell, and the action cell holds only the Upload control. The desktop score stayed at 95.9. The component test covers history on every row, including a read-only row, with no Upload control."
       ]
     },
     {
@@ -404,7 +435,7 @@
         "delivery/features/F-20/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -421,11 +452,25 @@
           ],
           "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:23:00Z",
+          "refs": [
+            "The phone As-of line sits directly under the note and before the cards (TemplatesView.tsx, report.json y=182). A component test covers the position."
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "777d9a3f"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The phone As-of line sits directly under the note and before the cards (TemplatesView.tsx, report.json y=182). A component test covers the position."
       ]
     },
     {
@@ -441,7 +486,7 @@
         "delivery/features/F-20/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -458,11 +503,25 @@
           ],
           "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:23:00Z",
+          "refs": [
+            "The new component test puts history on every row. The scored fixtures are unchanged."
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "777d9a3f"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The new component test puts history on every row. The scored fixtures are unchanged."
       ]
     }
   ],
@@ -661,6 +720,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-15T12:17:36Z",
+      "round": 2,
+      "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-15T12:23:13Z",
       "round": 2,
       "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
       "reason": null
