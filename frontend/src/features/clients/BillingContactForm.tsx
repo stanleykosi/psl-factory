@@ -19,7 +19,6 @@ type Notice =
   | { kind: 'uncertain' }
   | { kind: 'invalid'; message: string; fields?: FieldMessage[] };
 
-const HELP_ID = 'client-name-help';
 const FIELDS = ['name', 'email'] as const;
 
 type Props = {
