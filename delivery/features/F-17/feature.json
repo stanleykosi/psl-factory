@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-17",
   "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-WORKSPACE-FRAME"
   ],
@@ -172,7 +172,7 @@
         "delivery/features/F-17/round-1/fidelity/region-scores.txt"
       ],
       "raised_by": "coordinator",
-      "state": "FIX_SUBMITTED",
+      "state": "OPEN",
       "history": [
         {
           "action": "add",
@@ -189,6 +189,14 @@
           ],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": "Partial. The D-62 side column, Decide panel (orange head, green primary, full-width buttons), blue suggestion and form heads, and phone pinned bar are present. Region check rerun at a5e803a gives coverage 100% in 26 of 26 and visual >= 85 in 9 of 26. Of the gaps still open, UI-2-1 to UI-2-7 can be fixed in the frame, and the rest are listed below for the design engineer."
         }
       ],
       "fix_by": "builder",
@@ -209,7 +217,7 @@
         "delivery/features/F-17/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -226,11 +234,25 @@
           ],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "reset on id change at usePageReload.ts:27-34. The test \"access lost on one item is not carried to the next id\" renders W-2001, loses access, rerenders W-2002, and expects `lost` and `fresh` null. It fails on the old code, which had no reset."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a5e803a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "reset on id change at usePageReload.ts:27-34. The test \"access lost on one item is not carried to the next id\" renders W-2001, loses access, rerenders W-2002, and expects `lost` and `fresh` null. It fails on the old code, which had no reset."
       ]
     },
     {
@@ -246,7 +268,7 @@
         "delivery/features/F-17/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -263,11 +285,25 @@
           ],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "`stale(undefined)` no longer names a version (useWorkspaceStep.ts:41). The test \"a 409 whose re-read fails does not name a version\" covers it."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a5e803a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`stale(undefined)` no longer names a version (useWorkspaceStep.ts:41). The test \"a 409 whose re-read fails does not name a version\" covers it."
       ]
     },
     {
@@ -283,7 +319,7 @@
         "delivery/features/F-17/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -300,11 +336,25 @@
           ],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "`hasValue` treats empty and blank as Unknown in facts and figures (Sections.tsx:47, :155, :343). The test uses '' and '   '."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a5e803a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`hasValue` treats empty and blank as Unknown in facts and figures (Sections.tsx:47, :155, :343). The test uses '' and '   '."
       ]
     },
     {
@@ -343,7 +393,7 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -360,11 +410,25 @@
           ],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "StepForm collects unmatched 422 field messages with the top message into the alert (StepForm.tsx:244-249). A matched field stays under its input only, and a test shows it is not repeated at the top."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a5e803a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "StepForm collects unmatched 422 field messages with the top message into the alert (StepForm.tsx:244-249). A matched field stays under its input only, and a test shows it is not repeated at the top."
       ]
     },
     {
@@ -380,7 +444,7 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -397,11 +461,25 @@
           ],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "W-2008 at 390 shows \"Confirm what happened before anything is resent.\" and the \"Confirm what happened first.\" hint beside the off buttons."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a5e803a"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-2008 at 390 shows \"Confirm what happened before anything is resent.\" and the \"Confirm what happened first.\" hint beside the off buttons."
       ]
     },
     {
@@ -417,7 +495,7 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -434,11 +512,25 @@
           ],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "W-2002 shows \"More rows aren't available yet.\" once, in the section."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a5e803a"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-2002 shows \"More rows aren't available yet.\" once, in the section."
       ]
     },
     {
@@ -454,7 +546,7 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -471,11 +563,27 @@
           ],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "A 500 on W-2006 reads \"Check my answer",
+            "We couldn't confirm this step. Check the page before trying again.\""
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a5e803a"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "A 500 on W-2006 reads \"Check my answer",
+        "We couldn't confirm this step. Check the page before trying again.\""
       ]
     },
     {
@@ -491,7 +599,7 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -508,11 +616,303 @@
           ],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "After W-2001 \"Approve and send\" the notice leads with the step label (\"Approve and send",
+            "Lagoon Health received v2: ...\")."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a5e803a"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "After W-2001 \"Approve and send\" the notice leads with the step label (\"Approve and send",
+        "Lagoon Health received v2: ...\")."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`useWorkspacePage` resets on an id change by setting state during render (usePageReload.ts:27-34). An older in-flight `reload()` for the previous id can still land and set `fresh` after the reset. WorkItemView's newer-read rule limits the harm. Guard the late write by id if it ever shows.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "TECH-1-4 is still open: a manual retry sends the reloaded revision. This needs a backend answer on the idempotency promise before a real-API cutover. The build records it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On a short phone (390x667) the pinned Decide panel (about 170 to 250px) covers a quarter to a third of the screen while scrolling, and on W-2008 its lower button (\"Return with a note\") sat 28px below the visible edge at one scroll position. Consider keeping the pinned bar to the primary button only, or a smaller height. frontend/src/features/workspace/workspace.css (the `.ws-decide` sticky rule).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After a 500 on \"Check my answer\" (W-2006, 390) focus lands on a button 60px below the visible area, while the notice is at the top. A screen-reader user hears the alert, but a sighted keyboard user sees no focus. Move focus to the notice or the retry button in view. frontend/src/features/workspace/Workspace.tsx.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The phone sections have lost the board's panel. SCR-25-mobile-review and SCR-49-mobile-blocked both draw each section as a white box with a 2px ink border and a 14px inner inset. The frame at 390 removes the border and the inset (`workspace.css:139-142`: `.ws-section { border: none }`, `.ws-section__body { padding: 0 }`, head `padding: 0 0 6px`), so rows run flush to the page gutter. D-62's wording (\"no panel border on phones\") does not match these two boards. The boards are the spec, so please ask the design engineer to confirm. Fix: at <=720px keep `.ws-section` with `border: 2px solid var(--ink)`, give `.ws-section__body` 0 14px 6px and the head 10px 14px 6px, and keep the head unfilled as now. I injected these rules on W-2001 and W-2003 at 390: the result reads like the boards and there is no sideways scroll. That run was a check only and nothing was committed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Row end values wrap under the text when they should stay on the right. At 390 on W-2001 and W-2003, \"2 RECORDS\", \"ISS-0233\", \"MIN-0141\", \"HELD\", \"DONE \u00b7 22 Mar 2027\" and \"MEDIUM\" drop to their own line. SCR-25 and SCR-49 mobile keep them on the right and wrap the words instead. Cause: `.ws-row__main { flex: 1 1 auto }` (`workspace.css:71`) with `flex-wrap: wrap` on `.ws-row`. Fix: `.ws-row__main { flex: 1 1 0; }`. Row forms still wrap, because `.ws-row__form` stays at 100% basis. I checked this by injection at 390.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The phone pinned Decide bar doesn't match the boards' bar. (a) On first view at 390 on W-2001 the bar's lower part (Refuse and its reason) is cut off below the fold. The sticky containing block is `.ws`, which begins where the bar sits, so the bar cannot rise any further. Measured: bar top 665 and height 252 against a viewport of 844. (b) The 2px top rule and the white band stop at the page gutters. On the SCR-25, SCR-26 and SCR-49 phone boards they run edge to edge, with the buttons inset 16px. Fix: at <=720px give `.ws-decide` `position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px 18px`, and reserve its height at the end of the workspace (padding-bottom). Alternatively, attach the sticky bar to a full-width wrapper outside `.ws`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-4",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Tables break their reference cells and crush at phone width. \"R-07\" wraps to \"R-\" / \"07\" at 1440 as well as 390 (W-2002, Requirements table). At 390 the requirement column falls to one word per line, while the Pricing table on the same page scrolls. SCR-26 draws R-07 on one line. Fix: give reference and cite cells `white-space: nowrap` (`.ws-table td.psl-mono, .ws-table .ws-cite`), and give `.ws-table` a minimum width (for example `min-width: 560px` inside the scrolling `.ws-tablewrap`) so narrow screens scroll instead of squeezing.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-5",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The cite in a table cell and the status tag don't follow SCR-26. The board puts the source (\"RFP p.6\") on its own line under the requirement, in 12px muted sans with normal case, and sets the tag in capitals (\"SUGGESTED BY TOLA\"). The frame puts the cite inline as uppercase mono (\"RFP P.6\") and the tag in sentence case. Fix: inside `.ws-table`, show the cell link or cite as a block line in 12px `--ink-muted` sans with no uppercase, and give table tags `text-transform: uppercase; font-weight: 600`. Measured gap: table 1440 76.3, 390 74.3. Also put the \"0 selected \u00b7 Accept selected \u00b7 hint\" footer on one row, as the board does (count, then button, then hint), instead of stacking the three.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-6",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A suggestion card doesn't use the fields it already has the way SCR-26 draws them. The `suggestions` item carries `label`, `text`, `detail`, `tag` and `cites`, which are what the board's card shows: a mono reference line, an answer box with an `--action` border on `--action-tint`, then the source line in 12px muted. The frame runs label and text together in one bold-led line. It also repeats \"Suggested by Tola\" (agent meta line plus tag) and \"RFP P.6\" (cite plus label). Several items stack with no separator. Fix: show `label` as a mono line on its own, `text` in the tinted answer box and `detail` beneath it. Drop the agent line when the tag already names the agent, and put a 1px `--rule-soft` divider between items. Measured gap: suggestions 1440 46.9. The Status radio group and the \"Write my own\" button are not in the data (see B list).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-7",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Several word styles don't match the boards. (a) The checklist and findings status pills are in mono (they inherit `.ws-row__end`'s `--font-mono`). SCR-49 and SCR-44 draw them in 12px semibold sans. Fix: give `.ws-rows--checklist .ws-word, .ws-rows--findings .ws-word` `font-family: var(--font-sans); font-weight: 600`. (b) Money in table cells uses `.psl-amount`, which is the 16px/500 headline amount style used on decision cards (`psl-bundle.css:391`), so table numbers are larger than the row text. SCR-56 draws them at row size. Fix: `.ws-table .psl-amount { font-size: inherit; font-weight: 400 }`. (c) The step form's submit button takes the opening step's emphasis, so \"Edit answer\" submits with a white secondary button (`StepForm.tsx:320`, `stepClass`). SCR-26 edit draws the form's submit as a filled primary. Fix: always give the submit button inside `.ws-form` the primary class, unless the step is `danger`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-8",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop the checklist draws a check mark for each row. SCR-49 desktop has no marks and lets the pill carry the state, while SCR-44 readiness passes at 91.3 either way. The marks are harmless, but ask the design engineer whether the frame should drop them at every width, as it already does on phones.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
       ]
     }
   ],
@@ -575,6 +975,70 @@
           "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
           "evidence_refs": [
             "delivery/features/F-17/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "evidence_refs": [
+            "delivery/features/F-17/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-17/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "evidence_refs": [
+            "delivery/features/F-17/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate, D-59 region check, D-62 layout)",
+          "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "evidence_refs": [
+            "delivery/features/F-17/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "reviewer-security",
+          "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "evidence_refs": [
+            "delivery/features/F-17/round-2/review-security.md"
           ]
         }
       }
@@ -792,7 +1256,7 @@
     }
   },
   "created_at": "2026-11-14T21:38:05Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -842,6 +1306,22 @@
       "round": 2,
       "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T07:35:48Z",
+      "round": 2,
+      "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T07:35:48Z",
+      "round": 3,
+      "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "reason": null
     }
   ],
   "routing": {
@@ -858,10 +1338,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

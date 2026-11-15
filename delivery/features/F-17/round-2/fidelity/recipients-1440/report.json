@@ -1,0 +1,48 @@
+{
+  "region": "recipients",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-25-desktop-received.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "What happened",
+  "pageText": "Who receives it",
+  "boardRegion": {
+    "width": 1320,
+    "height": 193
+  },
+  "pageRegion": {
+    "width": 1320,
+    "height": 353
+  },
+  "pass": true,
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 100,
+    "visual": 89.7
+  },
+  "missing": [
+    {
+      "role": "text",
+      "name": "WHAT HAPPENED",
+      "exception": "Recipients are anchored on SCR-25's What happened list; the frame's recipients section has its own returned title."
+    }
+  ],
+  "misplaced": [],
+  "extra": [
+    {
+      "role": "heading",
+      "name": "WHO RECEIVES IT"
+    }
+  ],
+  "visual": {
+    "score": 89.7,
+    "allCellsScore": 89.7,
+    "width": 1320,
+    "height": 192,
+    "boardHeight": 192,
+    "pageHeight": 353,
+    "cell": 12,
+    "contentCells": 1760,
+    "mismatchedCells": 182
+  },
+  "notes": []
+}

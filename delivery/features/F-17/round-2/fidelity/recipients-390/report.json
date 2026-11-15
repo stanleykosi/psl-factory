@@ -1,0 +1,48 @@
+{
+  "region": "recipients",
+  "width": 390,
+  "board": "design/canvas/project/SCR-25-mobile-received.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "Delivered to 2 client contacts. Verified.",
+  "pageText": "Who receives it",
+  "boardRegion": {
+    "width": 390,
+    "height": 41
+  },
+  "pageRegion": {
+    "width": 390,
+    "height": 305
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 0,
+    "coverageWithExceptions": 100,
+    "visual": 25
+  },
+  "missing": [
+    {
+      "role": "text",
+      "name": "Delivered to 2 client contacts. Verified.",
+      "exception": "The phone received board draws only a one-line summary; the frame draws the returned section. The phone composition is the line task's board."
+    }
+  ],
+  "misplaced": [],
+  "extra": [
+    {
+      "role": "heading",
+      "name": "WHO RECEIVES IT"
+    }
+  ],
+  "visual": {
+    "score": 25,
+    "allCellsScore": 12.1,
+    "width": 390,
+    "height": 41,
+    "boardHeight": 41,
+    "pageHeight": 305,
+    "cell": 12,
+    "contentCells": 64,
+    "mismatchedCells": 48
+  },
+  "notes": []
+}

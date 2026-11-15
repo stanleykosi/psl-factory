@@ -1,0 +1,37 @@
+{
+  "region": "notice-done",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-25-desktop-received.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified.",
+  "pageText": "Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified.",
+  "boardRegion": {
+    "width": 1320,
+    "height": 41
+  },
+  "pageRegion": {
+    "width": 1320,
+    "height": 41
+  },
+  "pass": true,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 93.6
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [],
+  "visual": {
+    "score": 93.6,
+    "allCellsScore": 98.2,
+    "width": 1320,
+    "height": 41,
+    "boardHeight": 41,
+    "pageHeight": 41,
+    "cell": 12,
+    "contentCells": 125,
+    "mismatchedCells": 8
+  },
+  "notes": []
+}

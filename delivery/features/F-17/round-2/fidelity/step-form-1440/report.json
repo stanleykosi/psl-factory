@@ -1,0 +1,109 @@
+{
+  "region": "step-form",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-26-desktop-edit.dc.html",
+  "page": "/work/W-2002",
+  "boardText": "Review Tola's suggestion",
+  "pageText": "Edit answer",
+  "boardRegion": {
+    "width": 440,
+    "height": 507
+  },
+  "pageRegion": {
+    "width": 440,
+    "height": 387
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 23.1,
+    "coverageWithExceptions": 100,
+    "visual": 48.1
+  },
+  "missing": [
+    {
+      "role": "text",
+      "name": "REVIEW TOLA'S SUGGESTION",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "R-07 · RFP p.6",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "Loan officers approve applications above a set amount",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "Your answer",
+      "exception": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form."
+    },
+    {
+      "role": "text",
+      "name": "Editing in place. Your words replace Tola's once you save; Tola's version stays in the history.",
+      "exception": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form."
+    },
+    {
+      "role": "text",
+      "name": "From PSL's past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "link",
+      "name": "Harmattan Bank RFP 2025 · R-12",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    },
+    {
+      "role": "text",
+      "name": "Status",
+      "exception": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form."
+    },
+    {
+      "role": "link",
+      "name": "Save and accept",
+      "exception": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form."
+    },
+    {
+      "role": "text",
+      "name": "Cancel keeps Tola's suggestion as it was. If you've typed changes, we ask before throwing them away.",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    }
+  ],
+  "misplaced": [
+    {
+      "name": "Cancel"
+    }
+  ],
+  "extra": [
+    {
+      "role": "form",
+      "name": "Edit answer"
+    },
+    {
+      "role": "heading",
+      "name": "EDIT ANSWER"
+    },
+    {
+      "role": "textbox",
+      "name": "Your answer"
+    },
+    {
+      "role": "button",
+      "name": "Edit answer"
+    }
+  ],
+  "visual": {
+    "score": 48.1,
+    "allCellsScore": 51.6,
+    "width": 440,
+    "height": 507,
+    "boardHeight": 507,
+    "pageHeight": 387,
+    "cell": 12,
+    "contentCells": 1483,
+    "mismatchedCells": 770
+  },
+  "notes": []
+}

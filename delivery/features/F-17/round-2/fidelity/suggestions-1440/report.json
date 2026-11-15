@@ -1,0 +1,83 @@
+{
+  "region": "suggestions",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-26-desktop-review.dc.html",
+  "page": "/work/W-2002",
+  "boardText": "Review Tola's suggestion",
+  "pageText": "Review Tola’s suggestion",
+  "boardRegion": {
+    "width": 440,
+    "height": 499
+  },
+  "pageRegion": {
+    "width": 440,
+    "height": 543
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 35.7,
+    "coverageWithExceptions": 100,
+    "visual": 46.9
+  },
+  "missing": [
+    {
+      "role": "text",
+      "name": "R-07 · RFP p.6",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "Loan officers approve applications above a set amount",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "Tola's suggested answer",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "From PSL's past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "link",
+      "name": "Harmattan Bank RFP 2025 · R-12",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    },
+    {
+      "role": "text",
+      "name": "Status",
+      "exception": "The status choice is in the edit form, not in the review card."
+    },
+    {
+      "role": "link",
+      "name": "Write my own",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    },
+    {
+      "role": "text",
+      "name": "Accepting records your name. Tola's original suggestion stays in the history, so reviewers can see what was changed.",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    }
+  ],
+  "misplaced": [],
+  "extra": [],
+  "visual": {
+    "score": 46.9,
+    "allCellsScore": 48.8,
+    "width": 440,
+    "height": 499,
+    "boardHeight": 499,
+    "pageHeight": 543,
+    "cell": 12,
+    "contentCells": 1499,
+    "mismatchedCells": 796
+  },
+  "notes": []
+}
