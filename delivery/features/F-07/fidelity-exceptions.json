@@ -29,6 +29,12 @@
       "name": "← Projects",
       "reason": "Frame phone bar back link (usePhoneBack) draws the arrow as an icon, so its accessible name is 'Back to Projects'; same place and wording as the board",
       "approved_by": "builder proposal, extra round D-47 (design engineer to confirm)"
+    },
+    {
+      "role": "text",
+      "name": "—",
+      "reason": "Next milestone the response does not carry: the design system writes Unknown (amber Unknown tag), never a dash (D-92 content rule, README 'Unknown is written Unknown, never 0, never blank')",
+      "approved_by": "design engineer, 15 Nov 2026 — D-92/D-93"
     }
   ],
   "visual_waivers": [

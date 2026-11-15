@@ -108,6 +108,8 @@ function AgentSummary({ journey }: { journey: JourneyView }) {
   return (
     <Panel
       kind="agent"
+      as="aside"
+      aria-label={`${agent}'s summary`}
       className="projects__agent"
       head={
         <span className="projects__agenthead">

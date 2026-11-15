@@ -136,7 +136,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
       'person',
     ]);
     expect(document.querySelector('.projects__next')!.textContent).toBe(`What is next ${body.next}`);
-    const tola = screen.getByRole('region', { name: /^Tola/ });
+    const tola = screen.getByRole('complementary', { name: "Tola's summary" });
     expect(tola.textContent).toContain('Tola · PMO agent');
     const paragraphs = body.agent_summary!.text.split('\n\n');
     expect(paragraphs).toHaveLength(2);
@@ -166,7 +166,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(document.querySelector('.projects__phoneline')!.textContent).toBe('1 piece of work');
     expect(facts().map(([, value, cls]) => [value, cls])).toEqual(Array(6).fill(['Unknown', 'psl-fact psl-fact--unknown']));
     expect(lineItems()[0].querySelector('.projects__linename')!.textContent).toBe('RFP response');
-    expect(screen.getByRole('region', { name: /summary|agent/i }).textContent).toContain('Tola has not summarised this project yet.');
+    expect(screen.getByRole('complementary').textContent).toContain('Tola has not summarised this project yet.');
     expect(document.querySelector('main')!.textContent).not.toContain('undefined');
   });
 
@@ -190,7 +190,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(facts().map(([, value]) => value)).toEqual(Array(6).fill('Unknown'));
     expect(lineItems()[0].textContent).toBe('Prepare an invoiceStation 4 of 7 · Finance reviewWaiting');
     expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Milestones', 'Documents 2', 'Money', 'Registers', 'Actions']);
-    expect(screen.getByRole('region', { name: /summary|agent/i }).textContent).toContain('Tola has not summarised this project yet.');
+    expect(screen.getByRole('complementary').textContent).toContain('Tola has not summarised this project yet.');
     expect(document.querySelector('main')!.textContent).not.toMatch(/undefined|object Object/);
   });
 
@@ -220,7 +220,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
       ['Invoiced', 'Unknown', 'psl-fact psl-fact--unknown'],
       ['Stopped', '0', 'psl-fact'],
     ]);
-    const chidi = screen.getByRole('region', { name: /^Chidi/ });
+    const chidi = screen.getByRole('complementary', { name: "Chidi's summary" });
     expect(chidi.textContent).toContain('Chidi · Finance agent');
     expect(chidi.textContent).toContain('One paragraph.');
   });
