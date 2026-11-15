@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 580d01c48d42682171b319290e2fb8c378ae0d35
+COMMIT: 0036fe0ae4ee5811edd8976e0afaebe310552f44
 BUILDER: builder
 LANE: full
 
@@ -126,3 +126,23 @@ Remaining gaps and cause (none is F-21 data):
 Kept: D-69, D-71 exceptions, F-17 uncertain-send lock (e2e green).
 
 Validation: `bash delivery/checks.sh` exit 0; Playwright weekly, workspace, start-work, work-item on 4741/4742: 95 passed; test-results deleted; servers on 4741 to 4743 stopped. round-1/fidelity/scores.txt holds the final run.
+
+## Final scores on the final frame (head 0036fe0a, frame passes 1 and 2 merged)
+Test fix: `frontend/tests/weekly.test.tsx` (the page is rendered through AppShell + WorkItemView, header present). Changed assertions:
+- W-2201 default state: the line `expect(text).toContain('Reviewed weekly client report · week 5–11 Nov · ...')` (text of `.ws`) is replaced by `screen.getByText(<same subtitle>)` on the page plus `expect(document.querySelector('.ws').contains(subtitle)).toBe(false)`. All other W-2201 assertions unchanged.
+- W-2202 422 test: `ws().getByText('Needs fixing')` is replaced by `screen.getByText('Needs fixing')` plus `expect(.ws.contains(status)).toBe(false)`. The following W-2202 assertions are unchanged.
+Nothing weaker: the subtitle and status are still checked for exact text, and now also for their place.
+
+Scores (production build, FRAME_FIXTURES=1, frozen pages re-captured on this head, one run; coverage raw / with exceptions / visual), in round-1/fidelity/scores.txt:
+| board | coverage with exceptions | visual |
+| desktop default 1440 | 100 | 75.3 |
+| desktop invalid | 100 | 78.3 |
+| desktop assembling | 100 | 77.0 |
+| desktop review | 100 | 75.5 |
+| mobile default 390 | 100 | 70.8 |
+| mobile invalid | 100 | 76.5 |
+| mobile assembling | 100 | 76.3 |
+| mobile review | 100 | 80.4 |
+No board is under 70 (lowest: mobile default 70.8). All 8 are under 90, so each needs the D-83 signed waiver, which the coordinator signs; none written here. Remaining gaps are those listed above (project tab bar now in the frame; board form open vs D-69 form-on-press; assembling checklist placement).
+
+Validation: `bash delivery/checks.sh` exit 0; vitest weekly 22 passed; `E2E_PORT=4741 MOCK_PORT=4742 npx playwright test e2e/weekly.spec.ts e2e/workspace.spec.ts`: 62 passed; test-results deleted; servers on 4741 to 4743 stopped by PID, ports confirmed empty; git status clean; pushed.

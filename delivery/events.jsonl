@@ -1427,3 +1427,13 @@
 {"at":"2026-11-15T13:52:06Z","feature":"F-19","round":3,"kind":"finding","action":"add","finding":"PMO-3-4","by":"pmo-acceptance","severity":"low","owner":"backend","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-15T13:52:06Z","feature":"F-19","round":3,"kind":"finding","action":"add","finding":"PMO-3-5","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-15T13:52:06Z","feature":"F-19","round":3,"kind":"finding","action":"add","finding":"PMO-3-6","by":"pmo-acceptance","severity":"low","owner":"integration","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T14:09:55Z","feature":"F-19","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"a4a906cadfba","written_at":"2026-11-15T14:09:52Z"}
+{"at":"2026-11-15T14:09:55Z","feature":"F-19","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"a4a906cadfba","written_at":"2026-11-15T14:09:48Z"}
+{"at":"2026-11-15T14:09:55Z","feature":"F-19","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"a4a906cadfba","written_at":"2026-11-15T14:09:47Z"}
+{"at":"2026-11-15T14:10:53Z","feature":"F-19","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"a4a906cadfba","written_at":"2026-11-15T14:10:46Z"}
+{"at":"2026-11-15T14:10:53Z","feature":"F-19","round":3,"kind":"review","role":"pmo_acceptance","verdict":"CHANGES","reviewer":"pmo-acceptance","commit":"a4a906cadfba","findings":{"PMO-3-1":"medium","PMO-3-2":"low","PMO-3-3":"low","PMO-3-4":"low","PMO-3-5":"low","PMO-3-6":"low"},"written_at":"2026-11-15T14:10:35Z"}
+{"at":"2026-11-15T14:11:53Z","feature":"F-19","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"a4a906cadfba","written_at":"2026-11-15T14:11:20Z"}
+{"at":"2026-11-15T14:12:56Z","feature":"F-21","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":104.7,"commit":"0036fe0ae4ee"}
+{"at":"2026-11-15T14:13:09Z","feature":"F-21","round":1,"kind":"transition","head":"0036fe0ae4ee","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-15T14:14:24Z","feature":"F-19","round":3,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/37","git.pr_number":37,"git.ci_status":"passed"}}
+{"at":"2026-11-15T14:14:24Z","feature":"F-19","round":3,"kind":"transition","head":"a4a906cadfba","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}

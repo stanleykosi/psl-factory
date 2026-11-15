@@ -1,7 +1,15 @@
 VERDICT: PASS
-COMMIT: 95903eeb853bc2c9a244eb2e4d19174871d875de
+COMMIT: a4a906cadfbafced2c20f8535467cb32db06c3eb
 REVIEWER: reviewer-ui
 AUTHORITY: delegated UI review
+
+## Re-confirmed on the synced head
+
+Command: `git diff --stat 95903eeb a4a906ca -- frontend/src/features/clients frontend/src/styles frontend/src/shell` returned no changes. The sync merge of origin/dlv-00-delivery-setup brought in no clients, style or shell file, so no shell or style change touches /clients and the Clients rendering is unchanged. The other frontend files that came in (setup-templates and workspace code and tests, 38 files in all) belong to other screens. Fidelity and build were not re-run, as instructed. The PASS from 95903eeb stands, and the D-77 visual waivers are unchanged.
+
+---
+
+Earlier review (at 95903eeb):
 
 ## Findings
 none
