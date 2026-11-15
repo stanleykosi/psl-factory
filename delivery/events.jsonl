@@ -1287,3 +1287,12 @@
 {"at":"2026-11-15T10:36:42Z","feature":"F-19","round":0,"kind":"created","tasks":["FE-CLIENTS"]}
 {"at":"2026-11-15T10:36:42Z","feature":"F-20","round":0,"kind":"created","tasks":["FE-SETUP-TEMPLATES"]}
 {"at":"2026-11-15T10:36:42Z","feature":"F-21","round":0,"kind":"created","tasks":["FE-LINE-WEEKLY"]}
+{"at":"2026-11-15T10:48:59Z","feature":"F-19","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-15T10:49:00Z","feature":"F-20","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-15T10:49:00Z","feature":"F-21","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","external-messaging"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-15T10:49:08Z","feature":"F-19","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-15T10:49:09Z","feature":"F-20","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-15T10:49:10Z","feature":"F-21","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-15T10:49:43Z","feature":"F-19","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-15T10:50:10Z","feature":"F-20","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-15T10:50:24Z","feature":"F-21","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}

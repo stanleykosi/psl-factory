@@ -3,26 +3,58 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-19",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "A signed-in person sees the client register and each client's billing contact, projects and money, and can set the billing contact, on the contract mock",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CLIENTS"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop fidelity.** `SCR-35-desktop` and `SCR-35-desktop-detail` each pass at `--width 1440`: `report.json` has `pass: true`, `scores.coverageWithExceptions` = 100, `scores.visual` >= 90. \u2014 verify: the command per board, exit 0.",
+    "**Phone fidelity.** `SCR-35-mobile` and `SCR-35-mobile-detail` pass at `--width 390`. `round-<N>/fidelity/scores.txt` lists all 4 with coverage, visual and pass. \u2014 verify: same command shape; rows in `scores.txt`.",
+    "**Exceptions are limited and explained.** Each entry of `delivery/features/F-19/fidelity-exceptions.json` has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until the design engineer signs) and falls under a Conflicts item below. No entry covers a value the contract can supply. \u2014 verify: file content; build.md maps each entry to a Conflicts number.",
+    "**Titles and the phone bar.** Desktop: one `h1` (`.shell-title`, computed 40px at 1440, the frame's size, Conflicts 11). Phone: one `h1` (26px at 390), `usePhoneBack` link named \"Projects\" (list) or \"Clients\" (detail); `main` has no back link. The 403/404 page has one `h1`. \u2014 verify: e2e reading `getComputedStyle` and the bar link on the four boards' states.",
+    "**List from the data only.** On the default list the six names appear in the returned order; Lagoon Health and Ojo Foods show \"Missing \u00b7 invoices can't start\", the others \"Set\"; Tamarind Loans shows `0` projects; each row links to `/clients/{id}`. Text from a board that a fixture does not carry (an email in the list, \"active\", \"closed\", \"Prospect \u00b7 RFP\", \"READY\", \"NEEDS DETAILS\" as board words) is absent from the DOM. \u2014 verify: component test on `list.json`; `grep` for those strings in the rendered text.",
+    "**Owed and unknown.** A row with `owed.unknown: true` shows \"Unknown\"; a row with no `owed` shows \"Not given\"; a known amount shows through `formatAmount`; nowhere does the DOM show `0`, `0.00` or an empty cell for an unknown value. \u2014 verify: component tests on list and detail (CL-3501 owed, CL-3507, CL-3509); `grep -rn \"0\\.00\" frontend/src/features/clients` shows no default.",
+    "**Count line and paging.** With `psl_mock_clients=many` and `limit` 10 the list shows 10 rows, \"10 clients loaded as of \u2026\" and \"Show more\"; pressing it requests `cursor=<next_cursor>` once, appends rows (no repeat), and when `next_cursor` is absent the button is gone and the line reads \"25 clients as of \u2026\". A failed second page keeps the loaded rows and shows \"Try again\". The \"N missing billing contact\" figure appears only when `next_cursor` is absent. \u2014 verify: component test with a recording `fetch` and mock test for cursor paging.",
+    "**List states.** `psl_mock_clients=empty` shows \"No clients to show yet.\"; 5xx (`X-Mock-Scenario: 500` or stub) shows `WorkErrorCard` with Try again that only reads; 401 shows the signed-out callout with `next=/clients`; persona `none` (403) shows `NoAccessState`. \u2014 verify: component tests with `answers` stubs as `tests/projects*.test.tsx` do.",
+    "**Detail from the data only.** On `CL-3501` the page shows name \"Lagoon Health Ltd\", the banner text from `blocked[]`, empty inputs, project \"Patient app\" linking to `/projects/{case_id}`, money with owed \"Unknown\". On `CL-3509` (only required fields) there is no banner, no money section, \"No projects yet.\", and no empty placeholders. On `CL-3503` (`can_change: false`) there is no form or button, the values read-only, and \"You can't change this client's details.\". No address, tax ID, legal-name, PM, milestone or Contacts text is present anywhere. \u2014 verify: component tests on the four fixtures; text absent from the DOM.",
+    "**Save: request.** On `CL-3501` the Save button is off until both inputs are non-blank. A press sends one `PUT /api/v1/clients/CL-3501/billing-contact` with the CSRF header and exactly `{expected_revision: 3, name, email}` (no `reason`, no other key). A double press makes one request. A 200 reloads the detail once, shows the stored values, the \"Billing contact saved.\" status, and the banner is gone because the backend stopped returning it. \u2014 verify: component test with a recording `fetch` (request count and body asserted); mock test.",
+    "**Save: errors.** A 409 (`CL-3508`) reloads once, keeps what the person typed, shows the newer saved values and the changed-while-editing notice, resends nothing, and the next press carries the new `expected_revision` (asserted). A 422 puts the `email` message beside the email input (`aria-invalid=\"true\"`, linked by `aria-describedby`) and the `name` message beside the name input, entries kept, no reload loop. A 403 reloads once and the reloaded `can_change` decides. A 401 shows the signed-out callout. A network error or 502 shows \"We couldn\u2019t confirm the change was saved.\", reloads once and sends no second PUT; if that reload fails the form is off and \"Try again\" only reads. \u2014 verify: component tests with `answers` stubs and a recording `fetch`; counts asserted.",
+    "**Tenant and permission.** `CL-3599` (GET and PUT 404) and persona `none` (403) show `NoAccessState` with no client id, name or title in the document, tab title or phone bar; persona `none` gets 403 on each of the three operations on the mock; a PUT without the CSRF header gets 403 and the page shows the server message. The page never reads `/me` roles to show or hide the form. \u2014 verify: component tests; `tests/clients-mock.test.ts` per operation; `grep -rn \"roles\\|useMe\" frontend/src/features/clients` finds no permission decision.",
+    "**Nothing is derived or enforced.** No code path blocks, warns or enables anything about invoices or eligibility; the \"invoices can't start\" words appear only as returned `blocked[]` lines or the two static copy lines named in Contract. No invoice, receipt, allocation or payment call exists. \u2014 verify: `grep -rn \"invoice\" frontend/src/features/clients` shows only copy and the money labels; no `fetch` outside the three operations.",
+    "**The mock matches v7.** `tests/clients-mock.test.ts` checks, for the three operations: 200 replies validate against the v7 schema (no stripping); 401/403/404/409/422 shapes; the check order; cursor paging and `limit`; the 409-then-newer-revision flow; the stored contact after a 200; every new fixture validates against the generated schema; `CL-3509` has every optional field absent. \u2014 verify: `cd frontend && npx vitest run tests/clients-mock.test.ts tests/clients.test.tsx`.",
+    "**Accessibility at both widths.** `e2e/clients.spec.ts` shows no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 390 and 1440 on the list, the empty list, the detail (CL-3501), the detail with a 422 shown, the read-only detail (CL-3503) and the not-open state; no sideways scroll; visible focus rings and logical Tab order (rows, then name, email, Save); 44px targets; the table has real `th` headers and the phone cards are links with a readable name; \"Unknown\" is text, not colour alone; the 422 summary is announced (`role=\"alert\"`) and focus moves to the first invalid input; no animation under `reducedMotion: 'reduce'`. \u2014 verify: `cd frontend && E2E_PORT=4631 MOCK_PORT=4632 npx playwright test e2e/clients.spec.ts` with `timezoneId: 'Africa/Lagos'`; output in build.md.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/clients/clients.css` returns nothing; colours, spacing and type use `src/styles/tokens.css` variables. \u2014 verify: the command.",
+    "**Existing behaviour is not weakened.** `tests/mock-projects.test.ts`, the projects tests, `tests/work-item*.test.tsx`, `tests/response*.test.*`, `tests/api-schema-drift.test.ts`, `tests/mock-contract.test.ts` and the existing e2e specs pass unchanged. No removed `expect`, no loosened matcher. `git diff --stat` shows no edit to `frontend/src/shell/**`, `frontend/src/api/**`, `frontend/src/features/projects/**`, `architecture/**`, `package.json`, the lock file or the protected files, and `server.mjs` shows only the lines named in Lanes. \u2014 verify: `delivery/checks.sh` and the diff.",
+    "**No new dependency; no hard-coded data.** No new npm package. `grep -rn \"Lagoon\\|Harmattan\\|Kora\\|Ojo\\|Sabi\\|Tamarind\" frontend/src` finds nothing outside tests. \u2014 verify: the two commands.",
+    "**build.md evidence.** build.md contains `scores.txt` for the 4 boards, `side-by-side.png` paths, the exception-to-Conflicts map, every contract question for the backend developer (fields the boards need that the schema lacks: see Conflicts) recorded as a contract proposal, and for each board under 90 the measured gap and cause. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It is a cross-layer contract the backend developer has not yet confirmed (D-CLIENTS-VIEW proposed, architecture/model.json:1607) and it includes one write (the billing contact, which gates later invoicing) plus a money display where unknown must never read as zero. It is not high because it is mock-only, the write is a single contained field with revision control, no invoice, payment or migration logic runs, and nothing is released. SURFACES: `ui`, `api` (new endpoints consumed) and `contract-change` (a still-proposed v7 contract). `payments` is not listed because only displayed money is in scope. PRODUCT-ACCEPTANCE is not-required: it conforms to client-approved boards and adds no new business rule, with the board-versus-contract gaps handled as above."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-19/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +77,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +91,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": false,
+      "assessment_reason": "delivery/features/F-19/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +135,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-CLIENTS",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
+    "task_branch": "fe-clients-a-signed-in-person-sees-the-client-regis",
+    "head_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-19",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +149,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,12 +182,40 @@
     }
   },
   "created_at": "2026-11-15T10:36:42Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-15T10:49:08Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T10:49:43Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-19/readiness.md",
+      "delivery/features/F-19/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
