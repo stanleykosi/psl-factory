@@ -6,20 +6,18 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { Breadcrumb, buttonClass, Button, Callout, EmptyState, formatDate, formatTime, PageTitle, useIsPhone } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
-import { WarningIcon } from '@/shell/icons';
 import { RfpFrame } from '@/features/rfp/RfpFrame';
 import { currentStationIndex } from '@/features/work-item/labels';
 import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
 import type { Recorded, ResponseTask, ResponseWorkItem, TaskResponse } from './contract';
-import { CheckIcon, InfoIcon } from './icons';
-import { formatClock, formatDay, plural, RECORDABLE } from './labels';
+import { plural, RECORDABLE } from './labels';
 import { AgentAside, ClientResponseForm, SowSignatureForm } from './ResponseForm';
 import { TeamInputForm } from './TeamInputForm';
 import { findTask, teamInputOpen, useResponse, type Notice } from './useResponse';
-import { useIsPhone } from './usePhone';
 
 import '@/features/work-item/work-item.css';
 import './response.css';
@@ -37,29 +35,21 @@ function Crumb({ item, response }: { item: ResponseWorkItem; response: TaskRespo
   const project = response.context?.project;
   const document = response.context?.document;
   if (project) {
-    return (
-      <p className="psl-crumb resp-crumb">
-        <Link href="/projects">PROJECTS</Link> / {project.title.toUpperCase()}
-        {document && ` / DOCUMENTS / ${document.reference.toUpperCase()}`}
-      </p>
-    );
+    const rest = document ? `${project.title} / Documents / ${document.reference}` : project.title;
+    return <Breadcrumb items={[{ label: 'Projects', href: '/projects' }]} current={rest} />;
   }
   const current = currentStationIndex(item.stations);
-  const station = current >= 0 ? ` · STATION ${current + 1} OF ${item.stations.length}` : '';
-  return (
-    <p className="psl-crumb resp-crumb">
-      <Link href="/my-work">QUEUE</Link> / {item.line.toUpperCase()} / {item.reference.toUpperCase()}
-      {station}
-    </p>
-  );
+  const station = current >= 0 ? ` · Station ${current + 1} of ${item.stations.length}` : '';
+  return <Breadcrumb items={[{ label: 'Queue', href: '/my-work' }]} current={`${item.line} / ${item.reference}${station}`} />;
 }
 
+/** A warning that answers an action (stale, uncertain, unconfirmed): announced when it appears. */
 function Warning({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
-    <div className="psl-callout psl-callout--warning resp-retry" role="alert">
-      <WarningIcon />
-      <span>{children}</span>
-      {action}
+    <div role="alert">
+      <Callout kind="warning">
+        {children} {action}
+      </Callout>
     </div>
   );
 }
@@ -76,9 +66,9 @@ function PageNotice({ notice, onRecheck }: { notice: Notice | null; onRecheck: (
     return (
       <Warning
         action={
-          <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={notice.checking} onClick={onRecheck}>
-            {notice.checking ? 'Checking…' : 'Try again'}
-          </button>
+          <Button kind="secondary" size="sm" busy={notice.checking} busyLabel="Checking…" onClick={onRecheck}>
+            Try again
+          </Button>
         }
       >
         We couldn&rsquo;t confirm whether your response was recorded, and couldn&rsquo;t reload to check. Record stays off. Try again reloads the item;
@@ -91,19 +81,11 @@ function PageNotice({ notice, onRecheck }: { notice: Notice | null; onRecheck: (
 
 /** Notices that sit just above Record (the server's 422 or 403 message, a failed claim). */
 function FormNotice({ notice }: { notice: Notice | null }) {
-  if (notice?.kind === 'problem') {
-    return (
-      <div className="psl-callout psl-callout--problem" role="alert">
-        <WarningIcon />
-        <span>{notice.message}</span>
-      </div>
-    );
-  }
+  if (notice?.kind === 'problem') return <Callout kind="problem">{notice.message}</Callout>;
   if (notice?.kind === 'claim_failed') {
     return (
-      <div className="psl-callout psl-callout--warning" role="alert">
-        <WarningIcon />
-        <span>We couldn&rsquo;t get this ready. Try again.</span>
+      <div role="alert">
+        <Callout kind="warning">We couldn&rsquo;t get this ready. Try again.</Callout>
       </div>
     );
   }
@@ -112,13 +94,17 @@ function FormNotice({ notice }: { notice: Notice | null }) {
 
 function NotOpen({ id }: { id: string }) {
   return (
-    <section className="psl-empty resp-notopen" aria-labelledby="resp-notopen-title">
-      <h2 id="resp-notopen-title">This response isn&rsquo;t open here</h2>
-      <p>It may have been recorded already or moved. The work item shows where things stand.</p>
-      <Link className="psl-btn psl-btn--secondary" href={work(id)}>
-        Open the work item
-      </Link>
-    </section>
+    <EmptyState
+      title="This response isn’t open here"
+      className="resp-notopen"
+      action={
+        <Link className={buttonClass('secondary')} href={work(id)}>
+          Open the work item
+        </Link>
+      }
+    >
+      It may have been recorded already or moved. The work item shows where things stand.
+    </EmptyState>
   );
 }
 
@@ -127,9 +113,9 @@ function recordedSentence(recorded: Recorded, response: TaskResponse | undefined
   const channel = recorded.received_via
     ? (response?.channels?.find((c) => c.value === recorded.received_via)?.label ?? recorded.received_via).toLowerCase()
     : undefined;
-  const day = recorded.responded_at ? formatDay(recorded.responded_at) : undefined;
+  const day = recorded.responded_at ? formatDate(recorded.responded_at) : undefined;
   const received = channel ? `received by ${channel}${day ? ` on ${day}` : ''}` : day ? `received on ${day}` : '';
-  const by = `recorded by ${recorded.by.name} at ${formatClock(recorded.at)}`;
+  const by = `recorded by ${recorded.by.name} at ${formatTime(recorded.at)}`;
   const proof = recorded.proof_count !== undefined ? ` with ${plural(recorded.proof_count, 'proof file')}` : '';
   if (recorded.summary) return `${[recorded.summary, received, by].filter(Boolean).join(', ')}${proof}.`;
   const tail = [received, by].filter(Boolean).join(', ');
@@ -153,15 +139,12 @@ function SuccessView({ id, before, task, recorded, next, responderId, station, p
   return (
     <>
       {!phone && <p className="resp-eyebrow">{[before.reference, organisation].filter(Boolean).join(' · ').toUpperCase()}</p>}
-      <h1 className="shell-title resp-title resp-title--tight resp-title--done">{heading}</h1>
+      <PageTitle className="resp-title">{heading}</PageTitle>
       <div className="resp-success">
-        <div className="psl-callout psl-callout--success" role="status">
-          <CheckIcon />
-          <span>
-            <strong>Response recorded.</strong>
-            {recorded && ` ${recordedSentence(recorded, response)}`}
-          </span>
-        </div>
+        <Callout kind="success">
+          <strong>Response recorded.</strong>
+          {recorded && ` ${recordedSentence(recorded, response)}`}
+        </Callout>
         {next && next.length > 0 && (
           <div className="resp-next">
             <strong>What happens next</strong>
@@ -173,13 +156,13 @@ function SuccessView({ id, before, task, recorded, next, responderId, station, p
         <p className="resp-footnote">Recorded responses can&rsquo;t be edited. If something is wrong, record a correction; both stay in the history.</p>
         {phone ? (
           <div className="psl-actionbar resp-phonebar">
-            <Link className="psl-btn psl-btn--dark psl-btn--lg psl-btn--block" href="/my-work">
+            <Link className={buttonClass('dark', 'lg', true)} href="/my-work">
               Back to my queue
             </Link>
           </div>
         ) : (
           <p className="resp-back">
-            <Link className="psl-btn psl-btn--dark psl-btn--lg psl-btn--block" href={work(id)}>
+            <Link className={buttonClass('dark', 'lg', true)} href={work(id)}>
               Back to the work item
             </Link>
           </p>
@@ -249,7 +232,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
   if (!task || !recordable(task, response)) {
     return (
       <div className="resp-page">
-        <h1 className="shell-title resp-title">{task?.title ?? 'Record a response'}</h1>
+        <PageTitle className="resp-title">{task?.title ?? 'Record a response'}</PageTitle>
         <PageNotice notice={notice} onRecheck={recheck} />
         <NotOpen id={id} />
       </div>
@@ -277,13 +260,13 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
     return (
       <div className={phone ? 'resp-page resp-page--phone' : 'resp-page'}>
         {phone ? (
-          <h1 className="shell-title">Record team input</h1>
+          <PageTitle>Record team input</PageTitle>
         ) : rfp ? (
           <RfpFrame id={id} item={item} rfp={rfp} fallback={task.title} />
         ) : (
           <header className="resp-header">
             <Crumb item={item} response={response} />
-            <h1 className="shell-title resp-title">{task.title}</h1>
+            <PageTitle className="resp-title">{task.title}</PageTitle>
           </header>
         )}
         <PageNotice notice={notice} onRecheck={recheck} />
@@ -293,10 +276,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
           </div>
           {!phone && response.intro && (
             <aside className="resp-aside resp-aside--team" aria-label="About team input">
-              <div className="psl-callout psl-callout--info">
-                <InfoIcon />
-                <span>{response.intro}</span>
-              </div>
+              <Callout kind="info">{response.intro}</Callout>
             </aside>
           )}
         </div>
@@ -308,7 +288,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
     <div className={phone ? 'resp-page resp-page--phone' : 'resp-page'}>
       <header className="resp-header">
         {!phone && <Crumb item={item} response={response} />}
-        <h1 className={sow ? 'shell-title resp-title resp-title--tight' : 'shell-title resp-title'}>{phone && sow && current >= 0 ? item.stations[current].name : task.title}</h1>
+        <PageTitle className="resp-title">{phone && sow && current >= 0 ? item.stations[current].name : task.title}</PageTitle>
         {!phone && !sow && response.intro && <p className="resp-intro">{response.intro}</p>}
       </header>
       <PageNotice notice={notice} onRecheck={recheck} />
@@ -317,10 +297,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
         {!phone && !sow && <AgentAside response={response} />}
         {!phone && sow && response.intro && (
           <aside className="resp-aside" aria-label="About this signature">
-            <div className="psl-callout psl-callout--info">
-              <InfoIcon />
-              <span>{response.intro}</span>
-            </div>
+            <Callout kind="info">{response.intro}</Callout>
           </aside>
         )}
       </div>

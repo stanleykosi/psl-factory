@@ -3,9 +3,9 @@
 // SCR-16 forms: client_response (pickers, pills, proof chips) and sow_signature (the "Signature" panel). Every
 // option comes from tasks[].response; with exactly one responder, version or channel it is chosen, an action
 // never is. Record stays off until everything the API asks for is there, and while a write is in flight.
-import { useId, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 
-import { formatWat } from '@/features/work-item/labels';
+import { AgentAvatar, Button, Checkbox, DateField, formatDateTime, Panel, Segmented, Select as SelectField, TextArea, TextField } from '@/components';
 
 import type { ResponseTask, TaskResponse } from './contract';
 import { AGENT_LABELS, NOTE_MAX, RESPONSE_LABELS, responderText } from './labels';
@@ -32,28 +32,43 @@ export type FormProps = {
 
 const CHOOSE = 'Choose…';
 
+/** A pick from the options the API returned; with exactly one, it is the value and needs no choosing. */
 export function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; text: string }[] }) {
   return (
-    <label className="resp-field">
-      <span className="resp-label">{label}</span>
-      <select className="psl-input resp-select" value={value} onChange={(e) => onChange(e.target.value)}>
-        {options.length !== 1 && <option value="">{CHOOSE}</option>}
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.text}
-          </option>
-        ))}
-      </select>
-    </label>
+    <SelectField
+      label={label}
+      placeholder={CHOOSE}
+      options={options.map((o) => ({ value: o.value, label: o.text }))}
+      value={value || undefined}
+      onChange={onChange}
+      fieldClassName="resp-field"
+    />
   );
 }
 
+const splitWhen = (value: string) => {
+  const [date = '', time = ''] = value.split('T');
+  return { date, time: time.slice(0, 5) };
+};
+
+/** A date and a time (WAT) in one entry: "2026-11-11T16:20" once both are given, '' until then. */
 export function WhenField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  const [part, setPart] = useState(() => splitWhen(value));
+  const [shownFor, setShownFor] = useState(value);
+  if (value !== shownFor) {
+    setShownFor(value);
+    if (value && value !== `${part.date}T${part.time}`) setPart(splitWhen(value));
+  }
+  const change = (next: { date: string; time: string }) => {
+    setPart(next);
+    const joined = next.date && next.time ? `${next.date}T${next.time}` : '';
+    if (joined !== value) onChange(joined);
+  };
   return (
-    <label className="resp-field">
-      <span className="resp-label">{label}</span>
-      <input type="datetime-local" className="psl-input" value={value} onChange={(e) => onChange(e.target.value)} />
-    </label>
+    <div className="resp-when">
+      <DateField label={label} value={part.date} onChange={(date) => change({ ...part, date })} fieldClassName="resp-field" />
+      <TextField label="At (WAT)" type="time" value={part.time} onChange={(e) => change({ ...part, time: e.target.value })} fieldClassName="resp-field" />
+    </div>
   );
 }
 
@@ -71,67 +86,46 @@ function ChannelSelect({ response, entries, setEntry }: Pick<FormProps, 'respons
   );
 }
 
-function Actions({ response, entries, setEntry, segmented }: Pick<FormProps, 'response' | 'entries' | 'setEntry'> & { segmented: boolean }) {
+function Actions({ response, entries, setEntry, phone }: Pick<FormProps, 'response' | 'entries' | 'setEntry'> & { phone: boolean }) {
   const labelId = useId();
   return (
     <div className="resp-field">
       <span id={labelId} className="resp-label">
         What they did
       </span>
-      <div role="radiogroup" aria-labelledby={labelId} className={segmented ? 'psl-seg resp-seg' : 'resp-pills'}>
-        {offeredActions(response).map((a) => (
-          <label key={a.value} className={segmented ? 'psl-seg__opt resp-segopt' : 'resp-pill'}>
-            <input type="radio" name={labelId} value={a.value} checked={entries.action === a.value} onChange={() => setEntry('action', a.value)} />
-            {a.label}
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function Note({ entries, setEntry }: Pick<FormProps, 'entries' | 'setEntry'>) {
-  const labelId = useId();
-  const countId = useId();
-  // One line high to start (no board draws it); it grows by dragging. The counter sits on the label line.
-  return (
-    <div className="resp-field">
-      <span className="resp-notehead">
-        <label id={labelId} htmlFor={`${labelId}-note`} className="resp-label">
-          Note <span className="psl-opt">(optional)</span>
-        </label>
-        <span id={countId} className="psl-hint">
-          {entries.note.length} / {NOTE_MAX}
-        </span>
-      </span>
-      <textarea
-        id={`${labelId}-note`}
-        className="psl-input psl-input--area resp-note"
-        rows={1}
-        maxLength={NOTE_MAX}
-        value={entries.note}
-        aria-describedby={countId}
-        onChange={(e) => setEntry('note', e.target.value)}
+      <Segmented
+        labelledBy={labelId}
+        phone={phone}
+        className="resp-seg"
+        options={offeredActions(response).map((a) => ({ value: a.value, label: a.label as string }))}
+        value={entries.action || undefined}
+        onChange={(v) => setEntry('action', v)}
       />
     </div>
   );
 }
 
+export function Note({ entries, setEntry }: Pick<FormProps, 'entries' | 'setEntry'>) {
+  return <TextArea label="Note" optional limit={NOTE_MAX} value={entries.note} onChange={(e) => setEntry('note', e.target.value)} fieldClassName="resp-field" />;
+}
+
 function Attest({ entries, setEntry, short }: Pick<FormProps, 'entries' | 'setEntry'> & { short: boolean }) {
   return (
-    <label className="psl-check resp-attest">
-      <input type="checkbox" checked={entries.attested} onChange={(e) => setEntry('attested', e.target.checked)} />
-      <span>{short ? 'I confirm this response is genuine.' : 'I confirm this response is genuine and came from the client contact named above.'}</span>
-    </label>
+    <Checkbox
+      className="resp-attest"
+      checked={entries.attested}
+      onChange={(e) => setEntry('attested', e.target.checked)}
+      label={short ? 'I confirm this response is genuine.' : 'I confirm this response is genuine and came from the client contact named above.'}
+    />
   );
 }
 
 export function RecordRow({ props, ready, line, children }: { props: FormProps; ready: boolean; line: string | null; children?: ReactNode }) {
-  const text = props.busy ? RESPONSE_LABELS.busy : RESPONSE_LABELS.record[props.response.variant];
+  const text = RESPONSE_LABELS.record[props.response.variant];
   const button = (
-    <button type="button" className="psl-btn psl-btn--lg resp-record" disabled={!ready} onClick={props.onRecord}>
-      {text}
-    </button>
+    <Button size="lg" className="resp-record" disabled={!ready && !props.busy} busy={props.busy} busyLabel={RESPONSE_LABELS.busy} onClick={props.onRecord}>
+      {props.busy ? text : RESPONSE_LABELS.record[props.response.variant]}
+    </Button>
   );
   const alert =
     line &&
@@ -180,20 +174,24 @@ export function AgentAside({ response }: { response: TaskResponse }) {
   if (!note) return null;
   const agent = AGENT_LABELS[note.agent];
   return (
-    <aside className="resp-agent" aria-label={`${agent.name}, ${agent.role}`}>
-      <div className="resp-agent__head">
-        {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 36px avatar from public/agents */}
-        <img src={`/agents/${note.agent}.png`} alt="" width={36} height={36} className="resp-agent__img" />
-        <span className="resp-agent__name">
-          {agent.name} <span className="resp-agent__role">· {agent.role}</span>
+    <Panel
+      kind="agent"
+      className="resp-agent"
+      head={
+        <span className="resp-agent__head">
+          <AgentAvatar agent={note.agent} size={40} />
+          <span className="resp-agent__name">
+            {agent.name} <span className="resp-agent__role">· {agent.role}</span>
+          </span>
         </span>
-      </div>
+      }
+    >
       <div className="resp-agent__body">
         {note.lines.map((line, i) => (
           <p key={i}>{line}</p>
         ))}
       </div>
-    </aside>
+    </Panel>
   );
 }
 
@@ -233,8 +231,8 @@ export function ClientResponseForm(props: FormProps) {
         )}
         <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
         {when}
-        <Actions response={response} entries={entries} setEntry={setEntry} segmented={false} />
-        <ProofField proof={proof} layout="phone" />
+        <Actions response={response} entries={entries} setEntry={setEntry} phone />
+        <ProofField proof={proof} prompt="Take a photo or" single />
         <Note entries={entries} setEntry={setEntry} />
         <Attest entries={entries} setEntry={setEntry} short />
         <RecordRow props={props} ready={ready} line={line} />
@@ -250,7 +248,7 @@ export function ClientResponseForm(props: FormProps) {
         {when}
         <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
       </div>
-      <Actions response={response} entries={entries} setEntry={setEntry} segmented={false} />
+      <Actions response={response} entries={entries} setEntry={setEntry} phone={false} />
       {/* No board draws the note, so it shares the version's row instead of pushing the board's rows down. */}
       <div className={versionSelect ? 'resp-row' : undefined}>
         {versionSelect}
@@ -266,7 +264,7 @@ export function ClientResponseForm(props: FormProps) {
 function Fixed({ label, text, note }: { label: string; text: string; note?: string }) {
   return (
     <div className="resp-field">
-      <span className="resp-label resp-label--strong">{label}</span>
+      <span className="psl-label">{label}</span>
       <span className="resp-static">{text}</span>
       {note && <span className="psl-hint">{note}</span>}
     </div>
@@ -278,7 +276,7 @@ export function SowSignatureForm(props: FormProps) {
   const { ready, line } = readiness(props);
   const versions = response.versions ?? [];
   const responders = response.responders;
-  const sent = (v: (typeof versions)[number]) => (v.sent_at ? `${v.label} · sent ${formatWat(v.sent_at)}` : v.label);
+  const sent = (v: (typeof versions)[number]) => (v.sent_at ? `${v.label} · sent ${formatDateTime(v.sent_at)}` : v.label);
 
   const fields = (
     <>
@@ -307,13 +305,13 @@ export function SowSignatureForm(props: FormProps) {
         {!phone && <Note entries={entries} setEntry={setEntry} />}
       </div>
       <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
-      <Actions response={response} entries={entries} setEntry={setEntry} segmented />
+      <Actions response={response} entries={entries} setEntry={setEntry} phone={phone} />
       {/* Nor the attestation: it sits beside the proof it vouches for (on the phone, after the board's rows). */}
       {phone ? (
-        <ProofField proof={proof} layout="card" />
+        <ProofField proof={proof} prompt={phone ? "Take a photo or" : undefined} single />
       ) : (
         <div className="resp-row resp-row--proof">
-          <ProofField proof={proof} layout="card" />
+          <ProofField proof={proof} prompt={phone ? "Take a photo or" : undefined} single />
           <Attest entries={entries} setEntry={setEntry} short={false} />
         </div>
       )}
@@ -336,17 +334,12 @@ export function SowSignatureForm(props: FormProps) {
 
   return (
     <form className={phone ? 'resp-form resp-form--phone resp-form--sow' : 'resp-form resp-form--sow'} aria-busy={busy} onSubmit={(e) => e.preventDefault()}>
-      <section className="psl-panel resp-signature" aria-labelledby="resp-signature-head">
-        <h2 id="resp-signature-head" className="psl-panel__head">
-          Signature
-        </h2>
-        <div className="psl-panel__body">
-          {fields}
-          <RecordRow props={props} ready={ready} line={line}>
-            {next}
-          </RecordRow>
-        </div>
-      </section>
+      <Panel head="Signature" className="resp-signature">
+        {fields}
+        <RecordRow props={props} ready={ready} line={line}>
+          {next}
+        </RecordRow>
+      </Panel>
     </form>
   );
 }

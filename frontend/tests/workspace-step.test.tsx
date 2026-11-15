@@ -190,7 +190,7 @@ describe('the step form (AC 14, 15)', () => {
     const f = within(form);
     expect(f.getByLabelText('Your answer').tagName).toBe('TEXTAREA');
     expect(f.getByLabelText('Short title (optional)').getAttribute('placeholder')).toBe('e.g. Approval threshold');
-    expect(f.getByLabelText('Answer due (optional)').getAttribute('type')).toBe('date');
+    expect(f.getByLabelText('Answer due (optional)').getAttribute('placeholder')).toBe('DD Mmm YYYY');
     expect(f.getByRole('group', { name: 'Covers (optional)' })).toBeTruthy();
     expect(f.getByLabelText('Reporting month (optional)').getAttribute('type')).toBe('month');
     expect(f.getByLabelText('Discussed at (optional)').getAttribute('type')).toBe('datetime-local');
@@ -199,7 +199,7 @@ describe('the step form (AC 14, 15)', () => {
     expect(f.getByRole('radiogroup', { name: 'Status' })).toBeTruthy();
     expect(f.getByRole('combobox', { name: 'Project (optional)' })).toBeTruthy();
     expect(f.getByText('Choose Project first')).toBeTruthy();
-    expect(f.getByRole('button', { name: /Add another file|Supporting document/ })).toBeTruthy();
+    expect(f.getByText('Supporting document')).toBeTruthy();
     expect(f.getByText('RFP answer · test template v1')).toBeTruthy();
     expect(f.getByText('Restricted')).toBeTruthy();
     expect(document.body.textContent).not.toContain('HIDDEN-COST-CODE');
@@ -226,7 +226,8 @@ describe('the step form (AC 14, 15)', () => {
     fireEvent.change(f.getByLabelText('Your answer'), { target: { value: '  Approvals above a threshold go to a named officer.  ' } });
     fireEvent.change(f.getByLabelText('Hours to build (optional)'), { target: { value: '12' } });
     fireEvent.change(f.getByLabelText('Price for this requirement (optional)'), { target: { value: '4250000' } });
-    fireEvent.change(f.getByLabelText('Answer due (optional)'), { target: { value: '2026-11-20' } });
+    fireEvent.change(f.getByLabelText('Answer due (optional)'), { target: { value: '20 Nov 2026' } });
+    fireEvent.blur(f.getByLabelText('Answer due (optional)'));
     fireEvent.click(f.getByRole('radio', { name: 'Clarify' }));
     fireEvent.change(f.getByLabelText('Note (optional)'), { target: { value: ' Checked with Tunde. ' } });
     await act(async () => {
@@ -471,7 +472,7 @@ describe('effect_uncertain (AC 19, INV-RESEND)', () => {
     await press('Approve and send');
     const callout = await screen.findByText('Delivery to Lagoon Health couldn’t be confirmed.');
     expect(callout.closest('[role="alert"]')).not.toBeNull();
-    await screen.findByRole('radiogroup', { name: 'Confirm what happened' });
+    await screen.findByRole('group', { name: 'Confirm what happened' });
     expect(itemReads()).toHaveLength(2);
     for (const b of within(document.querySelector('.ws-steps') as HTMLElement).getAllByRole('button')) expect(b.getAttribute('aria-disabled')).toBe('true');
     await press('Approve and send');
@@ -499,7 +500,7 @@ describe('effect_uncertain (AC 19, INV-RESEND)', () => {
     });
     expect(itemReads()).toHaveLength(3);
     expect(posts()).toHaveLength(1);
-    expect(screen.queryByRole('radiogroup', { name: 'Confirm what happened' })).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Confirm what happened' })).toBeNull();
   });
 });
 

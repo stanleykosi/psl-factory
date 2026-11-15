@@ -6,10 +6,10 @@
 // is not sent, "Amount not known" sends unknown=true with no amount, and nothing is ever shown or sent as 0.
 import { useId, type ReactNode } from 'react';
 
+import { Button, DateField, MoneyField, Panel, Segmented, TextArea } from '@/components';
 import { NOTE_MAX } from '@/features/response/labels';
 import { ProofField } from '@/features/response/ProofField';
 import { Select, WhenField } from '@/features/response/ResponseForm';
-import { Segmented } from '@/features/response/Segmented';
 import type { EvidenceUpload } from '@/features/response/useEvidenceUpload';
 
 import type { OutcomeResult, RfpOutcome } from './contract';
@@ -31,127 +31,76 @@ type Props = {
   notice?: ReactNode;
 };
 
-/** A wrapping label (as F-09's fields): the label's words are the control's name. */
-function Field({ label, hint, children, id }: { label: string; hint?: string; children: ReactNode; id: string }) {
-  return (
-    <div className="resp-field">
-      <label className="resp-field">
-        <span className="resp-label">{label}</span>
-        {children}
-      </label>
-      {hint && (
-        <span id={`${id}-hint`} className="psl-hint">
-          {hint}
-        </span>
-      )}
-    </div>
-  );
-}
-
+/** The awarded amount: blank is not sent, "Mark as unknown" sends unknown with no amount, and nothing is ever shown as 0. */
 function Amount({ entries, setEntry }: Pick<Props, 'entries' | 'setEntry'>) {
-  const id = useId();
   const problem = amountProblem(entries);
   return (
-    <>
-      <Field id={id} label="Awarded amount">
-        <input
-          id={id}
-          type="text"
-          inputMode="decimal"
-          className="psl-input"
-          value={entries.amountUnknown ? '' : entries.amount}
-          disabled={entries.amountUnknown}
-          aria-invalid={problem ? true : undefined}
-          aria-describedby={problem ? `${id}-hint ${id}-problem` : `${id}-hint`}
-          onChange={(e) => setEntry('amount', e.target.value)}
-        />
-      </Field>
-      {/* The board's hint line; "Amount not known" (not drawn) shares it so the board's rows stay in place. */}
-      <div className="rfp-amountrow">
-        <span id={`${id}-hint`} className="psl-hint">
-          As stated in the award letter.
-        </span>
-        <label className="psl-check rfp-unknown">
-          <input type="checkbox" checked={entries.amountUnknown} onChange={(e) => setEntry('amountUnknown', e.target.checked)} />
-          <span>Amount not known</span>
-        </label>
-      </div>
-      {problem && (
-        <span id={`${id}-problem`} role="alert" className="resp-alert">
-          {problem}
-        </span>
-      )}
-    </>
+    <MoneyField
+      label="Awarded amount"
+      allowUnknown
+      value={entries.amountUnknown ? null : entries.amount}
+      error={problem ?? undefined}
+      hint="As stated in the award letter."
+      fieldClassName="resp-field"
+      onChange={(value) => {
+        if (value === null) {
+          setEntry('amountUnknown', true);
+          setEntry('amount', '');
+        } else {
+          setEntry('amountUnknown', false);
+          setEntry('amount', value);
+        }
+      }}
+    />
   );
 }
 
-/** F-09's note field (one line to start, the counter on the label line); no board draws it. */
+/** F-09's note field (a limit and the counter under the box); no board draws it. */
 function OutcomeNote({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const id = useId();
-  return (
-    <div className="resp-field">
-      <span className="resp-notehead">
-        <label htmlFor={id} className="resp-label">
-          Note <span className="psl-opt">(optional)</span>
-        </label>
-        <span id={`${id}-count`} className="psl-hint">
-          {value.length} / {NOTE_MAX}
-        </span>
-      </span>
-      <textarea
-        id={id}
-        className="psl-input psl-input--area resp-note"
-        rows={1}
-        maxLength={NOTE_MAX}
-        value={value}
-        aria-describedby={`${id}-count`}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </div>
-  );
+  return <TextArea label="Note" optional limit={NOTE_MAX} value={value} onChange={(e) => onChange(e.target.value)} fieldClassName="resp-field" />;
 }
 
 function ResultFields({ outcome, entries, setEntry }: Pick<Props, 'outcome' | 'entries' | 'setEntry'>) {
-  const lessonsId = useId();
-  const expectedId = useId();
+  const reasonId = useId();
   const remind = <WhenField label="Remind me on" value={entries.remind} onChange={(v) => setEntry('remind', v)} />;
   if (entries.result === 'won') return <Amount entries={entries} setEntry={setEntry} />;
   if (entries.result === 'lost') {
     return (
       <>
         {(outcome.reasons?.length ?? 0) > 0 && (
-          <Segmented
-            label="Main reason they gave"
-            options={outcome.reasons!.map((r) => ({ value: r.value, text: r.label }))}
-            value={entries.reason}
-            onChange={(v) => setEntry('reason', v)}
-          />
+          <div className="resp-field">
+            <span id={reasonId} className="resp-label">
+              Main reason they gave
+            </span>
+            <Segmented
+              labelledBy={reasonId}
+              options={outcome.reasons!.map((r) => ({ value: r.value, label: r.label }))}
+              value={entries.reason || undefined}
+              onChange={(v) => setEntry('reason', v)}
+            />
+          </div>
         )}
-        <Field id={lessonsId} label="Lessons (what we’d do differently)">
-          <textarea
-            id={lessonsId}
-            className="psl-input psl-input--area rfp-lessons"
-            maxLength={NOTE_MAX}
-            value={entries.lessons}
-            onChange={(e) => setEntry('lessons', e.target.value)}
-          />
-        </Field>
+        <TextArea
+          label="Lessons (what we’d do differently)"
+          limit={NOTE_MAX}
+          className="rfp-lessons"
+          fieldClassName="resp-field"
+          value={entries.lessons}
+          onChange={(e) => setEntry('lessons', e.target.value)}
+        />
       </>
     );
   }
   if (entries.result === 'pending') {
     return (
       <>
-        <Field id={expectedId} label="Expected decision date" hint="What the client told us. Use Unknown if they didn’t say.">
-          <input
-            id={expectedId}
-            type="date"
-            className="psl-input"
-            value={entries.expected}
-            aria-describedby={`${expectedId}-hint`}
-            onChange={(e) => setEntry('expected', e.target.value)}
-          />
-        </Field>
+        <DateField
+          label="Expected decision date"
+          hint="What the client told us. Use Unknown if they didn’t say."
+          value={entries.expected}
+          onChange={(iso) => setEntry('expected', iso)}
+          fieldClassName="resp-field"
+        />
         {remind}
       </>
     );
@@ -170,9 +119,9 @@ export function OutcomeForm(props: Props) {
   const showRole = roles.length > 1 || !phone;
 
   const button = (
-    <button type="button" className="psl-btn psl-btn--lg resp-record rfp-record" disabled={!ready} onClick={props.onRecord}>
-      {busy ? 'Recording…' : entries.result ? RECORD_LABELS[entries.result] : 'Record the outcome'}
-    </button>
+    <Button size="lg" className="resp-record rfp-record" disabled={!ready && !busy} busy={busy} busyLabel="Recording…" onClick={props.onRecord}>
+      {entries.result ? RECORD_LABELS[entries.result] : 'Record the outcome'}
+    </Button>
   );
   const alert =
     line && !busy ? (
@@ -190,16 +139,22 @@ export function OutcomeForm(props: Props) {
       {!phone && client && <p className="rfp-sub">What {client} decided about our response.</p>}
       {!phone && (
         <div className="resp-field">
-          <span className="resp-label">Submission</span>
+          <span className="psl-label">Submission</span>
           <span className="resp-static">{[submission.label, submission.delivery].filter(Boolean).join(' · ')}</span>
         </div>
       )}
-      <Segmented<OutcomeResult>
-        label="Result"
-        options={outcome.results.map((r) => ({ value: r, text: RESULT_LABELS[r] }))}
-        value={entries.result}
-        onChange={(v) => setEntry('result', v)}
-      />
+      <div className="resp-field">
+        <span id="rfp-result-label" className="resp-label">
+          Result
+        </span>
+        <Segmented<OutcomeResult>
+          labelledBy="rfp-result-label"
+          phone={phone}
+          options={outcome.results.map((r) => ({ value: r, label: RESULT_LABELS[r] }))}
+          value={entries.result || undefined}
+          onChange={(v) => setEntry('result', v)}
+        />
+      </div>
       {entries.result && (
         <WhenField
           label={entries.result === 'unknown' ? 'Last contact with the client' : 'When you learned it'}
@@ -208,11 +163,11 @@ export function OutcomeForm(props: Props) {
         />
       )}
       <ResultFields outcome={outcome} entries={entries} setEntry={setEntry} />
-      <ProofField proof={proof} layout="card" choose="Choose a file" />
+      <ProofField proof={proof} prompt={phone ? "Take a photo or" : undefined} single />
       {showRole &&
         (roles.length === 1 ? (
           <div className="resp-field">
-            <span className="resp-label">You are recording as</span>
+            <span className="psl-label">You are recording as</span>
             <span className="resp-static">{roles[0].label}</span>
             <span className="psl-hint">A role PSL allows to record outcomes</span>
           </div>
@@ -250,12 +205,9 @@ export function OutcomeForm(props: Props) {
       {phone ? (
         fields
       ) : (
-        <section className="psl-panel rfp-panel" aria-labelledby="rfp-outcome-head">
-          <h2 id="rfp-outcome-head" className="psl-panel__head">
-            Record the outcome
-          </h2>
-          <div className="psl-panel__body">{fields}</div>
-        </section>
+        <Panel head="Record the outcome" className="rfp-panel">
+          {fields}
+        </Panel>
       )}
     </form>
   );
