@@ -1346,3 +1346,16 @@
 {"at":"2026-11-15T12:05:53Z","feature":"F-20","round":1,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"c218bf2480b8","findings":{"UX-1-1":"low","UX-1-2":"low","UX-1-3":"low","UX-1-4":"low","UX-1-5":"low"},"written_at":"2026-11-15T12:05:36Z"}
 {"at":"2026-11-15T12:05:55Z","feature":"F-19","round":2,"kind":"transition","head":"41b4925c4419","from":"IN_REVIEW","to":"INTEGRATED_QA"}
 {"at":"2026-11-15T12:06:56Z","feature":"F-20","round":1,"kind":"review","role":"ui","verdict":"CHANGES","reviewer":"reviewer-ui","commit":"c218bf2480b8","findings":{"UI-1-1":"medium","UI-1-2":"low","UI-1-3":"low","UI-1-4":"low"},"written_at":"2026-11-15T12:06:23Z"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"TECH-1-1","by":"reviewer-technical","severity":"low","owner":"backend/builder","blocking":false,"role":"technical"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"TECH-1-2","by":"reviewer-technical","severity":"low","owner":"builder","blocking":false,"role":"technical"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UX-1-1","by":"reviewer-ux","severity":"low","owner":"design engineer","blocking":false,"role":"ux"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UX-1-2","by":"reviewer-ux","severity":"low","owner":"design engineer","blocking":false,"role":"ux"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UX-1-3","by":"reviewer-ux","severity":"low","owner":"builder","blocking":false,"role":"ux"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UX-1-4","by":"reviewer-ux","severity":"low","owner":"builder","blocking":false,"role":"ux"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UX-1-5","by":"reviewer-ux","severity":"low","owner":"builder","blocking":false,"role":"ux"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UI-1-1","by":"reviewer-ui","severity":"medium","owner":"design engineer","blocking":true,"role":"ui"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UI-1-2","by":"reviewer-ui","severity":"low","owner":"builder","blocking":true,"role":"ui"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UI-1-3","by":"reviewer-ui","severity":"low","owner":"design engineer","blocking":false,"role":"ui"}
+{"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UI-1-4","by":"reviewer-ui","severity":"low","owner":"builder","blocking":false,"role":"ui"}
+{"at":"2026-11-15T12:07:16Z","feature":"F-20","round":1,"kind":"transition","head":"c218bf2480b8","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-15T12:07:16Z","feature":"F-20","round":2,"kind":"transition","head":"c218bf2480b8","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}

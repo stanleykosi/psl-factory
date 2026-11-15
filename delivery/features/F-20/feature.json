@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-20",
   "outcome": "The Templates tab on Setup lists each document template and uploads a new version of one",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-SETUP-TEMPLATES"
   ],
@@ -143,8 +143,318 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "backend/builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Revision 0 is sent as 0 in the UI (useTemplateUpload passes `input.revision` as read) as the spec asks, but the generated schema says minimum 1 and the mock rejects `expected_revision < 1` with a 422. The desktop fixture therefore carries revision >= 1 instead of the spec's 0. This is disclosed in build.md for the backend developer. It is worth settling in D-TEMPLATES-VIEW whether 0 is valid. Only a stub component test covers 0.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone fidelity visual is 83.3, below 90. This is recorded openly as an open design-engineer decision, not a technical defect. Desktop passes (95.9). Route this to the design review, not to a code fix.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone visual score is 83.3 (< 90) because the approved extras (line, version/kind meta, full-width 44px Upload button, eight cards) make each card about 180px against the board's 71px. The extras are approved in D-71, so this is not a deviation from approved behaviour. Decide whether to accept the score or trim the cards (for example, move Upload behind a tap). Spec criterion 2 asks for >= 90, so record the acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Desktop puts version and kind inline after the document name, and \"3 versions \u00b7 Changed by X, 12 Nov\" under the Upload link. Conflict 4 said lines under the name. The builder flagged this. It reads fine in the image; confirm the placement.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Version text reads \"Version 1 \u00b7 PDF\" where the spec says unprefixed. This is clearer for readers, and the builder noted it; the design engineer should confirm.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On phone the \"AS OF\" line sits after the last card, so it is easy to miss with long lists. It was placed there to keep the card positions. Consider placing it under the note if the design engineer accepts the score change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The phone back link reads \"Setup\" and goes to `/setup/roles`, as approved in follow-ups 02 and D-68(c). Its accessible name is \"Back to Setup\", which is fine. No action.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "design engineer",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone SCR-34 @390 visual 83.3 < 90, so the gate fails. What is forced: by my measurement from side-by-side.png, the line (about 22px), meta (about 22px) and full-width 44px Upload button (about 58px with margin) approved in Conflict 2 add about 100px to every card. That pushes card 2 down about 90px, card 3 about 180px, and so on. Conflict 7's three extra cards add only length below the board's frame. What is fixable: about 6px of padding per card, plus about 22px if the line and meta were joined into one muted line, e.g. \"Invoice preparation and delivery \u00b7 Version 1 \u00b7 PDF\". Neither change brings the cards back to the board's positions, so no compact card that still carries the approved elements reaches 90. The only way the builder could close the gap is a change the spec rejected or did not approve: drop the meta, or replace the full-width button with a link-height control on the tag row. Expected: the design engineer either (a) records a standing visual exception for SCR-34-mobile at 83.3, as was done for the SCR-01 phone gap, or (b) approves a compact card and the builder rebuilds it. A compact card would keep line + meta on one line and put a right-aligned \"Upload PSL's version\" link-button with a 44px target on the tag row. It could score in the high 80s, still unlikely to reach 90. I recommend (a). The builder should not be asked to keep cutting the approved elements to chase the score.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Desktop: \"3 versions \u00b7 Changed by Ada Okafor, 12 Nov\" sits under \"Upload PSL's version\" in the action column (`setup-actioncell`, setup.css new block). In that column it reads as part of the action, not as the document's history. It is not where Conflict 4 (approved) puts it, and the board does not draw it there. It is also the only cause of the uneven Closure report row. Expected: keep version and kind inline after the name (see Notes), and put the history line as one muted `setup-meta` line under the name in the Document cell. Rows with `updated_by` grow by one line, which Conflict 4 accepted. Read-only rows (no Upload control) then show their history too. As built, history placed in the action column has no natural home on a read-only row; check `readonly.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone \"AS OF 12 NOV, 10:40\" is at the end of the eight cards. Conflict 6 (approved) puts it under the note. At the end of the list, the time stamp for the data is about 1,500px below the first card. The builder's reason is that it moved the cards and lowered the score. Under UI-1-1 (a) the score is waived anyway, so I recommend putting it back under the note as approved. Under (b) the design engineer chooses.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Fixtures carry `updated_by`/`updated_at` only on Closure report, set that way to protect the desktop score (build.md). Real rows will usually have them, so the scored page under-represents real row height. That is acceptable for the score, but the mixed-data component test should keep covering every row with history, so the layout from UI-1-2 is exercised.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-20/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T12:07:12Z",
+          "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delegated technical review",
+          "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+          "evidence_refs": [
+            "delivery/features/F-20/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-20/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delegated UX review",
+          "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+          "evidence_refs": [
+            "delivery/features/F-20/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delegated UI review",
+          "snapshot_ref": "c218bf2480b82e3753e88943e25b497f2e959e80",
+          "evidence_refs": [
+            "delivery/features/F-20/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -236,7 +546,7 @@
     }
   },
   "created_at": "2026-11-15T10:36:42Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -262,6 +572,22 @@
       "round": 1,
       "head": "c218bf2480b82e3753e88943e25b497f2e959e80",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T12:07:16Z",
+      "round": 1,
+      "head": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T12:07:16Z",
+      "round": 2,
+      "head": "c218bf2480b82e3753e88943e25b497f2e959e80",
+      "reason": null
     }
   ],
   "routing": {
@@ -277,10 +603,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 2,
-    "verdict": "PASS",
-    "commit": "c218bf2480b82e3753e88943e25b497f2e959e80"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
