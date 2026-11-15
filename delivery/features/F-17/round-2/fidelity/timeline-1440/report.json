@@ -1,0 +1,37 @@
+{
+  "region": "timeline",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-25-desktop-received.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "What happened",
+  "pageText": "What happened",
+  "boardRegion": {
+    "width": 1320,
+    "height": 192
+  },
+  "pageRegion": {
+    "width": 1320,
+    "height": 263
+  },
+  "pass": true,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 90.2
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [],
+  "visual": {
+    "score": 90.2,
+    "allCellsScore": 90.2,
+    "width": 1320,
+    "height": 192,
+    "boardHeight": 192,
+    "pageHeight": 263,
+    "cell": 12,
+    "contentCells": 1760,
+    "mismatchedCells": 172
+  },
+  "notes": []
+}

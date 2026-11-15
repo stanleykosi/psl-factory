@@ -6,7 +6,7 @@
     "delivery/config.json",
     "delivery/merge-policy.json"
   ],
-  "max_rounds": 3,
+  "max_rounds": 5,
   "max_gate_attempts": 3,
   "design_gate": "required",
   "require_pushed": true,
@@ -14,11 +14,11 @@
   "routing": {
     "low": {
       "technical": "haiku",
-      "qa": "sonnet"
+      "qa": "opus"
     },
     "medium": {
       "technical": "sonnet",
-      "qa": "sonnet"
+      "qa": "opus"
     },
     "high": {
       "technical": "opus",

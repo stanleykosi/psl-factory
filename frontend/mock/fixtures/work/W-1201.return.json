@@ -1,0 +1,90 @@
+{
+  "id": "W-1201",
+  "title": "Lagoon Health · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0412",
+  "state": "action_needed",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "current_person"
+    },
+    {
+      "name": "Finance review",
+      "status": "not_started"
+    },
+    {
+      "name": "Issue",
+      "status": "not_started"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-12T09:47:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read milestone 2 evidence",
+        "status": "done",
+        "source": "Milestone LH-M2"
+      },
+      {
+        "text": "Read stage 2 terms in the signed SOW",
+        "status": "done",
+        "source": "SOW-0198 · stage 2"
+      },
+      {
+        "text": "Drafted invoice v2 with the PO number added",
+        "status": "done",
+        "source": "Client details · PO-7781"
+      }
+    ]
+  },
+  "next_step": "Bisi Ade corrects invoice v2 and resubmits it.",
+  "sample": true
+}

@@ -1,0 +1,61 @@
+{
+  "region": "steps",
+  "width": 390,
+  "board": "design/canvas/project/SCR-25-mobile-review.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "Approve and send",
+  "pageText": "Approve and send",
+  "boardRegion": {
+    "width": 390,
+    "height": 140
+  },
+  "pageRegion": {
+    "width": 390,
+    "height": 253
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 36.9
+  },
+  "missing": [],
+  "misplaced": [
+    {
+      "name": "Approve and send"
+    },
+    {
+      "name": "Return with a note"
+    }
+  ],
+  "extra": [
+    {
+      "role": "complementary",
+      "name": "Review and decide"
+    },
+    {
+      "role": "text",
+      "name": "Approving sends this exact version to Lagoon Health."
+    },
+    {
+      "role": "button",
+      "name": "Refuse"
+    },
+    {
+      "role": "text",
+      "name": "Only the PMO Lead can refuse a report once it is assembled."
+    }
+  ],
+  "visual": {
+    "score": 36.9,
+    "allCellsScore": 40.4,
+    "width": 390,
+    "height": 140,
+    "boardHeight": 140,
+    "pageHeight": 253,
+    "cell": 12,
+    "contentCells": 374,
+    "mismatchedCells": 236
+  },
+  "notes": []
+}

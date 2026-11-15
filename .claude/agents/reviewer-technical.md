@@ -38,3 +38,6 @@ command only to confirm a specific finding, never one that rewrites files.
 Commit trailers and attribution belong to the builder; leave them out of your review.
 
 Reply with one line: your file's first line.
+
+## Fix rounds
+In a round that fixes earlier findings, verify those findings and review the changed code; carry forward the rest by a written impact assessment instead of reviewing everything again. Raise a blocking finding only for something that breaks the spec, the boards, security or accessibility, not for taste. Never add "Co-Authored-By" or "Generated with Claude Code" to commits.

@@ -1,0 +1,37 @@
+{
+  "region": "facts",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-46-desktop-evaluating.dc.html",
+  "page": "/work/W-2003",
+  "boardText": "Criteria",
+  "pageText": "Criteria",
+  "boardRegion": {
+    "width": 1320,
+    "height": 233
+  },
+  "pageRegion": {
+    "width": 1320,
+    "height": 235
+  },
+  "pass": true,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 94.6
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [],
+  "visual": {
+    "score": 94.6,
+    "allCellsScore": 94.6,
+    "width": 1320,
+    "height": 233,
+    "boardHeight": 233,
+    "pageHeight": 235,
+    "cell": 12,
+    "contentCells": 2200,
+    "mismatchedCells": 119
+  },
+  "notes": []
+}

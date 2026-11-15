@@ -1,0 +1,319 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:58:40.257Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-11/design/canvas/project/SCR-13-mobile-rules.dc.html",
+  "boardName": "SCR-13-mobile-rules.dc.html",
+  "pageUrl": "http://localhost:4601/setup/rules",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-11/round-3/fidelity/exception-requests.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 99.8 meets 90."
+  ],
+  "scores": {
+    "coverage": 7.1,
+    "coverageWithExceptions": 100,
+    "visual": 99.8
+  },
+  "visual": {
+    "score": 99.8,
+    "allCellsScore": 99.9,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1372,
+    "mismatchedCells": 3
+  },
+  "coverage": {
+    "total": 14,
+    "found": 1,
+    "coverage": 7.1,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Rules · 6 not set",
+        "pageName": "Rules · 6 not set",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 24
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Setup",
+        "key": "link: ← Setup",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 56,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The phone back link is now the frame's slot (usePhoneBack, PR #17, D-23/D-28). It shows exactly '← Setup' in the board's place (visual 99+), but the frame gives every back link the accessible name 'Back to <label>' (frame-phone-back build note and technical review, WCAG 2.5.3 holds), so the tool lists it as link 'Back to Setup'. Same link, same href (/setup/roles); the name belongs to the shared frame, not this feature.",
+          "approved_by": "requested by builder, F-11 round 3 (pending coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Who may assign an RFP to a PM",
+        "key": "text: Who may assign an RFP to a PM",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 120,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The board draws the Rule picker as a text box; the page draws a native <select> (listed as Drop-down 'Rule') holding the same rule.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not set · Pre-sale",
+        "key": "text: Not set · Pre-sale",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 144,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Who reviews client documents",
+        "key": "text: Who reviews client documents",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 201,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PMO Lead · All lines",
+        "key": "text: PMO Lead · All lines",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 225,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Costing rule",
+        "key": "text: Costing rule",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 282,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Rate card v4 · Pre-sale",
+        "key": "text: Rate card v4 · Pre-sale",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 306,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Short payments (e.g. tax deducted)",
+        "key": "text: Short payments (e.g. tax deducted)",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 363,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not set · Finance",
+        "key": "text: Not set · Finance",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 387,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Hypercare criteria",
+        "key": "text: Hypercare criteria",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 444,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not set · Delivery",
+        "key": "text: Not set · Delivery",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 468,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Archive storage and retention",
+        "key": "text: Archive storage and retention",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 525,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not set · Delivery",
+        "key": "text: Not set · Delivery",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 549,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Setup",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 53,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-11/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

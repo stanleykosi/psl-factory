@@ -1,0 +1,91 @@
+{
+  "id": "W-2110",
+  "title": "RFP TL-RFP-2026-019",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-019",
+  "state": "waiting",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Requirements",
+      "status": "done"
+    },
+    {
+      "name": "Team input",
+      "status": "done"
+    },
+    {
+      "name": "Pricing",
+      "status": "done"
+    },
+    {
+      "name": "Submission",
+      "status": "done"
+    },
+    {
+      "name": "Outcome",
+      "status": "current_person"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "next_step": "A person PSL allows records the client's decision with proof.",
+  "sample": true,
+  "case_id": "C-2110",
+  "case_revision": 3,
+  "rfp": {
+    "reference": "TL-RFP-2026-019",
+    "status": {
+      "kind": "submitted",
+      "label": "SUBMITTED 30 NOV"
+    }
+  },
+  "rfp_outcome": {
+    "submission": {
+      "id": "SUB-0040",
+      "label": "Submission pack v1"
+    },
+    "results": [
+      "won",
+      "lost",
+      "pending",
+      "unknown"
+    ],
+    "record_as": [
+      {
+        "value": "relationship_owner",
+        "label": "Relationship owner"
+      }
+    ]
+  }
+}

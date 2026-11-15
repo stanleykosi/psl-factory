@@ -1,0 +1,27 @@
+{
+  "case_id": "P-0114",
+  "title": "Hilltop Clinic · bookings",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1736"
+    },
+    {
+      "line": "Plan a project",
+      "state": "verified",
+      "work_id": "W-1737"
+    }
+  ],
+  "next": "Closure · retrospective: the PM Kunle Ade confirms the next step.",
+  "pm": {
+    "name": "Kunle Ade",
+    "role": "Project manager"
+  },
+  "tab_counts": {
+    "milestones": 4,
+    "documents": 3,
+    "registers": 2,
+    "actions": 4
+  }
+}

@@ -1,0 +1,438 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "LAGOON HEALTH",
+      "category": "frame item",
+      "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "You write these four parts; the factory adds the summary and standard scope wording. Each part must cite at least one of this week's records. \"TBD\" or \"unknown\" aren't accepted.",
+      "category": "frame vocabulary",
+      "reason": "Conflicts 7: the same words are on the page (the server's 422 message in the form's alert, per-part messages under their inputs, the week-end sentence in the section note, the saved parts in the form's text areas); the page draws them under a different role or inside a form control, and the two good parts stay in the form.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Status",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 2 is complete: Lagoon Health signed UAT on 11 Nov. Work on milestone 3 (go-live) has started.",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Cites:",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 2 · UAT signed",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "UAT walkthrough",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "link",
+      "name": "+ cite a record",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Risks",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Login fails on some older Android phones (high). A fix is in testing; go-live waits on it.",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "ISS-0233",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Timeline",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Go-live remains planned for 4 Dec, subject to the login fix and test accounts from your team.",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Weekly sync · 10 Nov",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Next steps",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Your team: send test accounts by 13 Nov. Ours: finish the login fix and assess the SMS reminders change.",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "Test accounts action",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "CR-0031",
+      "category": "frame form",
+      "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+      "approved_by": "design engineer, 15 Nov (D-69)"
+    },
+    {
+      "role": "text",
+      "name": "THIS WEEK'S RECORDS · 5–11 NOV",
+      "category": "frame layout",
+      "reason": "Conflicts 4: the records panel is five facts sections after the form in the frame's main column; the board's panel title and right-hand column are not drawn.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "checkbox",
+      "name": "Weekly sync with Lagoon Health · 10 Nov",
+      "category": "frame layout",
+      "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "checkbox",
+      "name": "UAT walkthrough · 11 Nov",
+      "category": "frame layout",
+      "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "checkbox",
+      "name": "Milestone 2 · UAT signed 11 Nov",
+      "category": "frame layout",
+      "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "checkbox",
+      "name": "3 overdue · 1 without an owner",
+      "category": "frame layout",
+      "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "3 overdue · 1 without an owner",
+      "category": "frame layout",
+      "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "checkbox",
+      "name": "Client to send test accounts · due 13 Nov",
+      "category": "frame layout",
+      "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "checkbox",
+      "name": "ISS-0233 Login fails on older Android phones · High",
+      "category": "frame layout",
+      "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "checkbox",
+      "name": "CR-0031 Add SMS reminders · being assessed",
+      "category": "frame layout",
+      "reason": "Conflicts 2 and 4: the board draws the week's records as checkbox rows; the page lists the same records (and the \"3 overdue · 1 without an owner\" note) as facts rows. Cites are chosen in the picker.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "PROJECTS",
+      "category": "frame item",
+      "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "tablist",
+      "name": "Project",
+      "category": "frame item",
+      "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "tab",
+      "name": "Journey",
+      "category": "frame item",
+      "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "tab",
+      "name": "Milestones 4",
+      "category": "frame item",
+      "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "tab",
+      "name": "Documents 6",
+      "category": "frame item",
+      "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "tab",
+      "name": "Money",
+      "category": "frame item",
+      "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "tab",
+      "name": "Registers 6",
+      "category": "frame item",
+      "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "tab",
+      "name": "Actions 9",
+      "category": "frame item",
+      "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Tola · PMO agent · step 3 of 4",
+      "category": "no field",
+      "reason": "Conflicts 9: the page draws the agent name, \"PMO agent · step 3 of 4\" and the start time in the checklist section's note (backend-composed text); there is no field of its own for them.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Started 12 Nov 09:05 Ask Tola",
+      "category": "no field",
+      "reason": "Conflicts 9: \"Ask Tola\" has no field or endpoint in the contract (contract proposal); it is not hard-coded. \"Started 12 Nov 09:05\" is returned in the checklist note.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "Ask Tola",
+      "category": "no field",
+      "reason": "Conflicts 9: \"Ask Tola\" has no field or endpoint in the contract (contract proposal); it is not hard-coded. \"Started 12 Nov 09:05\" is returned in the checklist note.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "TBD",
+      "category": "frame vocabulary",
+      "reason": "Conflicts 7: the same words are on the page (the server's 422 message in the form's alert, per-part messages under their inputs, the week-end sentence in the section note, the saved parts in the form's text areas); the page draws them under a different role or inside a form control, and the two good parts stay in the form.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Finish the login fix and plan go-live.",
+      "category": "frame vocabulary",
+      "reason": "Conflicts 7: the same words are on the page (the server's 422 message in the form's alert, per-part messages under their inputs, the week-end sentence in the section note, the saved parts in the form's text areas); the page draws them under a different role or inside a form control, and the two good parts stay in the form.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Two parts can't be sent yet. Every part needs words and at least one record from 5–11 Nov.",
+      "category": "frame vocabulary",
+      "reason": "Conflicts 7: the same words are on the page (the server's 422 message in the form's alert, per-part messages under their inputs, the week-end sentence in the section note, the saved parts in the form's text areas); the page draws them under a different role or inside a form control, and the two good parts stay in the form.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "The report can't start before the week has ended. This week ended 11 Nov.",
+      "category": "frame vocabulary",
+      "reason": "Conflicts 7: the same words are on the page (the server's 422 message in the form's alert, per-part messages under their inputs, the week-end sentence in the section note, the saved parts in the form's text areas); the page draws them under a different role or inside a form control, and the two good parts stay in the form.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "Setup",
+      "category": "frame item",
+      "reason": "Conflicts 11 (and 5 for the phone back links): top bar, signed-in name and role, Setup nav and the phone back link belong to the frame, not to this feature.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Kemi Adebayo · PMO Lead",
+      "category": "frame item",
+      "reason": "Conflicts 11 (and 5 for the phone back links): top bar, signed-in name and role, Setup nav and the phone back link belong to the frame, not to this feature.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "Open the report as the client will see it",
+      "category": "no field",
+      "reason": "Conflicts 10: no document route exists and the contract has no link field for the client's view of the report (contract proposal).",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "DECIDE · PMO LEAD",
+      "category": "frame vocabulary",
+      "reason": "Conflicts 10: the frame's Decide panel is titled \"Decide\" (no role field exists); the note field and its label are drawn when \"Return with a note\" is pressed, with the descriptor's label.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Note (needed to return or refuse)",
+      "category": "frame vocabulary",
+      "reason": "Conflicts 10: the frame's Decide panel is titled \"Decide\" (no role field exists); the note field and its label are drawn when \"Return with a note\" is pressed, with the descriptor's label.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "(needed to return or refuse)",
+      "category": "frame vocabulary",
+      "reason": "Conflicts 10: the frame's Decide panel is titled \"Decide\" (no role field exists); the note field and its label are drawn when \"Return with a note\" is pressed, with the descriptor's label.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "← Lagoon Health",
+      "category": "frame item",
+      "reason": "Conflicts 11 (and 5 for the phone back links): top bar, signed-in name and role, Setup nav and the phone back link belong to the frame, not to this feature.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "You write 4 parts, each citing this week's records.",
+      "category": "frame layout",
+      "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "✓ cited",
+      "category": "frame layout",
+      "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 2 is complete: Lagoon Health signed UAT on 11 Nov. Work on m…",
+      "category": "frame layout",
+      "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Login fails on some older Android phones (high). A fix is in testing; …",
+      "category": "frame layout",
+      "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "to write",
+      "category": "frame layout",
+      "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Tap to write and cite",
+      "category": "frame layout",
+      "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Tola · PMO agent 1 milestone completed, 3 actions overdue, 1 new change. The words are yours.",
+      "category": "no field",
+      "reason": "Conflicts 9: the page draws the agent name, \"PMO agent · step 3 of 4\" and the start time in the checklist section's note (backend-composed text); there is no field of its own for them.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "← Project",
+      "category": "frame item",
+      "reason": "Conflicts 11 (and 5 for the phone back links): top bar, signed-in name and role, Setup nav and the phone back link belong to the frame, not to this feature.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Started 12 Nov 09:05",
+      "category": "no field",
+      "reason": "Conflicts 9 and 5: the start time rides in the checklist note, one string; the phone board draws it as its own line.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "\"TBD\" isn't accepted. Cite a record.",
+      "category": "frame layout",
+      "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Finish the login fix.",
+      "category": "frame layout",
+      "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "No record cited yet.",
+      "category": "frame layout",
+      "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "← My work",
+      "category": "frame item",
+      "reason": "Conflicts 11 (and 5 for the phone back links): top bar, signed-in name and role, Setup nav and the phone back link belong to the frame, not to this feature.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    }
+  ]
+}

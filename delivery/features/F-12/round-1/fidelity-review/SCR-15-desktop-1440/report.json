@@ -1,0 +1,507 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:29:35.181Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-12/design/canvas/project/SCR-15-desktop.dc.html",
+  "boardName": "SCR-15-desktop.dc.html",
+  "pageUrl": "http://localhost:4211/notifications",
+  "viewport": {
+    "width": 1440,
+    "height": 760
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-12/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 97.8 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 88.9,
+    "coverageWithExceptions": 100,
+    "visual": 97.8
+  },
+  "visual": {
+    "score": 97.8,
+    "allCellsScore": 99.2,
+    "width": 1440,
+    "height": 760,
+    "boardHeight": 760,
+    "pageHeight": 760,
+    "cell": 12,
+    "contentCells": 2819,
+    "mismatchedCells": 63
+  },
+  "coverage": {
+    "total": 18,
+    "found": 16,
+    "coverage": 88.9,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 428,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 515,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 601,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 506
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 506
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NOTIFICATIONS",
+        "pageName": "NOTIFICATIONS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Notifications",
+        "pageName": "Notifications",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 288,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 259,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Alert settings",
+        "pageName": "Alert settings",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1268,
+          "y": 140,
+          "w": 84,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1268,
+          "y": 138,
+          "w": 84,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 178,
+          "w": 1264,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 179,
+          "w": 1264,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 178,
+          "w": 460,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 179,
+          "w": 460,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "pageName": "Filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 558,
+          "y": 178,
+          "w": 88,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 558,
+          "y": 179,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "4 ALERTS",
+        "pageName": "4 ALERTS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1294,
+          "y": 192,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1294,
+          "y": 192,
+          "w": 58,
+          "h": 18
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "E-2: frame item (CMP-23, F-05's frame); src/shell/** is not F-12's. SCR-15-desktop and SCR-15-desktop-settings.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-24)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "E-2: frame item (CMP-23, F-05's frame); src/shell/** is not F-12's. SCR-15-desktop and SCR-15-desktop-settings.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-24)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"4 ALERTS\"",
+        "kind": "Text",
+        "name": "4 ALERTS",
+        "boardBox": {
+          "x": 1294,
+          "y": 192,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1294,
+          "y": 192,
+          "w": 58,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Alert settings\"; on the page it comes after Filter \"Filter\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Invoice for Lagoon Health is waiting for your review , Chidi · WhatsApp and email · 10:42 , NEW",
+        "container": "main",
+        "pageBox": {
+          "x": 90,
+          "y": 245,
+          "w": 1260,
+          "h": 64
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "The UAT response for Lagoon Health is due tomorrow , Tola · Email · 09:00 daily digest",
+        "container": "main",
+        "pageBox": {
+          "x": 90,
+          "y": 310,
+          "w": 1260,
+          "h": 64
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "October payroll has 2 problems for HR , Zainab · In app only (you are not HR)",
+        "container": "main",
+        "pageBox": {
+          "x": 90,
+          "y": 375,
+          "w": 1260,
+          "h": 64
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Milestone 1 invoice was verified , Chidi · In app · yesterday",
+        "container": "main",
+        "pageBox": {
+          "x": 90,
+          "y": 440,
+          "w": 1260,
+          "h": 64
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-12/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

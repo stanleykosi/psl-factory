@@ -1,0 +1,284 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T08:39:56.359Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-mobile-success.dc.html",
+  "boardName": "SCR-16-mobile-success.dc.html",
+  "pageUrl": "http://localhost:4911/work/W-1601/respond?task=T-1601",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-09/round-1/fidelity/exception-requests.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 95.2 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 88.9,
+    "coverageWithExceptions": 100,
+    "visual": 95.2
+  },
+  "visual": {
+    "score": 95.2,
+    "allCellsScore": 95.4,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2238,
+    "mismatchedCells": 108
+  },
+  "coverage": {
+    "total": 9,
+    "found": 8,
+    "coverage": 88.9,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REL-0077",
+        "pageName": "REL-0077",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 19,
+          "w": 58,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Client UAT response",
+        "pageName": "Client UAT response",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 26
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Status message",
+        "role": "status",
+        "name": "Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 15:04 with 1 proof file.",
+        "pageName": "Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 09:39 with 1 proof file.",
+        "pageRole": "status",
+        "similarity": 92,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 96
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 104
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next",
+        "pageName": "What happens next",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 32,
+          "y": 232,
+          "w": 326,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 240,
+          "w": 326,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The release line moves on to go-live readiness.",
+        "pageName": "The release line moves on to go-live readiness.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 32,
+          "y": 256,
+          "w": 326,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 264,
+          "w": 326,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone 2 can now be marked complete, which lets Chidi draft its invoice.",
+        "pageName": "Milestone 2 can now be marked complete, which lets Chidi draft its invoice.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 32,
+          "y": 280,
+          "w": 326,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 288,
+          "w": 326,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Recorded responses can't be edited. If something is wrong, record a correction; both stay in the history.",
+        "pageName": "Recorded responses can’t be edited. If something is wrong, record a correction; both stay in the history.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 344,
+          "w": 358,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 352,
+          "w": 358,
+          "h": 34
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to my queue",
+        "pageName": "Back to my queue",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Work item",
+        "key": "link: ← Work item",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 86,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← Work item\" in the board's place, but the frame names it \"Back to Work item\" for screen readers, and the tool matches on that name. The page draws no back link of its own.",
+          "approved_by": ""
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"REL-0077\"",
+        "kind": "Text",
+        "name": "REL-0077",
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 19,
+          "w": 58,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top bar on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Work item",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 80,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "region": "unknown-money",
+  "width": 1440,
+  "board": "design/canvas/finance/project/SCR-56-desktop-review.dc.html",
+  "page": "/work/W-2004",
+  "boardText": "Forecast · 6 months",
+  "pageText": "Forecast · 6 months",
+  "boardRegion": {
+    "width": 1320,
+    "height": 279
+  },
+  "pageRegion": {
+    "width": 1320,
+    "height": 327
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 45.8,
+    "coverageWithExceptions": 100,
+    "visual": 75.6
+  },
+  "missing": [
+    {
+      "role": "text",
+      "name": "₦22.6M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦18.4M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦21.0M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦20.0M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦20.0M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦12.1M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦24.3M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦7.8M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦7.8M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "exception": "Matched by position in the table pattern, not as a standalone label; the page draws Unknown in the same cells (tests/workspace.test.tsx INV-UNKNOWN)."
+    },
+    {
+      "role": "text",
+      "name": "₦19.8M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "exception": "Matched by position in the table pattern, not as a standalone label; the page draws Unknown in the same cells (tests/workspace.test.tsx INV-UNKNOWN)."
+    },
+    {
+      "role": "text",
+      "name": "January receipts are Unknown: Kola Foods hasn't confirmed its payment date. The forecast shows Unknown, not 0.",
+      "exception": "The note text comes from the contract fixture, which writes the apostrophe as a typographic one; the board has a straight one. The words are the same."
+    }
+  ],
+  "misplaced": [
+    {
+      "name": ""
+    }
+  ],
+  "extra": [
+    {
+      "role": "region",
+      "name": "Table: Forecast · 6 months"
+    }
+  ],
+  "visual": {
+    "score": 75.6,
+    "allCellsScore": 75.6,
+    "width": 1320,
+    "height": 279,
+    "boardHeight": 279,
+    "pageHeight": 327,
+    "cell": 12,
+    "contentCells": 2640,
+    "mismatchedCells": 645
+  },
+  "notes": []
+}

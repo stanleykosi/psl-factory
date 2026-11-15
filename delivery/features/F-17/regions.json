@@ -1,0 +1,351 @@
+{
+  "about": "F-17 region-level design check (D-59, design engineer, 14 Nov 2026). Each region pairs an area of a line board with the same section kind drawn by the frame on a W-20xx fixture page. `text` finds the region on each side (the smallest element whose words include it); `root` widens it to the nearest matching ancestor. Board paths are relative to design/. Run by round-<N>/fidelity/region-check.mjs at 1440 (desktop board) and 390 (mobile board). Round 3 (D-63): a region may carry \"widths\" to name the widths a board draws; findings 390 compares one SCR-25 mobile row (Risks, with its cite) with one findings row; facts 390 compares SCR-44 mobile decision label/value rows with the facts list.",
+  "regions": [
+    {
+      "name": "text-cites",
+      "covers": "text with cites",
+      "board": {
+        "desktop_file": "canvas/project/SCR-25-desktop-review.dc.html",
+        "mobile_file": "canvas/project/SCR-25-mobile-review.dc.html",
+        "text": "Report v1 · written by Tunde Bello, assembled by Tola",
+        "root": "section",
+        "mobile": {
+          "text": "Status · Milestone 2 complete; go-live work started",
+          "root": "ul"
+        }
+      },
+      "page": {
+        "path": "/work/W-2001",
+        "text": "Report v1 · written by Tunde Bello, assembled by Tola",
+        "root": "section",
+        "mobile": {
+          "path": "/work/W-2001",
+          "text": "Status · Milestone 2 complete; go-live work started",
+          "root": "ul"
+        }
+      }
+    },
+    {
+      "name": "steps",
+      "covers": "the step button row with its consequence sentence",
+      "board": {
+        "desktop_file": "canvas/project/SCR-25-desktop-review.dc.html",
+        "mobile_file": "canvas/project/SCR-25-mobile-review.dc.html",
+        "text": "Approving sends this exact version to Lagoon Health.",
+        "root": "section",
+        "mobile": {
+          "text": "Approve and send",
+          "root": "div"
+        }
+      },
+      "page": {
+        "path": "/work/W-2001",
+        "text": "Approving sends this exact version to Lagoon Health.",
+        "root": ".ws-decide",
+        "mobile": {
+          "path": "/work/W-2001",
+          "text": "Approve and send",
+          "root": ".ws-decide"
+        }
+      }
+    },
+    {
+      "name": "recipients",
+      "covers": "recipients with receipts",
+      "board": {
+        "desktop_file": "canvas/project/SCR-25-desktop-received.dc.html",
+        "mobile_file": "canvas/project/SCR-25-mobile-received.dc.html",
+        "text": "What happened",
+        "root": "section",
+        "mobile": {
+          "text": "Delivered to 2 client contacts. Verified.",
+          "root": "div"
+        }
+      },
+      "page": {
+        "path": "/work/W-2001",
+        "text": "Who receives it",
+        "root": "section",
+        "mobile": {
+          "path": "/work/W-2001",
+          "text": "Who receives it",
+          "root": "section"
+        }
+      },
+      "widths": [
+        1440
+      ],
+      "dropped_390": "SCR-25 mobile-received draws one green summary line, not a recipients list; no phone board draws one (D-62 line summary)."
+    },
+    {
+      "name": "timeline",
+      "covers": "timeline (What happened)",
+      "board": {
+        "desktop_file": "canvas/project/SCR-25-desktop-received.dc.html",
+        "mobile_file": "canvas/project/SCR-25-mobile-received.dc.html",
+        "text": "What happened",
+        "root": "section",
+        "mobile": {
+          "text": "Delivered to 2 client contacts. Verified.",
+          "root": "div"
+        }
+      },
+      "page": {
+        "path": "/work/W-2001",
+        "text": "What happened",
+        "root": "section",
+        "mobile": {
+          "path": "/work/W-2001",
+          "text": "What happened",
+          "root": "section"
+        }
+      },
+      "widths": [
+        1440
+      ],
+      "dropped_390": "SCR-25 mobile-received draws one green summary line, not a timeline; no phone board draws one (D-62 line summary)."
+    },
+    {
+      "name": "table",
+      "covers": "table (REQUIREMENT / SUGGESTED ANSWER / STATUS)",
+      "board": {
+        "desktop_file": "canvas/project/SCR-26-desktop-review.dc.html",
+        "mobile_file": "canvas/project/SCR-26-mobile-review.dc.html",
+        "text": "SUGGESTED ANSWER",
+        "root": "table",
+        "mobile": {
+          "text": "Loan officers approve applications above a set amount",
+          "root": "div"
+        }
+      },
+      "page": {
+        "path": "/work/W-2002",
+        "text": "Suggested answer",
+        "root": "table",
+        "mobile": {
+          "path": "/work/W-2002",
+          "text": "Suggested answer",
+          "root": "table"
+        }
+      }
+    },
+    {
+      "name": "suggestions",
+      "covers": "suggestions (Suggested by Tola)",
+      "board": {
+        "desktop_file": "canvas/project/SCR-26-desktop-review.dc.html",
+        "mobile_file": "canvas/project/SCR-26-mobile-review.dc.html",
+        "text": "Review Tola's suggestion",
+        "root": "section",
+        "mobile": {
+          "text": "Loan officers approve applications above a set amount",
+          "root": "div"
+        }
+      },
+      "page": {
+        "path": "/work/W-2002",
+        "text": "Review Tola’s suggestion",
+        "root": "section",
+        "mobile": {
+          "path": "/work/W-2002",
+          "text": "Review Tola’s suggestion",
+          "root": "section"
+        }
+      },
+      "widths": [
+        1440
+      ],
+      "dropped_390": "SCR-26 mobile shows one suggestion as a full-screen swipe card (1 of 41) with no panel; the frame draws a boxed list of suggestions. No phone board draws that pattern."
+    },
+    {
+      "name": "checklist",
+      "covers": "checklist with status words (owner, due and held by are drawn when returned)",
+      "board": {
+        "desktop_file": "canvas/project/SCR-49-desktop-blocked.dc.html",
+        "mobile_file": "canvas/project/SCR-49-mobile-blocked.dc.html",
+        "text": "What closure needs",
+        "root": "section",
+        "mobile": {
+          "text": "Go-live accepted",
+          "root": "ul"
+        }
+      },
+      "page": {
+        "path": "/work/W-2003",
+        "text": "What closure needs",
+        "root": "section",
+        "mobile": {
+          "path": "/work/W-2003",
+          "text": "What closure needs",
+          "root": "section"
+        }
+      }
+    },
+    {
+      "name": "checklist-gates",
+      "covers": "checklist (SCR-44 release gates)",
+      "board": {
+        "desktop_file": "canvas/project/SCR-44-desktop-readiness.dc.html",
+        "mobile_file": "canvas/project/SCR-49-mobile-blocked.dc.html",
+        "text": "Release gates",
+        "root": "section",
+        "mobile": {
+          "text": "Go-live accepted",
+          "root": "ul"
+        }
+      },
+      "page": {
+        "path": "/work/W-2003",
+        "text": "Release gates",
+        "root": "section",
+        "mobile": {
+          "path": "/work/W-2003",
+          "text": "Release gates",
+          "root": "section"
+        }
+      }
+    },
+    {
+      "name": "findings",
+      "covers": "findings with severity and cites",
+      "board": {
+        "desktop_file": "canvas/project/SCR-49-desktop-blocked.dc.html",
+        "mobile_file": "canvas/project/SCR-25-mobile-review.dc.html",
+        "text": "What closure needs",
+        "root": "section",
+        "mobile": {
+          "text": "Login fails on older Android phones (high)",
+          "root": "li"
+        }
+      },
+      "page": {
+        "path": "/work/W-2003",
+        "text": "Open findings",
+        "root": "section",
+        "mobile": {
+          "path": "/work/W-2003",
+          "text": "Login fails on older Android phones",
+          "root": "li"
+        }
+      }
+    },
+    {
+      "name": "facts",
+      "covers": "facts (label and value)",
+      "board": {
+        "desktop_file": "canvas/project/SCR-46-desktop-evaluating.dc.html",
+        "mobile_file": "canvas/project/SCR-49-mobile-blocked.dc.html",
+        "text": "Criteria",
+        "root": "section",
+        "mobile": {
+          "text": "Go-live accepted",
+          "root": "ul"
+        }
+      },
+      "page": {
+        "path": "/work/W-2003",
+        "text": "Criteria",
+        "root": "section",
+        "mobile": {
+          "path": "/work/W-2003",
+          "text": "Window",
+          "root": "section"
+        }
+      },
+      "widths": [
+        1440
+      ],
+      "dropped_390": "SCR-44 mobile decision draws label and status-pill rows (UAT / APPROVED); the frame draws label and plain mono value. No phone board draws a plain label/value list. The first attempt (rows against rows) scored 64.2."
+    },
+    {
+      "name": "unknown-money",
+      "covers": "money with Unknown (SCR-56 forecast; SCR-53 to 58 draw Unknown only in tables)",
+      "board": {
+        "desktop_file": "canvas/finance/project/SCR-56-desktop-review.dc.html",
+        "mobile_file": "canvas/finance/project/SCR-56-mobile-review.dc.html",
+        "text": "Forecast · 6 months",
+        "root": "section",
+        "mobile": {
+          "text": "MONTH",
+          "root": "table"
+        }
+      },
+      "page": {
+        "path": "/work/W-2004",
+        "text": "Forecast · 6 months",
+        "root": "section",
+        "mobile": {
+          "path": "/work/W-2004",
+          "text": "Month",
+          "root": "table"
+        }
+      }
+    },
+    {
+      "name": "step-form",
+      "covers": "step form (fields, help, error under the field)",
+      "board": {
+        "desktop_file": "canvas/project/SCR-26-desktop-edit.dc.html",
+        "mobile_file": "canvas/project/SCR-26-mobile-edit.dc.html",
+        "text": "Review Tola's suggestion",
+        "root": "section",
+        "mobile": {
+          "text": "Edit the answer",
+          "root": "div"
+        }
+      },
+      "page": {
+        "path": "/work/W-2002",
+        "press": "Edit answer",
+        "text": "Edit answer",
+        "root": "form",
+        "mobile": {
+          "path": "/work/W-2002",
+          "press": "Edit answer",
+          "text": "Edit answer",
+          "root": "form"
+        }
+      },
+      "widths": [
+        1440
+      ],
+      "dropped_390": "SCR-26 mobile edit is a full-screen page, not the frame's boxed form. No phone board draws the frame pattern."
+    },
+    {
+      "name": "notice-done",
+      "covers": "saved notice (the received banner)",
+      "board": {
+        "desktop_file": "canvas/project/SCR-25-desktop-received.dc.html",
+        "mobile_file": "canvas/project/SCR-25-mobile-received.dc.html",
+        "text": "Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified.",
+        "root": "div",
+        "mobile": {
+          "text": "Delivered to 2 client contacts. Verified.",
+          "root": "div"
+        }
+      },
+      "page": {
+        "path": "/work/W-2001",
+        "press": "Approve and send",
+        "text": "Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified.",
+        "root": ".psl-callout",
+        "mobile": {
+          "path": "/work/W-2001",
+          "press": "Approve and send",
+          "text": "Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified.",
+          "root": ".psl-callout"
+        }
+      }
+    }
+  ],
+  "not_checked": [
+    {
+      "name": "restricted",
+      "reason": "No line board draws a restricted section label (SCR-02 history only describes restricted entries in its About text). Listed in fidelity-exceptions.json as category \"no board\"."
+    },
+    {
+      "name": "notice-queued-uncertain-stale",
+      "reason": "The waiting, uncertain and stale notices have no matching board callout on SCR-25 (returned and invalid draw the reviewer's note and field errors, not these sentences). Listed in fidelity-exceptions.json as category \"no board\"."
+    }
+  ]
+}

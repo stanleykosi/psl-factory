@@ -1,0 +1,1331 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:40:07.062Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-01-desktop-filter.dc.html",
+  "boardName": "SCR-01-desktop-filter.dc.html",
+  "pageUrl": "http://localhost:3311/my-work",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-02/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 83.6 is below 90.",
+    "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 83.3,
+    "coverageWithExceptions": 100,
+    "visual": 83.6
+  },
+  "visual": {
+    "score": 83.6,
+    "allCellsScore": 92.2,
+    "width": 1440,
+    "height": 900,
+    "boardHeight": 900,
+    "pageHeight": 900,
+    "cell": 12,
+    "contentCells": 4292,
+    "mismatchedCells": 705
+  },
+  "coverage": {
+    "total": 54,
+    "found": 45,
+    "coverage": 83.3,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 82,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 350,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 516,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 602,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 477
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 526
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 40px on the board, 36px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 209,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 169,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 147,
+          "w": 532,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 148,
+          "w": 532,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Needs me 3",
+        "pageName": "Needs me 3",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 149,
+          "w": 124,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 150,
+          "w": 124,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Waiting on others 2",
+        "pageName": "Waiting on others 5",
+        "pageRole": "tab",
+        "similarity": 95,
+        "looks": [],
+        "boardBox": {
+          "x": 214,
+          "y": 149,
+          "w": 172,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 214,
+          "y": 150,
+          "w": 172,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Done 28",
+        "pageName": "Done 28",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 386,
+          "y": 149,
+          "w": 99,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 386,
+          "y": 150,
+          "w": 99,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Unassigned 1",
+        "pageName": "Unassigned 1",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 485,
+          "y": 149,
+          "w": 135,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 485,
+          "y": 150,
+          "w": 135,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 215,
+          "w": 1264,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 220,
+          "w": 1264,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 215,
+          "w": 460,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 220,
+          "w": 460,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter 2",
+        "pageName": "Filter 2",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 558,
+          "y": 215,
+          "w": 116,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 558,
+          "y": 220,
+          "w": 122,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "dialog",
+        "name": "Filter",
+        "pageName": "Filter",
+        "pageRole": "dialog",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 558,
+          "y": 267,
+          "w": 384,
+          "h": 598
+        },
+        "pageBox": {
+          "x": 558,
+          "y": 272,
+          "w": 380,
+          "h": 603
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "text",
+        "name": "FILTER",
+        "pageName": "FILTER",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 560,
+          "y": 269,
+          "w": 380,
+          "h": 41
+        },
+        "pageBox": {
+          "x": 560,
+          "y": 274,
+          "w": 376,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Line",
+        "pageName": "Line",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 576,
+          "y": 326,
+          "w": 31,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 333,
+          "w": 27,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Invoice preparation and delivery",
+        "pageName": "Invoice preparation and delivery",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #1F2427 on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 576,
+          "y": 357,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 366,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Planning and delivery handoff",
+        "pageName": "Planning and delivery handoff",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 576,
+          "y": 393,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 402,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Go-live acceptance",
+        "pageName": "Go-live acceptance",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 576,
+          "y": 429,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 438,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Project closure",
+        "pageName": "Project closure",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 576,
+          "y": 465,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 474,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Show all 25 lines",
+        "pageName": "Show all 6 lines",
+        "pageRole": "button",
+        "similarity": 88,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 576,
+          "y": 496,
+          "w": 348,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 506,
+          "w": 91,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 576,
+          "y": 527,
+          "w": 348,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 540,
+          "w": 344,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "State",
+        "pageName": "State",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 576,
+          "y": 613,
+          "w": 348,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 625,
+          "w": 344,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting on",
+        "pageName": "Waiting on",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 576,
+          "y": 699,
+          "w": 348,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 710,
+          "w": 344,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Clear",
+        "pageName": "Clear",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 576,
+          "y": 801,
+          "w": 169,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 811,
+          "w": 167,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Show 2 items",
+        "pageName": "Show 1 item",
+        "pageRole": "button",
+        "similarity": 83,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 755,
+          "y": 801,
+          "w": 169,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 753,
+          "y": 811,
+          "w": 167,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 OF 4 ITEMS",
+        "pageName": "1 OF 3 ITEMS",
+        "pageRole": "text",
+        "similarity": 83,
+        "looks": [],
+        "boardBox": {
+          "x": 1266,
+          "y": 230,
+          "w": 86,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1266,
+          "y": 233,
+          "w": 86,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Line",
+        "pageName": "Line",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 99,
+          "y": 278,
+          "w": 24,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 99,
+          "y": 280,
+          "w": 24,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoice preparation and delivery",
+        "pageName": "Invoice preparation and delivery",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 129,
+          "y": 278,
+          "w": 196,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 129,
+          "y": 280,
+          "w": 196,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Remove Line filter",
+        "pageName": "Remove Line filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 331,
+          "y": 272,
+          "w": 28,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 331,
+          "y": 276,
+          "w": 28,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "State",
+        "pageName": "State",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 381,
+          "y": 278,
+          "w": 31,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 381,
+          "y": 280,
+          "w": 31,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Remove State filter",
+        "pageName": "Remove State filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 517,
+          "y": 272,
+          "w": 28,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 470,
+          "y": 276,
+          "w": 28,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Clear all",
+        "pageName": "Clear all",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 556,
+          "y": 278,
+          "w": 47,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 509,
+          "y": 276,
+          "w": 66,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 325,
+          "w": 1260,
+          "h": 150
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 332,
+          "w": 1260,
+          "h": 129
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WORK",
+        "pageName": "WORK",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 325,
+          "w": 445,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 332,
+          "w": 430,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WHERE ON ITS LINE",
+        "pageName": "WHERE ON ITS LINE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 535,
+          "y": 325,
+          "w": 357,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 520,
+          "y": 332,
+          "w": 320,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATE",
+        "pageName": "STATE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 892,
+          "y": 325,
+          "w": 364,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 841,
+          "y": 332,
+          "w": 421,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "AGE",
+        "pageName": "AGE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1256,
+          "y": 325,
+          "w": 94,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1261,
+          "y": 332,
+          "w": 89,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Station 4 of 7 · Finance review",
+        "pageName": "Station 4 of 7 · Finance review",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text size 14px on the board, 12px on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 535,
+          "y": 360,
+          "w": 357,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 520,
+          "y": 369,
+          "w": 320,
+          "h": 91
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2h",
+        "pageName": "2h",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 1256,
+          "y": 360,
+          "w": 94,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 1261,
+          "y": 369,
+          "w": 89,
+          "h": 91
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Start work opens the F-05 start flow (top bar on every board; the same link in the empty boards' caught-up panel). F-05 is not merged; src/shell/** is not F-02's.",
+          "approved_by": "Coordinator, F-02 round 3 brief (top-bar Start work belongs to F-05; list as a frame item)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Split part of the F-05 Start work button in the top bar.",
+          "approved_by": "Coordinator, F-02 round 3 brief (frame item, F-05)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "46 RECORDS YOU CAN SEE",
+        "key": "text: 46 RECORDS YOU CAN SEE",
+        "container": "main",
+        "boardBox": {
+          "x": 1194,
+          "y": 112,
+          "w": 158,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Only SCR-01-desktop-filter drops \"· updated 10:42\"; the page keeps one header line on every state.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Any project ▾",
+        "key": "text: Any project ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 576,
+          "y": 551,
+          "w": 348,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Built as a native select showing \"Any project\" with the board's small arrow; the check cannot read a select's shown value.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Needs a person ▾",
+        "key": "text: Needs a person ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 576,
+          "y": 637,
+          "w": 348,
+          "h": 48
+        },
+        "exception": {
+          "reason": "\"Needs a person\" is not a contract state (the State filter offers the 11 E-WORK-LIST states); native select value is also unreadable to the check.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Me ▾",
+        "key": "text: Me ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 576,
+          "y": 723,
+          "w": 348,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Native select (Waiting on); the check cannot read a select's shown value.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Needs a person",
+        "key": "text: Needs a person",
+        "container": "main",
+        "boardBox": {
+          "x": 418,
+          "y": 278,
+          "w": 93,
+          "h": 17
+        },
+        "exception": {
+          "reason": "State chip: \"Needs a person\" is not a contract state.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Station 4 of 7 · Finance review",
+        "key": "text: Station 4 of 7 · Finance review",
+        "container": "table",
+        "boardBox": {
+          "x": 535,
+          "y": 418,
+          "w": 357,
+          "h": 57
+        },
+        "exception": {
+          "reason": "SCR-01-desktop-filter draws a second invoice row (Harmattan Bank, 20m) that SCR-01-desktop's Needs me rows do not have; the board sample follows SCR-01-desktop.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "20m",
+        "key": "text: 20m",
+        "container": "table",
+        "boardBox": {
+          "x": 1256,
+          "y": 418,
+          "w": 94,
+          "h": 57
+        },
+        "exception": {
+          "reason": "Same second invoice row as above.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-17)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 477
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 526
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"2 OF 4 ITEMS\"; on the page it comes after Filter \"FILTER\""
+        ]
+      },
+      {
+        "label": "Text \"Line\"",
+        "kind": "Text",
+        "name": "Line",
+        "boardBox": {
+          "x": 576,
+          "y": 326,
+          "w": 31,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 576,
+          "y": 333,
+          "w": 27,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Table column \"WHERE ON ITS LINE\"; on the page it comes after Main area \"\""
+        ]
+      },
+      {
+        "label": "Text \"Station 4 of 7 · Finance review\"",
+        "kind": "Text",
+        "name": "Station 4 of 7 · Finance review",
+        "boardBox": {
+          "x": 535,
+          "y": 360,
+          "w": 357,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 520,
+          "y": 369,
+          "w": 320,
+          "h": 91
+        },
+        "reasons": [
+          "order: on the board it comes after Checkbox \"Invoice preparation and delivery\"; on the page it comes after Table \"\""
+        ]
+      },
+      {
+        "label": "Text \"2h\"",
+        "kind": "Text",
+        "name": "2h",
+        "boardBox": {
+          "x": 1256,
+          "y": 360,
+          "w": 94,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 1261,
+          "y": 369,
+          "w": 89,
+          "h": 91
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Station 4 of 7 · Finance review\"; on the page it comes after Checkbox \"Planning and delivery handoff\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "37 records you can see · updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 1078,
+          "y": 106,
+          "w": 274,
+          "h": 18
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Needs me3",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 330,
+          "w": 1264,
+          "h": 197
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "container": "table",
+        "pageBox": {
+          "x": 106,
+          "y": 409,
+          "w": 398,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "All 1 showing",
+        "container": "main",
+        "pageBox": {
+          "x": 104,
+          "y": 485,
+          "w": 94,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

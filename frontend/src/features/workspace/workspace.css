@@ -1,0 +1,172 @@
+/* Line workspace frame (PROPOSAL D-LINE-WORKSPACE). Token variables only. Sections follow the line boards'
+   panels: a bordered box, an uppercase head, rows with the words on the left and the state in mono on the right. */
+
+/* tokens.css is generated from the design system and has no 30px; the reconcile button's padding on a phone lives here */
+:root { --space-bar-clear: 30px; }
+
+.ws { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.ws-stack { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+/* layout, as the line boards share it (D-62): the sections in the main column; suggestions, the decision and the
+   edit form in a side column, each with a coloured head. On a phone there are no panel borders and the steps pin
+   to the bottom (see the media query at the end). */
+.ws-cols { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+.ws-main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.ws-side { flex: 1 1 340px; max-width: 440px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.ws-section--suggestions { border-color: var(--action); }
+.ws-section--suggestions > .psl-panel__head, .ws-form > .psl-panel__head { background: var(--action); color: var(--on-strong); border-bottom-color: var(--action); }
+.ws-form { border-color: var(--action); }
+.ws-decide__head { margin: 0; }
+.ws-decide__body { gap: 12px; }
+.ws-rows--checklist .ws-word, .ws-rows--findings .ws-word { font-family: var(--font-sans); font-weight: 600; }
+.ws-rows--checklist .ws-word { padding: 3px 8px; font-size: 12px; background: var(--neutral-tint); color: var(--neutral-ink); }
+.ws-rows--checklist .ws-word--status-done { background: var(--verified-tint); color: var(--verified-ink); }
+.ws-rows--checklist .ws-word--status-blocked { background: var(--signal-tint); color: var(--signal-ink); }
+.ws-rows--checklist .ws-word--status-held, .ws-rows--checklist .ws-word--status-unknown, .ws-rows--checklist .ws-word--status-now { background: var(--waiting-tint); color: var(--waiting-ink); }
+.ws-rows--findings .ws-word { padding: 3px 8px; font-size: 12px; background: var(--neutral-tint); color: var(--neutral-ink); }
+.ws-rows--findings .ws-word--severity-high { background: var(--signal-tint); color: var(--signal-ink); }
+.ws-rows--findings .ws-word--severity-medium { background: var(--waiting-tint); color: var(--waiting-ink); }
+.ws-table th { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; color: var(--ink-muted); }
+.ws-decide .ws-steps__buttons { flex-direction: column; align-items: stretch; gap: 8px; }
+.ws-decide .ws-steps__buttons > span, .ws-decide .ws-control { display: flex; flex-direction: column; align-items: stretch; }
+.ws-decide .psl-btn { width: 100%; min-height: 50px; white-space: nowrap; }
+.ws-decide .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject) { background: var(--verified); }
+.ws-decide .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):hover { background: var(--verified-strong); }
+.ws-hint { margin: 0; }
+/* a suggestion is the board's card: a mono reference, the answer in a tinted box, the source beneath */
+.ws-sugg { gap: 6px; }
+.ws-sugg__ref { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+.ws-sugg__answer { padding: 8px 10px; border: 2px solid var(--action); background: var(--action-tint); }
+.ws-side .ws-row { padding: 12px 0; }
+/* a suggestion in the side column reads as the board's card: the words, then the full-width buttons */
+.ws-side .ws-row { flex-direction: column; align-items: stretch; flex-wrap: nowrap; }
+.ws-side .ws-row__end { max-width: none; justify-content: flex-start; text-align: left; }
+.ws-side .ws-row__steps { flex-direction: column; align-items: stretch; }
+.ws-side .ws-row__steps .ws-control { display: flex; align-items: stretch; }
+.ws-side .ws-row__steps .psl-btn, .ws-form__actions .psl-btn { min-height: 50px; }
+.ws-side .ws-row__steps .psl-btn { width: 100%; }
+.ws-form__actions { flex-wrap: nowrap; }
+.ws-form__actions .psl-btn:first-child { flex: 2; }
+.ws-form__actions .psl-btn:last-child { flex: 1; }
+
+/* header */
+.ws-header { display: flex; flex-direction: column; gap: var(--space-2); }
+.ws-crumbs { list-style: none; padding: 0; display: flex; flex-wrap: wrap; }
+.ws-crumbs li + li::before { content: '/'; padding: 0 6px; color: var(--ink-muted); }
+.ws-titleline { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
+.ws-title { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1.15; overflow-wrap: anywhere; }
+.ws-status { align-self: flex-start; padding: 3px 8px; font-size: 12px; font-weight: 600; text-transform: uppercase; white-space: nowrap; }
+.ws-subtitle, .ws-byline { margin: 0; color: var(--ink-muted); }
+.ws-byline { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: baseline; }
+.ws-version { font-size: 12px; }
+.ws-agentnote { margin: 0; }
+
+/* sections */
+.ws-section { min-width: 0; }
+.ws-section__head { margin: 0; }
+.ws-meta { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); font-size: 12px; color: var(--ink-muted); }
+.ws-note { margin: 0; }
+.ws-empty, .ws-restricted { margin: 0; line-height: 1.5; }
+.ws-empty, .ws-restricted { color: var(--ink-muted); }
+.ws-detail { font-size: 13px; color: var(--ink-muted); }
+
+/* rows */
+.ws-rows { list-style: none; margin: 0; padding: 0; }
+.ws-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; min-height: 40px; border-top: 1px solid var(--rule-soft); font-size: 14px; padding: 6px 0; }
+.ws-row__main { display: flex; gap: 10px; align-items: flex-start; flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; }
+.ws-row__end { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: var(--space-2); flex: none; max-width: 50%; text-align: right; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+.ws-row__steps { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); flex: none; }
+.ws-row--restricted { color: var(--ink-muted); }
+.ws-word { text-transform: uppercase; }
+.ws-word--status-done, .ws-word--receipt-received { color: var(--verified-ink); }
+.ws-word--status-blocked, .ws-word--receipt-failed, .ws-word--severity-high { color: var(--signal-ink); }
+.ws-word--status-held, .ws-word--receipt-uncertain, .ws-word--status-unknown, .ws-word--receipt-unknown, .ws-word--severity-medium { color: var(--waiting-ink); }
+.ws-word--status-now { color: var(--action-ink); }
+.ws-cites { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); }
+.ws-cite { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); text-transform: uppercase; }
+.ws-ref { font-family: var(--font-mono); }
+a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offset: 2px; }
+.ws-value { color: var(--ink); }
+
+/* facts: label and value pairs */
+.ws-facts { margin: 0; }
+.ws-fact { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 40px; border-top: 1px solid var(--rule-soft); font-size: 14px; }
+.ws-fact dt { font-weight: 600; }
+.ws-fact dd { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); text-align: right; }
+
+/* tables scroll inside their own frame on phones */
+.ws-tablewrap { max-width: 100%; }
+.ws-tablewrap:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ws-table th { text-transform: uppercase; }
+/* a narrow screen scrolls the table; a reference never breaks; the source sits on its own line under the words */
+.ws-table { min-width: 560px; }
+.ws-table td { min-width: 0; }
+.ws-table td.num { font-family: var(--font-sans); }
+.ws-table .num { text-align: left; }
+.ws-table td.psl-mono, .ws-table .ws-cite { white-space: nowrap; }
+.ws-table .ws-cite { display: block; font-family: var(--font-sans); font-size: 12px; text-transform: none; }
+.ws-table td:has(> .ws-cite) { font-weight: 600; }
+.ws-table td > .ws-cite { font-weight: 400; }
+.ws-cite a.ws-ref { color: inherit; }
+.ws-table .psl-tag { text-transform: uppercase; font-weight: 600; }
+
+/* inert filters and paging */
+.ws-filters, .ws-more { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.ws-count { font-size: 12px; color: var(--ink-muted); text-transform: uppercase; }
+.ws-chip { min-height: var(--control-md); padding: 0 10px; color: var(--ink-muted); }
+.ws-chip[disabled], .ws-filters .psl-btn[disabled], .ws-more .psl-btn[disabled] { cursor: not-allowed; }
+
+/* steps: the consequence above the buttons, as the boards' decide panels; forms open under their control */
+.ws-steps { display: flex; flex-direction: column; gap: 10px; }
+.ws-steps__buttons { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+.ws-control { display: inline-flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.ws-consequence, .ws-confirm { margin: 0; line-height: 1.5; }
+.ws-steps .psl-btn[aria-disabled="true"], .ws-row__steps .psl-btn[aria-disabled="true"], .ws-table__steps .psl-btn[aria-disabled="true"], .ws-form .psl-btn[aria-disabled="true"] { cursor: not-allowed; }
+.ws-row__form { flex: 1 0 100%; padding-bottom: 10px; }
+.ws-table__steps { white-space: nowrap; }
+.ws-form { min-width: 0; }
+.ws-form__head { margin: 0; }
+.ws-form__head:focus-visible { outline: 2px solid var(--focus); outline-offset: -4px; }
+.ws-form__body { gap: var(--space-4); }
+.ws-form .psl-seg__opt, .ws-form .resp-filebtn { min-height: var(--control-md); }
+.ws-form__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.ws-money { display: flex; align-items: center; gap: 6px; }
+.ws-money input { flex: 1; min-width: 0; border: none; background: none; font: inherit; padding: 0; }
+.ws-money input:focus-visible { outline: none; }
+.ws-money:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ws-checkwrap { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; cursor: pointer; }
+.ws-check { width: 20px; height: 20px; margin: 0; accent-color: var(--ink); }
+.ws-bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.ws-bulk .ws-steps { flex-direction: row; flex-wrap: wrap; align-items: center; }
+.ws-notices { display: contents; }
+.ws-live:empty { display: none; }
+.ws-live p { margin: 0; }
+.ws-notice { margin: 0; flex-wrap: wrap; }
+.ws-reload { margin: 0; }
+
+@media (max-width: 720px) {
+  /* the columns collapse into one flow; each section stays a white box with the ink border (D-63) */
+  .ws-cols, .ws-main, .ws-side { display: contents; }
+  .ws-section, .ws-section--suggestions, .ws-form { border: 2px solid var(--ink); background: var(--surface); }
+  .ws-section__body, .ws-form__body { padding: 0 14px 6px; }
+  .ws-section > .psl-panel__head, .ws-section--suggestions > .psl-panel__head, .ws-form > .psl-panel__head { background: none; color: inherit; border-bottom: none; padding: 10px 14px 6px; }
+  /* the Decide panel is a fixed full-width bar; the page keeps its height clear below it and Tab focus scrolls above it */
+  .ws { padding-bottom: var(--ws-bar-h, 0px); }
+  html { scroll-padding-bottom: var(--ws-bar-h, 0px); }
+  .ws-decide { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; border: none; border-top: 2px solid var(--ink); background: var(--surface); padding: 10px 16px 14px; }
+  .ws-decide__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
+  .ws-decide__body { padding: 0; }
+  .ws-rows--text .ws-row { padding: 0; }
+  .ws-decide .ws-steps { gap: 6px; }
+  .ws-decide .ws-steps__buttons { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .ws-decide .ws-steps__buttons > span { flex: 1 1 120px; }
+  .ws-decide .psl-btn { min-height: 44px; white-space: normal; }
+  /* every step is off while the reconcile panel's own pinned button is shown: the Decide panel flows, and the page keeps that button's height (its control plus padding) clear below it */
+  .ws:has(.ws-decide--flow) { padding-bottom: calc(var(--control-lg) + var(--space-bar-clear)); }
+  html:has(.ws-decide--flow) { scroll-padding-bottom: calc(var(--control-lg) + var(--space-bar-clear)); }
+  .ws-decide.ws-decide--flow { position: static; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws * { transition: none; animation: none; }
+}

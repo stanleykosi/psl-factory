@@ -1,0 +1,83 @@
+$ curl -s -o /dev/null -w '%{http_code}
+' -X POST http://127.0.0.1:4712/__mock/reset
+204
+
+
+$ curl -s 'http://localhost:4711/api/v1/projects?limit=20' | python3 -c "import json,sys;d=json.load(sys.stdin);print({k:(len(v) if k==\"items\" else v) for k,v in d.items()}, [i[\"title\"] for i in d.get(\"items\",[])][:3])"
+{'items': 20, 'as_of': '2026-11-14T09:00:00Z', 'counts': {'active': 22, 'closed': 2, 'all': 24}, 'total': 22, 'next_cursor': 'o20'} ['Lagoon Health · patient app', 'Harmattan Bank · mobile onboarding', 'Kora Logistics · fleet tracker']
+
+
+$ curl -s 'http://localhost:4711/api/v1/projects?limit=20&status=closed' | python3 -c "import json,sys;d=json.load(sys.stdin);print({k:(len(v) if k==\"items\" else v) for k,v in d.items()}, [i[\"title\"] for i in d.get(\"items\",[])][:3])"
+{'items': 2, 'as_of': '2026-11-14T09:00:00Z', 'counts': {'active': 22, 'closed': 2, 'all': 24}, 'total': 2} ['Sabi Market · web store', 'Rivers Media · content hub']
+
+
+$ curl -s 'http://localhost:4711/api/v1/projects?limit=20&status=all' | python3 -c "import json,sys;d=json.load(sys.stdin);print({k:(len(v) if k==\"items\" else v) for k,v in d.items()}, [i[\"title\"] for i in d.get(\"items\",[])][:3])"
+{'items': 20, 'as_of': '2026-11-14T09:00:00Z', 'counts': {'active': 22, 'closed': 2, 'all': 24}, 'total': 24, 'next_cursor': 'o20'} ['Lagoon Health · patient app', 'Harmattan Bank · mobile onboarding', 'Kora Logistics · fleet tracker']
+
+
+$ curl -s 'http://localhost:4711/api/v1/projects?limit=20&cursor=o20' | python3 -c "import json,sys;d=json.load(sys.stdin);print({k:(len(v) if k==\"items\" else v) for k,v in d.items()}, [i[\"title\"] for i in d.get(\"items\",[])][:3])"
+{'items': 2, 'as_of': '2026-11-14T09:00:00Z', 'counts': {'active': 22, 'closed': 2, 'all': 24}, 'total': 22} ['Palm Credit · loan origination', 'Quarry Build · site reports']
+
+
+$ curl -s 'http://localhost:4711/api/v1/projects?limit=20&q=lagoon' | python3 -c "import json,sys;d=json.load(sys.stdin);print({k:(len(v) if k==\"items\" else v) for k,v in d.items()}, [i[\"title\"] for i in d.get(\"items\",[])][:3])"
+{'items': 1, 'as_of': '2026-11-14T09:00:00Z', 'counts': {'active': 22, 'closed': 2, 'all': 24}, 'total': 1} ['Lagoon Health · patient app']
+
+
+$ curl -s -b psl_mock_persona=pm 'http://localhost:4711/api/v1/projects?limit=20' | python3 -c "import json,sys;d=json.load(sys.stdin);print({k:(len(v) if k==\"items\" else v) for k,v in d.items()}, [i[\"title\"] for i in d.get(\"items\",[])][:3])"
+{'items': 4, 'as_of': '2026-11-14T09:00:00Z', 'counts': {'active': 4, 'closed': 1, 'all': 5}, 'total': 4} ['Lagoon Health · patient app', 'Harmattan Bank · mobile onboarding', 'Kora Logistics · fleet tracker']
+
+
+$ curl -s -b psl_mock_persona=pm 'http://localhost:4711/api/v1/projects?limit=20&status=closed' | python3 -c "import json,sys;d=json.load(sys.stdin);print({k:(len(v) if k==\"items\" else v) for k,v in d.items()}, [i[\"title\"] for i in d.get(\"items\",[])][:3])"
+{'items': 1, 'as_of': '2026-11-14T09:00:00Z', 'counts': {'active': 4, 'closed': 1, 'all': 5}, 'total': 1} ['Sabi Market · web store']
+
+
+$ curl -s -b psl_mock_persona=admin 'http://localhost:4711/api/v1/projects?limit=20' | python3 -c "import json,sys;d=json.load(sys.stdin);print({k:(len(v) if k==\"items\" else v) for k,v in d.items()}, [i[\"title\"] for i in d.get(\"items\",[])][:3])"
+{'items': 0, 'as_of': '2026-11-14T09:00:00Z', 'counts': {'active': 0, 'closed': 0, 'all': 0}, 'total': 0} []
+
+
+$ curl -s -b psl_mock_persona=none -w ' %{http_code}' 'http://localhost:4711/api/v1/projects?limit=20'
+{"items":[],"as_of":"2026-11-14T09:00:00Z","counts":{"active":0,"closed":0,"all":0},"total":0} 200
+
+$ curl -s -w ' %{http_code}' 'http://localhost:4711/api/v1/projects?limit=7'
+{"code":"invalid_query","message":"We could not read that list request."} 404
+
+$ curl -s -w ' %{http_code}' 'http://localhost:4711/api/v1/projects?limit=20&q='
+{"code":"invalid_query","message":"We could not read that list request."} 404
+
+$ curl -s -w ' %{http_code}' 'http://localhost:4711/api/v1/projects?limit=20&status=bogus'
+{"code":"invalid_query","message":"We could not read that list request."} 404
+
+$ curl -s -w ' %{http_code}' 'http://localhost:4711/api/v1/projects/P-0099'
+{"code":"not_found","message":"We could not find that record."} 404
+
+$ curl -s -b psl_mock_persona=pm -w ' %{http_code}' 'http://localhost:4711/api/v1/projects/P-0104'
+{"code":"not_found","message":"We could not find that record."} 404
+
+$ curl -s -w ' %{http_code}' 'http://localhost:4711/api/v1/projects/P-0104' | head -c 120
+{"case_id":"P-0104","title":"Delta Foods · ordering app","lines":[{"line":"Prepare an invoice","state":"verified","work
+
+$ curl -s -b psl_mock_scenario=401 -w ' %{http_code}' 'http://localhost:4711/api/v1/projects?limit=20'
+{"code":"not_signed_in","message":"Sign in to continue."} 401
+
+$ curl -s -b psl_mock_scenario=403 -w ' %{http_code}' 'http://localhost:4711/api/v1/projects?limit=20'
+{"code":"forbidden","message":"Your role does not allow this."} 403
+
+$ curl -s -b psl_mock_scenario=401 -w ' %{http_code}' 'http://localhost:4711/api/v1/projects/P-0101'
+{"code":"not_signed_in","message":"Sign in to continue."} 401
+
+$ curl -s -H 'X-Mock-Scenario: 403' -w ' %{http_code}' 'http://localhost:4711/api/v1/projects/P-0101'
+{"code":"forbidden","message":"Your role does not allow this."} 403
+
+$ curl -s 'http://localhost:4711/api/v1/projects/P-0101' | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d["title"],len(d["lines"]),[l["state"] for l in d["lines"]])'
+Lagoon Health · patient app 8 ['verified', 'verified', 'verified', 'verified', 'verified', 'waiting', 'waiting', 'owner_needed']
+
+
+$ curl -s 'http://localhost:4711/api/v1/projects/P-0105' | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d["title"],len(d["lines"]))'
+Sabi Market · web store 0
+
+
+$ curl -s -o /dev/null -w '%{http_code}
+' -X POST http://127.0.0.1:4712/__mock/reset
+204
+
+

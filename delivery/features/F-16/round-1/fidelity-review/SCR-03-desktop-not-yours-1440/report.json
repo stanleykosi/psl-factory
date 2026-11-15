@@ -1,0 +1,666 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T20:07:26.140Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-03-desktop-not-yours.dc.html",
+  "boardName": "SCR-03-desktop-not-yours.dc.html",
+  "pageUrl": "http://localhost:4631/work/W-1903/decide?task=T-1903",
+  "viewport": {
+    "width": 1440,
+    "height": 820
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-16/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 91.4 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 90.9,
+    "coverageWithExceptions": 100,
+    "visual": 91.4
+  },
+  "visual": {
+    "score": 91.4,
+    "allCellsScore": 95.9,
+    "width": 1440,
+    "height": 820,
+    "boardHeight": 820,
+    "pageHeight": 837,
+    "cell": 12,
+    "contentCells": 3962,
+    "mismatchedCells": 339
+  },
+  "coverage": {
+    "total": 22,
+    "found": 20,
+    "coverage": 90.9,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 18,
+          "w": 122,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 234,
+          "y": 1,
+          "w": 84,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 317,
+          "y": 1,
+          "w": 81,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 398,
+          "y": 1,
+          "w": 87,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1031,
+          "y": 8,
+          "w": 120,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1005,
+          "y": 9,
+          "w": 118,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1151,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1124,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 574
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 780
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECISION · INV-0412",
+        "pageName": "DECISION · INV-0412",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Approve the Milestone 2 invoice?",
+        "pageName": "Approve invoice v2",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Approve the Milestone 2 invoice?\" on the board, \"Approve invoice v2\" on the page",
+        "looks": [
+          "text size 34px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 118,
+          "w": 1264,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 114,
+          "w": 421,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AMOUNT",
+        "pageName": "AMOUNT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 189,
+          "w": 390,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 191,
+          "w": 390,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00",
+        "pageName": "₦4,250,000.00",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 206,
+          "w": 390,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 209,
+          "w": 390,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "BASIS",
+        "pageName": "BASIS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 524,
+          "y": 189,
+          "w": 390,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 524,
+          "y": 191,
+          "w": 390,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SOW v2 stage 2",
+        "pageName": "SOW v2 stage 2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 524,
+          "y": 206,
+          "w": 390,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 524,
+          "y": 209,
+          "w": 390,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING FOR",
+        "pageName": "WAITING FOR",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 944,
+          "y": 189,
+          "w": 390,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 944,
+          "y": 191,
+          "w": 390,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finance Lead",
+        "pageName": "Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 944,
+          "y": 206,
+          "w": 390,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 944,
+          "y": 209,
+          "w": 390,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NOT YOUR DECISION",
+        "pageName": "NOT YOUR DECISION",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 280,
+          "w": 141,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 282,
+          "w": 135,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor (Finance Lead) was alerted at 10:42 by WhatsApp and email.",
+        "pageName": "Ada Okafor (Finance Lead) was alerted at 12 Nov 10:42 by WhatsApp and email",
+        "pageRole": "text",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 361,
+          "w": 760,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 353,
+          "w": 760,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Comment for the Finance Lead (optional)",
+        "pageName": "Comment for the Finance Lead (optional)",
+        "pageRole": "textbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 110,
+          "y": 419,
+          "w": 760,
+          "h": 71
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 413,
+          "w": 760,
+          "h": 87
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Add comment",
+        "pageName": "Add comment",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 110,
+          "y": 502,
+          "w": 260,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 556,
+          "w": 260,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Bisi Adeyemi · Finance",
+        "key": "text: Bisi Adeyemi · Finance",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1217,
+          "y": 20,
+          "w": 135,
+          "h": 16
+        },
+        "exception": {
+          "reason": "The not-yours board is drawn signed in as Bisi Adeyemi; the frame shows the signed-in persona (finance_lead, Ada Okafor). Eligibility comes from the fixture's you_can_act and cannot_act_reason, never from the persona (Conflicts 22).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "This decision needs a Finance Lead. You hold Finance on this project, so you can read it and add a comment, but you can't approve, return or reject it.",
+        "key": "text: This decision needs a Finance Lead. You hold Finance on this project, so you can read it and add a comment, but you can't approve, return or reject it.",
+        "container": "main",
+        "boardBox": {
+          "x": 110,
+          "y": 313,
+          "w": 760,
+          "h": 36
+        },
+        "exception": {
+          "reason": "The copy is keyed on cannot_act_reason only (\"You can read it, but you can’t approve, return or reject it.\"); the board sentence reads the viewer's roles, which the page may not do (Conflicts 12, D-55).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 574
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 780
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"NOT YOUR DECISION\"; on the page it comes after Text \"Ada Okafor (Finance Lead) was alerted at 10:42 by WhatsApp and email.\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "This decision needs a Finance Lead.",
+        "container": "main",
+        "pageBox": {
+          "x": 110,
+          "y": 319,
+          "w": 265,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You can read it, but you can’t approve, return or reject it.",
+        "container": "main",
+        "pageBox": {
+          "x": 378,
+          "y": 319,
+          "w": 402,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Comments aren’t available yet.",
+        "container": "main",
+        "pageBox": {
+          "x": 110,
+          "y": 519,
+          "w": 760,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the work item",
+        "container": "main",
+        "pageBox": {
+          "x": 110,
+          "y": 619,
+          "w": 123,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Approval chain",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 681,
+          "w": 760,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 step",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 711,
+          "w": 760,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

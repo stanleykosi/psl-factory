@@ -1,0 +1,62 @@
+# Writes delivery/features/F-14/fidelity-exceptions.json (builder proposal, pending design engineer).
+import json
+P = "builder proposal, pending design engineer"
+FRAME, OWNED, NOOP, WORDS, BOARDS = "frame item", "control owned by another feature", "effect with no operation in scope", "contract state word (Contract rule 6)", "disagreement between boards"
+E = []
+def x(role, name, cat, reason): E.append({"role": role, "name": name, "category": cat, "reason": reason, "approved_by": P})
+# frame items (F-05, src/shell)
+x("link", "Start work", FRAME, "Top-bar Start work belongs to F-05 (src/shell); not merged on the base. As D-17.")
+x("link", "More ways to start", FRAME, "Split part of the F-05 Start work button in the top bar.")
+x("text", "Bisi Adeyemi · Finance", FRAME, "The issue and permission boards are drawn signed in as Bisi Adeyemi; the frame shows the signed-in persona (finance_lead, Ada Okafor). As D-17.")
+x("link", "← Queue", FRAME, "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Queue\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link.")
+x("link", "← Invoice", FRAME, "As \"← Queue\": the frame names the phone back link \"Back to Invoice\".")
+# controls owned by F-04, F-06, F-09
+x("text", "AWAITING FINANCE DECISION", WORDS, "Board-only state wording; the tag shows STATE_TAGS.waiting (\"Waiting\", CMP-05), as D-17.")
+x("text", "AGENT WORKING", WORDS, "Board-only wording; the tag shows STATE_TAGS.processing (\"Processing\").")
+x("text", "WAITING ON CLIENT", WORDS, "Board-only wording; the tag shows STATE_TAGS.waiting (\"Waiting\").")
+x("text", "APPROVED · READY TO SEND", WORDS, "Board-only wording for the issue step; the item is `ready` and the tag shows STATE_TAGS.ready (\"Ready to continue\").")
+x("text", "READY", WORDS, "The tag shows STATE_TAGS.ready (\"Ready to continue\").")
+x("textbox", "Note (required to return or reject)", OWNED, "The decision is taken on SCR-03 (F-04) with its version and stale checks; the page links there with \"Open the decision\" (F-03 AC 7).")
+x("text", "(required to return or reject)", OWNED, "Part of the F-04 Note field label.")
+x("button", "Approve v2", OWNED, "Deciding is F-04's (SCR-03); no decision is taken on this page.")
+x("button", "Return", OWNED, "F-04 (SCR-03).")
+x("button", "Reject", OWNED, "F-04 (SCR-03).")
+x("link", "Review and decide", OWNED, "The phone board's wording for the F-04 entry; built as F-03's \"Open the decision\" link (F-03 AC 7, F-09 seam).")
+x("complementary", "Your decision", OWNED, "The decision panel is F-03's TaskPanels section, named \"Current human task\" (binding F-09 seam: TaskPanels({ id, tasks }) unchanged).")
+x("text", "₦4,250,000.00", OWNED, "Shown in the Amount row by F-04's DecisionRows/AmountValue (read-only here); the check cannot read a lone span inside a <dd>, so it reports the amount as missing although it is on the page.")
+x("link", "See all exceptions", OWNED, "F-06 adds this link inside NextStep; F-14 does not edit NextStep.")
+x("text", "No person needs to act yet. An agent drafting is not a review or an approval.", OWNED, "Shown as the item's next_step inside NextStep, whose markup (and its \"Next step.\" prefix) F-14 may not change (F-06 seam).")
+x("link", "Record the client's response", OWNED, "F-09 (ResponseEntryLink).")
+x("complementary", "", OWNED, "Awaiting-reconciliation boards: the right-hand card is F-09's ReconcilePanel, mounted in the marked slot. Other boards' cards are present as <aside>.")
+x("text", "CONFIRM WHAT HAPPENED", OWNED, "F-09 ReconcilePanel heading.")
+x("text", "Chidi checked 6 times over 2 hours and found no delivery receipt. The factory won't resend until a person confirms what happened, so the client is never invoiced twice.", OWNED, "F-09 ReconcilePanel text.")
+for r in ["It arrived. I have proof the client received it (upload it next).", "It didn't arrive. Allow one resend of the same version.", "I can't tell yet. Keep it held and remind me tomorrow."]:
+    x("radio", r, OWNED, "F-09 reconcile choice.")
+    x("text", r, OWNED, "F-09 reconcile choice label.")
+for r in ["It arrived.", "It didn't arrive.", "I can't tell yet."]:
+    x("text", r, OWNED, "F-09 reconcile choice label (bold part).")
+x("link", "Record and continue", OWNED, "F-09 reconcile submit.")
+x("text", "Your choice is recorded with your name. A resend reuses the same invoice number.", OWNED, "F-09 ReconcilePanel small print.")
+x("text", "No receipt found after 6 checks. Confirm what happened before anything is resent.", OWNED, "F-09 ReconcilePanel's phone callout.")
+# effects with no operation in scope
+x("link", "Change the reminder", NOOP, "No reminder operation in scope; a dead button would claim an effect.")
+x("link", "Issue and send INV-0412", NOOP, "No issue/send operation in scope.")
+x("link", "Issue and send", NOOP, "Phone wording of the same; no operation in scope.")
+x("link", "Tell the PMO Lead", NOOP, "No notification operation in scope.")
+x("link", "Ask for access", NOOP, "No access-request operation in scope.")
+x("text", "This attempt is recorded in the audit history.", NOOP, "Audit logging of access attempts is not in scope, so the page must not claim it.")
+x("link", "Download history (CSV)", NOOP, "No export operation in scope (F-03 also asserts no CSV control).")
+x("tab", "Documents 2", NOOP, "No Documents tab or page in scope.")
+x("link", "lagoon-uat-signoff.pdf", NOOP, "No document page in scope; the file name shows as text.")
+# disagreements between boards
+x("link", "QUEUE", BOARDS, "Boards name the crumb QUEUE, MY WORK or draw a REF · CLIENT eyebrow; the page keeps F-03's \"My work / line / ref\" crumb on every state (D-17).")
+for e in ["INV-0412 · LAGOON HEALTH", "PLN-0160 · KORA LOGISTICS", "REL-0077 · LAGOON HEALTH", "INV-0410 · LAGOON HEALTH", "PLN-0151 · OJO FOODS"]:
+    x("text", e, BOARDS, "The state boards draw a REF · CLIENT eyebrow where the default board draws the crumb; the page keeps one crumb (D-17). The reference is in the crumb.")
+x("tablist", "Work item", BOARDS, "Only the history board draws tabs, as a tablist; the overview boards draw none. The page keeps F-03's Overview / History links in a \"Work item\" navigation (they change page, so links).")
+x("text", "Chidi drafted v2 from 3 sources. See his steps", BOARDS, "The default phone board writes the agent note without the agent's name; the other phone boards (ready, owner-needed, effect-uncertain) write \"Chidi · Finance agent\" first. The page uses that one form; the note and \"See his steps\" are shown.")
+x("text", "Tola is waiting on Lagoon Health.", BOARDS, "The waiting phone board bolds the first sentence of its note; the desktop board bolds a different headline. The full phone sentence is shown (presentation.agent.summary).")
+x("text", "Only an admin or Finance Lead can assign Finance roles.", BOARDS, "The owner-needed phone board words the small print differently from the desktop board (\"You can't fix this yourself: PMO can't assign Finance roles. We've told the admin.\"); the fixture follows the desktop board.")
+x("text", "Started 10:41", BOARDS, "The processing phone board shortens the card footer; the desktop board's \"Started 10:41 · you'll be alerted when it's ready\" is shown on both.")
+x("text", "+ 2 EARLIER ENTRIES", BOARDS, "The desktop history board lists all 7 entries, the phone board 5 and \"+ 2 earlier entries\". The smallest page is 10 rows (D-PAGING r2), so all 7 load and nothing is left to show; with more entries the phone button reads \"+ N earlier entries\".")
+json.dump({"exceptions": E}, open("/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json", "w"), ensure_ascii=False, indent=2)
+print(len(E))

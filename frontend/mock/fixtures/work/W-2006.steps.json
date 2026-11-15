@@ -1,0 +1,23 @@
+{
+  "check_answer": {
+    "status": 422,
+    "body": {
+      "code": "invalid",
+      "message": "R-07 is being edited by someone else; your answer is kept here.",
+      "fields": [
+        {
+          "name": "answer",
+          "message": "Say how approvals are recorded."
+        },
+        {
+          "name": "hours",
+          "message": "Hours must be under 200."
+        },
+        {
+          "name": "reviewer",
+          "message": "A reviewer must be free."
+        }
+      ]
+    }
+  }
+}

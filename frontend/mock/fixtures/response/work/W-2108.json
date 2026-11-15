@@ -1,0 +1,216 @@
+{
+  "id": "W-2108",
+  "title": "Tamarind Loans · loan origination RFP",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "state": "waiting",
+  "revision": 7,
+  "stations": [
+    {
+      "name": "Requirements",
+      "status": "done"
+    },
+    {
+      "name": "Team input",
+      "status": "done"
+    },
+    {
+      "name": "Pricing",
+      "status": "done"
+    },
+    {
+      "name": "Submission",
+      "status": "done"
+    },
+    {
+      "name": "Outcome",
+      "status": "current_person"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "next_step": "The RFP stays open as outcome unknown; a follow-up email is drafted for you to send.",
+  "sample": true,
+  "case_id": "C-2108",
+  "case_revision": 3,
+  "rfp": {
+    "reference": "TL-RFP-2026-014",
+    "title": "loan origination RFP",
+    "client": "Tamarind Loans",
+    "status": {
+      "kind": "unknown",
+      "label": "OUTCOME UNKNOWN"
+    },
+    "pm": {
+      "name": "Tunde Bello",
+      "role": "PM",
+      "is_you": true
+    },
+    "tabs": [
+      {
+        "key": "requirements",
+        "label": "Requirements",
+        "count": 64
+      },
+      {
+        "key": "team_input",
+        "label": "Team input",
+        "count": 4,
+        "of": 4
+      },
+      {
+        "key": "pricing",
+        "label": "Pricing"
+      },
+      {
+        "key": "submission",
+        "label": "Submission"
+      },
+      {
+        "key": "outcome",
+        "label": "Outcome",
+        "current": true
+      }
+    ]
+  },
+  "rfp_outcome": {
+    "submission": {
+      "id": "SUB-0031",
+      "label": "Submission pack v1 · emailed 26 Nov 15:42",
+      "sent_at": "2026-11-26T14:42:00Z",
+      "delivery": "delivery confirmed"
+    },
+    "results": [
+      "won",
+      "lost",
+      "pending",
+      "unknown"
+    ],
+    "reasons": [
+      {
+        "value": "price",
+        "label": "Price"
+      },
+      {
+        "value": "timeline",
+        "label": "Timeline"
+      },
+      {
+        "value": "scope_fit",
+        "label": "Scope fit"
+      },
+      {
+        "value": "other",
+        "label": "Other"
+      }
+    ],
+    "record_as": [
+      {
+        "value": "relationship_owner",
+        "label": "Relationship owner"
+      },
+      {
+        "value": "pm",
+        "label": "PM"
+      }
+    ],
+    "evidence_kind": "rfp_outcome_proof",
+    "lesson_categories": [
+      {
+        "value": "price",
+        "label": "Price"
+      },
+      {
+        "value": "timeline",
+        "label": "Timeline"
+      },
+      {
+        "value": "scope",
+        "label": "Scope"
+      },
+      {
+        "value": "strength",
+        "label": "Strength"
+      }
+    ],
+    "recorded": {
+      "result": "unknown",
+      "at": "2026-12-03T09:00:00Z",
+      "by": "Tunde Bello",
+      "rows": [
+        {
+          "label": "Submitted",
+          "value": "delivery confirmed",
+          "at": "2026-11-26T14:42:00Z"
+        },
+        {
+          "label": "Heard from the client since",
+          "value": "Nothing yet"
+        }
+      ],
+      "reminder": {
+        "holder": {
+          "name": "Tunde Bello",
+          "role": "PM",
+          "is_you": true
+        },
+        "at": "2026-12-10T08:00:00Z"
+      },
+      "next": [
+        "As soon as you hear anything, record the outcome."
+      ]
+    },
+    "followup": {
+      "to": "procurement@tamarindloans.example",
+      "body": "Dear Procurement team, we submitted our response to RFP TL-RFP-2026-014 on 26 Nov. Could you share when you expect to announce the outcome? Kind regards, Tunde Bello",
+      "version": 1,
+      "agent": "tola",
+      "checks": [
+        {
+          "text": "Checked when we last heard from the client",
+          "source": "Submission email · 26 Nov",
+          "status": "done"
+        },
+        {
+          "text": "Drafted a short follow-up to their procurement address",
+          "source": "procurement@tamarindloans.example",
+          "status": "done"
+        }
+      ],
+      "status": "drafted",
+      "note": "It goes only if you send it",
+      "can_send": true,
+      "can_edit": true
+    }
+  }
+}

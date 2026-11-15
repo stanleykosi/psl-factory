@@ -1,0 +1,775 @@
+<title>Factory Floor Concepts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,500;100,700;125,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --steel:#EEF0ED; --surface:#FFFFFF; --surface-subtle:#F7F8F6;
+  --ink:#1F2427; --ink-strong:#353D41; --ink-muted:#4A5357; --ink-subtle:#626B6F;
+  --rule-soft:#D5D9D3; --neutral-tint:#E2E5E0; --neutral-ink:#3F474B;
+  --signal:#C8401C; --signal-tint:#FBE3D9; --signal-ink:#9A2F10;
+  --action:#2459D6; --action-tint:#E9EEFB; --action-ink:#16388F; --focus:#2459D6;
+  --verified:#22764A; --verified-tint:#DDEFE3; --verified-ink:#16502F;
+  --waiting:#8A5A00; --waiting-tint:#FFF1D6; --waiting-ink:#6E4700;
+  --on-strong:#FFFFFF; --nav-muted:#C8CDD0;
+  --mascot-tola:#C77A52; --mascot-chidi:#7FA3E6; --mascot-zainab:#79B98A;
+  /* 3D floor materials (engineering proposal, derived from the tokens above) */
+  --g-bg:#F7F8F6; --g-plate:#E2E5E0; --g-belt:#353D41; --g-slat:#9AA2A6;
+  --g-edge-dark:#C8CDD0; --g-lot:#D5D9D3; --g-lane-a:#FFFFFF; --g-lane-b:#EEF0ED;
+  --display:Archivo,"Helvetica Neue",Arial,sans-serif;
+  --sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --steel:#14181A; --surface:#1F2427; --surface-subtle:#262C2F;
+    --ink:#ECEFEA; --ink-strong:#D5D9D3; --ink-muted:#B6BDB8; --ink-subtle:#949C98;
+    --rule-soft:#3A4245; --neutral-tint:#2F3639; --neutral-ink:#D5D9D3;
+    --signal:#C8401C; --signal-tint:#4A2218; --signal-ink:#FFB59C;
+    --action:#7FA3F0; --action-tint:#1B2A4D; --action-ink:#C9D7FA; --focus:#8EAEF5;
+    --verified:#5FC48A; --verified-tint:#173A27; --verified-ink:#A9E5C0;
+    --waiting:#E3B455; --waiting-tint:#3D2E0D; --waiting-ink:#F2CB7A;
+    --on-strong:#FFFFFF; --nav-muted:#C8CDD0;
+    --g-bg:#181C1E; --g-plate:#262C2F; --g-belt:#0E1113; --g-slat:#5A6367;
+    --g-edge-dark:#353D41; --g-lot:#353D41; --g-lane-a:#22282B; --g-lane-b:#1B2023;
+  }
+}
+:root[data-theme="dark"]{
+  --steel:#14181A; --surface:#1F2427; --surface-subtle:#262C2F;
+  --ink:#ECEFEA; --ink-strong:#D5D9D3; --ink-muted:#B6BDB8; --ink-subtle:#949C98;
+  --rule-soft:#3A4245; --neutral-tint:#2F3639; --neutral-ink:#D5D9D3;
+  --signal:#C8401C; --signal-tint:#4A2218; --signal-ink:#FFB59C;
+  --action:#7FA3F0; --action-tint:#1B2A4D; --action-ink:#C9D7FA; --focus:#8EAEF5;
+  --verified:#5FC48A; --verified-tint:#173A27; --verified-ink:#A9E5C0;
+  --waiting:#E3B455; --waiting-tint:#3D2E0D; --waiting-ink:#F2CB7A;
+  --on-strong:#FFFFFF; --nav-muted:#C8CDD0;
+  --g-bg:#181C1E; --g-plate:#262C2F; --g-belt:#0E1113; --g-slat:#5A6367;
+  --g-edge-dark:#353D41; --g-lot:#353D41; --g-lane-a:#22282B; --g-lane-b:#1B2023;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--steel);color:var(--ink)}
+body{font:400 14px/21px var(--sans);overflow-x:hidden}
+.page{max-width:1320px;margin:0 auto;padding:28px max(16px, env(safe-area-inset-right, 0px)) 72px max(16px, env(safe-area-inset-left, 0px))}
+.eyebrow{font:400 12px/16px var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-muted);margin:0 0 8px}
+h1{font:800 34px/37px var(--display);font-stretch:112%;margin:0 0 12px}
+h2{font:800 24px/28px var(--display);font-stretch:112%;margin:0}
+h3{font:800 14px/18px var(--display);text-transform:uppercase;letter-spacing:.02em;margin:0 0 8px}
+p{margin:0 0 10px}
+.lead{font-size:16px;line-height:24px;max-width:860px;color:var(--ink)}
+.tag{display:inline-block;padding:3px 8px;font:600 12px/17px var(--sans);white-space:nowrap}
+.tag.sample{background:var(--waiting-tint);color:var(--waiting-ink);font-family:var(--mono);font-weight:500;letter-spacing:.06em}
+.totals{display:grid;grid-template-columns:repeat(4,1fr);border:2px solid var(--ink);background:var(--surface);margin:18px 0 14px}
+.totals div{padding:12px 16px;border-right:2px solid var(--ink)}
+.totals div:last-child{border-right:0}
+.totals span{display:block;font:500 11px/14px var(--mono);letter-spacing:.06em;color:var(--ink-muted);text-transform:uppercase}
+.totals b{font:800 28px/34px var(--display)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;line-height:18px;color:var(--ink-muted);margin:0 0 8px}
+.legend i{display:inline-block;width:12px;height:12px;vertical-align:-1px;margin-right:6px;border:2px solid var(--ink)}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 26px}
+.jump a{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:2px solid var(--ink);background:var(--surface);color:var(--ink);text-decoration:none;font-weight:600}
+.jump a:hover{background:var(--surface-subtle)}
+a:focus-visible,button:focus-visible,.stage:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+.concept{border:2px solid var(--ink);background:var(--surface);margin:0 0 32px;scroll-margin-top:16px}
+.chead{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:2px solid var(--ink)}
+.chead .num{flex:none;width:40px;height:40px;display:grid;place-items:center;background:var(--ink);color:var(--surface);font:800 20px/1 var(--display)}
+.chead p{margin:2px 0 0;color:var(--ink-muted);font-size:13px;line-height:18px}
+.stage{position:relative;height:clamp(460px,50vw,640px);background:var(--g-bg);overflow:hidden;outline-offset:-4px}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.stage.dragging canvas{cursor:grabbing}
+.labels{position:absolute;inset:0;pointer-events:none}
+.lbl{position:absolute;left:0;top:0;will-change:transform}
+.chip{pointer-events:auto;display:inline-flex;align-items:baseline;gap:6px;min-height:24px;padding:2px 6px;border:2px solid var(--ink);background:var(--surface);color:var(--ink);font:500 12px/18px var(--sans);white-space:nowrap;cursor:pointer}
+.chip b{font:800 15px/18px var(--display)}
+.chip.zero{border-color:var(--ink-subtle);color:var(--ink-muted)}
+.chip.need{background:var(--signal);border-color:var(--signal);color:#fff}
+.chip.need em{font:500 10px/18px var(--mono);font-style:normal;letter-spacing:.06em}
+.chip.hot{outline:2px solid var(--focus);outline-offset:2px}
+.linelbl{display:inline-flex;flex-direction:column;align-items:flex-start;gap:2px;padding:4px 8px;background:var(--ink);color:var(--surface);pointer-events:none}
+.linelbl strong{font:700 13px/16px var(--display);font-stretch:105%;white-space:nowrap}
+.linelbl .tag{padding:0 5px;font-size:10px;line-height:15px;font-family:var(--mono);font-weight:500;letter-spacing:.04em}
+.t-ok{background:var(--verified-tint);color:var(--verified-ink)}
+.t-wait{background:var(--waiting-tint);color:var(--waiting-ink)}
+.t-bad{background:var(--signal-tint);color:var(--signal-ink)}
+.agentlbl{display:inline-flex;align-items:center;gap:5px;padding:1px 6px 1px 3px;background:var(--action-tint);color:var(--action-ink);border:1px solid var(--action);font:600 11px/16px var(--sans);white-space:nowrap}
+.agentlbl i{width:10px;height:10px;display:inline-block}
+.extralbl{font:500 11px/14px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);background:var(--g-bg);padding:2px 6px;white-space:nowrap}
+.extralbl.hub{background:var(--ink);color:var(--surface)}
+.compact .chip span,.compact .chip.need em{display:none}
+.compact .chip{padding:1px 5px;min-height:20px}
+.compact .chip b{font-size:13px;line-height:16px}
+.compact .linelbl{padding:2px 5px}
+.compact .linelbl strong{font-size:11px;line-height:13px}
+.compact .linelbl .tag{display:none}
+.compact .agentlbl{font-size:10px;line-height:13px}
+
+.stagebar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:10px 16px;border-top:2px solid var(--ink);background:var(--surface)}
+.readout{flex:1 1 320px;margin:0;font:500 13px/18px var(--mono);color:var(--ink);min-height:18px}
+.readout.need{color:var(--signal-ink)}
+.ctrls{display:flex;gap:6px;flex-wrap:wrap}
+.ctrls button{min-width:44px;min-height:44px;padding:0 12px;border:2px solid var(--ink);background:var(--surface);color:var(--ink);font:600 14px/1 var(--sans);cursor:pointer;border-radius:2px}
+.ctrls button:hover{background:var(--steel)}
+.ctrls button:active{background:var(--neutral-tint)}
+.ctrls button.reset{background:var(--ink);color:var(--surface)}
+
+.info{display:grid;grid-template-columns:1.25fr 1fr 1fr;border-top:2px solid var(--ink)}
+.info section{padding:16px;border-right:2px solid var(--ink)}
+.info section:last-child{border-right:0}
+.info ul{margin:0 0 10px;padding-left:18px}
+.info li{margin:0 0 4px}
+.pro h3{color:var(--verified-ink)}
+.con h3{color:var(--signal-ink)}
+
+.fallback{position:absolute;inset:0;overflow:auto;padding:16px;background:var(--surface)}
+.fallback .msg{border:2px solid var(--ink);background:var(--waiting-tint);color:var(--waiting-ink);padding:10px 12px;margin:0 0 14px;font-weight:600}
+.flat{display:grid;gap:8px}
+.flat .row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center}
+.flat .row strong{font:700 13px/16px var(--display)}
+.flat .sts{display:flex;flex-wrap:wrap;gap:6px}
+.flat .chip{cursor:default}
+
+.choose{border:2px solid var(--ink);background:var(--surface);padding:18px 16px}
+.choose ol{margin:8px 0 14px;padding-left:20px}
+.choose li{margin:0 0 6px}
+.reply{display:inline-block;background:var(--ink);color:var(--surface);padding:10px 14px;font-weight:600}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:900px){
+  .info{grid-template-columns:1fr}
+  .info section{border-right:0;border-bottom:2px solid var(--ink)}
+  .info section:last-child{border-bottom:0}
+}
+@media (max-width:720px){
+  h1{font-size:26px;line-height:30px}
+  h2{font-size:20px;line-height:24px}
+  .totals{grid-template-columns:1fr 1fr}
+  .totals div:nth-child(2){border-right:0}
+  .totals div:nth-child(-n+2){border-bottom:2px solid var(--ink)}
+  .stage{height:460px}
+  .flat .row{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+}
+</style>
+
+<div class="page">
+  <p class="eyebrow">SCR-06 · Factory floor · 3D concepts for review</p>
+  <h1>Factory floor: four 3D directions</h1>
+  <p class="lead">The current 3D floor looks flat because the camera faces the grid straight on. Each concept below puts the same floor (eight work lines, every station, every count) under a different camera, metaphor and motion. Drag to turn each one, use the buttons to tilt, and hover, tap or tab to a station to read it. On phones, concepts 1 to 3 turn the floor a quarter so the lines run down the screen, and station names move into the readout under the view.</p>
+  <span class="tag sample">SAMPLE DATA · 14 NOV 2026 16:40 WAT</span>
+  <div class="totals" aria-label="Floor totals">
+    <div><span>In progress</span><b>18</b></div>
+    <div><span>Need a person</span><b>5</b></div>
+    <div><span>Stopped</span><b>3</b></div>
+    <div><span>Verified this month</span><b>28</b></div>
+  </div>
+  <p class="legend">
+    <span><i style="background:var(--signal);border-color:var(--signal)"></i>Orange = a person must act here</span>
+    <span><i style="background:var(--ink)"></i>Dark = station holds work</span>
+    <span><i style="background:var(--surface)"></i>White = station empty</span>
+    <span><i style="background:var(--action-tint);border-color:var(--action)"></i>Blue tag = agent (Tola, Chidi, Zainab)</span>
+    <span>The number on a station is its count of work items.</span>
+  </p>
+  <nav class="jump" aria-label="Concepts">
+    <a href="#c1">1 · Isometric conveyor</a>
+    <a href="#c2">2 · Tabletop city</a>
+    <a href="#c3">3 · Tilted board</a>
+    <a href="#c4">4 · Stepped amphitheatre</a>
+  </nav>
+
+  <article class="concept" id="c1" data-concept="conveyor">
+    <header class="chead"><span class="num">1</span><div><h2>Isometric conveyor floor</h2><p>Fixed angled camera, no perspective · lines are belts · stations are machines</p></div></header>
+    <div class="stage" tabindex="0" aria-label="Concept 1, 3D view. Arrow keys turn and tilt, R resets."><canvas aria-hidden="true"></canvas><div class="labels"></div></div>
+    <div class="stagebar"><p class="readout" aria-live="polite"></p><div class="ctrls"></div></div>
+    <div class="info">
+      <section><h3>Why</h3><p>The floor as seen from a mezzanine above the plant. Each work line is a conveyor belt and each station a machine sitting on it. The stack of white blocks on a machine is the number of items waiting there, so busier stations stand taller. A machine that needs a person turns orange and lights a lamp. The camera is orthographic: there is no perspective, so every belt is the same length on screen and stack heights compare honestly, front to back.</p></section>
+      <section><h3>A Lead reads at a glance</h3><ul><li>Where work piles up: the tallest stacks.</li><li>Where a person is needed: the orange machines with lamps.</li><li>Which way work flows: boxes riding the belts left to right.</li></ul></section>
+      <section><div class="pro"><h3>Pros</h3><ul><li>Most literal factory story; motion shows flow.</li><li>No shrinking at the back, so labels stay one size.</li></ul></div><div class="con"><h3>Cons</h3><ul><li>On phones the belts turn to run down the screen and only counts fit; names show on tap.</li><li>Tall front stacks can hide stations behind them when tilted low.</li><li>Moving belts are busy on a screen people read for a long time.</li></ul></div></section>
+    </div>
+  </article>
+
+  <article class="concept" id="c2" data-concept="city">
+    <header class="chead"><span class="num">2</span><div><h2>Tabletop city</h2><p>Perspective camera on a slow orbit · lines are streets · stations are buildings</p></div></header>
+    <div class="stage" tabindex="0" aria-label="Concept 2, 3D view. Arrow keys turn and tilt, R resets."><canvas aria-hidden="true"></canvas><div class="labels"></div></div>
+    <div class="stagebar"><p class="readout" aria-live="polite"></p><div class="ctrls"></div></div>
+    <div class="info">
+      <section><h3>Why</h3><p>The floor as a model city on a table. Each line is a street; each station is a building along it, one storey per work item, and empty stations are bare lots. A station that needs a person is an orange building with a lit beacon on its roof and a ring pulsing on the ground, visible from any angle. Agents walk the pavements to the stations they are working at. The camera drifts slowly around the table so the skyline reads in depth.</p></section>
+      <section><h3>A Lead reads at a glance</h3><ul><li>The skyline: where work has piled up.</li><li>Beacons: where people are needed.</li><li>Quiet streets: lines that are clear.</li></ul></section>
+      <section><div class="pro"><h3>Pros</h3><ul><li>Strongest "spot the pile from across the room" view; suits a wall screen.</li><li>Beacons stay visible over tall buildings.</li></ul></div><div class="con"><h3>Cons</h3><ul><li>Perspective makes back streets smaller.</li><li>The view keeps moving, so the mental map shifts.</li><li>A city says less about order and flow than a line does.</li></ul></div></section>
+    </div>
+  </article>
+
+  <article class="concept" id="c3" data-concept="board">
+    <header class="chead"><span class="num">3</span><div><h2>Tilted swimlane board</h2><p>Board leaned back like a drafting table · cards lift on hover · agents slide between stations</p></div></header>
+    <div class="stage" tabindex="0" aria-label="Concept 3, 3D view. Arrow keys turn and tilt, R resets."><canvas aria-hidden="true"></canvas><div class="labels"></div></div>
+    <div class="stagebar"><p class="readout" aria-live="polite"></p><div class="ctrls"></div></div>
+    <div class="info">
+      <section><h3>Why</h3><p>The approved flat floor, picked up and leaned back on a table. Lines stay as rows top to bottom and stations as cards left to right, so switching between Flat and 3D loses nothing. Work items are dark tiles stacked on each card like a small deck. The board leans gently toward your pointer, and the card you point at lifts off the board. Tola, Chidi and Zainab slide from card to card as they move between the stations they work at.</p></section>
+      <section><h3>A Lead reads at a glance</h3><ul><li>The same reading order as the flat board.</li><li>Orange cards: where people are needed.</li><li>Thick decks: where work piles up; agents show where work is moving now.</li></ul></section>
+      <section><div class="pro"><h3>Pros</h3><ul><li>Easiest to read and closest to the approved board.</li><li>Works on a phone; the calmest motion.</li></ul></div><div class="con"><h3>Cons</h3><ul><li>The least "factory" of the four.</li><li>Depth adds feel more than new information.</li></ul></div></section>
+    </div>
+  </article>
+
+  <article class="concept" id="c4" data-concept="hub">
+    <header class="chead"><span class="num">4</span><div><h2>Stepped amphitheatre</h2><p>Low front camera · lines are curved tiers rising away from you · agents leave a coordinator desk</p></div></header>
+    <div class="stage" tabindex="0" aria-label="Concept 4, 3D view. Arrow keys turn and tilt, R resets."><canvas aria-hidden="true"></canvas><div class="labels"></div></div>
+    <div class="stagebar"><p class="readout" aria-live="polite"></p><div class="ctrls"></div></div>
+    <div class="info">
+      <section><h3>Why</h3><p>The floor as a stepped stage seen from the front row. Each line is a curved tier, and every tier sits one step higher than the one in front, so no line hides another and the camera can stay low and dramatic. Payroll is nearest; Pre-sale is the top tier. Back tiers are wider, which cancels out most of the perspective shrink, so labels stay a similar size. At the front sits the coordinator desk: Tola, Chidi and Zainab leave it, climb to the station they are working at, and come back, while orange columns mark where people must decide.</p></section>
+      <section><h3>A Lead reads at a glance</h3><ul><li>Every line at once, with nothing hidden behind anything else.</li><li>Orange columns: where people are needed.</li><li>Which agent is out on which line right now.</li></ul></section>
+      <section><div class="pro"><h3>Pros</h3><ul><li>The most depth with no hidden stations.</li><li>Shows the coordinator handing work to agents.</li></ul></div><div class="con"><h3>Cons</h3><ul><li>Line order is front-to-back, not top-to-bottom as on the flat board.</li><li>The fan shape is wide, so on phones it narrows and stations sit closer.</li><li>Climbing agents add motion near the front.</li></ul></div></section>
+    </div>
+  </article>
+
+  <section class="choose" aria-labelledby="choose-h">
+    <h2 id="choose-h">How to choose</h2>
+    <ol>
+      <li><strong>The floor must read like the flat board</strong> and stay calm on a working screen: choose 3.</li>
+      <li><strong>The factory story matters most</strong> (belts, machines, visible flow): choose 1.</li>
+      <li><strong>It will mostly run on a wall screen</strong> to spot piles from across the room: choose 2.</li>
+      <li><strong>You want real depth with nothing hidden</strong>, and to see agents being sent out from the coordinator: choose 4.</li>
+    </ol>
+    <p>Parts can be mixed, for example the board from 3 with the lamps from 1, or the coordinator desk from 4 on any of the others. Every concept uses the same data, labels, highlight and reduced-motion rules, so the choice is about the picture, not the facts.</p>
+    <p class="reply">Reply with the concept number (1, 2, 3 or 4), plus anything to borrow from another.</p>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+var DATA = {"as_of":"2026-11-14T15:40:00Z","lines":[
+ {"line":"Pre-sale","note":"1 WAITING","stations":[["Brief",1,0],["Qualify",0,0],["Proposal",0,1],["Review",0,0],["Submit",0,0]]},
+ {"line":"Planning","note":"1 STOPPED","stations":[["Scope",2,0],["Plan",0,0],["Costing",1,1],["Approval",0,0],["SOW",1,0]]},
+ {"line":"Release","note":"1 UNCERTAIN","stations":[["Build",1,0],["Test",1,0],["Gates",0,0],["Go-live",1,1],["Report",0,0]]},
+ {"line":"Closing","note":"ON TRACK","stations":[["Handover",0,0],["Sign-off",1,0],["Review",0,0],["Close",1,0]]},
+ {"line":"Invoices","note":"2 WAITING","stations":[["Milestone",3,0],["Draft",0,0],["Check",1,0],["Approve",1,1],["Send",0,0],["Receipt",0,0],["Match",1,0]]},
+ {"line":"Month-end","note":"ON TRACK","stations":[["Collect",0,0],["Reconcile",1,0],["Accrue",0,0],["Review",1,0],["Close",0,0]]},
+ {"line":"Cash and BU","note":"ON TRACK","stations":[["Receipts",1,0],["Allocate",0,0],["Report",0,0],["Close",0,0]]},
+ {"line":"Payroll","note":"2 PROBLEMS","stations":[["Inputs",0,0],["Calculate",1,0],["Approve",1,1],["Pay",0,0],["File",0,0]]}
+]};
+var LINES = DATA.lines.map(function(l){return {line:l.line,note:l.note,stations:l.stations.map(function(s){return {name:s[0],count:s[1],need:!!s[2]};})};});
+/* Sample agent rounds: illustrative only, each agent visits stations on its own department's lines. */
+var AGENTS = [
+  {name:'Tola',role:'PMO agent',color:'mascot-tola',route:[['Planning','Scope'],['Release','Build'],['Release','Test'],['Closing','Sign-off']]},
+  {name:'Chidi',role:'Finance agent',color:'mascot-chidi',route:[['Invoices','Milestone'],['Invoices','Check'],['Month-end','Reconcile'],['Cash and BU','Receipts']]},
+  {name:'Zainab',role:'HR agent',color:'mascot-zainab',route:[['Payroll','Calculate'],['Payroll','Inputs']]}
+];
+var L = 13.2;
+function sx(i,n){return -L/2 + (n<2?0:i/(n-1)*L);}
+function items(n){return n===1?'1 item':n+' items';}
+function describe(line,st){return line+' · '+st.name+' · '+items(st.count)+' · '+(st.need?'needs a person':'no person needed');}
+function noteClass(n){return /ON TRACK/.test(n)?'t-ok':/WAITING/.test(n)?'t-wait':'t-bad';}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue('--'+n).trim()||'#888';}
+function ease(f){return f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;}
+function frac(x){return x-Math.floor(x);}
+var RM = window.matchMedia('(prefers-reduced-motion: reduce)');
+var DARK = window.matchMedia('(prefers-color-scheme: dark)');
+var HAS3 = typeof window.THREE !== 'undefined';
+
+function flatHTML(msg){
+  var h='<p class="msg">'+esc(msg)+'</p><div class="flat">';
+  LINES.forEach(function(l){
+    h+='<div class="row"><strong>'+esc(l.line)+' <span class="tag '+noteClass(l.note)+'">'+esc(l.note)+'</span></strong><div class="sts">';
+    l.stations.forEach(function(s){
+      h+='<span class="chip '+(s.need?'need':s.count?'':'zero')+'" title="'+esc(describe(l.line,s))+'"><b>'+s.count+'</b><span>'+esc(s.name)+'</span>'+(s.need?'<em>PERSON</em>':'')+'</span>';
+    });
+    h+='</div></div>';
+  });
+  return h+'</div>';
+}
+
+/* ---------- shared 3D helpers ---------- */
+function Kit(scene){
+  this.scene=scene; this.M={}; this.LM={}; this.B={};
+}
+Kit.prototype.mat=function(name){
+  if(!this.M[name]) this.M[name]=new THREE.MeshLambertMaterial({color:new THREE.Color(css(name))});
+  return this.M[name];
+};
+Kit.prototype.basic=function(name,opts){
+  var m=new THREE.MeshBasicMaterial(Object.assign({color:new THREE.Color(css(name))},opts||{}));
+  return m;
+};
+Kit.prototype.lmat=function(name){
+  if(!this.LM[name]) this.LM[name]=new THREE.LineBasicMaterial({color:new THREE.Color(css(name))});
+  return this.LM[name];
+};
+Kit.prototype.box=function(parent,w,h,d,x,y,z,matName,edgeName,opt){
+  opt=opt||{};
+  var key=w+'|'+h+'|'+d, g=this.B[key];
+  if(!g){g=new THREE.BoxGeometry(w,h,d); g.translate(0,h/2,0); this.B[key]=g; g._edges=new THREE.EdgesGeometry(g);}
+  var m=new THREE.Mesh(g, typeof matName==='string'?this.mat(matName):matName);
+  m.position.set(x,y,z);
+  if(opt.ry) m.rotation.y=opt.ry;
+  m.castShadow=opt.cast!==false; m.receiveShadow=true;
+  if(edgeName){ m.add(new THREE.LineSegments(g._edges,this.lmat(edgeName))); }
+  parent.add(m); return m;
+};
+Kit.prototype.anchor=function(parent,x,y,z){var o=new THREE.Object3D(); o.position.set(x,y,z); parent.add(o); return o;};
+Kit.prototype.figure=function(parent,agent,s){
+  s=s||1; var g=new THREE.Group();
+  this.box(g,.42*s,.62*s,.42*s,0,0,0,agent.color,'ink');
+  this.box(g,.5*s,.12*s,.5*s,0,.62*s,0,'ink',null);
+  this.box(g,.2*s,.2*s,.04*s,0,.3*s,.23*s,'surface',null,{cast:false});
+  parent.add(g); g.userData.top=this.anchor(g,0,.95*s,0); return g;
+};
+
+/* ---------- concept 1: isometric conveyor ---------- */
+var CONVEYOR={
+  view:{ortho:true,yaw:.42,pitch:.72,yawMin:-.3,yawMax:1.2,pitchMin:.32,pitchMax:1.2,transpose:true,phone:{yaw:.18,pitch:.9}},
+  build:function(k){
+    var g=k.scene, n=LINES.length, gap=3.3, z0=-(n-1)*gap/2, bl=L+2.8, out={stations:[],lines:[],agents:[],extras:[]};
+    var slats=[],movers=[],lamps=[],pos={};
+    k.box(g,L+6.4,.4,(n-1)*gap+3.2,0,-.4,0,'g-plate','ink',{cast:false});
+    LINES.forEach(function(ln,li){
+      var z=z0+li*gap;
+      k.box(g,bl,.18,.9,0,0,z,'g-belt',null,{cast:false});
+      k.box(g,bl,.3,.08,0,0,z-.49,'ink',null); k.box(g,bl,.3,.08,0,0,z+.49,'ink',null);
+      for(var s=0;s<18;s++) slats.push({m:k.box(g,.1,.02,.82,0,.18,z,'g-slat',null,{cast:false}),k:s/18});
+      ln.stations.forEach(function(st,i){
+        var x=sx(i,ln.stations.length), has=st.count>0, hits=[];
+        hits.push(k.box(g,1.3,.55,1.25,x,.18,z,st.need?'signal':has?'ink':'surface',st.need?'signal-ink':has?'g-edge-dark':'ink'));
+        for(var c=0;c<st.count;c++) hits.push(k.box(g,.62,.56,.62,x,.73+c*.6,z,st.need?'signal-tint':'surface','ink'));
+        var top=.73+st.count*.6+.12;
+        if(st.need){
+          k.box(g,.07,1.55,.07,x+.56,.73,z-.53,'ink',null);
+          var lamp=new THREE.Mesh(new THREE.BoxGeometry(.28,.28,.28),k.basic('signal'));
+          lamp.position.set(x+.56,2.4,z-.53); g.add(lamp); lamps.push(lamp);
+          top=Math.max(top,.9);
+        }
+        var a=k.anchor(g,x,top,z);
+        out.stations.push({line:ln.line,st:st,anchor:a,hits:hits});
+        pos[ln.line+'|'+st.name]=new THREE.Vector3(x,.18,z+.95);
+        if(has && i<ln.stations.length-1){
+          var x2=sx(i+1,ln.stations.length);
+          for(var m=0;m<Math.min(st.count,2);m++) movers.push({m:k.box(g,.36,.3,.36,x,.18,z,'surface','ink'),x1:x+.85,x2:x2-.85,k:m/2+li*.13});
+        }
+      });
+      out.lines.push({line:ln.line,note:ln.note,anchor:k.anchor(g,-bl/2-.9,.1,z),align:'right'});
+    });
+    AGENTS.forEach(function(a){var f=k.figure(g,a); out.agents.push({def:a,obj:f,anchor:f.userData.top});});
+    out.update=function(t,dt,anim){
+      slats.forEach(function(s){s.m.position.x=-bl/2+.1+frac(s.k+(anim?t*.045:0))*(bl-.2);});
+      movers.forEach(function(m){m.m.visible=anim; if(anim){var f=frac(m.k+t*.12); m.m.position.x=m.x1+(m.x2-m.x1)*f;}});
+      lamps.forEach(function(l){var s=anim?1+.18*Math.sin(t*3):1; l.scale.set(s,s,s);});
+      moveAgents(out.agents,pos,t,anim,function(p){return p;});
+    };
+    return out;
+  }
+};
+
+/* ---------- concept 2: tabletop city ---------- */
+var CITY={
+  view:{ortho:false,fov:30,yaw:.38,pitch:.78,yawMin:-.9,yawMax:1.25,pitchMin:.36,pitchMax:1.25,orbit:true,transpose:true,phone:{yaw:.2,pitch:.95}},
+  build:function(k){
+    var g=k.scene, n=LINES.length, gap=3.2, z0=-(n-1)*gap/2, out={stations:[],lines:[],agents:[],extras:[]};
+    var vans=[],rings=[],gems=[],pos={};
+    k.box(g,L+6.4,.6,(n-1)*gap+4,0,-.6,0,'g-plate','ink',{cast:false});
+    LINES.forEach(function(ln,li){
+      var z=z0+li*gap, sz=z+.62;
+      k.box(g,L+3.4,.03,1.0,0,0,sz,'g-belt',null,{cast:false});
+      for(var d=0;d<14;d++) k.box(g,.45,.01,.07,-L/2-1.2+d*(L+2.4)/13,.03,sz,'g-slat',null,{cast:false});
+      ln.stations.forEach(function(st,i){
+        var x=sx(i,ln.stations.length), bz=z-.38, hits=[], top;
+        if(st.count===0){
+          hits.push(k.box(g,1.25,.1,1.25,x,0,bz,st.need?'signal':'g-lot',st.need?'signal-ink':'ink-subtle',{cast:false}));
+          top=.1;
+        }else{
+          for(var c=0;c<st.count;c++) hits.push(k.box(g,1.25,.8,1.25,x,c*.86,bz,st.need?'signal':'surface','ink'));
+          top=st.count*.86;
+          k.box(g,.9,.1,.9,x,top-.06,bz,'ink',null);
+        }
+        if(st.need){
+          k.box(g,.08,1.5,.08,x,top,bz,'ink',null);
+          var gem=new THREE.Mesh(new THREE.OctahedronGeometry(.3),k.basic('signal'));
+          gem.position.set(x,top+1.7,bz); g.add(gem); gems.push(gem);
+          var ring=new THREE.Mesh(new THREE.RingGeometry(.9,1.05,32),k.basic('signal',{transparent:true,opacity:.7,side:THREE.DoubleSide}));
+          ring.rotation.x=-Math.PI/2; ring.position.set(x,.03,bz); g.add(ring); rings.push(ring);
+          top+=2.1;
+        }
+        out.stations.push({line:ln.line,st:st,anchor:k.anchor(g,x,top+.15,bz),hits:hits});
+        pos[ln.line+'|'+st.name]=new THREE.Vector3(x+.45,0,z+1.2);
+      });
+      if(ln.stations.some(function(s){return s.count>0;}))
+        for(var v=0;v<2;v++) vans.push({m:k.box(g,.5,.28,.32,0,.03,sz+(v?.2:-.2),'surface','ink'),k:v/2+li*.17,dir:v?-1:1});
+      out.lines.push({line:ln.line,note:ln.note,anchor:k.anchor(g,-L/2-1.75,.05,sz),align:'right'});
+    });
+    AGENTS.forEach(function(a){var f=k.figure(g,a,.85); out.agents.push({def:a,obj:f,anchor:f.userData.top});});
+    out.update=function(t,dt,anim){
+      vans.forEach(function(v){v.m.visible=anim; if(anim){var f=frac(v.k+t*.05); if(v.dir<0) f=1-f; v.m.position.x=-L/2-1.4+f*(L+2.8);}});
+      rings.forEach(function(r){var f=anim?frac(t*.45):.35; var s=1+f*1.1; r.scale.set(s,s,s); r.material.opacity=.75*(1-f)+.1;});
+      gems.forEach(function(m){m.rotation.y=anim?t*1.2:.4; m.position.y+=0;});
+      moveAgents(out.agents,pos,t,anim);
+    };
+    return out;
+  }
+};
+
+/* ---------- concept 3: tilted swimlane board ---------- */
+var BOARD={
+  view:{ortho:false,fov:28,yaw:-.2,pitch:.98,yawMin:-.6,yawMax:.6,pitchMin:.62,pitchMax:1.32,parallax:true,transpose:true,phone:{yaw:-.12,pitch:1.0}},
+  build:function(k,stage){
+    var root=new THREE.Group(); k.scene.add(root);
+    var n=LINES.length, gap=1.95, z0=-(n-1)*gap/2, out={stations:[],lines:[],agents:[],extras:[]}, cards=[], pos={};
+    var left=-L/2-4.1, right=L/2+1.1, cx=(left+right)/2, W=right-left;
+    k.box(root,W,.35,(n-1)*gap+2.2,cx,-.35,0,'surface','ink',{cast:false});
+    LINES.forEach(function(ln,li){
+      var z=z0+li*gap;
+      k.box(root,W-.3,.02,gap-.12,cx,0,z,li%2?'g-lane-b':'g-lane-a',null,{cast:false});
+      k.box(root,2.9,.16,gap-.4,-L/2-2.45,0,z,'ink',null);
+      k.box(root,L,.03,.06,0,.02,z,'rule-soft',null,{cast:false});
+      ln.stations.forEach(function(st,i){
+        var x=sx(i,ln.stations.length), card=new THREE.Group(), hits=[];
+        card.position.set(x,0,z); root.add(card);
+        hits.push(k.box(card,1.5,.12,1.2,0,.02,0,st.need?'signal-tint':'surface',st.need?'signal':'ink'));
+        if(st.need) k.box(card,1.5,.04,.26,0,.14,-.47,'signal',null,{cast:false});
+        for(var c=0;c<st.count;c++) hits.push(k.box(card,1.0,.09,.72,c*.06,.15+c*.13,.05,st.need?'signal':'ink','g-edge-dark'));
+        var rec={line:ln.line,st:st,anchor:k.anchor(card,0,.3+st.count*.13,0),hits:hits,card:card};
+        out.stations.push(rec); cards.push(rec);
+        pos[ln.line+'|'+st.name]=new THREE.Vector3(x-.55,.02,z+.78);
+      });
+      out.lines.push({line:ln.line,note:ln.note,anchor:k.anchor(root,-L/2-2.45,.2,z),align:'center'});
+    });
+    AGENTS.forEach(function(a){var f=k.figure(root,a,.72); out.agents.push({def:a,obj:f,anchor:f.userData.top});});
+    var tilt={x:0,z:0};
+    out.update=function(t,dt,anim){
+      var f=anim?1-Math.exp(-dt*10):1;
+      cards.forEach(function(c){var target=(stage.hover===c||stage.pinned===c)?.55:0; c.card.position.y+=(target-c.card.position.y)*f; c.card.rotation.x+=((target?-.12:0)-c.card.rotation.x)*f;});
+      var px=anim&&stage.pointer?stage.pointer.x:0, py=anim&&stage.pointer?stage.pointer.y:0;
+      tilt.x+=(py*.05-tilt.x)*f; tilt.z+=(-px*.04-tilt.z)*f;
+      root.rotation.x=tilt.x; root.rotation.z=tilt.z;
+      moveAgents(out.agents,pos,t,anim);
+      return Math.abs(tilt.x-py*.05)>.0005||cards.some(function(c){return Math.abs(c.card.position.y-((stage.hover===c||stage.pinned===c)?.55:0))>.002;});
+    };
+    return out;
+  }
+};
+
+/* ---------- concept 4: stepped amphitheatre ---------- */
+var AMPHI={
+  view:{ortho:false,fov:32,yaw:0,pitch:.5,yawMin:-.75,yawMax:.75,pitchMin:.2,pitchMax:1.2,phone:{yaw:0,pitch:.78}},
+  build:function(k,stage){
+    var g=k.scene, n=LINES.length, narrow=stage.narrow, TH=narrow?.44:.6, r0=narrow?10.5:8.5, dr=2.4, step=.62;
+    var out={stations:[],lines:[],agents:[],extras:[]}, lamps=[], tokens=[], pos={};
+    var rBack=r0+(n-1)*dr+dr/2, deskZ=-(r0-dr/2)+2.6;
+    k.box(g,2*rBack*Math.sin(TH)+6,.3,rBack-(r0-dr/2)*Math.cos(TH)+6,0,-.3,(-rBack+deskZ)/2+.6,'g-plate','ink',{cast:false});
+    var desk=k.box(g,3.4,.9,1.3,0,0,deskZ,'ink','g-edge-dark');
+    out.extras.push({text:'Coordinator desk',cls:'hub',anchor:k.anchor(g,0,1.25,deskZ)});
+    var deskPos=new THREE.Vector3(0,0,deskZ-1.0);
+    LINES.forEach(function(ln,li){
+      var r=r0+(n-1-li)*dr, top=(n-li)*step, a0=Math.PI/2-TH, a1=Math.PI/2+TH;
+      var sh=new THREE.Shape(), ro=r+dr/2, ri=r-dr/2;
+      sh.moveTo(ro*Math.cos(a0),ro*Math.sin(a0)); sh.absarc(0,0,ro,a0,a1,false);
+      sh.lineTo(ri*Math.cos(a1),ri*Math.sin(a1)); sh.absarc(0,0,ri,a1,a0,true);
+      var geo=new THREE.ExtrudeGeometry(sh,{depth:top,bevelEnabled:false,curveSegments:48});
+      var tier=new THREE.Mesh(geo,k.mat(li%2?'g-lane-b':'g-lane-a')); tier.rotation.x=-Math.PI/2; tier.receiveShadow=true; tier.castShadow=true;
+      tier.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,25),k.lmat('ink'))); g.add(tier);
+      var track=new THREE.Mesh(new THREE.RingGeometry(r-.09,r+.09,64,1,a0,2*TH),k.basic('g-belt',{side:THREE.DoubleSide}));
+      track.rotation.x=-Math.PI/2; track.position.y=top+.012; g.add(track);
+      var ns=ln.stations.length;
+      ln.stations.forEach(function(st,i){
+        var f=-TH*.86+(ns<2?0:i/(ns-1))*2*TH*.86, sn=Math.sin(f), cs=Math.cos(f), x=r*sn, z=-r*cs, has=st.count>0, hits=[];
+        hits.push(k.box(g,1.25,.28,1.0,x,top,z,st.need?'signal':has?'ink':'surface',st.need?'signal-ink':has?'g-edge-dark':'ink',{ry:-f}));
+        for(var c=0;c<st.count;c++) hits.push(k.box(g,.85,.14,.68,x,top+.28+c*.17,z,st.need?'signal-tint':'surface','ink',{ry:-f}));
+        if(st.need){
+          var px=x+sn*.62, pz=z-cs*.62;
+          k.box(g,.1,1.5,.1,px,top,pz,'signal',null);
+          var lamp=new THREE.Mesh(new THREE.BoxGeometry(.3,.3,.3),k.basic('signal')); lamp.position.set(px,top+1.65,pz); g.add(lamp); lamps.push(lamp);
+        }
+        out.stations.push({line:ln.line,st:st,anchor:k.anchor(g,x,top+.36+st.count*.17,z),hits:hits});
+        pos[ln.line+'|'+st.name]=new THREE.Vector3((r-.95)*sn,top,-(r-.95)*cs);
+      });
+      if(ln.stations.some(function(s){return s.count>0;}))
+        for(var m=0;m<2;m++) tokens.push({m:k.box(g,.32,.24,.32,0,top,0,'surface','ink'),r:r,k:m/2+li*.13});
+      out.lines.push({line:ln.line,note:ln.note,anchor:k.anchor(g,-r*Math.sin(TH)-.5,top,-r*Math.cos(TH)),align:'right'});
+    });
+    AGENTS.forEach(function(a){var f=k.figure(g,a,.8); out.agents.push({def:a,obj:f,anchor:f.userData.top});});
+    out.update=function(t,dt,anim){
+      tokens.forEach(function(o){o.m.visible=anim; if(anim){var f=-TH*.95+frac(o.k+t*.05)*2*TH*.95; o.m.position.x=o.r*Math.sin(f); o.m.position.z=-o.r*Math.cos(f); o.m.rotation.y=-f;}});
+      lamps.forEach(function(l){var s=anim?1+.2*Math.sin(t*3):1; l.scale.set(s,s,s);});
+      out.agents.forEach(function(ag,ai){
+        var route=ag.def.route, P=6.5, ph=anim?(t+ai*2.2)/P:0, idx=Math.floor(ph)%route.length, f=anim?frac(ph):.5;
+        var p=pos[route[idx].join('|')], home=deskPos.clone(); home.x+=(ai-1)*1.1;
+        var m=f<.3?ease(f/.3):f<.7?1:1-ease((f-.7)/.3);
+        ag.obj.position.set(home.x+(p.x-home.x)*m,home.y+(p.y-home.y)*m+(anim?Math.sin(m*Math.PI)*.6:0),home.z+(p.z-home.z)*m);
+      });
+    };
+    return out;
+  }
+};
+
+function moveAgents(agents,pos,t,anim){
+  agents.forEach(function(ag,ai){
+    var route=ag.def.route, P=4.6, ph=anim?(t+ai*1.7)/P:0, idx=Math.floor(ph)%route.length, f=anim?frac(ph):0;
+    var a=pos[route[idx].join('|')], b=pos[route[(idx+1)%route.length].join('|')], m=f<.62?0:ease((f-.62)/.38);
+    ag.obj.position.set(a.x+(b.x-a.x)*m,a.y+(b.y-a.y)*m,a.z+(b.z-a.z)*m);
+  });
+}
+
+/* ---------- stage engine ---------- */
+var stages=[], V=HAS3?new THREE.Vector3():null;
+
+function Stage(article,concept){
+  var self=this;
+  this.article=article; this.concept=concept;
+  this.el=article.querySelector('.stage'); this.canvas=this.el.querySelector('canvas');
+  this.labels=this.el.querySelector('.labels'); this.readoutEl=article.querySelector('.readout');
+  this.view={yaw:concept.view.yaw,pitch:concept.view.pitch};
+  this.visible=false; this.dirty=true; this.t=0; this.lastInteract=-1e9; this.hover=null; this.pinned=null; this.pointer=null; this.ok=false;
+  this.setReadout(null);
+  if(!HAS3){ this.fail('The 3D view could not load (three.js was blocked or offline). Here is the same floor, flat.'); return; }
+  try{
+    this.renderer=new THREE.WebGLRenderer({canvas:this.canvas,antialias:true,powerPreference:'low-power'});
+  }catch(e){ this.fail('This browser has WebGL turned off, so the 3D view cannot run. Here is the same floor, flat.'); return; }
+  this.renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  this.renderer.shadowMap.enabled=true; this.renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  this.raycaster=new THREE.Raycaster();
+  this.ok=true;
+  this.buildControls();
+  this.build();
+  this.bind();
+  this.canvas.addEventListener('webglcontextlost',function(e){e.preventDefault(); self.fail('The 3D view stopped (the graphics context was lost). Here is the same floor, flat.');});
+}
+Stage.prototype.fail=function(msg){
+  this.ok=false;
+  var fb=document.createElement('div'); fb.className='fallback'; fb.innerHTML=flatHTML(msg);
+  this.canvas.style.display='none'; this.labels.style.display='none';
+  this.el.appendChild(fb); this.el.removeAttribute('tabindex');
+  var c=this.article.querySelector('.ctrls'); if(c) c.textContent='';
+  this.readoutEl.textContent='Flat fallback shown. Hover a station for its details.';
+};
+Stage.prototype.buildControls=function(){
+  var self=this, c=this.article.querySelector('.ctrls');
+  [['left','←','Turn left'],['right','→','Turn right'],['up','↑','Tilt up (look from higher)'],['down','↓','Tilt down (look from lower)'],['reset','Reset view','Reset view']].forEach(function(b){
+    var el=document.createElement('button'); el.type='button'; el.textContent=b[1]; el.setAttribute('aria-label',b[2]); el.title=b[2];
+    if(b[0]==='reset') el.className='reset';
+    el.addEventListener('click',function(){self.act(b[0]);}); c.appendChild(el);
+  });
+};
+Stage.prototype.act=function(a){
+  var s=.16;
+  if(a==='left') this.view.yaw-=s*1.5; if(a==='right') this.view.yaw+=s*1.5;
+  if(a==='up') this.view.pitch+=s; if(a==='down') this.view.pitch-=s;
+  if(a==='reset'){ var dv=this.defView(); this.view.yaw=dv.yaw; this.view.pitch=dv.pitch; this.pinned=null; this.setHover(null); this.lastInteract=-1e9; this.t=0; }
+  else this.lastInteract=performance.now();
+  this.clamp(); this.place(); this.dirty=true;
+};
+Stage.prototype.clamp=function(){
+  var v=this.concept.view;
+  this.view.yaw=Math.max(v.yawMin,Math.min(v.yawMax,this.view.yaw));
+  this.view.pitch=Math.max(v.pitchMin,Math.min(v.pitchMax,this.view.pitch));
+};
+Stage.prototype.build=function(){
+  var self=this;
+  if(this.scene) this.scene.traverse(function(o){ if(o.geometry) o.geometry.dispose(); });
+  var scene=new THREE.Scene(); this.scene=scene;
+  scene.background=new THREE.Color(css('g-bg'));
+  scene.add(new THREE.HemisphereLight(0xffffff,new THREE.Color(css('g-plate')),.78));
+  var sun=new THREE.DirectionalLight(0xffffff,.5); sun.position.set(-6,14,9); sun.castShadow=true;
+  sun.shadow.mapSize.set(1024,1024); var sc=sun.shadow.camera; sc.left=-18; sc.right=18; sc.top=18; sc.bottom=-18; sc.near=1; sc.far=50;
+  sun.shadow.bias=-.0008; scene.add(sun);
+  this.narrow=this.el.clientWidth<760;
+  var root=new THREE.Group(); scene.add(root);
+  this.transposed=!!(this.narrow&&this.concept.view.transpose);
+  if(this.transposed){ root.scale.z=-1; root.rotation.y=-Math.PI/2; }
+  var kit=new Kit(root);
+  this.model=this.concept.build(kit,this);
+  this.hits=[];
+  this.model.stations.forEach(function(r){r.hits.forEach(function(m){m.userData.rec=r; self.hits.push(m);});});
+  // labels
+  this.labels.textContent=''; this.lbls=[];
+  this.model.stations.forEach(function(r){
+    var b=document.createElement('button'); b.type='button';
+    b.className='chip '+(r.st.need?'need':r.st.count?'':'zero');
+    b.innerHTML='<b>'+r.st.count+'</b><span>'+esc(r.st.name)+'</span>'+(r.st.need?'<em>PERSON</em>':'');
+    b.setAttribute('aria-label',describe(r.line,r.st));
+    b.addEventListener('mouseenter',function(){self.setHover(r);});
+    b.addEventListener('mouseleave',function(){self.setHover(null);});
+    b.addEventListener('focus',function(){self.setHover(r);});
+    b.addEventListener('blur',function(){self.setHover(null);});
+    b.addEventListener('click',function(){self.pinned=self.pinned===r?null:r; self.setReadout(self.pinned||r); self.dirty=true;});
+    r.chip=b; self.addLabel(b,r.anchor,'bottom');
+  });
+  this.model.lines.forEach(function(l,li){
+    var d=document.createElement('div'); d.className='linelbl';
+    d.innerHTML='<strong>'+esc(l.line)+'</strong><span class="tag '+noteClass(l.note)+'">'+esc(l.note)+'</span>';
+    self.addLabel(d,l.anchor,self.transposed?'bottom':(l.align==='right'?'right':'center'));
+    if(self.transposed) self.lbls[self.lbls.length-1].dy=(li%2)*-22;
+  });
+  this.model.agents.forEach(function(a){
+    var d=document.createElement('div'); d.className='agentlbl'; d.title=a.def.name+' · '+a.def.role;
+    d.innerHTML='<i style="background:var(--'+a.def.color+')"></i>'+esc(a.def.name);
+    self.addLabel(d,a.anchor,'bottom',true);
+  });
+  (this.model.extras||[]).forEach(function(x){
+    var d=document.createElement('div'); d.className='extralbl '+(x.cls||''); d.textContent=x.text; self.addLabel(d,x.anchor,'center');
+  });
+  // camera
+  var v=this.concept.view;
+  this.camera=v.ortho?new THREE.OrthographicCamera(-10,10,10,-10,.1,400):new THREE.PerspectiveCamera(v.fov,1,.1,400);
+  scene.updateMatrixWorld(true);
+  var box=new THREE.Box3(); this.fitPts=[];
+  this.lbls.forEach(function(l){if(l.nofit) return; var p=new THREE.Vector3(); l.obj.getWorldPosition(p); self.fitPts.push(p); box.expandByPoint(p);});
+  this.baseTarget=box.getCenter(new THREE.Vector3()); this.baseTarget.y*=.5; this.target=this.baseTarget.clone();
+  var dv=this.defView(); this.view.yaw=dv.yaw; this.view.pitch=dv.pitch;
+  this.helper=null;
+  this.resize();
+};
+Stage.prototype.defView=function(){var v=this.concept.view; return (this.narrow&&v.phone)?v.phone:v;};
+Stage.prototype.addLabel=function(el,obj,align,nofit){
+  var w=document.createElement('div'); w.className='lbl'; w.appendChild(el); this.labels.appendChild(w);
+  this.lbls.push({w:w,obj:obj,align:align,nofit:!!nofit});
+};
+Stage.prototype.place=function(){
+  var c=this.camera, t=this.target, d=this.dist, y=this.view.yaw, p=this.view.pitch;
+  c.position.set(t.x+d*Math.sin(y)*Math.cos(p),t.y+d*Math.sin(p),t.z+d*Math.cos(y)*Math.cos(p));
+  c.lookAt(t); c.updateMatrixWorld();
+};
+Stage.prototype.resize=function(){
+  var w=this.el.clientWidth, h=this.el.clientHeight; if(!w||!h) return;
+  if((w<760)!==this.narrow){ this.build(); return; }
+  this.target.copy(this.baseTarget);
+  this.renderer.setSize(w,h,false);
+  this.el.classList.toggle('compact',w<760);
+  var asp=w/h, v=this.concept.view, dv=this.defView(), saved={yaw:this.view.yaw,pitch:this.view.pitch}, self=this, c=this.camera;
+  this.view.yaw=dv.yaw; this.view.pitch=dv.pitch;
+  var mx=w<760?.9:.86;
+  if(v.ortho){
+    this.dist=80; this.place();
+    var minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9,q=new THREE.Vector3();
+    this.fitPts.forEach(function(p){q.copy(p).applyMatrix4(c.matrixWorldInverse); minX=Math.min(minX,q.x);maxX=Math.max(maxX,q.x);minY=Math.min(minY,q.y);maxY=Math.max(maxY,q.y);});
+    var cx=(minX+maxX)/2, cy=(minY+maxY)/2, hw=(maxX-minX)/2/mx, hh=(maxY-minY)/2/mx*1.08;
+    if(hw/hh>asp) hh=hw/asp; else hw=hh*asp;
+    c.left=cx-hw; c.right=cx+hw; c.top=cy+hh; c.bottom=cy-hh; c.updateProjectionMatrix();
+  }else{
+    c.aspect=asp; c.updateProjectionMatrix();
+    var lo=4,hi=200;
+    for(var i=0;i<28;i++){
+      var mid=(lo+hi)/2; this.dist=mid; this.place();
+      var ok=this.fitPts.every(function(p){V.copy(p).project(c); return V.z<1&&Math.abs(V.x)<=mx&&V.y<=mx-.04&&V.y>=-mx;});
+      if(ok) hi=mid; else lo=mid;
+    }
+    this.dist=hi;
+  }
+  this.placeLabels(); this.contain(w,h);
+  this.view.yaw=saved.yaw; this.view.pitch=saved.pitch; this.place(); this.dirty=true;
+};
+/* Pan and zoom so the labels themselves (not just their anchor points) fill the stage. */
+Stage.prototype.contain=function(w,h){
+  var c=this.camera, sr=this.el.getBoundingClientRect(), pad=w<760?8:14;
+  for(var it=0;it<4;it++){
+    var minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+    this.lbls.forEach(function(l){ if(l.nofit) return; var r=l.w.firstChild.getBoundingClientRect(); minX=Math.min(minX,r.left-sr.left); maxX=Math.max(maxX,r.right-sr.left); minY=Math.min(minY,r.top-sr.top); maxY=Math.max(maxY,r.bottom-sr.top); });
+    var s=Math.max((maxX-minX)/(w-2*pad),(maxY-minY)/(h-2*pad)), dx=(minX+maxX)/2-w/2, dy=(minY+maxY)/2-h/2;
+    s=Math.max(.55,Math.min(3,s));
+    if(Math.abs(s-1)<.015&&Math.abs(dx)<2&&Math.abs(dy)<2) return;
+    if(this.concept.view.ortho){
+      var fw=c.right-c.left, fh=c.top-c.bottom, mx=(c.left+c.right)/2+dx/w*fw, my=(c.top+c.bottom)/2-dy/h*fh;
+      c.left=mx-fw*s/2; c.right=mx+fw*s/2; c.top=my+fh*s/2; c.bottom=my-fh*s/2; c.updateProjectionMatrix();
+    }else{
+      var wpp=2*this.dist*Math.tan(c.fov*Math.PI/360)/h, R=new THREE.Vector3().setFromMatrixColumn(c.matrixWorld,0), U=new THREE.Vector3().setFromMatrixColumn(c.matrixWorld,1);
+      this.target.addScaledVector(R,dx*wpp).addScaledVector(U,-dy*wpp);
+      this.dist*=s; this.place();
+    }
+    this.placeLabels();
+  }
+};
+Stage.prototype.setReadout=function(r){
+  var el=this.readoutEl;
+  if(!r){ el.className='readout'; el.textContent='Hover, tap or tab to a station to read it. Drag sideways to turn; use the arrows to tilt.'; return; }
+  el.className='readout'+(r.st.need?' need':''); el.textContent=describe(r.line,r.st)+(this.pinned===r?'  (pinned: click again to clear)':'');
+};
+Stage.prototype.setHover=function(r){
+  if(this.hover===r) return;
+  if(this.hover&&this.hover.chip) this.hover.chip.classList.remove('hot');
+  this.hover=r;
+  if(r&&r.chip) r.chip.classList.add('hot');
+  this.setReadout(r||this.pinned);
+  if(this.helper){this.scene.remove(this.helper); this.helper.geometry.dispose(); this.helper=null;}
+  var hr=r||this.pinned;
+  if(hr){ this.helper=new THREE.BoxHelper(hr.hits[0],new THREE.Color(css('focus'))); this.helper.material.depthTest=false; this.helper.renderOrder=10; this.scene.add(this.helper); }
+  this.dirty=true;
+};
+Stage.prototype.pick=function(e){
+  var rect=this.canvas.getBoundingClientRect(), m=new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);
+  this.raycaster.setFromCamera(m,this.camera);
+  var h=this.raycaster.intersectObjects(this.hits,false);
+  return h.length?h[0].object.userData.rec:null;
+};
+Stage.prototype.bind=function(){
+  var self=this, cv=this.canvas, drag=null;
+  cv.addEventListener('pointerdown',function(e){drag={x:e.clientX,y:e.clientY,moved:false,id:e.pointerId}; try{cv.setPointerCapture(e.pointerId);}catch(_){} });
+  cv.addEventListener('pointermove',function(e){
+    var rect=cv.getBoundingClientRect();
+    self.pointer={x:(e.clientX-rect.left)/rect.width*2-1,y:(e.clientY-rect.top)/rect.height*2-1};
+    if(drag){
+      var dx=e.clientX-drag.x, dy=e.clientY-drag.y;
+      if(!drag.moved&&Math.abs(dx)+Math.abs(dy)>4){drag.moved=true; self.el.classList.add('dragging');}
+      if(drag.moved){ self.view.yaw-=dx*.006; self.view.pitch+=dy*.005; drag.x=e.clientX; drag.y=e.clientY; self.clamp(); self.place(); self.lastInteract=performance.now(); }
+    } else if(e.pointerType==='mouse'){ self.setHover(self.pick(e)); }
+    self.dirty=true;
+  });
+  function end(e){
+    if(drag&&!drag.moved){ var r=self.pick(e); self.pinned=(r&&self.pinned!==r)?r:null; self.hover=null; self.setHover(r); self.setReadout(self.pinned); }
+    drag=null; self.el.classList.remove('dragging');
+  }
+  cv.addEventListener('pointerup',end);
+  cv.addEventListener('pointercancel',function(){drag=null; self.el.classList.remove('dragging');});
+  cv.addEventListener('pointerleave',function(e){ if(!drag){ self.pointer=null; if(e.pointerType==='mouse') self.setHover(null); self.dirty=true; } });
+  this.el.addEventListener('keydown',function(e){
+    if(e.target!==self.el) return;
+    var map={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',r:'reset',R:'reset',Home:'reset'};
+    if(map[e.key]){ e.preventDefault(); self.act(map[e.key]); }
+  });
+  if('ResizeObserver' in window) new ResizeObserver(function(){self.resize();}).observe(this.el);
+  else window.addEventListener('resize',function(){self.resize();});
+};
+Stage.prototype.tick=function(now,dt,anim){
+  if(anim) this.t+=dt;
+  var v=this.concept.view;
+  if(anim&&v.orbit&&now-this.lastInteract>3500){
+    this.orbitDir=this.orbitDir||1;
+    this.view.yaw+=this.orbitDir*dt*.07;
+    if(this.view.yaw>v.yawMax-.05) this.orbitDir=-1; if(this.view.yaw<v.yawMin+.05) this.orbitDir=1;
+    this.clamp(); this.place();
+  }
+  var more=this.model.update(this.t,dt,anim);
+  if(this.helper) this.helper.update();
+  this.renderer.render(this.scene,this.camera);
+  this.placeLabels();
+  this.dirty=!!(more&&!anim);
+};
+Stage.prototype.placeLabels=function(){
+  var w=this.el.clientWidth, h=this.el.clientHeight, c=this.camera;
+  for(var i=0;i<this.lbls.length;i++){
+    var l=this.lbls[i]; l.obj.getWorldPosition(V); V.project(c);
+    if(V.z>1||V.z<-1){ l.w.style.visibility='hidden'; continue; }
+    l.w.style.visibility='';
+    var x=(V.x+1)/2*w, y=(1-V.y)/2*h, tr=l.align==='right'?'translate(-100%,-50%)':l.align==='center'?'translate(-50%,-50%)':'translate(-50%,-100%)';
+    l.w.style.transform='translate3d('+x.toFixed(1)+'px,'+(y+(l.dy||0)).toFixed(1)+'px,0) '+tr;
+    l.w.style.zIndex=String(Math.round((1-V.z)*5000)+(l.w.firstChild.classList.contains('chip')?20000:0));
+  }
+};
+
+/* ---------- boot ---------- */
+var concepts={conveyor:CONVEYOR,city:CITY,board:BOARD,hub:AMPHI};
+document.querySelectorAll('.concept').forEach(function(a){ stages.push(new Stage(a,concepts[a.getAttribute('data-concept')])); });
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){stages.forEach(function(s){if(s.el===e.target){s.visible=e.isIntersecting; s.dirty=true;}});});},{rootMargin:'80px 0px'});
+  stages.forEach(function(s){io.observe(s.el);});
+}else stages.forEach(function(s){s.visible=true;});
+function onScheme(){ stages.forEach(function(s){ if(s.ok){ s.build(); } }); }
+if(DARK.addEventListener) DARK.addEventListener('change',onScheme); else if(DARK.addListener) DARK.addListener(onScheme);
+function onMotion(){ stages.forEach(function(s){s.dirty=true; s.t=0;}); }
+if(RM.addEventListener) RM.addEventListener('change',onMotion); else if(RM.addListener) RM.addListener(onMotion);
+var last=performance.now();
+function frame(now){
+  var dt=Math.min(.05,(now-last)/1000); last=now; var anim=!RM.matches;
+  for(var i=0;i<stages.length;i++){ var s=stages[i]; if(s.ok&&s.visible&&(anim||s.dirty)) s.tick(now,dt,anim); }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>

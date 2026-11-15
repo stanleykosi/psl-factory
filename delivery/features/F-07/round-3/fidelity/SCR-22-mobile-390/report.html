@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design fidelity · SCR-22-mobile.dc.html</title>
+<style>
+:root{--ink:#1F2427;--muted:#4A5357;--bg:#EEF0ED;--card:#fff;--line:#D5D9D3;--ok:#22764A;--okbg:#DDEFE3;--bad:#9A2F10;--badbg:#FBE3D9;--warn:#6E4700;--warnbg:#FFF1D6;--info:#2459D6}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 16px 64px;display:flex;flex-direction:column;gap:22px}
+h1{margin:0;font-size:28px;line-height:1.2}h2{margin:0 0 6px;font-size:20px}.n{font-size:14px;font-weight:600;background:var(--line);padding:1px 8px;border-radius:10px;vertical-align:2px}
+.sub{color:var(--muted);margin:4px 0 0}.intro{color:var(--muted);margin:0 0 10px}
+.verdict{padding:16px 18px;border:2px solid;display:flex;flex-direction:column;gap:6px}
+.verdict.pass{background:var(--okbg);border-color:var(--ok);color:#16502F}.verdict.fail{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.verdict strong{font-size:22px}.verdict ul{margin:0;padding-left:20px}
+.scores{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.score{background:var(--card);border:2px solid var(--ink);padding:14px 16px}.score .big{font-size:40px;font-weight:800;line-height:1}.score .need{color:var(--muted);font-size:13px}
+.score p{margin:8px 0 0;font-size:14px;color:var(--muted)}
+section{background:var(--card);border:2px solid var(--ink);padding:16px}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:2px solid var(--ink);padding:6px 8px}
+td{border-bottom:1px solid var(--line);padding:8px;vertical-align:top}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 7px;white-space:nowrap}
+.t-miss{background:var(--badbg);color:var(--bad)}.t-move{background:var(--warnbg);color:var(--warn)}.t-extra{background:#DFE8FB;color:#16388F}.t-ok{background:var(--okbg);color:#16502F}
+.none{color:var(--ok);font-weight:600;margin:0}
+ul.notes{margin:0;padding-left:18px}
+figure{margin:0 0 18px}figcaption{font-weight:600;margin-bottom:6px}figure img{max-width:100%;border:1px solid var(--line);display:block}
+.imgs{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:800px){.imgs{grid-template-columns:1fr}}
+details{margin-top:6px}summary{cursor:pointer;font-weight:600}
+.warnbox{background:var(--warnbg);color:var(--warn);padding:10px 12px}
+code{font-size:13px;background:var(--bg);padding:0 4px}
+</style></head><body><main>
+<header><h1>Does the built page follow the design?</h1>
+<p class="sub">Board <strong>SCR-22-mobile.dc.html</strong> compared with <strong>http://localhost:3701/projects</strong> at 390px wide · 2026-11-14T06:02:15.981Z</p></header>
+
+<div class="verdict pass"><strong>Passes the design check</strong>
+<ul><li>Every board item is on the page or approved as an exception (100%).</li><li>Visual match 91.6 meets 90.</li></ul></div>
+
+<div class="scores">
+<div class="score"><div class="big">88.9%</div><div class="need">Element coverage · needs 100% (approved exceptions count as covered)</div>
+<p>8 of 9 things drawn on the board were found on the page: headings, buttons, links, search and filter controls, table columns, labels and the repeated rows (counted once, not per row).</p></div>
+<div class="score"><div class="big">91.6</div><div class="need">Visual match out of 100 · needs 90</div>
+<p>How closely the shapes line up: blocks, bars, tables and text areas, compared in 12px squares over the top 844px. Different words in the same place still count as a match, so sample data does not lower the score.</p></div>
+</div>
+
+<section id="missing"><h2>Missing from the built page <span class="n">1</span></h2><p class="intro">Drawn on the board but not found on the page. Each one must be built, or approved as an exception.</p><table><thead><tr><th>#</th><th>What</th><th>Text on the board</th><th>Where on the board</th><th>Exception</th></tr></thead><tbody><tr><td><span class="tag t-miss">M1</span></td><td>Link</td><td>← Home</td><td>left, 6px down</td><td><span class="tag t-ok">approved</span> Frame phone bar (F-01 PhoneBar) draws menu and brand, not a back link · coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-08)</td></tr></tbody></table></section>
+
+<section id="moved"><h2>In a different place <span class="n">0</span></h2><p class="intro">Found on both, but in a different order, side of the page, or area (for example inside the table frame instead of above it).</p><p class="none">Everything found is in the same place and order.</p></section>
+
+<section id="looks"><h2>Looks different <span class="n">2</span></h2><p class="intro">Found on both, but styled differently: table rows and cells, fonts, colours, underlines, outlines, corners. Not part of the score; check each one against the board.</p><table><thead><tr><th>What</th><th>Difference</th></tr></thead><tbody><tr><td>Search box &quot;Search&quot;</td><td><ul class="notes"><li>text colour #000000 on the board, #1F2427 on the page</li></ul></td></tr><tr><td>Filter &quot;Filter&quot;</td><td><ul class="notes"><li>coloured bar under it on the board (#1F2427), none on the page</li></ul></td></tr></tbody></table></section>
+
+<section id="extra"><h2>On the page but not on the board <span class="n">4</span></h2><p class="intro">Built but not drawn. Some are expected (data, status lines); the rest need the design engineer to approve or remove them.</p><table><thead><tr><th>#</th><th>What</th><th>Text on the page</th><th>Where on the page</th></tr></thead><tbody><tr><td><span class="tag t-extra">E1</span></td><td>Button</td><td>Menu</td><td>left, 6px down</td></tr><tr><td><span class="tag t-extra">E2</span></td><td>Text</td><td>PSL FACTORY</td><td>right, 15px down</td></tr><tr><td><span class="tag t-extra">E3</span></td><td>tabpanel</td><td>Active4</td><td>middle, 168px down</td></tr><tr><td><span class="tag t-extra">E4</span></td><td>Text</td><td>All 4 showing</td><td>middle, 577px down</td></tr></tbody></table></section>
+
+<section id="images"><h2>Pictures</h2>
+<p class="intro">The red dashed line on the side-by-side marks how far down the visual score looks. On the marked board, red boxes are missing items (M). On the marked page, amber boxes moved (P) and blue boxes are extra (E). In the difference picture both screens are laid over each other and red squares are where the shapes do not line up.</p>
+<figure><figcaption>Board and built page side by side</figcaption><a href="side-by-side.png"><img src="side-by-side.png" alt="Board and page side by side"></a></figure>
+<div class="imgs">
+<figure><figcaption>Board, missing items marked</figcaption><a href="board-marked.png"><img src="board-marked.png" alt="Board with missing items marked"></a></figure>
+<figure><figcaption>Built page, moved and extra items marked</figcaption><a href="page-marked.png"><img src="page-marked.png" alt="Page with moved and extra items marked"></a></figure>
+</div>
+<figure><figcaption>Difference</figcaption><a href="diff.png"><img src="diff.png" alt="Difference overlay"></a></figure>
+</section>
+
+<section id="notes"><h2>Notes about this run</h2>
+<div class="warnbox"><ul class="notes"><li>Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).</li></ul></div>
+<details><summary>Found on both (8)</summary><table><tbody><tr><td><span class="tag t-ok">Heading</span></td><td>Projects</td><td></td></tr><tr><td><span class="tag t-ok">Search area</span></td><td></td><td></td></tr><tr><td><span class="tag t-ok">Search box</span></td><td>Search</td><td></td></tr><tr><td><span class="tag t-ok">Filter</span></td><td>Filter</td><td></td></tr><tr><td><span class="tag t-ok">Link</span></td><td>Lagoon Health · patient app Release · UAT with client · PM Tunde Bello 2 need a person · 1 stopped</td><td></td></tr><tr><td><span class="tag t-ok">Link</span></td><td>Harmattan Bank · mobile onboarding Go-live · report sent · PM Kunle Ade 1 need a person · 1 stopped</td><td></td></tr><tr><td><span class="tag t-ok">Link</span></td><td>Kora Logistics · fleet tracker Pre-sale · costing approval · PM Tunde Bello 1 need a person</td><td></td></tr><tr><td><span class="tag t-ok">Link</span></td><td>Ojo Foods · ordering app Planning · held · PM Sola Martins 1 stopped</td><td></td></tr></tbody></table></details>
+<details><summary>How the scores are worked out</summary>
+<p><strong>Element coverage.</strong> The board is drawn locally from its own template and sample data. From the drawn board the check lists everything a person sees or uses: page areas (navigation, main, search), headings, links, buttons, form fields with their labels, table column headers, filter, search and pagination controls and fixed labels. Rows drawn from sample data count once, as a pattern ("table rows with these columns"). Each item is looked for on the page by its kind and its words (ignoring capitals, curly quotes and small wording differences, at least 80% similar). Coverage is found ÷ drawn. Order is compared in reading order (top to bottom, left to right); an item is "moved" when it breaks the order, sits on the other side of the page, or sits inside a different area.</p>
+<p><strong>Visual match.</strong> Both full-page screenshots are compared in 12px squares after a light blur, over the board's height (844px; the page is 844px). Only squares with something in them count. A square matches when its colours line up, or when both have text or lines there. Score = matching ÷ counted squares (1381 of 1507). Over every square including empty background it would be 94.6.</p>
+</details>
+<details><summary>Technical details</summary><p>Board file: <code>/Users/Hunchoo/psl-factory/design/canvas/project/SCR-22-mobile.dc.html</code><br>Viewport: 390×844<br>Report data: <code>report.json</code><br>Exceptions file: <code>/Users/Hunchoo/psl-factory/delivery/features/F-07/fidelity-exceptions.json</code></p></details>
+</section>
+</main></body></html>

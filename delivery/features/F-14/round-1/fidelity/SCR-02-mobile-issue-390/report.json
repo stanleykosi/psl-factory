@@ -1,0 +1,651 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T09:04:08.334Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-02-mobile-issue.dc.html",
+  "boardName": "SCR-02-mobile-issue.dc.html",
+  "pageUrl": "http://localhost:4501/work/W-1706",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-14/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 81.9 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 87,
+    "coverageWithExceptions": 100,
+    "visual": 81.9
+  },
+  "visual": {
+    "score": 81.9,
+    "allCellsScore": 82.2,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 929,
+    "cell": 12,
+    "contentCells": 2313,
+    "mismatchedCells": 418
+  },
+  "coverage": {
+    "total": 23,
+    "found": 20,
+    "coverage": 87,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412",
+        "pageName": "INV-0412",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 255,
+          "y": 129,
+          "w": 58,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "pageName": "Lagoon Health · Milestone 2 invoice",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "pageName": "DRAFTED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 173,
+          "w": 100,
+          "h": 12
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 170,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v2",
+        "pageName": "v2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 185,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 184,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "pageName": "REVIEWED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 173,
+          "w": 100,
+          "h": 12
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 170,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Bisi Adeyemi",
+        "pageName": "Bisi Adeyemi",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 185,
+          "w": 94,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 184,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "pageName": "APPROVED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 173,
+          "w": 102,
+          "h": 12
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 170,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor",
+        "pageName": "Ada Okafor",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 185,
+          "w": 82,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 184,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "pageName": "SENT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #9A2F10 on the board, #626B6F on the page"
+        ],
+        "boardBox": {
+          "x": 26,
+          "y": 221,
+          "w": 100,
+          "h": 12
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 219,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not yet",
+        "pageName": "Not yet",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #9A2F10 on the board, #626B6F on the page"
+        ],
+        "boardBox": {
+          "x": 26,
+          "y": 233,
+          "w": 53,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 233,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "pageName": "RECEIPT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 221,
+          "w": 100,
+          "h": 12
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 219,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 233,
+          "w": 13,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 233,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 221,
+          "w": 102,
+          "h": 12
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 219,
+          "w": 102,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 233,
+          "w": 13,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 233,
+          "w": 102,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412 · v2 · TEST TEMPLATE",
+        "pageName": "INV-0412 · v2 · TEST TEMPLATE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 287,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 286,
+          "w": 174,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TEST TEMPLATE",
+        "pageName": "TEST TEMPLATE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 118,
+          "y": 287,
+          "w": 95,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 116,
+          "y": 287,
+          "w": 88,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00",
+        "pageName": "₦4,250,000.00",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 308,
+          "w": 330,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 312,
+          "w": 140,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Stage 2 of 4 · from signed SOW-0198 v2",
+        "pageName": "Stage 2 of 4 · from signed SOW-0198 v2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 335,
+          "w": 330,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 343,
+          "w": 234,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Preview the invoice",
+        "pageName": "Preview the invoice",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 357,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 369,
+          "w": 121,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "To finance@lagoonhealth.example · copy Tunde Bello",
+        "pageName": "To finance@lagoonhealth.example · copy Tunde Bello",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 400,
+          "w": 358,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 416,
+          "w": 358,
+          "h": 20
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 62,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The frame's phone bar draws the back link set with usePhoneBack; its accessible name is \"Back to Queue\" (src/shell/PhoneBar.tsx), so the check reads a different name for the same link.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED · READY TO SEND",
+        "key": "text: APPROVED · READY TO SEND",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 130,
+          "w": 190,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Board-only wording for the issue step; the item is `ready` and the tag shows STATE_TAGS.ready (\"Ready to continue\").",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Issue and send",
+        "key": "link: Issue and send",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Phone wording of the same; no operation in scope.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"INV-0412\"",
+        "kind": "Text",
+        "name": "INV-0412",
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 255,
+          "y": 129,
+          "w": 58,
+          "h": 15
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Heading \"Lagoon Health · Milestone 2 invoice\"",
+          "across the page: right on the board (88% across), right on the page (73% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "READY TO CONTINUE",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 126,
+          "w": 140,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412 · revision 3",
+        "container": "main",
+        "pageBox": {
+          "x": 255,
+          "y": 128,
+          "w": 119,
+          "h": 18
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 160,
+          "w": 358,
+          "h": 100
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 865,
+          "w": 176,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 18,
+          "y": 867,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 112,
+          "y": 867,
+          "w": 80,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
