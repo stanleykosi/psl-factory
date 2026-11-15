@@ -1345,3 +1345,4 @@
 {"at":"2026-11-15T12:05:53Z","feature":"F-20","round":1,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"c218bf2480b8","findings":{"TECH-1-1":"low","TECH-1-2":"low"},"written_at":"2026-11-15T12:05:30Z"}
 {"at":"2026-11-15T12:05:53Z","feature":"F-20","round":1,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"c218bf2480b8","findings":{"UX-1-1":"low","UX-1-2":"low","UX-1-3":"low","UX-1-4":"low","UX-1-5":"low"},"written_at":"2026-11-15T12:05:36Z"}
 {"at":"2026-11-15T12:05:55Z","feature":"F-19","round":2,"kind":"transition","head":"41b4925c4419","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-15T12:06:56Z","feature":"F-20","round":1,"kind":"review","role":"ui","verdict":"CHANGES","reviewer":"reviewer-ui","commit":"c218bf2480b8","findings":{"UI-1-1":"medium","UI-1-2":"low","UI-1-3":"low","UI-1-4":"low"},"written_at":"2026-11-15T12:06:23Z"}

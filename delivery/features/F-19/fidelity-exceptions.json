@@ -180,7 +180,7 @@
       "name": "Billing contact name",
       "category": "text",
       "reason": "Conflicts 7: the board draws a text label; the page's label belongs to the Billing contact name input, listed as a text field (same as Billing email). Round 1 matched it to the panel heading, which the phone page no longer draws (UI-1-4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-77"
     },
     {
       "role": "text",
@@ -237,6 +237,23 @@
       "category": "text",
       "reason": "Conflicts 7: the banner renders blocked[] as returned; the phone board's shorter sentence is not carried by data.",
       "approved_by": "design engineer, 15 Nov (D-71)"
+    }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-35-desktop",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-77",
+      "reason": "The list leaves out the search/filter row and the board's email and project wording (no field, D-71) and adds the OWED column; rows sit lower, so visual stays at 85.9. Approved as an exception on this board."
+    },
+    {
+      "board": "SCR-35-desktop-detail",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-77",
+      "reason": "The detail leaves out Legal name, Billing address, Tax ID and Contacts (no field, D-71) and adds the Money panel; visual stays at 80.3. Approved as an exception on this board."
+    },
+    {
+      "board": "SCR-35-mobile-detail",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-77",
+      "reason": "The phone detail leaves out the address field and Contacts (no field, D-71), keeps the longer banner sentence and adds the Projects and Money panels; visual stays at 86.0. Approved as an exception on this board."
     }
   ]
 }

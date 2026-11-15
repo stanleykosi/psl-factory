@@ -91,5 +91,12 @@
       "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
       "approved_by": "design engineer, 15 Nov (D-71)"
     }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-34-mobile",
+      "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-78",
+      "reason": "The approved phone card additions (line, version meta, 44px Upload button; Conflict 2) and all eight cards (Conflict 7) make each card about 179px against the board's 71px; visual stays at about 83. Approved as an exception on this board."
+    }
   ]
 }
