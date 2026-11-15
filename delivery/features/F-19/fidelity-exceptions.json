@@ -1,0 +1,235 @@
+{
+  "exceptions": [
+    {
+      "role": "search",
+      "name": "",
+      "category": "scope",
+      "reason": "Conflicts 5 and Out of scope: search (q) is not built; the page has no search area.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "searchbox",
+      "name": "Search",
+      "category": "scope",
+      "reason": "Conflicts 5 and Out of scope: no search box; q is not in scope.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "button",
+      "name": "Filter",
+      "category": "scope",
+      "reason": "Conflicts 5: Filter is a dead control, not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "6 CLIENTS · 2 MISSING BILLING CONTACT",
+      "category": "text",
+      "reason": "Conflicts 5: the page shows \"{n} clients as of {time}\" (and the missing-contact figure only on a complete list); no total is returned.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "1 active",
+      "category": "text",
+      "reason": "Conflicts 3: the list contract carries only a projects count; no active/closed or prospect status.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "1 closed",
+      "category": "text",
+      "reason": "Conflicts 3: the list contract carries only a projects count; no active/closed or prospect status.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Prospect · RFP",
+      "category": "text",
+      "reason": "Conflicts 3: the list contract carries only a projects count; no active/closed or prospect status.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "finance@harmattanbank.example",
+      "category": "text",
+      "reason": "Conflicts 2: the list schema has no billing contact email; the page shows Set / Missing only.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "accounts@koralogistics.example",
+      "category": "text",
+      "reason": "Conflicts 2: the list schema has no billing contact email; the page shows Set / Missing only.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "ap@sabimarket.example",
+      "category": "text",
+      "reason": "Conflicts 2: the list schema has no billing contact email; the page shows Set / Missing only.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "—",
+      "category": "text",
+      "reason": "Conflicts 2: the list schema has no billing contact email; the page shows Set / Missing only.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "NEEDS DETAILS",
+      "category": "text",
+      "reason": "Conflicts 1: the schema has only billing_contact_set; the tag reads Set / Billing contact missing, not the board's readiness words.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "READY",
+      "category": "text",
+      "reason": "Conflicts 1: the schema has only billing_contact_set; the tag reads Set / Billing contact missing, not the board's readiness words.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "PROSPECT",
+      "category": "text",
+      "reason": "Conflicts 1: the schema has only billing_contact_set; the tag reads Set / Billing contact missing, not the board's readiness words.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "← Projects",
+      "category": "frame item",
+      "reason": "Conflicts 14: the frame's phone bar link is named \"Back to Projects\" (usePhoneBack).",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "← Clients",
+      "category": "frame item",
+      "reason": "Conflicts 14: the frame's phone bar link is named \"Back to Clients\" (usePhoneBack).",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "CLIENT DETAILS",
+      "category": "text",
+      "reason": "Conflicts 8: the panel holds the billing contact only, so its heading reads Billing contact.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Legal name",
+      "category": "text",
+      "reason": "Conflicts 8: no legal name, address or tax ID in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Lagoon Health Ltd",
+      "category": "text",
+      "reason": "Conflicts 8: no legal name, address or tax ID in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Billing address",
+      "category": "text",
+      "reason": "Conflicts 8: no legal name, address or tax ID in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "14 Admiralty Way, Lekki, Lagos",
+      "category": "text",
+      "reason": "Conflicts 8: no legal name, address or tax ID in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "14 Admiralty Way, Lekki",
+      "category": "text",
+      "reason": "Conflicts 8: no legal name, address or tax ID in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Tax ID",
+      "category": "text",
+      "reason": "Conflicts 8: no legal name, address or tax ID in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "category": "text",
+      "reason": "Conflicts 8: no legal name, address or tax ID in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Not set",
+      "category": "text",
+      "reason": "Conflicts 7: the inputs are empty with no placeholder; a read-only detail shows Not set from the data.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Billing email",
+      "category": "text",
+      "reason": "Conflicts 7: the board draws a text label; the page's label belongs to the Billing email input, listed as a text field.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "link",
+      "name": "Save client details",
+      "category": "text",
+      "reason": "Conflicts 8: the button saves the billing contact only and reads Save billing contact.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Changes are recorded with your name. Invoices already issued keep the details they were issued with.",
+      "category": "text",
+      "reason": "Conflicts 8: a backend promise, not data; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Active · PM Tunde Bello · 4 milestones",
+      "category": "text",
+      "reason": "Conflicts 3: the detail project row carries title and stage only; no PM or milestones.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "CONTACTS",
+      "category": "text",
+      "reason": "Conflicts 12: no contacts field in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Product owner · recorded responses: 6",
+      "category": "text",
+      "reason": "Conflicts 12: no contacts field in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "Procurement · signed SOW v2",
+      "category": "text",
+      "reason": "Conflicts 12: no contacts field in the contract; not built.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "No billing contact, so invoices can't start.",
+      "category": "text",
+      "reason": "Conflicts 7: the banner renders blocked[] as returned; the phone board's shorter sentence is not carried by data.",
+      "approved_by": "design engineer, 15 Nov (D-71)"
+    }
+  ]
+}
