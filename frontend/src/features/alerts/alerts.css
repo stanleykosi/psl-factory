@@ -68,8 +68,9 @@
   .alerts-head .alerts-back { margin: calc(var(--space-2) * -1) 0; }
   .alerts-search { flex: 1 1 0; min-width: 0; max-width: none; }
   .alerts-link { padding: var(--space-10px) var(--space-3); }
-  /* the switch is a 44px target (D-92c); its track is drawn behind the knob, as the board draws it */
-  .alerts-switch, .alerts-switch.is-on, .alerts-switch.is-locked { height: var(--control-md); padding: 0 var(--space-1); border: none; background: none; }
+  /* the switch is a 44px target (D-92c); its track is drawn behind the knob as the board draws it, and the extra
+     height overlaps the row around it so the rows keep the board's rhythm */
+  .alerts-switch, .alerts-switch.is-on, .alerts-switch.is-locked { height: var(--control-md); margin-block: calc((var(--switch-track) - var(--control-md)) / 2); padding: 0 var(--space-1); border: none; background: none; }
   .alerts-switch::before { content: ""; position: absolute; left: 0; right: 0; top: calc((var(--control-md) - var(--switch-track)) / 2); height: var(--switch-track); box-sizing: border-box; border: var(--rule-strong) solid var(--ink); background: var(--surface); }
   .alerts-switch.is-on::before { background: var(--ink); }
   .alerts-switch.is-locked::before { border-color: var(--disabled); background: var(--surface); }
