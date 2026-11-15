@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-17",
   "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-WORKSPACE-FRAME"
   ],
@@ -91,6 +91,18 @@
       "at": "2026-11-15T06:50:41Z",
       "seconds": 167.0,
       "evidence_ref": "delivery/features/F-17/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T07:16:05Z",
+      "seconds": 100.6,
+      "evidence_ref": "delivery/features/F-17/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -160,14 +172,28 @@
         "delivery/features/F-17/round-1/fidelity/region-scores.txt"
       ],
       "raised_by": "coordinator",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "coordinator",
           "at": "2026-11-15T06:50:50Z",
           "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
       ]
     },
     {
@@ -183,14 +209,28 @@
         "delivery/features/F-17/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-15T06:55:28Z",
           "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
       ]
     },
     {
@@ -206,14 +246,28 @@
         "delivery/features/F-17/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-15T06:55:28Z",
           "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
       ]
     },
     {
@@ -229,14 +283,28 @@
         "delivery/features/F-17/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-15T06:55:28Z",
           "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
       ]
     },
     {
@@ -275,14 +343,28 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T06:55:28Z",
           "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
       ]
     },
     {
@@ -298,14 +380,28 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T06:55:28Z",
           "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
       ]
     },
     {
@@ -321,14 +417,28 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T06:55:28Z",
           "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
       ]
     },
     {
@@ -344,14 +454,28 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T06:55:28Z",
           "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
       ]
     },
     {
@@ -367,14 +491,28 @@
         "delivery/features/F-17/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T06:55:28Z",
           "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
       ]
     }
   ],
@@ -464,7 +602,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
     "task_branch": "fe-workspace-frame-the-work-item-page-renders-a-line-worksp",
-    "head_sha": "1432023f985798659f2cc4342c3a745936d30324",
+    "head_sha": "a5e803ab09ccd3122a4c252be8658a9138314be0",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-17",
     "pr_url": null,
     "pr_number": null,
@@ -532,6 +670,60 @@
       "delivery/features/F-17/round-1/fidelity/unknown-money-1440/side-by-side.png",
       "delivery/features/F-17/round-1/fidelity/unknown-money-390/report.json",
       "delivery/features/F-17/round-1/fidelity/unknown-money-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/checklist-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/checklist-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/checklist-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/checklist-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/checklist-gates-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/checklist-gates-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/checklist-gates-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/checklist-gates-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/facts-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/facts-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/facts-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/facts-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/findings-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/findings-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/findings-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/findings-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/notice-done-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/notice-done-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/notice-done-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/notice-done-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/recipients-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/recipients-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/recipients-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/recipients-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/region-check.mjs",
+      "delivery/features/F-17/round-2/fidelity/region-scores.txt",
+      "delivery/features/F-17/round-2/fidelity/step-form-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/step-form-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/step-form-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/step-form-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/steps-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/steps-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/steps-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/steps-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/suggestions-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/suggestions-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/suggestions-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/suggestions-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/table-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/table-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/table-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/table-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/text-cites-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/text-cites-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/text-cites-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/text-cites-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/timeline-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/timeline-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/timeline-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/timeline-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/unknown-money-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/unknown-money-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/unknown-money-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/unknown-money-390/side-by-side.png",
       "frontend/e2e/workspace.spec.ts",
       "frontend/mock/fixtures/response/W-2008.not_delivered.json",
       "frontend/mock/fixtures/response/W-2008.unknown.json",
@@ -642,6 +834,14 @@
       "round": 2,
       "head": "1432023f985798659f2cc4342c3a745936d30324",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T07:16:06Z",
+      "round": 2,
+      "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "reason": null
     }
   ],
   "routing": {
@@ -659,9 +859,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "a5e803ab09ccd3122a4c252be8658a9138314be0"
   },
   "blocked": null
 }
