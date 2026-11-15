@@ -161,11 +161,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO acceptance",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -1548,6 +1550,75 @@
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-15T10:01:13Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
+      ]
+    },
+    {
+      "id": "PMO-5-1",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The backend items are spread across round-1/build.md (Contract proposals), round-2/build.md and round-2/review-ui.md. The round-5 build.md has no consolidated list. Copy the list under \"Hand-off to backend\" below into the PR description and the hand-off note, so the items travel with the merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T10:02:20Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
+      ]
+    },
+    {
+      "id": "PMO-5-2",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "feature.json state lag. TECH-5-1 reads OPEN although review-technical.md verifies it at ff48d19. UX-2-1, UX-2-2 and UI-2-8 read FIX_SUBMITTED. TECH-1-4, TECH-2-2, QA-5-3, QA-5-4 and TECH-5-2 are non-blocking and OPEN. None blocks. Sync the record before the merge. TECH-1-4 and TECH-2-2 are backend dependent and must stay open.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T10:02:20Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
+      ]
+    },
+    {
+      "id": "PMO-5-3",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-5-3 (the uncertain callout sits below the fold on a phone after the press) and QA-5-4 (the over-long note message shows twice) are carried forward untouched. Fix in a later pass or in the first line task.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T10:02:20Z",
           "head": "ff48d19d80a904de760cf524166ad820107267dd"
         }
       ]
