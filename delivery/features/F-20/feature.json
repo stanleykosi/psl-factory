@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-20",
   "outcome": "The Templates tab on Setup lists each document template and uploads a new version of one",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-SETUP-TEMPLATES"
   ],
@@ -114,7 +114,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delegated technical review",
-      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "snapshot_ref": "1bf933da30fd5e895b5b35f48e89149984c4a305",
       "evidence_refs": [
         "delivery/features/F-20/round-2/review-technical.md"
       ]
@@ -123,7 +123,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA",
-      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "snapshot_ref": "1bf933da30fd5e895b5b35f48e89149984c4a305",
       "evidence_refs": [
         "delivery/features/F-20/round-2/review-qa.md"
       ]
@@ -152,7 +152,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delegated UX review",
-      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "snapshot_ref": "1bf933da30fd5e895b5b35f48e89149984c4a305",
       "evidence_refs": [
         "delivery/features/F-20/round-2/review-ux.md"
       ]
@@ -161,7 +161,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delegated UI review",
-      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "snapshot_ref": "1bf933da30fd5e895b5b35f48e89149984c4a305",
       "evidence_refs": [
         "delivery/features/F-20/round-2/review-ui.md"
       ]
@@ -757,9 +757,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -778,9 +778,9 @@
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "45c4820c4adf00f1834555e65a9f21f3c4abcba3",
     "merge_policy": "not_configured",
     "changed_paths": [
       ".python-version",
@@ -1170,12 +1170,23 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-20/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "apps/agents/migrations/0004_case_upload_jobs.py matches always-human path '*/migrations/*'",
+      "apps/finance/migrations/0077_forecast_evidence_reference.py matches always-human path '*/migrations/*'",
+      "367 changed files exceed the auto-merge limit of 15",
+      "finding UI-1-1 was accepted as a risk",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "1bf933da30fd5e895b5b35f48e89149984c4a305",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1254,6 +1265,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-15T12:54:39Z",
+      "round": 2,
+      "head": "1bf933da30fd5e895b5b35f48e89149984c4a305",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-15T12:57:38Z",
+      "round": 2,
+      "head": "1bf933da30fd5e895b5b35f48e89149984c4a305",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-15T12:58:05Z",
+      "round": 2,
+      "head": "1bf933da30fd5e895b5b35f48e89149984c4a305",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-15T12:58:24Z",
+      "round": 2,
+      "head": "1bf933da30fd5e895b5b35f48e89149984c4a305",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-15T12:58:25Z",
       "round": 2,
       "head": "1bf933da30fd5e895b5b35f48e89149984c4a305",
       "reason": null

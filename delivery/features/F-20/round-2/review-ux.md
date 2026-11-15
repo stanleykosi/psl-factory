@@ -1,7 +1,13 @@
 VERDICT: PASS
-COMMIT: 777d9a3f11f10544e6d43ffa7d52a86f7202df99
+COMMIT: 1bf933da30fd5e895b5b35f48e89149984c4a305
 REVIEWER: reviewer-ux
 AUTHORITY: delegated UX review
+
+## Re-confirmed on the synced head
+
+Merge-only confirmation. The only F-20 file the merge touched is frontend/src/features/setup/SetupFrame.tsx. The diff from 777d9a3f to 1bf933da is two lines: the phone "← Setup" back link (useSetupPhoneBack) now goes to /setup/rules instead of /setup/roles, with the comment citing D-68(c). The label, note and hook are unchanged. Sending phone users to Setup rules is a sensible landing until a phone Setup home is drawn, so there is no dead end and no accessibility change. The coordinator reports e2e setup-templates 11 and setup 28 passed after the merge. No findings.
+
+## Earlier review (at 777d9a3f)
 
 Lean re-review (D-64) of c218bf24..777d9a3f, from build.md, the round-2 side-by-side images and the diff. No build or browser run.
 
