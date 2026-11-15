@@ -8,6 +8,7 @@ import type { ReactNode } from 'react';
 
 import { InfoIcon } from '@/features/response/icons';
 import { formatClock, formatDay } from '@/features/response/labels';
+import { useIsPhone } from '@/features/response/usePhone';
 
 import type { RecordedOutcome, RfpOutcome } from './contract';
 import { recordedHeading } from './labels';
@@ -50,19 +51,39 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
   const next = recorded.next ?? [];
   const again = (recorded.result === 'pending' || recorded.result === 'unknown') && outcome.results.length > 0;
 
+  const phone = useIsPhone();
+  // The boards: won has no "Next" panel (a sentence and an outlined button); the phone has none for any state, pins the
+  // single action of won and pending, keeps unknown's as a secondary button and lost's as a quiet link.
+  const pinned = phone && (recorded.result === 'won' || recorded.result === 'pending');
   const action = again ? (
-    <button type="button" className="psl-btn psl-btn--lg psl-btn--block" onClick={onReopen}>
+    <button type="button" className={`psl-btn psl-btn--lg psl-btn--block${phone && recorded.result === 'unknown' ? ' psl-btn--secondary' : ''}`} onClick={onReopen}>
       Record the outcome
     </button>
   ) : recorded.result === 'won' && engagement?.work_id ? (
-    <Link className="psl-btn psl-btn--lg psl-btn--block" href={work(engagement.work_id)}>
+    <Link className={`psl-btn psl-btn--lg psl-btn--block${phone ? '' : ' psl-btn--secondary'}`} href={work(engagement.work_id)}>
       Open engagement {engagement.reference}
     </Link>
   ) : recorded.result === 'lost' ? (
-    <Link className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" href="/projects">
-      Back to projects
-    </Link>
+    phone ? (
+      <Link className="psl-link psl-link--quiet" href="/projects">
+        Back to projects
+      </Link>
+    ) : (
+      <Link className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" href="/projects">
+        Back to projects
+      </Link>
+    )
   ) : null;
+  const nextBody = (
+    <>
+      {next.map((line, i) => (
+        <p key={i} className="rfp-plain">
+          {line}
+        </p>
+      ))}
+      {action && <div className={pinned ? 'rfp-pin' : undefined}>{action}</div>}
+    </>
+  );
 
   const listed = rows.length > 0 || reminder || engagement;
   return (
@@ -102,24 +123,20 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
               )}
             </Panel>
           )}
-          {recorded.archive_reference && (
-            <p className="psl-callout psl-callout--info">
-              <InfoIcon />
-              <span>Archived as {recorded.archive_reference}.</span>
-            </p>
-          )}
+          {recorded.archive_reference &&
+            (phone ? (
+              <p className="psl-hint">Archived as {recorded.archive_reference}.</p>
+            ) : (
+              <p className="psl-callout psl-callout--info">
+                <InfoIcon />
+                <span>Archived as {recorded.archive_reference}.</span>
+              </p>
+            ))}
           {followup}
         </div>
         {(next.length > 0 || action) && (
           <aside className="rfp-recorded__aside" aria-label="Next">
-            <Panel title="Next">
-              {next.map((line, i) => (
-                <p key={i} className="rfp-plain">
-                  {line}
-                </p>
-              ))}
-              {action}
-            </Panel>
+            {phone || recorded.result === 'won' ? nextBody : <Panel title="Next">{nextBody}</Panel>}
           </aside>
         )}
       </div>

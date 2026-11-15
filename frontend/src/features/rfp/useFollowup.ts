@@ -45,6 +45,12 @@ export function useFollowup(item: ResponseWorkItem, followup: Followup, reload: 
     setEditing(true);
   }, [followup.body]);
 
+  /** Leave the edit box and go back to the drafted text, which is what Send then sends. */
+  const useDraft = useCallback(() => setEditing(false), []);
+
+  /** An open edit box with nothing in it: Send stays off rather than sending the original draft unseen. */
+  const blank = editing && text.trim() === '';
+
   /** The edited text, only when it differs from the draft and is not blank. */
   const edited = editing && text.trim() !== '' && text !== followup.body ? text : undefined;
 
@@ -57,7 +63,7 @@ export function useFollowup(item: ResponseWorkItem, followup: Followup, reload: 
   };
 
   const send = useCallback(async () => {
-    if (sending.current || refused || followup.status !== 'drafted' || !followup.can_send || notice?.kind === 'unconfirmed') return;
+    if (sending.current || blank || refused || followup.status !== 'drafted' || !followup.can_send || notice?.kind === 'unconfirmed') return;
     sending.current = true;
     setBusy(true);
     setNotice(null);
@@ -97,7 +103,7 @@ export function useFollowup(item: ResponseWorkItem, followup: Followup, reload: 
       sending.current = false;
       setBusy(false);
     }
-  }, [refused, followup, notice, item, edited, reload]);
+  }, [blank, refused, followup, notice, item, edited, reload]);
 
   /** "Check again" or "Try again": one read, never a send. */
   const check = useCallback(async () => {
@@ -110,5 +116,5 @@ export function useFollowup(item: ResponseWorkItem, followup: Followup, reload: 
     if (notice?.kind === 'unconfirmed') setNotice({ kind: 'uncertain' });
   }, [notice, reload]);
 
-  return { editing, edit, text, setText, edited, notice, busy, replied, refused, send, check };
+  return { editing, edit, useDraft, blank, text, setText, edited, notice, busy, replied, refused, send, check };
 }

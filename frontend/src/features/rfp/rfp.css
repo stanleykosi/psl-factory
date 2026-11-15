@@ -19,11 +19,11 @@
 .rfp-tab .psl-badge { box-sizing: border-box; vertical-align: 1px; }
 
 /* the boards' form sections: a panel with a dark rule, labels in the strong weight */
-.rfp-form, .resp-form--team { background: none; border: none; padding: 0; }
+.resp-form.rfp-form, .resp-form.resp-form--team { background: none; border: none; padding: 0; }
 .rfp-form .psl-panel__head, .resp-teampanel .psl-panel__head { margin: 0; }
 .rfp-form .resp-label, .resp-form--team .resp-label { font-weight: 600; }
 .rfp-main { flex: 999 1 600px; }
-.resp-main--team { max-width: 720px; }
+.resp-main.resp-main--team { max-width: 720px; }
 .rfp-sub { margin: 0; font-size: 14px; color: var(--ink-muted); }
 /* the boards' segmented choices fill the row; their boxes are 44px inside a 2px border */
 .resp-segbar { display: flex; }
@@ -40,7 +40,7 @@
 .resp-teams .psl-seg__opt.is-given { color: var(--ink-subtle); font-weight: 400; }
 .resp-teams .psl-seg__opt[aria-checked="true"] { color: var(--on-strong); font-weight: 600; }
 /* the team input board draws its note in a white panel beside the form */
-.resp-aside--team { flex: 1 1 300px; max-width: 380px; padding: 14px; background: var(--surface); border: 2px solid var(--ink); }
+.resp-aside.resp-aside--team { flex: 1 1 300px; max-width: 380px; padding: 14px; background: var(--surface); border: 2px solid var(--ink); }
 .resp-stack { display: flex; flex-direction: column; gap: 14px; }
 .resp-teamsub { margin: 0; font-size: 13px; color: var(--ink-muted); }
 /* the boards draw a choice's label 12px above it, as a row of the panel */
@@ -87,12 +87,14 @@
   /* the phone boards: framed rows with a plain heading (none over the recorded rows), the follow-up unframed with
      Send and Edit pinned to the bottom */
   .rfp-recorded { gap: 12px; }
-  .rfp-recorded .rfp-panel > .psl-panel__head { padding: 12px 14px 0; border: none; font-family: var(--font-sans); font-size: 15px; font-weight: 600; text-transform: none; letter-spacing: normal; }
+  .rfp-recorded .rfp-panel > .psl-panel__head, .rfp-recorded .rfp-followup > .psl-panel__head { padding: 12px 14px 0; border: none; font-family: var(--font-sans); font-size: 15px; font-weight: 600; text-transform: none; letter-spacing: normal; }
   .rfp-recorded .rfp-panel--rows > .psl-panel__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
   .rfp-recorded .rfp-panel > .psl-panel__body { gap: 10px; }
   .rfp-recorded .rfp-followup { border: none; background: none; }
   .rfp-recorded .rfp-followup > .psl-panel__head, .rfp-recorded .rfp-followup > .psl-panel__body { padding-left: 0; padding-right: 0; }
   .rfp-page:has(.rfp-followup__actions) { padding-bottom: 150px; }
+  .rfp-page:has(.rfp-pin) { padding-bottom: 110px; }
+  .rfp-pin { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 14px 16px; background: var(--surface); border-top: 2px solid var(--ink); }
   .rfp-followup__actions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; flex-direction: column; padding: 14px 16px; background: var(--surface); border-top: 2px solid var(--ink); }
   .rfp-followup__actions .psl-btn { flex: none; width: 100%; }
   .rfp-actions { max-width: none; }

@@ -4,7 +4,7 @@
 // recipient exactly as returned and the draft; Send and Edit show only when the API allows them and the draft is
 // still a draft. Edit saves nothing: the edited text goes with the send. The states the boards do not draw
 // (sending, sent, effect_uncertain, a changed draft) use the F-09 callouts (Conflicts 14).
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { ApiError } from '@/api/errors';
 import { WarningIcon } from '@/shell/icons';
@@ -24,7 +24,7 @@ function Warning({ children, action }: { children: ReactNode; action?: ReactNode
   );
 }
 
-function Checks({ followup }: { followup: Followup }) {
+function Checks({ followup, showNote }: { followup: Followup; showNote: boolean }) {
   const agent = followup.agent ? AGENT_LABELS[followup.agent] : undefined;
   const checks = followup.checks ?? [];
   const done = checks.length > 0 && checks.every((c) => c.status === 'done');
@@ -69,7 +69,7 @@ function Checks({ followup }: { followup: Followup }) {
           ))}
         </ol>
       )}
-      <p className="rfp-agent__note">{followup.note ?? 'It goes only if you send it.'}</p>
+      {showNote && <p className="rfp-agent__note">{followup.note ?? 'It goes only if you send it.'}</p>}
     </section>
   );
 }
@@ -82,6 +82,11 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
   const open = status === 'drafted' && !unconfirmed;
   const canSend = open && followup.can_send === true && !flow.refused;
   const canEdit = open && followup.can_edit === true && !flow.refused;
+  const statusLine = useRef<HTMLParagraphElement>(null);
+  // After Send the button is gone; keyboard focus moves to the status line so the person keeps their place.
+  useEffect(() => {
+    if (flow.replied && (status === 'sending' || status === 'sent')) statusLine.current?.focus();
+  }, [flow.replied, status]);
 
   return (
     <section className="psl-panel rfp-followup" aria-labelledby="rfp-followup-head">
@@ -89,7 +94,7 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
         {agent ? `Follow-up email · drafted by ${agent.name}` : 'Follow-up email'}
       </h2>
       <div className="psl-panel__body">
-        <Checks followup={followup} />
+        <Checks followup={followup} showNote={status === 'drafted'} />
         <p className="rfp-followup__to">
           To <span className="rfp-followup__addr">{followup.to}</span> · draft v{followup.version}
         </p>
@@ -133,14 +138,10 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
             doesn&rsquo;t send anything.
           </Warning>
         )}
-        {status === 'sending' && (
-          <p className="rfp-followup__status" role="status">
-            Sending…
-          </p>
-        )}
-        {status === 'sent' && (
-          <p className="rfp-followup__status" role="status">
-            {followup.sent_at ? `Sent ${formatDay(followup.sent_at)} ${formatClock(followup.sent_at)}` : 'Sent'}
+        {/* one element for both, so focus stays on it when Sending… becomes Sent */}
+        {(status === 'sending' || status === 'sent') && (
+          <p ref={statusLine} tabIndex={-1} className="rfp-followup__status" role="status">
+            {status === 'sending' ? 'Sending…' : followup.sent_at ? `Sent ${formatDay(followup.sent_at)} ${formatClock(followup.sent_at)}` : 'Sent'}
           </p>
         )}
         {status === 'effect_uncertain' && (
@@ -154,16 +155,24 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
             We couldn&rsquo;t confirm the follow-up was sent. It won&rsquo;t be sent again until it has been checked.
           </Warning>
         )}
+        {flow.editing && canEdit && flow.blank && (
+          <p className="psl-hint" role="status">
+            The box is empty. Write the follow-up, or use the draft.
+          </p>
+        )}
+        {open && !(followup.can_send === true || followup.can_edit === true) && !flow.refused && (
+          <p className="psl-hint">You can’t send this follow-up. Only people PSL allows to send follow-ups can.</p>
+        )}
         {(canSend || canEdit) && (
           <div className="rfp-followup__actions">
             {canSend && (
-              <button type="button" className="psl-btn psl-btn--lg" disabled={flow.busy} onClick={() => void flow.send()}>
+              <button type="button" className="psl-btn psl-btn--lg" disabled={flow.busy || flow.blank} onClick={() => void flow.send()}>
                 {flow.busy ? 'Sending…' : 'Send follow-up'}
               </button>
             )}
-            {canEdit && !flow.editing && (
-              <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg" disabled={flow.busy} onClick={flow.edit}>
-                Edit
+            {canEdit && (
+              <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg" disabled={flow.busy} onClick={flow.editing ? flow.useDraft : flow.edit}>
+                {flow.editing ? 'Use the draft' : 'Edit'}
               </button>
             )}
           </div>

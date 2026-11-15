@@ -162,7 +162,7 @@ describe('RFP frame (from rfp only)', () => {
   });
 
   it('tones the status tag by kind only', async () => {
-    const kinds = { deadline: 'psl-tag--waiting', pending: 'psl-tag--waiting', submitted: 'psl-tag--neutral', won: 'psl-tag--done', lost: 'psl-tag--person', unknown: 'psl-tag--neutral' } as const;
+    const kinds = { deadline: 'psl-tag--waiting', pending: 'psl-tag--waiting', submitted: 'psl-tag--neutral', won: 'psl-tag--done', lost: 'psl-tag--neutral', unknown: 'psl-tag--waiting' } as const;
     for (const [kind, tone] of Object.entries(kinds)) {
       const body = item('W-2103');
       body.rfp!.status = { kind: kind as keyof typeof kinds, label: `STATUS ${kind}`, days_left: 1 };
@@ -348,6 +348,7 @@ describe('team input (FE-M2B-RFP)', () => {
   it('W-2102 (not yours), a missing block or no input action shows the not-open state and writes nothing', async () => {
     await openTeam('W-2102', 'T-2102');
     expect(text()).toContain('This response isn’t open here');
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     cleanup();
     const noAction = item('W-2101');
     noAction.tasks[0].response!.actions = [{ value: 'approved', label: 'Approved' }];
@@ -423,12 +424,20 @@ describe('outcome form: options and gating', () => {
     expect(screen.queryByLabelText('When you learned it')).toBeNull();
     choose('Won');
     expect(button('Record won').disabled).toBe(true);
+    expect(text()).toContain('Choose when you learned it and who you are recording as, and add the proof, to record this.');
     type('When you learned it', WHEN);
+    expect(text()).toContain('Choose who you are recording as, and add the proof, to record this.');
     await addFile();
+    // one proof file only: E-RFP-OUTCOME takes one evidence_id, so no second picker is offered
+    expect(document.querySelectorAll('input[type="file"]')).toHaveLength(0);
     expect(button('Record won').disabled).toBe(true);
     expect(screen.getByRole('alert').textContent).toBe('Choose who you are recording as to record this.');
     fireEvent.change(screen.getByLabelText('You are recording as'), { target: { value: 'pm' } });
     expect(button('Record won').disabled).toBe(false);
+    fireEvent.click(button('Record won'));
+    await waitFor(() => expect(posts('/rfp-outcome')).toHaveLength(1));
+    expect(posts('/evidence')).toHaveLength(1);
+    expect(posts('/rfp-outcome')[0].body).toMatchObject({ evidence_id: 'EV-C-2103-1' });
   });
 
   it('shows each result’s fields and nothing else', async () => {
@@ -752,6 +761,35 @@ describe('recorded states', () => {
     expect(screen.getByRole('region', { name: 'Follow-up email · drafted by Tola' })).toBeTruthy();
   });
 
+  it('desktop won has no Next panel: the sentence and an outlined button; pending keeps the panel and its primary button', async () => {
+    await openOutcome('W-2105');
+    expect(screen.queryByRole('heading', { name: 'Next' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Open engagement EN-0042' }).className).toContain('psl-btn--secondary');
+    cleanup();
+    await openOutcome('W-2107');
+    expect(screen.getByRole('heading', { level: 2, name: 'Next' })).toBeTruthy();
+    expect(button('Record the outcome').className).not.toContain('psl-btn--secondary');
+  });
+
+  it('phone recorded states have no Next panel: won and pending pin the action, unknown keeps a secondary button, lost a quiet link and a muted archive line', async () => {
+    phone();
+    for (const id of ['W-2105', 'W-2107', 'W-2108', 'W-2106']) {
+      cleanup();
+      await openOutcome(id);
+      expect(screen.queryByRole('heading', { name: 'Next' })).toBeNull();
+      expect(document.querySelector('.rfp-recorded__aside .psl-panel')).toBeNull();
+      const pin = document.querySelector('.rfp-pin');
+      if (id === 'W-2105' || id === 'W-2107') expect(pin?.querySelector('a, button')).toBeTruthy();
+      else expect(pin).toBeNull();
+    }
+    expect(screen.getByRole('link', { name: 'Back to projects' }).className).toContain('psl-link');
+    expect(document.querySelector('.psl-callout--info')).toBeNull();
+    expect(text()).toContain('Archived as ARC-0117.');
+    cleanup();
+    await openOutcome('W-2108');
+    expect(button('Record the outcome').className).toContain('psl-btn--secondary');
+  });
+
   it('a recorded block with only its result shows the heading alone; an unknown result string reads "Outcome recorded"', async () => {
     const body = item('W-2110');
     body.rfp_outcome!.recorded = { result: 'won' };
@@ -794,6 +832,7 @@ describe('follow-up display', () => {
     cleanup();
     answers.item = (_, c) => json(200, item(c.path.split('/')[4]));
     await openOutcome('W-2113');
+    expect(text()).toContain('You can’t send this follow-up.');
     expect(screen.queryByRole('button', { name: 'Send follow-up' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Edit' })).toBeNull();
   });
@@ -845,24 +884,36 @@ describe('the follow-up is a person’s action (INV-AGENT, INV-RESEND)', () => {
     expect(sent.body!.idempotency_key).toMatch(/^[0-9a-f-]{36}$/);
   });
 
-  it('Edit saves nothing; the edited text goes with the send only when it differs and is not blank', async () => {
-    let sent = 0;
-    answers.followup = () => (sent++ === 0 ? json(422, { code: 'invalid', message: 'Check these fields: body.' }) : json(200, { work_id: 'W-2108', status: 'sent', revision: 8 }));
+  it('Edit saves nothing; an empty box keeps Send off and Use the draft goes back; edited text goes with the send', async () => {
     await openOutcome('W-2108');
     fireEvent.click(button('Edit'));
     const area = screen.getByLabelText('Follow-up text') as HTMLTextAreaElement;
     expect(area.value).toContain('Dear Procurement team');
     expect(writes()).toHaveLength(0);
     fireEvent.change(area, { target: { value: '   ' } });
+    expect(button('Send follow-up').disabled).toBe(true);
+    expect(text()).toContain('The box is empty. Write the follow-up, or use the draft.');
     fireEvent.click(button('Send follow-up'));
-    await screen.findByText('Check these fields: body.');
-    expect(posts('/followup')[0].body).not.toHaveProperty('body');
-    expect((screen.getByLabelText('Follow-up text') as HTMLTextAreaElement).value).toBe('   ');
+    expect(posts('/followup')).toHaveLength(0);
+    fireEvent.click(button('Use the draft'));
+    expect(screen.queryByLabelText('Follow-up text')).toBeNull();
+    expect(button('Edit')).toBeTruthy();
+    expect(button('Send follow-up').disabled).toBe(false);
+    fireEvent.click(button('Edit'));
     fireEvent.change(screen.getByLabelText('Follow-up text'), { target: { value: 'Dear team, any news on the RFP?' } });
     fireEvent.click(button('Send follow-up'));
-    await waitFor(() => expect(posts('/followup')).toHaveLength(2));
-    expect(posts('/followup')[1].body).toMatchObject({ body: 'Dear team, any news on the RFP?' });
-    expect(posts('/followup')[1].body!.idempotency_key).not.toBe(posts('/followup')[0].body!.idempotency_key);
+    await waitFor(() => expect(posts('/followup')).toHaveLength(1));
+    expect(posts('/followup')[0].body).toMatchObject({ body: 'Dear team, any news on the RFP?' });
+  });
+
+  it('after Send the stale line is gone and focus moves to the status line', async () => {
+    answers.item = (n, c) => json(200, n === 0 ? item(c.path.split('/')[4]) : item('W-2108.sent'));
+    await openOutcome('W-2108');
+    expect(text()).toContain('It goes only if you send it');
+    fireEvent.click(button('Send follow-up'));
+    const status = await screen.findByText(/^Sent /);
+    expect(text()).not.toContain('It goes only if you send it');
+    expect(document.activeElement).toBe(status);
   });
 
   it('W-2111: effect_uncertain shows the callout and no Send, after one reload and no second POST', async () => {

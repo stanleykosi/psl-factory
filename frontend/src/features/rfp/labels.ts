@@ -21,11 +21,10 @@ export function recordedHeading(result: string): string {
 /** The phone bar's note on recorded states. */
 export const resultNote = (result: string) => (result in RESULT_LABELS ? result.toUpperCase() : undefined);
 
-/** The frame's status tag tone, by kind only (nothing derived from days_left or at). */
+/** The frame's status tag tone, by kind only (nothing derived from days_left or at). Lost is grey and unknown amber, as the boards draw them. */
 export function statusTone(kind: Rfp['status']['kind']): string {
-  if (kind === 'deadline' || kind === 'pending') return 'psl-tag--waiting';
+  if (kind === 'deadline' || kind === 'pending' || kind === 'unknown') return 'psl-tag--waiting';
   if (kind === 'won') return 'psl-tag--done';
-  if (kind === 'lost') return 'psl-tag--person';
   return 'psl-tag--neutral';
 }
 

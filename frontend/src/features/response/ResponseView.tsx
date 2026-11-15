@@ -22,8 +22,8 @@ import { findTask, teamInputOpen, useResponse, type Notice } from './useResponse
 import { useIsPhone } from './usePhone';
 
 import '@/features/work-item/work-item.css';
-import '@/features/rfp/rfp.css';
 import './response.css';
+import '@/features/rfp/rfp.css';
 
 const work = (id: string) => `/work/${encodeURIComponent(id)}`;
 
@@ -249,6 +249,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
   if (!task || !recordable(task, response)) {
     return (
       <div className="resp-page">
+        <h1 className="shell-title resp-title">{task?.title ?? 'Record a response'}</h1>
         <PageNotice notice={notice} onRecheck={recheck} />
         <NotOpen id={id} />
       </div>

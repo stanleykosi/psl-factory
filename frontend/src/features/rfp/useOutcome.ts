@@ -77,7 +77,7 @@ export function outcomeMissing(e: OutcomeEntries, proofCount: number): string | 
   if (!e.result) parts.push('the result');
   if (!e.learned) parts.push(e.result === 'unknown' ? 'the last contact' : 'when you learned it');
   if (!e.recordAs) parts.push('who you are recording as');
-  if (parts.length) return `Choose ${listWords(parts)} to record this.`;
+  if (parts.length) return `Choose ${listWords(parts)}${proofCount === 0 ? ', and add the proof,' : ''} to record this.`;
   if (proofCount === 0) return 'Add the proof to record this.';
   return null;
 }
