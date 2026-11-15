@@ -433,6 +433,20 @@
       "category": "frame item",
       "reason": "Conflicts 11 (and 5 for the phone back links): top bar, signed-in name and role, Setup nav and the phone back link belong to the frame, not to this feature.",
       "approved_by": "design engineer, 15 Nov (D-71)"
+    },
+    {
+      "role": "text",
+      "name": "WORKING",
+      "category": "frame item",
+      "reason": "Since the line layout (D-73) the work item page no longer draws the agent card, which used to say WORKING. The board draws it as the tag of its agent panel; the workspace has no section-level tag field, and the checklist's own rows already say Done and In progress.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Overview",
+      "category": "frame item",
+      "reason": "Conflicts 11: the board's main navigation shows an Overview link for the PMO Lead persona; the nav belongs to the frame and the page's persona is not the board's.",
+      "approved_by": "builder proposal, pending design engineer"
     }
   ]
 }

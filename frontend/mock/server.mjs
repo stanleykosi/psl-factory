@@ -29,6 +29,7 @@ import { overview } from './overview.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
+import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { workList } from './work-list.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
@@ -36,7 +37,7 @@ import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog,
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', ...CLIENT_OPERATIONS, ...START_OPERATIONS];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', ...CLIENT_OPERATIONS, ...START_OPERATIONS];
 export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -233,6 +234,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         startWork.reset();
         resetResponses();
         resetSetup();
+        resetTemplates();
         alerts.reset();
         resetWorkspace();
         resetClients();
@@ -268,6 +270,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-EXCEPTIONS') { const r = exceptionsList({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-MONTH-END') { const r = monthEnd({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-SETUP-RULES' || route.operationId === 'E-SETUP-RULE-SAVE') { const r = (route.operationId === 'E-SETUP-RULES' ? setupRules : saveSetupRule)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-TEMPLATES' || route.operationId === 'E-TEMPLATE-VERSION') { const r = (route.operationId === 'E-TEMPLATES' ? templatesList : templateVersion)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EVIDENCE-UPLOAD') { const r = uploadEvidence({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
