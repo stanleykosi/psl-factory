@@ -89,11 +89,14 @@ describe('header from data', () => {
     await open(body);
     const ws = within(workspace());
     const data = body.workspace!;
-    expect(ws.getByText(data.subtitle!)).toBeTruthy();
-    expect(ws.getByText(data.status!.label).className).toContain('psl-tag--person');
+    // D-73: the frame's header, above the workspace, draws the subtitle, the status word and the crumbs
+    expect(screen.getByText(data.subtitle!)).toBeTruthy();
+    expect(screen.getByText(data.status!.label).className).toContain('psl-tag--person');
+    expect(workspace().contains(screen.getByText(data.subtitle!))).toBe(false);
     expect(ws.getByText(data.byline!)).toBeTruthy();
     expect(ws.getByText(data.version!.label)).toBeTruthy();
-    const trail = ws.getByRole('navigation', { name: 'Where this sits' });
+    const trail = screen.getByRole('navigation', { name: 'Where this sits' });
+    expect(workspace().contains(trail)).toBe(false);
     expect(within(trail).getAllByRole('listitem').map(text)).toEqual(data.context!.crumbs!.map((c) => c.label));
     expect(within(trail).queryAllByRole('link')).toHaveLength(0);
     expect(within(trail).getAllByRole('listitem').at(-1)?.getAttribute('aria-current')).toBe('location');
@@ -254,7 +257,7 @@ describe('the nine section kinds, in returned order', () => {
       'Archive verifiedDone',
       'Handover acknowledged · 2 gapsOwner: Ngozi Bello (Client) · Held by Tamarind LoansHeld',
       'Retrospective savedHeld by YouNot yet · Due 14 May 2027',
-      'Finance confirmationUnknown · Due Unknown',
+      'Finance confirmationUnknown',
     ]);
     // D-63: no check marks, the status stays in words
     for (const li of rows('What closure needs')) expect(li.querySelector('.ws-mark')).toBeNull();
@@ -317,7 +320,7 @@ describe('INV-UNKNOWN', () => {
     const receipt = within(kola).getAllByRole('cell').map(text);
     expect(receipt).toEqual(['Kola Foods', 'Unknown', 'Unknown', 'Bisi Ade']);
     expect(text(rows('January')[1])).toMatch(/Unknown$/);
-    expect(text(rows('Payment dates')[0])).toBe('Kola Foods payment dateUnknown · Due Unknown');
+    expect(text(rows('Payment dates')[0])).toBe('Kola Foods payment dateUnknown');
     for (const value of [cells[2], cells[4], receipt[1], receipt[2]]) expect(value).not.toMatch(/^(0|₦0(\.00)?|-|—|)$/);
     expect(text(workspace())).not.toMatch(/₦0\.00|₦0\b/);
   });

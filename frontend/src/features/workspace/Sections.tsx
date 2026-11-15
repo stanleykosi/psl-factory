@@ -273,7 +273,9 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
     <ul className={`ws-rows ws-rows--${section.kind}`}>
       {section.items.map((item) => {
         switch (section.kind) {
-          case 'checklist':
+          case 'checklist': {
+            // an unknown status with an unknown date reads Unknown once, as the board draws it
+            const due = item.due && !(item.status === 'unknown' && dateText(item.due) === null) ? item.due : undefined;
             return row(
               item,
               <>
@@ -289,16 +291,17 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
               (item.status || item.due) && (
                 <>
                   {item.status && <StatusWord value={item.status} kind="status" />}
-                  {item.status && item.due && ' · '}
-                  {item.due && (
+                  {item.status && due && ' · '}
+                  {due && (
                     <span className="ws-due">
                       <span className="work-sr">Due </span>
-                      <DateText value={item.due} />
+                      <DateText value={due} />
                     </span>
                   )}
                 </>
               ),
             );
+          }
           case 'findings':
             return row(
               item,

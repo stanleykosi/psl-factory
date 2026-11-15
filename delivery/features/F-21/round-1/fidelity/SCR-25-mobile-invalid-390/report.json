@@ -1,0 +1,770 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T11:01:56.219Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-25-mobile-invalid.dc.html",
+  "boardName": "SCR-25-mobile-invalid.dc.html",
+  "pageUrl": "http://localhost:4743/frozen/invalid-390.html",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-21/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 71.5 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 22.2,
+    "coverageWithExceptions": 100,
+    "visual": 71.5
+  },
+  "visual": {
+    "score": 71.5,
+    "allCellsScore": 79.1,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 3023,
+    "cell": 12,
+    "contentCells": 1721,
+    "mismatchedCells": 490
+  },
+  "coverage": {
+    "total": 9,
+    "found": 2,
+    "coverage": 22.2,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WCR-0216",
+        "pageName": "WCR-0216",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 255,
+          "y": 130,
+          "w": 58,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Needs fixing",
+        "pageName": "Weekly client report · 5–11 Nov",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Needs fixing\" on the board, \"Weekly client report · 5–11 Nov\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 64,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11 (and 5 for the phone back links): top bar, signed-in name and role, Setup nav and the phone back link belong to the frame, not to this feature.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Risks",
+        "key": "text: Risks",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TBD",
+        "key": "text: TBD",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 7: the same words are on the page (the server's 422 message in the form's alert, per-part messages under their inputs, the week-end sentence in the section note, the saved parts in the form's text areas); the page draws them under a different role or inside a form control, and the two good parts stay in the form.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "\"TBD\" isn't accepted. Cite a record.",
+        "key": "text: \"TBD\" isn't accepted. Cite a record.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 183,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next steps",
+        "key": "text: Next steps",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 212,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 1 and 2 (Option A): the board draws the four parts as open text with chips and \"+ cite a record\" links; the page shows the saved parts read-only, and opens the four labelled text areas and cite pickers on press. The same words are in the form's controls (text areas and the picker), not as page text.",
+          "approved_by": "design engineer, 15 Nov (D-69)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finish the login fix.",
+        "key": "text: Finish the login fix.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 237,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "No record cited yet.",
+        "key": "text: No record cited yet.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 291,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 5 and 6: the phone boards use shorter wording and a collapsed list (\"✓ cited\", \"to write\", \"Tap to write and cite\"); the frame draws desktop wording and the same four-part form at both widths.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"WCR-0216\"",
+        "kind": "Text",
+        "name": "WCR-0216",
+        "boardBox": {
+          "x": 316,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 255,
+          "y": 130,
+          "w": 58,
+          "h": 15
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Heading \"Needs fixing\"",
+          "across the page: right on the board (88% across), right on the page (73% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 240,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Start work",
+        "container": "page",
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION NEEDED",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 113,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WCR-0216 · revision 4",
+        "container": "main",
+        "pageBox": {
+          "x": 255,
+          "y": 129,
+          "w": 119,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 229,
+          "y": 153,
+          "w": 145,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 231,
+          "y": 155,
+          "w": 78,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 309,
+          "y": 155,
+          "w": 65,
+          "h": 24
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Facts",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 189,
+          "w": 358,
+          "h": 102
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "container": "main",
+        "pageBox": {
+          "x": 26,
+          "y": 200,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "In progress",
+        "container": "main",
+        "pageBox": {
+          "x": 26,
+          "y": 214,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "container": "main",
+        "pageBox": {
+          "x": 144,
+          "y": 250,
+          "w": 100,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown",
+        "container": "main",
+        "pageBox": {
+          "x": 144,
+          "y": 264,
+          "w": 100,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Paid is a separate Finance fact and is not part of this line.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 299,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Stations in order",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 331,
+          "w": 354,
+          "h": 132
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 74,
+          "y": 489,
+          "w": 156,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cannot approve, send or pay.",
+        "container": "main",
+        "pageBox": {
+          "x": 74,
+          "y": 510,
+          "w": 156,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "container": "main",
+        "pageBox": {
+          "x": 289,
+          "y": 497,
+          "w": 69,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 607,
+          "w": 358,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 16,
+          "y": 607,
+          "w": 61,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LAGOON HEALTH",
+        "container": "navigation",
+        "pageBox": {
+          "x": 77,
+          "y": 607,
+          "w": 120,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WEEKLY CLIENT REPORT · WCR-0216",
+        "container": "navigation",
+        "pageBox": {
+          "x": 16,
+          "y": 625,
+          "w": 258,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NEEDS FIXING",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 651,
+          "w": 100,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · week ending 11 Nov",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 682,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 750,
+          "w": 334,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Since last week: 1 milestone completed, 3 actions now overdue, 1 new change request. I've listed the records; the words to the client are yours.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 773,
+          "w": 334,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next: Tola assembles the report on the client template; the PMO Lead reviews it before it goes to Lagoon Health.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 738,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Send to Tola to assemble",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 175,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Save draft",
+        "container": "complementary",
+        "pageBox": {
+          "x": 199,
+          "y": 786,
+          "w": 175,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Form",
+        "role": "form",
+        "name": "Send to Tola to assemble",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 1676,
+          "w": 358,
+          "h": 1213
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "SEND TO TOLA TO ASSEMBLE",
+        "container": "form",
+        "pageBox": {
+          "x": 18,
+          "y": 1678,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next: Tola assembles the report on the client template; the PMO Lead reviews it before it goes to Lagoon Health.",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 1715,
+          "w": 326,
+          "h": 63
+        }
+      },
+      {
+        "kind": "alert",
+        "role": "alert",
+        "name": "Two parts can't be sent yet. Every part needs words and at least one record from 5–11 Nov.",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 1794,
+          "w": 326,
+          "h": 83
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Cites for status (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 2051,
+          "w": 326,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Risks (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 2138,
+          "w": 326,
+          "h": 88
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Write the risk in words and cite at least one of this week's records. \"TBD\" isn't accepted.",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 2232,
+          "w": 326,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Cites for risks (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 2311,
+          "w": 326,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Cites for timeline (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 2529,
+          "w": 326,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "combobox",
+        "name": "Cites for next steps (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 2747,
+          "w": 326,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cite at least one record: no record cited yet.",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 2797,
+          "w": 326,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Send to Tola to assemble",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 2831,
+          "w": 199,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Cancel",
+        "container": "form",
+        "pageBox": {
+          "x": 241,
+          "y": 2831,
+          "w": 117,
+          "h": 50
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

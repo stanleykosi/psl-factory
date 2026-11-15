@@ -3,26 +3,69 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-21",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "The weekly client report line: the PM writes four cited parts, Tola assembles, the PMO Lead reviews (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-LINE-WEEKLY"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop boards at 1440.** The four `SCR-25-desktop*` boards each pass: `report.json` `pass: true`, `scores.coverageWithExceptions` = 100 (every element present or covered by an approved exception), `scores.visual` >= 90. \u2014 verify: the command per board, exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass.",
+    "**Phone boards at 390.** The four `SCR-25-mobile*` boards pass at `--width 390` on the same pages with the same thresholds. \u2014 verify: same, rows in `scores.txt`.",
+    "**Driven states are the real UI.** `round-<N>/fidelity/drive-states.mjs` resets the mock (`POST /__mock/reset`), uses the real controls, the real mock and the real 422 (no hand-edited DOM except freezing: copy input values into attributes, remove scripts, add `<base>`). \u2014 verify: the script and `frozen/*.html`.",
+    "**Exceptions are limited and explained.** Each entry of `fidelity-exceptions.json` has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until confirmed) and maps to a Conflicts item; none covers a value the data can supply (a count, a label, a status, a cite). \u2014 verify: file content; build.md maps each to a Conflicts number.",
+    "**One fidelity run per round** (D-64); the UI review passes only on these 8 scores. \u2014 verify: build.md.",
+    "**Default state from data.** `/work/W-2201` shows the title, subtitle, agent-note lines, the saved parts with cites, the five records groups with their returned counts text, and the two step buttons, all from the fixture; a field the fixture omits draws nothing. \u2014 verify: `tests/weekly.test.tsx`; page at 1440 and 390.",
+    "**The form carries the PM's words.** Pressing \"Send to Tola to assemble\" opens a form with four labelled text areas and four cite pickers showing the saved values; the cite picker offers only the records E-LINE-OPTIONS returns for `weekly_report`; no control writes, suggests or generates text. \u2014 verify: component test with a recording `fetch`; a search of `features/workspace/**` and fixtures shows no generate/suggest control for these parts.",
+    "**Write request.** Submitting sends exactly one POST `/api/v1/work/W-2201/steps` with CSRF, `expected_revision` = `workspace.revision`, `step: \"send_to_tola\"`, `inputs` with the eight names (cites as lists of option values) and a UUID `idempotency_key`; no `note`, no `evidence_ids`; the body validates against the generated request schema. \"Save draft\" sends the same shape with `step: \"save_draft\"`. \u2014 verify: `tests/weekly.test.tsx` and `weekly-mock.test.ts`.",
+    "**Nothing is judged client-side.** Typing \"TBD\" or leaving a cite empty sends the request as is; the page shows only the server's answer. \u2014 verify: component test (request recorded; no local message).",
+    "**422 per part.** On W-2202 pressing Send shows the server message under `risks` and under `next_steps_cites` (`aria-invalid`, `aria-describedby`), the top `message` above the form, focus on the first failing input, inputs kept, and a new key for the next press. The \"Needs fixing\" tag and the week-end sentence come from the loaded fixture. \u2014 verify: component test and e2e; the strings are in the fixture, not in `src/`.",
+    "**Send moves to assembling.** A `done` on W-2201 `send_to_tola` reloads once and the page shows the assembling state (W-2203): the agent name, step text, three progress lines with their statuses as words, \"TEST TEMPLATE\", and the disabled \"Send for PMO Lead review\" with its reason; activating it sends nothing. \u2014 verify: component test and e2e with the recorded requests.",
+    "**Assembling is quiet and accessible.** The `now` item pulses only without `prefers-reduced-motion: reduce`; its state reads as a word; no step on W-2203 is actionable. \u2014 verify: e2e with `reducedMotion: 'reduce'` (no running animation on the `now` mark) and a component test for `aria-disabled`.",
+    "**Review state.** `/work/W-2204` shows \"Report v1 \u00b7 written by Tunde Bello, assembled by Tola\", the four parts with their record references (as links only for app paths), the consequence sentence \"Approving sends this exact version to Lagoon Health.\" and the buttons \"Approve and send\" and \"Return with a note\". \u2014 verify: component test; page at both widths.",
+    "**Approve.** \"Approve and send\" on W-2204 sends one POST with its own key; a double click sends one; `done` reloads once and shows \"Done: Approve and send.\"; no automatic retry (fake timers advanced 60 s, count stays 1). \u2014 verify: component tests; e2e reads `GET /__mock/workspace-log` (send count 1 for that key; mock evidence only).",
+    "**Return needs a note.** \"Return with a note\" opens the form with the `note` field; sending it blank is refused client-side because the descriptor says `required`; a note over 2000 characters is refused before any request; the valid note goes as `note`/`inputs.note` per F-17 and `done` reloads. \u2014 verify: component test.",
+    "**Uncertain send keeps the lock (INV-RESEND).** On W-2205, `approve_send` answering `effect_uncertain` shows the warning callout with the returned `message`; every step control is off; after the reload `ReconcilePanel` shows and its answer is one POST to `/actions` and none to `/steps`; a forced click on \"Approve and send\" sends no POST, before and after a page reload; no new key exists. When the reloaded item has no `reconcile`, the page says \"We are checking what happened. Nothing was sent again.\" and offers a reload only. \u2014 verify: component tests and e2e at 1440, 390 and 320 (the Decide bar leaves \"Record and continue\" tappable, as F-17).",
+    "**Stale, server and network errors.** W-2206: 409 keeps inputs, reloads once, shows \"This changed while you were working. Showing version 5.\", re-bases `expected_revision`; 500 on `save_draft` (a non-`sends` step) offers a manual \"Try again\" with the same key; a 500 on `approve_send` (a `sends` step) offers no resubmit. \u2014 verify: component tests.",
+    "**Access.** 401 shows the signed-out callout with `next` = this page; 403 on a step reloads and shows \"You can't take that step.\"; 404 and a wrong-tenant read show `NoAccessState` with no title, client or id. A persona with any role sees the same controls for the same fixture; nothing is derived from `/me`. \u2014 verify: component tests with a recording `fetch`; `grep -n \"/me\\b\" frontend/src/features/workspace` unchanged by this feature.",
+    "**Decision step.** The `task_id` step on W-2208 is a link to `/work/W-2208/decide?task=<task_id>`; the workspace sends nothing to `/steps`, `/claim` or `/decision`; following it opens the F-16 page. \u2014 verify: component test and e2e.",
+    "**Unknown, restricted, empty.** W-2207: a restricted records section shows its label only and none of the hidden strings appear in `document.body.textContent`; an unknown value reads \"Unknown\", never 0, blank or \"-\"; an empty records group reads \"Nothing here yet.\". \u2014 verify: component test.",
+    "**Returned and received are not built.** No file, route or component for either appears; a fixture in either state, if opened, renders only through the generic renderer. \u2014 verify: `git diff --stat`; no `returned`/`received` string in new `src/` code.",
+    "**Accessibility and layout.** For W-2201 to W-2208 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), no sideways scroll, visible focus rings, 44px targets, focus to the form heading on open and back to the step control on close or Escape, errors announced (`role=\"alert\"` or an associated live region), live regions for done, waiting and uncertain, reduced motion respected. \u2014 verify: `e2e/weekly.spec.ts`.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/workspace/*.css` returns nothing from this feature's diff. \u2014 verify: the command on the diff.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**` or `design/**`; every wanted field the schema lacks is a contract proposal in build.md (Conflicts 1, 2, 6, 9, 10 and the cite options). Fixtures validate against the generated schema with no stripping. \u2014 verify: `tests/mock-contract.test.ts`; `git diff --stat`; build.md.",
+    "**Mock matches the contract.** `weekly-mock.test.ts` runs W-2201 to W-2208 and the scripted step answers through the E-WORK-STEP handler: a bad body is 422, a wrong `expected_revision` is 409, an unknown step key is 404, a repeated key returns the stored reply with no second send. \u2014 verify: the test.",
+    "**No real send, no overclaim.** Every request in the e2e run goes to the mock (4742). The PR description and build.md state the D-LINE-WORKSPACE limits, call the template a test template, and do not claim idempotency, a real backend or a working weekly line. \u2014 verify: build.md; recorded requests.",
+    "**Existing behaviour not weakened.** `tests/workspace*.test.*`, `work-item*.test.tsx`, `decide*.test.tsx`, `response*.test.tsx`, `start-work*.test.*`, `shell.test.tsx`, `e2e/workspace.spec.ts`, `e2e/work-item*.spec.ts`, `e2e/decide*.spec.ts`, `e2e/response.spec.ts`, `e2e/rfp.spec.ts` and `e2e/start-work.spec.ts` pass; no assertion removed or loosened; `git diff` shows no edit to any existing fixture. F-17's region check (`regions.json`) still passes at its recorded scores if the frame was touched. \u2014 verify: `delivery/checks.sh`; `git diff` on those files.",
+    "**New tests run.** `weekly.test.tsx`, `weekly-mock.test.ts` and `e2e/weekly.spec.ts` exist and run in `delivery/checks.sh`, covering at least criteria 6 to 21. \u2014 verify: file presence and the run output in `round-<N>/build.md`.",
+    "**build.md evidence.** build.md lists: the commands run and their results, the 8 scores, every exception with its Conflicts number, every frame change with its reason, every contract proposal, and the D-LINE-WORKSPACE limits. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The work is on a shared renderer (`features/work-item/**`, touched by F-09, F-14, F-16, F-17) and a proposed v7 contract (D-LINE-WORKSPACE) that the backend may change. The review state includes \"Approve and send\", which sends to a client (INV-RESEND, effect_uncertain). It stays at medium because all of it is on the mock, the send is unimplemented in the backend, and nothing is released. SURFACES: ui (8 boards), api (E-WORK-STEP, E-WORK-ITEM workspace), contract-change (proposed block), external-messaging (client report send and uncertain-effect handling). PRODUCT-ACCEPTANCE is not-required because the work conforms to the client-approved boards. The business rules (four cited parts, PMO Lead review, exact version sent) are already on the boards and in screens.md."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-21/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +88,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +102,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": false,
+      "assessment_reason": "delivery/features/F-21/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +153,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-LINE-WEEKLY",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
+    "task_branch": "fe-line-weekly-the-weekly-client-report-line-the-pm-wri",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-21",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -136,12 +200,41 @@
     }
   },
   "created_at": "2026-11-15T10:36:42Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-15T10:49:10Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T10:50:24Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-21/readiness.md",
+      "delivery/features/F-21/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

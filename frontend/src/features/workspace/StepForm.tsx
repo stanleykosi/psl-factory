@@ -316,11 +316,6 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
             />
           );
         })}
-        {Object.keys(errors).length > 0 && (
-          <p className="work-sr" role="alert">
-            {Object.values(errors).join(' ')}
-          </p>
-        )}
         {step.confirm && <p className="ws-confirm">{step.confirm}</p>}
         <div className="ws-form__actions">
           <button type="submit" className={submitClass(step)} aria-disabled={pending || off || undefined}>

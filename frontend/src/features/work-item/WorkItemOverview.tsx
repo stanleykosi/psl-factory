@@ -764,8 +764,30 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
     );
   }
 
+  // D-73: the line boards draw the workspace straight under the title. The facts, stations, agent card and next step
+  // stay in the page for screen readers only (the contract data is never dropped), the way the state boards do.
+  if (item.workspace) {
+    before = (
+      <div className="work-sr">
+        <FactsStrip facts={item.facts} paidNote={false} />
+        <StationTrack stations={item.stations} state={item.state} />
+      </div>
+    );
+    main = (
+      <div className="work-sr">
+        <AgentCard agent={item.agent} />
+        <NextStep item={item} quiet />
+      </div>
+    );
+    after = hasExceptionsLink(item) ? (
+      <Link className="psl-btn psl-btn--secondary psl-btn--lg work-exceptions" href="/exceptions">
+        See all exceptions
+      </Link>
+    ) : null;
+  }
+
   return (
-    <div className={layout ? `work-overview work-board work-state--${item.state}${layout === LAYOUTS.issue ? ' work-board--issue' : ''} work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : 'work-overview'}>
+    <div className={layout ? `work-overview work-board work-state--${item.state}${layout === LAYOUTS.issue ? ' work-board--issue' : ''} work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : `work-overview${item.workspace ? ' work-overview--line' : ''}`}>
       {before}
       <div className="work-columns">
         <div className="work-column">{main}</div>

@@ -1,0 +1,5 @@
+board | width | coverage | coverage with exceptions | visual | pass
+SCR-35-desktop | 1440 | 61.1 | 100 | 85.9 | False
+SCR-35-desktop-detail | 1440 | 52.9 | 100 | 80.3 | False
+SCR-35-mobile | 390 | 30.4 | 100 | 92.5 | True
+SCR-35-mobile-detail | 390 | 12.5 | 100 | 86 | False

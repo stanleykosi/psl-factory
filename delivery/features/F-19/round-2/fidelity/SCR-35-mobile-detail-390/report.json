@@ -1,0 +1,351 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T11:37:48.876Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-35-mobile-detail.dc.html",
+  "boardName": "SCR-35-mobile-detail.dc.html",
+  "pageUrl": "http://localhost:4631/clients/CL-3501",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-19/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 86 is below 90."
+  ],
+  "scores": {
+    "coverage": 12.5,
+    "coverageWithExceptions": 100,
+    "visual": 86
+  },
+  "visual": {
+    "score": 86,
+    "allCellsScore": 86.7,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2225,
+    "mismatchedCells": 311
+  },
+  "coverage": {
+    "total": 8,
+    "found": 1,
+    "coverage": 12.5,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health Ltd",
+        "pageName": "Lagoon Health Ltd",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 22px on the board, 26px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 265,
+          "h": 28
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Clients",
+        "key": "link: ← Clients",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 63,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 14: the frame's phone bar link is named \"Back to Clients\" (usePhoneBack).",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "No billing contact, so invoices can't start.",
+        "key": "text: No billing contact, so invoices can't start.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 116,
+          "w": 256,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 7: the banner renders blocked[] as returned; the phone board's shorter sentence is not carried by data.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Billing contact name",
+        "key": "text: Billing contact name",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 159,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 7: the board draws a text label; the page's label belongs to the Billing contact name input, listed as a text field (same as Billing email). Round 1 matched it to the panel heading, which the phone page no longer draws (UI-1-4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Billing email",
+        "key": "text: Billing email",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 244,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 7: the board draws a text label; the page's label belongs to the Billing email input, listed as a text field.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Billing address",
+        "key": "text: Billing address",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 329,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 8: no legal name, address or tax ID in the contract; not built.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "14 Admiralty Way, Lekki",
+        "key": "text: 14 Admiralty Way, Lekki",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 354,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8: no legal name, address or tax ID in the contract; not built.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Save client details",
+        "key": "link: Save client details",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Conflicts 8: the button saves the billing contact only and reads Save billing contact.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Clients",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 59,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 240,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Start work",
+        "container": "page",
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "No billing contact, so invoices for this client can't start. Add one here.",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 122,
+          "w": 306,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Billing contact name",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 213,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Needed before any invoice can start",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 263,
+          "w": 358,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Billing email",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 322,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Save billing contact",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "PROJECTS",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 380,
+          "w": 354,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Patient app",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 437,
+          "w": 326,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Delivery",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 462,
+          "w": 326,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "MONEY",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 513,
+          "w": 354,
+          "h": 43
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
