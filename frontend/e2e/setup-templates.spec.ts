@@ -59,11 +59,11 @@ test.describe('desktop', () => {
     await expect(page.locator('.setup-tabs .psl-badge')).toHaveCount(0);
     await expect(page.getByText(/^Every document currently uses a test template\./)).toBeVisible();
     await expect(page.getByText('8 TEMPLATES · 8 TEST')).toBeVisible();
-    await expect(page.getByText('AS OF 12 NOV, 10:40')).toBeVisible();
+    await expect(page.locator('.setup-desktop').getByText('AS OF 12 NOV, 10:40')).toBeVisible();
     await expect(page.locator('.setup-desktop table tbody tr strong')).toHaveText(['Invoice', 'Statement of work', 'Weekly client report', 'Minutes', 'RFP response', 'Go-live document', 'Support handover', 'Closure report']);
-    await expect(page.locator('.setup-desktop').getByText('TEST TEMPLATE')).toHaveCount(8);
+    await expect(page.locator('.setup-desktop').getByText('TEST TEMPLATE', { exact: true })).toHaveCount(8);
     await expect(page.locator('.setup-desktop').getByRole('button', { name: UPLOAD })).toHaveCount(8);
-    await expect(desktopRow(page, 'Statement of work')).toContainText('Changed by Ada Okafor, 12 Nov · 3 versions');
+    await expect(desktopRow(page, 'Closure report')).toContainText('3 versions · Changed by Ada Okafor, 12 Nov');
     await expectNoAxeViolations(page);
   });
 
@@ -231,8 +231,8 @@ test.describe('phone', () => {
     expect(await noSideScroll(page)).toBe(true);
     await expectNoAxeViolations(page);
     await panel.getByRole('button', { name: 'Upload version' }).click();
-    await expect(page.locator('[aria-live="polite"]')).toHaveText('Version 3 uploaded for Minutes');
-    await expect(card).toContainText('Version 3');
+    await expect(page.locator('[aria-live="polite"]')).toHaveText('Version 2 uploaded for Minutes');
+    await expect(card).toContainText('Version 2');
     await expect(card.locator('strong')).toBeFocused();
   });
 

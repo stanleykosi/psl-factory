@@ -7,7 +7,6 @@
       "kind": "PDF",
       "version": "1",
       "test_template": true,
-      "versions": 1,
       "revision": 1,
       "can_upload": true
     },
@@ -16,13 +15,10 @@
       "name": "Statement of work",
       "line": "Costing and commercial submission",
       "kind": "DOCX",
-      "version": "3",
       "test_template": true,
-      "versions": 3,
-      "revision": 3,
       "can_upload": true,
-      "updated_by": "Ada Okafor",
-      "updated_at": "2026-11-12T09:15:00+01:00"
+      "version": "1",
+      "revision": 1
     },
     {
       "template_id": "T-03",
@@ -31,7 +27,6 @@
       "kind": "PDF",
       "version": "1",
       "test_template": true,
-      "versions": 1,
       "revision": 1,
       "can_upload": true
     },
@@ -40,13 +35,10 @@
       "name": "Minutes",
       "line": "Formal minutes and action handoff",
       "kind": "DOCX",
-      "version": "2",
+      "version": "1",
       "test_template": true,
-      "versions": 2,
-      "revision": 2,
-      "can_upload": true,
-      "updated_by": "Ada Okafor",
-      "updated_at": "2026-11-12T09:15:00+01:00"
+      "revision": 1,
+      "can_upload": true
     },
     {
       "template_id": "T-05",
@@ -55,7 +47,6 @@
       "kind": "DOCX",
       "version": "1",
       "test_template": true,
-      "versions": 1,
       "revision": 1,
       "can_upload": true
     },
@@ -66,7 +57,6 @@
       "kind": "DOCX",
       "version": "1",
       "test_template": true,
-      "versions": 1,
       "revision": 1,
       "can_upload": true
     },
@@ -75,24 +65,23 @@
       "name": "Support handover",
       "line": "Support and Operations handover",
       "kind": "DOCX",
-      "version": "2",
+      "version": "1",
       "test_template": true,
-      "versions": 2,
-      "revision": 2,
-      "can_upload": true,
-      "updated_by": "Ada Okafor",
-      "updated_at": "2026-11-12T09:15:00+01:00"
+      "revision": 1,
+      "can_upload": true
     },
     {
       "template_id": "T-08",
       "name": "Closure report",
       "line": "Project closure",
       "kind": "PDF",
-      "version": "1",
+      "version": "3",
       "test_template": true,
-      "versions": 1,
-      "revision": 1,
-      "can_upload": true
+      "revision": 3,
+      "can_upload": true,
+      "versions": 3,
+      "updated_by": "Ada Okafor",
+      "updated_at": "2026-11-12T09:15:00+01:00"
     }
   ],
   "as_of": "2026-11-12T10:40:00+01:00"

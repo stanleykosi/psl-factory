@@ -32,18 +32,20 @@ const canUpload = (row: TemplateRow): row is UploadRow =>
   typeof row.template_id === 'string' && row.template_id !== '' && row.can_upload === true && typeof row.revision === 'number';
 const uploadLabel = (row: TemplateRow) => (isTest(row) ? "Upload PSL's version" : 'Upload a new version');
 
-function metaLines(row: TemplateRow): string[] {
+/** Muted text after the name: "Version 3 · DOCX", then "3 versions · Changed by Ada Okafor, 12 Nov"; each part only when the API returned it. */
+function metaParts(row: TemplateRow): { first: string; second: string } {
   const day = lagosDay(row.updated_at);
   const by = row.updated_by ? `by ${row.updated_by}` : null;
   const when = [by, day].filter(Boolean);
-  const first = [`Version ${row.version}`, row.kind].filter(Boolean).join(' · ');
-  const second = [
-    when.length > 0 ? `Changed ${when.join(', ')}` : null,
-    typeof row.versions === 'number' ? `${row.versions} ${row.versions === 1 ? 'version' : 'versions'}` : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
-  return second ? [first, second] : [first];
+  return {
+    first: [`Version ${row.version}`, row.kind].filter(Boolean).join(' · '),
+    second: [
+      typeof row.versions === 'number' ? `${row.versions} ${row.versions === 1 ? 'version' : 'versions'}` : null,
+      when.length > 0 ? `Changed ${when.join(', ')}` : null,
+    ]
+      .filter(Boolean)
+      .join(' · '),
+  };
 }
 
 export function TemplatesPageView() {
@@ -204,11 +206,15 @@ function TemplatesView() {
     </strong>
   );
   const badge = (row: TemplateRow) => isTest(row) && <span className="psl-tag psl-tag--waiting setup-tag">TEST TEMPLATE</span>;
-  const meta = (row: TemplateRow) => metaLines(row).map((text) => (
-    <span key={text} className="setup-meta">
-      {text}
-    </span>
-  ));
+  const meta = (row: TemplateRow) => {
+    const { first, second } = metaParts(row);
+    return (
+      <>
+        <span className="setup-meta">{first}</span>
+        {second && <span className="setup-meta setup-meta--more">{second}</span>}
+      </>
+    );
+  };
 
   return (
     <>
@@ -268,14 +274,19 @@ function TemplatesView() {
                         <td>
                           <div className="setup-docname">
                             {name(row)}
-                            {meta(row)}
+                            <span className="setup-meta">{metaParts(row).first}</span>
                           </div>
                         </td>
                         <td>
                           <span className="setup-line">{row.line}</span>
                         </td>
                         <td>{badge(row)}</td>
-                        <td>{uploadButton(row, 'setup-linkbtn')}</td>
+                        <td>
+                          <div className="setup-actioncell">
+                            {uploadButton(row, 'setup-linkbtn')}
+                            {metaParts(row).second && <span className="setup-meta">{metaParts(row).second}</span>}
+                          </div>
+                        </td>
                       </tr>,
                       panel && (
                         <tr key={`${row.template_id}-panel`} className="setup-upload-row">
@@ -307,7 +318,6 @@ function TemplatesView() {
                 <span>All {rows.length} are test templates until PSL supplies its own.</span>
               </div>
             )}
-            {asOf && <p className="setup-more">AS OF {asOf.toUpperCase()}</p>}
             {notices}
             <ul className="setup-cards">
               {rows.map((row, i) => (
@@ -321,6 +331,7 @@ function TemplatesView() {
                 </li>
               ))}
             </ul>
+            {asOf && <p className="setup-more">AS OF {asOf.toUpperCase()}</p>}
             <ShowMore state={state} onMore={() => void loadMore()} noun="templates" />
           </>
         )}

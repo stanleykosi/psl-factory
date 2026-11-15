@@ -128,11 +128,10 @@ describe('the list (AC 4)', () => {
     expect(within(first).getByText('Invoice preparation and delivery')).toBeTruthy();
     expect(within(first).getByText('TEST TEMPLATE')).toBeTruthy();
     expect(within(first).getByText('Version 1 · PDF')).toBeTruthy();
-    expect(within(first).getByText('1 version')).toBeTruthy();
     expect(within(first).queryByText(/Changed/)).toBeNull();
-    const sow = rowOf('Statement of work');
-    expect(within(sow).getByText('Version 3 · DOCX')).toBeTruthy();
-    expect(within(sow).getByText('Changed by Ada Okafor, 12 Nov · 3 versions')).toBeTruthy();
+    const sow = rowOf('Closure report');
+    expect(within(sow).getByText('Version 3 · PDF')).toBeTruthy();
+    expect(within(sow).getByText('3 versions · Changed by Ada Okafor, 12 Nov')).toBeTruthy();
     expect(desktop().getAllByText('TEST TEMPLATE')).toHaveLength(8);
     expect(desktop().getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['DOCUMENT', 'USED BY LINE', 'STATUS', 'Action']);
   });
@@ -165,7 +164,7 @@ describe('the list (AC 4)', () => {
     answers.list = () => json(200, withRows(fixture('desktop'), (rows) => rows.map((r, i) => (i === 0 ? { ...r, version: '2026.2', updated_by: 'Ada Okafor', updated_at: '2025-06-30T10:00:00Z' } : r))));
     await open();
     expect(within(rowOf('Invoice')).getByText(/^Version 2026\.2/)).toBeTruthy();
-    expect(within(rowOf('Invoice')).getByText('Changed by Ada Okafor, 30 Jun 2025 · 1 version')).toBeTruthy();
+    expect(within(rowOf('Invoice')).getByText('Changed by Ada Okafor, 30 Jun 2025')).toBeTruthy();
     expect(lagosDay('2026-11-12T09:15:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('12 Nov');
     expect(lagosDay('not a date')).toBeNull();
     expect(lagosStamp('2026-11-12T10:40:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('12 Nov, 10:40');
@@ -173,10 +172,10 @@ describe('the list (AC 4)', () => {
 
   it('the phone shows a card per row: name, tag, line, meta and the upload button', async () => {
     await open();
-    const card = cardOf('Statement of work');
+    const card = cardOf('Closure report');
     expect(within(card).getByText('TEST TEMPLATE')).toBeTruthy();
-    expect(within(card).getByText('Costing and commercial submission')).toBeTruthy();
-    expect(within(card).getByText('Changed by Ada Okafor, 12 Nov · 3 versions')).toBeTruthy();
+    expect(within(card).getByText('Project closure')).toBeTruthy();
+    expect(within(card).getByText('3 versions · Changed by Ada Okafor, 12 Nov')).toBeTruthy();
     expect(within(card).getByRole('button', { name: UPLOAD })).toBeTruthy();
     expect(phone().getAllByRole('listitem')).toHaveLength(8);
   });
@@ -332,14 +331,14 @@ describe('the upload request (AC 7)', () => {
     answers.list = live.list;
     answers.upload = live.upload;
     await open();
-    const p = await openPanel('Statement of work');
+    const p = await openPanel('Closure report');
     const bytes = 'é€😀 template';
     choose(p, pdf('sow-v4.docx', bytes), '  Real SOW from legal.  ');
     expect(p.getByText('sow-v4.docx · 1 KB')).toBeTruthy();
     send();
     await waitFor(() => expect(uploads()).toHaveLength(1));
     const call = uploads()[0];
-    expect(call.path).toBe('/api/v1/setup/templates/T-02/versions');
+    expect(call.path).toBe('/api/v1/setup/templates/T-08/versions');
     expect(call.csrf).toBe('mock-csrf-admin');
     expect(Object.keys(call.body!).sort()).toEqual(['content_base64', 'expected_revision', 'filename', 'note']);
     expect(call.body).toMatchObject({ expected_revision: 3, filename: 'sow-v4.docx', note: 'Real SOW from legal.' });
@@ -386,7 +385,7 @@ describe('success (AC 8)', () => {
     expect(desktop().queryByRole('region', { name: /^Upload a version of/ })).toBeNull();
     const first = rowOf('Invoice');
     expect(within(first).getByText('Version 2 · PDF')).toBeTruthy();
-    expect(within(first).getByText('Changed by Ada Okafor, 14 Nov · 2 versions')).toBeTruthy();
+    expect(within(first).getByText('1 version · Changed by Ada Okafor, 14 Nov')).toBeTruthy();
     expect(within(first).getByText('TEST TEMPLATE')).toBeTruthy();
     expect(document.activeElement?.textContent).toBe('Invoice');
     expect(document.activeElement?.getAttribute('data-name-for')).toBe('T-01');
