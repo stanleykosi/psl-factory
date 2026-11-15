@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-19",
   "outcome": "A signed-in person sees the client register and each client's billing contact, projects and money, and can set the billing contact, on the contract mock",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CLIENTS"
   ],
@@ -103,6 +103,18 @@
       "at": "2026-11-15T12:04:03Z",
       "seconds": 261.7,
       "evidence_ref": "delivery/features/F-19/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T12:31:02Z",
+      "seconds": 171.5,
+      "evidence_ref": "delivery/features/F-19/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -110,17 +122,19 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delegated technical review",
-      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
       "evidence_refs": [
-        "delivery/features/F-19/round-2/review-technical.md"
+        "delivery/features/F-19/round-3/review-technical.md"
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "evidence_refs": [
+        "delivery/features/F-19/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -142,18 +156,18 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delegated UX review",
-      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
       "evidence_refs": [
-        "delivery/features/F-19/round-2/review-ux.md"
+        "delivery/features/F-19/round-3/review-ux.md"
       ]
     },
     "ui": {
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delegated UI review",
-      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
       "evidence_refs": [
-        "delivery/features/F-19/round-2/review-ui.md"
+        "delivery/features/F-19/round-3/review-ui.md"
       ]
     }
   },
@@ -739,6 +753,131 @@
           "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**Some save results are never announced (WCAG 2.1 AA 4.1.3 Status Messages; A-ACCESSIBILITY).**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:21:56Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:31:02Z",
+          "refs": [
+            "95903eeb"
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:32:22Z",
+          "refs": [
+            "delivery/features/F-19/round-3/review-ux.md"
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": "round-3 UX review: failure notices are role=alert and take focus; QA re-checks in the browser next"
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "95903eeb"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "delivery/features/F-19/round-3/review-ux.md"
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Focus is lost after each save press.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:21:56Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:31:02Z",
+          "refs": [
+            "95903eeb"
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-15T12:39:09Z",
+          "refs": [
+            "After a keyboard press of Save, focus lands on the notice (a `tabIndex=-1` div with a visible outline), never on `body`. Shift+Tab returns to Save or the email field, and Tab reaches \"Try again\" where it is shown. Typing in a field afterwards does not pull focus back to the notice."
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "95903eeb"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "After a keyboard press of Save, focus lands on the notice (a `tabIndex=-1` div with a visible outline), never on `body`. Shift+Tab returns to Save or the email field, and Tab reaches \"Try again\" where it is shown. Typing in a field afterwards does not pull focus back to the notice."
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**With persona `none`, the clients no-access page never appears in a real browser.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:21:56Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -796,6 +935,63 @@
           ]
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delegated technical review",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "integrated QA",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-19/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delegated UX review",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delegated UI review",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -820,7 +1016,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
     "task_branch": "fe-clients-a-signed-in-person-sees-the-client-regis",
-    "head_sha": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+    "head_sha": "95903eeb853bc2c9a244eb2e4d19174871d875de",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-19",
     "pr_url": null,
     "pr_number": null,
@@ -896,7 +1092,7 @@
     }
   },
   "created_at": "2026-11-15T10:36:42Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -954,6 +1150,46 @@
       "round": 2,
       "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
       "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T12:22:05Z",
+      "round": 2,
+      "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T12:22:05Z",
+      "round": 3,
+      "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T12:31:03Z",
+      "round": 3,
+      "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-15T12:32:22Z",
+      "round": 3,
+      "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-15T12:39:09Z",
+      "round": 3,
+      "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "reason": null
     }
   ],
   "routing": {
@@ -969,10 +1205,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 2,
+    "round": 3,
+    "attempts": 1,
     "verdict": "PASS",
-    "commit": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+    "commit": "95903eeb853bc2c9a244eb2e4d19174871d875de"
   },
   "blocked": null
 }

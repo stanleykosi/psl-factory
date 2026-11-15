@@ -1359,3 +1359,65 @@
 {"at":"2026-11-15T12:07:12Z","feature":"F-20","round":1,"kind":"finding","action":"add","finding":"UI-1-4","by":"reviewer-ui","severity":"low","owner":"builder","blocking":false,"role":"ui"}
 {"at":"2026-11-15T12:07:16Z","feature":"F-20","round":1,"kind":"transition","head":"c218bf2480b8","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-15T12:07:16Z","feature":"F-20","round":2,"kind":"transition","head":"c218bf2480b8","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-15T12:14:44Z","feature":"F-19","round":2,"kind":"review","role":"integrated_qa","verdict":"CHANGES","reviewer":"qa","commit":"41b4925c4419","findings":{"QA-2-1":"medium","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-15T12:14:20Z"}
+{"at":"2026-11-15T12:17:36Z","feature":"F-20","round":2,"kind":"finding","action":"fix","finding":"UX-1-5","by":"builder"}
+{"at":"2026-11-15T12:17:36Z","feature":"F-20","round":2,"kind":"finding","action":"fix","finding":"UI-1-2","by":"builder"}
+{"at":"2026-11-15T12:17:36Z","feature":"F-20","round":2,"kind":"finding","action":"fix","finding":"UI-1-3","by":"builder"}
+{"at":"2026-11-15T12:17:36Z","feature":"F-20","round":2,"kind":"finding","action":"fix","finding":"UI-1-4","by":"builder"}
+{"at":"2026-11-15T12:17:36Z","feature":"F-20","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":172.3,"commit":"777d9a3f11f1"}
+{"at":"2026-11-15T12:17:36Z","feature":"F-20","round":2,"kind":"transition","head":"777d9a3f11f1","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-15T12:21:56Z","feature":"F-19","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"qa","severity":"medium","owner":"frontend","blocking":true,"role":"integrated_qa"}
+{"at":"2026-11-15T12:21:56Z","feature":"F-19","round":2,"kind":"finding","action":"add","finding":"QA-2-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-15T12:21:56Z","feature":"F-19","round":2,"kind":"finding","action":"add","finding":"QA-2-3","by":"qa","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-15T12:22:05Z","feature":"F-19","round":2,"kind":"transition","head":"41b4925c4419","from":"INTEGRATED_QA","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-15T12:22:05Z","feature":"F-19","round":3,"kind":"transition","head":"41b4925c4419","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-15T12:22:53Z","feature":"F-20","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"777d9a3f11f1","written_at":"2026-11-15T12:22:43Z"}
+{"at":"2026-11-15T12:22:53Z","feature":"F-20","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"777d9a3f11f1","written_at":"2026-11-15T12:22:48Z"}
+{"at":"2026-11-15T12:22:53Z","feature":"F-20","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"777d9a3f11f1","written_at":"2026-11-15T12:22:51Z"}
+{"at":"2026-11-15T12:23:00Z","feature":"F-20","round":2,"kind":"finding","action":"verify","finding":"UI-1-2","by":"reviewer-ui"}
+{"at":"2026-11-15T12:23:00Z","feature":"F-20","round":2,"kind":"finding","action":"verify","finding":"UI-1-3","by":"reviewer-ui"}
+{"at":"2026-11-15T12:23:00Z","feature":"F-20","round":2,"kind":"finding","action":"verify","finding":"UI-1-4","by":"reviewer-ui"}
+{"at":"2026-11-15T12:23:12Z","feature":"F-20","round":2,"kind":"finding","action":"accept-risk","finding":"UI-1-1","by":"design engineer (hunchoweb)"}
+{"at":"2026-11-15T12:23:13Z","feature":"F-20","round":2,"kind":"transition","head":"777d9a3f11f1","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-15T12:31:02Z","feature":"F-19","round":3,"kind":"finding","action":"fix","finding":"QA-2-1","by":"builder"}
+{"at":"2026-11-15T12:31:02Z","feature":"F-19","round":3,"kind":"finding","action":"fix","finding":"QA-2-2","by":"builder"}
+{"at":"2026-11-15T12:31:02Z","feature":"F-19","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":171.5,"commit":"95903eeb853b"}
+{"at":"2026-11-15T12:31:03Z","feature":"F-19","round":3,"kind":"transition","head":"95903eeb853b","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-15T12:31:38Z","feature":"F-20","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"777d9a3f11f1","findings":{"QA-2-1":"low","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-15T12:31:07Z"}
+{"at":"2026-11-15T12:31:38Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-15T12:31:38Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"QA-2-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-15T12:31:38Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"QA-2-3","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-15T12:31:42Z","feature":"F-20","round":2,"kind":"transition","head":"777d9a3f11f1","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-15T12:31:53Z","feature":"F-19","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"95903eeb853b","written_at":"2026-11-15T12:31:44Z"}
+{"at":"2026-11-15T12:31:53Z","feature":"F-19","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"95903eeb853b","written_at":"2026-11-15T12:31:45Z"}
+{"at":"2026-11-15T12:31:53Z","feature":"F-19","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"95903eeb853b","written_at":"2026-11-15T12:31:50Z"}
+{"at":"2026-11-15T12:32:22Z","feature":"F-19","round":3,"kind":"finding","action":"verify","finding":"QA-2-1","by":"reviewer-ux"}
+{"at":"2026-11-15T12:32:22Z","feature":"F-19","round":3,"kind":"transition","head":"95903eeb853b","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-15T12:32:53Z","feature":"F-20","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"777d9a3f11f1","findings":{"PMO-2-1":"low","PMO-2-2":"low","PMO-2-3":"low","PMO-2-4":"low"},"written_at":"2026-11-15T12:32:25Z"}
+{"at":"2026-11-15T12:35:56Z","feature":"F-19","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"95903eeb853b","written_at":"2026-11-15T12:35:37Z"}
+{"at":"2026-11-15T12:38:59Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T12:38:59Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T12:38:59Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T12:38:59Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"PMO-2-4","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T12:39:09Z","feature":"F-19","round":3,"kind":"finding","action":"verify","finding":"QA-2-2","by":"qa"}
+{"at":"2026-11-15T12:39:09Z","feature":"F-19","round":3,"kind":"transition","head":"95903eeb853b","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-15T12:53:55Z","feature":"F-19","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"4721f83b30d5","findings":{"PMO-3-1":"medium","PMO-3-2":"low","PMO-3-3":"low","PMO-3-4":"low","PMO-3-5":"low","PMO-3-6":"low"},"written_at":"2026-11-15T12:53:22Z"}
+{"at":"2026-11-15T12:53:55Z","feature":"F-20","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"1bf933da30fd","findings":{"PMO-2-1":"low","PMO-2-2":"low","PMO-2-3":"low","PMO-2-4":"low"},"written_at":"2026-11-15T12:53:27Z"}
+{"at":"2026-11-15T12:54:14Z","feature":"F-20","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"1bf933da30fd","written_at":"2026-11-15T12:54:13Z"}
+{"at":"2026-11-15T12:54:39Z","feature":"F-20","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/34","git.pr_number":34}}
+{"at":"2026-11-15T12:54:39Z","feature":"F-20","round":2,"kind":"transition","head":"1bf933da30fd","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-15T12:54:49Z","feature":"F-20","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-15T12:55:35Z","feature":"F-20","round":2,"kind":"decision","decision":"BLOCKED","head":"1bf933da30fd","reasons":["technical review covers '777d9a3f11f10544e6d43ffa7d52a86f7202df99', not head '1bf933da30fd5e895b5b35f48e89149984c4a305'","integrated_qa review covers '777d9a3f11f10544e6d43ffa7d52a86f7202df99', not head '1bf933da30fd5e895b5b35f48e89149984c4a305'","ux review covers '777d9a3f11f10544e6d43ffa7d52a86f7202df99', not head '1bf933da30fd5e895b5b35f48e89149984c4a305'","ui review covers '777d9a3f11f10544e6d43ffa7d52a86f7202df99', not head '1bf933da30fd5e895b5b35f48e89149984c4a305'"]}
+{"at":"2026-11-15T12:55:35Z","feature":"F-20","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-15T12:56:10Z","feature":"F-20","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"1bf933da30fd","written_at":"2026-11-15T12:56:09Z"}
+{"at":"2026-11-15T12:56:10Z","feature":"F-20","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"1bf933da30fd","written_at":"2026-11-15T12:56:08Z"}
+{"at":"2026-11-15T12:56:20Z","feature":"F-20","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"1bf933da30fd","written_at":"2026-11-15T12:56:17Z"}
+{"at":"2026-11-15T12:57:17Z","feature":"F-20","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"1bf933da30fd","findings":{"QA-2-1":"low","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-15T12:57:15Z"}
+{"at":"2026-11-15T12:57:25Z","feature":"F-20","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"1bf933da30fd","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'product-decision' always needs a human","apps/agents/migrations/0004_case_upload_jobs.py matches always-human path '*/migrations/*'","apps/finance/migrations/0077_forecast_evidence_reference.py matches always-human path '*/migrations/*'","367 changed files exceed the auto-merge limit of 15","finding UI-1-1 was accepted as a risk","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-15T12:57:38Z","feature":"F-20","round":2,"kind":"transition","head":"1bf933da30fd","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-15T12:57:51Z","feature":"F-20","round":2,"kind":"fields","fields":{"git.human_approval":"design engineer (hunchoweb), 15 Nov 2026: Accept and merge"}}
+{"at":"2026-11-15T12:58:05Z","feature":"F-20","round":2,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-15T12:58:05Z","feature":"F-20","round":2,"kind":"transition","head":"1bf933da30fd","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-15T12:58:24Z","feature":"F-20","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"45c4820c4adf00f1834555e65a9f21f3c4abcba3"}}
+{"at":"2026-11-15T12:58:24Z","feature":"F-20","round":2,"kind":"transition","head":"1bf933da30fd","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-15T12:58:25Z","feature":"F-20","round":2,"kind":"transition","head":"1bf933da30fd","from":"MERGED","to":"DONE"}

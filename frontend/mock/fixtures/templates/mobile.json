@@ -1,0 +1,88 @@
+{
+  "items": [
+    {
+      "template_id": "T-01",
+      "name": "Invoice",
+      "line": "Invoice preparation and delivery",
+      "kind": "PDF",
+      "version": "1",
+      "test_template": true,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-02",
+      "name": "Statement of work",
+      "line": "Costing and commercial submission",
+      "kind": "DOCX",
+      "test_template": true,
+      "can_upload": true,
+      "version": "1",
+      "revision": 1
+    },
+    {
+      "template_id": "T-03",
+      "name": "Weekly client report",
+      "line": "Reviewed weekly client report",
+      "kind": "PDF",
+      "version": "1",
+      "test_template": true,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-04",
+      "name": "Minutes",
+      "line": "Formal minutes and action handoff",
+      "kind": "DOCX",
+      "version": "1",
+      "test_template": true,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-05",
+      "name": "RFP response",
+      "line": "RFP response and project handoff",
+      "kind": "DOCX",
+      "version": "1",
+      "test_template": true,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-06",
+      "name": "Go-live document",
+      "line": "Go-live acceptance",
+      "kind": "DOCX",
+      "version": "1",
+      "test_template": true,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-07",
+      "name": "Support handover",
+      "line": "Support and Operations handover",
+      "kind": "DOCX",
+      "version": "1",
+      "test_template": true,
+      "revision": 1,
+      "can_upload": true
+    },
+    {
+      "template_id": "T-08",
+      "name": "Closure report",
+      "line": "Project closure",
+      "kind": "PDF",
+      "version": "3",
+      "test_template": true,
+      "revision": 3,
+      "can_upload": true,
+      "versions": 3,
+      "updated_by": "Ada Okafor",
+      "updated_at": "2026-11-12T09:15:00+01:00"
+    }
+  ],
+  "as_of": "2026-11-12T10:40:00+01:00"
+}

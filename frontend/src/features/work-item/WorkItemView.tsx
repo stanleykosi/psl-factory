@@ -11,6 +11,8 @@ import { WarningIcon } from '@/shell/icons';
 import { SampleLabel } from '@/shell/SampleLabel';
 import { useWorkspacePage } from '@/features/workspace/usePageReload';
 
+import { tagClass } from '@/features/workspace/labels';
+
 import { formatWat, startedLine, STATE_TAGS, type WorkItem } from './labels';
 import { presentationOf, viewFor } from './presentation';
 import { useIsPhone } from './usePhone';
@@ -110,6 +112,81 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
   );
 }
 
+/**
+ * A work item with a line workspace is laid out as the LINE boards draw it (D-73): the crumb line from the workspace
+ * context, the title with the workspace status at the far end of its line, the subtitle as the one meta line, then the
+ * workspace. The started line, the Overview / History tabs and the revision are not drawn; History stays one link in
+ * the crumb line (desktop) or the meta line (phone), and the reference sits at the end of the phone bar and the status tag shares the meta line.
+ */
+function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boolean; historyHref: string }) {
+  const ws = item.workspace;
+  const state = STATE_TAGS[item.state];
+  const crumbs = ws?.context?.crumbs ?? [];
+  const status = ws?.status;
+  const history = (
+    <nav aria-label="Work item" className="work-linehistory">
+      <Link href={historyHref}>History</Link>
+    </nav>
+  );
+  const tag = status ? (
+    <span className={`${tagClass(status.tone)} work-state`}>{status.label}</span>
+  ) : (
+    <span className={`psl-tag psl-tag--${state.tone} work-state`}>{state.text}</span>
+  );
+  return (
+    <header className="work-header work-header--end work-header--line">
+      {phone && <span className="work-barref psl-mono">{item.reference}</span>}
+      {!phone && (
+        <div className="work-crumbrow">
+          {crumbs.length > 0 ? (
+            <nav aria-label="Where this sits">
+              <ol className="psl-crumb ws-crumbs">
+                {crumbs.map((c, i) => (
+                  <li key={`${c.value}-${i}`} aria-current={i === crumbs.length - 1 ? 'location' : undefined}>
+                    {c.label}
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          ) : (
+            <nav aria-label="Breadcrumb">
+              <p className="psl-crumb">
+                <Link href="/my-work">My work</Link> / {item.line} / <span className="psl-mono">{item.reference}</span>
+              </p>
+            </nav>
+          )}
+          {history}
+        </div>
+      )}
+      <div className="work-titleline">
+        <h1 className="shell-title">{item.title}</h1>
+        {!phone && (
+          <span className="work-lineend">
+            {/* INV-SAMPLE: the record says it is sample data, whatever the build's API mode */}
+            <SampleLabel show={item.sample} />
+            {tag}
+          </span>
+        )}
+      </div>
+      {(phone || ws?.subtitle) && (
+        <div className="work-linemeta">
+          {ws?.subtitle && <p className="work-sub">{ws.subtitle}</p>}
+          {phone && (
+            <>
+              <SampleLabel show={item.sample} />
+              {tag}
+              {history}
+            </>
+          )}
+        </div>
+      )}
+      <div className="work-sr">
+        <span>{startedLine(item)}</span>
+      </div>
+    </header>
+  );
+}
+
 function WorkItemTabs({ base, tab, count }: { base: string; tab: WorkItemTab; count?: number }) {
   const tabs = [
     { key: 'overview', label: 'Overview', href: base },
@@ -163,10 +240,16 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   const loadedAt = fresh?.at ?? state.loadedAt;
   const refreshFailed = state.refreshFailed || workspace.page.refreshFailed;
   // D-45: the Overview / History strip is on every work item page, boards included, so History is reachable.
+  // The line boards draw neither the tabs nor the started line; the history page keeps the item header.
+  const line = tab === 'overview' && shown.workspace !== undefined;
   const tabs = <WorkItemTabs base={base} tab={tab} count={view?.history_counts?.all} />;
   return (
     <>
-      <WorkItemHeader item={shown} tab={tab} phone={phone} tabs={tabs} />
+      {line ? (
+        <LineHeader item={shown} phone={phone} historyHref={`${base}/history`} />
+      ) : (
+        <WorkItemHeader item={shown} tab={tab} phone={phone} tabs={tabs} />
+      )}
       {refreshFailed && (
         <div className="psl-callout psl-callout--warning">
           <WarningIcon />

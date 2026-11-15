@@ -96,7 +96,7 @@
     {
       "board": "SCR-34-mobile",
       "approved_by": "design engineer (hunchoweb), 15 Nov 2026 — D-78",
-      "reason": "The approved phone card additions (line, version meta, 44px Upload button; Conflict 2) and all eight cards (Conflict 7) make each card about 179px against the board's 71px; visual stays at about 83. Approved as an exception on this board."
+      "reason": "The approved phone card additions (line, version meta, 44px Upload button; Conflict 2) and all eight cards (Conflict 7) make each card about 179px against the board's 71px; visual 83.3 in round 1 and 78.8 in round 2, after the \"As of\" line moved back under the note as D-78 asked, which pushes every card down. Approved as an exception on this board."
     }
   ]
 }

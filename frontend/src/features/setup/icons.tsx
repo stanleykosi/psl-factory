@@ -24,3 +24,12 @@ export function TickIcon() {
     </svg>
   );
 }
+
+export function SearchIcon() {
+  return (
+    <svg className="psl-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+      <circle cx="7.5" cy="7.5" r="5.5" />
+      <path d="M11.5 11.5L16 16" />
+    </svg>
+  );
+}

@@ -89,11 +89,14 @@ describe('header from data', () => {
     await open(body);
     const ws = within(workspace());
     const data = body.workspace!;
-    expect(ws.getByText(data.subtitle!)).toBeTruthy();
-    expect(ws.getByText(data.status!.label).className).toContain('psl-tag--person');
+    // D-73: the frame's header, above the workspace, draws the subtitle, the status word and the crumbs
+    expect(screen.getByText(data.subtitle!)).toBeTruthy();
+    expect(screen.getByText(data.status!.label).className).toContain('psl-tag--person');
+    expect(workspace().contains(screen.getByText(data.subtitle!))).toBe(false);
     expect(ws.getByText(data.byline!)).toBeTruthy();
     expect(ws.getByText(data.version!.label)).toBeTruthy();
-    const trail = ws.getByRole('navigation', { name: 'Where this sits' });
+    const trail = screen.getByRole('navigation', { name: 'Where this sits' });
+    expect(workspace().contains(trail)).toBe(false);
     expect(within(trail).getAllByRole('listitem').map(text)).toEqual(data.context!.crumbs!.map((c) => c.label));
     expect(within(trail).queryAllByRole('link')).toHaveLength(0);
     expect(within(trail).getAllByRole('listitem').at(-1)?.getAttribute('aria-current')).toBe('location');
