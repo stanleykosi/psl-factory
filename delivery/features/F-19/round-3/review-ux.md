@@ -1,7 +1,15 @@
 VERDICT: PASS
-COMMIT: 95903eeb853bc2c9a244eb2e4d19174871d875de
+COMMIT: a4a906cadfbafced2c20f8535467cb32db06c3eb
 REVIEWER: reviewer-ux
 AUTHORITY: delegated UX review
+
+## Re-confirmed on the synced head
+- `git diff --stat 95903eeb a4a906ca -- frontend/src/features/clients frontend/src/app/clients frontend/src/shell` is empty: no Clients page, Clients feature file or shell file changed.
+- The shared top bar is therefore unchanged, and the line-layout frame applies only to work items with a line workspace. Nothing alters the Clients pages for a PM or a Finance user.
+- The merge's other changes (backend, tests, docs) are outside the UX lens. e2e clients passed after the merge, per the brief; I did not re-run a browser walk.
+- My earlier PASS at 95903eeb stands. No new findings.
+
+## Earlier review (at 95903eeb)
 
 ## Findings
 - none

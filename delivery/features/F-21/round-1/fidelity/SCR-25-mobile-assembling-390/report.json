@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T11:02:04.956Z",
+  "generatedAt": "2026-11-15T14:08:38.086Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-25-mobile-assembling.dc.html",
   "boardName": "SCR-25-mobile-assembling.dc.html",
   "pageUrl": "http://localhost:4741/work/W-2203",
@@ -19,29 +19,29 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 69.1 is below 90.",
+    "Visual match 76.3 is below 90.",
     "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 57.1,
+    "coverage": 42.9,
     "coverageWithExceptions": 100,
-    "visual": 69.1
+    "visual": 76.3
   },
   "visual": {
-    "score": 69.1,
-    "allCellsScore": 76.1,
+    "score": 76.3,
+    "allCellsScore": 79.2,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
-    "pageHeight": 1341,
+    "pageHeight": 844,
     "cell": 12,
-    "contentCells": 1814,
-    "mismatchedCells": 560
+    "contentCells": 2051,
+    "mismatchedCells": 486
   },
   "coverage": {
     "total": 7,
-    "found": 4,
-    "coverage": 57.1,
+    "found": 3,
+    "coverage": 42.9,
     "matched": [
       {
         "kind": "Text",
@@ -50,9 +50,7 @@
         "pageName": "WCR-0216",
         "pageRole": "text",
         "similarity": 100,
-        "looks": [
-          "text colour #FFFFFF on the board, #4A5357 on the page"
-        ],
+        "looks": [],
         "boardBox": {
           "x": 316,
           "y": 21,
@@ -60,10 +58,10 @@
           "h": 15
         },
         "pageBox": {
-          "x": 255,
-          "y": 130,
+          "x": 174,
+          "y": 0,
           "w": 58,
-          "h": 15
+          "h": 56
         }
       },
       {
@@ -110,30 +108,9 @@
         },
         "pageBox": {
           "x": 18,
-          "y": 894,
+          "y": 285,
           "w": 354,
           "h": 37
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "WORKING",
-        "pageName": "WORKING",
-        "pageRole": "text",
-        "similarity": 100,
-        "looks": [],
-        "boardBox": {
-          "x": 272,
-          "y": 131,
-          "w": 86,
-          "h": 21
-        },
-        "pageBox": {
-          "x": 284,
-          "y": 506,
-          "w": 74,
-          "h": 23
         }
       }
     ],
@@ -176,6 +153,23 @@
       {
         "kind": "Text",
         "role": "text",
+        "name": "WORKING",
+        "key": "text: WORKING",
+        "container": "page",
+        "boardBox": {
+          "x": 272,
+          "y": 131,
+          "w": 86,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Since the line layout (D-73) the work item page no longer draws the agent card, which used to say WORKING. The board draws it as the tag of its agent panel; the workspace has no section-level tag field, and the checklist's own rows already say Done and In progress.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
         "name": "Started 12 Nov 09:05",
         "key": "text: Started 12 Nov 09:05",
         "container": "page",
@@ -203,14 +197,13 @@
           "h": 15
         },
         "pageBox": {
-          "x": 255,
-          "y": 130,
+          "x": 174,
+          "y": 0,
           "w": 58,
-          "h": 15
+          "h": 56
         },
         "reasons": [
-          "order: on the board it comes first; on the page it comes after Heading \"Weekly report\"",
-          "across the page: right on the board (88% across), right on the page (73% across)"
+          "across the page: right on the board (88% across), middle on the page (52% across)"
         ]
       },
       {
@@ -225,12 +218,12 @@
         },
         "pageBox": {
           "x": 18,
-          "y": 894,
+          "y": 285,
           "w": 354,
           "h": 37
         },
         "reasons": [
-          "order: on the board it comes after Heading \"Weekly report\"; on the page it comes after Text \"WORKING\""
+          "inside the main area on the board, inside a side panel on the page"
         ]
       }
     ],
@@ -274,228 +267,12 @@
       {
         "kind": "Text",
         "role": "text",
-        "name": "PROCESSING",
+        "name": "Lagoon Health · week ending 11 Nov",
         "container": "main",
         "pageBox": {
           "x": 16,
-          "y": 127,
-          "w": 94,
-          "h": 23
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "WCR-0216 · revision 5",
-        "container": "main",
-        "pageBox": {
-          "x": 255,
-          "y": 129,
-          "w": 119,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
-        "name": "Work item",
-        "container": "main",
-        "pageBox": {
-          "x": 229,
-          "y": 153,
-          "w": 145,
-          "h": 28
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Overview",
-        "container": "navigation",
-        "pageBox": {
-          "x": 231,
-          "y": 155,
-          "w": 78,
-          "h": 24
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "History",
-        "container": "navigation",
-        "pageBox": {
-          "x": 309,
-          "y": 155,
-          "w": 65,
-          "h": 24
-        }
-      },
-      {
-        "kind": "list",
-        "role": "list",
-        "name": "Facts",
-        "container": "main",
-        "pageBox": {
-          "x": 16,
-          "y": 189,
-          "w": 358,
-          "h": 102
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "DRAFTED",
-        "container": "main",
-        "pageBox": {
-          "x": 26,
-          "y": 200,
-          "w": 100,
-          "h": 14
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "In progress",
-        "container": "main",
-        "pageBox": {
-          "x": 26,
-          "y": 214,
-          "w": 100,
-          "h": 17
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "RECEIPT",
-        "container": "main",
-        "pageBox": {
-          "x": 144,
-          "y": 250,
-          "w": 100,
-          "h": 14
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Unknown",
-        "container": "main",
-        "pageBox": {
-          "x": 144,
-          "y": 264,
-          "w": 100,
-          "h": 17
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Paid is a separate Finance fact and is not part of this line.",
-        "container": "main",
-        "pageBox": {
-          "x": 16,
-          "y": 299,
-          "w": 358,
-          "h": 18
-        }
-      },
-      {
-        "kind": "list",
-        "role": "list",
-        "name": "Stations in order",
-        "container": "main",
-        "pageBox": {
-          "x": 18,
-          "y": 331,
-          "w": 354,
-          "h": 132
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Tola",
-        "container": "main",
-        "pageBox": {
-          "x": 74,
-          "y": 489,
-          "w": 156,
-          "h": 21
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Cannot approve, send or pay.",
-        "container": "main",
-        "pageBox": {
-          "x": 74,
-          "y": 510,
-          "w": 156,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "step 1 of 1",
-        "container": "main",
-        "pageBox": {
-          "x": 74,
-          "y": 528,
-          "w": 156,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
-        "name": "Where this sits",
-        "container": "main",
-        "pageBox": {
-          "x": 16,
-          "y": 668,
-          "w": 358,
-          "h": 36
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "PROJECTS",
-        "container": "navigation",
-        "pageBox": {
-          "x": 16,
-          "y": 668,
-          "w": 61,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "LAGOON HEALTH",
-        "container": "navigation",
-        "pageBox": {
-          "x": 77,
-          "y": 668,
-          "w": 120,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "WEEKLY CLIENT REPORT · WCR-0216",
-        "container": "navigation",
-        "pageBox": {
-          "x": 16,
-          "y": 686,
-          "w": 258,
+          "y": 130,
+          "w": 196,
           "h": 18
         }
       },
@@ -505,22 +282,34 @@
         "name": "ASSEMBLING",
         "container": "main",
         "pageBox": {
-          "x": 16,
-          "y": 712,
-          "w": 92,
+          "x": 225,
+          "y": 127,
+          "w": 94,
           "h": 23
         }
       },
       {
-        "kind": "Text",
-        "role": "text",
-        "name": "Lagoon Health · week ending 11 Nov",
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
         "container": "main",
         "pageBox": {
-          "x": 16,
-          "y": 743,
-          "w": 358,
-          "h": 21
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
         }
       },
       {
@@ -530,7 +319,7 @@
         "container": "main",
         "pageBox": {
           "x": 28,
-          "y": 782,
+          "y": 173,
           "w": 334,
           "h": 21
         }
@@ -542,7 +331,7 @@
         "container": "main",
         "pageBox": {
           "x": 28,
-          "y": 805,
+          "y": 196,
           "w": 334,
           "h": 63
         }
@@ -557,30 +346,6 @@
           "y": 0,
           "w": 0,
           "h": 0
-        }
-      },
-      {
-        "kind": "Button",
-        "role": "button",
-        "name": "Send for PMO Lead review",
-        "container": "complementary",
-        "pageBox": {
-          "x": 16,
-          "y": 763,
-          "w": 358,
-          "h": 44
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Tola is still placing your parts on the template.",
-        "container": "complementary",
-        "pageBox": {
-          "x": 16,
-          "y": 811,
-          "w": 358,
-          "h": 20
         }
       }
     ],

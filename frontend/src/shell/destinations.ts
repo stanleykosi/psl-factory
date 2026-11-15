@@ -17,5 +17,7 @@ export function visibleDestinations(allowed: readonly Destination[]): Destinatio
 }
 
 export function destinationForPath(pathname: string): DestinationInfo | undefined {
+  // Clients sit under Projects (SCR-35 draws Projects current).
+  if (pathname === '/clients' || pathname.startsWith('/clients/')) return DESTINATIONS.find((d) => d.key === 'projects');
   return DESTINATIONS.find((d) => pathname === d.href || pathname.startsWith(`${d.href}/`));
 }
