@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-21",
   "outcome": "The weekly client report line: the PM writes four cited parts, Tola assembles, the PMO Lead reviews (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-LINE-WEEKLY"
   ],
@@ -127,11 +127,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -730,6 +732,52 @@
       "verified_by": "reviewer-ux",
       "verification_refs": [
         "The wording is exactly the sentence I asked for: \"Saved records are not shown here. Choose at least one record for this part before you send.\" It makes no claim about what the server keeps, so it no longer contradicts the Send 422. It appears once per step, not on every field. The hint test now asserts the new sentence once, on the Save draft form. The records-field `value` (prefill) question stays with the coordinator as the real fix, after which the hint can go."
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock answers `POST /api/v1/work/W-2205/actions` with 501 `not_mocked`, so the reconcile journey stops after the request is sent. The UI handles this safely (\"We couldn't confirm your answer. Reload the work item\u2026\"; nothing is resent). But the result after recording \"It didn't arrive\" (one resend of the same version) has not been tested on any stack. Expected: a mock answer for the W-2205 reconcile, or the backend's E-WORK-ACTION, before the line is claimed end to end. Seen with `/private/tmp/claude-501/qa21/probe.mjs` at 320.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T15:31:44Z",
+          "head": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock serves the default work item (W-1001, \"Lagoon Health \u00b7 Milestone 2 invoice\") for an unknown id such as `/work/W-9999` instead of a 404 (`frontend/mock/server.mjs:96`, this predates F-21). On the mock, the wrong-tenant case can only be run through the 404 scenario header. The real E-WORK-ITEM must return 404 for an item outside the caller's tenant, and the frontend renders that 404 correctly.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T15:31:44Z",
+          "head": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d"
+        }
       ]
     }
   ],
@@ -1404,6 +1452,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-15T15:20:56Z",
+      "round": 3,
+      "head": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-15T15:31:44Z",
       "round": 3,
       "head": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
       "reason": null

@@ -1,7 +1,13 @@
 VERDICT: PASS
-COMMIT: 31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d
+COMMIT: a3b587107fba754884bfd399d9a4dc25d32c7ab1
 REVIEWER: reviewer-ui
 AUTHORITY: delegated UI review
+
+## Re-confirmed on the synced head
+
+Diff stat 31f0d25e..a3b58710 over frontend/src/features/workspace, features/work-item, styles and shell shows one file: frontend/src/shell/destinations.ts, 2 insertions (the F-19 Clients destination entry from the merge of origin/dlv-00-delivery-setup). No workspace, work-item or style change, so the SCR-25 rendering is unchanged. Earlier PASS stands; no fidelity re-run or build, as instructed.
+
+## Earlier content (at 31f0d25e)
 
 ## Findings
 
