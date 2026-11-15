@@ -51,7 +51,7 @@ Where to see the screens: the approved boards are in `design/canvas/project/` (m
    (authentication, permission, key, revision, body); idempotency on E-RESPONSE and the
    revision-only writes; 422 `fields[]` on every write. Needed before any real send is switched on. Also: every cited record in a client-bound report must be visible to this person for this case and week, and E-LINE-OPTIONS limited to person, tenant and case (F-21 SEC-1-2); approving sends exactly the version that was reviewed.
 2. **Workspace step fields carry the current value** on editable fields, not only display fields
-   (prefilled drafts, accept-with-edit, cover letters, payment reminders, saved cites).
+   (prefilled drafts, accept-with-edit, cover letters, payment reminders, saved cites). For `records` fields this means a list of `{value,label}` as `value`, so a saved draft's cited records come back (F-21 UX-1-1); and confirm whether a step write that omits a cites field keeps the saved cites.
    SCR-25, 26, 27, 32, 40 and the F-17 frame.
 3. **Per-step decision options**: which verdicts a step offers and their labels and consequences
    (Approve / Return / Reject / Withdraw differ by line; "Escalate", "Keep owed", "Approve an
@@ -109,3 +109,10 @@ approval. These are listed so nobody builds the API around them.
 Reply per gap id (`G-…`) or question id (`BQ-…`): accept, change (say how) or refuse. Line keys in
 the gap files (`management_accounts`, `delivery_release`, …) are suggestions; your names win. When
 an answer changes v7, the frontend repoints its mock and types to the new version in one task.
+
+## Added during F-21 (15 Nov)
+
+- **Reconcile after an uncertain send** (`POST /work/{id}/actions`, reconcile): the mock does not answer it yet (501), so what the work item looks like after "It didn't arrive" or "It arrived" is recorded is untested on any stack. Please define the reply and the next state (F-21 QA-3-1).
+- **Unknown work id must be 404.** The mock serves a default item for any unknown id; the real API must answer 404 for an unknown or other-tenant id, and the frontend shows no client, title or id then (F-21 QA-3-2).
+- **Cited records:** see priority 1 and 2 above (list-valued `value` for `records` fields; whether an omitted cites field keeps the saved cites; scope every cite to person, case and week).
+- **Which record the weekly timeline cites:** the board shows MIN-0141 (minutes); the sample data cites MTG-0140 (weekly sync). PSL/backend to decide.

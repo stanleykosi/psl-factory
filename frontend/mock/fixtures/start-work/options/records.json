@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "value": "MS-0002",
+      "label": "Milestone 2 · UAT signed 11 Nov",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "MTG-0141",
+      "label": "UAT walkthrough · 11 Nov",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "MTG-0140",
+      "label": "Weekly sync with Lagoon Health · 10 Nov",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "ISS-0233",
+      "label": "ISS-0233 Login fails on older Android phones · High",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "ACT-0412",
+      "label": "Client to send test accounts · due 13 Nov",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "CR-0031",
+      "label": "CR-0031 Add SMS reminders · being assessed",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    }
+  ]
+}

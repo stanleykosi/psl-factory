@@ -154,6 +154,8 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws { padding-bottom: var(--ws-bar-h, 0px); }
   html { scroll-padding-bottom: var(--ws-bar-h, 0px); }
   .ws-decide { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; border: none; border-top: 2px solid var(--ink); background: var(--surface); padding: 10px 16px 14px; }
+  /* while a Decide step's own form is open its submit is the action: the pinned bar would repeat it over the fields */
+  .ws-decide[data-form-open] { display: none; }
   .ws-decide__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
   .ws-decide__body { padding: 0; }
   .ws-rows--text .ws-row { padding: 0; }

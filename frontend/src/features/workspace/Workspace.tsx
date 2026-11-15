@@ -310,7 +310,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
               <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
             ))}
             {workspaceSteps.length > 0 && (
-              <section ref={decideRef} className={`psl-panel psl-panel--decide ws-decide${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`}>
+              <section ref={decideRef} className={`psl-panel psl-panel--decide ws-decide${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
                 <h2 id={`${decideId}-head`} className="psl-panel__head psl-panel__head--decide ws-decide__head">
                   {STEP_TEXT.decide}
                 </h2>

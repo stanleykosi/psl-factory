@@ -1,0 +1,23 @@
+{
+  "send_to_tola": {
+    "status": 422,
+    "body": {
+      "code": "invalid",
+      "message": "Two parts can't be sent yet. Every part needs words and at least one record from 5–11 Nov.",
+      "fields": [
+        {
+          "name": "risks",
+          "message": "Write the risk in words and cite at least one of this week's records. \"TBD\" isn't accepted."
+        },
+        {
+          "name": "next_steps_cites",
+          "message": "Cite at least one record: no record cited yet."
+        },
+        {
+          "name": "parts",
+          "message": "Two parts can't be sent yet. Every part needs words and at least one record from 5–11 Nov."
+        }
+      ]
+    }
+  }
+}
