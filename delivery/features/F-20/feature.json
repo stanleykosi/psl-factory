@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-20",
   "outcome": "The Templates tab on Setup lists each document template and uploads a new version of one",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-SETUP-TEMPLATES"
   ],
@@ -95,6 +95,18 @@
       "at": "2026-11-15T11:59:31Z",
       "seconds": 273.3,
       "evidence_ref": "delivery/features/F-20/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T12:17:36Z",
+      "seconds": 172.3,
+      "evidence_ref": "delivery/features/F-20/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -295,14 +307,28 @@
         "delivery/features/F-20/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T12:07:12Z",
           "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:17:36Z",
+          "refs": [
+            "left: no action needed per the review."
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "left: no action needed per the review."
       ]
     },
     {
@@ -341,14 +367,28 @@
         "delivery/features/F-20/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T12:07:12Z",
           "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:17:36Z",
+          "refs": [
+            "777d9a3f"
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "777d9a3f"
       ]
     },
     {
@@ -364,14 +404,28 @@
         "delivery/features/F-20/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T12:07:12Z",
           "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:17:36Z",
+          "refs": [
+            "777d9a3f"
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "777d9a3f"
       ]
     },
     {
@@ -387,14 +441,28 @@
         "delivery/features/F-20/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T12:07:12Z",
           "head": "c218bf2480b82e3753e88943e25b497f2e959e80"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T12:17:36Z",
+          "refs": [
+            "777d9a3f"
+          ],
+          "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "777d9a3f"
       ]
     }
   ],
@@ -477,7 +545,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
     "task_branch": "fe-setup-templates-the-templates-tab-on-setup-lists-each-do",
-    "head_sha": "c218bf2480b82e3753e88943e25b497f2e959e80",
+    "head_sha": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-20",
     "pr_url": null,
     "pr_number": null,
@@ -588,6 +656,14 @@
       "round": 2,
       "head": "c218bf2480b82e3753e88943e25b497f2e959e80",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T12:17:36Z",
+      "round": 2,
+      "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "reason": null
     }
   ],
   "routing": {
@@ -604,9 +680,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "777d9a3f11f10544e6d43ffa7d52a86f7202df99"
   },
   "blocked": null
 }
