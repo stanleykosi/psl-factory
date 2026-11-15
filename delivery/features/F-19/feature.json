@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-19",
   "outcome": "A signed-in person sees the client register and each client's billing contact, projects and money, and can set the billing contact, on the contract mock",
-  "state": "INTEGRATED_QA",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CLIENTS"
   ],
@@ -107,13 +107,11 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "delegated technical review",
-      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
-      "evidence_refs": [
-        "delivery/features/F-19/round-2/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
       "status": "pending",
@@ -139,22 +137,18 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "delegated UX review",
-      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
-      "evidence_refs": [
-        "delivery/features/F-19/round-2/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "passed",
-      "reviewer": "reviewer-ui",
-      "authority": "delegated UI review",
-      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
-      "evidence_refs": [
-        "delivery/features/F-19/round-2/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -739,6 +733,75 @@
           "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**Some save results are never announced (WCAG 2.1 AA 4.1.3 Status Messages; A-ACCESSIBILITY).**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:21:56Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Focus is lost after each save press.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:21:56Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**With persona `none`, the clients no-access page never appears in a real browser.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-19/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T12:21:56Z",
+          "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -793,6 +856,63 @@
           "snapshot_ref": "effdc3f55c827a61a258ee44f6904654cbd6eaee",
           "evidence_refs": [
             "delivery/features/F-19/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delegated technical review",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "integrated QA",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-19/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delegated UX review",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delegated UI review",
+          "snapshot_ref": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+          "evidence_refs": [
+            "delivery/features/F-19/round-2/review-ui.md"
           ]
         }
       }
@@ -896,7 +1016,7 @@
     }
   },
   "created_at": "2026-11-15T10:36:42Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -954,6 +1074,22 @@
       "round": 2,
       "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
       "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T12:22:05Z",
+      "round": 2,
+      "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T12:22:05Z",
+      "round": 3,
+      "head": "41b4925c441959c3a4fc2b7eaf8437fa35791109",
+      "reason": null
     }
   ],
   "routing": {
@@ -969,10 +1105,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 2,
-    "verdict": "PASS",
-    "commit": "41b4925c441959c3a4fc2b7eaf8437fa35791109"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
