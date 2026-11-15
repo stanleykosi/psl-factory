@@ -221,13 +221,15 @@ export function MyWork() {
 
   const toolbar = useRef<HTMLFormElement>(null);
   // The bottom sheet does not hand focus back to the Filter button on its own; the popover does.
+  const filterButton = useRef<HTMLElement | null>(null);
   const filterWasOpen = useRef(false);
   const closeFilter = useCallback(() => setFilterOpen(false), []);
   useEffect(() => {
+    filterButton.current = toolbar.current?.querySelector<HTMLElement>('.cmp-anchor button') ?? null;
     if (filterOpen) filterWasOpen.current = true;
     else if (filterWasOpen.current) {
       filterWasOpen.current = false;
-      toolbar.current?.querySelector<HTMLElement>('.cmp-anchor button')?.focus();
+      filterButton.current?.focus();
     }
   }, [filterOpen]);
   const applyFilters = (filters: Filters) => {
@@ -269,6 +271,7 @@ export function MyWork() {
       phone={phone}
       lines={lines}
       applied={{ line: view.line, project: view.project, state: view.state, waiting: view.waiting }}
+      anchor={filterButton}
       preview={preview}
       onApply={applyFilters}
       onClose={closeFilter}

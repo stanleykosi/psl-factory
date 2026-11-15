@@ -308,31 +308,24 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     const dialog = screen.getByRole('dialog', { name: 'Filter' });
     expect(dialog.className).toContain('psl-pop');
     // Lines come from the response's filters.lines (A–Z in the mock); four show until "Show all 6 lines".
-    const lines = () => within(dialog).getAllByRole('checkbox').map((r) => r.closest('label')!.textContent);
-    expect(document.activeElement).toBe(dialog);
+    const lines = () => within(dialog).getAllByRole('checkbox').map((r) => r.parentElement!.textContent);
+    expect(document.activeElement).toBe(within(dialog).getAllByRole('checkbox')[0]);
     expect(lines()).toEqual(['Approve a payment exception', 'Plan a project', 'Prepare an invoice', 'Reconcile a bank statement']);
     fireEvent.click(within(dialog).getByRole('button', { name: 'Show all 6 lines' }));
     expect(lines()).toHaveLength(6);
     expect(within(dialog).getByRole('combobox', { name: 'Project' })).toBeTruthy();
-    // State and Waiting on are the shared Select (a combobox that opens a listbox); Project stays a native list (record picker).
-    const state = within(dialog).getByRole('combobox', { name: 'State' });
-    fireEvent.click(state);
-    const stateOptions = within(screen.getByRole('listbox', { name: 'State' })).getAllByRole('option');
-    expect(stateOptions[0].textContent).toBe('Any state');
-    expect(stateOptions).toHaveLength(12);
-    fireEvent.click(state);
-    const waiting = within(dialog).getByRole('combobox', { name: 'Waiting on' });
-    fireEvent.click(waiting);
-    expect(within(screen.getByRole('listbox', { name: 'Waiting on' })).getAllByRole('option').map((o) => o.textContent)).toEqual(['Anyone', 'Me', 'Someone else', 'An agent', 'Someone outside PSL', 'No owner yet']);
-    fireEvent.click(waiting);
+    const state = within(dialog).getByRole('combobox', { name: 'State' }) as HTMLSelectElement;
+    expect([...state.options].map((o) => o.textContent)[0]).toBe('Any state');
+    expect(state.options).toHaveLength(12);
+    const waiting = within(dialog).getByRole('combobox', { name: 'Waiting on' }) as HTMLSelectElement;
+    expect([...waiting.options].map((o) => o.value)).toEqual(['', 'me', 'someone_else', 'agent', 'outside_party', 'no_owner']);
 
     fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Prepare an invoice' }));
     fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Record a receipt' }));
     // One line key at a time: the contract's line parameter takes one value.
-    expect(within(dialog).getAllByRole('checkbox', { checked: true }).map((c) => c.closest('label')!.textContent)).toEqual(['Record a receipt']);
+    expect(within(dialog).getAllByRole('checkbox', { checked: true }).map((c) => c.parentElement!.textContent)).toEqual(['Record a receipt']);
     fireEvent.click(within(dialog).getByRole('checkbox', { name: 'Prepare an invoice' }));
-    fireEvent.click(state);
-    fireEvent.click(within(screen.getByRole('listbox', { name: 'State' })).getByRole('option', { name: 'Action needed' }));
+    fireEvent.change(state, { target: { value: 'action_needed' } });
     // "Show N items" counts the draft with the same list request.
     const show = await within(dialog).findByRole('button', { name: /^Show \d+ items?$/ });
     const preview = calls.find((c) => c.searchParams.get('line') === 'invoice' && c.searchParams.get('limit') === '50');
@@ -368,7 +361,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     const filter = screen.getByRole('button', { name: /^Filter/ });
     fireEvent.click(filter);
     fireEvent.click(screen.getByRole('checkbox', { name: 'Plan a project' }));
-    fireEvent.keyDown(screen.getByRole('dialog', { name: 'Filter' }), { key: 'Escape' });
+    fireEvent.keyDown(document, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(filter);
     expect(filter.getAttribute('aria-expanded')).toBe('false');
@@ -386,12 +379,12 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     fireEvent.click(filter);
     const sheet = screen.getByRole('dialog', { name: 'Filter' });
     expect(sheet.className).toContain('psl-sheet');
-    // The shared BottomSheet: grab handle, Close in the head, the main button at xl and Clear all under it.
-    expect(within(sheet.querySelector('.psl-sheet__head') as HTMLElement).getByRole('button', { name: 'Close' })).toBeTruthy();
+    // SCR-01-mobile-filter: no grab handle; the head is FILTER with Clear.
+    expect(sheet.querySelector('.psl-sheet__grab')).toBeNull();
+    expect(within(sheet.querySelector('.psl-sheet__head') as HTMLElement).getByRole('button', { name: 'Clear' })).toBeTruthy();
     expect(within(sheet).getByRole('button', { name: /^Show / }).className).toContain('psl-btn--xl psl-btn--block');
-    expect(within(sheet).getByRole('button', { name: 'Clear all' })).toBeTruthy();
     expect(within(sheet).getByRole('button', { name: 'All 6 lines' })).toBeTruthy();
-    fireEvent.click(within(sheet).getByRole('button', { name: 'Close' }));
+    fireEvent.mouseDown(sheet.parentElement!);
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(filter);
   });
