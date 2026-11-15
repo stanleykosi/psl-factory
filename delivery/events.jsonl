@@ -1271,3 +1271,8 @@
 {"at":"2026-11-15T10:02:20Z","feature":"F-17","round":5,"kind":"finding","action":"add","finding":"PMO-5-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-15T10:02:20Z","feature":"F-17","round":5,"kind":"finding","action":"add","finding":"PMO-5-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-15T10:02:20Z","feature":"F-17","round":5,"kind":"finding","action":"add","finding":"PMO-5-3","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T10:31:53Z","feature":"F-17","round":5,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"ff48d19d80a9","written_at":"2026-11-15T10:31:28Z"}
+{"at":"2026-11-15T10:32:02Z","feature":"F-17","round":5,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/30","git.pr_number":30,"git.ci_status":"passed"}}
+{"at":"2026-11-15T10:32:02Z","feature":"F-17","round":5,"kind":"transition","head":"ff48d19d80a9","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-15T10:32:02Z","feature":"F-17","round":5,"kind":"decision","decision":"BLOCKED","head":"ff48d19d80a9","reasons":["ux review covers 'f91bc63ff41283e698faf47b356721f4ce2ec022', not head 'ff48d19d80a904de760cf524166ad820107267dd'","ui review covers 'af3b958cfa5807108e940017aefdc04e60375b1b', not head 'ff48d19d80a904de760cf524166ad820107267dd'"]}
+{"at":"2026-11-15T10:32:02Z","feature":"F-17","round":5,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"9cfaa27eb5e7c9000fd4691d2125fe5b8467f7ee"}}

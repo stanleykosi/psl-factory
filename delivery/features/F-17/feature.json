@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-17",
   "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-WORKSPACE-FRAME"
   ],
@@ -172,11 +172,13 @@
     "product_acceptance": {
       "required": false,
       "assessment_reason": "delivery/features/F-17/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb)",
+      "authority": "the design engineer's message on 15 Nov 2026: \"go ahead\", in reply to \"say 'merge F-17' and I'll merge it now\"",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -1892,14 +1894,14 @@
     "task_branch": "fe-workspace-frame-the-work-item-page-renders-a-line-worksp",
     "head_sha": "ff48d19d80a904de760cf524166ad820107267dd",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-17",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/30",
+    "pr_number": 30,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "9cfaa27eb5e7c9000fd4691d2125fe5b8467f7ee",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/COORDINATOR-HANDOFF.md",
@@ -2368,9 +2370,12 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "BLOCKED",
+    "script_reasons": [
+      "ux review covers 'f91bc63ff41283e698faf47b356721f4ce2ec022', not head 'ff48d19d80a904de760cf524166ad820107267dd'",
+      "ui review covers 'af3b958cfa5807108e940017aefdc04e60375b1b', not head 'ff48d19d80a904de760cf524166ad820107267dd'"
+    ],
+    "decided_for_head_sha": "ff48d19d80a904de760cf524166ad820107267dd",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -2513,6 +2518,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-15T10:01:14Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-15T10:32:02Z",
       "round": 5,
       "head": "ff48d19d80a904de760cf524166ad820107267dd",
       "reason": null
