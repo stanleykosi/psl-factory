@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-21",
   "outcome": "The weekly client report line: the PM writes four cited parts, Tola assembles, the PMO Lead reviews (contract mock only)",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-LINE-WEEKLY"
   ],
@@ -121,7 +121,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delegated technical review",
-      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
       "evidence_refs": [
         "delivery/features/F-21/round-3/review-technical.md"
       ]
@@ -130,17 +130,19 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA",
-      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
       "evidence_refs": [
         "delivery/features/F-21/round-3/review-qa.md"
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO acceptance",
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -155,7 +157,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delegated UX review",
-      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
       "evidence_refs": [
         "delivery/features/F-21/round-3/review-ux.md"
       ]
@@ -164,7 +166,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delegated UI review",
-      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
       "evidence_refs": [
         "delivery/features/F-21/round-3/review-ui.md"
       ]
@@ -173,7 +175,7 @@
       "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "delegated security review",
-      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
       "evidence_refs": [
         "delivery/features/F-21/round-3/review-security.md"
       ]
@@ -779,6 +781,98 @@
           "head": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d"
         }
       ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Fidelity was measured at round 2 (798c17f8). Round 3 changed the W-2201 hint (eight per-field helps became one sentence per form), which the UI reviewer judged only by reading the diff and did not re-score. The SCR-25-desktop and SCR-25-mobile waivers cite 72.8 and 72.9, so the margin over the D-83 floor of 70 is small. The change shortens the form, so a drop is unlikely, but it is unmeasured. Expected before merge: the design engineer sees this, or one fidelity run confirms visual >= 70 on the two default boards.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T15:57:09Z",
+          "head": "a3b587107fba754884bfd399d9a4dc25d32c7ab1"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The recorded gate (`round-3/checks.md`, `feature.json`) is for 2cdcfe71, not the head a3b58710. The head is covered by `round-3/checks-synced-a3b58710.log`, a manual full run (1556 passed, no failures), and by QA's re-run of the weekly e2e. The log has no explicit exit-code line, so the coordinator should re-run the gate on the head, or accept the log, before merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T15:57:09Z",
+          "head": "a3b587107fba754884bfd399d9a4dc25d32c7ab1"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Contract proposals are recorded for the backend, but the handoff carries only some of them. Round-1 `build.md` lists: the `steps[].inline` flag, a list-valued `records` `value`, per-part state tags, \"step n of m\" and start-time fields, \"Ask Tola\", the open-the-report link, and weekly cite options through E-LINE-OPTIONS. `BACKEND-HANDOFF.md` has the cite and prefill items, the reconcile reply (QA-3-1), the unknown-id 404 (QA-3-2) and the minutes record question, and mentions Ask Tola. The inline flag, the per-part tag and the report link are in the gaps files or `build.md` only. The coordinator should confirm they reach the backend developer. Nothing is lost.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T15:57:09Z",
+          "head": "a3b587107fba754884bfd399d9a4dc25d32c7ab1"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The reconcile result after an uncertain send (W-2205 \"It didn't arrive\") is untested on any stack (QA-3-1, mock returns 501). The UI is safe and sends nothing again, but the line must not be called end to end until the backend defines the reply. This is already in the handoff.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T15:57:09Z",
+          "head": "a3b587107fba754884bfd399d9a4dc25d32c7ab1"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -919,9 +1013,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -933,16 +1027,16 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
     "task_branch": "fe-line-weekly-the-weekly-client-report-line-the-pm-wri",
-    "head_sha": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+    "head_sha": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-21",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/39",
+    "pr_number": 39,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "8f7a0f1d63218a2fd06149b35d388f23e08470b5",
     "merge_policy": "not_configured",
     "changed_paths": [
       ".python-version",
@@ -1007,6 +1101,7 @@
       "delivery/backend-handoff/gaps-e-finance-payroll.md",
       "delivery/backend-handoff/gaps-f-finance-workspaces.md",
       "delivery/events.jsonl",
+      "delivery/features/F-19/decision.md",
       "delivery/features/F-19/feature.json",
       "delivery/features/F-19/fidelity-exceptions.json",
       "delivery/features/F-19/round-1/build.md",
@@ -1159,6 +1254,7 @@
       "delivery/features/F-21/feature.json",
       "delivery/features/F-21/fidelity-exceptions.json",
       "delivery/features/F-21/round-1/build.md",
+      "delivery/features/F-21/round-1/checks.md",
       "delivery/features/F-21/round-1/fidelity/SCR-25-desktop-1440/board-marked.png",
       "delivery/features/F-21/round-1/fidelity/SCR-25-desktop-1440/board.png",
       "delivery/features/F-21/round-1/fidelity/SCR-25-desktop-1440/board.rendered.html",
@@ -1239,6 +1335,102 @@
       "delivery/features/F-21/round-1/fidelity/run.sh",
       "delivery/features/F-21/round-1/fidelity/scores.txt",
       "delivery/features/F-21/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-21/round-1/review-security.md",
+      "delivery/features/F-21/round-1/review-technical.md",
+      "delivery/features/F-21/round-1/review-ui.md",
+      "delivery/features/F-21/round-1/review-ux.md",
+      "delivery/features/F-21/round-2/build.md",
+      "delivery/features/F-21/round-2/checks.md",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-1440/board-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-1440/board.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-1440/board.rendered.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-1440/diff.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-1440/page-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-1440/page.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-1440/report.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-1440/report.json",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-1440/side-by-side.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-assembling-1440/board-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-assembling-1440/board.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-assembling-1440/board.rendered.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-assembling-1440/diff.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-assembling-1440/page-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-assembling-1440/page.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-assembling-1440/report.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-assembling-1440/report.json",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-assembling-1440/side-by-side.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-invalid-1440/board-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-invalid-1440/board.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-invalid-1440/board.rendered.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-invalid-1440/diff.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-invalid-1440/page-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-invalid-1440/page.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-invalid-1440/report.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-invalid-1440/report.json",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-invalid-1440/side-by-side.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-review-1440/board-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-review-1440/board.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-review-1440/diff.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-review-1440/page-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-review-1440/page.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-review-1440/report.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-review-1440/report.json",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-390/board-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-390/board.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-390/board.rendered.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-390/diff.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-390/page-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-390/page.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-390/report.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-390/report.json",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-390/side-by-side.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-assembling-390/board-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-assembling-390/board.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-assembling-390/board.rendered.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-assembling-390/diff.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-assembling-390/page-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-assembling-390/page.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-assembling-390/report.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-assembling-390/report.json",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-assembling-390/side-by-side.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-invalid-390/board-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-invalid-390/board.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-invalid-390/board.rendered.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-invalid-390/diff.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-invalid-390/page-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-invalid-390/page.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-invalid-390/report.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-invalid-390/report.json",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-invalid-390/side-by-side.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-review-390/board-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-review-390/board.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-review-390/board.rendered.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-review-390/diff.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-review-390/page-marked.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-review-390/page.png",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-review-390/report.html",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-review-390/report.json",
+      "delivery/features/F-21/round-2/fidelity/SCR-25-mobile-review-390/side-by-side.png",
+      "delivery/features/F-21/round-2/fidelity/drive-states.mjs",
+      "delivery/features/F-21/round-2/fidelity/frozen/default-1440.html",
+      "delivery/features/F-21/round-2/fidelity/frozen/default-390.html",
+      "delivery/features/F-21/round-2/fidelity/frozen/invalid-1440.html",
+      "delivery/features/F-21/round-2/fidelity/frozen/invalid-390.html",
+      "delivery/features/F-21/round-2/fidelity/run.sh",
+      "delivery/features/F-21/round-2/fidelity/scores.txt",
+      "delivery/features/F-21/round-2/fidelity/serve-frozen.mjs",
+      "delivery/features/F-21/round-2/review-security.md",
+      "delivery/features/F-21/round-2/review-technical.md",
+      "delivery/features/F-21/round-2/review-ui.md",
+      "delivery/features/F-21/round-2/review-ux.md",
+      "delivery/features/F-21/round-3/build.md",
+      "delivery/features/F-21/round-3/checks.md",
+      "delivery/features/F-21/round-3/review-security.md",
+      "delivery/features/F-21/round-3/review-technical.md",
+      "delivery/features/F-21/round-3/review-ui.md",
+      "delivery/features/F-21/round-3/review-ux.md",
       "delivery/followups-02/build-note.md",
       "delivery/followups-02/fidelity/SCR-01-desktop-1440/report.json",
       "delivery/followups-02/fidelity/SCR-01-desktop-1440/side-by-side.png",
@@ -1246,6 +1438,7 @@
       "delivery/followups-02/fidelity/SCR-01-mobile-390/side-by-side.png",
       "delivery/followups-02/review-technical.md",
       "delivery/frame-line-layout-2/build-note.md",
+      "delivery/frame-line-layout-2/review-technical.md",
       "delivery/frame-line-layout/build-note.md",
       "delivery/frame-line-layout/review-technical.md",
       "docs/acceptance/HOD-MEETING.md",
@@ -1253,13 +1446,26 @@
       "docs/runbooks/agent-checkout.md",
       "docs/runbooks/quickbooks-mcp.md",
       "docs/runbooks/railway.md",
+      "frontend/e2e/clients.spec.ts",
       "frontend/e2e/my-work.spec.ts",
       "frontend/e2e/setup-templates.spec.ts",
       "frontend/e2e/setup.spec.ts",
       "frontend/e2e/weekly.spec.ts",
       "frontend/e2e/workspace.spec.ts",
+      "frontend/mock/clients.mjs",
+      "frontend/mock/fixtures/E-CLIENT-CONTACT.json",
+      "frontend/mock/fixtures/E-CLIENT.json",
+      "frontend/mock/fixtures/E-CLIENTS.json",
       "frontend/mock/fixtures/E-TEMPLATE-VERSION.json",
       "frontend/mock/fixtures/E-TEMPLATES.json",
+      "frontend/mock/fixtures/clients/CL-3501.json",
+      "frontend/mock/fixtures/clients/CL-3502.json",
+      "frontend/mock/fixtures/clients/CL-3503.json",
+      "frontend/mock/fixtures/clients/CL-3507.json",
+      "frontend/mock/fixtures/clients/CL-3508.json",
+      "frontend/mock/fixtures/clients/CL-3508.next.json",
+      "frontend/mock/fixtures/clients/CL-3509.json",
+      "frontend/mock/fixtures/clients/list.json",
       "frontend/mock/fixtures/start-work/options/records.json",
       "frontend/mock/fixtures/templates/desktop.json",
       "frontend/mock/fixtures/templates/empty.json",
@@ -1285,7 +1491,19 @@
       "frontend/mock/server.mjs",
       "frontend/mock/start-work.mjs",
       "frontend/mock/templates.mjs",
+      "frontend/src/app/clients/[clientId]/page.tsx",
+      "frontend/src/app/clients/page.tsx",
       "frontend/src/app/setup/templates/page.tsx",
+      "frontend/src/features/clients/BillingContactForm.tsx",
+      "frontend/src/features/clients/ClientDetail.tsx",
+      "frontend/src/features/clients/ClientStates.tsx",
+      "frontend/src/features/clients/ClientsList.tsx",
+      "frontend/src/features/clients/api.ts",
+      "frontend/src/features/clients/clients.css",
+      "frontend/src/features/clients/index.ts",
+      "frontend/src/features/clients/labels.ts",
+      "frontend/src/features/clients/useClient.ts",
+      "frontend/src/features/clients/useClients.ts",
       "frontend/src/features/my-work/my-work.css",
       "frontend/src/features/setup/SetupFrame.tsx",
       "frontend/src/features/setup/TemplateUploadPanel.tsx",
@@ -1304,10 +1522,14 @@
       "frontend/src/features/workspace/Workspace.tsx",
       "frontend/src/features/workspace/useWorkspaceStep.ts",
       "frontend/src/features/workspace/workspace.css",
+      "frontend/src/shell/destinations.ts",
+      "frontend/tests/clients-mock.test.ts",
+      "frontend/tests/clients.test.tsx",
       "frontend/tests/mock-contract.test.ts",
       "frontend/tests/setup-rules.test.tsx",
       "frontend/tests/setup-templates-mock.test.ts",
       "frontend/tests/setup-templates.test.tsx",
+      "frontend/tests/shell.test.tsx",
       "frontend/tests/weekly-mock.test.ts",
       "frontend/tests/weekly.test.tsx",
       "frontend/tests/workspace-step.test.tsx",
@@ -1360,12 +1582,22 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-21/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "apps/agents/migrations/0004_case_upload_jobs.py matches always-human path '*/migrations/*'",
+      "apps/finance/migrations/0077_forecast_evidence_reference.py matches always-human path '*/migrations/*'",
+      "523 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1462,6 +1694,46 @@
       "at": "2026-11-15T15:31:44Z",
       "round": 3,
       "head": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-15T15:57:22Z",
+      "round": 3,
+      "head": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-15T15:58:56Z",
+      "round": 3,
+      "head": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-15T15:58:56Z",
+      "round": 3,
+      "head": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-15T15:59:10Z",
+      "round": 3,
+      "head": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-15T15:59:10Z",
+      "round": 3,
+      "head": "a3b587107fba754884bfd399d9a4dc25d32c7ab1",
       "reason": null
     }
   ],

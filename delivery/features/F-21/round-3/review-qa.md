@@ -1,7 +1,12 @@
 VERDICT: PASS
-COMMIT: 31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d
+COMMIT: a3b587107fba754884bfd399d9a4dc25d32c7ab1
 REVIEWER: qa
 AUTHORITY: integrated QA
+
+## Re-confirmed on the synced head
+- Head a3b58710 only adds a merge of origin/dlv-00-delivery-setup (F-19 Clients), including the shared mock server. I ran `cd /Users/Hunchoo/psl-factory-worktrees/f-21/frontend && E2E_PORT=4681 MOCK_PORT=4682 npx playwright test e2e/weekly.spec.ts --reporter=line`. All 25 tests passed (59.4 s): axe, h1, scroll and 44px checks for W-2201..W-2208 at 1440 and 390, the four-part form and cites, the W-2202 422, the W-2201 send and reduced motion, the W-2204 double approve, the W-2205 uncertain-send lock at 1440, 390 and 320, the W-2208 link, and "every request went to the local mock".
+- This ran on the mock only, as before. QA-3-1 and QA-3-2 are unchanged. Ports 4681 and 4682 are free (lsof shows nothing).
+
 
 ## Summary
 - I built production `next build` at head 31f0d25e and ran it with `next start -p 4681` (FRAME_FIXTURES=1, API_ORIGIN pointing to the contract mock `node mock/server.mjs` on 4682). Chromium session "F-21-qa" ran 142 checks across W-2201..W-2208 at 1440, 390 and 320 (script `/private/tmp/claude-501/qa21/qa.mjs`, log `run2.log`). All 142 passed. `vitest weekly.test.tsx weekly-mock.test.ts`: 35 passed.

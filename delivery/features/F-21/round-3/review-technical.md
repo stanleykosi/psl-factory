@@ -1,7 +1,15 @@
 VERDICT: PASS
-COMMIT: 31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d
+COMMIT: a3b587107fba754884bfd399d9a4dc25d32c7ab1
 REVIEWER: reviewer-technical
 AUTHORITY: delegated technical review
+
+## Re-confirmed on the synced head
+- HEAD is a3b58710. Since 31f0d25e the branch only merged origin/dlv-00-delivery-setup (F-19 Clients).
+- git diff --stat 31f0d25e a3b58710 over frontend/src/features/workspace, frontend/mock/fixtures/work, frontend/mock/start-work.mjs, weekly.test.tsx, weekly-mock.test.ts, e2e/weekly.spec.ts: empty. F-21 code is unchanged.
+- Diff of frontend/mock/server.mjs and frontend/tests/mock-contract.test.ts: only F-19 clients lines (clients.mjs import, CLIENT_OPERATIONS in M1_OPERATIONS, resetClients, clients route dispatch; client_id path value, E-CLIENT-CONTACT body, 403 expectations for E-CLIENTS/E-CLIENT/E-CLIENT-CONTACT). Nothing touches weekly behaviour.
+- Full run after the merge: checks-synced-a3b58710.log (build completes, routes listed).
+
+## Earlier review (at 31f0d25e)
 
 ## Findings
 none

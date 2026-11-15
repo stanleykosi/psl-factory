@@ -1,7 +1,13 @@
 VERDICT: PASS
-COMMIT: 31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d
+COMMIT: a3b587107fba754884bfd399d9a4dc25d32c7ab1
 REVIEWER: reviewer-ux
 AUTHORITY: delegated UX review
+
+## Re-confirmed on the synced head
+The branch since 31f0d25e only merged origin/dlv-00-delivery-setup (F-19 Clients). The diff stat over workspace, work-item, shell and the work fixtures shows one change: frontend/src/shell/destinations.ts, +2 lines. It maps /clients paths to the Projects destination in destinationForPath. The weekly journey does not use /clients, so nothing it touches changed. Workspace, work-item and the work fixtures are unchanged. No findings.
+
+## Earlier review (at 31f0d25e)
+
 
 ## Verified
 - UX-1-1 | verified | The hint no longer promises that saved cites are kept. It now tells the PM what to do on this page. Read from the diff and fixture, not walked in a browser. The fixture has exactly two `help` strings, and each is on the first records field of a W-2201 step (`status_cites` in the first, and the matching first field in the second). The per-field helps are gone. The shared frame is unchanged.
