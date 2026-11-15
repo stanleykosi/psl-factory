@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-17",
   "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-WORKSPACE-FRAME"
   ],
@@ -146,16 +146,16 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead)",
-      "snapshot_ref": "af3b958cfa5807108e940017aefdc04e60375b1b",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
       "evidence_refs": [
         "delivery/features/F-17/round-5/review-technical.md"
       ]
     },
     "integrated_qa": {
-      "status": "changes_requested",
+      "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA",
-      "snapshot_ref": "af3b958cfa5807108e940017aefdc04e60375b1b",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
       "evidence_refs": [
         "delivery/features/F-17/round-5/review-qa.md"
       ]
@@ -198,7 +198,7 @@
       "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "security reviewer",
-      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
       "evidence_refs": [
         "delivery/features/F-17/round-5/review-security.md"
       ]
@@ -1302,7 +1302,7 @@
         "delivery/features/F-17/round-5/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1327,11 +1327,35 @@
           "refs": [],
           "head": "ff48d19d80a904de760cf524166ad820107267dd",
           "reason": "Fixed only in the pressing session before scrolling to the bottom. (a) Same session at 390x844 and 320x640, touch tap and pointer click: right after the press (scrollY 123 at 390) the tap reaches the button and `/actions` returns 200. At maximum scroll (599 at 390, 933 at 320) the static Decide panel covers the button: at 390 the button is at 776-826 and the panel at 685-828, with the hit `P.psl-reason ws-hint`. A touch tap and a mouse click there send nothing (no `/actions` request within 4 s). Screenshot: `w2008-390-bottom-flow.png`. (b) Press \"Approve and send\", then `page.reload()`: the class is `ws-decide` with no `--flow`, the position is fixed and the bar is at 747-844 (390) or 522-640 (320). \"Record and continue\" is at 776-826 (390) or 572-622 (320), and the hit is `DIV.ws-steps__buttons` at scrollY 0, 300 and the maximum. Tap and click both fail at 390 and 320. Screenshot: `w2008-390-reload.png`. (c) The same happens when W-2008 is opened in a new tab in the same context while it is uncertain. In every case, focus plus Enter does send the one `POST /actions` (200). At 1440, Record and continue is answered with 200 (hit is the button)."
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T10:01:13Z",
+          "refs": [
+            "97574624"
+          ],
+          "head": "ff48d19d80a904de760cf524166ad820107267dd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-15T10:01:13Z",
+          "refs": [
+            "Touch tap on W-2008, persona finance_lead. 390x844 (button at 776-826):"
+          ],
+          "head": "ff48d19d80a904de760cf524166ad820107267dd",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
-        "af3b958c"
+        "97574624"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "Touch tap on W-2008, persona finance_lead. 390x844 (button at 776-826):"
       ]
     },
     {
@@ -1467,7 +1491,7 @@
         "delivery/features/F-17/round-5/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1484,11 +1508,48 @@
           ],
           "head": "ff48d19d80a904de760cf524166ad820107267dd",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-15T10:01:13Z",
+          "refs": [
+            "Press \"Approve and send\" on W-2008, then reload, at 390, 320 and 1440. Both steps are `aria-disabled=\"true\"` and the hint reads \"Confirm what happened first.\" I then tried, in order: a touch tap or forced click on \"Approve and send\", focus with Enter and Space, a forced double click, two more touch taps, and a forced click on \"Return with a note\". No form opened. The mock log at each width shows one entry, for example `[[\"approve_send\",200,\"6df20b2b\",3]]`, so there was no second key and no resend. The no-reconcile variant (c) at 390 and 1440 also shows one entry. Screenshots: `b-390-reload.png`, `c-390-noreconcile.png`."
+          ],
+          "head": "ff48d19d80a904de760cf524166ad820107267dd",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "97574624"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "Press \"Approve and send\" on W-2008, then reload, at 390, 320 and 1440. Both steps are `aria-disabled=\"true\"` and the hint reads \"Confirm what happened first.\" I then tried, in order: a touch tap or forced click on \"Approve and send\", focus with Enter and Space, a forced double click, two more touch taps, and a forced click on \"Return with a note\". No form opened. The mock log at each width shows one entry, for example `[[\"approve_send\",200,\"6df20b2b\",3]]`, so there was no second key and no resend. The no-reconcile variant (c) at 390 and 1440 also shows one entry. Screenshots: `b-390-reload.png`, `c-390-noreconcile.png`."
+      ]
+    },
+    {
+      "id": "TECH-5-2",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`awaitingReconcile` uses `item.reconcile` alone, while the reconcile panel also needs the `reconcile` grant. A viewer without that grant on an item awaiting reconcile sees every step off with no reconcile button. That matches the invariant (reconcile before any retry) and is the safe side, so no change is needed. Make sure the \"confirm first\" hint copy still reads sensibly for that viewer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T10:01:13Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
       ]
     }
   ],
@@ -2375,6 +2436,14 @@
       "at": "2026-11-15T08:34:23Z",
       "round": 5,
       "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-15T10:01:14Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
       "reason": null
     }
   ],

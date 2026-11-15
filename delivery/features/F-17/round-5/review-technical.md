@@ -1,18 +1,18 @@
 VERDICT: PASS
-COMMIT: af3b958cfa5807108e940017aefdc04e60375b1b
+COMMIT: ff48d19d80a904de760cf524166ad820107267dd
 REVIEWER: reviewer-technical
 AUTHORITY: technical reviewer (lead)
 
-Earlier lean-confirm note (PASS at f91bc63: table cell CSS, warning icon, fidelity-exceptions.json) is kept by reference, as are the non-blocking items in round-3/review-technical.md.
-
 ## Summary
-Lean confirm of `git diff f91bc63..af3b958` (D-66 extra round). The flow class is added only when `flow.allLocked && hasReconcile`. `allLocked` is set only after a step returns `effect_uncertain`, so normal items never get it. `hasReconcile` is the same expression that `ReconcilePanel` uses to render, so the flow class implies the reconcile panel is on screen. The CSS change is scoped to the phone media block. The new 390 e2e does click the real button and checks the 200 from the actions endpoint.
+Lean confirm of `git diff af3b958..9757462` and the merge resolution in ff48d19. TECH-5-1 is fixed: the lock now also comes from the item's own state (`Boolean(item.reconcile)`), so it holds after a reload and for any viewer. I did not rerun the gate; I rely on build.md "### Base merge" (checks.sh exit 0, Playwright 405/405).
 
 ## Findings
-- TECH-5-1 | non-blocking | low | builder | The class depends on `allLocked`, which is client state set only after an uncertain step in this session. If a page loads fresh with the server already showing a reconcile panel and Decide steps still present, the Decide bar stays fixed and could cover the reconcile button again. The test only covers the in-session path. Check whether the server omits workspace steps in that state. If it does, there is nothing to fix. If not, key the class on `hasReconcile` alone.
+- TECH-5-2 | non-blocking | low | builder | `awaitingReconcile` uses `item.reconcile` alone, while the reconcile panel also needs the `reconcile` grant. A viewer without that grant on an item awaiting reconcile sees every step off with no reconcile button. That matches the invariant (reconcile before any retry) and is the safe side, so no change is needed. Make sure the "confirm first" hint copy still reads sensibly for that viewer.
 
 ## Verified
-- Condition: `flow.allLocked && hasReconcile` (Workspace.tsx:310). `hasReconcile` matches ReconcilePanel's own guard (`item.reconcile` and `allowed_actions` includes `reconcile`). No trigger on normal items.
-- CSS: `.ws-decide--flow` becomes `position: static`, `.ws:has(.ws-decide--flow)` drops the bottom padding, and `white-space: normal` lets phone button labels wrap. All of it sits inside the phone media block, and `:has` is acceptable here.
-- Test: W-2008 at 390 wide goes through Approve and send, then the "It didn’t arrive" radio, then clicks "Record and continue" with no force. It waits for POST /api/v1/work/W-2008/actions and asserts status 200. The builder reports it fails on the old code with a pointer-intercept error and passes on the new code.
-- Gate evidence in build.md "Extra round (D-66)": checks.sh exit 0, and the 48 workspace and response e2e tests passed. I did not rerun them.
+- TECH-5-1 | verified | `allLocked = pressLocked || awaitingReconcile` (useWorkspaceStep.ts:81). The server-side item state now drives the lock, so a fresh load no longer depends on client memory.
+- Send-path coverage | verified | The only send path is `flow.submit` (Workspace.tsx:120). Its guard at useWorkspaceStep.ts:100 checks `allLocked`. `off()` (Workspace.tsx:111) checks `flow.allLocked`, so buttons get aria-disabled. The forms and item-level actions I grepped for in Workspace.tsx go through the same `submit`. ReconcilePanel's own E-WORK-ACTION write is a separate path and is deliberately not locked.
+- Release | verified | After a successful reconcile the item reloads without `item.reconcile`, so the derived lock drops. The press-time lock still resets only when the page is opened again, as before, which is the existing behaviour.
+- Tests | verified | The new reload test at 390 and 320 asserts that every `.ws-steps button` is aria-disabled. It force-clicks Approve and asserts `stepPosts()` is unchanged. It then reconciles at the bottom of the page. Before the fix, the reload left the steps enabled, so the force-click would post and the assertions would fail. The scrolled-to-bottom tests cover the padding change. I did not run them against the old code.
+- CSS | verified | The padding is `--control-lg + 30px` under `.ws:has(.ws-decide--flow)`, with a matching `scroll-padding-bottom`. All of it sits inside the phone media block.
+- Merge ff48d19 | verified | WorkItemOverview.tsx keeps both imports (the F-17 `WorkspacePage` and `Workspace` imports, and the F-18 `RfpOutcomeLink`). The F-17 reconcile and workspace code is intact. The other conflict was a fidelity report.json under delivery/, which is not product code.
