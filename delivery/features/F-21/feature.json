@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-21",
   "outcome": "The weekly client report line: the PM writes four cited parts, Tola assembles, the PMO Lead reviews (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-LINE-WEEKLY"
   ],
@@ -118,11 +118,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delegated technical review",
+      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -148,25 +150,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delegated UX review",
+      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delegated UI review",
+      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delegated security review",
+      "snapshot_ref": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+      "evidence_refs": [
+        "delivery/features/F-21/round-3/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -298,7 +306,7 @@
         "delivery/features/F-21/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -315,11 +323,25 @@
           ],
           "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T15:20:56Z",
+          "refs": [
+            "The hint no longer promises that saved cites are kept. It now tells the PM what to do on this page. Read from the diff and fixture, not walked in a browser. The fixture has exactly two `help` strings, and each is on the first records field of a W-2201 step (`status_cites` in the first, and the matching first field in the second). The per-field helps are gone. The shared frame is unchanged."
+          ],
+          "head": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "798c17f8"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "The hint no longer promises that saved cites are kept. It now tells the PM what to do on this page. Read from the diff and fixture, not walked in a browser. The fixture has exactly two `help` strings, and each is on the first records field of a W-2201 step (`status_cites` in the first, and the matching first field in the second). The per-field helps are gone. The shared frame is unchanged."
       ]
     },
     {
@@ -672,7 +694,7 @@
         "delivery/features/F-21/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -689,11 +711,25 @@
           ],
           "head": "2cdcfe71f6edd2957718e0c677e842e06010c3ad",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T15:20:56Z",
+          "refs": [
+            "The wording is exactly the sentence I asked for: \"Saved records are not shown here. Choose at least one record for this part before you send.\" It makes no claim about what the server keeps, so it no longer contradicts the Send 422. It appears once per step, not on every field. The hint test now asserts the new sentence once, on the Save draft form. The records-field `value` (prefill) question stays with the coordinator as the real fix, after which the hint can go."
+          ],
+          "head": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "2cdcfe71f6edd2957718e0c677e842e06010c3ad"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "The wording is exactly the sentence I asked for: \"Saved records are not shown here. Choose at least one record for this part before you send.\" It makes no claim about what the server keeps, so it no longer contradicts the Send 422. It appears once per step, not on every field. The hint test now asserts the new sentence once, on the Save draft form. The records-field `value` (prefill) question stays with the coordinator as the real fix, after which the hint can go."
       ]
     }
   ],
@@ -1362,6 +1398,14 @@
       "at": "2026-11-15T15:13:28Z",
       "round": 3,
       "head": "2cdcfe71f6edd2957718e0c677e842e06010c3ad",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-15T15:20:56Z",
+      "round": 3,
+      "head": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
       "reason": null
     }
   ],

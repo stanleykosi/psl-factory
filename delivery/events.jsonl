@@ -1487,3 +1487,10 @@
 {"at":"2026-11-15T15:13:27Z","feature":"F-21","round":3,"kind":"finding","action":"fix","finding":"UX-2-1","by":"builder"}
 {"at":"2026-11-15T15:13:27Z","feature":"F-21","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":127.5,"commit":"2cdcfe71f6ed"}
 {"at":"2026-11-15T15:13:28Z","feature":"F-21","round":3,"kind":"transition","head":"2cdcfe71f6ed","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-15T15:20:53Z","feature":"F-21","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"31f0d25efa8b","written_at":"2026-11-15T15:20:48Z"}
+{"at":"2026-11-15T15:20:53Z","feature":"F-21","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"31f0d25efa8b","written_at":"2026-11-15T15:20:41Z"}
+{"at":"2026-11-15T15:20:53Z","feature":"F-21","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"31f0d25efa8b","written_at":"2026-11-15T15:20:28Z"}
+{"at":"2026-11-15T15:20:53Z","feature":"F-21","round":3,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"31f0d25efa8b","written_at":"2026-11-15T15:20:28Z"}
+{"at":"2026-11-15T15:20:56Z","feature":"F-21","round":3,"kind":"finding","action":"verify","finding":"UX-1-1","by":"reviewer-ux"}
+{"at":"2026-11-15T15:20:56Z","feature":"F-21","round":3,"kind":"finding","action":"verify","finding":"UX-2-1","by":"reviewer-ux"}
+{"at":"2026-11-15T15:20:56Z","feature":"F-21","round":3,"kind":"transition","head":"31f0d25efa8b","from":"IN_REVIEW","to":"INTEGRATED_QA"}
