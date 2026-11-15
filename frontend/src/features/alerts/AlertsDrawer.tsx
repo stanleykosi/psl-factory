@@ -20,7 +20,7 @@ import './alerts.css';
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 type Tab = 'need' | 'info';
 
-type Props = { feed: AlertsFeed; phone: boolean; pathname: string; onClose: () => void; onLeave: () => void };
+type Props = { feed: AlertsFeed; phone: boolean; pathname: string; onClose: () => void; onLeave: (href: string) => void };
 
 const plainClick = (event: MouseEvent) => event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
@@ -77,10 +77,10 @@ export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props)
 
   const open: OpenAlert = (event, alert) => {
     void openAlert(event, alert);
-    if (plainClick(event)) onLeave();
+    if (plainClick(event)) onLeave(workHref(alert));
   };
-  const follow = (event: MouseEvent) => {
-    if (plainClick(event)) onLeave();
+  const follow = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (plainClick(event)) onLeave(event.currentTarget.getAttribute('href') ?? '');
   };
 
   const items = data?.items ?? [];

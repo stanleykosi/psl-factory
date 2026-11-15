@@ -469,7 +469,7 @@ export function ProjectsList() {
           {filterOpen && <FilterSoon onClose={closeFilter} anchor={filterButton} />}
         </div>
         {list.status === 'ready' && (
-          <span className="psl-resultcount projects__total">{total === undefined ? shownText(list.items.length) : `${total} PROJECTS`}</span>
+          <span className="psl-resultcount projects__total">{total === undefined ? shownText(list.items.length) : `${total} ${total === 1 ? 'PROJECT' : 'PROJECTS'}`}</span>
         )}
       </form>
       <div role="tabpanel" id={LIST_PANEL_ID} aria-labelledby={listTabId(view.tab)} className="projects__panel">

@@ -59,6 +59,8 @@ function RulesView() {
   const editable = items.filter(isEditable);
   const notSet = page.not_set_count;
   const empty = items.length === 0;
+  // The notice belongs to a closed panel: once an editable rule is back it is cleared, not just hidden (TECH-3-1).
+  if (closedNotice && editable.length > 0) setClosedNotice(null);
 
   return (
     <>

@@ -9,11 +9,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
 import { OPENAPI_PATH, SCENARIO_BODIES, startMockServer } from '../mock/server.mjs';
-// @ts-expect-error plain ESM module without type declarations
-import { contractBody, PROPOSED_FIELDS } from '../mock/projects.mjs';
 
-// E-PROJECTS and E-PROJECT against the openapi the mock loads (v6). The mock adds the boards' PROPOSAL fields; a 200
-// body is checked without them (contractBody), and in full against the architecture v7 draft (D-PROJECTS-VIEW).
+// E-PROJECTS and E-PROJECT against the openapi the mock loads (architecture v7, D-PROJECTS-VIEW). A 200 body is
+// checked in full, with every field it serves.
 type Response = { content: { 'application/json': { schema: object } } };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, { get: { responses: Record<string, Response> } }> };
 const ajv = new Ajv2020({ allErrors: true, strict: true });
@@ -65,8 +63,7 @@ async function get(path: string, persona: string, operationId: string, validator
   const body = await response.json();
   const validate = validators[String(response.status)];
   expect(validate, `undeclared status ${response.status}`).toBeTruthy();
-  const contract = response.status === 200 ? contractBody(operationId, body) : body;
-  expect(validate(contract), `${path} ${response.status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
+  expect(validate(body), `${path} ${response.status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
   if (response.status === 200) {
     const full = v7Validators[operationId];
     expect(full(body), `${path} against v7: ${ajv.errorsText(full.errors)}`).toBe(true);
@@ -148,7 +145,6 @@ describe('E-PROJECTS mock honours the query', () => {
     expect([p0101.next_milestone, p0101.needs_person, p0101.stopped]).toEqual([{ name: 'UAT sign-off', due: { date: '2026-11-14', unknown: false } }, 2, 1]);
     expect(p0105).not.toHaveProperty('next_milestone');
     expect([p0105.needs_person, p0105.stopped]).toEqual([0, 0]);
-    expect(PROPOSED_FIELDS.row).toEqual(['reference', 'next_milestone', 'needs_person', 'stopped']);
   });
 
   it('a bad limit, a bad cursor or an empty q gets 404 invalid_query', async () => {
@@ -233,15 +229,15 @@ describe('project fixtures', () => {
       .map((name) => join(fixtures, 'projects', name)),
   ];
 
-  it('every journey file and the default list body are schema-valid (v6 without PROPOSAL fields, v7 in full)', () => {
+  it('every journey file and the default list body are schema-valid in full', () => {
     expect(journeyFiles.length).toBeGreaterThan(20);
     for (const path of journeyFiles) {
       const validate = journeyValidators['200'];
-      expect(validate(contractBody('E-PROJECT', readJson(path))), `${path}: ${ajv.errorsText(validate.errors)}`).toBe(true);
+      expect(validate(readJson(path)), `${path}: ${ajv.errorsText(validate.errors)}`).toBe(true);
       const full = v7Validators['E-PROJECT'];
       expect(full(readJson(path)), `${path} against v7: ${ajv.errorsText(full.errors)}`).toBe(true);
     }
-    expect(validate200(readJson(join(fixtures, 'E-PROJECT.json'))), 'the fallback has no PROPOSAL fields').toBe(true);
+    expect(validate200(readJson(join(fixtures, 'E-PROJECT.json'))), 'the fallback body is schema-valid').toBe(true);
     const validate = listValidators['200'];
     const body = readJson(join(fixtures, 'E-PROJECTS.json'));
     expect(validate(body), ajv.errorsText(validate.errors)).toBe(true);

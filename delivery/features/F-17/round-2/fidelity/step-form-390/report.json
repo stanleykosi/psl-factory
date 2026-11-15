@@ -1,0 +1,93 @@
+{
+  "region": "step-form",
+  "width": 390,
+  "board": "design/canvas/project/SCR-26-mobile-edit.dc.html",
+  "page": "/work/W-2002",
+  "boardText": "Edit the answer",
+  "pageText": "Edit answer",
+  "boardRegion": {
+    "width": 390,
+    "height": 844
+  },
+  "pageRegion": {
+    "width": 390,
+    "height": 339
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 14.3,
+    "coverageWithExceptions": 100,
+    "visual": 66
+  },
+  "missing": [
+    {
+      "role": "text",
+      "name": "R-07 · RFP p.6",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "Loan officers approve applications above a set amount",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "Tola's version stays in the history.",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    },
+    {
+      "role": "text",
+      "name": "From Harmattan Bank RFP 2025 · R-12",
+      "exception": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping."
+    },
+    {
+      "role": "text",
+      "name": "Status",
+      "exception": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form."
+    },
+    {
+      "role": "text",
+      "name": "Cancel keeps Tola's suggestion. If you've typed changes, we ask first.",
+      "exception": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal."
+    }
+  ],
+  "misplaced": [
+    {
+      "name": "Edit the answer"
+    }
+  ],
+  "extra": [
+    {
+      "role": "complementary",
+      "name": "Review and decide"
+    },
+    {
+      "role": "form",
+      "name": "Edit answer"
+    },
+    {
+      "role": "textbox",
+      "name": "Your answer"
+    },
+    {
+      "role": "button",
+      "name": "Edit answer"
+    },
+    {
+      "role": "button",
+      "name": "Cancel"
+    }
+  ],
+  "visual": {
+    "score": 66,
+    "allCellsScore": 30,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 339,
+    "cell": 12,
+    "contentCells": 1064,
+    "mismatchedCells": 362
+  },
+  "notes": []
+}

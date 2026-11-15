@@ -105,7 +105,7 @@
 .my-work__free .my-work__freeaction { min-height: 40px; padding: 0 12px; font-size: 13px; }
 .my-work__free .my-work__notnow { padding: 0 var(--space-2); min-height: 40px; font-size: 13px; color: var(--ink-muted); }
 .my-work__nothing { display: flex; align-items: center; gap: var(--space-6); padding: var(--space-4) 28px 0; background: var(--mascot-tola-tint); border: 2px solid var(--ink); }
-.my-work__mascot { flex: none; width: 150px; height: 150px; align-self: flex-end; }
+.my-work__mascot { flex: none; width: auto; height: 170px; align-self: flex-end; } /* Tola's thumbs-up pose, as the SCR-01 empty boards draw it */
 .my-work__nothingtext { display: flex; flex-direction: column; gap: 10px; padding-bottom: var(--space-4); }
 .my-work__nothingtext h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 30px; line-height: 1.05; }
 .my-work__nothingtext p { margin: 0; color: var(--ink-muted); line-height: 1.5; }
@@ -132,7 +132,7 @@
   .my-work__foot { margin-top: var(--space-2); border-top: 2px solid var(--ink); }
   /* SCR-01-mobile-empty: Tola on top, centred text and stacked buttons */
   .my-work__nothing { flex-direction: column; align-items: center; gap: 10px; padding: var(--space-3) 14px var(--space-4); }
-  .my-work__mascot { align-self: center; }
+  .my-work__mascot { height: 150px; align-self: center; }
   .my-work__nothingtext { align-items: center; gap: var(--space-3); padding-bottom: 0; text-align: center; }
   .my-work__nothingtext h2 { font-size: 22px; }
   .my-work__nothingtext p { line-height: 1.55; }

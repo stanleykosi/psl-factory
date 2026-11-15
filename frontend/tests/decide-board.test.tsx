@@ -158,6 +158,18 @@ describe('done board (criterion 15)', () => {
     expect(onlyContractCalls()).toBe(true);
   });
 
+  it('on a phone the card stops before the Paid sentence and the separate line says it once (SCR-03-mobile-done)', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: true, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
+    answers.item = (n) => json(200, item(n === 0 ? 'W-1901' : 'W-1901.approve'));
+    await open('W-1901', 'T-1901');
+    await ready();
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText(/^Chidi will issue it and email it to Lagoon Health\./);
+    expect(text().match(/Paid is tracked separately/g)).toHaveLength(1);
+    expect(document.querySelector('.decide-next')!.textContent).not.toContain('Paid is tracked');
+    expect(document.querySelector('.decide-paid')!.textContent).toContain('Paid is tracked separately');
+  });
+
   it('moves focus to the done heading, announces the result, and draws the next step on the agent surface with the done pose', async () => {
     answers.item = (n) => json(200, item(n === 0 ? 'W-1901' : 'W-1901.approve'));
     await open('W-1901', 'T-1901');

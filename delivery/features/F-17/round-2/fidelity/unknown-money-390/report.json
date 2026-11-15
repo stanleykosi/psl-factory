@@ -1,0 +1,92 @@
+{
+  "region": "unknown-money",
+  "width": 390,
+  "board": "design/canvas/finance/project/SCR-56-mobile-review.dc.html",
+  "page": "/work/W-2004",
+  "boardText": "MONTH",
+  "pageText": "Month",
+  "boardRegion": {
+    "width": 640,
+    "height": 153
+  },
+  "pageRegion": {
+    "width": 714,
+    "height": 174
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 47.1,
+    "coverageWithExceptions": 100,
+    "visual": 81.2
+  },
+  "missing": [
+    {
+      "role": "text",
+      "name": "₦22.6M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦18.4M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦21.0M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦20.0M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦12.1M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦24.3M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "₦7.8M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "exception": "Matched by position in the table pattern, not as a standalone label; the page draws Unknown in the same cells (tests/workspace.test.tsx INV-UNKNOWN)."
+    },
+    {
+      "role": "text",
+      "name": "₦19.8M",
+      "exception": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both."
+    }
+  ],
+  "misplaced": [
+    {
+      "name": ""
+    }
+  ],
+  "extra": [
+    {
+      "role": "region",
+      "name": "Table: Forecast · 6 months"
+    }
+  ],
+  "visual": {
+    "score": 81.2,
+    "allCellsScore": 85.1,
+    "width": 714,
+    "height": 153,
+    "boardHeight": 153,
+    "pageHeight": 174,
+    "cell": 12,
+    "contentCells": 616,
+    "mismatchedCells": 116
+  },
+  "notes": []
+}

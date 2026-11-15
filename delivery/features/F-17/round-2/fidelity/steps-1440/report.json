@@ -1,0 +1,70 @@
+{
+  "region": "steps",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-25-desktop-review.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "Approving sends this exact version to Lagoon Health.",
+  "pageText": "Approving sends this exact version to Lagoon Health.",
+  "boardRegion": {
+    "width": 440,
+    "height": 317
+  },
+  "pageRegion": {
+    "width": 440,
+    "height": 296
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 62.5,
+    "coverageWithExceptions": 100,
+    "visual": 40.4
+  },
+  "missing": [
+    {
+      "role": "text",
+      "name": "DECIDE · PMO LEAD",
+      "exception": "The decide panel title names the deciding role; workspace.steps carries no panel title or role (contract proposal in build.md)."
+    },
+    {
+      "role": "text",
+      "name": "Note (needed to return or refuse)",
+      "exception": "The note is a field of the Return step's form, drawn when Return is pressed (Contract: a step with fields opens its form)."
+    },
+    {
+      "role": "text",
+      "name": "(needed to return or refuse)",
+      "exception": "As the note label above."
+    }
+  ],
+  "misplaced": [
+    {
+      "name": "Approve and send"
+    }
+  ],
+  "extra": [
+    {
+      "role": "heading",
+      "name": "DECIDE"
+    },
+    {
+      "role": "button",
+      "name": "Refuse"
+    },
+    {
+      "role": "text",
+      "name": "Only the PMO Lead can refuse a report once it is assembled."
+    }
+  ],
+  "visual": {
+    "score": 40.4,
+    "allCellsScore": 44.1,
+    "width": 440,
+    "height": 317,
+    "boardHeight": 317,
+    "pageHeight": 296,
+    "cell": 12,
+    "contentCells": 937,
+    "mismatchedCells": 558
+  },
+  "notes": []
+}

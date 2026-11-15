@@ -1,0 +1,42 @@
+{
+  "region": "findings",
+  "width": 390,
+  "board": "design/canvas/project/SCR-25-mobile-review.dc.html",
+  "page": "/work/W-2003",
+  "boardText": "Login fails on older Android phones (high)",
+  "pageText": "Login fails on older Android phones",
+  "boardRegion": {
+    "width": 386,
+    "height": 41
+  },
+  "pageRegion": {
+    "width": 386,
+    "height": 56
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 74.7
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [
+    {
+      "role": "link",
+      "name": "ISS-0233"
+    }
+  ],
+  "visual": {
+    "score": 74.7,
+    "allCellsScore": 82.6,
+    "width": 386,
+    "height": 41,
+    "boardHeight": 41,
+    "pageHeight": 56,
+    "cell": 12,
+    "contentCells": 91,
+    "mismatchedCells": 23
+  },
+  "notes": []
+}

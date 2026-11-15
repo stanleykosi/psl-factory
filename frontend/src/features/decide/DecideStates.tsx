@@ -410,6 +410,8 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
   // desktop draws Paid once, inside the next-step card; the phone board draws it as its own line
   const phone = useIsPhone();
   const showPaid = approved && (phone || !reloaded?.next_step.includes('Paid is tracked separately'));
+  // on the phone the sentence is the separate line, so the card text stops before it
+  const nextStep = phone && approved && reloaded ? reloaded.next_step.replace(/\s*Paid is tracked separately[^.]*\.?/, '') : reloaded?.next_step;
   return (
     <>
       <DecideHeader
@@ -439,7 +441,7 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
             <div className={`psl-callout psl-callout--${approved ? 'success' : 'info'} decide-next`}>
               {image && <Image className="decide-next__img" src={image} alt="" width={96} height={136} unoptimized />}
               <p className="decide-plain">
-                <strong>Next step.</strong> {reloaded.next_step}
+                <strong>Next step.</strong> {nextStep}
               </p>
             </div>
           )}

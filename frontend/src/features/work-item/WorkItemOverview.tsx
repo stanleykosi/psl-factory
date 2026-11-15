@@ -441,9 +441,10 @@ function StatePanel({ panel, children }: { panel: NonNullable<WorkItemPresentati
             ))}
           </dl>
         )}
-        {children}
+        {panel.note && panel.note_first && <p className="work-statepanel__note">{panel.note}</p>}
         {panel.links && <PanelLinks links={panel.links} tone={tone} />}
-        {panel.note && <p className="work-statepanel__note">{panel.note}</p>}
+        {children}
+        {panel.note && !panel.note_first && <p className="work-statepanel__note">{panel.note}</p>}
       </div>
     </aside>
   );

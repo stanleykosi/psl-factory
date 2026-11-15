@@ -1,0 +1,42 @@
+{
+  "region": "checklist-gates",
+  "width": 390,
+  "board": "design/canvas/project/SCR-49-mobile-blocked.dc.html",
+  "page": "/work/W-2003",
+  "boardText": "Go-live accepted",
+  "pageText": "Release gates",
+  "boardRegion": {
+    "width": 386,
+    "height": 246
+  },
+  "pageRegion": {
+    "width": 386,
+    "height": 278
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 72.2
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [
+    {
+      "role": "heading",
+      "name": "RELEASE GATES"
+    }
+  ],
+  "visual": {
+    "score": 72.2,
+    "allCellsScore": 72.2,
+    "width": 386,
+    "height": 246,
+    "boardHeight": 246,
+    "pageHeight": 278,
+    "cell": 12,
+    "contentCells": 693,
+    "mismatchedCells": 193
+  },
+  "notes": []
+}
