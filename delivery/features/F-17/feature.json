@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-17",
   "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-WORKSPACE-FRAME"
   ],
@@ -1882,6 +1882,14 @@
       "from": "CHANGES_REQUESTED",
       "to": "IMPLEMENTING",
       "at": "2026-11-15T08:22:23Z",
+      "round": 5,
+      "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T08:24:16Z",
       "round": 5,
       "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
       "reason": null

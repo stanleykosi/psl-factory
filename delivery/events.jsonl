@@ -1217,3 +1217,4 @@
 {"at":"2026-11-15T08:23:50Z","feature":"F-17","round":5,"kind":"finding","action":"accept-risk","finding":"FID-1-1","by":"design-engineer"}
 {"at":"2026-11-15T08:23:51Z","feature":"F-18","round":3,"kind":"finding","action":"accept-risk","finding":"UI-1-7","by":"design-engineer"}
 {"at":"2026-11-15T08:23:51Z","feature":"F-18","round":3,"kind":"finding","action":"accept-risk","finding":"TECH-1-1","by":"design-engineer"}
+{"at":"2026-11-15T08:24:16Z","feature":"F-17","round":5,"kind":"transition","head":"f91bc63ff412","from":"IMPLEMENTING","to":"IN_REVIEW"}
