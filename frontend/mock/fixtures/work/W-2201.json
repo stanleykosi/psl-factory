@@ -215,8 +215,7 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record",
-            "help": "Records you cited in the saved draft stay on it until you choose new ones."
+            "placeholder": "+ cite a record"
           },
           {
             "name": "risks",
@@ -232,8 +231,7 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record",
-            "help": "Records you cited in the saved draft stay on it until you choose new ones."
+            "placeholder": "+ cite a record"
           },
           {
             "name": "timeline",
@@ -248,8 +246,7 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record",
-            "help": "Records you cited in the saved draft stay on it until you choose new ones."
+            "placeholder": "+ cite a record"
           },
           {
             "name": "next_steps",
@@ -264,8 +261,7 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record",
-            "help": "Records you cited in the saved draft stay on it until you choose new ones."
+            "placeholder": "+ cite a record"
           }
         ]
       },
@@ -289,8 +285,7 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record",
-            "help": "Records you cited in the saved draft stay on it until you choose new ones."
+            "placeholder": "+ cite a record"
           },
           {
             "name": "risks",
@@ -306,8 +301,7 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record",
-            "help": "Records you cited in the saved draft stay on it until you choose new ones."
+            "placeholder": "+ cite a record"
           },
           {
             "name": "timeline",
@@ -322,8 +316,7 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record",
-            "help": "Records you cited in the saved draft stay on it until you choose new ones."
+            "placeholder": "+ cite a record"
           },
           {
             "name": "next_steps",
@@ -338,8 +331,7 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record",
-            "help": "Records you cited in the saved draft stay on it until you choose new ones."
+            "placeholder": "+ cite a record"
           }
         ]
       }

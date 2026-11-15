@@ -184,7 +184,7 @@ describe('write request (AC 8, 9)', () => {
     await open(item('W-2201'));
     await press('Save draft');
     const f = form('Save draft');
-    expect(f.getAllByText('Records you cited in the saved draft stay on it until you choose new ones.')).toHaveLength(4);
+    expect(f.getAllByText('Saved records are not shown here. Choose at least one record for this part before you send.')).toHaveLength(1);
     await submit('Save draft');
     await waitFor(() => expect(posts()).toHaveLength(1));
     const inputs = posts()[0].body!.inputs as Record<string, unknown>;
