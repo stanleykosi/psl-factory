@@ -1,4 +1,14 @@
-# Coordinator handoff (15 Nov 2026, third session)
+# Coordinator handoff (15 Nov 2026, fourth session)
+
+## Fourth session (15 Nov, later) — read this first
+- **Done and on main:** follow-ups 02 (PR #31), F-20 Setup templates (PR #34), F-19 Clients (PR #37), F-21 Weekly update part 1 (PR #39), line work item frame passes 1 and 2 (PRs #33, #36). dlv-00 was merged into main (PR #32, then #35, #38, #40); main and dlv-00 are identical. **The backend developer builds on main** (D-80): after each merge into dlv-00, bring dlv-00 into main with a PR.
+- **Backend handoff:** `delivery/BACKEND-HANDOFF.md` plus `delivery/backend-handoff/` (board-vs-v7 gaps for every unbuilt screen, 45 open questions, F-21 additions at the end). The frontend is NOT connected to a real API: main's Django app has no `/api/v1` endpoints yet.
+- **New rules:** D-83 standing waiver for line screens (coverage 100 after exceptions + UI reviewer finds no fixable gap + visual >= 70, signed per board). D-76: no new features started until the design engineer lifts the pause (the handoff pack is out, so ask).
+- **Process lessons:** reviewer prompts must give the tool's exact header words (`VERDICT: PASS|CHANGES`, `REVIEWER: reviewer-<lens>`, full 40-char COMMIT). After a base sync every lens must re-confirm on the new head, each by its own reviewer role (one agent writing for several roles is refused, rightly). Run PMO after the other confirmations land. Read back review files: a reviewer once reported a write that didn't happen. Gates fail on load-sensitive timeouts (decide-board, setup-rules, mock-contract) when builders run in parallel; re-run when quiet — a follow-up to raise testing-library's async timeout is worth doing.
+- **Next (when the pause lifts):** F-21b (SCR-25 returned, received); FE-LINE-MINUTES (SCR-28, split); FE-ASSISTANT (SCR-05); FE-SETUP-DELEGATION; FE-M3-PROJECT-TABS; the other line screens per `delivery/screen-coverage.md` and the remaining-tasks list in BACKEND-HANDOFF.md.
+- **Waiting for the design engineer:** DE-5 (the phone "+ Start" in the bar). Board corrections listed in BACKEND-HANDOFF.md.
+
+## Third session notes (kept)
 
 Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-01…D-58). Feature state: `python3 /Users/Hunchoo/software-factory/packages/delivery/feature.py --project . status` and `next <F-id>`. Cost: `feature.py --project . cost`.
 
