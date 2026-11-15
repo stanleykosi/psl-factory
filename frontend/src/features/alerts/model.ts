@@ -1,6 +1,6 @@
 // SCR-15 alerts: contract values to the words on the boards, the list view in the URL, and the settings PUT body.
 // Presentation only: a proposal field the API does not return is never defaulted, and nothing here decides access.
-import { AGENT_NAMES, formatClock } from '@/features/decide/format';
+import { AGENTS as AGENT_INFO, formatDate, formatTime } from '@/components';
 
 import type { Alert, AlertAgent, AlertPrefs, AlertQuery, AlertWithNeed, PrefsBody } from './types';
 
@@ -9,12 +9,7 @@ export const AGENTS: readonly AlertAgent[] = ['tola', 'chidi', 'zainab'];
 const isAgent = (value: string | null | undefined): value is AlertAgent => AGENTS.includes(value as AlertAgent);
 
 export function agentName(agent: string): string {
-  return isAgent(agent) ? AGENT_NAMES[agent] : agent;
-}
-
-/** The mascot image for a known agent; none for any other key (the avatar is then a neutral circle). */
-export function agentImage(agent: string): string | undefined {
-  return isAgent(agent) ? `/agents/${agent}.png` : undefined;
+  return isAgent(agent) ? AGENT_INFO[agent].name : agent;
 }
 
 const CHANNEL_ORDER = ['whatsapp', 'email', 'in_app'] as const;
@@ -27,22 +22,21 @@ export function deliveryWords(via: readonly string[]): string {
 }
 
 const WAT_DAY = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit' });
-const DAY_MONTH = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'short' });
 const DAY_MS = 86_400_000;
 
-/** "10:42" on the same WAT day as now, "yesterday" on the day before, else "12 Nov". */
+/** "10:42 WAT" on the same WAT day as now, "yesterday" on the day before, else "12 Nov 2026". */
 export function dayWords(value: string, now: number): string {
   const day = WAT_DAY.format(new Date(value));
-  if (day === WAT_DAY.format(new Date(now))) return formatClock(value);
+  if (day === WAT_DAY.format(new Date(now))) return formatTime(value);
   if (day === WAT_DAY.format(new Date(now - DAY_MS))) return 'yesterday';
-  return DAY_MONTH.format(new Date(value));
+  return formatDate(value);
 }
 
 /** "<Agent> · <how> · <when>", or "<Agent> · In app only (<reason>)". */
 export function metaLine(alert: Alert, now: number): string {
   const name = agentName(alert.agent);
   if (alert.in_app_reason) return `${name} · In app only (${alert.in_app_reason})`;
-  const when = alert.digest_at ? `${formatClock(alert.digest_at)} daily digest` : dayWords(alert.delivered_at ?? alert.at, now);
+  const when = alert.digest_at ? `${formatTime(alert.digest_at)} daily digest` : dayWords(alert.delivered_at ?? alert.at, now);
   return [name, alert.delivered_via && deliveryWords(alert.delivered_via), when].filter(Boolean).join(' · ');
 }
 

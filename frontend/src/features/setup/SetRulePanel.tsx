@@ -6,18 +6,22 @@
 // re-applied); 422 keeps the edits and marks the named fields; a network or server error re-reads once and
 // never resends. When the view will not show the panel after the re-read (the right was withdrawn), the outcome goes
 // to onEditorGone and the view shows it above the list instead.
-import { useEffect, useId, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
-import { WarningIcon } from '@/shell/icons';
+import { Button, Callout, Checkbox, DateField, FileUpload, Panel, Select, TextField, type FileState } from '@/components';
 
 import { uploadEvidence } from './api';
 import type { RulesPage, RuleRow, SaveBody } from './contract-proposal';
-import { fieldsFromMessage, lagosToday, type RuleField } from './format';
-import { TickIcon } from './icons';
-import { ProofField, type ProofState } from './ProofField';
+import { fieldsFromMessage, fileToBase64, lagosToday, type RuleField } from './format';
 import { useRuleSave } from './useRuleSave';
 import { asApiError } from './useSetupRules';
+
+export type ProofState =
+  | { status: 'empty' }
+  | { status: 'uploading'; filename: string }
+  | { status: 'uploaded'; filename: string; size: number; evidenceId: string }
+  | { status: 'failed'; message: string };
 
 type Edits = { component: string; roles: string[]; starts: string; why: string; proof: ProofState; caseRevision?: number };
 export type Notice = { tone: 'success' | 'problem' | 'warning'; text: string };
@@ -45,18 +49,14 @@ export const NOT_SAVED = 'Nothing you entered was saved.';
 
 /** A save outcome callout; it takes focus when shown. The views also use it above the list once the panel has closed. */
 export function OutcomeNotice({ notice }: { notice: Notice }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => ref.current?.focus(), [notice]);
   return (
-    <div ref={ref} tabIndex={-1} role={notice.tone === 'success' ? 'status' : 'alert'} className={`psl-callout psl-callout--${notice.tone} setup-notice`}>
-      {notice.tone === 'success' ? <TickIcon /> : <WarningIcon />}
-      <span>{notice.text}</span>
-    </div>
+    <Callout kind={notice.tone} focusOnShow className="setup-notice">
+      {notice.text}
+    </Callout>
   );
 }
 
 export function SetRulePanel({ rows, refresh, signOut, staysOpen, onEditorGone }: Props) {
-  const id = useId();
   const [selected, setSelected] = useState(rows[0].component);
   const row = rows.find((r) => r.component === selected) ?? rows[0];
   const [edits, setEdits] = useState<Edits>(() => startEdits(row));
@@ -103,7 +103,7 @@ export function SetRulePanel({ rows, refresh, signOut, staysOpen, onEditorGone }
     const gen = generation.current;
     patch({ proof: { status: 'uploading', filename: file.name } });
     try {
-      const content = await toBase64(file);
+      const content = await fileToBase64(file);
       const result = await uploadEvidence(proofCase.case_id, {
         kind: proofCase.evidence_kind,
         filename: file.name,
@@ -190,77 +190,64 @@ export function SetRulePanel({ rows, refresh, signOut, staysOpen, onEditorGone }
   };
 
   const err = (field: RuleField) => invalid.has(field);
+  const proof = current.proof;
+  const proofState: FileState =
+    proof.status === 'uploading'
+      ? { status: 'uploading', name: proof.filename }
+      : proof.status === 'uploaded'
+        ? { status: 'uploaded', name: proof.filename, size: proof.size }
+        : { status: 'empty' };
+  const proofError = proof.status === 'failed' ? proof.message : err('evidence_id') ? 'Check this proof and choose it again.' : undefined;
   return (
-    <section className="psl-panel setup-panel" aria-labelledby={`${id}-head`}>
-      <h2 className="psl-panel__head setup-panel__head" id={`${id}-head`}>
-        Set a rule
-      </h2>
-      <div className="psl-panel__body">
-        {notice && <OutcomeNotice notice={notice} />}
-        <div className="psl-field">
-          <label className="psl-label" htmlFor={`${id}-rule`}>
-            Rule
-          </label>
-          <select id={`${id}-rule`} className="psl-input setup-select" value={row.component} onChange={(e) => pickRule(e.target.value)}>
-            {rows.map((r) => (
-              <option key={r.component} value={r.component}>
-                {r.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <fieldset className={`setup-roles${err('roles') ? ' is-error' : ''}`}>
-          <legend className="psl-label">Roles allowed</legend>
-          {options.map((o) => (
-            <label key={o.role} className={`psl-check setup-check${err('roles') ? ' is-error' : ''}`}>
-              <input
-                type="checkbox"
-                checked={current.roles.includes(o.role)}
-                aria-invalid={err('roles') || undefined}
-                onChange={(e) => toggleRole(o.role, e.target.checked)}
-              />
-              <span>{o.label}</span>
-            </label>
-          ))}
-        </fieldset>
-        <div className="psl-field">
-          <label className="psl-label" htmlFor={`${id}-starts`}>
-            Starts
-          </label>
-          <input
-            id={`${id}-starts`}
-            type="date"
-            className={`psl-input${err('starts') ? ' is-error' : ''}`}
-            value={current.starts}
-            aria-invalid={err('starts') || undefined}
-            onChange={(e) => patch({ starts: e.target.value })}
+    <Panel head={<h2>Set a rule</h2>} className="setup-panel">
+      {notice && <OutcomeNotice notice={notice} />}
+      <Select
+        label="Rule"
+        placeholder="Choose a rule"
+        options={rows.map((r) => ({ value: r.component, label: r.name }))}
+        value={row.component}
+        onChange={pickRule}
+      />
+      <fieldset className="setup-roles">
+        <legend className="psl-label">Roles allowed</legend>
+        {options.map((o, i) => (
+          <Checkbox
+            key={o.role}
+            label={o.label}
+            checked={current.roles.includes(o.role)}
+            error={i === 0 && err('roles') ? 'Choose the roles that may do this.' : undefined}
+            onChange={(e) => toggleRole(o.role, e.target.checked)}
           />
-        </div>
-        <div className="psl-field">
-          <label className="psl-label" htmlFor={`${id}-why`}>
-            Why
-          </label>
-          <input
-            id={`${id}-why`}
-            className={`psl-input${err('reason') ? ' is-error' : ''}`}
-            value={current.why}
-            aria-invalid={err('reason') || undefined}
-            onChange={(e) => patch({ why: e.target.value })}
-          />
-        </div>
-        <ProofField
-          id={`${id}-proof`}
-          enabled={row.proof_case !== undefined}
-          state={current.proof}
-          invalid={err('evidence_id')}
-          onPick={(file) => void pickProof(file)}
+        ))}
+      </fieldset>
+      <DateField
+        label="Starts"
+        value={current.starts}
+        error={err('starts') ? 'Check the start date.' : undefined}
+        onChange={(starts) => patch({ starts })}
+      />
+      <TextField
+        label="Why"
+        value={current.why}
+        error={err('reason') ? 'Check the reason.' : undefined}
+        onChange={(e) => patch({ why: e.target.value })}
+      />
+      {row.proof_case === undefined ? (
+        <FileUpload label="Proof" state={{ status: 'empty' }} onFile={() => {}} onRemove={() => {}} disabledReason="Proof can’t be attached here yet." />
+      ) : (
+        <FileUpload
+          label="Proof"
+          state={proofState}
+          error={proofError}
+          onFile={(file) => void pickProof(file)}
+          onRemove={() => patch({ proof: { status: 'empty' } })}
         />
-        <button type="button" className="psl-btn psl-btn--lg psl-btn--block setup-save" disabled={busy || locked} onClick={() => void onSave()}>
-          {busy ? 'Saving…' : `Save as version ${row.revision + 1}`}
-        </button>
-        <p className="setup-footnote">Rules are versioned. Work already decided keeps the version it was decided under.</p>
-      </div>
-    </section>
+      )}
+      <Button size="lg" block busy={busy} busyLabel="Saving…" disabled={locked} onClick={() => void onSave()}>
+        Save as version {row.revision + 1}
+      </Button>
+      <p className="setup-footnote">Rules are versioned. Work already decided keeps the version it was decided under.</p>
+    </Panel>
   );
 }
 
@@ -269,11 +256,4 @@ function without<T>(set: Set<T>, value: T): Set<T> {
   const next = new Set(set);
   next.delete(value);
   return next;
-}
-
-async function toBase64(file: File): Promise<string> {
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  let text = '';
-  for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  return btoa(text);
 }

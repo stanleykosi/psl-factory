@@ -12,7 +12,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RulesPage, RuleRow } from '@/features/setup/contract-proposal';
 import { DeliveryPageView } from '@/features/setup/DeliveryRulesView';
 import { FinancePageView } from '@/features/setup/FinanceRulesView';
-import { fieldsFromMessage, formatSize, groupButtonLabel, isEditable, versionText } from '@/features/setup/format';
+import { fieldsFromMessage, groupButtonLabel, isEditable, versionText } from '@/features/setup/format';
 import { ReservedTab } from '@/features/setup/ReservedTab';
 import { RulesPageView } from '@/features/setup/RulesView';
 import { EDITOR_GONE, NOT_SAVED } from '@/features/setup/SetRulePanel';
@@ -97,6 +97,12 @@ const panel = () => within(screen.getByRole('region', { name: 'Set a rule' }));
 const saveButton = () => panel().getByRole('button', { name: /Save as version|Saving…/ }) as HTMLButtonElement;
 const rowCells = (name: string) =>
   Array.from((within(desktop().getByRole('table')).getByText(name).closest('tr') as HTMLTableRowElement).cells).map((cell) => cell.textContent);
+/** Choose a rule in the Select: open it, then the option. */
+function pickRule(label: string) {
+  fireEvent.click(panel().getByRole('combobox', { name: 'Rule' }));
+  fireEvent.click(panel().getByRole('option', { name: label }));
+}
+const ruleShown = () => panel().getByRole('combobox', { name: 'Rule' }).textContent;
 const withPage = (page: RulesPage, change: (rows: RuleRow[]) => RuleRow[], extra: Partial<RulesPage> = {}): RulesPage => ({
   ...page,
   ...extra,
@@ -114,9 +120,9 @@ describe('rules list (AC 2, 3, 4)', () => {
       .slice(1)
       .map((tr) => tr.querySelector('td')?.textContent);
     expect(names).toEqual(page.items.map((r) => r.name));
-    expect(rowCells('Who reviews client documents')).toEqual(['Who reviews client documents', 'All lines', 'PMO Lead', 'v2 · since 01 Oct']);
+    expect(rowCells('Who reviews client documents')).toEqual(['Who reviews client documents', 'All lines', 'PMO Lead', 'v2 · since 1 Oct 2026']);
     expect(rowCells('Who may assign an RFP to a PM')).toEqual(['Who may assign an RFP to a PM', 'Pre-sale', 'Not set', 'HOLDS WORK']);
-    expect(rowCells('Invoice payment terms default')).toEqual(['Invoice payment terms default', 'Finance', 'From each signed SOW', 'v1 · since 30 Jun']);
+    expect(rowCells('Invoice payment terms default')).toEqual(['Invoice payment terms default', 'Finance', 'From each signed SOW', 'v1 · since 30 Jun 2026']);
     expect(desktop().getAllByText('Not set')[0].className).toBe('setup-notset');
     expect(desktop().getByRole('link', { name: 'PSL standard pricing v4' }).getAttribute('href')).toBe('/setup/costing-rule');
     expect(desktop().getAllByRole('link', { name: 'Finance' })[0].getAttribute('href')).toBe('/setup/rules/finance');
@@ -134,7 +140,7 @@ describe('rules list (AC 2, 3, 4)', () => {
 
   it('frame: seven tabs in order, Rules current, badges from the count fields', async () => {
     await open();
-    const tabs = within(screen.getByRole('navigation', { name: 'Setup' })).getAllByRole('link');
+    const tabs = within(screen.getByRole('tablist', { name: 'Setup' })).getAllByRole('tab');
     expect(tabs.map((t) => [t.textContent, t.getAttribute('href')])).toEqual([
       ['Roles2', '/setup/roles'],
       ['Rules8', '/setup/rules'],
@@ -144,7 +150,7 @@ describe('rules list (AC 2, 3, 4)', () => {
       ['Staff accounts', '/setup/staff'],
       ['Templates', '/setup/templates'],
     ]);
-    expect(tabs.filter((t) => t.getAttribute('aria-current') === 'page').map((t) => t.textContent)).toEqual(['Rules8']);
+    expect(tabs.filter((t) => t.getAttribute('aria-selected') === 'true').map((t) => t.textContent)).toEqual(['Rules8']);
   });
 
   it('without the count fields: no badges, no banner, phone h1 "Rules"; rows never make a count', async () => {
@@ -161,7 +167,7 @@ describe('rules list (AC 2, 3, 4)', () => {
   it('with not_set_count 0 the badge reads 0 and there is no banner; 1 reads "1 rule isn’t set yet"', async () => {
     answers.rules = () => json(200, { ...fixture('rules.desktop'), not_set_count: 0 });
     await open();
-    expect(within(screen.getByRole('navigation', { name: 'Setup' })).getByRole('link', { name: /^Rules/ }).textContent).toBe('Rules0');
+    expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules0');
     expect(document.body.textContent).not.toContain('set yet');
   });
 
@@ -190,13 +196,12 @@ describe('rules list (AC 2, 3, 4)', () => {
     expect(phone().getAllByText(/^Not set/)).toHaveLength(2);
   });
 
-  it('version text: Lagos date, year outside the current year, bare version without a date', () => {
+  it('version text: Lagos date with the year, bare version without a date', () => {
     const row = { component: 'c', name: 'n', set: true, revision: 3 } as RuleRow;
-    const now = new Date('2026-11-14T09:00:00+01:00');
-    expect(versionText({ ...row, effective_from: '2026-09-30T23:30:00Z' }, now)).toBe('v3 · since 01 Oct');
-    expect(versionText({ ...row, effective_from: '2025-06-30T00:00:00+01:00' }, now)).toBe('v3 · since 30 Jun 2025');
-    expect(versionText(row, now)).toBe('v3');
-    expect(versionText({ ...row, set: false }, now)).toBeNull();
+    expect(versionText({ ...row, effective_from: '2026-09-30T23:30:00Z' })).toBe('v3 · since 1 Oct 2026');
+    expect(versionText({ ...row, effective_from: '2025-06-30T00:00:00+01:00' })).toBe('v3 · since 30 Jun 2025');
+    expect(versionText(row)).toBe('v3');
+    expect(versionText({ ...row, set: false })).toBeNull();
   });
 });
 
@@ -219,8 +224,8 @@ describe('editor gating (AC 5, 6, 7)', () => {
     expect(isEditable({ ...base, can_change: undefined })).toBe(false);
 
     await open();
-    const picker = panel().getByRole('combobox', { name: 'Rule' }) as HTMLSelectElement;
-    expect(Array.from(picker.options).map((o) => o.textContent)).toEqual([
+    fireEvent.click(panel().getByRole('combobox', { name: 'Rule' }));
+    expect(panel().getAllByRole('option').map((o) => o.textContent)).toEqual([
       'Who may assign an RFP to a PM',
       'Who reviews client documents',
       'Who may record an RFP outcome',
@@ -259,7 +264,7 @@ describe('editor gating (AC 5, 6, 7)', () => {
       ['CEO', false],
       ['PMO', false],
     ]);
-    fireEvent.change(panel().getByRole('combobox', { name: 'Rule' }), { target: { value: 'documents.client_reviewer' } });
+    pickRule('Who reviews client documents');
     expect(boxes().map((b) => b.checked)).toEqual([true, false, false]);
     expect(saveButton().textContent).toBe('Save as version 3');
   });
@@ -293,7 +298,7 @@ describe('first save (AC 8, 9, 15)', () => {
     };
     await open();
     expect(saveButton().textContent).toBe('Save as version 1');
-    expect((panel().getByLabelText('Starts') as HTMLInputElement).value).toBe('2026-11-14');
+    expect((panel().getByLabelText('Starts') as HTMLInputElement).value).toBe('14 Nov 2026');
     await fillFirstSave({ why: '  Agreed at the PSL leadership meeting  ' });
 
     expect(uploads()).toHaveLength(1);
@@ -307,14 +312,14 @@ describe('first save (AC 8, 9, 15)', () => {
     expect(saves()).toHaveLength(1);
     expect(saves()[0]).toMatchObject({ path: '/api/v1/setup/rules/presale.rfp_assigner', csrf: 'mock-csrf-admin' });
     expect(saves()[0].body).toEqual({ expected_revision: 0, value: { roles: ['pmo_lead'] }, starts: '2026-11-14', reason: 'Agreed at the PSL leadership meeting', evidence_id: 'EV-1' });
-    expect(rowCells('Who may assign an RFP to a PM')).toEqual(['Who may assign an RFP to a PM', 'Pre-sale', 'PMO Lead', 'v1 · since 14 Nov']);
-    expect(within(screen.getByRole('navigation', { name: 'Setup' })).getByRole('link', { name: /^Rules/ }).textContent).toBe('Rules7');
+    expect(rowCells('Who may assign an RFP to a PM')).toEqual(['Who may assign an RFP to a PM', 'Pre-sale', 'PMO Lead', 'v1 · since 14 Nov 2026']);
+    expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules7');
     expect(desktop().getByText(/^7 rules aren’t set yet/)).toBeTruthy();
     // Rebuilt from the reloaded row: next version, its selection, Why and Proof cleared; focus on the callout.
     expect(saveButton().textContent).toBe('Save as version 2');
     expect((panel().getByRole('checkbox', { name: 'PMO Lead' }) as HTMLInputElement).checked).toBe(true);
     expect((panel().getByLabelText('Why') as HTMLInputElement).value).toBe('');
-    expect(panel().getByText('Choose a file')).toBeTruthy();
+    expect(panel().getByText('choose a file')).toBeTruthy();
     // Focus moves in an effect after the outcome renders.
     await waitFor(() => expect(document.activeElement).toBe(panel().getByRole('status')));
   });
@@ -327,7 +332,7 @@ describe('first save (AC 8, 9, 15)', () => {
     fireEvent.click(saveButton());
     fireEvent.click(saveButton());
     expect(saveButton().textContent).toBe('Saving…');
-    expect(saveButton().disabled).toBe(true);
+    expect(saveButton().getAttribute('aria-busy')).toBe('true');
     await waitFor(() => expect(saves()).toHaveLength(1));
     await act(async () => release());
     await waitFor(() => expect(panel().getByRole('status')).toBeTruthy());
@@ -363,7 +368,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     expect(rowCells('Who may assign an RFP to a PM')[2]).toBe('PMO Lead');
     expect((panel().getAllByRole('checkbox') as HTMLInputElement[]).map((b) => b.checked)).toEqual([true, false, false]);
     expect((panel().getByLabelText('Why') as HTMLInputElement).value).toBe('');
-    expect(panel().getByText('Choose a file')).toBeTruthy();
+    expect(panel().getByText('choose a file')).toBeTruthy();
     expect(saveButton().textContent).toBe('Save as version 2');
   });
 
@@ -403,7 +408,8 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     fireEvent.click(saveButton());
     await waitFor(() => expect(panel().getByRole('alert').textContent).toBe(FORBIDDEN.message));
     expect(reads()).toHaveLength(2);
-    expect(Array.from((panel().getByRole('combobox', { name: 'Rule' }) as HTMLSelectElement).options).map((o) => o.value)).not.toContain('presale.rfp_assigner');
+    fireEvent.click(panel().getByRole('combobox', { name: 'Rule' }));
+    expect(panel().getAllByRole('option').map((o) => o.textContent)).not.toContain('Who may assign an RFP to a PM');
   });
 
   it('403 that leaves no editable row: the panel closes and the message stays above the list with focus (QA-1-1)', async () => {
@@ -457,7 +463,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     await fillFirstSave({ why: 'Mine', file: false });
     fireEvent.click(saveButton());
     await waitFor(() => expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeNull());
-    const alert = desktop().getByRole('alert');
+    const alert = desktop().getByText(new RegExp(EDITOR_GONE)).closest('.psl-callout')!;
     expect(alert.textContent).toContain(EDITOR_GONE);
     expect(alert.textContent).not.toContain(NOT_SAVED);
     expect(saves()).toHaveLength(1);
@@ -479,7 +485,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     await waitFor(() => expect(panel().getByRole('alert').textContent).toBe(FORBIDDEN.message));
     expect(desktop().getAllByRole('alert')).toHaveLength(1);
     expect(document.body.textContent).not.toContain(EDITOR_GONE);
-    expect((panel().getByRole('combobox', { name: 'Rule' }) as HTMLSelectElement).value).toBe('documents.client_reviewer');
+    expect(ruleShown()).toBe('Who reviews client documents');
   });
 
   it('rules: a Show more that brings the panel back drops the stale "panel has closed" callout (TECH-2-1)', async () => {
@@ -498,7 +504,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(screen.getByRole('region', { name: 'Set a rule' })).toBeTruthy());
     expect(document.body.textContent).not.toContain(EDITOR_GONE);
-    expect((panel().getByRole('combobox', { name: 'Rule' }) as HTMLSelectElement).value).toBe('later.reviewer');
+    expect(ruleShown()).toBe('A later rule');
   });
 
   it('network error, revision unchanged: re-reads once, keeps the edits, never resends', async () => {
@@ -506,9 +512,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     await open();
     await fillFirstSave({ why: 'Mine', file: false });
     fireEvent.click(saveButton());
-    await waitFor(() =>
-      expect(panel().getByRole('alert').textContent).toBe('We couldn’t confirm the save. Nothing new is shown for this rule, so you can save again.'),
-    );
+    await waitFor(() => expect(panel().getByText('We couldn’t confirm the save. Nothing new is shown for this rule, so you can save again.')).toBeTruthy());
     expect(saves()).toHaveLength(1);
     expect(reads()).toHaveLength(2);
     expect((panel().getByLabelText('Why') as HTMLInputElement).value).toBe('Mine');
@@ -525,7 +529,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     await open();
     await fillFirstSave({ why: 'Mine', file: false });
     fireEvent.click(saveButton());
-    await waitFor(() => expect(panel().getByRole('alert').textContent).toBe('This rule changed. Check the version shown before saving again.'));
+    await waitFor(() => expect(panel().getByText('This rule changed. Check the version shown before saving again.')).toBeTruthy());
     expect((panel().getByLabelText('Why') as HTMLInputElement).value).toBe('');
     expect(saveButton().textContent).toBe('Save as version 2');
     expect(saves()).toHaveLength(1);
@@ -540,7 +544,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     expect(saveButton().disabled).toBe(true);
     fireEvent.click(saveButton());
     expect(saves()).toHaveLength(1);
-    fireEvent.change(panel().getByRole('combobox', { name: 'Rule' }), { target: { value: 'documents.client_reviewer' } });
+    pickRule('Who reviews client documents');
     expect(saveButton().disabled).toBe(false);
   });
 
@@ -559,6 +563,8 @@ describe('proof (AC 15)', () => {
     const input = () => panel().getByLabelText(/^Proof/) as HTMLInputElement;
     fireEvent.change(input(), { target: { files: [new File(['a'], 'one.pdf')] } });
     await waitFor(() => expect(panel().getByText('one.pdf')).toBeTruthy());
+    // The shared field shows the chosen file with Remove; another file is chosen after removing it.
+    fireEvent.click(panel().getByRole('button', { name: 'Remove' }));
     fireEvent.change(input(), { target: { files: [new File(['b'], 'two.pdf')] } });
     await waitFor(() => expect(panel().getByText('two.pdf')).toBeTruthy());
     expect(uploads().map((u) => (u.body as { case_revision: number }).case_revision)).toEqual([1, 2]);
@@ -566,9 +572,9 @@ describe('proof (AC 15)', () => {
     await waitFor(() => expect(saves()).toHaveLength(1));
     expect((saves()[0].body as { evidence_id: string }).evidence_id).toBe('EV-2');
 
-    fireEvent.change(panel().getByRole('combobox', { name: 'Rule' }), { target: { value: 'presale.rfp_outcome_recorder' } });
-    const drop = panel().getByText('Proof can’t be attached here yet.');
-    expect(drop.className).toBe('psl-drop is-disabled setup-drop');
+    pickRule('Who may record an RFP outcome');
+    const drop = panel().getByText('Proof can’t be attached here yet.').closest('.psl-drop')!;
+    expect(drop.className).toBe('psl-drop is-disabled');
     expect(drop.getAttribute('aria-disabled')).toBe('true');
     expect(panel().queryByLabelText(/^Proof/)).toBeNull();
   });
@@ -576,7 +582,7 @@ describe('proof (AC 15)', () => {
   it('a 422 upload marks Proof invalid and Save still works without evidence_id', async () => {
     answers.upload = () => json(422, { code: 'invalid', message: 'Check these fields: content_base64.' });
     await open();
-    fireEvent.change(panel().getByLabelText(/^Proof/), { target: { files: [new File(['a'], 'one.exe')] } });
+    fireEvent.change(panel().getByLabelText(/^Proof/), { target: { files: [new File(['a'], 'one.pdf')] } });
     await waitFor(() => expect(panel().getByText('Check these fields: content_base64.')).toBeTruthy());
     expect(panel().getByLabelText(/^Proof/).getAttribute('aria-invalid')).toBe('true');
     fireEvent.click(saveButton());
@@ -595,11 +601,11 @@ describe('proof (AC 15)', () => {
     expect(uploads()).toHaveLength(2);
   });
 
-  it('sizes read in KB below 1024 KB, else MB', () => {
-    expect(formatSize(120 * 1024)).toBe('120 KB');
-    expect(formatSize(1)).toBe('1 KB');
-    expect(formatSize(1024 * 1024)).toBe('1.0 MB');
-    expect(formatSize(1.55 * 1024 * 1024)).toBe('1.6 MB');
+  it('a file type the proof field refuses (.exe) sends nothing', async () => {
+    await open();
+    fireEvent.change(panel().getByLabelText(/^Proof/), { target: { files: [new File(['a'], 'one.exe')] } });
+    await waitFor(() => expect(panel().getByText('EXE files can’t be used as proof')).toBeTruthy());
+    expect(uploads()).toHaveLength(0);
   });
 });
 
@@ -651,14 +657,14 @@ describe('read states and paging (AC 14, 19, 21)', () => {
     // the button that was pressed is gone: focus goes to the end of the list instead of the page top (QA-3-1)
     expect(document.activeElement).toBe(desktop().getByText('All 55 rules are shown.'));
     expect(desktop().getAllByRole('row')[55].textContent).toContain('Sample rule 55');
-    expect(within(screen.getByRole('navigation', { name: 'Setup' })).getByRole('link', { name: /^Rules/ }).textContent).toBe('Rules55');
+    expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules55');
   });
 
   it('empty keeps the frame and shows the empty pattern without banner or panel', async () => {
     answers.rules = () => json(200, { items: [], as_of: '2026-11-12T10:40:00+01:00', not_set_count: 0 });
     await open();
-    expect(screen.getByRole('navigation', { name: 'Setup' })).toBeTruthy();
-    expect(desktop().getByRole('heading', { level: 2, name: 'No rules to show.' })).toBeTruthy();
+    expect(screen.getByRole('tablist', { name: 'Setup' })).toBeTruthy();
+    expect(desktop().getByRole('heading', { level: 3, name: 'No rules to show.' })).toBeTruthy();
     expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeNull();
     expect(document.body.textContent).not.toContain('set yet');
   });
@@ -690,7 +696,8 @@ describe('finance and delivery views (AC 16, 17)', () => {
     fireEvent.click(buttons[6]);
     expect(buttons[6].getAttribute('aria-expanded')).toBe('true');
     expect(document.getElementById(buttons[6].getAttribute('aria-controls')!)!.hidden).toBe(false);
-    expect(Array.from((panel().getByRole('combobox', { name: 'Rule' }) as HTMLSelectElement).options).map((o) => o.textContent)).toEqual([
+    fireEvent.click(panel().getByRole('combobox', { name: 'Rule' }));
+    expect(panel().getAllByRole('option').map((o) => o.textContent)).toEqual([
       'Who may read inputs',
       'Who reviews payroll',
     ]);
@@ -741,8 +748,8 @@ describe('reserved tabs (AC 20)', () => {
   it('shows the frame with that tab current, no badges, the empty pattern and makes no setup call', async () => {
     pathname.value = '/setup/delegation';
     await open(<ReservedTab tab="delegation" />);
-    const nav = screen.getByRole('navigation', { name: 'Setup' });
-    expect(within(nav).getByRole('link', { name: 'Delegation' }).getAttribute('aria-current')).toBe('page');
+    const nav = screen.getByRole('tablist', { name: 'Setup' });
+    expect(within(nav).getByRole('tab', { name: 'Delegation' }).getAttribute('aria-selected')).toBe('true');
     expect(nav.querySelectorAll('.psl-badge')).toHaveLength(0);
     expect(screen.getByRole('heading', { level: 2, name: 'Delegation comes next.' })).toBeTruthy();
     expect(calls.map((c) => c.path)).toEqual(['/api/v1/me']);

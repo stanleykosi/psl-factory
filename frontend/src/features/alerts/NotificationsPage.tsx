@@ -1,22 +1,19 @@
 'use client';
 
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { FilterIcon, SearchIcon } from '@/features/my-work/icons';
-import { LoadingState, SignedOutState } from '@/shell/FrameStates';
+import { Button, Callout, EmptyState, Link, ListToolbar, Loading, PageTitle, ShowMore, Skeleton, Tag, useIsPhone, VisuallyHidden } from '@/components';
+import { SignedOutState } from '@/shell/FrameStates';
 
 import { AlertAvatar, AlertBody, AlertsLoadError, useOpenAlert, type OpenAlert } from './AlertParts';
 import { AlertsFilterPanel, type AlertFilters } from './AlertsFilterPanel';
 import type { Alert } from './types';
 import { buildAlertQuery, countLine, filterCount, isNarrowed, parseView, viewSearch, workHref, type View } from './model';
-import { useIsPhone } from './useIsPhone';
 import './alerts.css';
-
-const SEARCH_DEBOUNCE_MS = 300;
 
 // `now` is when page 1 arrived: "10:42", "yesterday" and "12 Nov" are read against it.
 type Loaded = { items: Alert[]; nextCursor?: string; total?: number; now: number };
@@ -52,7 +49,6 @@ function Notifications() {
 
   const seq = useRef(0);
   const viewRef = useRef(view);
-  const filterButton = useRef<HTMLButtonElement>(null);
 
   const navigate = useCallback(
     (next: Partial<View>) => router.replace(`/notifications${viewSearch({ ...viewRef.current, ...next })}`, { scroll: false }),
@@ -112,24 +108,16 @@ function Notifications() {
     void load(view);
   }, [view, load]);
 
-  // Search: the box keeps what the person typed; the URL takes it 300 ms after the last keystroke.
+  // Search: the box keeps what the person typed; the URL takes the settled search (two characters or more, or none).
   const [text, setText] = useState(view.q ?? '');
   const [syncedQ, setSyncedQ] = useState(view.q);
   if (view.q !== syncedQ) {
     setSyncedQ(view.q);
     if ((text.trim() || undefined) !== view.q) setText(view.q ?? '');
   }
-  const debounce = useRef<ReturnType<typeof setTimeout>>(undefined);
-  useEffect(() => () => clearTimeout(debounce.current), []);
   const applySearch = (value: string) => {
-    clearTimeout(debounce.current);
     const q = value.trim() || undefined;
     if (q !== viewRef.current.q) navigate({ q });
-  };
-  const onSearchInput = (value: string) => {
-    setText(value);
-    clearTimeout(debounce.current);
-    debounce.current = setTimeout(() => applySearch(value), SEARCH_DEBOUNCE_MS);
   };
   const onSearchSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -138,7 +126,6 @@ function Notifications() {
 
   const closeFilter = useCallback(() => {
     setFilterOpen(false);
-    filterButton.current?.focus();
   }, []);
   const applyFilters = (filters: AlertFilters) => {
     closeFilter();
@@ -151,45 +138,37 @@ function Notifications() {
 
   const count = list.status === 'ready' ? countLine(list.total) : undefined;
   const facets = filterCount(view);
-  const filterLabel = facets > 0 ? `Filter · ${facets}` : 'Filter';
-  const filterProps = {
-    ref: filterButton,
-    type: 'button' as const,
-    'aria-haspopup': 'dialog' as const,
-    'aria-expanded': filterOpen,
-    onClick: () => (filterOpen ? closeFilter() : setFilterOpen(true)),
-  };
-  const filterPanel = filterOpen && (
-    <AlertsFilterPanel
-      phone={phone}
-      applied={{ agent: view.agent, unread: view.unread }}
-      unreadCount={unreadCount}
-      anchor={filterButton}
-      onApply={applyFilters}
-      onClose={closeFilter}
-    />
+  const filterPanel = (
+    <AlertsFilterPanel applied={{ agent: view.agent, unread: view.unread }} unreadCount={unreadCount} onApply={applyFilters} onClose={closeFilter} />
   );
   const settingsLink = <Link href="/settings/alerts">Alert settings</Link>;
 
   let body;
   if (list.status === 'loading') {
-    body = <LoadingState />;
+    body = (
+      <div className="cmp-stack">
+        <Skeleton />
+        <Loading>Loading…</Loading>
+      </div>
+    );
   } else if (list.status === 'error') {
     body = <AlertsLoadError error={list.error} asOf={asOf} onRetry={() => void load(view)} />;
   } else if (list.items.length === 0 && isNarrowed(view)) {
     body = (
-      <div className="psl-empty">
-        <h3>No alerts match</h3>
-        <button type="button" className="psl-btn psl-btn--secondary" onClick={() => navigate({ q: undefined, agent: undefined, unread: undefined })}>
-          Clear search and filters
-        </button>
-      </div>
+      <EmptyState
+        title="No alerts match"
+        action={
+          <Button kind="secondary" onClick={() => navigate({ q: undefined, agent: undefined, unread: undefined })}>
+            Clear search and filters
+          </Button>
+        }
+      >
+        Nothing fits this search and these filters.
+      </EmptyState>
     );
   } else if (list.items.length === 0) {
     body = (
-      <div className="psl-empty">
-        <h3>No alerts yet.</h3>
-      </div>
+      <EmptyState title="No alerts yet.">Alerts for your work will appear here.</EmptyState>
     );
   } else {
     const { now } = list;
@@ -200,26 +179,16 @@ function Notifications() {
             <AlertRow key={alert.id} alert={alert} now={now} onOpen={openAlert} />
           ))}
         </ul>
-        {list.nextCursor && (
-          <div className="psl-showmore alerts-showmore">
-            <button
-              type="button"
-              className="psl-btn psl-btn--secondary psl-btn--sm"
-              aria-busy={more === 'loading'}
-              aria-disabled={more === 'loading' || undefined}
-              onClick={() => void showMore()}
-            >
-              Show more
-            </button>
-          </div>
+        {(list.nextCursor || more === 'loading') && (
+          <ShowMore className="alerts-showmore" shown={list.items.length} hasMore busy={more === 'loading'} onMore={() => void showMore()} />
         )}
         {more === 'error' && (
-          <div className="psl-callout psl-callout--problem alerts-morefail">
-            <span>We couldn&rsquo;t load more. Nothing was changed.</span>
-            <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" onClick={() => void showMore()}>
+          <Callout kind="problem">
+            We couldn&rsquo;t load more. Nothing was changed.{' '}
+            <Button kind="secondary" size="sm" onClick={() => void showMore()}>
               Try again
-            </button>
-          </div>
+            </Button>
+          </Callout>
         )}
       </div>
     );
@@ -227,10 +196,12 @@ function Notifications() {
 
   return (
     <div className="alerts-page">
-      {!phone && <p className="alerts-eyebrow">NOTIFICATIONS</p>}
       {/* Phone: "← Home" sits level with the heading until the frame's phone bar has a back-link slot (D-19, D-13). */}
       <div className="alerts-head">
-        <h1 className="shell-title">Notifications</h1>
+        <div className="alerts-titlecol">
+          {!phone && <p className="alerts-eyebrow">NOTIFICATIONS</p>}
+          <PageTitle>Notifications</PageTitle>
+        </div>
         {phone ? (
           <Link href="/" className="alerts-back">
             ← Home
@@ -241,39 +212,18 @@ function Notifications() {
       </div>
 
       {toolbar && (
-        <form role="search" className="psl-toolbar alerts-toolbar" onSubmit={onSearchSubmit}>
-          <div className="psl-search alerts-search">
-            <SearchIcon />
-            <label className="alerts-sr" htmlFor="alerts-q">
-              Search
-            </label>
-            <input
-              id="alerts-q"
-              type="search"
-              className="psl-input"
-              placeholder="Search notifications"
-              value={text}
-              onChange={(e) => onSearchInput(e.target.value)}
-            />
-          </div>
-          <div className="alerts-filter">
-            {phone ? (
-              <button {...filterProps} className="psl-iconbtn" aria-label={filterLabel}>
-                <FilterIcon />
-              </button>
-            ) : (
-              <button {...filterProps} className="psl-btn psl-btn--secondary alerts-filterbtn">
-                <FilterIcon />
-                {filterLabel}
-              </button>
-            )}
-            {!phone && filterPanel}
-          </div>
-          {!phone && count && <span className="alerts-count">{count}</span>}
-          {!phone && count && unreadCount !== undefined && <span className="alerts-sr">, {unreadCount} unread</span>}
+        <form role="search" onSubmit={onSearchSubmit}>
+          <ListToolbar
+            search={{ label: 'Search', placeholder: 'Search notifications', value: text, onChange: setText, onSearch: applySearch }}
+            filterCount={facets}
+            filterOpen={filterOpen}
+            onFilterToggle={() => (filterOpen ? closeFilter() : setFilterOpen(true))}
+            filterPanel={filterPanel}
+            resultText={count ?? ''}
+          />
+          {!phone && count && unreadCount !== undefined && <VisuallyHidden>, {unreadCount} unread</VisuallyHidden>}
         </form>
       )}
-      {phone && filterPanel}
 
       {body}
       {phone && settingsLink}
@@ -288,15 +238,15 @@ function AlertRow({ alert, now, onOpen }: RowProps) {
   const unread = alert.read === false;
   return (
     <li className={unread ? 'alerts-row alerts-row--unread' : 'alerts-row'}>
-      <Link href={workHref(alert)} className="alerts-link" onClick={(event) => onOpen(event, alert)}>
+      <NextLink href={workHref(alert)} className="alerts-link" onClick={(event) => onOpen(event, alert)}>
         <AlertAvatar agent={alert.agent} />
         <AlertBody alert={alert} now={now} />
         {unread && (
-          <span className="psl-tag psl-tag--person alerts-new">
-            <span className="alerts-sr">, </span>NEW
-          </span>
+          <Tag tone="neutral" className="alerts-new">
+            <VisuallyHidden>, </VisuallyHidden>NEW
+          </Tag>
         )}
-      </Link>
+      </NextLink>
     </li>
   );
 }

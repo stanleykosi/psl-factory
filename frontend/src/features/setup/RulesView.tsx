@@ -3,10 +3,9 @@
 // /setup/rules (SCR-13-desktop-rules, SCR-13-mobile-rules). Every value comes from E-SETUP-RULES: Not set only when
 // set is false, counts only from the count fields, editing only where the row allows it. Both layouts render and
 // CSS shows one; the phone is read-only as drawn (D-15).
-import Link from 'next/link';
 import { useState } from 'react';
 
-import { WarningIcon } from '@/shell/icons';
+import { Callout, Link, PageTitle, Table, Tag } from '@/components';
 
 import type { RuleRow } from './contract-proposal';
 import { areaHref, isEditable, linkHref, valueText, versionText } from './format';
@@ -42,7 +41,7 @@ function ValueCell({ row }: { row: RuleRow }) {
 }
 
 function VersionCell({ row }: { row: RuleRow }) {
-  if (row.holds_work) return <span className="psl-tag psl-tag--person setup-tag">HOLDS WORK</span>;
+  if (row.holds_work) return <Tag tone="person">HOLDS WORK</Tag>;
   const text = versionText(row);
   return text ? <span className="setup-version">{text}</span> : null;
 }
@@ -71,44 +70,24 @@ function RulesView() {
         ) : (
           <>
             {notSet !== undefined && notSet > 0 && (
-              <div className="psl-callout psl-callout--warning">
-                <WarningIcon />
-                <span>{notSetBanner(notSet)}</span>
-              </div>
+              <Callout kind="warning">{notSetBanner(notSet)}</Callout>
             )}
             {closedNotice && editable.length === 0 && <OutcomeNotice notice={closedNotice} />}
             <div className="setup-columns">
               <section className="setup-main" aria-label="Rules">
-                <div className="psl-tablewrap">
-                  <table className="psl-table setup-table">
-                    <thead>
-                      <tr>
-                        <th scope="col">RULE</th>
-                        <th scope="col">AREA</th>
-                        <th scope="col">CURRENT VALUE</th>
-                        <th scope="col">VERSION</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map((row) => (
-                        <tr key={row.component}>
-                          <td>
-                            <strong>{row.name}</strong>
-                          </td>
-                          <td>
-                            <AreaText row={row} />
-                          </td>
-                          <td>
-                            <ValueCell row={row} />
-                          </td>
-                          <td>
-                            <VersionCell row={row} />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <Table
+                  caption="Rules and their current values"
+                  className="setup-table"
+                  columns={[
+                    { key: 'rule', header: 'RULE', cell: (row) => <strong>{row.name}</strong> },
+                    { key: 'area', header: 'AREA', cell: (row) => <AreaText row={row} /> },
+                    { key: 'value', header: 'CURRENT VALUE', cell: (row) => <ValueCell row={row} /> },
+                    { key: 'version', header: 'VERSION', cell: (row) => <VersionCell row={row} /> },
+                  ]}
+                  rows={items}
+                  rowKey={(row) => row.component}
+                  empty="No rules to show."
+                />
                 <ShowMore state={state} onMore={() => void loadMore()} />
               </section>
               {editable.length > 0 && (
@@ -128,7 +107,7 @@ function RulesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <h1 className="setup-phone-title">{notSet === undefined ? 'Rules' : `Rules · ${notSet} not set`}</h1>
+        <PageTitle>{notSet === undefined ? 'Rules' : `Rules · ${notSet} not set`}</PageTitle>
         {empty ? (
           <RulesEmpty />
         ) : (
@@ -138,7 +117,7 @@ function RulesView() {
               return (
                 <li key={row.component} className="setup-card">
                   <strong>{row.name}</strong>
-                  <span className={`setup-card__line${text === null ? ' is-notset' : ''}`}>
+                  <span className="setup-card__line">
                     {text ?? 'Not set'}
                     {row.area_label && (
                       <>

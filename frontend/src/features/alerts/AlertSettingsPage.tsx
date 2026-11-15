@@ -1,16 +1,15 @@
 'use client';
 
-import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
+import { Button, Callout, ErrorState, Link, PageTitle, Select, Table, useIsPhone } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { AlertSwitch } from './AlertSwitch';
 import type { AlertEvent, AlertPrefs, SavedPrefs } from './types';
 import { buildPrefsBody, draftFrom, quietLabel, selectsShown, type Draft } from './model';
-import { useIsPhone } from './useIsPhone';
 import './alerts.css';
 
 const PATHNAME = '/settings/alerts';
@@ -44,7 +43,7 @@ export function AlertSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [signedOut, setSignedOut] = useState(false);
   const savingRef = useRef(false);
-  const callout = useRef<HTMLDivElement>(null);
+  const problem = useRef<HTMLDivElement>(null);
 
   const failed = useCallback((error: unknown) => {
     const e = asApiError(error);
@@ -68,9 +67,8 @@ export function AlertSettingsPage() {
   }, [load]);
 
   useEffect(() => {
-    if (notice?.kind === 'stale' || notice?.kind === 'invalid') callout.current?.focus();
     // a failed save's message can sit under the phone's pinned Save bar; the callout's scroll-margin keeps it clear of the bar
-    else if (notice?.kind === 'problem') callout.current?.scrollIntoView?.({ block: 'nearest' });
+    if (notice?.kind === 'problem') problem.current?.scrollIntoView?.({ block: 'nearest' });
   }, [notice]);
 
   const edit = (change: (draft: Draft) => Draft) => {
@@ -114,7 +112,7 @@ export function AlertSettingsPage() {
   // Phone: "← Notifications" sits level with the heading until the frame's phone bar has a back-link slot (D-19, D-13).
   const title = phone ? (
     <div className="alerts-head">
-      <h1 className="shell-title alerts-settitle">How you&rsquo;re alerted</h1>
+      <PageTitle className="alerts-settitle">How you&rsquo;re alerted</PageTitle>
       <Link href="/notifications" className="alerts-back">
         ← Notifications
       </Link>
@@ -122,7 +120,7 @@ export function AlertSettingsPage() {
   ) : (
     <>
       <p className="alerts-eyebrow">SETTINGS / ALERTS</p>
-      <h1 className="shell-title">How you&rsquo;re alerted</h1>
+      <PageTitle>How you&rsquo;re alerted</PageTitle>
     </>
   );
 
@@ -131,16 +129,9 @@ export function AlertSettingsPage() {
     return (
       <div className="alerts-page">
         {title}
-        <div className="shell-errorcard" role="alert">
-          <span className="shell-eyebrow">ERROR · COULDN&rsquo;T LOAD</span>
-          <span>We couldn&rsquo;t load your alert settings. Your work is safe; nothing was changed.</span>
-          <span className="shell-reference">Reference {page.code} for support.</span>
-          <div className="shell-errorcard__action">
-            <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" onClick={() => void load()}>
-              Try again
-            </button>
-          </div>
-        </div>
+        <ErrorState title="We couldn’t load your alert settings." retryLabel="Try again" onRetry={() => void load()}>
+          Your work is safe; nothing was changed. Reference {page.code} for support.
+        </ErrorState>
       </div>
     );
   }
@@ -159,32 +150,30 @@ export function AlertSettingsPage() {
 
   const notices = notice && (
     <>
-      {notice.kind === 'saved' && (
-        <div className="psl-callout psl-callout--success" role="status">
-          Your alert settings are saved.
-        </div>
-      )}
+      {notice.kind === 'saved' && <Callout kind="success">Your alert settings are saved.</Callout>}
       {notice.kind === 'stale' && (
-        <div ref={callout} tabIndex={-1} className="psl-callout psl-callout--warning" role="alert">
+        <Callout kind="warning" focusOnShow>
           Someone changed these settings since you opened them. This is the latest version; make your changes again.
-        </div>
+        </Callout>
       )}
       {notice.kind === 'invalid' && (
-        <div ref={callout} tabIndex={-1} className="psl-callout psl-callout--problem" role="alert">
+        <Callout kind="problem" focusOnShow>
           We couldn&rsquo;t save your settings. {notice.message}
-        </div>
+        </Callout>
       )}
       {notice.kind === 'problem' && (
-        <div ref={callout} className="psl-callout psl-callout--problem" role="alert">
-          We couldn&rsquo;t save your settings. Nothing was changed. {notice.message} Reference {notice.code} for support.
+        <div ref={problem} className="alerts-scroll">
+          <Callout kind="problem">
+            We couldn&rsquo;t save your settings. Nothing was changed. {notice.message} Reference {notice.code} for support.
+          </Callout>
         </div>
       )}
     </>
   );
-  const saveButton = (className: string) => (
-    <button type="button" className={className} aria-disabled={saving || undefined} onClick={() => void save()}>
-      {saving ? 'Saving…' : 'Save settings'}
-    </button>
+  const saveButton = (size: 'lg' | 'xl') => (
+    <Button size={size} block busy={saving} busyLabel="Saving…" onClick={() => void save()}>
+      Save settings
+    </Button>
   );
 
   if (phone) {
@@ -203,7 +192,7 @@ export function AlertSettingsPage() {
         {quiet && <p className="alerts-quiet">Quiet hours {quiet}</p>}
         {notices}
         <div className="alerts-footspace" aria-hidden="true" />
-        <div className="alerts-footer">{saveButton('psl-btn psl-btn--xl psl-btn--block')}</div>
+        <div className="alerts-footer">{saveButton('xl')}</div>
       </div>
     );
   }
@@ -213,78 +202,49 @@ export function AlertSettingsPage() {
   return (
     <div className="alerts-page">
       {title}
-      <div className="psl-tablewrap">
-        <table className="psl-table alerts-table">
-          <caption className="alerts-sr">Alerts for each kind of work</caption>
-          <thead>
-            <tr>
-              <th scope="col">WHEN</th>
-              <th scope="col">WHATSAPP</th>
-              <th scope="col">EMAIL</th>
-              <th scope="col">TIMING</th>
-            </tr>
-          </thead>
-          <tbody>
-            {prefs.events.map((event) => {
-              const [whatsapp, email] = switches(event, false);
-              return (
-                <tr key={event.key}>
-                  <td>
-                    {event.label}
-                    {locked(event)}
-                  </td>
-                  <td>{whatsapp}</td>
-                  <td>{email}</td>
-                  <td>{event.timing_label}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <Table
+        caption="Alerts for each kind of work"
+        className="alerts-table"
+        columns={[
+          {
+            key: 'when',
+            header: 'WHEN',
+            cell: (event) => (
+              <>
+                {event.label}
+                {locked(event)}
+              </>
+            ),
+          },
+          { key: 'whatsapp', header: 'WHATSAPP', cell: (event) => switches(event, false)[0] },
+          { key: 'email', header: 'EMAIL', cell: (event) => switches(event, false)[1] },
+          { key: 'timing', header: 'TIMING', cell: (event) => event.timing_label },
+        ]}
+        rows={prefs.events}
+        rowKey={(event) => event.key}
+        empty="No alert settings to show."
+      />
       {(shown.digest || shown.quiet || number || prefs.note) && (
         <div className="alerts-cards">
           {(shown.digest || shown.quiet) && (
             <div className="alerts-card">
               {shown.digest && prefs.digest_at && (
-                <>
-                  <label htmlFor="alerts-digest" className="alerts-cardlabel">
-                    Daily digest at
-                  </label>
-                  <select
-                    id="alerts-digest"
-                    className="psl-input alerts-select"
-                    value={draft.digest}
-                    onChange={(e) => edit((d) => ({ ...d, digest: e.target.value }))}
-                  >
-                    {prefs.digest_at.value === undefined && <option value="">Not set</option>}
-                    {prefs.digest_at.options.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                </>
+                <Select
+                  label="Daily digest at"
+                  placeholder="Not set"
+                  options={prefs.digest_at.options}
+                  value={draft.digest || undefined}
+                  onChange={(digest) => edit((d) => ({ ...d, digest }))}
+                />
               )}
               {shown.quiet && prefs.quiet_hours && (
-                <>
-                  <label htmlFor="alerts-quiet" className="alerts-cardlabel">
-                    Quiet hours
-                  </label>
-                  <select
-                    id="alerts-quiet"
-                    className="psl-input alerts-select"
-                    value={draft.quiet}
-                    onChange={(e) => edit((d) => ({ ...d, quiet: e.target.value }))}
-                  >
-                    {prefs.quiet_hours.value === undefined && <option value="">Not set</option>}
-                    {prefs.quiet_hours.options.map((o) => (
-                      <option key={o.value} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                </>
+                <Select
+                  label="Quiet hours"
+                  placeholder="Not set"
+                  options={prefs.quiet_hours.options}
+                  value={draft.quiet || undefined}
+                  onChange={(quiet) => edit((d) => ({ ...d, quiet }))}
+                />
               )}
             </div>
           )}
@@ -304,7 +264,7 @@ export function AlertSettingsPage() {
         </div>
       )}
       {notices}
-      <div className="alerts-save">{saveButton('psl-btn psl-btn--lg psl-btn--block')}</div>
+      <div className="alerts-save">{saveButton('lg')}</div>
     </div>
   );
 }

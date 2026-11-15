@@ -4,39 +4,28 @@
 .monthend { display: flex; flex-direction: column; gap: 20px; line-height: normal; }
 .monthend-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
 .monthend-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-3); }
-.monthend-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 34px; line-height: 1.08; }
 .monthend-asof { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
 
 /* the strip: four cells, values as returned */
 .monthend-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 2px solid var(--ink); background: var(--surface); }
-.monthend-cell { padding: var(--space-3) 14px; border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: var(--space-1); }
-.monthend-cell--done { background: var(--verified); color: var(--on-strong); }
-.monthend-cell--waiting { background: var(--waiting-tint); color: var(--waiting-ink); }
-.monthend-cell--progress { background: var(--surface); color: var(--ink-subtle); }
-.monthend-cell--plain { background: var(--surface); color: var(--ink); }
-.monthend .psl-tag { line-height: normal; border-radius: 0; }
+.monthend-cell { padding: var(--space-3) var(--space-14px); border-right: var(--rule-strong) solid var(--ink); display: flex; flex-direction: column; gap: var(--space-1); }
+.monthend-cell:last-child { border-right: none; }
+.monthend-cell__value--waiting { color: var(--waiting-ink); }
+.monthend-cell__value--progress { color: var(--action-ink); }
 .monthend-cell__label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; }
 .monthend-cell__value { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
 
 /* table and aside */
 .monthend-row { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
 .monthend-tasks, .monthend-empty { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-.monthend-frame { overflow-x: auto; background: var(--surface); border: 2px solid var(--ink); }
-.monthend-table { width: 100%; min-width: 760px; border-collapse: collapse; }
-.monthend-table th { padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--ink); font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; color: var(--ink-muted); }
-.monthend-table td { padding: 10px 14px; border-bottom: 1px solid var(--rule-soft); }
 .monthend-detail { font-size: 12px; color: var(--ink-muted); }
-.monthend-restricted { font-size: 13px; color: var(--ink-muted); white-space: nowrap; }
 .monthend-aside { flex: 1 1 320px; max-width: 420px; display: flex; flex-direction: column; gap: 14px; }
 .monthend-note { display: flex; gap: 10px; align-items: flex-start; padding: 10px var(--space-3); background: var(--action-tint); border: 2px solid var(--action); }
-.monthend-note__avatar { width: 36px; height: 36px; border-radius: var(--radius-round); object-fit: cover; background: var(--mascot-chidi-tint); flex: none; }
 .monthend-note__text { font-size: 14px; color: var(--action-ink); line-height: 1.45; }
-.psl a.monthend-action { min-height: var(--control-lg); display: flex; align-items: center; justify-content: center; padding: 0 18px; background: var(--action); color: var(--on-strong); font-weight: 600; text-decoration: none; white-space: nowrap; }
-.psl a.monthend-action:hover { background: var(--action-strong); }
-.psl a.monthend-action:active { background: var(--action-ink); }
 
 /* phone-only parts, hidden on desktop */
 .psl a.monthend-back { min-height: var(--control-md); margin: -8px 0; display: none; align-items: center; align-self: flex-start; color: var(--ink); text-decoration: none; }
+.monthend-action { white-space: nowrap; }
 .monthend-narrow, .monthend-summary, .monthend-cards, .monthend-bar { display: none; }
 
 @media (max-width: 719.98px) {
@@ -49,7 +38,6 @@
   .monthend { position: relative; }
   .psl a.monthend-back { display: inline-flex; position: absolute; top: -10px; right: 0; margin: 0; padding: 0 var(--space-1); }
   .monthend-narrow { display: inline; }
-  .monthend-title { font-size: 22px; padding-right: 96px; }
   .monthend-summary { display: block; font-size: 14px; }
   .monthend-row { display: contents; }
   /* the row is gone, so the empty panel sits in the full-height column: keep it sized to its text */
@@ -61,4 +49,16 @@
   .monthend-card__where { font-size: 13px; color: var(--ink-muted); }
   /* bottom action bar: pinned, full width over the frame's 16px page padding */
   .monthend-bar { position: sticky; bottom: 0; margin-top: auto; display: flex; flex-direction: column; gap: var(--space-2); margin-left: calc(-1 * var(--space-4)); margin-right: calc(-1 * var(--space-4)); margin-bottom: calc(-1 * var(--space-4)); padding: var(--space-3) var(--space-4) 18px; background: var(--surface); border-top: 2px solid var(--ink); }
+}
+
+/* the board centres cells vertically */
+.monthend-tasks .psl-table td { vertical-align: middle; }
+/* the board's column widths */
+.monthend-tasks .psl-table th:nth-child(1) { width: 36.7%; }
+.monthend-tasks .psl-table th:nth-child(2) { width: 27.2%; }
+.monthend-tasks .psl-table th:nth-child(3) { width: 26.3%; }
+
+@media (max-width: 719.98px) {
+  /* the phone board's title size */
+  .monthend-head .cmp-page-title { font-size: 22px; line-height: 1.08; padding-right: 96px; }
 }

@@ -55,9 +55,9 @@ const setupRequests = (page: Page) => {
 
 const today = () => {
   const parts = Object.fromEntries(
-    new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: '2-digit', month: 'short' }).formatToParts(new Date()).map((p) => [p.type, p.value]),
+    new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'short', year: 'numeric' }).formatToParts(new Date()).map((p) => [p.type, p.value]),
   );
-  return `${parts.day} ${parts.month}`;
+  return `${parts.day} ${parts.month} ${parts.year}`;
 };
 
 const WITHDRAWN = 'Your role does not allow this. You can no longer change these rules, so the Set a rule panel has closed. Nothing you entered was saved.';
@@ -79,7 +79,7 @@ test.describe('desktop rules', () => {
     await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Setup' })).toHaveAttribute('aria-current', 'page');
     await expect(page.locator('.setup-eyebrow')).toHaveText('SETUP');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(['Roles, rules and delegation']);
-    const tabs = page.getByRole('navigation', { name: 'Setup' }).getByRole('link');
+    const tabs = page.getByRole('tablist', { name: 'Setup' }).getByRole('tab');
     await expect(tabs).toHaveText(['Roles2', 'Rules8', 'Costing rule', 'Delegation', 'Payroll visibility', 'Staff accounts', 'Templates']);
     expect(await tabs.evaluateAll((els) => els.map((el) => el.getAttribute('href')))).toEqual([
       '/setup/roles',
@@ -90,9 +90,9 @@ test.describe('desktop rules', () => {
       '/setup/staff',
       '/setup/templates',
     ]);
-    await expect(tabs.nth(1)).toHaveAttribute('aria-current', 'page');
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
     await expect(table(page).locator('tbody tr')).toHaveCount(10);
-    await expect(row(page, 'Who reviews client documents').locator('td')).toHaveText(['Who reviews client documents', 'All lines', 'PMO Lead', 'v2 · since 01 Oct']);
+    await expect(row(page, 'Who reviews client documents').locator('td')).toHaveText(['Who reviews client documents', 'All lines', 'PMO Lead', 'v2 · since 1 Oct 2026']);
     await expect(row(page, 'Who may assign an RFP to a PM').locator('td').nth(3)).toHaveText('HOLDS WORK');
     await expect(page.getByRole('link', { name: 'PSL standard pricing v4' })).toHaveAttribute('href', '/setup/costing-rule');
     await expect(page.getByText(/^8 rules aren’t set yet\./)).toBeVisible();
@@ -130,7 +130,7 @@ test.describe('desktop rules', () => {
       evidence_id: expect.stringMatching(/^EV-\d+$/),
     });
     await expect(row(page, 'Who may assign an RFP to a PM').locator('td')).toHaveText(['Who may assign an RFP to a PM', 'Pre-sale', 'PMO Lead', `v1 · since ${today()}`]);
-    await expect(page.getByRole('navigation', { name: 'Setup' }).getByRole('link', { name: /^Rules/ })).toHaveText('Rules7');
+    await expect(page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: /^Rules/ })).toHaveText('Rules7');
     await expect(page.getByText(/^7 rules aren’t set yet\./)).toBeVisible();
   });
 
@@ -207,25 +207,27 @@ test.describe('desktop rules', () => {
 
   test('keyboard reaches each tab, the panel controls in order and Save, with the 2px focus ring (AC 24)', async ({ page, context }) => {
     await openAs(page, context, '/setup/rules');
-    for (const name of ['Roles', 'Rules', 'Templates']) {
-      await tabTo(page, page.getByRole('navigation', { name: 'Setup' }).getByRole('link', { name: new RegExp(`^${name}`) }));
-    }
+    // The tabs are one stop (the current one); the arrows, Home and End move between them.
+    const tabs = page.getByRole('tablist', { name: 'Setup' }).getByRole('tab');
+    await tabTo(page, tabs.filter({ hasText: /^Rules/ }));
+    await page.keyboard.press('ArrowLeft');
+    await expect(tabs.nth(0)).toBeFocused();
+    await page.keyboard.press('End');
+    await expect(tabs.nth(6)).toBeFocused();
     const order = [
       panel(page).getByRole('combobox', { name: 'Rule' }),
       panel(page).getByRole('checkbox', { name: 'PMO Lead' }),
       panel(page).getByRole('checkbox', { name: 'CEO' }),
       panel(page).getByRole('checkbox', { name: 'PMO', exact: true }),
       panel(page).getByLabel('Starts'),
+      panel(page).getByRole('button', { name: 'Choose a date' }),
       panel(page).getByLabel('Why'),
       panel(page).getByLabel(/^Proof/),
       panel(page).getByRole('button', { name: 'Save as version 1' }),
     ];
     await tabTo(page, order[0]);
-    for (const [index, target] of order.slice(1).entries()) {
+    for (const target of order.slice(1)) {
       await page.keyboard.press('Tab');
-      // The date input holds day, month and year parts; Tab moves through them before Why.
-      const afterDate = index === 4;
-      for (let i = 0; afterDate && i < 3 && !(await target.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press('Tab');
       await expect(target).toBeFocused();
     }
     const ring = await panel(page).getByRole('button', { name: 'Save as version 1' }).evaluate((el) => {
@@ -254,7 +256,7 @@ test.describe('desktop rules', () => {
 
   test('empty: frame, "No rules to show." and no banner or panel, on all three views (AC 21)', async ({ page, context }) => {
     await openAs(page, context, '/setup/rules', { psl_mock_setup: 'empty' });
-    await expect(page.getByRole('navigation', { name: 'Setup' })).toBeVisible();
+    await expect(page.getByRole('tablist', { name: 'Setup' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'No rules to show.' })).toBeVisible();
     await expect(page.getByText(/set yet/)).toHaveCount(0);
     await expect(panel(page)).toHaveCount(0);
@@ -296,7 +298,9 @@ test.describe('desktop rules', () => {
     await expect(bu).toHaveAttribute('aria-expanded', 'false');
     await bu.click();
     await expect(bu).toHaveAttribute('aria-expanded', 'true');
-    await expect(panel(page).getByRole('combobox', { name: 'Rule' }).locator('option')).toHaveText(['Who reviews BU totals']);
+    await panel(page).getByRole('combobox', { name: 'Rule' }).click();
+    await expect(panel(page).getByRole('option')).toHaveText(['Who reviews BU totals']);
+    await page.keyboard.press('Escape');
     await expectNoAxeViolations(page);
 
     await setCookies(context, { psl_mock_setup: 'readonly' });
@@ -322,10 +326,10 @@ test.describe('desktop rules', () => {
     await openAs(page, context, '/setup/rules');
     seen.length = 0;
     for (const [label, path] of RESERVED) {
-      await page.getByRole('navigation', { name: 'Setup' }).getByRole('link', { name: new RegExp(`^${label}`) }).click();
+      await page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: new RegExp(`^${label}`) }).click();
       await expect(page).toHaveURL(new RegExp(`${path}$`));
       await expect(page.getByRole('heading', { level: 2, name: `${label} comes next.` })).toBeVisible();
-      await expect(page.getByRole('navigation', { name: 'Setup' }).getByRole('link', { name: label, exact: true })).toHaveAttribute('aria-current', 'page');
+      await expect(page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: label, exact: true })).toHaveAttribute('aria-selected', 'true');
       await expect(page).toHaveTitle(`${label} · Setup · PSL Factory`);
     }
     expect(seen).toEqual([]);
@@ -350,7 +354,7 @@ test.describe('phone', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(['Rules · 6 not set']);
     await expect(page.locator('.setup-card')).toHaveCount(6);
     await expect(page.locator('.setup-card').first()).toContainText('Not set · Pre-sale');
-    await expect(page.getByRole('navigation', { name: 'Setup' })).toHaveCount(0);
+    await expect(page.getByRole('tablist', { name: 'Setup' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /Save as version/ })).toHaveCount(0);
     expect(await noSideScroll(page)).toBe(true);
     await expectNoAxeViolations(page);

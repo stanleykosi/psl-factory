@@ -232,7 +232,7 @@ export class FloorScene {
       const name = document.createElement('strong');
       name.textContent = l.line;
       const tag = document.createElement('span');
-      tag.className = `psl-tag ${tagTone(l)}`;
+      tag.className = `psl-tag psl-tag--${tagTone(l)}`;
       tag.textContent = l.note;
       label.append(name, tag);
       this.addLabel(label, this.anchor(this.root, -SPAN / 2 - 2.45, 0.2, z), 'center');
@@ -564,7 +564,7 @@ export class FloorScene {
     lines.forEach((l, i) => {
       const tag = this.labels.filter((label) => label.align === 'center')[i]?.el.querySelector('.psl-tag');
       if (tag) {
-        tag.className = `psl-tag ${tagTone(l)}`;
+        tag.className = `psl-tag psl-tag--${tagTone(l)}`;
         tag.textContent = l.note;
       }
     });

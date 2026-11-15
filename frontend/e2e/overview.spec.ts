@@ -30,7 +30,7 @@ const noHorizontalScroll = (page: Page) => page.evaluate(() => document.document
 
 async function loaded(page: Page) {
   await expect(page.getByRole('heading', { level: 1, name: 'Factory floor' })).toBeVisible();
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
 }
 
 /** Tabs until the target has focus, then reads its outline. */
@@ -49,7 +49,7 @@ async function keyboardRing(page: Page, target: Locator) {
 /** Station screen-reader texts per line, as read from the flat list. */
 const stationTexts = (page: Page) =>
   page.locator('section[aria-label="Lines"] ol').evaluateAll((ols) =>
-    ols.map((ol) => [...ol.querySelectorAll('.overview__sr')].map((sr) => sr.textContent)),
+    ols.map((ol) => [...ol.querySelectorAll('.cmp-sr')].map((sr) => sr.textContent)),
   );
 
 test.describe('desktop 1440', () => {
@@ -63,7 +63,7 @@ test.describe('desktop 1440', () => {
     await page.goto('/overview');
     await loaded(page);
     await expect(page).toHaveTitle('Overview · PSL Factory');
-    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT')).toBeVisible();
+    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT')).toBeVisible();
     await expect(tiles(page)).toHaveText(['IN PROGRESS18', 'NEED A PERSON5', 'STOPPED3', 'VERIFIED THIS MONTH28']);
     await expect(rows(page).locator('.overview__name')).toHaveText(LINES);
     await expect(rows(page).locator('.psl-tag')).toHaveText(NOTES);
@@ -72,7 +72,7 @@ test.describe('desktop 1440', () => {
     await expect(main(page).getByRole('link', { name: 'See all exceptions' })).toHaveAttribute('href', '/exceptions');
     await expect(rows(page).first().locator('.overview__sub')).toHaveText('RFP · commercial');
     // The mascot avatars are static files that load (no broken image).
-    const avatar = rows(page).first().getByRole('img', { name: 'Tola · PMO agent' });
+    const avatar = rows(page).first().locator('img.psl-avatar--tola');
     await expect(avatar).toBeVisible();
     expect(await avatar.evaluate((img) => (img as HTMLImageElement).complete && (img as HTMLImageElement).naturalWidth)).toBe(192);
     // A normal desktop browser with WebGL gets the 3D option and no "can't show" hint.
@@ -128,7 +128,7 @@ test.describe('desktop 1440', () => {
     await page.goto('/overview');
     await loaded(page);
     const tones = await rows(page).locator('.psl-tag').evaluateAll((tags) => tags.map((t) => t.className.replace('psl-tag ', '')));
-    expect(tones).toEqual(['psl-tag--neutral', 'psl-tag--person', 'psl-tag--person', 'psl-tag--done', 'psl-tag--neutral', 'psl-tag--done', 'psl-tag--done', 'psl-tag--person']);
+    expect(tones).toEqual(['psl-tag--neutral', 'psl-tag--person', 'psl-tag--waiting', 'psl-tag--done', 'psl-tag--neutral', 'psl-tag--done', 'psl-tag--done', 'psl-tag--person']);
     await expectNoAxeViolations(page);
   });
 
@@ -224,7 +224,7 @@ test.describe('desktop 1440', () => {
 
     await setCookies(context, { psl_mock_overview: 'changed' });
     await page.clock.fastForward(15_000);
-    await expect(page.locator('.overview__eyebrow')).toHaveText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT');
+    await expect(page.locator('.overview__eyebrow')).toHaveText('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT');
     await expect.poll(async () => (await stationTexts(page))[0][0]).toBe('Brief: 2 items');
     expect((await stationTexts(page))[4][0]).toBe('Milestone: 1 item');
     expect((await stationTexts(page))[7][2]).toBe('Approve: 1 item');
@@ -292,7 +292,7 @@ test.describe('phone 390', () => {
     await expect(viewSwitch(page)).toHaveCount(0);
     await expect(page.locator('.overview__hint')).toHaveCount(0);
     await expect(page.locator('.overview__summary')).toHaveText('18 in progress · 5 need a person');
-    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT')).toBeVisible();
+    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT')).toBeVisible();
     expect(await page.locator('.overview__sq').first().evaluate((el) => el.getBoundingClientRect().width)).toBe(18);
     for (const [i, name] of LINES.entries()) {
       await expect(rows(page).nth(i).locator('.overview__name')).toHaveText(name);

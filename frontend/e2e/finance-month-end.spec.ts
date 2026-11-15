@@ -13,7 +13,7 @@ async function expectNoAxeViolations(page: Page) {
 }
 
 async function loaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.locator('main#main h1, main#main h3').first()).toBeVisible();
 }
 
@@ -61,7 +61,7 @@ test.describe('desktop 1440', () => {
     const order = [
       'FINANCE / MONTH-END',
       'Month-end · October 2026',
-      'FROM RECORDS YOU CAN SEE · UPDATED 10:42',
+      'FROM RECORDS YOU CAN SEE · UPDATED 10:42 WAT',
       'DONE',
       '2 of 7',
       'WAITING',
@@ -89,7 +89,7 @@ test.describe('desktop 1440', () => {
     await expect(rows.locator('td:nth-child(3) .psl-tag')).toHaveText(['WAITING', 'NEEDS FINANCE DECISION', 'DONE', 'WAITING', 'DONE', 'WAITING', 'WAITING ON HR']);
     await expect(rows.nth(1).locator('.psl-tag')).toHaveClass('psl-tag psl-tag--person');
     await expect(rows.nth(2).locator('.psl-tag')).toHaveClass('psl-tag psl-tag--done');
-    await expect(rows.nth(6).locator('.psl-tag')).toHaveClass('psl-tag psl-tag--waiting');
+    await expect(rows.nth(6).locator('.psl-tag')).toHaveClass('psl-tag psl-tag--neutral');
     await expect(rows.nth(0)).toContainText('Access Bank statement missing');
     await expect(rows.nth(0)).toContainText('2 of 3 accounts imported');
 
@@ -133,7 +133,7 @@ test.describe('desktop 1440', () => {
     await openPage(page, context, baseURL!, { psl_mock_month_end: 'known' });
     await expect(cashCell(page)).toHaveText('₦4.7M');
     await expect(cashCell(page)).toHaveAccessibleDescription('₦4,712,500.00');
-    const cell = page.locator('.monthend-cell').filter({ hasText: 'CASH RECEIVED' });
+    const cell = page.locator('.monthend-strip');
     expect(await cell.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(255, 255, 255)');
     await expect(page.locator('.monthend-note')).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'Import the missing statement' })).toHaveCount(0);
@@ -149,7 +149,7 @@ test.describe('desktop 1440', () => {
     await expect(page.locator('.monthend-cell__value')).toHaveText(['Unknown', 'Unknown', 'Unknown', 'Unknown']);
     const rows = page.locator('table tbody tr');
     await expect(rows.locator('td:first-child')).toHaveText(['Bank statements', 'Management accounts', 'Income detail and schedules', 'Fixed asset schedule', 'Cash forecast', 'Business-unit totals', 'Payroll']);
-    await expect(rows.locator('.psl-tag')).toHaveText(['WAITING', 'ACTION NEEDED', 'VERIFIED', 'WAITING', 'VERIFIED', 'WAITING', 'WAITING']);
+    await expect(rows.locator('.psl-tag')).toHaveText(['Waiting', 'Action needed', 'Verified', 'Waiting', 'Verified', 'Waiting', 'Waiting']);
     await expect(rows.locator('a')).toHaveCount(6);
     await expect(rows.nth(6).locator('td').nth(3)).toHaveText('');
     await expect(page.locator('.monthend-note')).toHaveCount(0);

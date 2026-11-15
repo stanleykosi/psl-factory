@@ -77,7 +77,7 @@ const overviewCalls = () => calls.filter((u) => u.pathname === '/api/v1/overview
 const linesSection = () => screen.queryByRole('region', { name: 'Lines' });
 const rows = () => within(within(linesSection()!).getAllByRole('list')[0]).getAllByRole('listitem').filter((el) => el.classList.contains('overview__row'));
 const stations = (line: string) => within(screen.getByRole('list', { name: `${line} stations` })).getAllByRole('listitem');
-const station = (line: string, name: string) => stations(line).find((li) => li.querySelector('.overview__sr')!.textContent!.startsWith(`${name}: `))!;
+const station = (line: string, name: string) => stations(line).find((li) => li.querySelector('.cmp-sr')!.textContent!.startsWith(`${name}: `))!;
 const tiles = () =>
   [...document.querySelectorAll('dl.overview__totals > div')].map((d) => [d.querySelector('dt')!.textContent, d.querySelector('dd')!.textContent]);
 const settle = (body: Overview) => {
@@ -153,7 +153,7 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
     expect(rows().map((li) => [li.querySelector('.psl-tag')!.textContent, li.querySelector('.psl-tag')!.className])).toEqual([
       ['1 WAITING', 'psl-tag psl-tag--neutral'],
       ['1 STOPPED', 'psl-tag psl-tag--person'],
-      ['1 UNCERTAIN', 'psl-tag psl-tag--person'],
+      ['1 UNCERTAIN', 'psl-tag psl-tag--waiting'],
       ['ON TRACK', 'psl-tag psl-tag--done'],
       ['2 WAITING', 'psl-tag psl-tag--neutral'],
       ['ON TRACK', 'psl-tag psl-tag--done'],
@@ -171,14 +171,14 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
   it('each board line shows its agent avatar and subtitle; an unknown line shows neither', async () => {
     settle({ ...DEFAULT, lines: [DEFAULT.lines[0], DEFAULT.lines[4], DEFAULT.lines[7], { ...DEFAULT.lines[3], line: 'Something new' }] });
     await open();
-    const avatar = (li: HTMLElement) => li.querySelector('img.overview__avatar');
+    const avatar = (li: HTMLElement) => li.querySelector('img.psl-avatar');
     expect(rows().map((li) => [avatar(li)?.getAttribute('src') ?? null, avatar(li)?.getAttribute('alt') ?? null, li.querySelector('.overview__sub')?.textContent ?? null])).toEqual([
-      ['/agents/tola.png', 'Tola · PMO agent', 'RFP · commercial'],
-      ['/agents/chidi.png', 'Chidi · Finance agent', 'Milestone to verified'],
-      ['/agents/zainab.png', 'Zainab · HR agent', 'Restricted'],
+      ['/agents/tola.png', '', 'RFP · commercial'],
+      ['/agents/chidi.png', '', 'Milestone to verified'],
+      ['/agents/zainab.png', '', 'Restricted'],
       [null, null, null],
     ]);
-    expect(avatar(rows()[0])!.className).toBe('psl-avatar psl-avatar--tola overview__avatar');
+    expect(avatar(rows()[0])!.className).toBe('psl-avatar psl-avatar--tola');
   });
 
   it('shows a note word for word, unparsed and not re-cased', async () => {
@@ -190,7 +190,7 @@ describe('totals, lines and stations exactly as returned (A-OVERVIEW)', () => {
   it('shows the coverage time from as_of', async () => {
     await open();
     const eyebrow = document.querySelector('.overview__eyebrow')!;
-    expect(eyebrow.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT');
+    expect(eyebrow.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT');
     expect(eyebrow.querySelector('time')!.getAttribute('datetime')).toBe('2026-11-14T15:40:00Z');
     expect(screen.getByRole('heading', { level: 1, name: 'Factory floor' })).toBeTruthy();
   });
@@ -276,9 +276,9 @@ describe('who may see it and what fails', () => {
     await act(() => vi.advanceTimersByTimeAsync(15_000));
     await until(() => expect(screen.getByRole('alert')).toBeTruthy());
     const alert = screen.getByRole('alert');
-    expect(alert.textContent).toContain('ERROR · COULDN’T LOAD');
+    expect(alert.textContent).toContain('We couldn’t load the factory floor.');
     expect(alert.textContent).toContain('We couldn’t load the factory floor. Your work is safe; nothing was changed.');
-    expect(alert.textContent).toContain('Last loaded 14 Nov 16:40 WAT.');
+    expect(alert.textContent).toContain('Last loaded 14 Nov 2026 16:40 WAT.');
     expect(alert.textContent).toMatch(/Reference (server_error|network_error) for support\./);
     expect(document.querySelector('dl')).toBeNull();
     expect(linesSection()).toBeNull();
@@ -361,7 +361,7 @@ describe('staying current (D-UPDATES r2)', () => {
     await until(() => expect(overviewCalls()).toHaveLength(4));
     for (let i = 0; i < 5; i++) await act(async () => new Promise((r) => realImmediate(r)));
     expect(tiles()[0]).toEqual(['IN PROGRESS', '99']);
-    expect(document.querySelector('.overview__eyebrow')!.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 16:41 WAT');
+    expect(document.querySelector('.overview__eyebrow')!.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 2026 16:41 WAT');
   });
 });
 
@@ -397,9 +397,9 @@ describe('the 3D option follows reduced motion, WebGL and width', () => {
     expect(screen.queryByRole('radiogroup', { name: 'View' })).toBeNull();
     expect(document.querySelector('.overview__hint')).toBeNull();
     const h1 = screen.getByRole('heading', { level: 1 });
-    expect(h1.nextElementSibling!.textContent).toBe('18 in progress · 5 need a person');
+    expect(h1.closest('header')!.nextElementSibling!.textContent).toBe('18 in progress · 5 need a person');
     expect(tiles()).toHaveLength(0);
-    expect(linesSection()!.nextElementSibling!.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT');
+    expect(linesSection()!.nextElementSibling!.textContent).toBe('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT');
     expect(screen.queryByText(/Each square is a station/)).toBeNull();
     expect(rows()).toHaveLength(8);
   });
