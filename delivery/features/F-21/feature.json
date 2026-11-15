@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-21",
   "outcome": "The weekly client report line: the PM writes four cited parts, Tola assembles, the PMO Lead reviews (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-LINE-WEEKLY"
   ],
@@ -102,6 +102,18 @@
       "at": "2026-11-15T15:03:30Z",
       "seconds": 113.6,
       "evidence_ref": "delivery/features/F-21/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "2cdcfe71f6edd2957718e0c677e842e06010c3ad",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T15:13:27Z",
+      "seconds": 127.5,
+      "evidence_ref": "delivery/features/F-21/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -660,14 +672,28 @@
         "delivery/features/F-21/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T15:05:31Z",
           "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T15:13:27Z",
+          "refs": [
+            "2cdcfe71f6edd2957718e0c677e842e06010c3ad"
+          ],
+          "head": "2cdcfe71f6edd2957718e0c677e842e06010c3ad",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2cdcfe71f6edd2957718e0c677e842e06010c3ad"
       ]
     }
   ],
@@ -823,7 +849,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "9e989cd51b8c58a0f5543cb26d5e0cc26ad8673e",
     "task_branch": "fe-line-weekly-the-weekly-client-report-line-the-pm-wri",
-    "head_sha": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
+    "head_sha": "31f0d25efa8bb8e90da50b0d43c4e71b4bf3fb0d",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-21",
     "pr_url": null,
     "pr_number": null,
@@ -1329,6 +1355,14 @@
       "round": 3,
       "head": "798c17f8b0b30f6aabf94dc0ff621a901b6df7e4",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T15:13:28Z",
+      "round": 3,
+      "head": "2cdcfe71f6edd2957718e0c677e842e06010c3ad",
+      "reason": null
     }
   ],
   "routing": {
@@ -1346,9 +1380,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "2cdcfe71f6edd2957718e0c677e842e06010c3ad"
   },
   "blocked": null
 }

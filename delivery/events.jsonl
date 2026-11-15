@@ -1484,3 +1484,6 @@
 {"at":"2026-11-15T15:05:31Z","feature":"F-21","round":2,"kind":"finding","action":"add","finding":"UX-2-1","by":"reviewer-ux","severity":"high","owner":"builder","blocking":true,"role":"ux"}
 {"at":"2026-11-15T15:05:31Z","feature":"F-21","round":2,"kind":"transition","head":"798c17f8b0b3","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-15T15:05:31Z","feature":"F-21","round":3,"kind":"transition","head":"798c17f8b0b3","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-15T15:13:27Z","feature":"F-21","round":3,"kind":"finding","action":"fix","finding":"UX-2-1","by":"builder"}
+{"at":"2026-11-15T15:13:27Z","feature":"F-21","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":127.5,"commit":"2cdcfe71f6ed"}
+{"at":"2026-11-15T15:13:28Z","feature":"F-21","round":3,"kind":"transition","head":"2cdcfe71f6ed","from":"IMPLEMENTING","to":"IN_REVIEW"}
