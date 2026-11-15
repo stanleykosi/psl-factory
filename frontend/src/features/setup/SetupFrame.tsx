@@ -69,9 +69,9 @@ export function RulesReadState({ state, retry }: { state: RulesState; retry: () 
   return <WorkErrorCard message="We couldn’t load the rules. Your work is safe; nothing was changed." error={error} onRetry={retry} />;
 }
 
-/** "← Setup" in the phone bar, back to the phone Setup home (SCR-13-mobile), with the board's mono note. */
+/** "← Setup" in the phone bar, to Setup rules until a phone Setup home is drawn (D-68(c)), with the board's mono note. */
 export function useSetupPhoneBack(note?: string) {
-  usePhoneBack({ label: 'Setup', href: '/setup/roles', note });
+  usePhoneBack({ label: 'Setup', href: '/setup/rules', note });
 }
 
 export function RulesEmpty() {

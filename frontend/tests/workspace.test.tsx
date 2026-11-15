@@ -254,7 +254,7 @@ describe('the nine section kinds, in returned order', () => {
       'Archive verifiedDone',
       'Handover acknowledged · 2 gapsOwner: Ngozi Bello (Client) · Held by Tamarind LoansHeld',
       'Retrospective savedHeld by YouNot yet · Due 14 May 2027',
-      'Finance confirmationUnknown · Due Unknown',
+      'Finance confirmationUnknown',
     ]);
     // D-63: no check marks, the status stays in words
     for (const li of rows('What closure needs')) expect(li.querySelector('.ws-mark')).toBeNull();
@@ -317,7 +317,7 @@ describe('INV-UNKNOWN', () => {
     const receipt = within(kola).getAllByRole('cell').map(text);
     expect(receipt).toEqual(['Kola Foods', 'Unknown', 'Unknown', 'Bisi Ade']);
     expect(text(rows('January')[1])).toMatch(/Unknown$/);
-    expect(text(rows('Payment dates')[0])).toBe('Kola Foods payment dateUnknown · Due Unknown');
+    expect(text(rows('Payment dates')[0])).toBe('Kola Foods payment dateUnknown');
     for (const value of [cells[2], cells[4], receipt[1], receipt[2]]) expect(value).not.toMatch(/^(0|₦0(\.00)?|-|—|)$/);
     expect(text(workspace())).not.toMatch(/₦0\.00|₦0\b/);
   });

@@ -217,7 +217,7 @@ describe('the step form (AC 14, 15)', () => {
     expect(answer.getAttribute('aria-invalid')).toBe('true');
     expect(document.getElementById(answer.getAttribute('aria-describedby')!.split(' ').at(-1)!)?.textContent).toBe('Add your answer to continue.');
     // optional fields left blank raise nothing
-    expect(within(form).getAllByText(/to continue\.$/).map((e) => e.textContent)).toEqual(['Add your answer to continue.', 'Add status to continue.', 'Add your answer to continue. Add status to continue.']);
+    expect(within(form).getAllByText(/to continue\.$/).map((e) => e.textContent)).toEqual(['Add your answer to continue.', 'Add status to continue.']);
   });
 
   it('submitting sends exactly one POST with CSRF, the revision, inputs shaped per kind, a UUID key and the note; it validates against the request schema', async () => {
@@ -281,6 +281,8 @@ describe('the step form (AC 14, 15)', () => {
     });
     expect(posts()).toHaveLength(0);
     expect(f.getByLabelText('Note (optional)').getAttribute('aria-invalid')).toBe('true');
+    // the message is on the page once (the field's own error), not repeated in a hidden summary
+    expect(f.getAllByText('Keep the note to 2000 characters.')).toHaveLength(1);
   });
 
   it('a whole-number field with other text is refused before any request', async () => {
@@ -628,6 +630,20 @@ describe('notices name the step (UX-1-2, UX-1-4, UX-1-5)', () => {
     await open(item('W-2001'));
     await press('Approve and send');
     await screen.findByText('We are not sure it was sent.');
+    expect(ws().getByText('Confirm what happened first.')).toBeTruthy();
+  });
+
+  it('a viewer without the reconcile grant is told someone with reconcile access has to confirm first (UX-5-1)', async () => {
+    const body = item('W-2008.next');
+    expect(body.reconcile).toBeTruthy();
+    await open({ ...body, allowed_actions: (body.allowed_actions ?? []).filter((a) => a !== 'reconcile') });
+    expect(ws().getByText('Someone with reconcile access needs to confirm what happened first.')).toBeTruthy();
+    expect(ws().queryByText('Confirm what happened first.')).toBeNull();
+  });
+
+  it('a viewer who can reconcile keeps the short hint (UX-5-1)', async () => {
+    const body = item('W-2008.next');
+    await open({ ...body, allowed_actions: [...new Set([...(body.allowed_actions ?? []), 'reconcile' as const])] });
     expect(ws().getByText('Confirm what happened first.')).toBeTruthy();
   });
 

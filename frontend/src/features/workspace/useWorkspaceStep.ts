@@ -45,6 +45,7 @@ export const STEP_TEXT = {
   sends: 'This sends to the client.',
   claim: 'Claim it first',
   confirmFirst: 'Confirm what happened first.',
+  confirmFirstByOther: 'Someone with reconcile access needs to confirm what happened first.',
   decide: 'Decide',
 } as const;
 
