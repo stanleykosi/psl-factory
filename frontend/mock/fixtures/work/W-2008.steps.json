@@ -1,0 +1,9 @@
+{
+  "approve_send": {
+    "status": 200,
+    "body": {
+      "outcome": "effect_uncertain",
+      "message": "Delivery to Lagoon Health couldn’t be confirmed."
+    }
+  }
+}

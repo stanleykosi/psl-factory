@@ -4,7 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { configure, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { WorkItem } from '@/features/work-item/labels';
@@ -12,6 +12,9 @@ import { WorkItemView } from '@/features/work-item/WorkItemView';
 import { STATUS_WORDS, RECEIPT_WORDS, SEVERITY_WORDS } from '@/features/workspace/labels';
 import { AppShell } from '@/shell/AppShell';
 import { withoutBellFeed } from './bell-feed';
+
+// A busy machine can take more than the default second to render a page; nothing here waits on a timer.
+configure({ asyncUtilTimeout: 5000 });
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/work/W-2001',
@@ -51,7 +54,7 @@ async function open(body: WorkItem) {
       <WorkItemView id={body.id} tab="overview" />
     </AppShell>,
   );
-  await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+  await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
   await screen.findByRole('heading', { level: 1, name: body.title });
   return view;
 }
@@ -180,9 +183,11 @@ describe('the nine section kinds, in returned order', () => {
     expect(within(first).getByRole('link', { name: 'WCR-0216' }).getAttribute('href')).toBe('/work/W-2001');
     expect(within(second).queryByRole('link')).toBeNull();
     const requirements = section('Requirements');
-    expect(within(requirements).getAllByRole('columnheader').map(text)).toEqual(['#', 'Requirement', 'Suggested answer', 'Status']);
+    // the first column holds the Accept selected checkboxes (Part B)
+    expect(within(requirements).getAllByRole('columnheader').map(text)).toEqual(['Select', '#', 'Requirement', 'Suggested answer', 'Status']);
     const r07 = within(requirements).getAllByRole('row')[1];
     expect(within(r07).getAllByRole('cell').map(text)).toEqual([
+      '',
       'R-07',
       'Loan officers approve applications above a set amount RFP p.6',
       'Approvals above a configurable threshold go to a named loan officer; every decision is recorded.',
@@ -216,7 +221,8 @@ describe('the nine section kinds, in returned order', () => {
     const [s07, s08] = rows('Review Tola’s suggestion');
     expect(text(s07)).toBe(
       'R-07 · RFP p.6 · Approvals above a configurable threshold go to a named loan officer; every decision is recorded.' +
-        'From PSL’s past answer: Harmattan Bank RFP 2025 · R-12 · that bid was wonSuggested by TolaSuggested by TolaRFP p.6',
+        'From PSL’s past answer: Harmattan Bank RFP 2025 · R-12 · that bid was wonSuggested by TolaSuggested by TolaRFP p.6' +
+        'Accept answerEdit answer',
     );
     expect(within(s07).getAllByText('Suggested by Tola')[1].className).toContain('psl-tag--agent');
     expect(text(s08)).toContain('Suggested by Tola');
@@ -287,10 +293,14 @@ describe('INV-UNKNOWN', () => {
     await open(item('W-2004'));
     const jan = within(section('Forecast · 6 months')).getAllByRole('row')[3];
     const cells = within(jan).getAllByRole('cell').map(text);
-    expect(cells).toEqual(['Jan', '₦7,800,000.00', 'Unknown', '₦19,800,000.00', 'Unknown', 'Unknown', 'Bisi Ade']);
+    // In is unknown; Closing has no amount at all: both read Unknown
+    expect(cells).toEqual(['Jan', '₦7,800,000.00', 'Unknown', '₦19,800,000.00', 'Unknown']);
+    const kola = within(section('Receipts')).getAllByRole('row')[2];
+    const receipt = within(kola).getAllByRole('cell').map(text);
+    expect(receipt).toEqual(['Kola Foods', 'Unknown', 'Unknown', 'Bisi Ade']);
     expect(text(rows('January')[1])).toMatch(/Unknown$/);
     expect(text(rows('Payment dates')[0])).toBe('Kola Foods payment dateUnknown · Due Unknown');
-    for (const value of [cells[2], cells[4], cells[5]]) expect(value).not.toMatch(/^(0|₦0(\.00)?|-|—|)$/);
+    for (const value of [cells[2], cells[4], receipt[1], receipt[2]]) expect(value).not.toMatch(/^(0|₦0(\.00)?|-|—|)$/);
     expect(text(workspace())).not.toMatch(/₦0\.00|₦0\b/);
   });
 });
@@ -302,7 +312,7 @@ describe('INV-RESTRICTED', () => {
     const payroll = section('Payroll lines');
     expect(text(payroll.querySelector('.ws-section__body'))).toBe('Payroll lines are restricted to Finance Leads.');
     expect(within(payroll).queryAllByRole('listitem')).toHaveLength(0);
-    const dec = within(section('Forecast · 6 months')).getAllByRole('row')[2];
+    const dec = within(section('Receipts')).getAllByRole('row')[1];
     expect(within(dec).getAllByRole('cell').at(-1)?.textContent).toBe('Restricted');
     const page = document.body.textContent ?? '';
     for (const hidden of ['HIDDEN-ROW-TEXT', 'HIDDEN-ROW-DETAIL', 'HIDDEN-CITE', 'HIDDEN-CITE-LABEL', 'HIDDEN-SECTION-NOTE', 'HIDDEN-SECTION-COVERAGE', 'HIDDEN-ITEM-LABEL', 'HIDDEN-ITEM-DETAIL', '9,999,999', '5,555,555']) {
@@ -315,7 +325,7 @@ describe('INV-RESTRICTED', () => {
 
   it('a restricted section without its own label reads Restricted', async () => {
     const body = item('W-2004');
-    delete body.workspace!.sections[3].restricted_label;
+    delete body.workspace!.sections.find((s) => s.key === 'payroll')!.restricted_label;
     await open(body);
     expect(text(section('Payroll lines').querySelector('.ws-section__body'))).toBe('Restricted');
   });

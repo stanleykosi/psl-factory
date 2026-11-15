@@ -104,16 +104,6 @@
             "key": "closing",
             "label": "Closing",
             "kind": "money"
-          },
-          {
-            "key": "confirmed",
-            "label": "Confirmed",
-            "kind": "date"
-          },
-          {
-            "key": "owner",
-            "label": "Owner",
-            "kind": "text"
           }
         ],
         "items": [
@@ -155,17 +145,6 @@
                   "currency": "NGN",
                   "unknown": false
                 }
-              },
-              {
-                "column": "confirmed",
-                "date": {
-                  "date": "2026-11-10",
-                  "unknown": false
-                }
-              },
-              {
-                "column": "owner",
-                "text": "Ada Okafor"
               }
             ]
           },
@@ -207,18 +186,6 @@
                   "currency": "NGN",
                   "unknown": false
                 }
-              },
-              {
-                "column": "confirmed",
-                "date": {
-                  "date": "2026-11-12",
-                  "unknown": false
-                }
-              },
-              {
-                "column": "owner",
-                "text": "Ada Okafor",
-                "restricted": true
               }
             ]
           },
@@ -257,6 +224,80 @@
                 "money": {
                   "currency": "NGN",
                   "unknown": false
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "receipts",
+        "kind": "table",
+        "title": "Receipts",
+        "columns": [
+          {
+            "key": "client",
+            "label": "Client",
+            "kind": "text"
+          },
+          {
+            "key": "expected",
+            "label": "Expected",
+            "kind": "money"
+          },
+          {
+            "key": "confirmed",
+            "label": "Confirmed",
+            "kind": "date"
+          },
+          {
+            "key": "owner",
+            "label": "Owner",
+            "kind": "text"
+          }
+        ],
+        "items": [
+          {
+            "id": "RC-1",
+            "cells": [
+              {
+                "column": "client",
+                "text": "Harbour Bank"
+              },
+              {
+                "column": "expected",
+                "money": {
+                  "amount": "12100000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "confirmed",
+                "date": {
+                  "date": "2026-11-12",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "owner",
+                "text": "Ada Okafor",
+                "restricted": true
+              }
+            ]
+          },
+          {
+            "id": "RC-2",
+            "cells": [
+              {
+                "column": "client",
+                "text": "Kola Foods"
+              },
+              {
+                "column": "expected",
+                "money": {
+                  "currency": "NGN",
+                  "unknown": true
                 }
               },
               {

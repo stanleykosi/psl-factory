@@ -223,6 +223,33 @@
             "severity": "info"
           }
         ]
+      },
+      {
+        "key": "criteria",
+        "kind": "facts",
+        "title": "Criteria",
+        "items": [
+          {
+            "id": "K-1",
+            "label": "Window",
+            "value": "30 days · from setup"
+          },
+          {
+            "id": "K-2",
+            "label": "No open high-severity issues",
+            "value": "Met"
+          },
+          {
+            "id": "K-3",
+            "label": "No unresolved incidents",
+            "value": "Met"
+          },
+          {
+            "id": "K-4",
+            "label": "Medium issues have an owner",
+            "value": "Met"
+          }
+        ]
       }
     ]
   }

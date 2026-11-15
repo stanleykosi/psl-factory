@@ -4,7 +4,7 @@
 // section as returned; an absent field draws nothing. INV-RESTRICTED: a restricted section or item draws its label
 // and none of its rows, cites, detail or money. INV-UNKNOWN: an unknown or missing amount or date reads Unknown.
 import Link from 'next/link';
-import { useId, type ReactNode } from 'react';
+import { Fragment, useId, type ReactNode } from 'react';
 
 import { isAppPath } from '@/features/work-item/presentation';
 import { formatWat } from '@/features/work-item/labels';
@@ -37,6 +37,8 @@ export type ItemControls = {
   item?: (section: Section, item: Item) => ReactNode;
   /** The checkbox for an `items` step. */
   select?: (section: Section, item: Item) => ReactNode;
+  /** The open form for one of the item's steps, drawn under its row. */
+  after?: (section: Section, item: Item) => ReactNode;
   /** The `items` step button under the section. */
   foot?: (section: Section) => ReactNode;
 };
@@ -109,15 +111,19 @@ function Row({ item, controls, section, main, end }: { item: Item; controls?: It
   }
   const select = controls?.select?.(section, item);
   const steps = controls?.item?.(section, item);
+  const after = controls?.after?.(section, item);
   return (
     <li className="ws-row">
       {select}
       <span className="ws-row__main">{main}</span>
       {end && <span className="ws-row__end">{end}</span>}
       {steps && <span className="ws-row__steps">{steps}</span>}
+      {hasNode(after) && <div className="ws-row__form">{after}</div>}
     </li>
   );
 }
+
+const hasNode = (node: ReactNode) => (Array.isArray(node) ? node.some((n) => n !== null && n !== undefined && n !== false) : node !== null && node !== undefined && node !== false);
 
 const Lead = ({ item }: { item: Item }) =>
   item.label && item.text ? (
@@ -178,8 +184,9 @@ function CellValue({ cell, column }: { cell: Cell | undefined; column: Column })
 
 function Table({ section, controls }: { section: Section; controls?: ItemControls }) {
   const columns = section.columns ?? [];
-  const selectable = controls?.select !== undefined;
-  const stepCol = controls?.item !== undefined && section.items.some((i) => controls.item?.(section, i));
+  const selectable = controls?.select !== undefined && section.items.some((i) => hasNode(controls.select?.(section, i)));
+  const stepCol = controls?.item !== undefined && section.items.some((i) => hasNode(controls.item?.(section, i)));
+  const span = columns.length + (selectable ? 1 : 0) + (stepCol ? 1 : 0);
   return (
     // The frame scrolls sideways on phones, so it takes focus for keyboard scrolling (WCAG 2.1.1).
     // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
@@ -205,23 +212,34 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
           </tr>
         </thead>
         <tbody>
-          {section.items.map((item) =>
-            item.restricted ? (
-              <tr key={item.id}>
-                <td colSpan={columns.length + (selectable ? 1 : 0) + (stepCol ? 1 : 0)}>{WS_TEXT.restricted}</td>
-              </tr>
-            ) : (
-              <tr key={item.id}>
-                {selectable && <td className="psl-check-cell">{controls?.select?.(section, item)}</td>}
-                {columns.map((c) => (
-                  <td key={c.key} className={c.kind === 'money' || c.kind === 'integer' ? 'num' : c.kind === 'reference' ? 'psl-mono' : undefined}>
-                    <CellValue cell={item.cells?.find((cell) => cell.column === c.key)} column={c} />
-                  </td>
-                ))}
-                {stepCol && <td>{controls?.item?.(section, item)}</td>}
-              </tr>
-            ),
-          )}
+          {section.items.map((item) => {
+            if (item.restricted) {
+              return (
+                <tr key={item.id}>
+                  <td colSpan={span}>{WS_TEXT.restricted}</td>
+                </tr>
+              );
+            }
+            const after = controls?.after?.(section, item);
+            return (
+              <Fragment key={item.id}>
+                <tr>
+                  {selectable && <td className="psl-check-cell">{controls?.select?.(section, item)}</td>}
+                  {columns.map((c) => (
+                    <td key={c.key} className={c.kind === 'money' || c.kind === 'integer' ? 'num' : c.kind === 'reference' ? 'psl-mono' : undefined}>
+                      <CellValue cell={item.cells?.find((cell) => cell.column === c.key)} column={c} />
+                    </td>
+                  ))}
+                  {stepCol && <td className="ws-table__steps">{controls?.item?.(section, item)}</td>}
+                </tr>
+                {hasNode(after) && (
+                  <tr>
+                    <td colSpan={span}>{after}</td>
+                  </tr>
+                )}
+              </Fragment>
+            );
+          })}
         </tbody>
       </table>
     </div>

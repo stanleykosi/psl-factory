@@ -406,7 +406,28 @@
             "name": "answer",
             "label": "Your answer",
             "type": "long_text",
-            "required": true
+            "required": true,
+            "help": "Editing in place. Your words replace Tola’s once you save; Tola’s version stays in the history."
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "type": "choice",
+            "required": true,
+            "options": [
+              {
+                "value": "addressed",
+                "label": "Addressed"
+              },
+              {
+                "value": "clarify",
+                "label": "Clarify"
+              },
+              {
+                "value": "out_of_scope",
+                "label": "Out of scope"
+              }
+            ]
           }
         ]
       }

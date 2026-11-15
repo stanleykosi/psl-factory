@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type APIRequestContext, type Locator, type Page } from '@playwright/test';
 
 // F-17: the line workspace on the work item page (PROPOSAL D-LINE-WORKSPACE, contract mock only). Every request
 // goes to the local mock; nothing is sent to anyone.
@@ -105,6 +105,142 @@ test('W-2002 paging and filters are drawn disabled and send nothing; every reque
   expect(requests.slice(before).filter((u) => u.includes('/api/'))).toEqual([]);
   // the page's API calls go through the app's same-origin proxy to the mock; nothing leaves this machine
   for (const url of requests) expect(new URL(url).hostname, url).toMatch(/^(localhost|127\.0\.0\.1)$/);
+});
+
+// ---------- Part B: steps and the write (mock only)
+const log = async (request: APIRequestContext) =>
+  (await (await request.get(`${MOCK}/__mock/workspace-log`)).json()) as { entries: { idempotency_key: string; step: string; status: number; replay: boolean; expected_revision: number }[]; sends: Record<string, number> };
+const stepPosts = () => requests.filter((u) => /\/api\/v1\/work\/W-\d+\/steps$/.test(new URL(u).pathname));
+
+const PART_B: [string, (page: Page) => Promise<unknown>][] = [
+  ['W-2006 form open', async (page) => {
+    await openItem(page, 'W-2006');
+    await page.getByRole('button', { name: 'Save and accept' }).click();
+    await expect(page.getByRole('form', { name: 'Save and accept' })).toBeVisible();
+  }],
+  ['W-2006 422', async (page) => {
+    await openItem(page, 'W-2006');
+    await page.getByRole('button', { name: 'Check my answer' }).click();
+    const form = page.getByRole('form', { name: 'Check my answer' });
+    await form.getByLabel('Your answer').fill('Officers approve.');
+    await form.getByRole('button', { name: 'Check my answer' }).click();
+    await expect(form.getByText('Say how approvals are recorded.', { exact: true })).toBeVisible();
+  }],
+  ['W-2007 409', async (page) => {
+    await openItem(page, 'W-2007');
+    await page.getByRole('button', { name: 'Edit your update' }).click();
+    const form = page.getByRole('form', { name: 'Edit your update' });
+    await form.getByLabel('Your update').fill('Login fix verified.');
+    await form.getByRole('button', { name: 'Edit your update' }).click();
+    await expect(page.getByText('This changed while you were working. Showing version 5.')).toBeVisible();
+  }],
+  ['W-2008 uncertain', async (page) => {
+    await openItem(page, 'W-2008');
+    await page.getByRole('button', { name: 'Approve and send' }).click();
+    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  }],
+  ['W-2009 decision step', (page) => openItem(page, 'W-2009')],
+];
+
+for (const viewport of [DESKTOP, PHONE]) {
+  for (const [name, reach] of PART_B) {
+    test(`${name} at ${viewport.width}: axe clean, no sideways scroll, 44px controls`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await reach(page);
+      await expectNoAxeViolations(page);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
+      for (const control of await page.locator('.ws button:visible, .ws a.psl-btn:visible, .ws .ws-checkwrap:visible').all()) {
+        expect((await control.boundingBox())!.height, await control.innerText()).toBeGreaterThanOrEqual(44);
+      }
+    });
+  }
+}
+
+test('the form heading takes focus on open; Escape closes it and focus returns to the step', async ({ page }) => {
+  await page.setViewportSize(DESKTOP);
+  await openItem(page, 'W-2006');
+  const control = page.getByRole('button', { name: 'Save and accept' });
+  await control.click();
+  await expect(page.getByRole('heading', { name: 'Save and accept' })).toBeFocused();
+  await page.getByRole('form', { name: 'Save and accept' }).getByLabel('Short title (optional)').fill('x');
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('form')).toHaveCount(0);
+  await expect(control).toBeFocused();
+  expect(await ring(control)).toBe(true);
+  expect(stepPosts()).toEqual([]);
+});
+
+test('W-2001: a double click sends once (one send for that key on the mock), and the returned message is announced', async ({ page, request }) => {
+  await page.setViewportSize(DESKTOP);
+  await openItem(page, 'W-2001');
+  await page.getByRole('button', { name: 'Approve and send' }).dblclick();
+  await expect(page.getByRole('status').filter({ hasText: 'Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified.' })).toBeVisible();
+  const recorded = await log(request);
+  expect(recorded.entries).toHaveLength(1);
+  expect(recorded.sends[recorded.entries[0].idempotency_key]).toBe(1);
+  expect(stepPosts()).toHaveLength(1);
+});
+
+test('W-2007: queued is announced as Waiting; the 409 re-bases the next press on version 5 with a new key', async ({ page, request }) => {
+  await page.setViewportSize(DESKTOP);
+  await openItem(page, 'W-2007');
+  await page.getByRole('button', { name: 'Ask Tola to reassemble' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Waiting: Tola reassembles the report after the 16:00 records sync.' })).toBeVisible();
+  await request.post(`${MOCK}/__mock/reset`);
+  await page.reload();
+  await expect(page.locator('.ws')).toBeAttached();
+  await page.getByRole('button', { name: 'Edit your update' }).click();
+  const form = page.getByRole('form', { name: 'Edit your update' });
+  await form.getByLabel('Your update').fill('Login fix verified.');
+  await form.getByRole('button', { name: 'Edit your update' }).click();
+  await expect(page.getByRole('alert').filter({ hasText: 'This changed while you were working. Showing version 5.' })).toBeVisible();
+  await expect(form.getByLabel('Your update')).toHaveValue('Login fix verified.');
+  await page.waitForTimeout(1000);
+  expect((await log(request)).entries).toHaveLength(1);
+  await form.getByRole('button', { name: 'Edit your update' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Done: Edit your update.' })).toBeVisible();
+  const [stale, done] = (await log(request)).entries;
+  expect([stale.status, stale.expected_revision]).toEqual([409, 4]);
+  expect([done.status, done.expected_revision]).toEqual([200, 5]);
+  expect(done.idempotency_key).not.toBe(stale.idempotency_key);
+});
+
+test('W-2008: effect uncertain turns every step off; the reconcile answer goes once to E-WORK-ACTION and nothing to steps', async ({ page, context, baseURL }) => {
+  await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
+  await page.setViewportSize(DESKTOP);
+  await openItem(page, 'W-2008');
+  await page.getByRole('button', { name: 'Approve and send' }).click();
+  await expect(page.getByRole('alert').filter({ hasText: 'Delivery to Lagoon Health couldn’t be confirmed.' })).toBeVisible();
+  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  for (const b of await page.locator('.ws-steps button').all()) await expect(b).toHaveAttribute('aria-disabled', 'true');
+  await page.getByRole('button', { name: 'Approve and send' }).click({ force: true });
+  await page.getByRole('radio', { name: /It didn’t arrive/ }).check();
+  const answered = page.waitForResponse((r) => new URL(r.url()).pathname === '/api/v1/work/W-2008/actions');
+  await page.getByRole('button', { name: 'Record and continue' }).click();
+  expect((await answered).status()).toBe(200);
+  expect(requests.filter((u) => new URL(u).pathname === '/api/v1/work/W-2008/actions')).toHaveLength(1);
+  expect(stepPosts()).toHaveLength(1);
+});
+
+test('W-2009: the decision step is a link to the decision page; following it opens the page and the workspace sent nothing', async ({ page }) => {
+  await page.setViewportSize(DESKTOP);
+  await openItem(page, 'W-2009');
+  const link = page.locator('.ws').getByRole('link', { name: 'Open the decision' });
+  await expect(link).toHaveAttribute('href', '/work/W-2009/decide?task=T-2009');
+  // what the workspace sent before the decision page (which claims and decides itself, F-16) opened
+  const before = [...requests];
+  await link.click();
+  await expect(page).toHaveURL(/\/work\/W-2009\/decide\?task=T-2009$/);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Approve/ }).first()).toBeVisible();
+  expect(before.filter((u) => /\/(steps|claim|decision)$/.test(new URL(u).pathname))).toEqual([]);
+});
+
+test('nothing in the step form animates with reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openItem(page, 'W-2006');
+  await page.getByRole('button', { name: 'Save and accept' }).click();
+  expect(await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length)).toBe(0);
 });
 
 test('W-2010 draws no workspace', async ({ page }) => {

@@ -1,0 +1,9 @@
+{
+  "approve_send": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified."
+    }
+  }
+}
