@@ -89,7 +89,7 @@
 /* the counter sits at the end of the label line, so the buttons keep the board's place */
 .decide-panel .psl-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: var(--space-2); }
 .decide-panel .psl-field { row-gap: 6px; }
-.decide-panel .psl-field > .psl-hint { grid-row: 1; grid-column: 2; }
+.decide-panel .psl-field > .psl-hint, .decide-panel .psl-field > .psl-count { grid-row: 1; grid-column: 2; }
 .decide-panel .psl-field > textarea, .decide-panel .psl-field > .psl-error { grid-column: 1 / -1; }
 .decide-reason { margin: 0; }
 .decide-doesnt { margin: 0; }
