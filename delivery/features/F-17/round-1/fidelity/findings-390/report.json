@@ -1,0 +1,42 @@
+{
+  "region": "findings",
+  "width": 390,
+  "board": "design/canvas/project/SCR-49-mobile-blocked.dc.html",
+  "page": "/work/W-2003",
+  "boardText": "Go-live accepted",
+  "pageText": "Open findings",
+  "boardRegion": {
+    "width": 386,
+    "height": 246
+  },
+  "pageRegion": {
+    "width": 386,
+    "height": 288
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 62.2
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [
+    {
+      "role": "heading",
+      "name": "OPEN FINDINGS"
+    }
+  ],
+  "visual": {
+    "score": 62.2,
+    "allCellsScore": 62.2,
+    "width": 386,
+    "height": 246,
+    "boardHeight": 246,
+    "pageHeight": 288,
+    "cell": 12,
+    "contentCells": 693,
+    "mismatchedCells": 262
+  },
+  "notes": []
+}

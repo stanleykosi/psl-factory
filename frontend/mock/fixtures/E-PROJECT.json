@@ -1,0 +1,67 @@
+{
+  "case_id": "P-0101",
+  "title": "Lagoon Health · patient app",
+  "lines": [
+    {
+      "line": "RFP response",
+      "state": "verified",
+      "work_id": "W-1801"
+    },
+    {
+      "line": "Commercial submission",
+      "state": "cancelled",
+      "work_id": "W-1802"
+    },
+    {
+      "line": "Plan a project",
+      "state": "verified",
+      "work_id": "W-1804"
+    },
+    {
+      "line": "Prepare for release",
+      "state": "owner_needed",
+      "work_id": "W-1803"
+    },
+    {
+      "line": "Prepare an invoice",
+      "state": "waiting",
+      "work_id": "W-1001"
+    },
+    {
+      "line": "Prepare an invoice",
+      "state": "ready",
+      "work_id": "W-1004"
+    },
+    {
+      "line": "Weekly client update",
+      "state": "processing",
+      "work_id": "W-1805"
+    },
+    {
+      "line": "Raise a change request",
+      "state": "setup_needed",
+      "work_id": "W-1806"
+    },
+    {
+      "line": "Raise an issue",
+      "state": "action_needed",
+      "work_id": "W-1807"
+    },
+    {
+      "line": "Record a receipt",
+      "state": "effect_uncertain",
+      "work_id": "W-1808"
+    },
+    {
+      "line": "Record a receipt",
+      "state": "awaiting_reconciliation",
+      "work_id": "W-1809"
+    },
+    {
+      "line": "Follow up an invoice",
+      "state": "followup_needed",
+      "work_id": "W-1810"
+    }
+  ],
+  "next": "Client UAT response, then Finance review of the milestone 2 invoice."
+}

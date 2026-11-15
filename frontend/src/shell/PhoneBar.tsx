@@ -4,18 +4,34 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import type { Me } from '@/api/types';
+import { AlertsBell, type BellProps } from '@/features/alerts/AlertsBell';
+import { StartWorkButton } from '@/features/start-work/StartWorkButton';
 
 import type { DestinationInfo } from './destinations';
 import { MenuIcon } from './icons';
 import { SampleLabel } from './SampleLabel';
 
-type Props = { me: Me | null; destinations: DestinationInfo[]; current: DestinationInfo | undefined };
+/** A sub-page's way back, drawn in the phone bar as "← label", with an optional mono note at the right ("RULES"). */
+export type PhoneBack = { label: string; href: string; note?: string };
 
-/** CMP-01 phone bar (below 720px): a menu-button disclosure, PSL FACTORY and the sample label. */
-export function PhoneBar({ me, destinations, current }: Props) {
+type Props = {
+  me: Me | null;
+  destinations: DestinationInfo[];
+  current: DestinationInfo | undefined;
+  back?: PhoneBack | null;
+  bell?: BellProps;
+};
+
+/**
+ * CMP-01 phone bar (below 720px): a menu-button disclosure, PSL FACTORY and the sample label, the alert bell (F-15) and
+ * "+ Start" (CMP-23). On a sub-page that sets a back link the bar shows "← label" instead of Menu and PSL FACTORY
+ * (SCR-10-mobile, SCR-22-mobile); the bell stays.
+ */
+export function PhoneBar({ me, destinations, current, back = null, bell }: Props) {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const hasMenu = me !== null;
+  const hasMenu = me !== null && back === null;
+  const canStart = me !== null && me.startable_lines.length > 0;
 
   useEffect(() => {
     if (!open) return undefined;
@@ -30,7 +46,7 @@ export function PhoneBar({ me, destinations, current }: Props) {
 
   return (
     <>
-      <header className="psl-phonebar psl-on-dark">
+      <header className={`psl-phonebar psl-on-dark${canStart ? ' sw-phonebar' : ''}${bell ? ' shell-phonebar--bell' : ''}`}>
         {hasMenu && (
           <button
             ref={buttonRef}
@@ -44,7 +60,14 @@ export function PhoneBar({ me, destinations, current }: Props) {
             <MenuIcon />
           </button>
         )}
-        <span className="psl-brand">PSL FACTORY</span>
+        {back ? (
+          <Link href={back.href} aria-label={`Back to ${back.label}`}>
+            {`← ${back.label}`}
+          </Link>
+        ) : (
+          <span className="psl-brand">PSL FACTORY</span>
+        )}
+        {back?.note && <span className="shell-phonenote">{back.note}</span>}
         <SampleLabel />
       </header>
       {hasMenu && open && (
@@ -66,6 +89,13 @@ export function PhoneBar({ me, destinations, current }: Props) {
             </Link>
           ))}
         </nav>
+      )}
+      {/* After the menu in the DOM, so Tab goes Menu, its links, the bell, then "+ Start"; drawn at the bar's right end. */}
+      {(bell || canStart) && (
+        <span className="sw-phoneslot psl-on-dark">
+          {bell && <AlertsBell {...bell} phone />}
+          {canStart && <StartWorkButton variant="phone" />}
+        </span>
       )}
     </>
   );

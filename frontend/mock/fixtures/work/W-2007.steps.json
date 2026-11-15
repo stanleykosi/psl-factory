@@ -1,0 +1,20 @@
+{
+  "reassemble": {
+    "status": 200,
+    "body": {
+      "outcome": "queued",
+      "message": "Tola reassembles the report after the 16:00 records sync."
+    },
+    "next": false
+  },
+  "edit_update": {
+    "status": 409,
+    "next": true
+  },
+  "send_now": {
+    "status": 500
+  },
+  "refresh_records": {
+    "status": 500
+  }
+}

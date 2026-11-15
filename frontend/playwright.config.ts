@@ -19,7 +19,7 @@ export default defineConfig({
     },
     {
       command: `npm run build && npx next start -p ${appPort}`,
-      env: { API_ORIGIN: `http://127.0.0.1:${mockPort}`, NEXT_TELEMETRY_DISABLED: '1' },
+      env: { API_ORIGIN: `http://127.0.0.1:${mockPort}`, NEXT_TELEMETRY_DISABLED: '1', FRAME_FIXTURES: '1' },
       url: `http://localhost:${appPort}/my-work`,
       timeout: 300_000,
       reuseExistingServer: false,

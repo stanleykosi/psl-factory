@@ -1,1 +1,1 @@
-{"name":"Tunde Bello","roles":["PM"],"destinations":["my_work","projects","assistant"],"startable_lines":["Weekly client update"],"csrf_token":"mock-csrf-pm"}
+{"name":"Tunde Bello","roles":["PM"],"destinations":["my_work","projects","assistant"],"startable_lines":["invoice","weekly_report","minutes","issue_followup","change_request","emergency_change","escalation","leadership_report"],"csrf_token":"mock-csrf-pm"}

@@ -1,0 +1,2613 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-17",
+  "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
+  "state": "DONE",
+  "task_ids": [
+    "FE-WORKSPACE-FRAME"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Unchanged without a workspace.** W-2010 (and W-1701, W-1901) render exactly as before. \u2014 verify: `tests/work-item.test.tsx`, `work-item-board.test.tsx`, `decide.test.tsx`, `response.test.tsx` pass unchanged; a new test asserts no workspace element on W-2010.",
+    "**Header from data.** On W-2001 the page shows the returned `subtitle`, status tag word, `byline`, `version.label`, crumbs and `agent_note` lines; each absent field on W-2005 draws nothing. There is exactly one `h1` (the work item title); `workspace.title` is an `h2` only when different. \u2014 verify: component test on W-2001 and W-2005; e2e counts `h1`.",
+    "**Nine section kinds.** W-2001 to W-2004 draw each of facts, table, checklist, findings, suggestions, recipients, figures, text, timeline with the elements in the Contract table, in returned order. Table cells render by column kind; a cell `link` becomes an anchor only for an app path. \u2014 verify: `tests/workspace.test.tsx`, one test per kind; `<a>` count for a crafted `link` of `https://x.example` is zero.",
+    "**Item vocab as words.** Every item `status`, `receipt` and `severity` value on W-2003 and W-2001 appears as a word in text (not colour alone); `receipt: uncertain` never reads \"Received\". An unknown enum value renders raw. \u2014 verify: component tests; axe in criterion 11.",
+    "**INV-UNKNOWN.** On W-2004 an unknown amount, `due.unknown`, and an unknown date read \"Unknown\"; the page contains no \"0\", \"\u20a60\", \"-\" or empty cell in their place. \u2014 verify: component test over the DOM text of those cells.",
+    "**INV-RESTRICTED.** On W-2004 a `restricted` section shows only `restricted_label` and no row text, no `cites`, no `money`, even though the fixture also carries data for those rows (the fixture includes it deliberately, to prove it is not drawn). A restricted cell reads \"Restricted\". \u2014 verify: component test that none of the fixture's hidden strings appears in `document.body.textContent`.",
+    "**as_of, coverage, sample.** As_of (WAT), `coverage` text and the sample label show on W-2004; absent elsewhere. \u2014 verify: component test.",
+    "**Empty.** W-2005 shows \"Nothing here yet.\" for an empty section and nothing else for a workspace with no sections or steps; no exception is thrown. \u2014 verify: component test.",
+    "**Paging and filters inert.** W-2002 shows filters, total and \"Show more\" disabled with \"More rows aren\u2019t available yet.\"; activating them sends no request. \u2014 verify: component test with a recording `fetch` (only the GET E-WORK-ITEM calls).",
+    "**Fixtures valid, old untouched.** Every `W-20xx` fixture validates against the generated schema; `git diff --stat` shows no edit to any existing fixture. \u2014 verify: `tests/mock-contract.test.ts`; `git diff --stat`.",
+    "**Accessibility and layout (Part A).** For W-2001 to W-2005 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), no sideways scroll (`scrollWidth <= viewport`), visible focus rings, 44px targets, tables scroll inside their own container at 390, no animation under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/workspace.spec.ts`.",
+    "**Steps only as returned.** Controls appear only for steps in `workspace.steps`; none when `workspace.revision` is absent; none are derived from `/me` (a persona with any role sees the same controls for the same fixture). `disabled_reason` shows as text, the control is `aria-disabled`, and activating it sends nothing. \u2014 verify: component tests with a recording `fetch`.",
+    "**Scopes.** `workspace` steps in the row; `item` steps on the right items only (`steps[]` contains the key); an `items` step is disabled with zero checked, and sends `item_ids` = the checked ids in item order. \u2014 verify: component test reading the recorded body (W-2002).",
+    "**Form from descriptors.** On W-2006 every field kind renders through `IntakeField`, `display` is shown and never sent, `required`, `help`, `depends_on` behave as in Start work, and only descriptor checks run client-side. A step with `confirm` shows its text above the submit. `restricted` field draws no value. \u2014 verify: component test; `git diff --stat` shows no behavioural edit in `features/start-work/**`.",
+    "**Write request shape.** Submitting a W-2006 step sends exactly one POST `/api/v1/work/W-2006/steps` with the CSRF header, `expected_revision` equal to `workspace.revision`, `step`, `inputs` shaped per kind, `idempotency_key` (a UUID), `evidence_ids` only if an evidence field was filled, `note` only if a `note` field exists and is non-blank; a `note` over 2000 characters is refused before any request. The body validates against the generated request schema. \u2014 verify: `tests/workspace-step.test.tsx` and `workspace-mock.test.ts`.",
+    "**One key per attempt; no double send.** A double click sends one request; while pending the button is disabled and reads \"<label>\u2026\". Opening the form twice gives two different keys; a manual \"Try again\" after a network failure on a non-`sends` step reuses the first key; a key is renewed after `done`, 409 and 422. Under React StrictMode no request is sent twice. \u2014 verify: component tests; e2e reads `GET /__mock/workspace-log` (the mock's send count for that key is 1). This is mock evidence only, not proof of backend idempotency.",
+    "**No automatic retry.** For 500, network failure, 409 and `effect_uncertain` the count of POSTs to the steps URL stays 1 until the person presses again, after waiting beyond any plausible timer (fake timers advanced by 60s). \u2014 verify: component tests.",
+    "**done and queued.** `done` reloads once and shows the live \"Done\" line with the new revision; `queued` shows \"Waiting: \u2026\" and reloads once; neither resends. \u2014 verify: tests on W-2001 and W-2007.",
+    "**effect_uncertain (INV-RESEND).** On W-2008 `effect_uncertain` shows the uncertain callout with the returned `message`; every step control on the page is off; after the reload `ReconcilePanel` is shown and its answer goes to E-WORK-ACTION (one POST to `/actions`, none to `/steps`); no new key or resend is possible. When the reloaded item has no `reconcile`, the page says \"We are checking what happened. Nothing was sent again.\" and offers a reload only. \u2014 verify: component test and e2e with the recorded requests.",
+    "**409.** On W-2007 a 409 keeps the typed inputs, reloads once, shows \"This changed while you were working. Showing version 5.\", re-bases `expected_revision` to 5, and sends nothing until the next deliberate press, with a new key. \u2014 verify: component test and e2e.",
+    "**422.** On W-2006 a 422 with `fields[]` puts each message under its input (`aria-invalid`, `aria-describedby`), focuses the first, keeps all inputs, shows an unnamed message at the top, and renews the key. \u2014 verify: component test.",
+    "**Other errors.** 401 shows the signed-out callout with `next` = this page. 403 reloads and shows \"You can\u2019t take that step.\". 404 shows `NoAccessState` with no id or title. A 500 on a `sends` step offers no resubmit; on a non-`sends` step a manual Try again with the same key. \u2014 verify: component tests.",
+    "**Decision steps.** The `task_id` step on W-2009 is a link to `/work/W-2009/decide?task=T-2009`; following it opens the F-16 page; the workspace itself sends no request to `/steps`, `/claim` or `/decision`. \u2014 verify: component test with a recording `fetch`; e2e navigates and sees the decision page.",
+    "**Part B accessibility.** For W-2006 to W-2009 at 1440 and 390: axe clean, no sideways scroll, focus moves to the form heading on open and back to the step control on close or Escape, errors are announced (`role=\"alert\"` or an associated live region), live regions for done, waiting and uncertain, 44px targets, reduced motion respected. \u2014 verify: `e2e/workspace.spec.ts`.",
+    "**Region-level design check.** After the design engineer signs Conflicts 1: every region in `regions.json` passes at 1440 and 390 with structure and text coverage 100% after exceptions and visual >= 85, via `region-check.mjs`. `fidelity-exceptions.json` entries each carry `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until confirmed), and none covers a value the data can supply. \u2014 verify: `round-<N>/fidelity/region-scores.txt` and per-region reports; build.md maps exceptions to categories.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/workspace/*.css` returns nothing. \u2014 verify: the command.",
+    "**Contract is not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**` or `design/**`; every field the renderer wanted but the schema lacks is listed in build.md as a contract proposal. \u2014 verify: `git diff --stat` and build.md.",
+    "**No real send, no overclaim.** Every request in the e2e run goes to the mock (4702); the PR description and build.md state D-LINE-WORKSPACE limits and do not claim idempotency or a real backend. \u2014 verify: build.md content and the recorded requests.",
+    "**Existing tests not weakened.** `tests/work-item*.test.tsx`, `decide*.test.tsx`, `response*.test.tsx`, `start-work*.test.*`, `shell.test.tsx`, `e2e/work-item*.spec.ts`, `e2e/decide*.spec.ts`, `e2e/response.spec.ts`, `e2e/start-work.spec.ts` pass; no assertion removed or loosened. \u2014 verify: `delivery/checks.sh`; `git diff` on those test files shows none.",
+    "**New tests exist and run in checks.** `workspace.test.tsx`, `workspace-step.test.tsx`, `workspace-mock.test.ts` and `e2e/workspace.spec.ts` exist and run in `delivery/checks.sh`. \u2014 verify: file presence and the run output in build.md."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The frame is a shared renderer on `features/work-item/**` (also touched by F-09, F-14, F-16) and defines the one write that every later line uses, including steps that send to clients (`sends`, `effect_uncertain`, INV-RESEND), so a wrong duplicate-submit, retry or restricted-section rule here is copied into about 25 screens. It stays at medium and not high because it is mock-only, the write is unimplemented in the backend, and nothing is released. SURFACES: `ui` (the renderer), `api` (new write and request shape), `contract-change` (it consumes a still-proposed v7 block that the backend developer may change) and `external-messaging` (steps that send and uncertain-effect handling). Money appears only as displayed values (unknown never 0); payment decisions are out of scope, so `payments` is not listed."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-17/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "APPROVED",
+      "design_sha256": "9fad8d2dbf70dc7b8fcbfeb1cea1a7b846642501887626c6ff283dca1f95c8cd",
+      "canvas_url": "https://claude.ai/artifact/THB9steET1h8qCmZp9jdD2",
+      "canvas_version": "1794581312-b166"
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "1432023f985798659f2cc4342c3a745936d30324",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T06:50:41Z",
+      "seconds": 167.0,
+      "evidence_ref": "delivery/features/F-17/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T07:16:05Z",
+      "seconds": 100.6,
+      "evidence_ref": "delivery/features/F-17/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T08:05:41Z",
+      "seconds": 102.0,
+      "evidence_ref": "delivery/features/F-17/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 4,
+      "attempt": 1,
+      "commit": "5dea11efbc33d8f40c3f9c3beb40934067bb7fba",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T08:16:14Z",
+      "seconds": 94.5,
+      "evidence_ref": "delivery/features/F-17/round-4/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 5,
+      "attempt": 1,
+      "commit": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T08:23:50Z",
+      "seconds": 87.0,
+      "evidence_ref": "delivery/features/F-17/round-5/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO acceptance",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": false,
+      "assessment_reason": "delivery/features/F-17/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb)",
+      "authority": "the design engineer's message on 15 Nov 2026: \"go ahead\", in reply to \"say 'merge F-17' and I'll merge it now\"",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design-fidelity gate)",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-ui.md"
+      ]
+    },
+    "security": {
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-security.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "FID-1-1",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Region design check below 85 on 19 of 26 runs: the frame must build the shared line layouts (desktop side-column cards with coloured head for decide, suggestion and edit; phone borderless sections with pinned step buttons), decided by the design engineer 15 Nov (D-62)",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/fidelity/region-scores.txt"
+      ],
+      "raised_by": "coordinator",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "coordinator",
+          "at": "2026-11-15T06:50:50Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": "Partial. The D-62 side column, Decide panel (orange head, green primary, full-width buttons), blue suggestion and form heads, and phone pinned bar are present. Region check rerun at a5e803a gives coverage 100% in 26 of 26 and visual >= 85 in 9 of 26. Of the gaps still open, UI-2-1 to UI-2-7 can be fixed in the frame, and the rest are listed below for the design engineer."
+        },
+        {
+          "action": "accept-risk",
+          "by": "design-engineer",
+          "at": "2026-11-15T08:23:50Z",
+          "refs": [
+            "delivery/OVERNIGHT-DECISIONS.md"
+          ],
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+          "reason": "Remaining region gaps are forced (line designs, contract gaps, 44px targets); frame accepted at measured scores, D-65"
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
+      ],
+      "risk_authority": "design engineer"
+    },
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`useWorkspacePage` keeps `fresh`, `lost` and `refreshFailed` in state with no reset when `id` changes (frontend/src/features/workspace/usePageReload.ts:25-27). If Next ever reuses the WorkItemView instance across ids, a `lost` set on one item would show NoAccessState for the next. Next normally remounts a changed dynamic segment, but cites now link between work items. Reset the state on `id` or key the hook by id.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T06:55:28Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "reset on id change at usePageReload.ts:27-34. The test \"access lost on one item is not carried to the next id\" renders W-2001, loses access, rerenders W-2002, and expects `lost` and `fresh` null. It fails on the old code, which had no reset."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "reset on id change at usePageReload.ts:27-34. The test \"access lost on one item is not carried to the next id\" renders W-2001, loses access, rerenders W-2002, and expects `lost` and `fresh` null. It fails on the old code, which had no reset."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When the 409 re-read fails, the notice reads \"Showing version unknown\" (frontend/src/features/workspace/useWorkspaceStep.ts:41, :127). The controls are off by then because `refreshFailed` is set, so the page should say it could not reload, not name a version.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T06:55:28Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "`stale(undefined)` no longer names a version (useWorkspaceStep.ts:41). The test \"a 409 whose re-read fails does not name a version\" covers it."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`stale(undefined)` no longer names a version (useWorkspaceStep.ts:41). The test \"a 409 whose re-read fails does not name a version\" covers it."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A facts item whose `value` is an empty string draws a blank `dd`, not Unknown (frontend/src/features/workspace/Sections.tsx:~150, `item.value !== undefined`). INV-UNKNOWN says missing is never blank. Treat `''` and `null` as unknown.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T06:55:28Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "`hasValue` treats empty and blank as Unknown in facts and figures (Sections.tsx:47, :155, :343). The test uses '' and '   '."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`hasValue` treats empty and blank as Unknown in facts and figures (Sections.tsx:47, :155, :343). The test uses '' and '   '."
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The manual \"Try again\" for a non-`sends` step reuses the key but sends the reloaded `expected_revision` (useWorkspaceStep.ts:97). If the first attempt did land, the retry is a 409 on the real backend, since the idempotency promise is unbuilt. This is in the spec and the build records it. It needs a backend answer before a real-API cutover. No change now.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T06:55:28Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A 422 reply with a named field that is not on the form loses its message. Spec criterion 21: an unnamed or unmatched message shows at the top. On W-2006 \"Check my answer\", the server sends `reviewer: \"A reviewer must be free.\"`; the form shows the main message and the two matched field messages, and \"A reviewer must be free.\" appears nowhere on the page (checked the DOM text). The person cannot tell why the step failed. Expected: every returned message is visible (unmatched ones in the top alert). Actual: the top alert lists only `result.fields` entries that match a field. frontend/src/features/workspace/StepForm.tsx:244-250 (`known`/`unnamed`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T06:55:28Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "StepForm collects unmatched 422 field messages with the top message into the alert (StepForm.tsx:244-249). A matched field stays under its input only, and a test shows it is not repeated at the top."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "StepForm collects unmatched 422 field messages with the top message into the alert (StepForm.tsx:244-249). A matched field stays under its input only, and a test shows it is not repeated at the top."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After `effect_uncertain` every step button turns grey with no stated reason (W-2008 at 390: \"Approve and send\", \"Return with a note\" are disabled; the explanation sits in a callout far below the reconcile panel). Suggest a short line by the buttons, for example \"Confirm what happened first.\" frontend/src/features/workspace/Workspace.tsx.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T06:55:28Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "W-2008 at 390 shows \"Confirm what happened before anything is resent.\" and the \"Confirm what happened first.\" hint beside the off buttons."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-2008 at 390 shows \"Confirm what happened before anything is resent.\" and the \"Confirm what happened first.\" hint beside the off buttons."
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"Filter\", the filter chip and \"Show more\" are drawn as disabled controls on W-2002 and the same line \"More rows aren't available yet.\" appears twice. It is spec-mandated, but it reads as a dead end to a PMO or Finance person. Consider one line only, once the section-page read exists, or hide the controls until then.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T06:55:28Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "W-2002 shows \"More rows aren't available yet.\" once, in the section."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-2002 shows \"More rows aren't available yet.\" once, in the section."
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On the 500 path for a non-sending step the \"Try again\" button sits above all step buttons and away from the form that failed, and the message \"We couldn't confirm this step. Check the page before trying again.\" does not say which step. Name the step label in the message.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T06:55:28Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "A 500 on W-2006 reads \"Check my answer",
+            "We couldn't confirm this step. Check the page before trying again.\""
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "A 500 on W-2006 reads \"Check my answer",
+        "We couldn't confirm this step. Check the page before trying again.\""
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After `done` on a fixture with no reload change (W-2001) the same \"Approve and send\" button stays on the page, so a person sees nothing telling them it was done beyond the returned message. This is fixture content (no `.next.json`), and the real backend decides whether the step is still offered; note for the line task that the \"Done: <label>\" line is replaced by `message` when one is returned, so a message that does not name the step loses the step name.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T06:55:28Z",
+          "head": "1432023f985798659f2cc4342c3a745936d30324"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:16:05Z",
+          "refs": [
+            "a5e803a"
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "refs": [
+            "After W-2001 \"Approve and send\" the notice leads with the step label (\"Approve and send",
+            "Lagoon Health received v2: ...\")."
+          ],
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a5e803a"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "After W-2001 \"Approve and send\" the notice leads with the step label (\"Approve and send",
+        "Lagoon Health received v2: ...\")."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`useWorkspacePage` resets on an id change by setting state during render (usePageReload.ts:27-34). An older in-flight `reload()` for the previous id can still land and set `fresh` after the reset. WorkItemView's newer-read rule limits the harm. Guard the late write by id if it ever shows.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T08:06:54Z",
+          "refs": [
+            "usePageReload.ts adds a `current` ref set in an effect, with the guard before `setFresh`/`setRefreshFailed`/`setLost` in both try and catch. The test \"a read that lands after the id changed\" in workspace-step.test.tsx covers it. checks.md shows the gate passed."
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "usePageReload.ts adds a `current` ref set in an effect, with the guard before `setFresh`/`setRefreshFailed`/`setLost` in both try and catch. The test \"a read that lands after the id changed\" in workspace-step.test.tsx covers it. checks.md shows the gate passed."
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "TECH-1-4 is still open: a manual retry sends the reloaded revision. This needs a backend answer on the idempotency promise before a real-API cutover. The build records it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On a short phone (390x667) the pinned Decide panel (about 170 to 250px) covers a quarter to a third of the screen while scrolling, and on W-2008 its lower button (\"Return with a note\") sat 28px below the visible edge at one scroll position. Consider keeping the pinned bar to the primary button only, or a smaller height. frontend/src/features/workspace/workspace.css (the `.ws-decide` sticky rule).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After a 500 on \"Check my answer\" (W-2006, 390) focus lands on a button 60px below the visible area, while the notice is at the top. A screen-reader user hears the alert, but a sighted keyboard user sees no focus. Move focus to the notice or the retry button in view. frontend/src/features/workspace/Workspace.tsx.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The phone sections have lost the board's panel. SCR-25-mobile-review and SCR-49-mobile-blocked both draw each section as a white box with a 2px ink border and a 14px inner inset. The frame at 390 removes the border and the inset (`workspace.css:139-142`: `.ws-section { border: none }`, `.ws-section__body { padding: 0 }`, head `padding: 0 0 6px`), so rows run flush to the page gutter. D-62's wording (\"no panel border on phones\") does not match these two boards. The boards are the spec, so please ask the design engineer to confirm. Fix: at <=720px keep `.ws-section` with `border: 2px solid var(--ink)`, give `.ws-section__body` 0 14px 6px and the head 10px 14px 6px, and keep the head unfilled as now. I injected these rules on W-2001 and W-2003 at 390: the result reads like the boards and there is no sideways scroll. That run was a check only and nothing was committed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:07:06Z",
+          "refs": [
+            "delivery/features/F-17/round-3/review-ui.md"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-17/round-3/review-ui.md"
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Row end values wrap under the text when they should stay on the right. At 390 on W-2001 and W-2003, \"2 RECORDS\", \"ISS-0233\", \"MIN-0141\", \"HELD\", \"DONE \u00b7 22 Mar 2027\" and \"MEDIUM\" drop to their own line. SCR-25 and SCR-49 mobile keep them on the right and wrap the words instead. Cause: `.ws-row__main { flex: 1 1 auto }` (`workspace.css:71`) with `flex-wrap: wrap` on `.ws-row`. Fix: `.ws-row__main { flex: 1 1 0; }`. Row forms still wrap, because `.ws-row__form` stays at 100% basis. I checked this by injection at 390.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:07:06Z",
+          "refs": [
+            "delivery/features/F-17/round-3/review-ui.md"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-17/round-3/review-ui.md"
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The phone pinned Decide bar doesn't match the boards' bar. (a) On first view at 390 on W-2001 the bar's lower part (Refuse and its reason) is cut off below the fold. The sticky containing block is `.ws`, which begins where the bar sits, so the bar cannot rise any further. Measured: bar top 665 and height 252 against a viewport of 844. (b) The 2px top rule and the white band stop at the page gutters. On the SCR-25, SCR-26 and SCR-49 phone boards they run edge to edge, with the buttons inset 16px. Fix: at <=720px give `.ws-decide` `position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px 18px`, and reserve its height at the end of the workspace (padding-bottom). Alternatively, attach the sticky bar to a full-width wrapper outside `.ws`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:07:07Z",
+          "refs": [
+            "delivery/features/F-17/round-3/review-ui.md"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-17/round-3/review-ui.md"
+      ]
+    },
+    {
+      "id": "UI-2-4",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Tables break their reference cells and crush at phone width. \"R-07\" wraps to \"R-\" / \"07\" at 1440 as well as 390 (W-2002, Requirements table). At 390 the requirement column falls to one word per line, while the Pricing table on the same page scrolls. SCR-26 draws R-07 on one line. Fix: give reference and cite cells `white-space: nowrap` (`.ws-table td.psl-mono, .ws-table .ws-cite`), and give `.ws-table` a minimum width (for example `min-width: 560px` inside the scrolling `.ws-tablewrap`) so narrow screens scroll instead of squeezing.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:07:07Z",
+          "refs": [
+            "delivery/features/F-17/round-3/review-ui.md"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-17/round-3/review-ui.md"
+      ]
+    },
+    {
+      "id": "UI-2-5",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The cite in a table cell and the status tag don't follow SCR-26. The board puts the source (\"RFP p.6\") on its own line under the requirement, in 12px muted sans with normal case, and sets the tag in capitals (\"SUGGESTED BY TOLA\"). The frame puts the cite inline as uppercase mono (\"RFP P.6\") and the tag in sentence case. Fix: inside `.ws-table`, show the cell link or cite as a block line in 12px `--ink-muted` sans with no uppercase, and give table tags `text-transform: uppercase; font-weight: 600`. Measured gap: table 1440 76.3, 390 74.3. Also put the \"0 selected \u00b7 Accept selected \u00b7 hint\" footer on one row, as the board does (count, then button, then hint), instead of stacking the three.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:07:07Z",
+          "refs": [
+            "delivery/features/F-17/round-3/review-ui.md"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-17/round-3/review-ui.md"
+      ]
+    },
+    {
+      "id": "UI-2-6",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A suggestion card doesn't use the fields it already has the way SCR-26 draws them. The `suggestions` item carries `label`, `text`, `detail`, `tag` and `cites`, which are what the board's card shows: a mono reference line, an answer box with an `--action` border on `--action-tint`, then the source line in 12px muted. The frame runs label and text together in one bold-led line. It also repeats \"Suggested by Tola\" (agent meta line plus tag) and \"RFP P.6\" (cite plus label). Several items stack with no separator. Fix: show `label` as a mono line on its own, `text` in the tinted answer box and `detail` beneath it. Drop the agent line when the tag already names the agent, and put a 1px `--rule-soft` divider between items. Measured gap: suggestions 1440 46.9. The Status radio group and the \"Write my own\" button are not in the data (see B list).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:07:07Z",
+          "refs": [
+            "delivery/features/F-17/round-3/review-ui.md"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-17/round-3/review-ui.md"
+      ]
+    },
+    {
+      "id": "UI-2-7",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Several word styles don't match the boards. (a) The checklist and findings status pills are in mono (they inherit `.ws-row__end`'s `--font-mono`). SCR-49 and SCR-44 draw them in 12px semibold sans. Fix: give `.ws-rows--checklist .ws-word, .ws-rows--findings .ws-word` `font-family: var(--font-sans); font-weight: 600`. (b) Money in table cells uses `.psl-amount`, which is the 16px/500 headline amount style used on decision cards (`psl-bundle.css:391`), so table numbers are larger than the row text. SCR-56 draws them at row size. Fix: `.ws-table .psl-amount { font-size: inherit; font-weight: 400 }`. (c) The step form's submit button takes the opening step's emphasis, so \"Edit answer\" submits with a white secondary button (`StepForm.tsx:320`, `stepClass`). SCR-26 edit draws the form's submit as a filled primary. Fix: always give the submit button inside `.ws-form` the primary class, unless the step is `danger`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:07:07Z",
+          "refs": [
+            "delivery/features/F-17/round-3/review-ui.md"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-17/round-3/review-ui.md"
+      ]
+    },
+    {
+      "id": "UI-2-8",
+      "round": 2,
+      "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop the checklist draws a check mark for each row. SCR-49 desktop has no marks and lets the pill carry the state, while SCR-44 readiness passes at 91.3 either way. The marks are harmless, but ask the design engineer whether the frame should drop them at every width, as it already does on phones.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:35:48Z",
+          "head": "a5e803ab09ccd3122a4c252be8658a9138314be0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:05:41Z",
+          "refs": [
+            "d9cd1d2"
+          ],
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9cd1d2"
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Table money doesn't match SCR-56. The board draws month and amounts left-aligned in the body sans, the table inset 16px inside the panel; the frame right-aligns amounts in mono (`.num`) and runs the table full width. The money size is now right (UI-2-7b fixed), but the alignment and face are a frame style, not a line's task (D-63 only decided full vs compact figures). Fix: in `.ws-table`, give money cells `text-align: left; font-family: var(--font-sans)` (header cells left too), and inset the table 16px inside its section panel. Also draw the unknown-money note's warning icon as the board does (the callout has no icon), and show the \"As of ... reconciled\" line below the table, or ask for an exception since the board has no such line. Expected: unknown-money 1440 from 72.3 to near 85. Do not use `.psl-unknown` chip inside the cell next to \"UNKNOWN\" text (checklist last row shows \"UNKNOWN \u00b7 Unknown\" twice, non-blocking).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:06:54Z",
+          "head": "d9cd1d2e011106564b113229ce15100497d81ca7"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T08:16:14Z",
+          "refs": [
+            "5dea11e"
+          ],
+          "head": "5dea11efbc33d8f40c3f9c3beb40934067bb7fba",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:34:16Z",
+          "refs": [
+            "in round-4/fidelity/unknown-money-1440/side-by-side.png the money cells are now left-aligned in the body sans, as on SCR-56, and the amber note shows the warning icon. unknown-money 72.3 -> 75.6, coverage 100%."
+          ],
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5dea11e"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "in round-4/fidelity/unknown-money-1440/side-by-side.png the money cells are now left-aligned in the body sans, as on SCR-56, and the amber note shows the warning icon. unknown-money 72.3 -> 75.6, coverage 100%."
+      ]
+    },
+    {
+      "id": "QA-5-1",
+      "round": 5,
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "**Phone reconcile is unreachable behind the Decide bar.** Steps: persona finance_lead, viewport 390x844 (also 320x640), `/work/W-2008`, press \"Approve and send\". The mock returns `effect_uncertain`, the item is read again, and ReconcilePanel mounts. Expected: the person can choose \"It didn't arrive\" and tap \"Record and continue\" (spec criterion 19; INV-RESEND recovery). Actual: two fixed bottom bars are stacked. F-09's `.resp-actionbar` (`frontend/src/features/response/response.css:146`, z-index 5) is at y 762-844, and F-17's `.ws-decide` (`frontend/src/features/workspace/workspace.css:153`, z-index 5, later in the DOM) is at y 722-844 on top of it. The Decide bar holds only aria-disabled steps and \"Confirm what happened first.\" At maximum scroll (565 at 390) \"Record and continue\" is still at 776-826, inside the Decide bar's area. Playwright's click fails with \"`<div class=\"ws-steps__buttons\">` intercepts pointer events\". Focusing it and pressing Enter does send the one POST to `/actions`, so the keyboard path works and the touch path does not. At 1440 the click works. `.ws { padding-bottom: var(--ws-bar-h) }` (`workspace.css:151`) clears only the workspace's own content, not another fixed bar. The phone e2e did not catch this because the W-2008 e2e runs at desktop only (`e2e/workspace.spec.ts:208`). Expected fix: while a reconcile action bar is shown, or whenever every step is locked by the uncertain state, do not draw the fixed Decide bar on top of it. Either let it flow statically or stack it above the reconcile bar and reserve both heights. Then add a 390 e2e that taps \"Record and continue\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T08:56:58Z",
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T09:16:59Z",
+          "refs": [
+            "af3b958c"
+          ],
+          "head": "af3b958cfa5807108e940017aefdc04e60375b1b",
+          "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "qa",
+          "at": "2026-11-15T09:52:13Z",
+          "refs": [],
+          "head": "ff48d19d80a904de760cf524166ad820107267dd",
+          "reason": "Fixed only in the pressing session before scrolling to the bottom. (a) Same session at 390x844 and 320x640, touch tap and pointer click: right after the press (scrollY 123 at 390) the tap reaches the button and `/actions` returns 200. At maximum scroll (599 at 390, 933 at 320) the static Decide panel covers the button: at 390 the button is at 776-826 and the panel at 685-828, with the hit `P.psl-reason ws-hint`. A touch tap and a mouse click there send nothing (no `/actions` request within 4 s). Screenshot: `w2008-390-bottom-flow.png`. (b) Press \"Approve and send\", then `page.reload()`: the class is `ws-decide` with no `--flow`, the position is fixed and the bar is at 747-844 (390) or 522-640 (320). \"Record and continue\" is at 776-826 (390) or 572-622 (320), and the hit is `DIV.ws-steps__buttons` at scrollY 0, 300 and the maximum. Tap and click both fail at 390 and 320. Screenshot: `w2008-390-reload.png`. (c) The same happens when W-2008 is opened in a new tab in the same context while it is uncertain. In every case, focus plus Enter does send the one `POST /actions` (200). At 1440, Record and continue is answered with 200 (hit is the button)."
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T10:01:13Z",
+          "refs": [
+            "97574624"
+          ],
+          "head": "ff48d19d80a904de760cf524166ad820107267dd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-15T10:01:13Z",
+          "refs": [
+            "Touch tap on W-2008, persona finance_lead. 390x844 (button at 776-826):"
+          ],
+          "head": "ff48d19d80a904de760cf524166ad820107267dd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "97574624"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "Touch tap on W-2008, persona finance_lead. 390x844 (button at 776-826):"
+      ]
+    },
+    {
+      "id": "QA-5-2",
+      "round": 5,
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Long step labels in the 320 Decide bar.** I checked this at the UX reviewer's request. Every fixture label fits at 320: the buttons are 288px wide, no text is clipped and the page is 320 wide. With labels injected into the W-2007 read (a stress test, not fixture data), a label of up to about 36 characters fits. At 40 or more characters it runs off the right edge and is clipped, not wrapped: \"Ask Tola to reassemble the weekly client report\" ends at x=359 on a 320 screen. The cause is `.ws-decide .psl-btn { white-space: nowrap }` (`workspace.css:29`). At 390, labels of up to 40 characters fit. This does not affect today's fixtures. The line tasks should allow wrapping (`white-space: normal` in the phone media block) before they return longer labels.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T08:56:58Z",
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T09:16:59Z",
+          "refs": [
+            "af3b958c"
+          ],
+          "head": "af3b958cfa5807108e940017aefdc04e60375b1b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-15T09:52:13Z",
+          "refs": [
+            "`.ws-decide .psl-btn { white-space: normal }` in the phone block. I injected labels of 47 and 64 characters into the W-2007 read. At 320 they wrap to 67 and 101 px tall, every button's right edge is at most 304, nothing overflows (`scrollWidth <= clientWidth`) and the page is 320 wide. At 390 they are 50 and 67 px tall, the right edge is at most 374 and the page is 390 wide. Fixture labels are unchanged: 44 px, one line. At 1440 `white-space` is still `nowrap`. Screenshots: `w2007-320-long.png`, `w2007-390-long.png`."
+          ],
+          "head": "ff48d19d80a904de760cf524166ad820107267dd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "af3b958c"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "`.ws-decide .psl-btn { white-space: normal }` in the phone block. I injected labels of 47 and 64 characters into the W-2007 read. At 320 they wrap to 67 and 101 px tall, every button's right edge is at most 304, nothing overflows (`scrollWidth <= clientWidth`) and the page is 320 wide. At 390 they are 50 and 67 px tall, the right edge is at most 374 and the page is 390 wide. Fixture labels are unchanged: 44 px, one line. At 1440 `white-space` is still `nowrap`. Screenshots: `w2007-320-long.png`, `w2007-390-long.png`."
+      ]
+    },
+    {
+      "id": "QA-5-3",
+      "round": 5,
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On a phone, the uncertain callout \"Delivery to Lagoon Health couldn't be confirmed.\" is below the fold after the press (y 938 on an 844-high viewport at 390). The reconcile choices are visible higher up, so the journey is not blocked once QA-5-1 is fixed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T08:56:58Z",
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        }
+      ]
+    },
+    {
+      "id": "QA-5-4",
+      "round": 5,
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In the \"Return with a note\" form on W-2001, a 2001-character note shows \"Keep the note to 2000 characters.\" twice (once as help text and once as the error). It is correctly refused before any request: 0 extra POSTs.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T08:56:58Z",
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        }
+      ]
+    },
+    {
+      "id": "TECH-5-1",
+      "round": 5,
+      "snapshot_ref": "af3b958cfa5807108e940017aefdc04e60375b1b",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The class depends on `allLocked`, which is client state set only after an uncertain step in this session. If a page loads fresh with the server already showing a reconcile panel and Decide steps still present, the Decide bar stays fixed and could cover the reconcile button again. The test only covers the in-session path. Check whether the server omits workspace steps in that state. If it does, there is nothing to fix. If not, key the class on `hasReconcile` alone.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T09:52:13Z",
+          "head": "af3b958cfa5807108e940017aefdc04e60375b1b"
+        }
+      ]
+    },
+    {
+      "id": "QA-5-5",
+      "round": 5,
+      "snapshot_ref": "af3b958cfa5807108e940017aefdc04e60375b1b",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "**A reload re-enables a resend while delivery is uncertain.** Steps: persona finance_lead, any viewport (I checked 1440 and 390), `/work/W-2008`, press \"Approve and send\" (the mock replies `effect_uncertain` and the reconcile panel shows), reload the page, then press \"Approve and send\" again. Expected (spec criterion 19, outcome table row `effect_uncertain`, INV-RESEND): every step stays off while the item is waiting for reconcile, with no new key and no resend. Actual: after the reload, both Decide buttons have no `aria-disabled` and are enabled. The press sends a second `POST /api/v1/work/W-2008/steps` with a new key. Mock log: `[[\"approve_send\",200,key aa6148cf,rev 3],[\"approve_send\",200,key 1946d824,rev 4]]`. The page shows \"Delivery uncertain\" and \"Confirm what happened before anything is resent.\" alongside the live send button. Cause: as in QA-5-1, `off()` (`Workspace.tsx:111`) reads `flow.allLocked`, which a reload clears. Expected fix: treat `hasReconcile` (item has `reconcile` and `allowed_actions` includes `reconcile`) as all-locked, with the \"Confirm what happened first.\" hint. The backend must still refuse it (not provable on the mock).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T09:52:13Z",
+          "head": "af3b958cfa5807108e940017aefdc04e60375b1b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T09:52:13Z",
+          "refs": [
+            "97574624"
+          ],
+          "head": "ff48d19d80a904de760cf524166ad820107267dd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-15T10:01:13Z",
+          "refs": [
+            "Press \"Approve and send\" on W-2008, then reload, at 390, 320 and 1440. Both steps are `aria-disabled=\"true\"` and the hint reads \"Confirm what happened first.\" I then tried, in order: a touch tap or forced click on \"Approve and send\", focus with Enter and Space, a forced double click, two more touch taps, and a forced click on \"Return with a note\". No form opened. The mock log at each width shows one entry, for example `[[\"approve_send\",200,\"6df20b2b\",3]]`, so there was no second key and no resend. The no-reconcile variant (c) at 390 and 1440 also shows one entry. Screenshots: `b-390-reload.png`, `c-390-noreconcile.png`."
+          ],
+          "head": "ff48d19d80a904de760cf524166ad820107267dd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "97574624"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "Press \"Approve and send\" on W-2008, then reload, at 390, 320 and 1440. Both steps are `aria-disabled=\"true\"` and the hint reads \"Confirm what happened first.\" I then tried, in order: a touch tap or forced click on \"Approve and send\", focus with Enter and Space, a forced double click, two more touch taps, and a forced click on \"Return with a note\". No form opened. The mock log at each width shows one entry, for example `[[\"approve_send\",200,\"6df20b2b\",3]]`, so there was no second key and no resend. The no-reconcile variant (c) at 390 and 1440 also shows one entry. Screenshots: `b-390-reload.png`, `c-390-noreconcile.png`."
+      ]
+    },
+    {
+      "id": "TECH-5-2",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`awaitingReconcile` uses `item.reconcile` alone, while the reconcile panel also needs the `reconcile` grant. A viewer without that grant on an item awaiting reconcile sees every step off with no reconcile button. That matches the invariant (reconcile before any retry) and is the safe side, so no change is needed. Make sure the \"confirm first\" hint copy still reads sensibly for that viewer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T10:01:13Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
+      ]
+    },
+    {
+      "id": "PMO-5-1",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The backend items are spread across round-1/build.md (Contract proposals), round-2/build.md and round-2/review-ui.md. The round-5 build.md has no consolidated list. Copy the list under \"Hand-off to backend\" below into the PR description and the hand-off note, so the items travel with the merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T10:02:20Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
+      ]
+    },
+    {
+      "id": "PMO-5-2",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "feature.json state lag. TECH-5-1 reads OPEN although review-technical.md verifies it at ff48d19. UX-2-1, UX-2-2 and UI-2-8 read FIX_SUBMITTED. TECH-1-4, TECH-2-2, QA-5-3, QA-5-4 and TECH-5-2 are non-blocking and OPEN. None blocks. Sync the record before the merge. TECH-1-4 and TECH-2-2 are backend dependent and must stay open.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T10:02:20Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
+      ]
+    },
+    {
+      "id": "PMO-5-3",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-5-3 (the uncertain callout sits below the fold on a phone after the press) and QA-5-4 (the over-long note message shows twice) are carried forward untouched. Fix in a later pass or in the first line task.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-15T10:02:20Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
+      ]
+    },
+    {
+      "id": "UX-5-1",
+      "round": 5,
+      "snapshot_ref": "ff48d19d80a904de760cf524166ad820107267dd",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "TECH-5-2 follow-up. A viewer without the `reconcile` grant on an item awaiting reconcile sees every step off and no reconcile button, with no sentence saying who can act. Locking is correct and safe. A short hint would help, for example \"Waiting for someone with reconcile access to confirm what happened.\" It can ship as a later follow-up and does not block the merge, because the person cannot act and the item's state panel still shows that it is waiting.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T10:32:47Z",
+          "head": "ff48d19d80a904de760cf524166ad820107267dd"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+          "evidence_refs": [
+            "delivery/features/F-17/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-17/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+          "evidence_refs": [
+            "delivery/features/F-17/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "reviewer-security",
+          "snapshot_ref": "1432023f985798659f2cc4342c3a745936d30324",
+          "evidence_refs": [
+            "delivery/features/F-17/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "evidence_refs": [
+            "delivery/features/F-17/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-17/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "evidence_refs": [
+            "delivery/features/F-17/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate, D-59 region check, D-62 layout)",
+          "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "evidence_refs": [
+            "delivery/features/F-17/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "reviewer-security",
+          "snapshot_ref": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+          "evidence_refs": [
+            "delivery/features/F-17/round-2/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "evidence_refs": [
+            "delivery/features/F-17/round-3/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-17/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (D-59 region check, D-62/D-63 layout), lean round per D-64",
+          "snapshot_ref": "d9cd1d2e011106564b113229ce15100497d81ca7",
+          "evidence_refs": [
+            "delivery/features/F-17/round-3/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        }
+      }
+    },
+    {
+      "round": 4,
+      "reviews": {
+        "technical": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-17/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ui": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-WORKSPACE-FRAME",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
+    "task_branch": "fe-workspace-frame-the-work-item-page-renders-a-line-worksp",
+    "head_sha": "ff48d19d80a904de760cf524166ad820107267dd",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-17",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/30",
+    "pr_number": 30,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "9cfaa27eb5e7c9000fd4691d2125fe5b8467f7ee",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/COORDINATOR-HANDOFF.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-17/feature.json",
+      "delivery/features/F-17/fidelity-exceptions.json",
+      "delivery/features/F-17/regions.json",
+      "delivery/features/F-17/round-1/build.md",
+      "delivery/features/F-17/round-1/checks.md",
+      "delivery/features/F-17/round-1/fidelity/checklist-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/checklist-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/checklist-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/checklist-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/checklist-gates-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/checklist-gates-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/checklist-gates-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/checklist-gates-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/facts-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/facts-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/facts-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/facts-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/findings-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/findings-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/findings-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/findings-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/notice-done-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/notice-done-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/notice-done-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/notice-done-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/recipients-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/recipients-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/recipients-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/recipients-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/region-check.mjs",
+      "delivery/features/F-17/round-1/fidelity/region-scores.txt",
+      "delivery/features/F-17/round-1/fidelity/step-form-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/step-form-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/step-form-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/step-form-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/steps-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/steps-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/steps-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/steps-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/suggestions-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/suggestions-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/suggestions-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/suggestions-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/table-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/table-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/table-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/table-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/text-cites-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/text-cites-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/text-cites-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/text-cites-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/timeline-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/timeline-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/timeline-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/timeline-390/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/unknown-money-1440/report.json",
+      "delivery/features/F-17/round-1/fidelity/unknown-money-1440/side-by-side.png",
+      "delivery/features/F-17/round-1/fidelity/unknown-money-390/report.json",
+      "delivery/features/F-17/round-1/fidelity/unknown-money-390/side-by-side.png",
+      "delivery/features/F-17/round-1/review-security.md",
+      "delivery/features/F-17/round-1/review-technical.md",
+      "delivery/features/F-17/round-1/review-ux.md",
+      "delivery/features/F-17/round-2/build.md",
+      "delivery/features/F-17/round-2/checks.md",
+      "delivery/features/F-17/round-2/fidelity/checklist-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/checklist-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/checklist-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/checklist-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/checklist-gates-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/checklist-gates-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/checklist-gates-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/checklist-gates-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/facts-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/facts-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/facts-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/facts-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/findings-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/findings-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/findings-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/findings-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/notice-done-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/notice-done-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/notice-done-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/notice-done-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/recipients-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/recipients-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/recipients-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/recipients-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/region-check.mjs",
+      "delivery/features/F-17/round-2/fidelity/region-scores.txt",
+      "delivery/features/F-17/round-2/fidelity/step-form-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/step-form-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/step-form-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/step-form-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/steps-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/steps-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/steps-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/steps-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/suggestions-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/suggestions-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/suggestions-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/suggestions-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/table-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/table-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/table-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/table-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/text-cites-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/text-cites-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/text-cites-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/text-cites-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/timeline-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/timeline-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/timeline-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/timeline-390/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/unknown-money-1440/report.json",
+      "delivery/features/F-17/round-2/fidelity/unknown-money-1440/side-by-side.png",
+      "delivery/features/F-17/round-2/fidelity/unknown-money-390/report.json",
+      "delivery/features/F-17/round-2/fidelity/unknown-money-390/side-by-side.png",
+      "delivery/features/F-17/round-2/review-security.md",
+      "delivery/features/F-17/round-2/review-technical.md",
+      "delivery/features/F-17/round-2/review-ui.md",
+      "delivery/features/F-17/round-2/review-ux.md",
+      "delivery/features/F-17/round-3/build.md",
+      "delivery/features/F-17/round-3/checks.md",
+      "delivery/features/F-17/round-3/fidelity/checklist-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/checklist-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/checklist-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/checklist-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/checklist-gates-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/checklist-gates-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/checklist-gates-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/checklist-gates-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/facts-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/facts-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/findings-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/findings-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/findings-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/findings-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/notice-done-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/notice-done-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/notice-done-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/notice-done-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/recipients-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/recipients-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/region-check.mjs",
+      "delivery/features/F-17/round-3/fidelity/region-scores.txt",
+      "delivery/features/F-17/round-3/fidelity/step-form-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/step-form-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/steps-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/steps-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/steps-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/steps-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/suggestions-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/suggestions-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/table-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/table-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/table-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/table-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/text-cites-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/text-cites-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/text-cites-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/text-cites-390/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/timeline-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/timeline-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/unknown-money-1440/report.json",
+      "delivery/features/F-17/round-3/fidelity/unknown-money-1440/side-by-side.png",
+      "delivery/features/F-17/round-3/fidelity/unknown-money-390/report.json",
+      "delivery/features/F-17/round-3/fidelity/unknown-money-390/side-by-side.png",
+      "delivery/features/F-17/round-3/review-technical.md",
+      "delivery/features/F-17/round-3/review-ui.md",
+      "delivery/features/F-17/round-4/build.md",
+      "delivery/features/F-17/round-4/checks.md",
+      "delivery/features/F-17/round-4/fidelity/region-scores.txt",
+      "delivery/features/F-17/round-4/fidelity/table-1440/report.json",
+      "delivery/features/F-17/round-4/fidelity/table-1440/side-by-side.png",
+      "delivery/features/F-17/round-4/fidelity/unknown-money-1440/report.json",
+      "delivery/features/F-17/round-4/fidelity/unknown-money-1440/side-by-side.png",
+      "delivery/features/F-17/round-5/build.md",
+      "delivery/features/F-17/round-5/checks.md",
+      "delivery/features/F-17/round-5/review-qa.md",
+      "delivery/features/F-17/round-5/review-security.md",
+      "delivery/features/F-17/round-5/review-technical.md",
+      "delivery/features/F-17/round-5/review-ui.md",
+      "delivery/features/F-17/round-5/review-ux.md",
+      "delivery/features/F-18/feature.json",
+      "delivery/features/F-18/fidelity-exceptions.json",
+      "delivery/features/F-18/round-1/build.md",
+      "delivery/features/F-18/round-1/checks.md",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-lost-1440/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-lost-1440/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-outcome-1440/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-outcome-1440/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-outcome-lost-1440/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-outcome-lost-1440/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-outcome-pending-1440/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-outcome-pending-1440/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-outcome-unknown-1440/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-outcome-unknown-1440/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-pending-1440/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-pending-1440/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-unknown-1440/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-unknown-1440/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-won-1440/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-rfp-won-1440/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-team-input-1440/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-desktop-team-input-1440/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-lost-390/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-lost-390/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-outcome-390/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-outcome-390/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-outcome-lost-390/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-outcome-lost-390/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-outcome-pending-390/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-outcome-pending-390/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-outcome-unknown-390/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-outcome-unknown-390/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-pending-390/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-pending-390/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-unknown-390/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-unknown-390/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-won-390/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-rfp-won-390/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-team-input-390/report.json",
+      "delivery/features/F-18/round-1/fidelity/SCR-16-mobile-team-input-390/side-by-side.png",
+      "delivery/features/F-18/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-18/round-1/fidelity/frozen/rfp-outcome-1440.html",
+      "delivery/features/F-18/round-1/fidelity/frozen/rfp-outcome-390.html",
+      "delivery/features/F-18/round-1/fidelity/frozen/rfp-outcome-lost-1440.html",
+      "delivery/features/F-18/round-1/fidelity/frozen/rfp-outcome-lost-390.html",
+      "delivery/features/F-18/round-1/fidelity/frozen/rfp-outcome-pending-1440.html",
+      "delivery/features/F-18/round-1/fidelity/frozen/rfp-outcome-pending-390.html",
+      "delivery/features/F-18/round-1/fidelity/frozen/rfp-outcome-unknown-1440.html",
+      "delivery/features/F-18/round-1/fidelity/frozen/rfp-outcome-unknown-390.html",
+      "delivery/features/F-18/round-1/fidelity/frozen/team-input-1440.html",
+      "delivery/features/F-18/round-1/fidelity/frozen/team-input-390.html",
+      "delivery/features/F-18/round-1/fidelity/scores.txt",
+      "delivery/features/F-18/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-18/round-1/review-security.md",
+      "delivery/features/F-18/round-1/review-technical.md",
+      "delivery/features/F-18/round-1/review-ui.md",
+      "delivery/features/F-18/round-1/review-ux.md",
+      "delivery/features/F-18/round-2/build.md",
+      "delivery/features/F-18/round-2/checks.md",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-lost-1440/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-lost-1440/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-outcome-1440/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-outcome-1440/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-outcome-lost-1440/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-outcome-lost-1440/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-outcome-pending-1440/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-outcome-pending-1440/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-outcome-unknown-1440/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-outcome-unknown-1440/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-pending-1440/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-pending-1440/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-unknown-1440/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-unknown-1440/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-won-1440/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-rfp-won-1440/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-team-input-1440/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-desktop-team-input-1440/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-lost-390/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-lost-390/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-outcome-390/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-outcome-390/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-outcome-lost-390/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-outcome-lost-390/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-outcome-pending-390/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-outcome-pending-390/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-outcome-unknown-390/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-outcome-unknown-390/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-pending-390/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-pending-390/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-unknown-390/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-unknown-390/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-won-390/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-rfp-won-390/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-team-input-390/report.json",
+      "delivery/features/F-18/round-2/fidelity/SCR-16-mobile-team-input-390/side-by-side.png",
+      "delivery/features/F-18/round-2/fidelity/drive-states.mjs",
+      "delivery/features/F-18/round-2/fidelity/frozen/rfp-outcome-1440.html",
+      "delivery/features/F-18/round-2/fidelity/frozen/rfp-outcome-390.html",
+      "delivery/features/F-18/round-2/fidelity/frozen/rfp-outcome-lost-1440.html",
+      "delivery/features/F-18/round-2/fidelity/frozen/rfp-outcome-lost-390.html",
+      "delivery/features/F-18/round-2/fidelity/frozen/rfp-outcome-pending-1440.html",
+      "delivery/features/F-18/round-2/fidelity/frozen/rfp-outcome-pending-390.html",
+      "delivery/features/F-18/round-2/fidelity/frozen/rfp-outcome-unknown-1440.html",
+      "delivery/features/F-18/round-2/fidelity/frozen/rfp-outcome-unknown-390.html",
+      "delivery/features/F-18/round-2/fidelity/frozen/team-input-1440.html",
+      "delivery/features/F-18/round-2/fidelity/frozen/team-input-390.html",
+      "delivery/features/F-18/round-2/fidelity/scores.txt",
+      "delivery/features/F-18/round-2/fidelity/serve-frozen.mjs",
+      "delivery/features/F-18/round-2/review-security.md",
+      "delivery/features/F-18/round-2/review-technical.md",
+      "delivery/features/F-18/round-2/review-ui.md",
+      "delivery/features/F-18/round-2/review-ux.md",
+      "delivery/features/F-18/round-3/acceptance-pmo.md",
+      "delivery/features/F-18/round-3/acceptance-product.md",
+      "delivery/features/F-18/round-3/build.md",
+      "delivery/features/F-18/round-3/checks.md",
+      "delivery/features/F-18/round-3/fidelity/SCR-16-mobile-rfp-lost-390/report.json",
+      "delivery/features/F-18/round-3/fidelity/SCR-16-mobile-rfp-lost-390/side-by-side.png",
+      "delivery/features/F-18/round-3/fidelity/SCR-16-mobile-rfp-unknown-390/report.json",
+      "delivery/features/F-18/round-3/fidelity/SCR-16-mobile-rfp-unknown-390/side-by-side.png",
+      "delivery/features/F-18/round-3/review-qa.md",
+      "delivery/features/F-18/round-3/review-security.md",
+      "delivery/features/F-18/round-3/review-technical.md",
+      "delivery/features/F-18/round-3/review-ui.md",
+      "delivery/features/F-18/round-3/review-ux.md",
+      "delivery/followups-01/build-note.md",
+      "delivery/followups-01/fidelity/SCR-01-desktop-empty-1440/report.json",
+      "delivery/followups-01/fidelity/SCR-01-desktop-empty-1440/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-01-mobile-empty-390/report.json",
+      "delivery/followups-01/fidelity/SCR-01-mobile-empty-390/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-02-desktop-effect-uncertain-1440/report.json",
+      "delivery/followups-01/fidelity/SCR-02-desktop-effect-uncertain-1440/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-02-desktop-owner-needed-1440/report.json",
+      "delivery/followups-01/fidelity/SCR-02-desktop-owner-needed-1440/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-02-desktop-setup-needed-1440/report.json",
+      "delivery/followups-01/fidelity/SCR-02-desktop-setup-needed-1440/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-02-mobile-owner-needed-390/report.json",
+      "delivery/followups-01/fidelity/SCR-02-mobile-owner-needed-390/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-02-mobile-setup-needed-390/report.json",
+      "delivery/followups-01/fidelity/SCR-02-mobile-setup-needed-390/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-03-mobile-done-390/report.json",
+      "delivery/followups-01/fidelity/SCR-03-mobile-done-390/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-15-mobile-settings-390/report.json",
+      "delivery/followups-01/fidelity/SCR-15-mobile-settings-390/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-22-desktop-1440/report.json",
+      "delivery/followups-01/fidelity/SCR-22-desktop-1440/side-by-side.png",
+      "delivery/followups-01/fidelity/SCR-22-mobile-390/report.json",
+      "delivery/followups-01/fidelity/SCR-22-mobile-390/side-by-side.png",
+      "delivery/followups-01/review-technical.md",
+      "delivery/followups-01/review-ui.md",
+      "frontend/e2e/alerts.spec.ts",
+      "frontend/e2e/projects.spec.ts",
+      "frontend/e2e/rfp.spec.ts",
+      "frontend/e2e/workspace.spec.ts",
+      "frontend/mock/fixtures/response/W-1711.delivered.json",
+      "frontend/mock/fixtures/response/W-1711.not_delivered.json",
+      "frontend/mock/fixtures/response/W-1711.unknown.json",
+      "frontend/mock/fixtures/response/W-2008.not_delivered.json",
+      "frontend/mock/fixtures/response/W-2008.unknown.json",
+      "frontend/mock/fixtures/response/W-2101.recorded.json",
+      "frontend/mock/fixtures/response/work/W-2101.json",
+      "frontend/mock/fixtures/response/work/W-2102.json",
+      "frontend/mock/fixtures/response/work/W-2103.json",
+      "frontend/mock/fixtures/response/work/W-2104.json",
+      "frontend/mock/fixtures/response/work/W-2105.json",
+      "frontend/mock/fixtures/response/work/W-2106.json",
+      "frontend/mock/fixtures/response/work/W-2107.json",
+      "frontend/mock/fixtures/response/work/W-2108.json",
+      "frontend/mock/fixtures/response/work/W-2108.sent.json",
+      "frontend/mock/fixtures/response/work/W-2109.json",
+      "frontend/mock/fixtures/response/work/W-2110.json",
+      "frontend/mock/fixtures/response/work/W-2111.json",
+      "frontend/mock/fixtures/response/work/W-2112.json",
+      "frontend/mock/fixtures/response/work/W-2112.next.json",
+      "frontend/mock/fixtures/response/work/W-2113.json",
+      "frontend/mock/fixtures/response/work/W-2114.json",
+      "frontend/mock/fixtures/work/W-1709.json",
+      "frontend/mock/fixtures/work/W-1711.json",
+      "frontend/mock/fixtures/work/W-2001.json",
+      "frontend/mock/fixtures/work/W-2001.steps.json",
+      "frontend/mock/fixtures/work/W-2002.json",
+      "frontend/mock/fixtures/work/W-2003.json",
+      "frontend/mock/fixtures/work/W-2004.json",
+      "frontend/mock/fixtures/work/W-2005.json",
+      "frontend/mock/fixtures/work/W-2006.json",
+      "frontend/mock/fixtures/work/W-2006.steps.json",
+      "frontend/mock/fixtures/work/W-2007.json",
+      "frontend/mock/fixtures/work/W-2007.next.json",
+      "frontend/mock/fixtures/work/W-2007.steps.json",
+      "frontend/mock/fixtures/work/W-2008.json",
+      "frontend/mock/fixtures/work/W-2008.next.json",
+      "frontend/mock/fixtures/work/W-2008.steps.json",
+      "frontend/mock/fixtures/work/W-2009.json",
+      "frontend/mock/fixtures/work/W-2010.json",
+      "frontend/mock/projects.mjs",
+      "frontend/mock/response.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/mock/workspace.mjs",
+      "frontend/public/agents/tola-done.png",
+      "frontend/src/app/work/[id]/outcome/page.tsx",
+      "frontend/src/features/alerts/AlertSettingsPage.tsx",
+      "frontend/src/features/alerts/AlertsDrawer.tsx",
+      "frontend/src/features/alerts/alerts.css",
+      "frontend/src/features/decide/DecideStates.tsx",
+      "frontend/src/features/my-work/CaughtUp.tsx",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/src/features/projects/ProjectsList.tsx",
+      "frontend/src/features/response/ProofField.tsx",
+      "frontend/src/features/response/ResponseForm.tsx",
+      "frontend/src/features/response/ResponseView.tsx",
+      "frontend/src/features/response/Segmented.tsx",
+      "frontend/src/features/response/TeamInputForm.tsx",
+      "frontend/src/features/response/contract.ts",
+      "frontend/src/features/response/labels.ts",
+      "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/rfp/FollowupCard.tsx",
+      "frontend/src/features/rfp/OutcomeForm.tsx",
+      "frontend/src/features/rfp/OutcomeView.tsx",
+      "frontend/src/features/rfp/RecordedView.tsx",
+      "frontend/src/features/rfp/RfpFrame.tsx",
+      "frontend/src/features/rfp/RfpOutcomeLink.tsx",
+      "frontend/src/features/rfp/api.ts",
+      "frontend/src/features/rfp/contract.ts",
+      "frontend/src/features/rfp/index.ts",
+      "frontend/src/features/rfp/labels.ts",
+      "frontend/src/features/rfp/rfp.css",
+      "frontend/src/features/rfp/useFollowup.ts",
+      "frontend/src/features/rfp/useOutcome.ts",
+      "frontend/src/features/setup/RulesView.tsx",
+      "frontend/src/features/setup/SetupFrame.tsx",
+      "frontend/src/features/setup/setup.css",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/presentation.ts",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/StepForm.tsx",
+      "frontend/src/features/workspace/Steps.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/usePageReload.ts",
+      "frontend/src/features/workspace/useWorkspaceStep.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/tests/alerts-bell.test.tsx",
+      "frontend/tests/decide-board.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-projects.test.ts",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/projects.test.tsx",
+      "frontend/tests/response-mock.test.ts",
+      "frontend/tests/rfp-mock.test.ts",
+      "frontend/tests/rfp.test.tsx",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/workspace-mock.test.ts",
+      "frontend/tests/workspace-step.test.tsx",
+      "frontend/tests/workspace.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "443 changed files exceed the auto-merge limit of 15",
+      "finding FID-1-1 was accepted as a risk",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "ff48d19d80a904de760cf524166ad820107267dd",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-14T21:38:05Z",
+  "round": 5,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-14T21:59:34Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-14T22:00:12Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T06:50:50Z",
+      "round": 1,
+      "head": "1432023f985798659f2cc4342c3a745936d30324",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T06:55:40Z",
+      "round": 1,
+      "head": "1432023f985798659f2cc4342c3a745936d30324",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T06:55:48Z",
+      "round": 2,
+      "head": "1432023f985798659f2cc4342c3a745936d30324",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T07:16:06Z",
+      "round": 2,
+      "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T07:35:48Z",
+      "round": 2,
+      "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T07:35:48Z",
+      "round": 3,
+      "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T08:05:42Z",
+      "round": 3,
+      "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T08:06:54Z",
+      "round": 3,
+      "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T08:06:54Z",
+      "round": 4,
+      "head": "d9cd1d2e011106564b113229ce15100497d81ca7",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T08:16:14Z",
+      "round": 4,
+      "head": "5dea11efbc33d8f40c3f9c3beb40934067bb7fba",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T08:22:23Z",
+      "round": 4,
+      "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T08:22:23Z",
+      "round": 5,
+      "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T08:24:16Z",
+      "round": 5,
+      "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-15T08:34:23Z",
+      "round": 5,
+      "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-15T10:01:14Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-15T10:32:02Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-15T10:32:47Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-15T10:32:47Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-15T10:32:48Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-15T10:32:48Z",
+      "round": 5,
+      "head": "ff48d19d80a904de760cf524166ad820107267dd",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-17/readiness.md",
+      "delivery/features/F-17/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 5,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+  },
+  "blocked": null
+}

@@ -1,0 +1,114 @@
+{
+  "id": "W-1603",
+  "title": "Lagoon Health · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0412",
+  "state": "awaiting_reconciliation",
+  "revision": 7,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "done"
+    },
+    {
+      "name": "Issue",
+      "status": "done"
+    },
+    {
+      "name": "Deliver",
+      "status": "current_person"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-12T09:40:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-12T09:47:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "unknown"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "waiting",
+    "steps": [
+      {
+        "text": "Issued invoice INV-0412 v2",
+        "status": "done",
+        "source": "INV-0412 v2"
+      },
+      {
+        "text": "Emailed it to the billing contact",
+        "status": "done",
+        "source": "accounts@lagoonhealth.example"
+      },
+      {
+        "text": "Checked 6 times for a delivery receipt; none found",
+        "status": "waiting"
+      }
+    ]
+  },
+  "next_step": "Held. Chidi reminds you tomorrow to confirm whether it arrived.",
+  "sample": true,
+  "case_id": "C-1603",
+  "case_revision": 5,
+  "allowed_actions": [
+    "reconcile"
+  ],
+  "reconcile": {
+    "what": "Invoice INV-0412 v2 to the billing contact",
+    "sent_at": "2026-11-12T09:55:00Z",
+    "checks": {
+      "count": 6,
+      "first_at": "2026-11-12T10:00:00Z",
+      "last_at": "2026-11-12T12:00:00Z",
+      "agent": "chidi"
+    },
+    "outcomes": [
+      "delivered",
+      "not_delivered",
+      "unknown"
+    ],
+    "evidence_kind": "delivery_receipt",
+    "resend": "one resend of the same version",
+    "unknown_note": "Keep it held and remind me tomorrow",
+    "resend_note": "A resend reuses the same invoice number"
+  }
+}

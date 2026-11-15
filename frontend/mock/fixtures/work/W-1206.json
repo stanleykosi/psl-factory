@@ -1,0 +1,138 @@
+{
+  "id": "W-1206",
+  "title": "Harbour Bank · Mobile onboarding costing",
+  "line": "Prepare a costing",
+  "reference": "CST-0207",
+  "state": "waiting",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Scope",
+      "status": "done"
+    },
+    {
+      "name": "Estimate",
+      "status": "done"
+    },
+    {
+      "name": "PM review",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead review",
+      "status": "current_person"
+    },
+    {
+      "name": "CEO approval",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-11T14:05:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-1206",
+      "kind": "decide",
+      "title": "Approve costing v1",
+      "required_role": "CEO",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Costing v1",
+          "number": 1,
+          "drafted_at": "2026-11-11T14:05:00Z"
+        },
+        "amount": {
+          "amount": "18600000.00",
+          "currency": "NGN",
+          "unknown": false
+        },
+        "basis": "Estimate v1 · 3 phases",
+        "prepared_by": {
+          "name": "Tunde Bello",
+          "role": "PM",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PM",
+              "person": "Tunde Bello",
+              "status": "approved",
+              "decided_at": "2026-11-11T15:20:00Z",
+              "is_you": false
+            },
+            {
+              "position": 2,
+              "role": "PMO Lead",
+              "person": "Ngozi Eze",
+              "status": "current",
+              "is_you": false
+            },
+            {
+              "position": 3,
+              "role": "CEO",
+              "person": "Ada Okafor",
+              "status": "not_yet",
+              "is_you": true
+            }
+          ],
+          "your_step": 3,
+          "step_count": 3
+        }
+      },
+      "cannot_act_reason": "not_your_turn",
+      "asked": [
+        {
+          "name": "Ngozi Eze",
+          "role": "PMO Lead"
+        }
+      ]
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the scope notes",
+        "status": "done",
+        "source": "Scope v2"
+      },
+      {
+        "text": "Drafted costing v1",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "The PMO Lead reviews costing v1, then the CEO decides.",
+  "sample": true
+}

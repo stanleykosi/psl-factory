@@ -1,0 +1,540 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T11:14:57.836Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-35-mobile.dc.html",
+  "boardName": "SCR-35-mobile.dc.html",
+  "pageUrl": "http://localhost:4631/clients",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-19/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 92.5 meets 90."
+  ],
+  "scores": {
+    "coverage": 30.4,
+    "coverageWithExceptions": 100,
+    "visual": 92.5
+  },
+  "visual": {
+    "score": 92.5,
+    "allCellsScore": 95.1,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1536,
+    "mismatchedCells": 115
+  },
+  "coverage": {
+    "total": 23,
+    "found": 7,
+    "coverage": 30.4,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Clients",
+        "pageName": "Clients",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 24px on the board, 26px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 26
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health",
+        "pageName": "Lagoon Health",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 178,
+          "w": 93,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 174,
+          "w": 93,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Harmattan Bank",
+        "pageName": "Harmattan Bank",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 262,
+          "w": 107,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 260,
+          "w": 107,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kora Logistics",
+        "pageName": "Kora Logistics",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 346,
+          "w": 90,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 345,
+          "w": 90,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ojo Foods",
+        "pageName": "Ojo Foods",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 430,
+          "w": 64,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 431,
+          "w": 64,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Sabi Market",
+        "pageName": "Sabi Market",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 514,
+          "w": 77,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 517,
+          "w": 77,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tamarind Loans",
+        "pageName": "Tamarind Loans",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 598,
+          "w": 103,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 603,
+          "w": 103,
+          "h": 18
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Projects",
+        "key": "link: ← Projects",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 14: the frame's phone bar link is named \"Back to Projects\" (usePhoneBack).",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "(search area)",
+        "key": "search:",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 5 and Out of scope: search (q) is not built; the page has no search area.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "key": "searchbox: Search",
+        "container": "search",
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 306,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 5 and Out of scope: no search box; q is not in scope.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "key": "button: Filter",
+        "container": "search",
+        "boardBox": {
+          "x": 330,
+          "y": 108,
+          "w": 44,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 5: Filter is a dead control, not built.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NEEDS DETAILS",
+        "key": "text: NEEDS DETAILS",
+        "container": "page",
+        "boardBox": {
+          "x": 254,
+          "y": 178,
+          "w": 106,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 1: the schema has only billing_contact_set; the tag reads Set / Billing contact missing, not the board's readiness words.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 active",
+        "key": "text: 1 active",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 205,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 3: the list contract carries only a projects count; no active/closed or prospect status.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "READY",
+        "key": "text: READY",
+        "container": "page",
+        "boardBox": {
+          "x": 305,
+          "y": 262,
+          "w": 55,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 1: the schema has only billing_contact_set; the tag reads Set / Billing contact missing, not the board's readiness words.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 active",
+        "key": "text: 1 active",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 289,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 3: the list contract carries only a projects count; no active/closed or prospect status.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "READY",
+        "key": "text: READY",
+        "container": "page",
+        "boardBox": {
+          "x": 305,
+          "y": 346,
+          "w": 55,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 1: the schema has only billing_contact_set; the tag reads Set / Billing contact missing, not the board's readiness words.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 active",
+        "key": "text: 1 active",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 373,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 3: the list contract carries only a projects count; no active/closed or prospect status.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NEEDS DETAILS",
+        "key": "text: NEEDS DETAILS",
+        "container": "page",
+        "boardBox": {
+          "x": 254,
+          "y": 430,
+          "w": 106,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 1: the schema has only billing_contact_set; the tag reads Set / Billing contact missing, not the board's readiness words.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 active",
+        "key": "text: 1 active",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 457,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 3: the list contract carries only a projects count; no active/closed or prospect status.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "READY",
+        "key": "text: READY",
+        "container": "page",
+        "boardBox": {
+          "x": 305,
+          "y": 514,
+          "w": 55,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 1: the schema has only billing_contact_set; the tag reads Set / Billing contact missing, not the board's readiness words.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 closed",
+        "key": "text: 1 closed",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 541,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 3: the list contract carries only a projects count; no active/closed or prospect status.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROSPECT",
+        "key": "text: PROSPECT",
+        "container": "page",
+        "boardBox": {
+          "x": 283,
+          "y": 598,
+          "w": 77,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 1: the schema has only billing_contact_set; the tag reads Set / Billing contact missing, not the board's readiness words.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Prospect · RFP",
+        "key": "text: Prospect · RFP",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 625,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 3: the list contract carries only a projects count; no active/closed or prospect status.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Projects",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 240,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Start work",
+        "container": "page",
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "6 clients as of 14 Nov, 10:00 · 2 missing billing contact",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 358,
+          "h": 36
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

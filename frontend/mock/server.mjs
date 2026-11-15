@@ -1,23 +1,42 @@
-// Local contract mock for /api/v1. Routes come from the reviewed openapi.json; M-1
+// Local contract mock for /api/v1. Routes come from the v7 openapi.json; M-1
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
-// Persona: cookie psl_mock_persona (finance_lead | pm | none; default finance_lead).
+// Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none; default finance_lead).
+// Start work: E-LINES, E-LINE-OPTIONS and E-WORK-START are answered by start-work.mjs.
 // Scenario: cookie psl_mock_scenario or header X-Mock-Scenario (401 | 403 | 404 | 409 | 422),
 // applied only when the operation declares that status.
 // Work items: E-WORK-ITEM and E-WORK-HISTORY pick fixtures/work/<id>.json and <id>.history.json when
 // present (else the default fixture); W-1099 is the reserved no-access id. History honours kind, limit, cursor.
+// Tasks: E-TASK-CLAIM and E-TASK-DECIDE validate the body against the openapi request schema, find the task in
+// the items the mock serves and check its revision. A decide swaps in <id>.next.json (a redraft: 409) or
+// <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
+// Projects: E-PROJECTS and E-PROJECT answer from projects.mjs (persona rows, q, paging; P-0099 is the no-access id).
+// Overview: E-OVERVIEW serves fixtures/overview/<v>.json when cookie psl_mock_overview names a variant.
+// Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import Ajv2020 from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
+import { projects } from './projects.mjs';
+import { exceptionsList } from './exceptions.mjs';
+import { uploadEvidence } from './evidence.mjs';
+import { monthEnd } from './finance.mjs';
+import { overview } from './overview.mjs';
+import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
+import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
+import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { workList } from './work-list.mjs';
+import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
+import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v2-reviewed', 'openapi.json');
+export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE'];
-export const PERSONAS = ['finance_lead', 'pm', 'none'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', ...START_OPERATIONS];
+export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
 
@@ -44,7 +63,13 @@ const HISTORY_LIMITS = [10, 20, 50];
 function readWorkFixtures() {
   const dir = join(here, 'fixtures', 'work');
   const files = readdirSync(dir).filter((name) => name.endsWith('.json'));
-  return Object.fromEntries(files.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(dir, name), 'utf8'))]));
+  // F-09: the v7 response items (fixtures/response/work/) are served from the same map; v4 checks read only fixtures/work/.
+  const responseDir = join(here, 'fixtures', 'response', 'work');
+  const responseFiles = readdirSync(responseDir).filter((name) => name.endsWith('.json'));
+  return Object.fromEntries([
+    ...files.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(dir, name), 'utf8'))]),
+    ...responseFiles.map((name) => [name.slice(0, -5), JSON.parse(readFileSync(join(responseDir, name), 'utf8'))]),
+  ]);
 }
 
 /** One history page: filter by the mock-only `_kind`, page by an "o:<offset>" cursor, strip `_kind`. */
@@ -62,13 +87,88 @@ function historyPage(history, query) {
   return page;
 }
 
-function workResponse(operationId, url, fixtures, work) {
+function workResponse(operationId, url, fixtures, work, overrides) {
   const workId = decodeCookie(url.pathname.split('/')[4] ?? '');
   if (workId === NO_ACCESS_WORK_ID) return [404, SCENARIO_BODIES[404]];
   // Only plain ids ("W-1003") pick a per-id file, so "W-1004.history" or other sidecar names never answer as an item.
   const own = (name) => (/^W-\d+$/.test(workId) && Object.hasOwn(work, name) ? work[name] : undefined);
-  if (operationId === 'E-WORK-ITEM') return [200, own(workId) ?? fixtures['E-WORK-ITEM']];
+  if (operationId === 'E-WORK-ITEM') return [200, overrides.get(workId) ?? own(workId) ?? fixtures['E-WORK-ITEM']];
   return [200, historyPage(own(`${workId}.history`) ?? fixtures['E-WORK-HISTORY'], url.searchParams)];
+}
+
+const TASK_OPERATIONS = ['E-TASK-CLAIM', 'E-TASK-DECIDE'];
+const NOTE_REQUIRED = new Set(['return', 'reject', 'revoke']);
+const NOTE_MAX = 2000;
+const invalid = (fields) => [422, { code: 'invalid', message: `Check these fields: ${[...new Set(fields)].join(', ')}.` }];
+
+/** One request-body validator per task operation, compiled once from the loaded openapi. */
+function bodyValidators(openapi) {
+  const ajv = new Ajv2020({ allErrors: true, strict: true });
+  addFormats(ajv);
+  const validators = {};
+  for (const ops of Object.values(openapi.paths)) {
+    for (const op of Object.values(ops)) {
+      if (TASK_OPERATIONS.includes(op?.operationId)) {
+        validators[op.operationId] = ajv.compile(op.requestBody.content['application/json'].schema);
+      }
+    }
+  }
+  return validators;
+}
+
+/** Field names from Ajv errors: the missing or extra property, else the failing path; "body" for the whole body. */
+function errorFields(errors) {
+  return errors.map(
+    (e) => e.params.missingProperty ?? e.params.additionalProperty ?? (e.instancePath.split('/')[1] || 'body'),
+  );
+}
+
+/** The task with this id in the items the mock currently serves: default, per-id files, then overrides. */
+function findTask(taskId, fixtures, work, overrides) {
+  const items = new Map([[fixtures['E-WORK-ITEM'].id, fixtures['E-WORK-ITEM']]]);
+  for (const [name, body] of Object.entries(work)) if (/^W-\d+$/.test(name)) items.set(name, body);
+  for (const [workId, body] of overrides) items.set(workId, body);
+  for (const [workId, item] of items) {
+    const task = item.tasks.find((t) => t.id === taskId);
+    if (task) return { workId, item, task };
+  }
+  return undefined;
+}
+
+function taskResponse(operationId, url, raw, ctx) {
+  const { fixtures, work, overrides, validators, me } = ctx;
+  const taskId = decodeCookie(url.pathname.split('/')[4] ?? '');
+  const found = findTask(taskId, fixtures, work, overrides);
+  if (!found) return [404, SCENARIO_BODIES[404]];
+  let body;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return invalid(['body']);
+  }
+  const validate = validators[operationId];
+  if (!validate(body)) return invalid(errorFields(validate.errors));
+  const decide = operationId === 'E-TASK-DECIDE';
+  if (decide) {
+    const blank = typeof body.note !== 'string' || body.note.trim() === '';
+    if ((NOTE_REQUIRED.has(body.verdict) && blank) || (body.note?.length ?? 0) > NOTE_MAX) return invalid(['note']);
+    if (body.verdict === 'revoke') return [501, NOT_MOCKED];
+  }
+  const { workId, item, task } = found;
+  // Revision before eligibility, so a decided task (now you_can_act: false) answers a repeat decide with 409.
+  if (body.expected_revision !== task.revision) return [409, SCENARIO_BODIES[409]];
+  if (!task.you_can_act) return [403, SCENARIO_BODIES[403]];
+  if (!decide) return [200, { task_id: task.id, revision: task.revision, claimed_by: me.name }];
+
+  const next = work[`${workId}.next`];
+  if (next && !overrides.has(workId)) {
+    overrides.set(workId, next);
+    return [409, SCENARIO_BODIES[409]];
+  }
+  const decided = work[`${workId}.${body.verdict}`];
+  if (decided) overrides.set(workId, decided);
+  const result = { task_id: task.id, verdict: body.verdict, decided_by: me.name, decided_at: new Date().toISOString() };
+  return [200, { ...result, work_state: (decided ?? item).state }];
 }
 
 export function loadRoutes(openapi) {
@@ -112,17 +212,41 @@ function send(res, status, body) {
 export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'))) {
   const routes = loadRoutes(openapi);
   const me = Object.fromEntries(PERSONAS.map((p) => [p, readFixture(`me.${p}`)]));
-  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME').map((id) => [id, readFixture(id)]));
+  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME' && !START_OPERATIONS.includes(id)).map((id) => [id, readFixture(id)]));
   const work = readWorkFixtures();
+  const validators = bodyValidators(openapi);
+  const startWork = createStartWorkMock(openapi);
+  // work_id -> the item served instead of its fixture; in memory only, cleared on restart and by /__mock/reset.
+  const overrides = new Map();
+  const alerts = createAlertsMock({ openapi });
 
   return http.createServer((req, res) => {
-    // Drain any request body; the mock answers from fixtures only.
-    req.resume();
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
     req.on('end', () => {
+      const raw = Buffer.concat(chunks).toString('utf8');
       const url = new URL(req.url ?? '/', 'http://mock.local');
       const method = (req.method ?? 'GET').toLowerCase();
+      if (method === 'post' && url.pathname === '/__mock/reset') {
+        overrides.clear();
+        startWork.reset();
+        resetResponses();
+        resetSetup();
+        alerts.reset();
+        resetWorkspace();
+        res.writeHead(204, { 'Cache-Control': 'no-store' });
+        return res.end();
+      }
+      if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
+      // F-17: E-WORK-STEP goes to workspace.mjs (fixture scripts, the mock's idempotency map and log).
+      if (WORKSPACE_OPERATIONS.includes(route.operationId)) return send(res, ...workspaceRoute({ req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
+      // E-EVIDENCE-UPLOAD has two mock owners: Setup proof cases (C-SETUP-*, F-11, evidence.mjs) and work-item cases (F-09, response.mjs).
+      const setupProof = route.operationId === 'E-EVIDENCE-UPLOAD' && decodeURIComponent(url.pathname.split('/')[4] ?? '').startsWith('C-SETUP-');
+      if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {
+        return send(res, ...responseRoute(route.operationId, { req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
+      }
       if (!M1_OPERATIONS.includes(route.operationId)) return send(res, 501, NOT_MOCKED);
 
       const cookies = parseCookies(req.headers.cookie);
@@ -134,11 +258,22 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (WRITE_METHODS.has(method) && req.headers['x-csrftoken'] !== me[persona].csrf_token) {
         return send(res, 403, CSRF_FAILED);
       }
+      if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
-      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-EXCEPTIONS') { const r = exceptionsList({ url, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-MONTH-END') { const r = monthEnd({ url, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-SETUP-RULES' || route.operationId === 'E-SETUP-RULE-SAVE') { const r = (route.operationId === 'E-SETUP-RULES' ? setupRules : saveSetupRule)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-EVIDENCE-UPLOAD') { const r = uploadEvidence({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
-        return send(res, ...workResponse(route.operationId, url, fixtures, work));
+        return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));
       }
+      if (TASK_OPERATIONS.includes(route.operationId)) {
+        return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona] }));
+      }
+      if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona }));
+      if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
       return send(res, 200, fixtures[route.operationId]);
     });
   });

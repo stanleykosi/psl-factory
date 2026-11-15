@@ -1,0 +1,42 @@
+[
+  {
+    "decision_id": "D-API-STYLE",
+    "revision": 2,
+    "fingerprint": "df57c9215c679ace625e19212b765a916e5504d5f018b710f78e527421f0e6d2",
+    "reviewer": "hunchoweb (PSL factory design engineer)",
+    "verdict": "approve",
+    "note": "Agreed with the proposal on 13 Nov 2026. The frontend builds against it; the decision itself belongs to its owner (backend developer).",
+    "state": "current",
+    "identity": "unverified_local_claim"
+  },
+  {
+    "decision_id": "D-AUTH",
+    "revision": 2,
+    "fingerprint": "cca9f0d53b1f3e001ed79da0eb80d5a1f3e4ff3f4ce26f7da09164211fcee010",
+    "reviewer": "hunchoweb (PSL factory design engineer)",
+    "verdict": "approve",
+    "note": "Agreed with the proposal on 13 Nov 2026. The frontend builds against it; the decision itself belongs to its owner (backend developer).",
+    "state": "current",
+    "identity": "unverified_local_claim"
+  },
+  {
+    "decision_id": "D-NOTIFY-MODEL",
+    "revision": 2,
+    "fingerprint": "e186c2b6896a52712506dc6b284fc5dd494d5c7b6e763c9172a67f47e3fdadef",
+    "reviewer": "hunchoweb (PSL factory design engineer)",
+    "verdict": "approve",
+    "note": "Agreed with the proposal on 13 Nov 2026. The frontend builds against it; the decision itself belongs to its owner (backend developer).",
+    "state": "stale",
+    "identity": "unverified_local_claim"
+  },
+  {
+    "decision_id": "D-CONVERSATION-MODEL",
+    "revision": 2,
+    "fingerprint": "2feac4d0a13dd9375a8317aea915516c9cacbfb9fcffe92c167302d0aae6816b",
+    "reviewer": "hunchoweb (PSL factory design engineer)",
+    "verdict": "approve",
+    "note": "Agreed with the proposal on 13 Nov 2026. The frontend builds against it; the decision itself belongs to its owner (backend developer).",
+    "state": "stale",
+    "identity": "unverified_local_claim"
+  }
+]

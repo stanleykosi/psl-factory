@@ -1,0 +1,1520 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:46:53.606Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-11/design/canvas/project/SCR-13-desktop-rules.dc.html",
+  "boardName": "SCR-13-desktop-rules.dc.html",
+  "pageUrl": "http://localhost:4111/setup/rules",
+  "viewport": {
+    "width": 1440,
+    "height": 1060
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-11/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 93.4 meets 90.",
+    "10 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 77.6,
+    "coverageWithExceptions": 100,
+    "visual": 93.4
+  },
+  "visual": {
+    "score": 93.4,
+    "allCellsScore": 96.5,
+    "width": 1440,
+    "height": 1090,
+    "boardHeight": 1090,
+    "pageHeight": 1060,
+    "cell": 12,
+    "contentCells": 5773,
+    "mismatchedCells": 381
+  },
+  "coverage": {
+    "total": 58,
+    "found": 45,
+    "coverage": 77.6,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 428,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 515,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 601,
+          "y": 1,
+          "w": 66,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 66,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 1034
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 970
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SETUP",
+        "pageName": "SETUP",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Roles, rules and delegation",
+        "pageName": "Roles, rules and delegation",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 1264,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Roles 2",
+        "pageName": "Roles 2",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 178,
+          "w": 96,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 179,
+          "w": 96,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Rules 8",
+        "pageName": "Rules 8",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 186,
+          "y": 178,
+          "w": 96,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 186,
+          "y": 179,
+          "w": 96,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Costing rule",
+        "pageName": "Costing rule",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 281,
+          "y": 178,
+          "w": 111,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 281,
+          "y": 179,
+          "w": 111,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Delegation",
+        "pageName": "Delegation",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 392,
+          "y": 178,
+          "w": 103,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 392,
+          "y": 179,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Payroll visibility",
+        "pageName": "Payroll visibility",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 495,
+          "y": 178,
+          "w": 135,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 495,
+          "y": 179,
+          "w": 135,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Staff accounts",
+        "pageName": "Staff accounts",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 630,
+          "y": 178,
+          "w": 126,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 630,
+          "y": 179,
+          "w": 126,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Templates",
+        "pageName": "Templates",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 756,
+          "y": 178,
+          "w": 101,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 756,
+          "y": 179,
+          "w": 101,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "8 rules aren't set yet. Work that needs them waits as \"Setup needed\"; nothing guesses a rule. These are PSL's decisions (see the approvals worksheet).",
+        "pageName": "8 rules aren’t set yet. Work that needs them waits as “Setup needed”; nothing guesses a rule. These are PSL’s decisions (see the approvals worksheet).",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 128,
+          "y": 254,
+          "w": 942,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 128,
+          "y": 255,
+          "w": 944,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 307,
+          "w": 918,
+          "h": 447
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 308,
+          "w": 918,
+          "h": 447
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "RULE",
+        "pageName": "RULE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 307,
+          "w": 371,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 308,
+          "w": 371,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "AREA",
+        "pageName": "AREA",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 461,
+          "y": 307,
+          "w": 117,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 461,
+          "y": 308,
+          "w": 117,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "CURRENT VALUE",
+        "pageName": "CURRENT VALUE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 577,
+          "y": 307,
+          "w": 254,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 578,
+          "y": 308,
+          "w": 254,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "VERSION",
+        "pageName": "VERSION",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 831,
+          "y": 307,
+          "w": 176,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 831,
+          "y": 308,
+          "w": 176,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pre-sale",
+        "pageName": "Pre-sale",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 461,
+          "y": 342,
+          "w": 117,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 461,
+          "y": 343,
+          "w": 117,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "All lines",
+        "pageName": "All lines",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 461,
+          "y": 384,
+          "w": 117,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 461,
+          "y": 385,
+          "w": 117,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PMO Lead",
+        "pageName": "PMO Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 577,
+          "y": 384,
+          "w": 254,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 578,
+          "y": 385,
+          "w": 254,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pre-sale",
+        "pageName": "Pre-sale",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 461,
+          "y": 423,
+          "w": 117,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 461,
+          "y": 424,
+          "w": 117,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PSL standard pricing v4",
+        "pageName": "PSL standard pricing v4",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 591,
+          "y": 434,
+          "w": 147,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 592,
+          "y": 435,
+          "w": 147,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finance",
+        "pageName": "Finance",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 461,
+          "y": 462,
+          "w": 117,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 475,
+          "y": 475,
+          "w": 49,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Delivery",
+        "pageName": "Delivery",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 461,
+          "y": 504,
+          "w": 117,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 475,
+          "y": 559,
+          "w": 51,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Delivery",
+        "pageName": "Delivery",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 461,
+          "y": 546,
+          "w": 117,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 475,
+          "y": 517,
+          "w": 51,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finance",
+        "pageName": "Finance",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 461,
+          "y": 588,
+          "w": 117,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 475,
+          "y": 600,
+          "w": 49,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "From each signed SOW",
+        "pageName": "From each signed SOW",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 577,
+          "y": 588,
+          "w": 254,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 578,
+          "y": 589,
+          "w": 254,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pre-sale",
+        "pageName": "Pre-sale",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 461,
+          "y": 627,
+          "w": 117,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 461,
+          "y": 628,
+          "w": 117,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pre-sale",
+        "pageName": "Pre-sale",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 461,
+          "y": 669,
+          "w": 117,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 461,
+          "y": 670,
+          "w": 117,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pre-sale",
+        "pageName": "Pre-sale",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 461,
+          "y": 711,
+          "w": 117,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 461,
+          "y": 712,
+          "w": 117,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Set a rule",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1032,
+          "y": 305,
+          "w": 320,
+          "h": 729
+        },
+        "pageBox": {
+          "x": 1032,
+          "y": 306,
+          "w": 320,
+          "h": 665
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SET A RULE",
+        "pageName": "SET A RULE",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "bar under it on the page (#2459D6), none on the board"
+        ],
+        "boardBox": {
+          "x": 1034,
+          "y": 307,
+          "w": 316,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1034,
+          "y": 308,
+          "w": 316,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Roles allowed",
+        "pageName": "Roles allowed",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 440,
+          "w": 288,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 443,
+          "w": 90,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "PMO Lead",
+        "pageName": "PMO Lead",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 1048,
+          "y": 479,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 481,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "CEO",
+        "pageName": "CEO",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 1048,
+          "y": 575,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 529,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "PMO",
+        "pageName": "PMO",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 1048,
+          "y": 623,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 577,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 830,
+          "w": 288,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 785,
+          "w": 288,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Save as version 1",
+        "pageName": "Save as version 1",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 926,
+          "w": 288,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 863,
+          "w": 288,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Rules are versioned. Work already decided keeps the version it was decided under.",
+        "pageName": "Rules are versioned. Work already decided keeps the version it was decided under.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 988,
+          "w": 288,
+          "h": 30
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 925,
+          "w": 288,
+          "h": 30
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1077,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Start work and More ways to start belong to F-05 (D-04), which has not merged at this base; the top bar is the shell's (src/shell, not touched).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1195,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "As Start work (F-05, D-04).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Admin · sample",
+        "key": "text: Admin · sample",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1261,
+          "y": 20,
+          "w": 91,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The shell prints /me as name · roles (A-14). The fidelity tool scopes --cookies to the page folder (/setup/rules/), so the mock answers the default persona and the bar reads 'Ada Okafor · Finance Lead'; under the admin cookie it reads 'Ada Okafor · Admin'.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Setup",
+        "key": "tablist: Setup",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 176,
+          "w": 769,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Assumption A-7: the tabs change routes, so they are a nav of links with aria-current (same look), not ARIA tabs; the tool reads them as a navigation area.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Rule",
+        "key": "text: Rule",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 356,
+          "w": 288,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The board draws the Rule label as a span; the page uses a real <label> for its <select>, which the tool lists as the field's label, not as text.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Who may assign an RFP to a PM",
+        "key": "text: Who may assign an RFP to a PM",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 380,
+          "w": 288,
+          "h": 48
+        },
+        "exception": {
+          "reason": "The board draws the Rule picker as a text box; the page draws a native <select> (listed as Drop-down 'Rule') holding the same rule.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "PMO Lead",
+        "key": "checkbox: PMO Lead",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 527,
+          "w": 18,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The board shows PMO Lead twice (leftover of the 13 Nov Head of PMO merge, PMO-0-4); options come from the API, so one PMO Lead checkbox is on the page.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Starts",
+        "key": "text: Starts",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 662,
+          "w": 288,
+          "h": 18
+        },
+        "exception": {
+          "reason": "A real <label> for the date input (see Rule).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Today, 12 Nov 2026",
+        "key": "text: Today, 12 Nov 2026",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 686,
+          "w": 288,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Assumption A-11: a native date input prefilled with today in Africa/Lagos; the board's text format is not reproduced.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Why",
+        "key": "text: Why",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 746,
+          "w": 288,
+          "h": 18
+        },
+        "exception": {
+          "reason": "A real <label> for the Why input (see Rule).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Agreed at the PSL leadership meeting, 12 Nov",
+        "key": "text: Agreed at the PSL leadership meeting, 12 Nov",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 770,
+          "w": 288,
+          "h": 48
+        },
+        "exception": {
+          "reason": "A-14: the tool cannot fill the form; Why starts empty (nothing is prefilled).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "leadership-minutes-12nov.pdf",
+        "key": "text: leadership-minutes-12nov.pdf",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1090,
+          "y": 866,
+          "w": 198,
+          "h": 18
+        },
+        "exception": {
+          "reason": "A-14: Proof starts empty ('Choose a file'); after an upload the same box shows the file name and 'Uploaded · size' (unit and e2e tests).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 120 KB",
+        "key": "text: Uploaded · 120 KB",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1090,
+          "y": 886,
+          "w": 101,
+          "h": 15
+        },
+        "exception": {
+          "reason": "As the file name: shown after an upload (A-14).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-22)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Tab \"Roles 2\"",
+        "kind": "Tab",
+        "name": "Roles 2",
+        "boardBox": {
+          "x": 90,
+          "y": 178,
+          "w": 96,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 179,
+          "w": 96,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Rules 8\"",
+        "kind": "Tab",
+        "name": "Rules 8",
+        "boardBox": {
+          "x": 186,
+          "y": 178,
+          "w": 96,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 186,
+          "y": 179,
+          "w": 96,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Costing rule\"",
+        "kind": "Tab",
+        "name": "Costing rule",
+        "boardBox": {
+          "x": 281,
+          "y": 178,
+          "w": 111,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 281,
+          "y": 179,
+          "w": 111,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Delegation\"",
+        "kind": "Tab",
+        "name": "Delegation",
+        "boardBox": {
+          "x": 392,
+          "y": 178,
+          "w": 103,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 392,
+          "y": 179,
+          "w": 103,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Payroll visibility\"",
+        "kind": "Tab",
+        "name": "Payroll visibility",
+        "boardBox": {
+          "x": 495,
+          "y": 178,
+          "w": 135,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 495,
+          "y": 179,
+          "w": 135,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Staff accounts\"",
+        "kind": "Tab",
+        "name": "Staff accounts",
+        "boardBox": {
+          "x": 630,
+          "y": 178,
+          "w": 126,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 630,
+          "y": 179,
+          "w": 126,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Templates\"",
+        "kind": "Tab",
+        "name": "Templates",
+        "boardBox": {
+          "x": 756,
+          "y": 178,
+          "w": 101,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 756,
+          "y": 179,
+          "w": 101,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"Delivery\"",
+        "kind": "Text",
+        "name": "Delivery",
+        "boardBox": {
+          "x": 461,
+          "y": 504,
+          "w": 117,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 475,
+          "y": 559,
+          "w": 51,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Table \"\"; on the page it comes after Checkbox \"CEO\""
+        ]
+      },
+      {
+        "label": "Checkbox \"PMO\"",
+        "kind": "Checkbox",
+        "name": "PMO",
+        "boardBox": {
+          "x": 1048,
+          "y": 623,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 577,
+          "w": 20,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"From each signed SOW\"; on the page it comes after Text \"Delivery\""
+        ]
+      },
+      {
+        "label": "Text \"Pre-sale\"",
+        "kind": "Text",
+        "name": "Pre-sale",
+        "boardBox": {
+          "x": 461,
+          "y": 627,
+          "w": 117,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 461,
+          "y": 628,
+          "w": 117,
+          "h": 42
+        },
+        "reasons": [
+          "order: on the board it comes after Checkbox \"PMO\"; on the page it comes after Side panel \"\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Admin",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1239,
+          "y": 19,
+          "w": 113,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Setup",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 177,
+          "w": 769,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Rule",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1048,
+          "y": 383,
+          "w": 288,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Choose a file",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1090,
+          "y": 821,
+          "w": 80,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-11/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

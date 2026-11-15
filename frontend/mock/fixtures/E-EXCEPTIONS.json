@@ -1,0 +1,230 @@
+{
+  "as_of": "2026-11-14T10:05:00Z",
+  "items": [
+    {
+      "work_id": "W-1005",
+      "what": "effect_uncertain",
+      "title": "Kora Logistics · Milestone 1 invoice",
+      "ref": "INV-0405",
+      "doing": "Chidi is checking for a delivery receipt by reference. Nothing resent.",
+      "who_acts": "Chidi · then Finance if not found",
+      "since": "2026-11-14T10:02:00Z"
+    },
+    {
+      "work_id": "W-1501",
+      "what": "owner_needed",
+      "title": "Lagoon Health · Milestone 4 invoice",
+      "ref": "INV-0601",
+      "doing": "Held at Finance review: no Finance Lead is set up for this project.",
+      "who_acts": "Admin or Finance Lead · Setup",
+      "since": "2026-11-14T09:40:00Z"
+    },
+    {
+      "work_id": "W-1502",
+      "what": "effect_uncertain",
+      "title": "Delta Freight · Milestone 2 invoice",
+      "ref": "INV-0602",
+      "doing": "Tola is checking the email provider for a delivery receipt. Nothing resent.",
+      "who_acts": "Tola · then Finance if not found",
+      "since": "2026-11-14T09:12:00Z"
+    },
+    {
+      "work_id": "W-1503",
+      "what": "setup_needed",
+      "title": "Northwind Clinics · Weekly client update",
+      "ref": "UPD-0601",
+      "doing": "Waiting for an update template for this client.",
+      "who_acts": "Admin · Setup",
+      "since": "2026-11-14T08:55:00Z"
+    },
+    {
+      "work_id": "W-1504",
+      "what": "blocked",
+      "title": "Harbour Bank · Receipt for INV-0402",
+      "ref": "RCP-0601",
+      "doing": "The receipt amount does not match the invoice. Chidi has listed both amounts.",
+      "who_acts": "Finance Officer",
+      "since": "2026-11-14T08:20:00Z"
+    },
+    {
+      "work_id": "W-1505",
+      "what": "followup_needed",
+      "title": "Kora Logistics · Milestone 2 invoice",
+      "ref": "INV-0603",
+      "doing": "No receipt 14 days after delivery. A follow-up draft is ready for review.",
+      "who_acts": "Finance Officer",
+      "since": "2026-11-14T07:45:00Z"
+    },
+    {
+      "work_id": "W-1506",
+      "what": "owner_needed",
+      "title": "Sable Foods · Project costing",
+      "ref": "CST-0601",
+      "doing": "No PMO owner is assigned to this project yet.",
+      "who_acts": "PMO Lead · Assign",
+      "since": "2026-11-14T07:10:00Z"
+    },
+    {
+      "work_id": "W-1507",
+      "what": "effect_uncertain",
+      "title": "Meridian Telecom · Milestone 1 invoice",
+      "ref": "INV-0604",
+      "doing": "Zainab is checking the provider log by reference before anything is resent.",
+      "who_acts": "Zainab · then Finance if not found",
+      "since": "2026-11-14T06:30:00Z"
+    },
+    {
+      "work_id": "W-1508",
+      "what": "blocked",
+      "title": "Coral Insurance · Milestone 3 invoice",
+      "ref": "INV-0605",
+      "doing": "The contract amount check failed: the SOW total and the milestone sum differ.",
+      "who_acts": "PMO Lead",
+      "since": "2026-11-13T17:05:00Z"
+    },
+    {
+      "work_id": "W-1509",
+      "what": "setup_needed",
+      "title": "Atlas Energy · Receipt for INV-0399",
+      "ref": "RCP-0602",
+      "doing": "No allocation rule is set up for part payments on this account.",
+      "who_acts": "Admin or Finance Lead · Setup",
+      "since": "2026-11-13T15:40:00Z"
+    },
+    {
+      "work_id": "W-1510",
+      "what": "followup_needed",
+      "title": "Lagoon Health · Milestone 5 invoice",
+      "ref": "INV-0606",
+      "doing": "Second reminder is due. The draft is waiting for review.",
+      "who_acts": "Finance Officer",
+      "since": "2026-11-13T14:15:00Z"
+    },
+    {
+      "work_id": "W-1511",
+      "what": "owner_needed",
+      "title": "Delta Freight · Weekly client update",
+      "ref": "UPD-0602",
+      "doing": "The project PM left the project; no PM is assigned to review updates.",
+      "who_acts": "PMO Lead · Assign",
+      "since": "2026-11-13T12:50:00Z"
+    },
+    {
+      "work_id": "W-1512",
+      "what": "blocked",
+      "title": "Northwind Clinics · Milestone 1 invoice",
+      "ref": "INV-0607",
+      "doing": "Milestone evidence is missing a signed acceptance note.",
+      "who_acts": "Project Manager",
+      "since": "2026-11-13T11:30:00Z"
+    },
+    {
+      "work_id": "W-1513",
+      "what": "setup_needed",
+      "title": "Sable Foods · Milestone 1 invoice",
+      "ref": "INV-0608",
+      "doing": "No invoice numbering series is set up for this entity.",
+      "who_acts": "Admin · Setup",
+      "since": "2026-11-13T10:05:00Z"
+    },
+    {
+      "work_id": "W-1514",
+      "what": "followup_needed",
+      "title": "Harbour Bank · Milestone 4 invoice",
+      "ref": "INV-0609",
+      "doing": "The client asked for a revised PO number. A reply draft is ready.",
+      "who_acts": "Finance Officer",
+      "since": "2026-11-12T16:20:00Z"
+    },
+    {
+      "work_id": "W-1515",
+      "what": "owner_needed",
+      "title": "Meridian Telecom · Receipt for INV-0408",
+      "ref": "RCP-0603",
+      "doing": "No Finance Officer covers this account while the usual one is away.",
+      "who_acts": "Finance Lead · Assign",
+      "since": "2026-11-12T14:00:00Z"
+    },
+    {
+      "work_id": "W-1516",
+      "what": "blocked",
+      "title": "Atlas Energy · Project costing",
+      "ref": "CST-0602",
+      "doing": "The rate card for this role has expired.",
+      "who_acts": "PMO Lead",
+      "since": "2026-11-12T11:45:00Z"
+    },
+    {
+      "work_id": "W-1517",
+      "what": "followup_needed",
+      "title": "Coral Insurance · Milestone 2 invoice",
+      "ref": "INV-0610",
+      "doing": "Payment is 30 days late. A follow-up draft is waiting for review.",
+      "who_acts": "Finance Officer",
+      "since": "2026-11-12T09:30:00Z"
+    },
+    {
+      "work_id": "W-1518",
+      "what": "setup_needed",
+      "title": "Kora Logistics · Weekly client update",
+      "ref": "UPD-0603",
+      "doing": "No client contact is set up to receive updates.",
+      "who_acts": "PMO Lead · Setup",
+      "since": "2026-11-11T16:10:00Z"
+    },
+    {
+      "work_id": "W-1519",
+      "what": "blocked",
+      "title": "Lagoon Health · Receipt for INV-0390",
+      "ref": "RCP-0604",
+      "doing": "Two receipts claim the same invoice. Chidi has listed both.",
+      "who_acts": "Finance Officer",
+      "since": "2026-11-11T13:25:00Z"
+    },
+    {
+      "work_id": "W-1520",
+      "what": "owner_needed",
+      "title": "Northwind Clinics · Project costing",
+      "ref": "CST-0603",
+      "doing": "No Finance reviewer is assigned for costings above the review threshold.",
+      "who_acts": "Finance Lead · Assign",
+      "since": "2026-11-11T10:40:00Z"
+    },
+    {
+      "work_id": "W-1521",
+      "what": "followup_needed",
+      "title": "Delta Freight · Milestone 1 invoice",
+      "ref": "INV-0611",
+      "doing": "The client disputed one line. A reply draft is ready for review.",
+      "who_acts": "Finance Officer",
+      "since": "2026-11-10T15:15:00Z"
+    },
+    {
+      "work_id": "W-1522",
+      "what": "setup_needed",
+      "title": "Meridian Telecom · Milestone 3 invoice",
+      "ref": "INV-0612",
+      "doing": "No withholding tax rule is set up for this client.",
+      "who_acts": "Admin or Finance Lead · Setup",
+      "since": "2026-11-10T11:00:00Z"
+    },
+    {
+      "work_id": "W-1523",
+      "what": "blocked",
+      "title": "Sable Foods · Weekly client update",
+      "ref": "UPD-0604",
+      "doing": "The PM returned the draft; the progress figures do not match the plan.",
+      "who_acts": "Project Manager",
+      "since": "2026-11-10T08:30:00Z"
+    },
+    {
+      "work_id": "W-1524",
+      "what": "followup_needed",
+      "title": "Atlas Energy · Milestone 2 invoice",
+      "ref": "INV-0613",
+      "doing": "Final reminder is due. The draft is waiting for review.",
+      "who_acts": "Finance Lead",
+      "since": "2026-11-09T14:20:00Z"
+    }
+  ]
+}

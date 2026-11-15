@@ -1,0 +1,77 @@
+{
+  "id": "W-2005",
+  "title": "Northwind Clinics · weekly sync minutes",
+  "line": "Minutes",
+  "reference": "MIN-0150",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Assembled this from the week’s records",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "workspace": {
+    "line_key": "minutes",
+    "sections": [
+      {
+        "key": "actions",
+        "kind": "checklist",
+        "title": "Actions",
+        "items": []
+      }
+    ]
+  }
+}

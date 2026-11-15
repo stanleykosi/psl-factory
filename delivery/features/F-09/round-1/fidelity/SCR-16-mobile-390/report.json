@@ -1,0 +1,508 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:54:48.132Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-mobile.dc.html",
+  "boardName": "SCR-16-mobile.dc.html",
+  "pageUrl": "http://localhost:4401/work/W-1601/respond?task=T-1601",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-09/round-1/fidelity/exception-requests.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 80.3 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 88.9,
+    "coverageWithExceptions": 100,
+    "visual": 80.3
+  },
+  "visual": {
+    "score": 80.3,
+    "allCellsScore": 81,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2257,
+    "mismatchedCells": 445
+  },
+  "coverage": {
+    "total": 9,
+    "found": 8,
+    "coverage": 88.9,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Record the client's UAT response",
+        "pageName": "Record the client's UAT response",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 52
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 52
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · build 2.4.0 · Dr Amaka Obi",
+        "pageName": "Lagoon Health · Patient app · build 2.4.0 · Dr Amaka Obi",
+        "pageRole": "text",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 134,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 134,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Approved",
+        "pageName": "Approved",
+        "pageRole": "radio",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 35,
+          "y": 182,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 35,
+          "y": 291,
+          "w": 18,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Asked for changes",
+        "pageName": "Asked for changes",
+        "pageRole": "radio",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 35,
+          "y": 240,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 35,
+          "y": 349,
+          "w": 18,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Rejected",
+        "pageName": "Rejected",
+        "pageRole": "radio",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 35,
+          "y": 298,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 35,
+          "y": 407,
+          "w": 18,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon_UAT_signoff.pdf · 184 KB",
+        "pageName": "Lagoon_UAT_signoff_11Nov.pdf · 184 KB",
+        "pageRole": "text",
+        "similarity": 92,
+        "looks": [
+          "background #FFFFFF on the board, none on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 344,
+          "w": 358,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 27,
+          "y": 494,
+          "w": 289,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "I confirm this response is genuine.",
+        "pageName": "I confirm this response is genuine.",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #1F2427 on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 20,
+          "y": 394,
+          "w": 20,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 633,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record response",
+        "pageName": "Record response",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 61,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← Queue\" in the board's place, but the frame names it \"Back to Queue\" for screen readers, and the tool matches on that name. The page draws no back link of its own. On SCR-02 phone boards the page is F-03's (D-25/D-26).",
+          "approved_by": ""
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Lagoon Health · build 2.4.0 · Dr Amaka Obi\"",
+        "kind": "Text",
+        "name": "Lagoon Health · build 2.4.0 · Dr Amaka Obi",
+        "boardBox": {
+          "x": 16,
+          "y": 134,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 134,
+          "w": 358,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Option \"Approved\"",
+        "kind": "Option",
+        "name": "Approved",
+        "boardBox": {
+          "x": 35,
+          "y": 182,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 35,
+          "y": 291,
+          "w": 18,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Option \"Asked for changes\"",
+        "kind": "Option",
+        "name": "Asked for changes",
+        "boardBox": {
+          "x": 35,
+          "y": 240,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 35,
+          "y": 349,
+          "w": 18,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Option \"Rejected\"",
+        "kind": "Option",
+        "name": "Rejected",
+        "boardBox": {
+          "x": 35,
+          "y": 298,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 35,
+          "y": 407,
+          "w": 18,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Lagoon_UAT_signoff.pdf · 184 KB\"",
+        "kind": "Text",
+        "name": "Lagoon_UAT_signoff.pdf · 184 KB",
+        "boardBox": {
+          "x": 16,
+          "y": 344,
+          "w": 358,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 27,
+          "y": 494,
+          "w": 289,
+          "h": 17
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Checkbox \"I confirm this response is genuine.\"",
+        "kind": "Checkbox",
+        "name": "I confirm this response is genuine.",
+        "boardBox": {
+          "x": 20,
+          "y": 394,
+          "w": 20,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 633,
+          "w": 20,
+          "h": 20
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Record response\"",
+        "kind": "Link",
+        "name": "Record response",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "When they responded",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 191,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What they did",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 249,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 456,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Remove Lagoon_UAT_signoff_11Nov.pdf",
+        "container": "form",
+        "pageBox": {
+          "x": 324,
+          "y": 490,
+          "w": 24,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 52,
+          "y": 537,
+          "w": 66,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 324,
+          "y": 539,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 563,
+          "w": 358,
+          "h": 47
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I confirm this response is genuine.",
+        "container": "form",
+        "pageBox": {
+          "x": 46,
+          "y": 632,
+          "w": 215,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

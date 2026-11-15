@@ -1,0 +1,280 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T04:59:24.218Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-06/design/canvas/project/SCR-10-mobile.dc.html",
+  "boardName": "SCR-10-mobile.dc.html",
+  "pageUrl": "http://localhost:3601/exceptions",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/private/tmp/claude-501/-Users-Hunchoo-psl-factory/a400a30b-92cb-4efc-99c2-4a72d08a67f7/scratchpad/f06-frame-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page (100%).",
+    "Visual match 91.6 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 91.6
+  },
+  "visual": {
+    "score": 91.6,
+    "allCellsScore": 94.4,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1566,
+    "mismatchedCells": 131
+  },
+  "coverage": {
+    "total": 6,
+    "found": 6,
+    "coverage": 100,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "pageName": "← Queue",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 61,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 317,
+          "y": 64,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Exceptions · 4",
+        "pageName": "Exceptions · 4",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 204,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 306,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 110,
+          "w": 306,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "pageName": "Filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 330,
+          "y": 108,
+          "w": 44,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 330,
+          "y": 110,
+          "w": 44,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [
+      {
+        "kind": "Repeated rows",
+        "role": "pattern",
+        "name": "Repeated clickable cards with 3 text field(s) each",
+        "boardCount": 4,
+        "boardBox": {
+          "x": 16,
+          "y": 162,
+          "w": 358,
+          "h": 406
+        },
+        "matched": true,
+        "pageName": "Repeated list items with 3 text field(s) each",
+        "pageCount": 4,
+        "pageBox": {
+          "x": 16,
+          "y": 164,
+          "w": 358,
+          "h": 409
+        },
+        "notes": [
+          "the whole item is one link on the board; on the page it is not",
+          "board field 2 (page field 2): a link on the page, text on the board"
+        ]
+      }
+    ],
+    "missing": [],
+    "misplaced": [
+      {
+        "label": "Link \"← Queue\"",
+        "kind": "Link",
+        "name": "← Queue",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 61,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 317,
+          "y": 64,
+          "w": 57,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Heading \"Exceptions · 4\"",
+          "across the page: left on the board (12% across), right on the page (89% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 218,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Showing 4",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 583,
+          "w": 65,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As of 14 Nov 11:05",
+        "container": "main",
+        "pageBox": {
+          "x": 97,
+          "y": 583,
+          "w": 103,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The factory never resends after an unknown outcome until it has checked for a receipt. Nothing here is lost; each item resumes where it stopped.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 665,
+          "w": 358,
+          "h": 59
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

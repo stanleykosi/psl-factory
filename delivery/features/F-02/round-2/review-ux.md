@@ -1,20 +1,21 @@
 VERDICT: PASS
-COMMIT: 55e81940bdf715f222ebd7f15f26a9150d981915
+COMMIT: eab6dffa85a3636cea84a414ea5ca4b55ab90534
 REVIEWER: reviewer-ux
 AUTHORITY: reviewer-ux
 
 ## Summary
-- I ran the frontend at this head in a scratch copy (app 3311, mock 3312) and looked at /my-work as finance_lead at 390 and 1440.
-- Phone cards now put the kind tag (DO, DECIDE, FIX) on its own line above the title, left-aligned, with the same spacing on every card I saw. This matches SCR-01-mobile-lead. The page has no horizontal overflow at either width.
-- Desktop is unchanged: the tag stays inline beside the title in the table.
-- Round 1 UX findings were none; the round 2 changes (a phone card CSS rule and a mock fix for persona none) do not touch other states or journeys.
+- Re-review of the integrated head (F-03 work item page merged in, both mock branches kept). `git diff --name-only 55e8194 eab6dff` shows no change under src/features/my-work or src/app/my-work, so the My work screen is as I passed it.
+- I ran frontend/ at eab6dff from a fresh copy with its own `npm ci` (app 3311, mock 3312) and walked /my-work as finance_lead at 1440 and 390 wide. No horizontal overflow at either width.
+- Phone cards still show the kind tag (DO, DECIDE) on its own line above the title, with the same left edge and spacing on each card. Desktop shows the tag beside the title in the table.
+- Clicking a row opens /work/<id> for the same id, at both widths (tested W-1104). The page loads with the work item layout (breadcrumb, state, Overview and History tabs, step list) and no dead end.
+- Both processes are stopped; ports 3311 and 3312 no longer answer.
 
 ## Findings
 None.
 
 ## Verified
-- UI-1-1 (UI lens, checked from the UX side) | verified | Phone cards at 390 show tag above title, same left edge, consistent header spacing; desktop table unchanged.
+- UX-2 check of my own round-2 pass | verified | Same phone card layout and no overflow at eab6dff as at 55e8194.
 
 ## Notes
-- Not re-walked this round: empty, error and 403 states and keyboard order, which round 1 passed and this round did not change. I relied on the builder's e2e run for these.
-- The /work/[id] links 404 in this branch, as expected.
+- The mock has fixtures only for W-1002 to W-1006, so other ids (such as W-1104) open the page with a stand-in work item whose title differs from the row. This is mock data, not a product defect. I did not judge the detail content against the row title.
+- Not re-walked: empty, error and 403 states and keyboard order. They passed in earlier rounds and this merge does not touch them.

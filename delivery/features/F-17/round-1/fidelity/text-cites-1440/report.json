@@ -1,0 +1,43 @@
+{
+  "region": "text-cites",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-25-desktop-review.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "Report v1 · written by Tunde Bello, assembled by Tola",
+  "pageText": "Report v1 · written by Tunde Bello, assembled by Tola",
+  "boardRegion": {
+    "width": 1320,
+    "height": 263
+  },
+  "pageRegion": {
+    "width": 1320,
+    "height": 235
+  },
+  "pass": true,
+  "scores": {
+    "coverage": 66.7,
+    "coverageWithExceptions": 100,
+    "visual": 86.3
+  },
+  "missing": [
+    {
+      "role": "link",
+      "name": "Open the report as the client will see it",
+      "exception": "No workspace field carries a client preview link (contract proposal)."
+    }
+  ],
+  "misplaced": [],
+  "extra": [],
+  "visual": {
+    "score": 86.3,
+    "allCellsScore": 86.3,
+    "width": 1320,
+    "height": 263,
+    "boardHeight": 263,
+    "pageHeight": 235,
+    "cell": 12,
+    "contentCells": 2420,
+    "mismatchedCells": 332
+  },
+  "notes": []
+}

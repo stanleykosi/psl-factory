@@ -1,0 +1,472 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T07:54:58.771Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-09/design/canvas/project/SCR-16-mobile-validation.dc.html",
+  "boardName": "SCR-16-mobile-validation.dc.html",
+  "pageUrl": "http://localhost:4401/work/W-1601/respond?task=T-1601",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-09/round-1/fidelity/exception-requests.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 70.5 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 85.7,
+    "coverageWithExceptions": 100,
+    "visual": 70.5
+  },
+  "visual": {
+    "score": 70.5,
+    "allCellsScore": 72.9,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2159,
+    "mismatchedCells": 636
+  },
+  "coverage": {
+    "total": 14,
+    "found": 12,
+    "coverage": 85.7,
+    "matched": [
+      {
+        "kind": "Form",
+        "role": "form",
+        "name": "",
+        "pageName": "",
+        "pageRole": "form",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 56,
+          "w": 390,
+          "h": 788
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 134,
+          "w": 358,
+          "h": 589
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Record the client's UAT response",
+        "pageName": "Record the client's UAT response",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 52
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · build 2.4.0 · Dr Amaka Obi",
+        "pageName": "Lagoon Health · Patient app · build 2.4.0 · Dr Amaka Obi",
+        "pageRole": "text",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 142,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 134,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What they did",
+        "pageName": "What they did",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 173,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 249,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Approved",
+        "pageName": "Approved",
+        "pageRole": "radio",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 35,
+          "y": 216,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 35,
+          "y": 291,
+          "w": 18,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Asked for changes",
+        "pageName": "Asked for changes",
+        "pageRole": "radio",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 35,
+          "y": 274,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 35,
+          "y": 349,
+          "w": 18,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Rejected",
+        "pageName": "Rejected",
+        "pageRole": "radio",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 35,
+          "y": 332,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 35,
+          "y": 407,
+          "w": 18,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 379,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 456,
+          "w": 358,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Take a photo or choose a file",
+        "pageName": "Take a photo or choose a file",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 403,
+          "w": 358,
+          "h": 52
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 481,
+          "w": 358,
+          "h": 52
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "I confirm this response is genuine.",
+        "pageName": "I confirm this response is genuine.",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #FFFFFF on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 20,
+          "y": 472,
+          "w": 20,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 643,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I confirm this response is genuine.",
+        "pageName": "I confirm this response is genuine.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 53,
+          "y": 469,
+          "w": 221,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 46,
+          "y": 642,
+          "w": 215,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Record response",
+        "pageName": "Record response",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 774,
+          "w": 358,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 62,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The back link is the frame's phone-bar slot (usePhoneBack, PR #17 / D-28): it shows \"← Queue\" in the board's place, but the frame names it \"Back to Queue\" for screen readers, and the tool matches on that name. The page draws no back link of its own. On SCR-02 phone boards the page is F-03's (D-25/D-26).",
+          "approved_by": ""
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Add the proof and confirm it's genuine to record this.",
+        "key": "text: Add the proof and confirm it's genuine to record this.",
+        "container": "form",
+        "boardBox": {
+          "x": 16,
+          "y": 509,
+          "w": 358,
+          "h": 54
+        },
+        "exception": {
+          "reason": "On the page the line is role=\"alert\" (spec: announced beside the disabled Record, as on the desktop validation board); the phone board draws a plain div, so the tool counts it as a different role. Same words.",
+          "approved_by": ""
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Heading \"Record the client's UAT response\"",
+        "kind": "Heading",
+        "name": "Record the client's UAT response",
+        "boardBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 52
+        },
+        "reasons": [
+          "inside a form on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Form \"\"",
+        "kind": "Form",
+        "name": "",
+        "boardBox": {
+          "x": 0,
+          "y": 56,
+          "w": 390,
+          "h": 788
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 134,
+          "w": 358,
+          "h": 589
+        },
+        "reasons": [
+          "order: on the board it comes after Button \"Take a photo or choose a file\"; on the page it comes after Option \"Rejected\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "When they responded",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 191,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 52,
+          "y": 547,
+          "w": 66,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 324,
+          "y": 549,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 573,
+          "w": 358,
+          "h": 47
+        }
+      },
+      {
+        "kind": "alert",
+        "role": "alert",
+        "name": "Add the proof and confirm it’s genuine to record this.",
+        "container": "form",
+        "pageBox": {
+          "x": 16,
+          "y": 685,
+          "w": 358,
+          "h": 38
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-09/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

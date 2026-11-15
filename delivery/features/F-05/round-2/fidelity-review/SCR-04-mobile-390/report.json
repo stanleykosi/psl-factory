@@ -1,0 +1,540 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:02:27.850Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-05/design/canvas/project/SCR-04-mobile.dc.html",
+  "boardName": "SCR-04-mobile.dc.html",
+  "pageUrl": "http://localhost:3511/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-05/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 86.3 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 60,
+    "coverageWithExceptions": 100,
+    "visual": 86.3
+  },
+  "visual": {
+    "score": 86.3,
+    "allCellsScore": 92.2,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1329,
+    "mismatchedCells": 182
+  },
+  "coverage": {
+    "total": 15,
+    "found": 9,
+    "coverage": 60,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Invoice preparation",
+        "pageName": "Invoice preparation",
+        "pageRole": "dialog",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 718
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 718
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoice preparation",
+        "pageName": "Invoice preparation",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "letter width 100% on the board, 112% on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 150,
+          "w": 166,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 148,
+          "w": 194,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Step 2 of 2 · change line",
+        "pageName": "Step 2 of 2 · change line",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 173,
+          "w": 147,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 194,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "change line",
+        "pageName": "change line",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page"
+        ],
+        "boardBox": {
+          "x": 93,
+          "y": 173,
+          "w": 69,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 89,
+          "y": 159,
+          "w": 69,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 215,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 216,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Completed milestone",
+        "pageName": "Completed milestone",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 296,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 297,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next: Chidi drafts · a Finance Lead decides",
+        "pageName": "Next: Chidi drafts · a Finance Lead decides",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 377,
+          "w": 358,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 527,
+          "w": 358,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start the invoice",
+        "pageName": "Start the invoice",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 778,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 75,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Phone form is a bottom sheet for every line (design engineer, 14 Nov 2026). SCR-04-mobile-weekly, -minutes, -issue, -change, -incident, -escalation and -leadership draw a full-screen page whose bar reads \"← My work\" / \"START\"; the build opens the same content in the bottom sheet over My work, so that page chrome is not drawn.",
+          "approved_by": "Design engineer, 14 Nov 2026 (relayed by the delivery coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · Milestone 2 invoice",
+        "key": "text: Lagoon Health · Milestone 2 invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 122,
+          "w": 258,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Harmattan Bank · go-live report",
+        "key": "text: Harmattan Bank · go-live report",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 178,
+          "w": 232,
+          "h": 18
+        },
+        "exception": {
+          "reason": "The My work page under the scrim, not F-05 (coordinator: ignore the page behind the drawer).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "×",
+        "key": "text: ×",
+        "container": "dialog",
+        "boardBox": {
+          "x": 361,
+          "y": 150,
+          "w": 13,
+          "h": 39
+        },
+        "exception": {
+          "reason": "The phone board draws the close mark as plain text; the build draws the same × inside a button named \"Close\" (it matches the board's Close).",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health ▾",
+        "key": "text: Lagoon Health ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 238,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone 3 · UAT signed ▾",
+        "key": "text: Milestone 3 · UAT signed ▾",
+        "container": "dialog",
+        "boardBox": {
+          "x": 16,
+          "y": 319,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-16)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Pagination \"Next: Chidi drafts · a Finance Lead decides\"",
+        "kind": "Pagination",
+        "name": "Next: Chidi drafts · a Finance Lead decides",
+        "boardBox": {
+          "x": 16,
+          "y": 377,
+          "w": 358,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 527,
+          "w": 358,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Completed milestone\"; on the page it comes after dialog \"Invoice preparation\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 122,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Start work",
+        "container": "page",
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 280,
+          "y": 82,
+          "w": 94,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "container": "search",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 244,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "container": "search",
+        "pageBox": {
+          "x": 270,
+          "y": 172,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 ITEMS",
+        "container": "search",
+        "pageBox": {
+          "x": 324,
+          "y": 185,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 338,
+          "y": 143,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Project",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 243,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Completed milestone",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 324,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only milestones marked complete, with proof, are listed.",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 374,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Anything Chidi should know (optional)",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 429,
+          "w": 358,
+          "h": 88
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Fonts: Google Fonts could not be reached (fonts.gstatic.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

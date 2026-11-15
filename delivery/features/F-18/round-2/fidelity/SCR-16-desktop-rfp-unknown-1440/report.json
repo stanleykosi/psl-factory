@@ -1,0 +1,940 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T07:44:57.252Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-desktop-rfp-unknown.dc.html",
+  "boardName": "SCR-16-desktop-rfp-unknown.dc.html",
+  "pageUrl": "http://localhost:4651/work/W-2108/outcome",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-18/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 86.7 is below 90.",
+    "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 82.4,
+    "coverageWithExceptions": 100,
+    "visual": 86.7
+  },
+  "visual": {
+    "score": 86.7,
+    "allCellsScore": 92.3,
+    "width": 1440,
+    "height": 958,
+    "boardHeight": 958,
+    "pageHeight": 986,
+    "cell": 12,
+    "contentCells": 5534,
+    "mismatchedCells": 738
+  },
+  "coverage": {
+    "total": 34,
+    "found": 28,
+    "coverage": 82.4,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1194,
+          "y": 9,
+          "w": 118,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 98,
+        "looks": [],
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1084,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 902
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 929
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PRE-SALE / RFP · TL-RFP-2026-014",
+        "pageName": "PRE-SALE / RFP · TL-RFP-2026-014",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Tamarind Loans · loan origination RFP",
+        "pageName": "Tamarind Loans · loan origination RFP",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 744,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 837,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OUTCOME UNKNOWN",
+        "pageName": "OUTCOME UNKNOWN",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1092,
+          "y": 133,
+          "w": 137,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1092,
+          "y": 142,
+          "w": 137,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM TUNDE BELLO",
+        "pageName": "PM TUNDE BELLO",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1238,
+          "y": 133,
+          "w": 114,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1238,
+          "y": 142,
+          "w": 114,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Team input 4/4",
+        "pageName": "Team input 4/4",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 245,
+          "y": 176,
+          "w": 143,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 245,
+          "y": 177,
+          "w": 143,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Outcome unknown",
+        "pageName": "Outcome unknown",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "heading level 1 on the board, 2 on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 242,
+          "w": 1264,
+          "h": 26
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 243,
+          "w": 1264,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WHAT'S RECORDED",
+        "pageName": "WHAT’S RECORDED",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 289,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 291,
+          "w": 898,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FOLLOW-UP EMAIL · DRAFTED BY TOLA",
+        "pageName": "FOLLOW-UP EMAIL · DRAFTED BY TOLA",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 495,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 494,
+          "w": 898,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Follow-up email",
+        "pageName": "Follow-up email",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 162,
+          "y": 558,
+          "w": 127,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 162,
+          "y": 557,
+          "w": 127,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent · done",
+        "pageName": "Tola · PMO agent · done",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 162,
+          "y": 576,
+          "w": 127,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 162,
+          "y": 575,
+          "w": 127,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "pageName": "DONE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 909,
+          "y": 564,
+          "w": 49,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 909,
+          "y": 562,
+          "w": 49,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "It goes only if you send it Ask Tola",
+        "pageName": "It goes only if you send it",
+        "pageRole": "text",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 708,
+          "w": 866,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 707,
+          "w": 866,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Dear Procurement team, we submitted our response to RFP TL-RFP-2026-014 on 26 Nov. Could you share when you expect to announce the outcome? Kind regards, Tunde Bello",
+        "pageName": "Dear Procurement team, we submitted our response to RFP TL-RFP-2026-014 on 26 Nov. Could you share when you expect to announce the outcome? Kind regards, Tunde Bello",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 758,
+          "w": 870,
+          "h": 66
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 786,
+          "w": 870,
+          "h": 66
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Send follow-up",
+        "pageName": "Send follow-up",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 836,
+          "w": 431,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 864,
+          "w": 431,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Edit",
+        "pageName": "Edit",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 543,
+          "y": 836,
+          "w": 431,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 543,
+          "y": 864,
+          "w": 431,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Next",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 287,
+          "w": 340,
+          "h": 167
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 289,
+          "w": 340,
+          "h": 173
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "NEXT",
+        "pageName": "NEXT",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1014,
+          "y": 289,
+          "w": 336,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 1014,
+          "y": 291,
+          "w": 336,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As soon as you hear anything, record the outcome.",
+        "pageName": "As soon as you hear anything, record the outcome.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 340,
+          "w": 308,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 342,
+          "w": 308,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record the outcome",
+        "pageName": "Record the outcome",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 388,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 396,
+          "w": 308,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "RFP",
+        "key": "tablist: RFP",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 579,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 3: the frame's tabs are a <nav aria-label=\"RFP\"> of links with aria-current, not a role=\"tablist\" (a tablist needs panels). The nav is on the page under the same name.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Requirements 64",
+        "key": "tab: Requirements 64",
+        "container": "tablist",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 155,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Requirements 64\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Pricing",
+        "key": "tab: Pricing",
+        "container": "tablist",
+        "boardBox": {
+          "x": 389,
+          "y": 176,
+          "w": 78,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Pricing\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Submission",
+        "key": "tab: Submission",
+        "container": "tablist",
+        "boardBox": {
+          "x": 467,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Submission\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Outcome",
+        "key": "tab: Outcome",
+        "container": "tablist",
+        "boardBox": {
+          "x": 575,
+          "y": 176,
+          "w": 92,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 3 and 4: the board draws \"Outcome\" as role=\"tab\"; the page draws the same words and count as a link (built screens), the current page marker (aria-current) or plain text (Requirements, Pricing and Submission are unbuilt), never a tab.",
+          "approved_by": "coordinator, provisional (D-60)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "key": "link: Ask Tola",
+        "container": "main",
+        "boardBox": {
+          "x": 907,
+          "y": 718,
+          "w": 51,
+          "h": 17
+        },
+        "exception": {
+          "reason": "D-60 (c) / Conflicts 13: \"Ask Tola\" has no endpoint; no client-side assistant call is built (Out of scope).",
+          "approved_by": "design engineer, 14 Nov (D-60)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Tunde Bello · PMO\"",
+        "kind": "Text",
+        "name": "Tunde Bello · PMO",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1084,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Link \"Assistant\""
+        ]
+      },
+      {
+        "label": "Tab \"Team input 4/4\"",
+        "kind": "Tab",
+        "name": "Team input 4/4",
+        "boardBox": {
+          "x": 245,
+          "y": 176,
+          "w": 143,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 245,
+          "y": 177,
+          "w": 143,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"As soon as you hear anything, record the outcome.\"",
+        "kind": "Text",
+        "name": "As soon as you hear anything, record the outcome.",
+        "boardBox": {
+          "x": 1028,
+          "y": 340,
+          "w": 308,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 342,
+          "w": 308,
+          "h": 42
+        },
+        "reasons": [
+          "order: on the board it comes after Pagination \"NEXT\"; on the page it comes after Side panel \"\""
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 902
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 929
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Record the outcome\"; on the page it comes after Text \"FOLLOW-UP EMAIL · DRAFTED BY TOLA\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1036,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "RFP",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 580,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Requirements 64",
+        "container": "navigation",
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 155,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "64",
+        "container": "navigation",
+        "pageBox": {
+          "x": 202,
+          "y": 190,
+          "w": 25,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pricing",
+        "container": "navigation",
+        "pageBox": {
+          "x": 389,
+          "y": 177,
+          "w": 78,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Submission",
+        "container": "navigation",
+        "pageBox": {
+          "x": 467,
+          "y": 177,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Outcome",
+        "container": "navigation",
+        "pageBox": {
+          "x": 575,
+          "y": 177,
+          "w": 92,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

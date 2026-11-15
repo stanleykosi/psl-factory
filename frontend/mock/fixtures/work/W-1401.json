@@ -1,0 +1,77 @@
+{
+  "id": "W-1401",
+  "title": "Lagoon Health · Invoice preparation and delivery",
+  "line": "Invoice preparation and delivery",
+  "reference": "INV-0420",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Draft invoice",
+      "status": "current_agent"
+    },
+    {
+      "name": "Finance review",
+      "status": "not_started"
+    },
+    {
+      "name": "Finance decision",
+      "status": "not_started"
+    },
+    {
+      "name": "Issue",
+      "status": "not_started"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Receipt",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Reading what you entered",
+        "status": "working"
+      }
+    ]
+  },
+  "next_step": "Chidi is drafting the invoice from the signed SOW. A Finance Lead decides next.",
+  "sample": true
+}

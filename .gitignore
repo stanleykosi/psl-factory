@@ -20,3 +20,4 @@ staticfiles/
 .coverage
 htmlcov/
 
+delivery/features/*/.lock

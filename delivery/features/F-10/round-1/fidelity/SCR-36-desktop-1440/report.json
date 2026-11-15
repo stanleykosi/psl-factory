@@ -1,0 +1,982 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T06:05:43.252Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-10/design/canvas/finance/project/SCR-36-desktop.dc.html",
+  "boardName": "SCR-36-desktop.dc.html",
+  "pageUrl": "http://localhost:4001/finance/month-end?period=2026-10",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-worktrees/f-10/delivery/features/F-10/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 97.8 meets 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 95.3,
+    "coverageWithExceptions": 100,
+    "visual": 97.8
+  },
+  "visual": {
+    "score": 97.8,
+    "allCellsScore": 98.9,
+    "width": 1440,
+    "height": 900,
+    "boardHeight": 900,
+    "pageHeight": 900,
+    "cell": 12,
+    "contentCells": 4551,
+    "mismatchedCells": 102
+  },
+  "coverage": {
+    "total": 43,
+    "found": 41,
+    "coverage": 95.3,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 428,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 515,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 601,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1200,
+          "y": 20,
+          "w": 152,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1200,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 698
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 698
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FINANCE / MONTH-END",
+        "pageName": "FINANCE / MONTH-END",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Month-end · October 2026",
+        "pageName": "Month-end · October 2026",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 551,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 492,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FROM RECORDS YOU CAN SEE · UPDATED 10:42",
+        "pageName": "FROM RECORDS YOU CAN SEE · UPDATED 10:42",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1064,
+          "y": 141,
+          "w": 288,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1064,
+          "y": 142,
+          "w": 288,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "pageName": "DONE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 190,
+          "w": 285,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 191,
+          "w": 285,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 of 7",
+        "pageName": "2 of 7",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 208,
+          "w": 285,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 209,
+          "w": 285,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "pageName": "WAITING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 419,
+          "y": 190,
+          "w": 285,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 419,
+          "y": 191,
+          "w": 285,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3",
+        "pageName": "3",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 419,
+          "y": 208,
+          "w": 285,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 419,
+          "y": 209,
+          "w": 285,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "IN PROGRESS",
+        "pageName": "IN PROGRESS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 734,
+          "y": 190,
+          "w": 285,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 734,
+          "y": 191,
+          "w": 285,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2",
+        "pageName": "2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 734,
+          "y": 208,
+          "w": 285,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 734,
+          "y": 209,
+          "w": 285,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CASH RECEIVED",
+        "pageName": "CASH RECEIVED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1049,
+          "y": 190,
+          "w": 285,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 1049,
+          "y": 191,
+          "w": 285,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4.7M + Unknown",
+        "pageName": "₦4.7M + Unknown",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1049,
+          "y": 208,
+          "w": 285,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1049,
+          "y": 209,
+          "w": 285,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 261,
+          "w": 918,
+          "h": 435
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 262,
+          "w": 918,
+          "h": 435
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "TASK",
+        "pageName": "TASK",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 261,
+          "w": 335,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 262,
+          "w": 335,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WHERE IT IS",
+        "pageName": "WHERE IT IS",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 425,
+          "y": 261,
+          "w": 250,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 425,
+          "y": 262,
+          "w": 250,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATE",
+        "pageName": "STATE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 675,
+          "y": 261,
+          "w": 243,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 675,
+          "y": 262,
+          "w": 243,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 of 3 accounts imported",
+        "pageName": "2 of 3 accounts imported",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 425,
+          "y": 296,
+          "w": 250,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 425,
+          "y": 297,
+          "w": 250,
+          "h": 58
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 316,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 317,
+          "w": 34,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "In review · Finance reviewer",
+        "pageName": "In review · Finance reviewer",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 425,
+          "y": 353,
+          "w": 250,
+          "h": 57
+        },
+        "pageBox": {
+          "x": 425,
+          "y": 354,
+          "w": 250,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 373,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 374,
+          "w": 34,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified 05 Nov",
+        "pageName": "Verified 05 Nov",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 425,
+          "y": 410,
+          "w": 250,
+          "h": 57
+        },
+        "pageBox": {
+          "x": 425,
+          "y": 411,
+          "w": 250,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 430,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 431,
+          "w": 34,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting for register review",
+        "pageName": "Waiting for register review",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 425,
+          "y": 467,
+          "w": 250,
+          "h": 57
+        },
+        "pageBox": {
+          "x": 425,
+          "y": 468,
+          "w": 250,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 487,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 488,
+          "w": 34,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Published 06 Nov",
+        "pageName": "Published 06 Nov",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 425,
+          "y": 524,
+          "w": 250,
+          "h": 57
+        },
+        "pageBox": {
+          "x": 425,
+          "y": 525,
+          "w": 250,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 544,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 545,
+          "w": 34,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting for payroll matching",
+        "pageName": "Waiting for payroll matching",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 425,
+          "y": 581,
+          "w": 250,
+          "h": 57
+        },
+        "pageBox": {
+          "x": 425,
+          "y": 582,
+          "w": 250,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open",
+        "pageName": "Open",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 932,
+          "y": 601,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 932,
+          "y": 602,
+          "w": 34,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Restricted · HR's work",
+        "pageName": "Restricted · HR's work",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 425,
+          "y": 638,
+          "w": 250,
+          "h": 57
+        },
+        "pageBox": {
+          "x": 425,
+          "y": 639,
+          "w": 250,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1032,
+          "y": 259,
+          "w": 320,
+          "h": 189
+        },
+        "pageBox": {
+          "x": 1032,
+          "y": 260,
+          "w": 320,
+          "h": 189
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent One Access Bank statement isn't imported, so October's cash received for that account is Unknown, not 0. Import it to complete the month.",
+        "pageName": "Chidi · Finance agent One Access Bank statement isn't imported, so October's cash received for that account is Unknown, not 0. Import it to complete the month.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1092,
+          "y": 271,
+          "w": 246,
+          "h": 101
+        },
+        "pageBox": {
+          "x": 1092,
+          "y": 272,
+          "w": 246,
+          "h": 101
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi",
+        "pageName": "Chidi",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1092,
+          "y": 272,
+          "w": 33,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1092,
+          "y": 273,
+          "w": 33,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Import the missing statement",
+        "pageName": "Import the missing statement",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1032,
+          "y": 398,
+          "w": 320,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1032,
+          "y": 399,
+          "w": 320,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "exception": {
+          "reason": "App frame item: the top-bar Start work control is built by F-05 (src/shell/**) and arrives when F-05 merges.",
+          "approved_by": "coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-04(a))"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1134,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "App frame item: part of F-05's Start work control.",
+          "approved_by": "coordinator (overnight, provisional — D-04(a))"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Import the missing statement\"",
+        "kind": "Link",
+        "name": "Import the missing statement",
+        "boardBox": {
+          "x": 1032,
+          "y": 398,
+          "w": 320,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1032,
+          "y": 399,
+          "w": 320,
+          "h": 50
+        },
+        "reasons": [
+          "order: on the board it comes after Main area \"\"; on the page it comes after Text \"Verified 05 Nov\""
+        ]
+      }
+    ],
+    "extra": [],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-10/design/mascots/canvas-assets.json (19 mapped).",
+    "Images: 1 /_blob/ image(s) could not be shown because they are not in the assets map: /_blob/4ac9ee52f6c83d9cdc4f91e694a3a025. They render as broken images and lower the visual score."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

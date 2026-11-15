@@ -8,6 +8,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { STATE_TAGS, type HistoryEntry, type WorkHistory, type WorkItem, type WorkState } from '@/features/work-item/labels';
 import { FactsStrip, StationTrack } from '@/features/work-item/WorkItemOverview';
 import { WorkItemView } from '@/features/work-item/WorkItemView';
+import { AppShell } from '@/shell/AppShell';
+import { withoutBellFeed } from './bell-feed';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/work/W-1001',
@@ -23,6 +25,7 @@ function history(id: string): WorkHistory {
   const raw = read(`work/${id}.history.json`) as { items: (HistoryEntry & { _kind?: string })[]; as_of: string };
   return { as_of: raw.as_of, items: raw.items.map(({ _kind, ...entry }) => (void _kind, entry)) };
 }
+const me = read('me.finance_lead.json');
 const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -30,19 +33,27 @@ type Handler = (url: URL) => Response | Promise<Response>;
 let fetchStub: ReturnType<typeof vi.fn<(request: Request) => Promise<Response>>>;
 const urls = () => fetchStub.mock.calls.map(([request]) => new URL(request.url));
 const historyUrls = () => urls().filter((u) => u.pathname.endsWith('/history'));
-const itemUrls = () => urls().filter((u) => !u.pathname.endsWith('/history'));
+const itemUrls = () => urls().filter((u) => u.pathname.startsWith('/api/v1/work/') && !u.pathname.endsWith('/history'));
 
-/** Routes fetch by path: the item answer and the history answer, each built fresh per call. */
+/** Routes fetch by path: the frame's E-ME, the item answer and the history answer, each built fresh per call. */
 function serve(itemAnswer: Handler, historyAnswer: Handler = () => json(200, { items: [], as_of: '2026-11-12T15:45:00Z' })) {
   fetchStub.mockImplementation(async (request) => {
     const url = new URL(request.url);
+    if (url.pathname === '/api/v1/me') return json(200, me);
     return url.pathname.endsWith('/history') ? historyAnswer(url) : itemAnswer(url);
   });
 }
 
+/** The page as the app renders it: inside the frame, which owns the phone back link (usePhoneBack). */
+const inFrame = (id: string, tab: 'overview' | 'history') => (
+  <AppShell>
+    <WorkItemView id={id} tab={tab} />
+  </AppShell>
+);
+
 beforeEach(() => {
   fetchStub = vi.fn<(request: Request) => Promise<Response>>();
-  vi.stubGlobal('fetch', fetchStub);
+  vi.stubGlobal('fetch', withoutBellFeed(fetchStub));
 });
 afterEach(() => {
   vi.useRealTimers();
@@ -51,7 +62,7 @@ afterEach(() => {
 });
 
 async function open(id: string, tab: 'overview' | 'history' = 'overview') {
-  const view = render(<WorkItemView id={id} tab={tab} />);
+  const view = render(inFrame(id, tab));
   await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
   return view;
 }
@@ -63,7 +74,7 @@ describe('overview', () => {
   it('W-1004 (A-WORKITEM) shows six separate facts, Unknown for the receipt, and the Paid note', async () => {
     serve(() => json(200, item('W-1004')));
     await open('W-1004');
-    expect(fetchStub).toHaveBeenCalledTimes(1);
+    expect(itemUrls()).toHaveLength(1);
     expect(itemUrls()[0].pathname).toBe('/api/v1/work/W-1004');
     const boxes = facts();
     expect(boxes.map((li) => li.textContent)).toEqual([
@@ -242,7 +253,7 @@ describe('overview', () => {
     expect(next.className).toBe('psl-callout psl-callout--warning work-next');
     expect(next.textContent).toContain('Nothing has been resent.');
     expect(facts()[3].textContent).toBe('SENTUnknown');
-    expect(screen.queryAllByRole('button')).toEqual([]);
+    expect(within(screen.getByRole('main')).queryAllByRole('button')).toEqual([]);
     const stations = within(screen.getByRole('region', { name: 'Stations' })).getAllByRole('listitem');
     expect(stations[5].getAttribute('aria-current')).toBe('step');
     expect(stations[5].className).toBe('psl-station psl-station--waiting work-station--uncertain');
@@ -258,7 +269,15 @@ describe('overview', () => {
     expect(screen.getByText('Next step.').closest('.psl-callout')!.classList.contains(`psl-callout--${kind}`)).toBe(true);
   });
 
-  it('shows SAMPLE DATA from the record even when the build says the API is live', async () => {
+  it('shows no SAMPLE DATA tag by default, though the record is sample', async () => {
+    serve(() => json(200, item('W-1004')));
+    await open('W-1004');
+    expect(item('W-1004').sample).toBe(true);
+    expect(document.querySelector('.psl-sample')).toBeNull();
+  });
+
+  it('with the tag switched on, shows SAMPLE DATA from the record even when the build says the API is live', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
     vi.stubEnv('NEXT_PUBLIC_API_MODE', 'live');
     serve(() => json(200, item('W-1004')));
     await open('W-1004');
@@ -273,7 +292,8 @@ describe('item states', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this work item');
     expect(screen.getByText('NO ACCESS').className).toContain('psl-tag psl-tag--neutral');
     expect(screen.getByText(/Nothing about it is shown here, not even its name or amount\./)).toBeTruthy();
-    expect(screen.getByText(/ask the PMO Lead for access to the project\. If someone sent you this link/)).toBeTruthy();
+    expect(screen.getByText('If your work needs it, ask the PMO Lead for access to the project.').tagName).toBe('LI');
+    expect(screen.getByText('If someone sent you this link, ask them what they need from you.').tagName).toBe('LI');
     expect(screen.getByRole('link', { name: 'Back to my queue' }).getAttribute('href')).toBe('/my-work');
     expect(screen.getByRole('link', { name: 'Back to my queue' }).className).toBe('psl-btn psl-btn--dark psl-btn--lg');
     expect(document.body.textContent).not.toContain('W-1099');
@@ -302,11 +322,14 @@ describe('item states', () => {
     ]);
     fireEvent.click(within(card).getByRole('button', { name: 'Try again' }));
     await waitFor(() => expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · Milestone 2 invoice'));
-    expect(fetchStub).toHaveBeenCalledTimes(2);
+    expect(itemUrls()).toHaveLength(2);
   });
 
   it('a network error shows the same card with its reference', async () => {
-    fetchStub.mockRejectedValue(new TypeError('Failed to fetch'));
+    fetchStub.mockImplementation(async (request) => {
+      if (new URL(request.url).pathname === '/api/v1/me') return json(200, me);
+      throw new TypeError('Failed to fetch');
+    });
     await open('W-1001');
     expect(within(screen.getByRole('alert')).getByText('Reference network_error for support.')).toBeTruthy();
   });
@@ -369,7 +392,7 @@ describe('history', () => {
     );
     await open('W-1004', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
-    const controls = [...document.querySelectorAll('button, input, select, textarea, [contenteditable]')];
+    const controls = [...screen.getByRole('main').querySelectorAll('button, input, select, textarea, [contenteditable]')];
     expect(controls.map((el) => [el.tagName, el.getAttribute('role'), el.textContent])).toEqual([
       ['BUTTON', 'radio', 'All'],
       ['BUTTON', 'radio', 'Decisions'],
@@ -462,7 +485,8 @@ describe('updates (D-UPDATES r2)', () => {
   const settle = () => act(() => vi.advanceTimersByTimeAsync(0));
   const advance = (ms: number) => act(() => vi.advanceTimersByTimeAsync(ms));
   async function openWithFakeTimers(id: string, tab: 'overview' | 'history' = 'overview') {
-    render(<WorkItemView id={id} tab={tab} />);
+    render(inFrame(id, tab));
+    await settle();
     await settle();
     await settle();
   }
@@ -535,7 +559,8 @@ describe('updates (D-UPDATES r2)', () => {
       fetchStub.mockReset();
       let calls = 0;
       serve(() => (++calls === 2 ? json(status, { code: 'denied', message: 'No' }) : json(200, item('W-1003'))));
-      const view = render(<WorkItemView id="W-1003" tab="overview" />);
+      const view = render(inFrame('W-1003', 'overview'));
+      await settle();
       await settle();
       await settle();
       await advance(5000);

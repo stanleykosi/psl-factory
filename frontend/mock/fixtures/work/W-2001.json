@@ -1,0 +1,294 @@
+{
+  "id": "W-2001",
+  "title": "Weekly client report · 5–11 Nov",
+  "line": "Weekly client report",
+  "reference": "WCR-0216",
+  "state": "action_needed",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Assembled this from the week’s records",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "workspace": {
+    "line_key": "weekly_client_report",
+    "screen": "SCR-25",
+    "view": "review",
+    "title": "Weekly client report · 5–11 Nov",
+    "subtitle": "Lagoon Health · week ending 11 Nov",
+    "status": {
+      "label": "Your review",
+      "tone": "person"
+    },
+    "byline": "Written by Tunde Bello, assembled by Tola",
+    "version": {
+      "label": "Report v1",
+      "number": 1,
+      "document_id": "D-WCR-0216-1"
+    },
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "WCR-0216",
+          "label": "Weekly client report · WCR-0216"
+        }
+      ]
+    },
+    "agent_note": {
+      "agent": "tola",
+      "lines": [
+        "I assembled v1 from Tunde Bello’s update and this week’s records.",
+        "Nothing goes to the client until the PMO Lead approves."
+      ]
+    },
+    "sections": [
+      {
+        "key": "week",
+        "kind": "facts",
+        "title": "This week",
+        "items": [
+          {
+            "id": "F-1",
+            "label": "Week",
+            "value": "5–11 Nov 2026"
+          },
+          {
+            "id": "F-2",
+            "label": "Client",
+            "value": "Lagoon Health"
+          },
+          {
+            "id": "F-3",
+            "label": "Audience",
+            "value": "Client"
+          }
+        ]
+      },
+      {
+        "key": "report",
+        "kind": "text",
+        "title": "Report v1 · written by Tunde Bello, assembled by Tola",
+        "items": [
+          {
+            "id": "P-1",
+            "label": "Status",
+            "text": "Milestone 2 complete; go-live work started",
+            "cite_label": "2 RECORDS",
+            "cites": [
+              {
+                "label": "Milestone 2 sign-off",
+                "reference": "MS-0002",
+                "work_id": "W-1004"
+              },
+              {
+                "reference": "UAT-0031",
+                "document_id": "D-UAT-0031"
+              }
+            ]
+          },
+          {
+            "id": "P-2",
+            "label": "Risks",
+            "text": "Login fails on older Android phones (high)",
+            "cites": [
+              {
+                "reference": "ISS-0233",
+                "work_id": "W-1404"
+              }
+            ]
+          },
+          {
+            "id": "P-3",
+            "label": "Timeline",
+            "text": "Go-live 4 Dec, subject to the login fix",
+            "cites": [
+              {
+                "reference": "MIN-0141",
+                "document_id": "D-MIN-0141"
+              }
+            ]
+          },
+          {
+            "id": "P-4",
+            "label": "Next steps",
+            "text": "Fix verification; go-live plan",
+            "cite_label": "2 ACTIONS",
+            "cites": [
+              {
+                "reference": "ACT-0412"
+              },
+              {
+                "reference": "ACT-0413"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "recipients",
+        "kind": "recipients",
+        "title": "Who receives it",
+        "items": [
+          {
+            "id": "R-1",
+            "text": "Dr Amaka Obi",
+            "channel": "Email",
+            "receipt": "received",
+            "at": "2026-11-12T14:10:00Z"
+          },
+          {
+            "id": "R-2",
+            "text": "Lagoon Health projects inbox",
+            "channel": "Email",
+            "receipt": "not_yet"
+          },
+          {
+            "id": "R-3",
+            "text": "Chinedu Eze",
+            "channel": "WhatsApp",
+            "receipt": "uncertain",
+            "at": "2026-11-12T14:12:00Z"
+          },
+          {
+            "id": "R-4",
+            "text": "Lagoon Health board inbox",
+            "channel": "Email",
+            "receipt": "failed",
+            "at": "2026-11-12T14:13:00Z"
+          },
+          {
+            "id": "R-5",
+            "text": "Funke Ade",
+            "channel": "Email",
+            "receipt": "unknown"
+          }
+        ]
+      },
+      {
+        "key": "timeline",
+        "kind": "timeline",
+        "title": "What happened",
+        "items": [
+          {
+            "id": "E-1",
+            "text": "Approved by Kemi Adebayo",
+            "at": "2026-11-12T13:58:00Z",
+            "owner": {
+              "name": "Kemi Adebayo",
+              "role": "PMO Lead"
+            }
+          },
+          {
+            "id": "E-2",
+            "text": "Emailed to Dr Amaka Obi",
+            "at": "2026-11-12T14:10:00Z",
+            "agent": "tola",
+            "detail": "Delivered 15:10"
+          },
+          {
+            "id": "E-3",
+            "text": "Emailed to Lagoon Health projects inbox",
+            "at": "2026-11-12T14:11:00Z",
+            "agent": "tola"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_send",
+        "label": "Approve and send",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "sends": true,
+        "consequence": "Approving sends this exact version to Lagoon Health."
+      },
+      {
+        "key": "return",
+        "label": "Return with a note",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "fields": [
+          {
+            "name": "note",
+            "label": "Note (needed to return or refuse)",
+            "type": "long_text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "refuse",
+        "label": "Refuse",
+        "emphasis": "danger",
+        "disabled_reason": "Only the PMO Lead can refuse a report once it is assembled."
+      }
+    ],
+    "revision": 3
+  }
+}

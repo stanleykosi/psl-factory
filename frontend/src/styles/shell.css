@@ -21,6 +21,8 @@
 .shell-menuwho { margin: 0; padding: var(--space-2) 14px; display: flex; flex-direction: column; }
 .shell-menuwho strong { font-weight: 600; }
 .shell-menuwho small { font-size: 12px; color: var(--ink-muted); }
+/* a sub-page's mono note at the right of the phone bar ("RULES" on SCR-13-mobile-finance-rules); auto margin keeps it at the right edge when the SAMPLE DATA tag follows */
+.shell-phonenote { margin-left: auto; font-family: var(--font-mono); font-size: 12px; }
 
 /* (d) skip link, visually hidden until focused */
 .shell-skip { position: absolute; left: var(--space-4); top: var(--space-2); z-index: 20; transform: translateY(-200%); }
@@ -30,7 +32,7 @@
 body { margin: 0; background: var(--steel); }
 .shell-topbar .psl-nav__in { max-width: 1320px; margin: 0 auto; }
 .shell-main { max-width: 1320px; margin: 0 auto; padding: var(--space-6) var(--space-6) calc(var(--space-6) * 2); display: flex; flex-direction: column; gap: var(--space-5); }
-.shell-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 36px; line-height: 1.08; }
+.shell-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 40px; line-height: 1.08; }
 .shell-reference { margin: 0; font-size: 13px; color: var(--ink-muted); }
 /* STATES error card: white surface, 2px signal border, mono eyebrow, message, reference, Try again */
 .shell-errorcard { background: var(--surface); border: 2px solid var(--signal); padding: 14px; display: flex; flex-direction: column; gap: var(--space-2); }
@@ -48,9 +50,72 @@ body { margin: 0; background: var(--steel); }
    wordmark and the page title share a left edge; it fits at 720px by tightening the gaps between items and
    links, and the who-line shows the name only (design owner, 13 Nov 2026); the role stays for screen readers */
 .shell-navend { margin-left: auto; flex: none; }
+/* the first of bell, who-line and Start work takes the free space, so they sit together at the right in that order
+   (F-15, concept 3: Start work is the last item and the last tab stop) */
+.shell-topbar .shell-bellwrap, .psl-nav__in > .psl-nav__who { margin-left: auto; }
+.shell-topbar .shell-bellwrap ~ .psl-nav__who, .shell-bellwrap ~ .shell-navend, .psl-nav__who ~ .shell-navend { margin-left: 0; }
 @media (min-width: 720px) and (max-width: 1079.98px) {
   .shell-topbar .psl-nav__in { gap: var(--space-2); }
   .shell-topbar .psl-navlink { padding-left: var(--space-1); padding-right: var(--space-1); }
   .psl-nav__who { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .shell-who-role { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+/* (g) alert bell (F-15, concept 3 of design/concepts/alerts-bell-concepts.html): 36px in the top bar, 44px in the
+   phone bar; the red unread badge at its top-right; the open state has a white 2px border on a darker fill. The
+   "N need you" chip touches the bell and shows from bp-desktop (1080px) only. */
+.shell-bellwrap { display: inline-flex; align-items: center; flex: none; }
+.shell-bell {
+  position: relative; flex: none; display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0;
+  color: var(--on-strong); background: transparent; border: 2px solid transparent; font: inherit; cursor: pointer;
+}
+.shell-bell:hover { background: var(--ink-strong); }
+.shell-bell.is-open { border-color: var(--on-strong); background: var(--ink-strong); }
+.shell-bellbadge {
+  position: absolute; top: -2px; right: -3px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px;
+  background: var(--signal); color: var(--on-strong); font-family: var(--font-sans); font-weight: 600; font-size: 11px; line-height: 17px; text-align: center;
+}
+.shell-bellchip {
+  display: none; align-items: center; height: 24px; padding: 0 8px; white-space: nowrap;
+  background: var(--signal); color: var(--on-strong); font-weight: 600; font-size: 12px; line-height: 1;
+}
+@media (min-width: 1080px) {
+  .shell-bellchip { display: inline-flex; }
+}
+/* the bar's 24px gap is wider than concept 3 draws between bell, name and Start work; 12px there (and Start work's
+   own right margin dropped, as it is now last) keeps the bar on one line at 1080px with the chip and the role */
+.shell-topbar .shell-bellwrap ~ .psl-nav__who, .shell-topbar .shell-bellwrap ~ .shell-navend { margin-left: calc(var(--space-3) - var(--space-5)); }
+.shell-topbar .shell-navend > .sw-split:last-child { margin-right: 0; }
+/* 1080px to 1279px, where the chip and the role both show: 10px link padding instead of 14px keeps the bar's 28px gutter */
+@media (min-width: 1080px) and (max-width: 1279.98px) {
+  .shell-topbar:has(.shell-bellwrap) .psl-navlink { padding-left: 10px; padding-right: 10px; }
+}
+/* 720px up to bp-desktop: the flex gap (8px) is the clear space between the bell and the name */
+@media (min-width: 720px) and (max-width: 1079.98px) {
+  .shell-topbar .shell-bellwrap ~ .psl-nav__who, .shell-topbar .shell-bellwrap ~ .shell-navend { margin-left: 0; }
+}
+/* 720px to 759px only, where the earlier 4px link padding does not fit beside the name: a 32px bell (the icon keeps
+   6px clear inside it), a 4px gap between items (8px kept between the bell and the name, none between the links and
+   the bell) and 2px link padding */
+@media (min-width: 720px) and (max-width: 759.98px) {
+  .shell-topbar .psl-nav__in { gap: var(--space-1); }
+  .shell-topbar .shell-bell { width: 32px; height: 32px; }
+  .shell-topbar .psl-nav__links:has(+ .shell-bellwrap) { margin-right: calc(var(--space-1) * -1); }
+  .shell-topbar .shell-bellwrap ~ .psl-nav__who { margin-left: var(--space-1); }
+  .shell-topbar:has(.shell-bellwrap) .psl-navlink { padding-left: calc(var(--space-1) / 2); padding-right: calc(var(--space-1) / 2); }
+}
+/* phone: the bell is drawn in "+ Start"'s slot at the bar's right end (after the menu in the DOM, so Tab goes Menu,
+   its links, bell, "+ Start"); the bar keeps room for it */
+.shell-phone .sw-phoneslot .shell-bellwrap:not(:last-child) { margin-right: var(--space-2); }
+.psl-phonebar.shell-phonebar--bell { padding-right: calc(var(--space-4) + var(--control-md) + var(--space-2)); }
+.psl-phonebar.sw-phonebar.shell-phonebar--bell { padding-right: calc(var(--space-7) * 2 + var(--space-5) + var(--control-md) + var(--space-2)); }
+.shell-phone .shell-bell { width: var(--control-md); height: var(--control-md); }
+/* phones narrower than 380px (the 390px boards keep their 16px sides): the bar's 16px sides drop to 8px, the wordmark to 13px and the gap between the bell and
+   "+ Start" to 4px, so the wordmark ends at least 8px before the bell down to 320px (controls stay 44px) */
+@media (max-width: 379.98px) {
+  .psl-phonebar.shell-phonebar--bell { padding-left: var(--space-2); padding-right: calc(var(--space-2) + var(--control-md) + var(--space-1)); }
+  .psl-phonebar.sw-phonebar.shell-phonebar--bell { padding-right: calc(var(--space-7) * 2 + var(--space-5) + var(--control-md) + var(--space-1)); }
+  .shell-phonebar--bell .psl-brand { font-size: 13px; }
+  .shell-phone .sw-phoneslot { right: var(--space-2); }
+  .shell-phone .sw-phoneslot .shell-bellwrap:not(:last-child) { margin-right: var(--space-1); }
 }

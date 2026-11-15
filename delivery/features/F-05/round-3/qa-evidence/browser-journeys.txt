@@ -1,0 +1,25 @@
+# Browser journeys at 0758d3e: Playwright headless (worktree node_modules), scratch config with baseURL http://localhost:4611, no webServer. 21/21 passed in 36.9s.
+# Mock reset (POST :4612/__mock/reset -> 204) before and after each data-changing journey. Faults: scenario cookie psl_mock_scenario (401/403/409) set after the drawer opened; 500 and network loss via page.route on POST /api/v1/work only; journey_url fed by rewriting the real E-LINES response in page.route.
+J1 PASS url=http://localhost:4611/work/W-1401 posts=1 csrf=mock-csrf-pm body={"line":"invoice","case_id":"C-0101","case_revision":6,"intake":{"project":"P-0101","milestone":"M-0103","note":"PO 4471 on it"},"idempotency_key":"6600b7d6-872d-48b4-afa9-f1c973f40bd1"}
+J2 PASS ceo main button -> "Choose a line", 8 radios
+J3 PASS double/triple press while POST pending -> posts=1, landed /work/W-1401
+J4a dialog text: START WORK Invoice preparation and delivery 1 thing to fix × 1 thing to fix before Chidi can start. Project Harmattan Bank · mobile onboarding ▾ Completed milestone Milestone 2 · beta signed 30 Oct ▾ Only milestones marked complete, with proof, are listed. Anything Chidi should know (optional) Billing contact — The client register has no billing contact for Harmattan Bank. Add one in the project's client details. WHAT HAPPENS NEXT 7 stations. Chidi drafts the invoice from the signed SOW · a Finance Lead decides · issue, delivery and verification are automatic. See the full invoice journey Back Start the invoice
+J4a 422 callout="1 thing to fix before Chidi can start." focus-in-callout="1 thing to fix before Chidi can start."
+J4 PASS 422 then 201; keys 00ea9928-b5ab-4086-b2ab-9763ad680a98 -> a9bfeeb1-69c4-4571-8da1-754dd4285f0e
+J4b PASS no milestone -> aria-invalid=true, "Completed milestone is required.", callout focused: "1 thing to fix before Chidi can start."
+J5 PASS 409 stale callout; re-read /api/v1/lines/invoice/fields/project/options?q=Lagoon%20Health%20%C2%B7%20patient%20app&limit=20; values kept; posts after 2s=1; next press new key -> 201
+J6 PASS 403 callout="You can’t start this here. Your role does not allow this.", note kept, drawer open
+J7-500 PASS uncertain callout; note readOnly=true; posts after 3s=1; Check again same key 4c225780-79aa-43cc-a33c-0c15629a95c0 and identical body -> W-1401
+J7-network PASS uncertain callout; note readOnly=true; posts after 3s=1; Check again same key 18eede77-2c3e-43fe-a438-a950435e7a63 and identical body -> W-1401 (mock had already recorded the start: replay returned the stored 201, nothing started twice)
+J8 PASS 401 on submit -> "You're signed out." Sign in href=/accounts/login/?next=%2Fmy-work
+J8b PASS 401 on lines -> signed-out, href=/accounts/login/?next=%2Fmy-work
+J9 PASS none persona: 0 "Start work", 0 "More ways to start"
+J10 journey_url="/.//evil.example" -> link=false href=null evil-anchors=0
+J10 journey_url="//evil.example" -> link=false href=null evil-anchors=0
+J10 journey_url="/%2e//evil.example" -> link=false href=null evil-anchors=0
+J10 journey_url="https://evil.example/x" -> link=false href=null evil-anchors=0
+J10 journey_url="javascript:alert(1)" -> link=false href=null evil-anchors=0
+J10 journey_url="http://localhost:4611//evil.example" -> link=false href=null evil-anchors=0
+J10 journey_url="/projects?x=1#h" -> link=true href=/projects?x=1#h evil-anchors=0
+J11 PASS phone sheet x=0 w=390 y=126 h=718 scrollWidth/innerWidth=390,390; landed W-1401, posts=1
+J12 PASS phone offline -> uncertain, no auto resend, Check again same key -> W-1401

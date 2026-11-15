@@ -1,0 +1,22 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Start work",
+      "reason": "E-2: frame item (CMP-23, F-05's frame); src/shell/** is not F-12's. SCR-15-desktop and SCR-15-desktop-settings.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-24)"
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "reason": "E-2: frame item (CMP-23, F-05's frame); src/shell/** is not F-12's. SCR-15-desktop and SCR-15-desktop-settings.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-24)"
+    },
+    {
+      "role": "text",
+      "name": "WhatsApp Email",
+      "reason": "E-6 (SCR-15-mobile-settings): the visible words beside each phone switch are aria-hidden as the spec requires (each switch already carries the name \"WhatsApp, <label>\" / \"Email, <label>\"), so the tool cannot read them; they are on screen in the drawn place.",
+      "approved_by": "coordinator (overnight, provisional \u2014 see delivery/OVERNIGHT-DECISIONS.md D-24)"
+    }
+  ]
+}

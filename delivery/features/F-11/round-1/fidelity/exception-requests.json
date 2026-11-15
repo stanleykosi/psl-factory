@@ -1,0 +1,155 @@
+{
+  "$comment": "F-11 round 1 exception requests for the six SCR-13 rules boards. None is approved yet; the design engineer records each decision. Board data disagreements (8 vs 7 Not set, archive Not set vs 'Keep, never purge') are handled with one mock scenario per board (PMO-0-4, A-1). Other requests that do not show as tool misses: AREA texts and breadcrumb SETUP/RULES as links (A-8), board '#' actions built as buttons and 'Set BU totals rules' (A-12), undrawn states (A-13), phone back link and RULES label under the app's phone bar (D-08, A-14), phones read-only (A-6, D-15).",
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Start work",
+      "reason": "Start work and More ways to start belong to F-05 (D-04), which has not merged at this base; the top bar is the shell's (src/shell, not touched).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "reason": "As Start work (F-05, D-04).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Admin · sample",
+      "reason": "The shell prints /me as name · roles (A-14). The fidelity tool scopes --cookies to the page folder (/setup/rules/), so the mock answers the default persona and the bar reads 'Ada Okafor · Finance Lead'; under the admin cookie it reads 'Ada Okafor · Admin'.",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Ada Okafor · Admin",
+      "reason": "As 'Admin · sample': the persona text comes from /me (A-14).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "tablist",
+      "name": "Setup",
+      "reason": "Assumption A-7: the tabs change routes, so they are a nav of links with aria-current (same look), not ARIA tabs; the tool reads them as a navigation area.",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Rule",
+      "reason": "The board draws the Rule label as a span; the page uses a real <label> for its <select>, which the tool lists as the field's label, not as text.",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Who may assign an RFP to a PM",
+      "reason": "The board draws the Rule picker as a text box; the page draws a native <select> (listed as Drop-down 'Rule') holding the same rule.",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "checkbox",
+      "name": "PMO Lead",
+      "reason": "The board shows PMO Lead twice (leftover of the 13 Nov Head of PMO merge, PMO-0-4); options come from the API, so one PMO Lead checkbox is on the page.",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Starts",
+      "reason": "A real <label> for the date input (see Rule).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Today, 12 Nov 2026",
+      "reason": "Assumption A-11: a native date input prefilled with today in Africa/Lagos; the board's text format is not reproduced.",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Why",
+      "reason": "A real <label> for the Why input (see Rule).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Agreed at the PSL leadership meeting, 12 Nov",
+      "reason": "A-14: the tool cannot fill the form; Why starts empty (nothing is prefilled).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "leadership-minutes-12nov.pdf",
+      "reason": "A-14: Proof starts empty ('Choose a file'); after an upload the same box shows the file name and 'Uploaded · size' (unit and e2e tests).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Uploaded · 120 KB",
+      "reason": "As the file name: shown after an upload (A-14).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Who may assign an RFP to a PM",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Not set · Pre-sale",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Who reviews client documents",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "PMO Lead · All lines",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Costing rule",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Rate card v4 · Pre-sale",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Short payments (e.g. tax deducted)",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Not set · Finance",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Hypercare criteria",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Not set · Delivery",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Archive storage and retention",
+      "reason": "The tool reads the page's six outlined cards (ul > li) as repeated data rows and hides their words, while the board draws six separate blocks; the cards carry exactly these texts (e2e and side-by-side).",
+      "approved_by": "Requested by the F-11 builder, 14 Nov 2026; pending the design engineer"
+    }
+  ]
+}

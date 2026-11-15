@@ -1,0 +1,144 @@
+{
+  "id": "W-1204",
+  "title": "Lagoon Health · Milestone 2 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0415",
+  "state": "waiting",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "current_person"
+    },
+    {
+      "name": "Issue",
+      "status": "not_started"
+    },
+    {
+      "name": "Deliver",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-1204",
+      "kind": "decide",
+      "title": "Approve invoice v2",
+      "required_role": "Finance Lead",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Invoice v2",
+          "number": 2,
+          "drafted_at": "2026-11-12T09:30:00Z"
+        },
+        "amount": {
+          "amount": "4250000.00",
+          "currency": "NGN",
+          "unknown": false
+        },
+        "basis": "Contract stage 2 of 4 · terms v1",
+        "recipient": "accounts@lagoonhealth.example",
+        "changes": {
+          "previous_label": "Invoice v1",
+          "items": [
+            "PO number, as you asked"
+          ]
+        },
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": true,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Finance Lead",
+              "person": "Ada Okafor",
+              "status": "current",
+              "is_you": false
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "prepared_by_you",
+      "asked": [
+        {
+          "name": "Ada Okafor",
+          "role": "Finance Lead",
+          "alerted_at": "2026-11-12T09:20:00Z"
+        }
+      ]
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read milestone 2 evidence",
+        "status": "done",
+        "source": "Milestone LH-M2"
+      },
+      {
+        "text": "Read stage 2 terms in the signed SOW",
+        "status": "done",
+        "source": "SOW-0198 · stage 2"
+      },
+      {
+        "text": "Drafted invoice v2 with the PO number added",
+        "status": "done",
+        "source": "Client details · PO-7781"
+      }
+    ]
+  },
+  "next_step": "A Finance Lead decides invoice v2.",
+  "sample": true
+}

@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "id": "N-0101",
+      "work_id": "W-1003",
+      "agent": "tola",
+      "text": "The project plan for Kestrel Logistics needs your sign-off",
+      "at": "2026-11-14T08:15:00Z",
+      "read": false,
+      "delivered_via": [
+        "whatsapp"
+      ],
+      "delivered_at": "2026-11-14T08:15:00Z"
+    },
+    {
+      "id": "N-0102",
+      "work_id": "W-1005",
+      "agent": "tola",
+      "text": "Milestone 2 for Kestrel Logistics is complete",
+      "at": "2026-11-12T11:05:00Z",
+      "read": true,
+      "delivered_via": [
+        "whatsapp"
+      ],
+      "delivered_at": "2026-11-12T11:05:00Z"
+    }
+  ],
+  "as_of": "2026-11-14T10:00:00Z",
+  "total": 2,
+  "unread_count": 1
+}

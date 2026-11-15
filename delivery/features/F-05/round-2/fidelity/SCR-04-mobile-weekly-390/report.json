@@ -1,0 +1,615 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-14T05:37:41.617Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-05/design/canvas/project/SCR-04-mobile-weekly.dc.html",
+  "boardName": "SCR-04-mobile-weekly.dc.html",
+  "pageUrl": "http://localhost:3501/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-05/round-2/fidelity/_with-requests.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 85.2 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 72.7,
+    "coverageWithExceptions": 100,
+    "visual": 85.2
+  },
+  "visual": {
+    "score": 85.2,
+    "allCellsScore": 85.8,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2248,
+    "mismatchedCells": 332
+  },
+  "coverage": {
+    "total": 11,
+    "found": 8,
+    "coverage": 72.7,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "START",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Mono on the board, IBM Plex Sans on the page",
+          "text size 12px on the board, 14px on the page",
+          "weight 400 on the board, 600 on the page",
+          "capitals on the board, not on the page",
+          "background none on the board, #C8401C on the page"
+        ],
+        "boardBox": {
+          "x": 338,
+          "y": 21,
+          "w": 36,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Weekly client report",
+        "pageName": "Weekly client report",
+        "pageRole": "text",
+        "similarity": 100,
+        "note": "not marked up as a heading on the page",
+        "looks": [
+          "text size 20px on the board, 18px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 148,
+          "w": 199,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 216,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Week",
+        "pageName": "Week",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 189,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 297,
+          "w": 36,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Must have ended; up to 8 days",
+        "pageName": "Must have ended; up to 8 days",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 268,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 374,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Template",
+        "pageName": "Template",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 297,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 402,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client weekly report · test template v1",
+        "pageName": "Client weekly report · test template v1",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 322,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 429,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start report",
+        "pageName": "Start report",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Phone form is a bottom sheet for every line (design engineer, 14 Nov 2026). SCR-04-mobile-weekly, -minutes, -issue, -change, -incident, -escalation and -leadership draw a full-screen page whose bar reads \"← My work\" / \"START\"; the build opens the same content in the bottom sheet over My work, so that page chrome is not drawn.",
+          "approved_by": "Design engineer, 14 Nov 2026 (relayed by the delivery coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · patient app ▾",
+        "key": "text: Lagoon Health · patient app ▾",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+          "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "12–18 Nov 2026",
+        "key": "text: 12–18 Nov 2026",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 214,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Text inside a form control: the board draws the shown value as static text; the tool names a combobox, text field or date field by its label, so the value it shows cannot be matched.",
+          "approved_by": "REQUESTED by the F-05 builder, round 2; not approved"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Heading \"Weekly client report\"",
+        "kind": "Heading",
+        "name": "Weekly client report",
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 148,
+          "w": 199,
+          "h": 24
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Project\"",
+        "kind": "Text",
+        "name": "Project",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 216,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Week\"",
+        "kind": "Text",
+        "name": "Week",
+        "boardBox": {
+          "x": 16,
+          "y": 189,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 297,
+          "w": 36,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Must have ended; up to 8 days\"",
+        "kind": "Text",
+        "name": "Must have ended; up to 8 days",
+        "boardBox": {
+          "x": 16,
+          "y": 268,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 374,
+          "w": 358,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Template\"",
+        "kind": "Text",
+        "name": "Template",
+        "boardBox": {
+          "x": 16,
+          "y": 297,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 402,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Client weekly report · test template v1\"",
+        "kind": "Text",
+        "name": "Client weekly report · test template v1",
+        "boardBox": {
+          "x": 16,
+          "y": 322,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 429,
+          "w": 358,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Link \"Start report\"",
+        "kind": "Link",
+        "name": "Start report",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 122,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 10:42",
+        "container": "main",
+        "pageBox": {
+          "x": 280,
+          "y": 82,
+          "w": 94,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "container": "search",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 244,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "container": "search",
+        "pageBox": {
+          "x": 270,
+          "y": 172,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 ITEMS",
+        "container": "search",
+        "pageBox": {
+          "x": 324,
+          "y": 185,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Weekly client report",
+        "container": "page",
+        "pageBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 718
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Step 2 of 2 · change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 172,
+          "w": 199,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 89,
+          "y": 159,
+          "w": 69,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 338,
+          "y": 143,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Project",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 243,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "From",
+        "container": "dialog",
+        "pageBox": {
+          "x": 30,
+          "y": 335,
+          "w": 161,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "To",
+        "container": "dialog",
+        "pageBox": {
+          "x": 199,
+          "y": 335,
+          "w": 161,
+          "h": 23
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

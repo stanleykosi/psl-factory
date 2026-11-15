@@ -1,0 +1,73 @@
+{
+  "id": "W-1507",
+  "title": "Meridian Telecom · Milestone 1 invoice",
+  "line": "Prepare an invoice",
+  "reference": "INV-0604",
+  "state": "awaiting_reconciliation",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Milestone evidence",
+      "status": "done"
+    },
+    {
+      "name": "Contract amount",
+      "status": "done"
+    },
+    {
+      "name": "Draft invoice",
+      "status": "done"
+    },
+    {
+      "name": "Finance review",
+      "status": "done"
+    },
+    {
+      "name": "Issue",
+      "status": "done"
+    },
+    {
+      "name": "Deliver",
+      "status": "waiting"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-01T09:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-02T09:00:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-03T09:00:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "unknown"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "Delivery was not confirmed. Zainab is checking the provider log by reference. Nothing has been resent.",
+  "sample": true
+}
