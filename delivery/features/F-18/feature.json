@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-18",
   "outcome": "Team input and the RFP outcome are recorded inside the RFP frame, and the drafted follow-up goes only when a person sends it",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M2B-RFP"
   ],
@@ -126,11 +126,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "evidence_refs": [
+        "delivery/features/F-18/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -156,25 +158,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "evidence_refs": [
+        "delivery/features/F-18/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design-fidelity gate)",
+      "snapshot_ref": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "evidence_refs": [
+        "delivery/features/F-18/round-3/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "evidence_refs": [
+        "delivery/features/F-18/round-3/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -1161,7 +1169,7 @@
         "delivery/features/F-18/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1178,11 +1186,25 @@
           ],
           "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:33:46Z",
+          "refs": [
+            "`git diff 28c13dbc..9d0fc66` changes only `frontend/src/features/rfp/rfp.css`, inside the phone media query. All five rules from my round-2 proposal are present: Lessons head 14px/700 with 12px padding, body padding 6px 12px 14px with gap 8px, hint margin 0, 12px gaps on `.resp-board` and the main column, and the follow-up head with padding-top 0 and weight 700."
+          ],
+          "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "9d0fc66"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`git diff 28c13dbc..9d0fc66` changes only `frontend/src/features/rfp/rfp.css`, inside the phone media query. All five rules from my round-2 proposal are present: Lessons head 14px/700 with 12px padding, body padding 6px 12px 14px with gap 8px, hint margin 0, 12px gaps on `.resp-board` and the main column, and the follow-up head with padding-top 0 and weight 700."
       ]
     }
   ],
@@ -1499,6 +1521,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-15T08:14:26Z",
+      "round": 3,
+      "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-15T08:33:55Z",
       "round": 3,
       "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
       "reason": null

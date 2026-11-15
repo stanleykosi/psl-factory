@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-17",
   "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-WORKSPACE-FRAME"
   ],
@@ -143,11 +143,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -173,25 +175,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design-fidelity gate)",
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -1241,7 +1249,7 @@
         "delivery/features/F-17/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1258,11 +1266,25 @@
           ],
           "head": "5dea11efbc33d8f40c3f9c3beb40934067bb7fba",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T08:34:16Z",
+          "refs": [
+            "in round-4/fidelity/unknown-money-1440/side-by-side.png the money cells are now left-aligned in the body sans, as on SCR-56, and the amber note shows the warning icon. unknown-money 72.3 -> 75.6, coverage 100%."
+          ],
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "5dea11e"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "in round-4/fidelity/unknown-money-1440/side-by-side.png the money cells are now left-aligned in the body sans, as on SCR-56, and the amber note shows the warning icon. unknown-money 72.3 -> 75.6, coverage 100%."
       ]
     }
   ],
@@ -1890,6 +1912,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-15T08:24:16Z",
+      "round": 5,
+      "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-15T08:34:23Z",
       "round": 5,
       "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
       "reason": null

@@ -1218,3 +1218,15 @@
 {"at":"2026-11-15T08:23:51Z","feature":"F-18","round":3,"kind":"finding","action":"accept-risk","finding":"UI-1-7","by":"design-engineer"}
 {"at":"2026-11-15T08:23:51Z","feature":"F-18","round":3,"kind":"finding","action":"accept-risk","finding":"TECH-1-1","by":"design-engineer"}
 {"at":"2026-11-15T08:24:16Z","feature":"F-17","round":5,"kind":"transition","head":"f91bc63ff412","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-15T08:33:45Z","feature":"F-17","round":5,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"f91bc63ff412","written_at":"2026-11-15T08:33:45Z"}
+{"at":"2026-11-15T08:33:45Z","feature":"F-17","round":5,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"f91bc63ff412","written_at":"2026-11-15T08:33:45Z"}
+{"at":"2026-11-15T08:33:45Z","feature":"F-17","round":5,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"f91bc63ff412","written_at":"2026-11-15T08:33:45Z"}
+{"at":"2026-11-15T08:33:45Z","feature":"F-17","round":5,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"f91bc63ff412","written_at":"2026-11-15T08:33:45Z"}
+{"at":"2026-11-15T08:33:46Z","feature":"F-18","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"9d0fc6688283","written_at":"2026-11-15T08:33:45Z"}
+{"at":"2026-11-15T08:33:46Z","feature":"F-18","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"9d0fc6688283","written_at":"2026-11-15T08:33:45Z"}
+{"at":"2026-11-15T08:33:46Z","feature":"F-18","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"9d0fc6688283","written_at":"2026-11-15T08:33:29Z"}
+{"at":"2026-11-15T08:33:46Z","feature":"F-18","round":3,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"9d0fc6688283","written_at":"2026-11-15T08:33:45Z"}
+{"at":"2026-11-15T08:33:46Z","feature":"F-18","round":3,"kind":"finding","action":"verify","finding":"UI-2-1","by":"reviewer-ui"}
+{"at":"2026-11-15T08:33:55Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-15T08:34:16Z","feature":"F-17","round":5,"kind":"finding","action":"verify","finding":"UI-3-1","by":"reviewer-ui"}
+{"at":"2026-11-15T08:34:23Z","feature":"F-17","round":5,"kind":"transition","head":"f91bc63ff412","from":"IN_REVIEW","to":"INTEGRATED_QA"}
