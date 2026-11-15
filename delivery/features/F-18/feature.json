@@ -86,6 +86,18 @@
       "at": "2026-11-15T06:58:38Z",
       "seconds": 99.0,
       "evidence_ref": "delivery/features/F-18/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T07:37:51Z",
+      "seconds": 86.6,
+      "evidence_ref": "delivery/features/F-18/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -178,14 +190,28 @@
         "delivery/features/F-18/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -339,14 +365,28 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -362,14 +402,28 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -408,14 +462,28 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -431,14 +499,28 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -454,14 +536,28 @@
         "delivery/features/F-18/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -477,14 +573,28 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -500,14 +610,28 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -523,14 +647,28 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -546,14 +684,28 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -569,14 +721,28 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -592,14 +758,28 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-15T07:37:51Z",
+          "refs": [
+            "28c13db"
+          ],
+          "head": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "28c13db"
       ]
     },
     {
@@ -760,7 +940,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
     "task_branch": "fe-m2b-rfp-team-input-and-the-rfp-outcome-are-recor",
-    "head_sha": "352893425c8d197b3de15ab04eac6c68d1d05782",
+    "head_sha": "28c13dbcca5af9b6db6f276e2878c43a487a8958",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-18",
     "pr_url": null,
     "pr_number": null,
@@ -909,9 +1089,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "28c13dbcca5af9b6db6f276e2878c43a487a8958"
   },
   "blocked": null
 }
