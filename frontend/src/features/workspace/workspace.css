@@ -158,8 +158,9 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-decide .ws-steps__buttons { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   .ws-decide .ws-steps__buttons > span { flex: 1 1 120px; }
   .ws-decide .psl-btn { min-height: 44px; white-space: normal; }
-  /* every step is off while the reconcile panel's own pinned button is shown: the Decide panel flows instead of covering it */
-  .ws:has(.ws-decide--flow) { padding-bottom: 0; }
+  /* every step is off while the reconcile panel's own pinned button is shown: the Decide panel flows, and the page keeps that button's height (its control plus padding) clear below it */
+  .ws:has(.ws-decide--flow) { padding-bottom: calc(var(--control-lg) + 30px); }
+  html:has(.ws-decide--flow) { scroll-padding-bottom: calc(var(--control-lg) + 30px); }
   .ws-decide.ws-decide--flow { position: static; }
 }
 

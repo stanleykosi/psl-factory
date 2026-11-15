@@ -217,6 +217,46 @@ test('W-2008 on a phone: after an uncertain send, Record and continue is tappabl
   expect((await answered).status()).toBe(200);
 });
 
+async function pressApprove(page: Page) {
+  await page.getByRole('button', { name: 'Approve and send' }).click();
+  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  await page.getByRole('radio', { name: /It didn’t arrive/ }).check();
+}
+
+async function recordAtBottom(page: Page) {
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  const answered = page.waitForResponse((r) => new URL(r.url()).pathname === '/api/v1/work/W-2008/actions');
+  await page.getByRole('button', { name: 'Record and continue' }).click();
+  expect((await answered).status()).toBe(200);
+}
+
+for (const size of [PHONE, { width: 320, height: 640 }]) {
+  test(`W-2008 at ${size.width}: scrolled to the bottom after an uncertain send, Record and continue is tappable`, async ({ page, context, baseURL }) => {
+    await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
+    await page.setViewportSize(size);
+    await openItem(page, 'W-2008');
+    await pressApprove(page);
+    await recordAtBottom(page);
+  });
+
+  test(`W-2008 at ${size.width}: after a reload while uncertain every step is off, sends nothing, and Record and continue is tappable`, async ({ page, context, baseURL }) => {
+    await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
+    await page.setViewportSize(size);
+    await openItem(page, 'W-2008');
+    await page.getByRole('button', { name: 'Approve and send' }).click();
+    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    for (const b of await page.locator('.ws-steps button').all()) await expect(b).toHaveAttribute('aria-disabled', 'true');
+    const before = stepPosts().length;
+    await page.getByRole('button', { name: 'Approve and send' }).click({ force: true });
+    await page.waitForTimeout(300);
+    expect(stepPosts()).toHaveLength(before);
+    await page.getByRole('radio', { name: /It didn’t arrive/ }).check();
+    await recordAtBottom(page);
+  });
+}
+
 test('W-2008: effect uncertain turns every step off; the reconcile answer goes once to E-WORK-ACTION and nothing to steps', async ({ page, context, baseURL }) => {
   await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
   await page.setViewportSize(DESKTOP);

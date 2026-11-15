@@ -74,7 +74,7 @@ const itemName = (section: Section, item: Item) => item.text ?? item.label ?? it
 function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkItem; workspace: WorkspaceData; page: WorkspacePage }) {
   const steps = workspace.steps ?? [];
   const byKey = new Map(steps.map((s) => [s.key, s]));
-  const flow = useWorkspaceStep({ id, revision: workspace.revision, page });
+  const flow = useWorkspaceStep({ id, revision: workspace.revision, page, awaitingReconcile: Boolean(item.reconcile) });
   const [open, setOpen] = useState<Open | null>(null);
   const [selected, setSelected] = useState<Record<string, string[]>>({});
   const controls = useRef(new Map<string, HTMLButtonElement | null>());

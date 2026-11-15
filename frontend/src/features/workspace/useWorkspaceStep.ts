@@ -68,13 +68,17 @@ type Args = {
   id: string;
   revision: number | undefined;
   page: WorkspacePage;
+  /** The item itself is waiting for someone to confirm what happened: no step may send, whoever looks at it. */
+  awaitingReconcile: boolean;
 };
 
-export function useWorkspaceStep({ id, revision, page }: Args) {
+export function useWorkspaceStep({ id, revision, page, awaitingReconcile }: Args) {
   const [pending, setPending] = useState<string | null>(null);
   const [notice, setNotice] = useState<StepNotice | null>(null);
-  // INV-RESEND: an uncertain effect turns every step off; a failed step that sends stays off. Until the page is opened again.
-  const [allLocked, setAllLocked] = useState(false);
+  // INV-RESEND: an uncertain effect turns every step off; a failed step that sends stays off. The press itself locks at once; the item's own state keeps it locked.
+  const [pressLocked, setAllLocked] = useState(false);
+  // ...and it stays off after a reload, because the item itself says it is awaiting reconcile.
+  const allLocked = pressLocked || awaitingReconcile;
   const [locked, setLocked] = useState<ReadonlySet<string>>(() => new Set());
   const writing = useRef(false);
   const key = useRef<{ token: string; key: string } | null>(null);
