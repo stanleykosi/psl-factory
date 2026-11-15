@@ -11,7 +11,10 @@
 // response swaps in fixtures/response/<work_id>.recorded.json with `recorded` filled from the request; a
 // reconcile swaps in fixtures/response/<work_id>.<outcome>.json; an RFP outcome swaps in the recorded item of
 // its result (W-2105 won, W-2106 lost, W-2107 pending, W-2108 unknown) under the item's own id, case and next
-// revision, with recorded.at and .by from the request. A sidecar whose `recorded` has a `summary` is
+// revision, with recorded.at and .by from the request. A follow-up send (E-RFP-FOLLOWUP) answers sent and serves
+// <work_id>.sent.json when present (else the draft marked sent); W-2111 answers effect_uncertain and serves its
+// draft in that state; W-2112's first send answers 409 and serves W-2112.next.json. A repeated idempotency_key
+// returns the stored reply with no second effect. Nothing is emailed: the mock only changes what it serves. A sidecar whose `recorded` has a `summary` is
 // board (r2) data and its 200 carries revision, recorded and next; otherwise the 200 is the bare
 // {task_id, work_state} and the reloaded item carries only recorded.by and .at.
 import { createHash } from 'node:crypto';
@@ -25,7 +28,7 @@ import addFormats from 'ajv-formats';
 import { DEFAULT_PERSONA, OPENAPI_PATH, PERSONAS, SCENARIO_BODIES } from './server.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const RESPONSE_OPERATIONS = ['E-EVIDENCE-UPLOAD', 'E-RESPONSE', 'E-WORK-ACTION', 'E-RFP-OUTCOME'];
+export const RESPONSE_OPERATIONS = ['E-EVIDENCE-UPLOAD', 'E-RESPONSE', 'E-WORK-ACTION', 'E-RFP-OUTCOME', 'E-RFP-FOLLOWUP'];
 
 const CSRF_FAILED = { code: 'csrf_failed', message: 'Your session check failed. Reload and try again.' };
 const NOT_MOCKED = { code: 'not_mocked', message: 'Not available in the mock yet.' };
@@ -68,9 +71,14 @@ function readSidecars() {
 
 // case_id -> evidence ids this mock issued; cleared by resetResponses().
 const evidence = new Map();
+// "<work_id> <idempotency_key>" -> the stored E-RFP-FOLLOWUP reply; work ids whose one-time 409 was served.
+const sends = new Map();
+const stalled = new Set();
 
 export function resetResponses() {
   evidence.clear();
+  sends.clear();
+  stalled.clear();
 }
 
 /** The items the mock serves now: per-id files, then overrides. */
@@ -230,6 +238,39 @@ function recordOutcome(body, ctx) {
   return [200, result];
 }
 
+const UNCERTAIN_SEND = 'W-2111';
+const STALE_ONCE = 'W-2112';
+
+function sendFollowup(body, ctx) {
+  const { items, workId, overrides, work } = ctx;
+  const item = items.get(workId);
+  if (!item) return [404, SCENARIO_BODIES[404]];
+  const stored = sends.get(`${workId} ${body.idempotency_key}`);
+  if (stored) return structuredClone(stored);
+  const followup = item.rfp_outcome?.followup;
+  if (body.body !== undefined && body.body.trim() === '') return invalid(['body']);
+  if (body.expected_revision !== item.revision || (followup && body.version !== followup.version)) return [409, SCENARIO_BODIES[409]];
+  if (workId === STALE_ONCE && !stalled.has(workId) && work[`${workId}.next`]) {
+    stalled.add(workId);
+    overrides.set(workId, structuredClone(work[`${workId}.next`]));
+    return [409, SCENARIO_BODIES[409]];
+  }
+  if (!followup || followup.can_send !== true || followup.status !== 'drafted') return [403, SCENARIO_BODIES[403]];
+
+  const status = workId === UNCERTAIN_SEND ? 'effect_uncertain' : 'sent';
+  const sent = work[`${workId}.sent`];
+  const next = structuredClone(status === 'sent' && sent ? sent : item);
+  next.revision = item.revision + 1;
+  const draft = next.rfp_outcome.followup;
+  Object.assign(draft, { status, can_send: false, can_edit: false });
+  if (body.body !== undefined) draft.body = body.body;
+  if (status === 'sent') draft.sent_at = new Date().toISOString();
+  overrides.set(workId, next);
+  const reply = [200, { work_id: workId, status, revision: next.revision }];
+  sends.set(`${workId} ${body.idempotency_key}`, reply);
+  return structuredClone(reply);
+}
+
 function handle(operationId, { req, url, raw, cookies, me, work, overrides }) {
   const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
   const { request, replies } = validators()[operationId];
@@ -259,7 +300,7 @@ function handle(operationId, { req, url, raw, cookies, me, work, overrides }) {
   if (!request(body)) return invalid(errorFields(request.errors));
 
   const ctx = { items, overrides, work, me: me[persona], caseId: segment, taskId: segment, workId: segment };
-  const writes = { 'E-EVIDENCE-UPLOAD': upload, 'E-RESPONSE': respond, 'E-WORK-ACTION': act, 'E-RFP-OUTCOME': recordOutcome };
+  const writes = { 'E-EVIDENCE-UPLOAD': upload, 'E-RESPONSE': respond, 'E-WORK-ACTION': act, 'E-RFP-OUTCOME': recordOutcome, 'E-RFP-FOLLOWUP': sendFollowup };
   const result = writes[operationId](body, ctx);
   if (scenario === RECORD_THEN_FAIL && operationId !== 'E-EVIDENCE-UPLOAD' && result[0] === 200) return [502, MOCK_LOST];
   return result;

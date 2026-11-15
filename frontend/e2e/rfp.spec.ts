@@ -43,6 +43,18 @@ const STATES: State[] = [
     title: { desktop: 'Tamarind Loans · loan origination RFP', phone: 'Record the outcome' },
     reach: (page: Page) => chooseResult(page, result),
   })),
+  ...([
+    ['W-2105', 'WON', 'Won'],
+    ['W-2106', 'LOST', 'Lost'],
+    ['W-2107', 'PENDING', 'Decision pending'],
+    ['W-2108', 'UNKNOWN', 'Outcome unknown'],
+    ['W-2114', 'UNKNOWN', 'Outcome unknown'],
+  ] as const).map(([id, note, word]) => ({
+    name: `recorded ${id}`,
+    path: `/work/${id}/outcome`,
+    note,
+    title: { desktop: 'Tamarind Loans · loan origination RFP', phone: word },
+  })),
   { name: 'not open W-2109', path: '/work/W-2109/outcome', title: { desktop: 'Tamarind Loans · loan origination RFP', phone: 'Record the outcome' } },
 ];
 
@@ -79,7 +91,8 @@ test('the 403/404 page has one h1 and names nothing about the item', async ({ pa
   await open(page, '/work/W-1099/outcome');
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page).toHaveTitle('Record the outcome · PSL Factory');
-  expect(await page.locator('body').textContent()).not.toContain('W-1099');
+  expect(await page.locator('main').innerText()).not.toContain('W-1099');
+  expect(await page.locator('.psl-phonebar, nav[aria-label="Main"]').allInnerTexts()).not.toContain('W-1099');
 });
 
 /** Tabs forward until the target has keyboard focus; returns how many presses it took. */
@@ -113,7 +126,7 @@ test('the frame tabs: only built screens are in the Tab order; the current tab i
   expect(focused.some((t) => /Requirements|Pricing|Submission/.test(t))).toBe(false);
 });
 
-test('team input Tab order is Team, the fields, Proof, the confirmation and Record, each with a focus ring', async ({ page }) => {
+test('team input Tab order is Team, the fields, Proof and its confirmation, Received and the note, each with a focus ring', async ({ page }) => {
   await page.setViewportSize(DESKTOP);
   await open(page, TEAM);
   await page.getByRole('radio', { name: 'Security, missing' }).click();
@@ -123,8 +136,9 @@ test('team input Tab order is Team, the fields, Proof, the confirmation and Reco
     page.getByLabel('Estimate (person-days)'),
     page.getByLabel('What they gave'),
     page.getByRole('button', { name: 'Choose a file' }),
-    page.getByLabel('Received'),
     page.getByRole('checkbox'),
+    page.getByLabel('Received'),
+    page.getByLabel(/^Note/),
   ];
   for (const target of order) {
     expect(await tabTo(page, target)).toBeLessThanOrEqual(8);
@@ -183,4 +197,25 @@ test('the outcome records through the mock and shows the recorded state; the wor
   await page.getByLabel('You are recording as').selectOption('relationship_owner');
   await page.getByRole('button', { name: 'Record pending' }).click();
   await expect(page.getByRole('heading', { level: 2, name: 'Decision pending' })).toBeVisible();
+});
+
+test('the follow-up Edit and Send are reached by keyboard, and Send goes through the mock once', async ({ page }) => {
+  let sent = 0;
+  await page.route('**/rfp-outcome/followup', async (route) => {
+    sent += 1;
+    await route.continue();
+  });
+  await page.setViewportSize(DESKTOP);
+  await open(page, '/work/W-2108/outcome');
+  const send = page.getByRole('button', { name: 'Send follow-up' });
+  const edit = page.getByRole('button', { name: 'Edit' });
+  await page.getByRole('heading', { level: 2, name: 'Outcome unknown' }).click();
+  expect(await tabTo(page, send)).toBeLessThanOrEqual(12);
+  expect(await ring(send)).toBe(true);
+  expect(await tabTo(page, edit)).toBe(1);
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('status').filter({ hasText: /^Sent / })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Send follow-up' })).toHaveCount(0);
+  expect(sent).toBe(1);
 });

@@ -704,3 +704,238 @@ describe('outcome guards', () => {
     }
   });
 });
+
+describe('recorded states', () => {
+  it('W-2105 (won): heading, the rows, the engagement and "Open engagement EN-0042"; no amount line', async () => {
+    await openOutcome('W-2105');
+    expect(screen.getByRole('heading', { level: 2, name: 'Won' })).toBeTruthy();
+    expect(text()).toContain('Outcome recorded · Won · award letter attached');
+    expect(text()).toContain('Engagement EN-0042 created');
+    expect(screen.getByRole('link', { name: 'Open engagement EN-0042' }).getAttribute('href')).toBe('/work/W-1003');
+    expect(text()).toContain("When Tola is done, you'll confirm the PM and register the engagement.");
+    expect(text()).not.toMatch(/₦|0\.00|Awarded/);
+    expect(screen.queryByRole('button', { name: 'Record the outcome' })).toBeNull();
+    for (const board of ['handed off', 'planning packet', 'Ask Tola', 'Handoff', 'route A']) expect(text()).not.toContain(board);
+  });
+
+  it('W-2106 (lost): the three lessons with their tags, the debrief proof, the archive and "Back to projects"', async () => {
+    await openOutcome('W-2106');
+    expect(screen.getByRole('heading', { level: 2, name: 'Lost' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Lessons · recorded by Tunde Bello' })).toBeTruthy();
+    expect([...document.querySelectorAll('.rfp-row__tag')].map((t) => t.textContent)).toEqual(['Price', 'Timeline', 'Strength']);
+    expect(document.querySelector('.rfp-row__tag')!.className).toContain('rfp-row__tag');
+    expect(text()).toContain('Price · our total was 18% above the winning bid');
+    expect(screen.getByRole('link', { name: 'Debrief notes (proof)' }).getAttribute('href')).toBe('/work/W-1601');
+    expect(text()).toContain('Archived as ARC-0117.');
+    expect(screen.getByRole('link', { name: 'Back to projects' }).getAttribute('href')).toBe('/projects');
+    for (const board of ['Nothing is deleted', 'from the client’s debrief', "from the client's debrief", 'accepted answers']) expect(text()).not.toContain(board);
+  });
+
+  it('W-2107 (pending): rows, "Reminder for Tunde Bello" with day and time, and "Record the outcome" reopens the form', async () => {
+    await openOutcome('W-2107');
+    expect(screen.getByRole('heading', { level: 2, name: 'Decision pending' })).toBeTruthy();
+    expect(text()).toContain('Expected decision12 Dec');
+    expect(text()).toContain('Reminder for Tunde Bello12 Dec 09:00');
+    expect(text()).not.toContain('delayed to 12 Dec. The RFP stays open');
+    fireEvent.click(button('Record the outcome'));
+    expect(screen.getByRole('radiogroup', { name: 'Result' })).toBeTruthy();
+    expect(writes()).toHaveLength(0);
+  });
+
+  it('W-2108 (unknown): rows, reminder and the follow-up card; the phone bar note is UNKNOWN', async () => {
+    phone();
+    await openOutcome('W-2108');
+    expect(screen.getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Outcome unknown']);
+    expect(screen.getByRole('link', { name: 'Back to RFP' }).closest('.psl-phonebar')!.textContent).toContain('UNKNOWN');
+    expect(text()).toContain('Heard from the client sinceNothing yet');
+    expect(text()).toContain('Reminder for Tunde Bello10 Dec 09:00');
+    expect(screen.getByRole('region', { name: 'Follow-up email · drafted by Tola' })).toBeTruthy();
+  });
+
+  it('a recorded block with only its result shows the heading alone; an unknown result string reads "Outcome recorded"', async () => {
+    const body = item('W-2110');
+    body.rfp_outcome!.recorded = { result: 'won' };
+    answers.item = () => json(200, body);
+    await openOutcome('W-2110');
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Won');
+    expect(document.querySelector('.rfp-recorded')!.textContent).toBe('');
+    cleanup();
+    const odd = item('W-2105');
+    (odd.rfp_outcome!.recorded as { result: string }).result = 'withdrawn';
+    answers.item = () => json(200, odd);
+    await openOutcome('W-2105');
+    expect(screen.getByRole('heading', { level: 2, name: 'Outcome recorded' })).toBeTruthy();
+  });
+});
+
+describe('follow-up display', () => {
+  it('W-2108 shows the agent, the checks, To exactly as returned, the draft, the note, Send and Edit', async () => {
+    await openOutcome('W-2108');
+    const card = screen.getByRole('region', { name: 'Follow-up email · drafted by Tola' });
+    const agent = within(card).getByRole('region', { name: 'Tola, PMO agent' });
+    expect(agent.querySelector('img')!.getAttribute('src')).toBe('/agents/tola.png');
+    expect(agent.textContent).toContain('Tola · PMO agent · done');
+    expect([...agent.querySelectorAll('.psl-step')].map((s) => s.className)).toEqual(['psl-step psl-step--done', 'psl-step psl-step--done']);
+    expect(agent.textContent).toContain('Submission email · 26 Nov');
+    expect(agent.textContent).toContain('It goes only if you send it');
+    expect(card.textContent).toContain('To procurement@tamarindloans.example · draft v1');
+    expect(card.textContent).toContain('Dear Procurement team, we submitted our response');
+    expect(within(card).getByRole('button', { name: 'Send follow-up' })).toBeTruthy();
+    expect(within(card).getByRole('button', { name: 'Edit' })).toBeTruthy();
+    expect(text()).not.toContain('Ask Tola');
+  });
+
+  it('without a note the card says a person sends it; W-2113 shows neither Send nor Edit', async () => {
+    const body = item('W-2108');
+    delete body.rfp_outcome!.followup!.note;
+    answers.item = () => json(200, body);
+    await openOutcome('W-2108');
+    expect(text()).toContain('It goes only if you send it.');
+    cleanup();
+    answers.item = (_, c) => json(200, item(c.path.split('/')[4]));
+    await openOutcome('W-2113');
+    expect(screen.queryByRole('button', { name: 'Send follow-up' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Edit' })).toBeNull();
+  });
+
+  it('W-2114 (effect_uncertain) shows the callout and Check again, which only reads; W-2108.sent shows Sent and no buttons', async () => {
+    await openOutcome('W-2114');
+    expect(text()).toContain('We couldn’t confirm the follow-up was sent. It won’t be sent again until it has been checked.');
+    expect(screen.queryByRole('button', { name: 'Send follow-up' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Edit' })).toBeNull();
+    const before = gets();
+    fireEvent.click(button('Check again'));
+    await waitFor(() => expect(gets()).toBe(before + 1));
+    expect(posts('/followup')).toHaveLength(0);
+    cleanup();
+    answers.item = () => json(200, { ...item('W-2108.sent'), id: 'W-2108' });
+    await openOutcome('W-2108');
+    expect(screen.getByRole('status').textContent).toBe('Sent 03 Dec 10:30');
+    expect(screen.queryByRole('button', { name: /Send follow-up|Edit/ })).toBeNull();
+  });
+});
+
+describe('the follow-up is a person’s action (INV-AGENT, INV-RESEND)', () => {
+  it('loading, reloads, focus and ten minutes of timers send nothing; only a click on Send does', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await openOutcome('W-2108');
+      fireEvent.focus(button('Send follow-up'));
+      window.dispatchEvent(new Event('focus'));
+      await vi.advanceTimersByTimeAsync(10 * 60 * 1000);
+      expect(posts('/followup')).toHaveLength(0);
+      fireEvent.click(button('Send follow-up'));
+      await waitFor(() => expect(posts('/followup')).toHaveLength(1));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('a double click makes one request; the body has the revision, version and a key, and no body when not edited', async () => {
+    answers.item = (n, c) => json(200, n === 0 ? item(c.path.split('/')[4]) : item('W-2108.sent'));
+    await openOutcome('W-2108');
+    fireEvent.click(button('Send follow-up'));
+    fireEvent.click(button(/Send follow-up|Sending…/));
+    await screen.findByText(/^Sent /);
+    expect(posts('/followup')).toHaveLength(1);
+    const sent = posts('/followup')[0];
+    expect(sent).toMatchObject({ path: '/api/v1/work/W-2108/rfp-outcome/followup', csrf: 'mock-csrf-pm' });
+    expect(Object.keys(sent.body!).sort()).toEqual(['expected_revision', 'idempotency_key', 'version']);
+    expect(sent.body).toMatchObject({ expected_revision: 7, version: 1 });
+    expect(sent.body!.idempotency_key).toMatch(/^[0-9a-f-]{36}$/);
+  });
+
+  it('Edit saves nothing; the edited text goes with the send only when it differs and is not blank', async () => {
+    let sent = 0;
+    answers.followup = () => (sent++ === 0 ? json(422, { code: 'invalid', message: 'Check these fields: body.' }) : json(200, { work_id: 'W-2108', status: 'sent', revision: 8 }));
+    await openOutcome('W-2108');
+    fireEvent.click(button('Edit'));
+    const area = screen.getByLabelText('Follow-up text') as HTMLTextAreaElement;
+    expect(area.value).toContain('Dear Procurement team');
+    expect(writes()).toHaveLength(0);
+    fireEvent.change(area, { target: { value: '   ' } });
+    fireEvent.click(button('Send follow-up'));
+    await screen.findByText('Check these fields: body.');
+    expect(posts('/followup')[0].body).not.toHaveProperty('body');
+    expect((screen.getByLabelText('Follow-up text') as HTMLTextAreaElement).value).toBe('   ');
+    fireEvent.change(screen.getByLabelText('Follow-up text'), { target: { value: 'Dear team, any news on the RFP?' } });
+    fireEvent.click(button('Send follow-up'));
+    await waitFor(() => expect(posts('/followup')).toHaveLength(2));
+    expect(posts('/followup')[1].body).toMatchObject({ body: 'Dear team, any news on the RFP?' });
+    expect(posts('/followup')[1].body!.idempotency_key).not.toBe(posts('/followup')[0].body!.idempotency_key);
+  });
+
+  it('W-2111: effect_uncertain shows the callout and no Send, after one reload and no second POST', async () => {
+    const after = item('W-2111');
+    after.rfp_outcome!.followup = { ...after.rfp_outcome!.followup!, status: 'effect_uncertain', can_send: false, can_edit: false };
+    answers.followup = () => json(200, { work_id: 'W-2111', status: 'effect_uncertain', revision: 8 });
+    answers.item = (n) => json(200, n === 0 ? item('W-2111') : after);
+    await openOutcome('W-2111');
+    const before = gets();
+    fireEvent.click(button('Send follow-up'));
+    await screen.findByText(/It won’t be sent again until it has been checked/);
+    expect(gets()).toBe(before + 1);
+    expect(screen.queryByRole('button', { name: 'Send follow-up' })).toBeNull();
+    expect(posts('/followup')).toHaveLength(1);
+  });
+
+  it('a network error or 502 shows the uncertain notice, reloads once and sends nothing; a later press reuses the key', async () => {
+    for (const fail of [() => Promise.reject(new TypeError('Failed to fetch')), () => json(502, { code: 'mock_lost', message: 'The mock dropped this reply.' })]) {
+      calls = [];
+      let n = 0;
+      answers.followup = () => (n++ === 0 ? fail() : json(200, { work_id: 'W-2108', status: 'sent', revision: 8 }));
+      await openOutcome('W-2108');
+      const before = gets();
+      fireEvent.click(button('Send follow-up'));
+      await screen.findByText(/We couldn’t confirm the follow-up was sent. We’ve reloaded it/);
+      expect(gets()).toBe(before + 1);
+      expect(posts('/followup')).toHaveLength(1);
+      fireEvent.click(button('Send follow-up'));
+      await waitFor(() => expect(posts('/followup')).toHaveLength(2));
+      expect(posts('/followup')[1].body!.idempotency_key).toBe(posts('/followup')[0].body!.idempotency_key);
+      cleanup();
+    }
+  });
+
+  it('when the reload after an uncertain send fails, every follow-up control is off and Try again only reads', async () => {
+    answers.followup = () => Promise.reject(new TypeError('Failed to fetch'));
+    await openOutcome('W-2108');
+    answers.item = () => Promise.reject(new TypeError('Failed to fetch'));
+    fireEvent.click(button('Send follow-up'));
+    await screen.findByText(/couldn’t reload to check/);
+    expect(screen.queryByRole('button', { name: /Send follow-up|Edit/ })).toBeNull();
+    answers.item = (_, c) => json(200, item(c.path.split('/')[4]));
+    const before = gets();
+    fireEvent.click(button('Try again'));
+    await waitFor(() => expect(gets()).toBe(before + 1));
+    expect(posts('/followup')).toHaveLength(1);
+  });
+
+  it('W-2112: a 409 reloads, keeps the edited text, shows "Current draft (v3)"; the next press sends version 3 with a new key', async () => {
+    let sent = 0;
+    answers.followup = () => (sent++ === 0 ? json(409, STALE) : json(200, { work_id: 'W-2112', status: 'sent', revision: 9 }));
+    answers.item = (n) => json(200, n === 0 ? item('W-2112') : item('W-2112.next'));
+    await openOutcome('W-2112');
+    fireEvent.click(button('Edit'));
+    fireEvent.change(screen.getByLabelText('Follow-up text'), { target: { value: 'My own words' } });
+    fireEvent.click(button('Send follow-up'));
+    await screen.findByText('The draft changed. Check it before you send.');
+    expect((screen.getByLabelText('Follow-up text') as HTMLTextAreaElement).value).toBe('My own words');
+    expect(text()).toContain('Current draft (v3)');
+    expect(text()).toContain('Could you let us know');
+    expect(posts('/followup')).toHaveLength(1);
+    fireEvent.click(button('Send follow-up'));
+    await waitFor(() => expect(posts('/followup')).toHaveLength(2));
+    expect(posts('/followup')[1].body).toMatchObject({ version: 3, expected_revision: 8, body: 'My own words' });
+    expect(posts('/followup')[1].body!.idempotency_key).not.toBe(posts('/followup')[0].body!.idempotency_key);
+  });
+
+  it('403 reloads and removes Send with the server message', async () => {
+    answers.followup = () => json(403, FORBIDDEN);
+    await openOutcome('W-2108');
+    fireEvent.click(button('Send follow-up'));
+    await screen.findByText('Your role does not allow this.');
+    expect(screen.queryByRole('button', { name: 'Send follow-up' })).toBeNull();
+    expect(posts('/followup')).toHaveLength(1);
+  });
+});

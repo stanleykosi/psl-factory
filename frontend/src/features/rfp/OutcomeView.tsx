@@ -15,7 +15,8 @@ import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemState
 
 import { InfoIcon } from '@/features/response/icons';
 
-import { RESULT_LABELS, recordedHeading, resultNote } from './labels';
+import { frameHeading, RESULT_LABELS, recordedHeading, resultNote } from './labels';
+import { FollowupCard } from './FollowupCard';
 import { OutcomeForm } from './OutcomeForm';
 import { RecordedView } from './RecordedView';
 import { RfpFrame } from './RfpFrame';
@@ -136,7 +137,17 @@ export function OutcomeView({ id }: { id: string }) {
       <div className={phone ? 'resp-page resp-page--phone rfp-page' : 'resp-page rfp-page'}>
         <Header id={id} item={current} title={recordedHeading(recorded.result)} phone={phone} />
         <PageNotice notice={notice} onRecheck={recheck} />
-        <RecordedView outcome={current.rfp_outcome!} recorded={recorded} title={phone ? 'h1' : current.rfp ? 'h2' : 'none'} onReopen={flow.reopen} />
+        <RecordedView
+          outcome={current.rfp_outcome!}
+          recorded={recorded}
+          title={phone ? 'h1' : current.rfp && frameHeading(current.rfp) ? 'h2' : 'none'}
+          onReopen={flow.reopen}
+          followup={
+            recorded.result === 'unknown' && current.rfp_outcome!.followup ? (
+              <FollowupCard item={current} followup={current.rfp_outcome!.followup} reload={flow.refresh} />
+            ) : undefined
+          }
+        />
       </div>
     );
   }

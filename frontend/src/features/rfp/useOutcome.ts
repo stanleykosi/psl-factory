@@ -165,6 +165,13 @@ export function useOutcome(id: string) {
     }
   }, [id, sync]);
 
+  /** Re-read for the follow-up card: the page shows the new item, or the read's error (access loss replaces the page). */
+  const refresh = useCallback(async () => {
+    const next = await reread();
+    if (!(next instanceof ApiError)) setPage((p) => (p.kind === 'item' ? { kind: 'item', item: next } : p));
+    return next;
+  }, [reread]);
+
   const record = useCallback(async () => {
     if (writing.current || !item || !outcomeOpen(outcome) || notice?.kind === 'unconfirmed') return;
     const e = effectiveOutcome(entries, outcome);
@@ -245,6 +252,7 @@ export function useOutcome(id: string) {
     reopen: () => setReopened(true),
     record,
     recheck,
+    refresh,
     retry: load,
   };
 }

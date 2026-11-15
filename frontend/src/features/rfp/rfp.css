@@ -49,13 +49,52 @@
 .resp-form--team .resp-actions { flex-direction: column; align-items: stretch; }
 .resp-form--team .resp-record { width: 100%; }
 
-/* recorded states */
-.rfp-recorded { display: flex; flex-direction: column; gap: 14px; max-width: 760px; }
-.rfp-recorded__title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 26px; line-height: 1.08; }
-.rfp-recorded__again { margin: 0; }
+/* recorded states: the rows and lessons panels with the follow-up on the left, "Next" on the right */
+.rfp-recorded { display: flex; flex-direction: column; gap: 20px; }
+.rfp-recorded__title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 24px; line-height: 1.08; }
+.rfp-recorded__main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.rfp-recorded__aside { flex: 1 1 340px; max-width: 440px; display: flex; flex-direction: column; gap: 14px; }
+.rfp-panel .psl-panel__head, .rfp-followup > .psl-panel__head { margin: 0; }
+.rfp-rows { list-style: none; margin: 0; padding: 0; }
+.rfp-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 40px; border-top: 1px solid var(--rule-soft); font-size: 14px; }
+.rfp-row__meta { flex: none; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); text-transform: uppercase; }
+.rfp-row__tag { flex: none; text-transform: uppercase; border-radius: var(--radius-none); }
+.rfp-plain { margin: 0; font-size: 14px; line-height: 1.5; }
+.rfp-debrief { margin: 0; font-size: 14px; }
+.rfp-debrief__ref { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+
+/* the follow-up: the agent card, the draft and the person's Send */
+.rfp-agent { background: var(--surface); }
+.rfp-agent__head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 2px solid var(--action); }
+.rfp-agent__img { width: 32px; height: 32px; border-radius: var(--radius-round); object-fit: cover; background: var(--mascot-tola-tint); flex: none; }
+.rfp-agent__name { display: flex; flex-direction: column; min-width: 0; font-size: 14px; }
+.rfp-agent__role { font-size: 12px; color: var(--action-ink); }
+.rfp-agent__tag { margin-left: auto; border-radius: var(--radius-none); }
+.rfp-agent .psl-step--done .psl-step__box { color: var(--on-strong); }
+.rfp-agent__note { margin: 0; padding: 9px 14px; border-top: 1px solid var(--rule-soft); font-size: 13px; color: var(--ink-muted); }
+.rfp-followup__to { margin: 0; font-size: 13px; color: var(--ink-muted); }
+.rfp-followup__addr { font-family: var(--font-mono); overflow-wrap: anywhere; }
+.rfp-followup__body { padding: 10px 12px; border: 2px solid var(--action); background: var(--action-tint); font-size: 14px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.rfp-followup__edit { min-height: 120px; }
+.rfp-followup__current { display: flex; flex-direction: column; gap: 6px; }
+.rfp-followup__status { margin: 0; font-weight: 600; }
+.rfp-followup__actions { display: flex; gap: 8px; }
+.rfp-followup__actions .psl-btn { flex: 1; }
+.rfp-followup .psl-callout, .rfp-recorded .psl-callout { margin: 0; }
 
 @media (max-width: 719.98px) {
   .rfp-form .psl-panel, .resp-form--team .psl-panel { border: none; background: none; }
+  /* the phone boards: framed rows with a plain heading (none over the recorded rows), the follow-up unframed with
+     Send and Edit pinned to the bottom */
+  .rfp-recorded { gap: 12px; }
+  .rfp-recorded .rfp-panel > .psl-panel__head { padding: 12px 14px 0; border: none; font-family: var(--font-sans); font-size: 15px; font-weight: 600; text-transform: none; letter-spacing: normal; }
+  .rfp-recorded .rfp-panel--rows > .psl-panel__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
+  .rfp-recorded .rfp-panel > .psl-panel__body { gap: 10px; }
+  .rfp-recorded .rfp-followup { border: none; background: none; }
+  .rfp-recorded .rfp-followup > .psl-panel__head, .rfp-recorded .rfp-followup > .psl-panel__body { padding-left: 0; padding-right: 0; }
+  .rfp-page:has(.rfp-followup__actions) { padding-bottom: 150px; }
+  .rfp-followup__actions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; flex-direction: column; padding: 14px 16px; background: var(--surface); border-top: 2px solid var(--ink); }
+  .rfp-followup__actions .psl-btn { flex: none; width: 100%; }
   .rfp-actions { max-width: none; }
   /* 44px targets on the phone */
   .resp-segbar .psl-seg__opt { min-height: var(--control-md); }

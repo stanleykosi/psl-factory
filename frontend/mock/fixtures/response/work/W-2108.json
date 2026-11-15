@@ -189,6 +189,28 @@
       "next": [
         "As soon as you hear anything, record the outcome."
       ]
+    },
+    "followup": {
+      "to": "procurement@tamarindloans.example",
+      "body": "Dear Procurement team, we submitted our response to RFP TL-RFP-2026-014 on 26 Nov. Could you share when you expect to announce the outcome? Kind regards, Tunde Bello",
+      "version": 1,
+      "agent": "tola",
+      "checks": [
+        {
+          "text": "Checked when we last heard from the client",
+          "source": "Submission email · 26 Nov",
+          "status": "done"
+        },
+        {
+          "text": "Drafted a short follow-up to their procurement address",
+          "source": "procurement@tamarindloans.example",
+          "status": "done"
+        }
+      ],
+      "status": "drafted",
+      "note": "It goes only if you send it",
+      "can_send": true,
+      "can_edit": true
     }
   }
 }

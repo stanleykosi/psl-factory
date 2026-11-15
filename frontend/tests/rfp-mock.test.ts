@@ -264,3 +264,64 @@ describe('E-RFP-OUTCOME', () => {
     expect((await outcome('W-2103', body)).status).toBe(409);
   });
 });
+
+const followup = (workId: string, body: unknown, init?: Parameters<typeof post>[3]) => post(`/api/v1/work/${workId}/rfp-outcome/followup`, 'E-RFP-FOLLOWUP', body, init);
+async function sendBody(workId: string, extra: Record<string, unknown> = {}) {
+  const item = (await getItem(workId)) as Awaited<ReturnType<typeof getItem>> & { rfp_outcome: { followup: { version: number } } };
+  return { expected_revision: item.revision, version: item.rfp_outcome.followup.version, idempotency_key: `key-${workId}-${Math.random()}`, ...extra };
+}
+
+describe('E-RFP-FOLLOWUP', () => {
+  it('W-2108 answers sent (valid v7) and serves W-2108.sent; the same key returns the same reply with no second effect', async () => {
+    const body = await sendBody('W-2108');
+    const first = await followup('W-2108', body);
+    expect(first).toEqual({ status: 200, body: { work_id: 'W-2108', status: 'sent', revision: 8 } });
+    const after = (await getItem('W-2108')) as unknown as Record<string, unknown> & { revision: number; rfp_outcome: { followup: { status: string; can_send: boolean } } };
+    expect(after.rfp_outcome.followup).toMatchObject({ status: 'sent', can_send: false });
+    expect(await followup('W-2108', body)).toEqual(first);
+    expect((await getItem('W-2108')).revision).toBe(8);
+    expect((await followup('W-2108', { ...body, idempotency_key: 'another' })).status).toBe(409);
+  });
+
+  it('sends edited text as the draft; 422 for a blank body', async () => {
+    const body = await sendBody('W-2108');
+    expect(fields(await followup('W-2108', { ...body, body: '  ' }))).toBe('Check these fields: body.');
+    expect((await followup('W-2108', { ...body, body: 'Any news?' })).status).toBe(200);
+    expect(((await getItem('W-2108')) as unknown as { rfp_outcome: { followup: { body: string } } }).rfp_outcome.followup.body).toBe('Any news?');
+  });
+
+  it('W-2111 answers effect_uncertain and serves the draft in that state, with no Send', async () => {
+    const r = await followup('W-2111', await sendBody('W-2111'));
+    expect(r.body.status).toBe('effect_uncertain');
+    expect(((await getItem('W-2111')) as unknown as { rfp_outcome: { followup: Record<string, unknown> } }).rfp_outcome.followup).toMatchObject({ status: 'effect_uncertain', can_send: false });
+    expect((await followup('W-2111', await sendBody('W-2111'))).status).toBe(403);
+  });
+
+  it('W-2112 answers 409 once and serves v3; a send of v3 then goes', async () => {
+    const first = await followup('W-2112', await sendBody('W-2112'));
+    expect(first.status).toBe(409);
+    const next = await sendBody('W-2112');
+    expect(next).toMatchObject({ version: 3, expected_revision: 8 });
+    expect((await followup('W-2112', next)).status).toBe(200);
+  });
+
+  it('409 on a stale revision or version; 403 without can_send (W-2113), already uncertain (W-2114), for persona none or without CSRF', async () => {
+    const body = await sendBody('W-2108');
+    expect((await followup('W-2108', { ...body, expected_revision: 1 })).status).toBe(409);
+    expect((await followup('W-2108', { ...body, version: 9 })).status).toBe(409);
+    expect((await followup('W-2113', await sendBody('W-2113'))).status).toBe(403);
+    expect((await followup('W-2114', await sendBody('W-2114'))).status).toBe(403);
+    expect((await followup('W-2108', body, { persona: 'none' })).body.code).toBe('forbidden');
+    expect((await followup('W-2108', body, { csrf: null })).body.code).toBe('csrf_failed');
+    expect((await followup('W-2999', body)).status).toBe(404);
+    expect((await followup('W-2108', { ...body, idempotency_key: undefined })).status).toBe(422);
+  });
+
+  it('scenarios answer their status; record-then-fail sends, then answers 502, and the same key returns the stored 200', async () => {
+    const body = await sendBody('W-2108');
+    for (const status of [401, 403, 404, 409, 422]) expect((await followup('W-2108', body, { headers: { 'X-Mock-Scenario': String(status) } })).status).toBe(status);
+    expect((await followup('W-2108', body, { headers: { 'X-Mock-Scenario': 'record-then-fail' } })).status).toBe(502);
+    expect(((await getItem('W-2108')) as unknown as { rfp_outcome: { followup: { status: string } } }).rfp_outcome.followup.status).toBe('sent');
+    expect((await followup('W-2108', body)).body).toMatchObject({ status: 'sent' });
+  });
+});
