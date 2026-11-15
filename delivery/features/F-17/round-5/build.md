@@ -1,10 +1,11 @@
 STATUS: READY
-COMMIT: af3b958cfa5807108e940017aefdc04e60375b1b
+COMMIT: 97574624fbd0843b80886ad80bd1d01fbb8e4e53
 BUILDER: builder
 LANE: records only
 
 ## Fixes
-- QA-5-1 | af3b958c | Decide bar flows (position: static, no reserved bottom padding) while every step is locked and a reconcile action exists, so F-09's fixed "Record and continue" bar is tappable
+- QA-5-1 | 97574624 | (reopened) the flow-mode page now keeps bottom space equal to F-09's reconcile bar (control height + 30px) and scroll-padding, so "Record and continue" is tappable at every scroll position at 390 and 320. Earlier: af3b958c | Decide bar flows (position: static, no reserved bottom padding) while every step is locked and a reconcile action exists, so F-09's fixed "Record and continue" bar is tappable
+- QA-5-5 | 97574624 | every step is locked whenever the item itself has `item.reconcile` (with or without the reconcile permission), so a reload no longer unlocks Approve and send; the lock drives off(), the submit guard, the hint and ws-decide--flow; the in-memory press lock stays
 - QA-5-2 | af3b958c | Decide button labels wrap on phones (white-space: normal)
 
 ## Summary
@@ -21,3 +22,8 @@ Validation:
 - `bash delivery/checks.sh`: exit 0.
 - `E2E_PORT=4721 MOCK_PORT=4722 npx playwright test e2e/workspace.spec.ts e2e/response.spec.ts`: 48 passed.
 - The new phone test fails on the old code ("ws-steps__buttons subtree intercepts pointer events") and passes on the new.
+
+### Second fix (D-66)
+- Lock: `useWorkspaceStep` takes `awaitingReconcile` (= `Boolean(item.reconcile)`); `allLocked` = press lock OR that. Space: `.ws:has(.ws-decide--flow)` padding-bottom and html scroll-padding-bottom = `--control-lg` + 30px. F-09 code unchanged.
+- New e2e (390 and 320): press then scroll to bottom then Record and continue (200); press, reload, all steps aria-disabled, forced tap on Approve and send sends no POST, scroll to bottom, Record and continue (200). All 4 fail on af3b958 and pass now.
+- `bash delivery/checks.sh` exit 0. Playwright (workspace, response, work-item, work-item-board, decide, decide-board; E2E_PORT=4721 MOCK_PORT=4722, FRAME_FIXTURES=1): 155 passed, 0 failed. Design-fidelity not run (per instruction).

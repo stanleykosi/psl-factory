@@ -1245,3 +1245,12 @@
 {"at":"2026-11-15T09:17:54Z","feature":"F-17","round":5,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"af3b958cfa58","written_at":"2026-11-15T09:17:45Z"}
 {"at":"2026-11-15T09:18:26Z","feature":"F-17","round":5,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"af3b958cfa58","findings":{"TECH-5-1":"low"},"written_at":"2026-11-15T09:18:05Z"}
 {"at":"2026-11-15T09:27:54Z","feature":"F-17","round":5,"kind":"review","role":"integrated_qa","verdict":"CHANGES","reviewer":"qa","commit":"af3b958cfa58","findings":{"QA-5-1":"high","QA-5-5":"high","QA-5-3":"low","QA-5-4":"low"},"written_at":"2026-11-15T09:26:57Z"}
+{"at":"2026-11-15T09:32:54Z","feature":"F-18","round":3,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb)","commit":"9d0fc6688283","written_at":"2026-11-15T09:32:38Z"}
+{"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/29","git.pr_number":29,"git.ci_status":"passed"}}
+{"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"decision","decision":"HUMAN_APPROVAL","head":"9d0fc6688283","reasons":["risk 'high' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'external-messaging' always needs a human","surface 'security' always needs a human","45 changed files exceed the auto-merge limit of 15","finding TECH-1-1 was accepted as a risk","finding UI-1-7 was accepted as a risk","approver recommendation is None, not 'AUTO_MERGE'"]}
+{"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"fields","fields":{"git.human_approval":"approved","git.merge_status":"merged","git.merge_sha":"e376d8e3dcc11f5351fb79396423877c563c2fa3"}}
+{"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-15T09:41:02Z","feature":"F-18","round":3,"kind":"transition","head":"9d0fc6688283","from":"MERGED","to":"DONE"}

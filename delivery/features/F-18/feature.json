@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-18",
   "outcome": "Team input and the RFP outcome are recorded inside the RFP frame, and the drafted follow-up goes only when a person sends it",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-M2B-RFP"
   ],
@@ -155,11 +155,13 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-18/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb)",
+      "authority": "the design engineer's message on 15 Nov 2026: \"merge F-18 when ready\"",
+      "snapshot_ref": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "evidence_refs": [
+        "delivery/features/F-18/round-3/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -1387,9 +1389,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -1403,14 +1405,14 @@
     "task_branch": "fe-m2b-rfp-team-input-and-the-rfp-outcome-are-recor",
     "head_sha": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-18",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/29",
+    "pr_number": 29,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "e376d8e3dcc11f5351fb79396423877c563c2fa3",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/rfp.spec.ts",
@@ -1481,9 +1483,18 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'high' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "surface 'security' always needs a human",
+      "45 changed files exceed the auto-merge limit of 15",
+      "finding TECH-1-1 was accepted as a risk",
+      "finding UI-1-7 was accepted as a risk",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1578,6 +1589,46 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-15T08:57:10Z",
+      "round": 3,
+      "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-15T09:41:02Z",
+      "round": 3,
+      "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-15T09:41:02Z",
+      "round": 3,
+      "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-15T09:41:02Z",
+      "round": 3,
+      "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-15T09:41:02Z",
+      "round": 3,
+      "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-15T09:41:02Z",
       "round": 3,
       "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
       "reason": null
