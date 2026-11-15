@@ -1421,3 +1421,9 @@
 {"at":"2026-11-15T12:58:24Z","feature":"F-20","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"45c4820c4adf00f1834555e65a9f21f3c4abcba3"}}
 {"at":"2026-11-15T12:58:24Z","feature":"F-20","round":2,"kind":"transition","head":"1bf933da30fd","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-15T12:58:25Z","feature":"F-20","round":2,"kind":"transition","head":"1bf933da30fd","from":"MERGED","to":"DONE"}
+{"at":"2026-11-15T13:52:06Z","feature":"F-19","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"medium","owner":"coordinator","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T13:52:06Z","feature":"F-19","round":3,"kind":"finding","action":"add","finding":"PMO-3-2","by":"pmo-acceptance","severity":"low","owner":"coordinator","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T13:52:06Z","feature":"F-19","round":3,"kind":"finding","action":"add","finding":"PMO-3-3","by":"pmo-acceptance","severity":"low","owner":"design engineer","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T13:52:06Z","feature":"F-19","round":3,"kind":"finding","action":"add","finding":"PMO-3-4","by":"pmo-acceptance","severity":"low","owner":"backend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T13:52:06Z","feature":"F-19","round":3,"kind":"finding","action":"add","finding":"PMO-3-5","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T13:52:06Z","feature":"F-19","round":3,"kind":"finding","action":"add","finding":"PMO-3-6","by":"pmo-acceptance","severity":"low","owner":"integration","blocking":false,"role":"pmo_acceptance"}

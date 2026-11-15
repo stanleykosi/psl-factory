@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T11:01:44.499Z",
+  "generatedAt": "2026-11-15T14:08:26.992Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-25-desktop-review.dc.html",
   "boardName": "SCR-25-desktop-review.dc.html",
   "pageUrl": "http://localhost:4741/work/W-2204",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 68.2 is below 90.",
+    "Visual match 75.5 is below 90.",
     "6 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 53.1,
     "coverageWithExceptions": 100,
-    "visual": 68.2
+    "visual": 75.5
   },
   "visual": {
-    "score": 68.2,
-    "allCellsScore": 78.1,
+    "score": 75.5,
+    "allCellsScore": 90.4,
     "width": 1440,
     "height": 960,
     "boardHeight": 960,
-    "pageHeight": 1010,
+    "pageHeight": 960,
     "cell": 12,
-    "contentCells": 6607,
-    "mismatchedCells": 2098
+    "contentCells": 3772,
+    "mismatchedCells": 926
   },
   "coverage": {
     "total": 32,
@@ -133,30 +133,6 @@
       {
         "kind": "Link",
         "role": "link",
-        "name": "Overview",
-        "pageName": "Overview",
-        "pageRole": "link",
-        "similarity": 100,
-        "looks": [
-          "text colour #C8CDD0 on the board, #FFFFFF on the page",
-          "background none on the board, #1F2427 on the page"
-        ],
-        "boardBox": {
-          "x": 430,
-          "y": 1,
-          "w": 86,
-          "h": 55
-        },
-        "pageBox": {
-          "x": 1201,
-          "y": 79,
-          "w": 82,
-          "h": 28
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
         "name": "Assistant",
         "pageName": "Assistant",
         "pageRole": "link",
@@ -240,7 +216,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 953
+          "h": 554
         }
       },
       {
@@ -261,9 +237,9 @@
         },
         "pageBox": {
           "x": 269,
-          "y": 598,
+          "y": 85,
           "w": 258,
-          "h": 18
+          "h": 15
         }
       },
       {
@@ -274,7 +250,7 @@
         "pageRole": "heading",
         "similarity": 100,
         "looks": [
-          "text size 32px on the board, 40px on the page"
+          "text size 32px on the board, 35px on the page"
         ],
         "boardBox": {
           "x": 88,
@@ -284,9 +260,9 @@
         },
         "pageBox": {
           "x": 88,
-          "y": 110,
-          "w": 682,
-          "h": 37
+          "y": 120,
+          "w": 596,
+          "h": 35
         }
       },
       {
@@ -304,10 +280,32 @@
           "h": 21
         },
         "pageBox": {
-          "x": 88,
-          "y": 624,
-          "w": 97,
+          "x": 1252,
+          "y": 120,
+          "w": 100,
           "h": 23
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
         }
       },
       {
@@ -327,7 +325,7 @@
         },
         "pageBox": {
           "x": 90,
-          "y": 721,
+          "y": 322,
           "w": 898,
           "h": 43
         }
@@ -348,7 +346,7 @@
         },
         "pageBox": {
           "x": 1012,
-          "y": 719,
+          "y": 320,
           "w": 340,
           "h": 235
         }
@@ -369,7 +367,7 @@
         },
         "pageBox": {
           "x": 1028,
-          "y": 778,
+          "y": 379,
           "w": 308,
           "h": 42
         }
@@ -391,7 +389,7 @@
         },
         "pageBox": {
           "x": 1028,
-          "y": 830,
+          "y": 431,
           "w": 308,
           "h": 50
         }
@@ -413,7 +411,7 @@
         },
         "pageBox": {
           "x": 1028,
-          "y": 888,
+          "y": 489,
           "w": 308,
           "h": 50
         }
@@ -421,6 +419,23 @@
     ],
     "patterns": [],
     "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "key": "link: Overview",
+        "container": "navigation",
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 11: the board's main navigation shows an Overview link for the PMO Lead persona; the nav belongs to the frame and the page's persona is not the board's.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
       {
         "kind": "Link",
         "role": "link",
@@ -500,23 +515,6 @@
           "y": 174,
           "w": 654,
           "h": 48
-        },
-        "exception": {
-          "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
-          "approved_by": "design engineer, 15 Nov (D-71)"
-        }
-      },
-      {
-        "kind": "Tab",
-        "role": "tab",
-        "name": "Journey",
-        "key": "tab: Journey",
-        "container": "tablist",
-        "boardBox": {
-          "x": 90,
-          "y": 176,
-          "w": 86,
-          "h": 44
         },
         "exception": {
           "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
@@ -679,27 +677,6 @@
     ],
     "misplaced": [
       {
-        "label": "Link \"Overview\"",
-        "kind": "Link",
-        "name": "Overview",
-        "boardBox": {
-          "x": 430,
-          "y": 1,
-          "w": 86,
-          "h": 55
-        },
-        "pageBox": {
-          "x": 1201,
-          "y": 79,
-          "w": 82,
-          "h": 28
-        },
-        "reasons": [
-          "order: on the board it comes after Link \"Projects\"; on the page it comes after Link \"More ways to start\"",
-          "across the page: left on the board (33% across), right on the page (86% across)"
-        ]
-      },
-      {
         "label": "Link \"Start work\"",
         "kind": "Link",
         "name": "Start work",
@@ -751,34 +728,53 @@
         },
         "pageBox": {
           "x": 269,
-          "y": 598,
+          "y": 85,
           "w": 258,
-          "h": 18
+          "h": 15
         },
         "reasons": [
-          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Main area \"\"",
           "across the page: middle on the board (50% across), left on the page (28% across)",
           "inside the main area on the board, inside the top navigation on the page"
         ]
       },
       {
-        "label": "Text \"YOUR REVIEW\"",
-        "kind": "Text",
-        "name": "YOUR REVIEW",
+        "label": "Heading \"Weekly client report · 5–11 Nov\"",
+        "kind": "Heading",
+        "name": "Weekly client report · 5–11 Nov",
         "boardBox": {
-          "x": 1255,
-          "y": 133,
-          "w": 97,
-          "h": 21
+          "x": 88,
+          "y": 119,
+          "w": 607,
+          "h": 35
         },
         "pageBox": {
           "x": 88,
-          "y": 624,
-          "w": 97,
-          "h": 23
+          "y": 120,
+          "w": 596,
+          "h": 35
         },
         "reasons": [
-          "across the page: right on the board (91% across), left on the page (9% across)"
+          "order: on the board it comes after Text \"PROJECTS / LAGOON HEALTH / WEEKLY CLIENT REPORT · WCR-0216\"; on the page it comes after Text \"YOUR REVIEW\""
+        ]
+      },
+      {
+        "label": "Tab \"Journey\"",
+        "kind": "Tab",
+        "name": "Journey",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
         ]
       },
       {
@@ -795,10 +791,10 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 953
+          "h": 554
         },
         "reasons": [
-          "order: on the board it comes after Text \"Approving sends this exact version to Lagoon Health.\"; on the page it comes after Heading \"Weekly client report · 5–11 Nov\""
+          "order: on the board it comes after Text \"Approving sends this exact version to Lagoon Health.\"; on the page it comes after Tab \"Journey\""
         ]
       }
     ],
@@ -830,253 +826,13 @@
       {
         "kind": "Navigation area",
         "role": "navigation",
-        "name": "Breadcrumb",
-        "container": "main",
-        "pageBox": {
-          "x": 88,
-          "y": 85,
-          "w": 315,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "MY WORK / WEEKLY CLIENT REPORT / WCR-0216",
-        "container": "navigation",
-        "pageBox": {
-          "x": 88,
-          "y": 85,
-          "w": 315,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "MY WORK",
-        "container": "navigation",
-        "pageBox": {
-          "x": 88,
-          "y": 85,
-          "w": 54,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "revision 3",
-        "container": "main",
-        "pageBox": {
-          "x": 1131,
-          "y": 85,
-          "w": 57,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
-        "name": "Work item",
-        "container": "main",
-        "pageBox": {
-          "x": 1199,
-          "y": 77,
-          "w": 153,
-          "h": 32
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "History",
-        "container": "navigation",
-        "pageBox": {
-          "x": 1283,
-          "y": 79,
-          "w": 69,
-          "h": 28
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "ACTION NEEDED",
-        "container": "main",
-        "pageBox": {
-          "x": 784,
-          "y": 115,
-          "w": 117,
-          "h": 27
-        }
-      },
-      {
-        "kind": "list",
-        "role": "list",
-        "name": "Facts",
-        "container": "main",
-        "pageBox": {
-          "x": 88,
-          "y": 167,
-          "w": 1264,
-          "h": 82
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "DRAFTED",
-        "container": "main",
-        "pageBox": {
-          "x": 104,
-          "y": 181,
-          "w": 180,
-          "h": 14
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Earned",
-        "container": "main",
-        "pageBox": {
-          "x": 104,
-          "y": 199,
-          "w": 180,
-          "h": 17
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "12 Nov 10:30",
-        "container": "main",
-        "pageBox": {
-          "x": 104,
-          "y": 220,
-          "w": 180,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "REVIEWED",
-        "container": "main",
-        "pageBox": {
-          "x": 314,
-          "y": 181,
-          "w": 180,
-          "h": 14
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "In progress",
-        "container": "main",
-        "pageBox": {
-          "x": 314,
-          "y": 199,
-          "w": 180,
-          "h": 17
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "RECEIPT",
-        "container": "main",
-        "pageBox": {
-          "x": 944,
-          "y": 181,
-          "w": 180,
-          "h": 14
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Unknown",
-        "container": "main",
-        "pageBox": {
-          "x": 944,
-          "y": 199,
-          "w": 180,
-          "h": 17
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Paid is a separate Finance fact and is not part of this line.",
-        "container": "main",
-        "pageBox": {
-          "x": 88,
-          "y": 257,
-          "w": 1264,
-          "h": 18
-        }
-      },
-      {
-        "kind": "list",
-        "role": "list",
-        "name": "Stations in order",
-        "container": "main",
-        "pageBox": {
-          "x": 90,
-          "y": 301,
-          "w": 1260,
-          "h": 82
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Tola",
-        "container": "main",
-        "pageBox": {
-          "x": 146,
-          "y": 421,
-          "w": 156,
-          "h": 21
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Cannot approve, send or pay.",
-        "container": "main",
-        "pageBox": {
-          "x": 146,
-          "y": 442,
-          "w": 156,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "DONE",
-        "container": "main",
-        "pageBox": {
-          "x": 939,
-          "y": 429,
-          "w": 49,
-          "h": 23
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
         "name": "Where this sits",
         "container": "main",
         "pageBox": {
           "x": 88,
-          "y": 598,
-          "w": 1264,
-          "h": 18
+          "y": 85,
+          "w": 439,
+          "h": 15
         }
       },
       {
@@ -1086,9 +842,9 @@
         "container": "navigation",
         "pageBox": {
           "x": 88,
-          "y": 598,
+          "y": 85,
           "w": 61,
-          "h": 18
+          "h": 15
         }
       },
       {
@@ -1098,9 +854,105 @@
         "container": "navigation",
         "pageBox": {
           "x": 149,
-          "y": 598,
+          "y": 85,
           "w": 120,
-          "h": 18
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Project",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 550,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestones",
+        "container": "navigation",
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Documents",
+        "container": "navigation",
+        "pageBox": {
+          "x": 279,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Money",
+        "container": "navigation",
+        "pageBox": {
+          "x": 386,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Registers",
+        "container": "navigation",
+        "pageBox": {
+          "x": 462,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Actions",
+        "container": "navigation",
+        "pageBox": {
+          "x": 556,
+          "y": 177,
+          "w": 82,
+          "h": 44
         }
       },
       {
@@ -1110,9 +962,9 @@
         "container": "main",
         "pageBox": {
           "x": 88,
-          "y": 655,
-          "w": 1264,
-          "h": 21
+          "y": 243,
+          "w": 229,
+          "h": 18
         }
       },
       {
@@ -1122,7 +974,7 @@
         "container": "complementary",
         "pageBox": {
           "x": 1014,
-          "y": 721,
+          "y": 322,
           "w": 336,
           "h": 43
         }

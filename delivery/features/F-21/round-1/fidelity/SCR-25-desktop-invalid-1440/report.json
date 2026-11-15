@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T11:01:31.626Z",
+  "generatedAt": "2026-11-15T14:08:19.223Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-25-desktop-invalid.dc.html",
   "boardName": "SCR-25-desktop-invalid.dc.html",
   "pageUrl": "http://localhost:4743/frozen/invalid-1440.html",
@@ -19,29 +19,29 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 70.2 is below 90.",
-    "6 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "Visual match 78.3 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
-    "coverage": 51.6,
+    "coverage": 54.8,
     "coverageWithExceptions": 100,
-    "visual": 70.2
+    "visual": 78.3
   },
   "visual": {
-    "score": 70.2,
-    "allCellsScore": 82.4,
+    "score": 78.3,
+    "allCellsScore": 85,
     "width": 1440,
     "height": 900,
     "boardHeight": 900,
-    "pageHeight": 2296,
+    "pageHeight": 1959,
     "cell": 12,
-    "contentCells": 5310,
-    "mismatchedCells": 1584
+    "contentCells": 6232,
+    "mismatchedCells": 1353
   },
   "coverage": {
     "total": 31,
-    "found": 16,
-    "coverage": 51.6,
+    "found": 17,
+    "coverage": 54.8,
     "matched": [
       {
         "kind": "Navigation area",
@@ -237,7 +237,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 2239
+          "h": 1902
         }
       },
       {
@@ -258,9 +258,9 @@
         },
         "pageBox": {
           "x": 269,
-          "y": 536,
+          "y": 85,
           "w": 258,
-          "h": 18
+          "h": 15
         }
       },
       {
@@ -271,7 +271,7 @@
         "pageRole": "heading",
         "similarity": 100,
         "looks": [
-          "text size 32px on the board, 40px on the page"
+          "text size 32px on the board, 35px on the page"
         ],
         "boardBox": {
           "x": 88,
@@ -281,9 +281,9 @@
         },
         "pageBox": {
           "x": 88,
-          "y": 110,
-          "w": 682,
-          "h": 37
+          "y": 120,
+          "w": 596,
+          "h": 35
         }
       },
       {
@@ -301,10 +301,32 @@
           "h": 21
         },
         "pageBox": {
-          "x": 88,
-          "y": 562,
-          "w": 100,
+          "x": 1250,
+          "y": 120,
+          "w": 102,
           "h": 23
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
         }
       },
       {
@@ -324,7 +346,7 @@
         },
         "pageBox": {
           "x": 90,
-          "y": 731,
+          "y": 394,
           "w": 898,
           "h": 43
         }
@@ -345,7 +367,7 @@
         },
         "pageBox": {
           "x": 1028,
-          "y": 1575,
+          "y": 1238,
           "w": 308,
           "h": 36
         }
@@ -366,7 +388,7 @@
         },
         "pageBox": {
           "x": 1028,
-          "y": 2140,
+          "y": 1803,
           "w": 308,
           "h": 18
         }
@@ -387,7 +409,7 @@
         },
         "pageBox": {
           "x": 1012,
-          "y": 729,
+          "y": 392,
           "w": 340,
           "h": 1511
         }
@@ -440,23 +462,6 @@
           "y": 174,
           "w": 654,
           "h": 48
-        },
-        "exception": {
-          "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
-          "approved_by": "design engineer, 15 Nov (D-71)"
-        }
-      },
-      {
-        "kind": "Tab",
-        "role": "tab",
-        "name": "Journey",
-        "key": "tab: Journey",
-        "container": "tablist",
-        "boardBox": {
-          "x": 90,
-          "y": 176,
-          "w": 86,
-          "h": 44
         },
         "exception": {
           "reason": "Conflicts 4: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn. The page's crumb under the header carries the same words as plain text.",
@@ -684,34 +689,53 @@
         },
         "pageBox": {
           "x": 269,
-          "y": 536,
+          "y": 85,
           "w": 258,
-          "h": 18
+          "h": 15
         },
         "reasons": [
-          "order: on the board it comes after Text \"Tunde Bello · PMO\"; on the page it comes after Heading \"Weekly client report · 5–11 Nov\"",
           "across the page: middle on the board (50% across), left on the page (28% across)",
           "inside the main area on the board, inside the top navigation on the page"
         ]
       },
       {
-        "label": "Text \"NEEDS FIXING\"",
-        "kind": "Text",
-        "name": "NEEDS FIXING",
+        "label": "Heading \"Weekly client report · 5–11 Nov\"",
+        "kind": "Heading",
+        "name": "Weekly client report · 5–11 Nov",
         "boardBox": {
-          "x": 1252,
-          "y": 133,
-          "w": 100,
-          "h": 21
+          "x": 88,
+          "y": 119,
+          "w": 607,
+          "h": 35
         },
         "pageBox": {
           "x": 88,
-          "y": 562,
-          "w": 100,
-          "h": 23
+          "y": 120,
+          "w": 596,
+          "h": 35
         },
         "reasons": [
-          "across the page: right on the board (90% across), left on the page (10% across)"
+          "order: on the board it comes after Text \"PROJECTS / LAGOON HEALTH / WEEKLY CLIENT REPORT · WCR-0216\"; on the page it comes after Text \"NEEDS FIXING\""
+        ]
+      },
+      {
+        "label": "Tab \"Journey\"",
+        "kind": "Tab",
+        "name": "Journey",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
         ]
       },
       {
@@ -726,7 +750,7 @@
         },
         "pageBox": {
           "x": 1012,
-          "y": 729,
+          "y": 392,
           "w": 340,
           "h": 1511
         },
@@ -746,7 +770,7 @@
         },
         "pageBox": {
           "x": 1028,
-          "y": 1575,
+          "y": 1238,
           "w": 308,
           "h": 36
         },
@@ -767,7 +791,7 @@
         },
         "pageBox": {
           "x": 1028,
-          "y": 2140,
+          "y": 1803,
           "w": 308,
           "h": 18
         },
@@ -793,229 +817,13 @@
       {
         "kind": "Navigation area",
         "role": "navigation",
-        "name": "Breadcrumb",
-        "container": "main",
-        "pageBox": {
-          "x": 88,
-          "y": 85,
-          "w": 315,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "MY WORK / WEEKLY CLIENT REPORT / WCR-0216",
-        "container": "navigation",
-        "pageBox": {
-          "x": 88,
-          "y": 85,
-          "w": 315,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "MY WORK",
-        "container": "navigation",
-        "pageBox": {
-          "x": 88,
-          "y": 85,
-          "w": 54,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "revision 4",
-        "container": "main",
-        "pageBox": {
-          "x": 1131,
-          "y": 85,
-          "w": 57,
-          "h": 15
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
-        "name": "Work item",
-        "container": "main",
-        "pageBox": {
-          "x": 1199,
-          "y": 77,
-          "w": 153,
-          "h": 32
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "Overview",
-        "container": "navigation",
-        "pageBox": {
-          "x": 1201,
-          "y": 79,
-          "w": 82,
-          "h": 28
-        }
-      },
-      {
-        "kind": "Link",
-        "role": "link",
-        "name": "History",
-        "container": "navigation",
-        "pageBox": {
-          "x": 1283,
-          "y": 79,
-          "w": 69,
-          "h": 28
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "ACTION NEEDED",
-        "container": "main",
-        "pageBox": {
-          "x": 784,
-          "y": 115,
-          "w": 117,
-          "h": 27
-        }
-      },
-      {
-        "kind": "list",
-        "role": "list",
-        "name": "Facts",
-        "container": "main",
-        "pageBox": {
-          "x": 88,
-          "y": 167,
-          "w": 1264,
-          "h": 63
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "DRAFTED",
-        "container": "main",
-        "pageBox": {
-          "x": 104,
-          "y": 181,
-          "w": 180,
-          "h": 14
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "In progress",
-        "container": "main",
-        "pageBox": {
-          "x": 104,
-          "y": 199,
-          "w": 180,
-          "h": 17
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "RECEIPT",
-        "container": "main",
-        "pageBox": {
-          "x": 944,
-          "y": 181,
-          "w": 180,
-          "h": 14
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Unknown",
-        "container": "main",
-        "pageBox": {
-          "x": 944,
-          "y": 199,
-          "w": 180,
-          "h": 17
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Paid is a separate Finance fact and is not part of this line.",
-        "container": "main",
-        "pageBox": {
-          "x": 88,
-          "y": 238,
-          "w": 1264,
-          "h": 18
-        }
-      },
-      {
-        "kind": "list",
-        "role": "list",
-        "name": "Stations in order",
-        "container": "main",
-        "pageBox": {
-          "x": 90,
-          "y": 282,
-          "w": 1260,
-          "h": 82
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Tola",
-        "container": "main",
-        "pageBox": {
-          "x": 146,
-          "y": 402,
-          "w": 156,
-          "h": 21
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Cannot approve, send or pay.",
-        "container": "main",
-        "pageBox": {
-          "x": 146,
-          "y": 423,
-          "w": 156,
-          "h": 18
-        }
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "WAITING",
-        "container": "main",
-        "pageBox": {
-          "x": 919,
-          "y": 410,
-          "w": 69,
-          "h": 23
-        }
-      },
-      {
-        "kind": "Navigation area",
-        "role": "navigation",
         "name": "Where this sits",
         "container": "main",
         "pageBox": {
           "x": 88,
-          "y": 536,
-          "w": 1264,
-          "h": 18
+          "y": 85,
+          "w": 439,
+          "h": 15
         }
       },
       {
@@ -1025,9 +833,9 @@
         "container": "navigation",
         "pageBox": {
           "x": 88,
-          "y": 536,
+          "y": 85,
           "w": 61,
-          "h": 18
+          "h": 15
         }
       },
       {
@@ -1037,9 +845,105 @@
         "container": "navigation",
         "pageBox": {
           "x": 149,
-          "y": 536,
+          "y": 85,
           "w": 120,
-          "h": 18
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Project",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 550,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestones",
+        "container": "navigation",
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Documents",
+        "container": "navigation",
+        "pageBox": {
+          "x": 279,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Money",
+        "container": "navigation",
+        "pageBox": {
+          "x": 386,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Registers",
+        "container": "navigation",
+        "pageBox": {
+          "x": 462,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Actions",
+        "container": "navigation",
+        "pageBox": {
+          "x": 556,
+          "y": 177,
+          "w": 82,
+          "h": 44
         }
       },
       {
@@ -1049,9 +953,9 @@
         "container": "main",
         "pageBox": {
           "x": 88,
-          "y": 593,
-          "w": 1264,
-          "h": 21
+          "y": 243,
+          "w": 229,
+          "h": 18
         }
       },
       {
@@ -1061,7 +965,7 @@
         "container": "main",
         "pageBox": {
           "x": 100,
-          "y": 661,
+          "y": 324,
           "w": 899,
           "h": 21
         }
@@ -1073,7 +977,7 @@
         "container": "main",
         "pageBox": {
           "x": 100,
-          "y": 684,
+          "y": 347,
           "w": 899,
           "h": 21
         }
@@ -1085,7 +989,7 @@
         "container": "complementary",
         "pageBox": {
           "x": 1014,
-          "y": 731,
+          "y": 394,
           "w": 336,
           "h": 43
         }
@@ -1097,7 +1001,7 @@
         "container": "complementary",
         "pageBox": {
           "x": 1028,
-          "y": 788,
+          "y": 451,
           "w": 308,
           "h": 63
         }
@@ -1109,7 +1013,7 @@
         "container": "complementary",
         "pageBox": {
           "x": 1028,
-          "y": 861,
+          "y": 524,
           "w": 308,
           "h": 50
         }
@@ -1121,7 +1025,7 @@
         "container": "complementary",
         "pageBox": {
           "x": 1028,
-          "y": 919,
+          "y": 582,
           "w": 308,
           "h": 50
         }
@@ -1133,7 +1037,7 @@
         "container": "complementary",
         "pageBox": {
           "x": 1012,
-          "y": 999,
+          "y": 662,
           "w": 340,
           "h": 1241
         }
@@ -1145,7 +1049,7 @@
         "container": "form",
         "pageBox": {
           "x": 1014,
-          "y": 1001,
+          "y": 664,
           "w": 336,
           "h": 43
         }
@@ -1157,7 +1061,7 @@
         "container": "form",
         "pageBox": {
           "x": 1028,
-          "y": 1058,
+          "y": 721,
           "w": 308,
           "h": 63
         }
@@ -1169,7 +1073,7 @@
         "container": "form",
         "pageBox": {
           "x": 1028,
-          "y": 1137,
+          "y": 800,
           "w": 308,
           "h": 83
         }
@@ -1181,7 +1085,7 @@
         "container": "form",
         "pageBox": {
           "x": 1028,
-          "y": 1394,
+          "y": 1057,
           "w": 308,
           "h": 44
         }
@@ -1193,7 +1097,7 @@
         "container": "form",
         "pageBox": {
           "x": 1028,
-          "y": 1481,
+          "y": 1144,
           "w": 308,
           "h": 88
         }
@@ -1205,7 +1109,7 @@
         "container": "form",
         "pageBox": {
           "x": 1028,
-          "y": 1654,
+          "y": 1317,
           "w": 308,
           "h": 44
         }
@@ -1217,7 +1121,7 @@
         "container": "form",
         "pageBox": {
           "x": 1028,
-          "y": 1872,
+          "y": 1535,
           "w": 308,
           "h": 44
         }
@@ -1229,7 +1133,7 @@
         "container": "form",
         "pageBox": {
           "x": 1028,
-          "y": 2090,
+          "y": 1753,
           "w": 308,
           "h": 44
         }
@@ -1241,7 +1145,7 @@
         "container": "form",
         "pageBox": {
           "x": 1028,
-          "y": 2174,
+          "y": 1837,
           "w": 198,
           "h": 50
         }
@@ -1253,7 +1157,7 @@
         "container": "form",
         "pageBox": {
           "x": 1235,
-          "y": 2174,
+          "y": 1837,
           "w": 101,
           "h": 50
         }
