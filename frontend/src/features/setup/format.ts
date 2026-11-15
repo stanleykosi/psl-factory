@@ -15,6 +15,31 @@ export function lagosToday(now = new Date()): string {
   return `${year}-${month}-${day}`;
 }
 
+/** "12 Nov" in Africa/Lagos, with the year added outside the current Lagos year. Null for a missing or unreadable date. */
+export function lagosDay(value: string | undefined, now = new Date()): string | null {
+  const date = value ? new Date(value) : null;
+  if (!date || Number.isNaN(date.getTime())) return null;
+  const at = lagosParts(date);
+  const year = at.year === lagosParts(now).year ? '' : ` ${at.year}`;
+  return `${Number(at.day)} ${MONTHS[Number(at.month) - 1]}${year}`;
+}
+
+/** "12 Nov, 10:40" in Africa/Lagos (no year inside the current Lagos year). Null for an unreadable date. */
+export function lagosStamp(value: string | undefined, now = new Date()): string | null {
+  const day = lagosDay(value, now);
+  if (!day) return null;
+  const time = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(value!));
+  return `${day}, ${time}`;
+}
+
+/** The file's bytes as base64 (the E-TEMPLATE-VERSION and evidence bodies carry no other encoding). */
+export async function fileToBase64(file: File): Promise<string> {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let text = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(text);
+}
+
 /** "v2 · since 01 Oct" (year added outside the current Lagos year), "v2" without a date, null when not set. */
 export function versionText(row: RuleRow, now = new Date()): string | null {
   if (!row.set) return null;
