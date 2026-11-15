@@ -1,10 +1,10 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T06:54:02.053Z",
+  "generatedAt": "2026-11-15T07:03:43.867Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-desktop-rfp-pending.dc.html",
   "boardName": "SCR-16-desktop-rfp-pending.dc.html",
-  "pageUrl": "http://localhost:4621/work/W-2107/outcome",
+  "pageUrl": "http://localhost:4651/work/W-2107/outcome",
   "viewport": {
     "width": 1440,
     "height": 820
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 74.6 is below 90.",
+    "Visual match 74.4 is below 90.",
     "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 76.9,
     "coverageWithExceptions": 100,
-    "visual": 74.6
+    "visual": 74.4
   },
   "visual": {
-    "score": 74.6,
-    "allCellsScore": 90.5,
+    "score": 74.4,
+    "allCellsScore": 90.3,
     "width": 1440,
     "height": 820,
     "boardHeight": 820,
     "pageHeight": 820,
     "cell": 12,
-    "contentCells": 3112,
-    "mismatchedCells": 789
+    "contentCells": 3128,
+    "mismatchedCells": 802
   },
   "coverage": {
     "total": 26,
@@ -756,8 +756,7 @@
     "unexcepted": 0
   },
   "warnings": [
-    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).",
-    "Fonts: these board fonts did not load and fell back to system fonts: Archivo."
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
   ],
   "images": {
     "board": "board.png",

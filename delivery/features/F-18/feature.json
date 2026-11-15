@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-18",
   "outcome": "Team input and the RFP outcome are recorded inside the RFP frame, and the drafted follow-up goes only when a person sends it",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M2B-RFP"
   ],
@@ -141,8 +141,603 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Spec AC1 and AC2 require visual >= 90 on all 18 boards. Only 4 reach it (desktop team-input, rfp-outcome, -lost, -pending). Desktop rfp-won 73.5 and rfp-pending 74.6, and phone rfp-won 74.4, rfp-lost 78.5 and rfp-pending 77.3, are far below. `round-1/build.md` Fidelity table and `round-1/fidelity/scores.txt`. Most of the gap comes from exceptions D-60 approved (omitted copy, the 40px title), but the spec does not accept \"under 90 with a cause\" as a pass. The fix is more layout work. If the gap is a design call, the design engineer must change the criterion (or approve more exceptions) before this passes. The UI review judges the layout causes.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Several proof files can be attached on the outcome form, but the write sends only `ids[0]`. E-RFP-OUTCOME has no `evidence_ids`, so the later files are uploaded and silently dropped, and the person believes both are recorded. `frontend/src/features/rfp/useOutcome.ts` (`outcomeBody(..., ids[0], ...)`) with `frontend/src/features/response/ProofField.tsx:96-98`, which lets a person keep adding files. Expected: allow one file on the outcome form (hide the picker once one is uploaded), or tell the person only the first counts. Ask the backend developer whether the outcome should take several (add to the contract questions).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`amountValue` accepts \"0\" and \"0.00\" and sends `amount: \"0.00\"` as a real value. Typed zero is explicit, but the product rule is that unknown is not zero. Consider refusing zero (or showing a \"did you mean not known?\" hint). `frontend/src/features/rfp/labels.ts` (`amountValue`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Follow-up 409: if the reload also fails (5xx), no notice is set and the old draft stays with Send on. A repeat press would just 409 again, so nothing unsafe happens, but the person is not told. `frontend/src/features/rfp/useFollowup.ts`, stale branch (`if (!(next instanceof ApiError)) setNotice(...)`). Also, after the reload \"Current draft (vN)\" shows only while the edit box is open and `can_edit` is true. If the new draft is not editable, the person's text disappears.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A reply of `sending` followed by a failed reload leaves \"Sending\u2026\" with no way to refresh. There is no \"Check again\" for `sending`, only for `effect_uncertain`. `frontend/src/features/rfp/FollowupCard.tsx` and `useFollowup.ts` (`replied`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-6",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Outcome 409 or 403 whose reload fails with a 5xx replaces the page with the error card (`setPage({kind:'error'})`). Entries stay in hook state, but the error card shows no form until Try again (a reload, which keeps entries). Spec says keep entries; this holds, but the form disappears meanwhile. `useOutcome.ts`, `record` (`if (refusal) return setPage({ kind: 'error', error: next })`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-7",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec fixes `T-2001`/`T-2002`; the build uses `T-2101`/`T-2102` because `mock/fixtures/E-WORK-ITEM.json` and `work/W-1002.json` already hold `T-2001`, and `server.mjs` finds the default first. I confirmed the collision (`grep` finds `T-2001` in those fixtures). It is the right call, and it is already listed in build.md. The fidelity URL differs from the spec's command (`task=T-2101`). Update the spec or the coordinator's board table to match.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-8",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`RecordedView` and `RfpFrame` are drawn from the returned fields, and nothing hard-codes option text (the `Engineering` grep finds only a pre-existing comment in `features/exceptions/types.ts`). No finding. One note: `RfpFrame` leads the eyebrow with `item.line`, which the spec does not list. build.md names it, and the board draws it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After \"Send follow-up\" succeeds, the button is removed and keyboard focus drops to the page body, so a keyboard or screen-reader user loses their place. Expected: focus moves to the \"Sent\" status line or the card. Actual: document.activeElement is body. `frontend/src/features/rfp/FollowupCard.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The line \"It goes only if you send it\" still shows after the follow-up has been sent, which reads as stale. Same file.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Edit view has Send but no Cancel or \"Use the draft\", so a person who opens Edit by mistake cannot return to the drafted text without reloading. Same file.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On W-2113 (no send or edit right) the card says \"It goes only if you send it\" but shows no buttons and gives no reason. A short line saying who can send it would help. Same file.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The outcome form's disabled hint names only some missing items (for example \"Choose when you learned it and who you are recording as\", without proof), so the hint can clear while Record stays off. `frontend/src/features/rfp/OutcomeForm.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The not-open response on W-2102 (team input) has no h1 on either width. The spec's one-h1 rule covers 403/404 only, so this is a note, not a spec break.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The team input form's look depends on which CSS file loads last. `features/response/ResponseView.tsx:25-26` imports `rfp/rfp.css` before `./response.css`. `.resp-form--team { background:none; border:none; padding:0 }` (rfp.css:22) and `.resp-form { background:var(--surface); border:2px solid var(--ink); padding:20px }` (response.css:35) have equal specificity, so whichever file loads last wins. The board draws one panel (\"RECORD TEAM INPUT\"). On `next dev` the live page `/work/W-2101/respond?task=T-2101` at 1440 computes the form as border 2px, padding 20px, white. The panel then sits inside a second framed box and the layout widens. A frozen page from that build scores visual 69.4 against 93.4 for the production frozen page; see the dev side-by-side I compared. The production build passes only because the chunks happen to load in the other order. Expected: the override holds whatever the load order, e.g. `.resp-form.resp-form--team` (likewise `.rfp-form` and the phone rule at rfp.css:86), or import `response.css` first in ResponseView, as OutcomeView already does (OutcomeView.tsx:26-27).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Desktop won (SCR-16-desktop-rfp-won, 73.2). The board draws no \"NEXT\" panel on the won state. Under the right column it has the plain sentence \"When Tola is done, you'll confirm the PM and register the engagement.\" and a secondary outlined \"Open engagement EN-0042\" button (white, ink outline, ink text). The page renders a bordered \"NEXT\" panel with a primary blue button. The tool reports: background #FFFFFF on the board, #2459D6 on the page; outlined on the board, not on the page; extra heading \"NEXT\". The pending, unknown and lost boards do draw the NEXT panel, so only won differs. Expected: on won, no panel head; the sentence, then `psl-btn` secondary, in the right column (`RecordedView.tsx` / rfp.css `.rfp-recorded__aside`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone recorded states (mobile rfp-won 74.8, -pending 77.4, -lost 77.7, -unknown 85.3).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone lost (SCR-16-mobile-rfp-lost). The board draws \"Archived as ARC-0117\u2026\" as plain muted 13px text under the lessons panel. The page renders a blue info callout (`psl-callout`). The desktop board does draw the callout, so this is phone only. Expected: plain muted line at < 720px.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone unknown (SCR-16-mobile-rfp-unknown). The board's follow-up heading is \"Follow-up drafted by Tola\" in IBM Plex Sans 15/600, sentence case, with no rule. The page keeps the desktop panel head: Archivo, capitals, 2px ink bar. The tool reports font Plex vs Archivo, capitals on the page, bar under it on the page. The phone head style at rfp.css:84 is applied to `.rfp-panel > .psl-panel__head` but not to `.rfp-followup > .psl-panel__head`. Expected: the same phone head treatment for the follow-up panel. The agent card, checks and \"To\" line stay (spec Contract 6, AC15); those are forced.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Status tag tones contradict the boards, and no exception covers them. Desktop rfp-lost: the board's \"LOST \u00b7 04 DEC\" is neutral grey (#3F474B); the page uses red (#9A2F10). Desktop rfp-unknown: the board's \"OUTCOME UNKNOWN\" is amber (#6E4700); the page uses neutral. The tones come from spec Contract 1 (\"lost: red, unknown: neutral\"), but the spec's Conflicts list does not record them as a board deviation, and D-60 did not decide them. Expected: match the boards (lost neutral, unknown amber/waiting) in the status-kind tone map (`features/rfp/RfpFrame.tsx`). Alternatively the coordinator records an approved exception and updates the spec line; the design engineer must sign it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The gate still fails on 14 boards, and the causes are decisions that layout cannot fix. Once UI-1-1 to UI-1-6 are fixed, the remaining gap on each board under 90 comes from:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Tones the contract cannot carry: row tag \"NOTHING YET\" (amber on the board) and lesson category tags (PRICE and TIMELINE amber, STRENGTH green) render neutral on the page. Build.md contract question 5 asks for a tone. Until a field exists, they need a signed exception. The frontend should not derive a tone from text.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-9",
+      "round": 1,
+      "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Won rows: the board shows \"Engagement EN-0042 created (route A, from this RFP) \u00b7 04 DEC\" and \"Tola building the planning packet \u00b7 AGENT WORKING\". v7 `engagement` carries only `reference` and `work_id`, so the page shows \"Engagement EN-0042 created\" with no date. Add to the D-RFP-OUTCOME r3 question list next to question 3.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-18/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-15T07:11:03Z",
+          "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+          "evidence_refs": [
+            "delivery/features/F-18/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-18/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+          "evidence_refs": [
+            "delivery/features/F-18/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate)",
+          "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+          "evidence_refs": [
+            "delivery/features/F-18/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "security reviewer",
+          "snapshot_ref": "352893425c8d197b3de15ab04eac6c68d1d05782",
+          "evidence_refs": [
+            "delivery/features/F-18/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -255,7 +850,7 @@
     }
   },
   "created_at": "2026-11-14T21:38:06Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -281,6 +876,22 @@
       "round": 1,
       "head": "352893425c8d197b3de15ab04eac6c68d1d05782",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T07:11:03Z",
+      "round": 1,
+      "head": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T07:11:03Z",
+      "round": 2,
+      "head": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "reason": null
     }
   ],
   "routing": {
@@ -297,10 +908,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "352893425c8d197b3de15ab04eac6c68d1d05782"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

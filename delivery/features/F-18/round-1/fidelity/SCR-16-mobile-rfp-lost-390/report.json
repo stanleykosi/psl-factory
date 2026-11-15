@@ -1,10 +1,10 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T06:54:35.730Z",
+  "generatedAt": "2026-11-15T07:03:39.364Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-mobile-rfp-lost.dc.html",
   "boardName": "SCR-16-mobile-rfp-lost.dc.html",
-  "pageUrl": "http://localhost:4621/work/W-2106/outcome",
+  "pageUrl": "http://localhost:4651/work/W-2106/outcome",
   "viewport": {
     "width": 390,
     "height": 844
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 78.5 is below 90.",
+    "Visual match 77.7 is below 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 40,
     "coverageWithExceptions": 100,
-    "visual": 78.5
+    "visual": 77.7
   },
   "visual": {
-    "score": 78.5,
-    "allCellsScore": 89.7,
+    "score": 77.7,
+    "allCellsScore": 89.2,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 1122,
-    "mismatchedCells": 241
+    "contentCells": 1138,
+    "mismatchedCells": 254
   },
   "coverage": {
     "total": 5,

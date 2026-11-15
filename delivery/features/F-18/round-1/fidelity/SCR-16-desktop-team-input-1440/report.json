@@ -1,10 +1,10 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T06:53:24.773Z",
+  "generatedAt": "2026-11-15T07:05:18.697Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-desktop-team-input.dc.html",
   "boardName": "SCR-16-desktop-team-input.dc.html",
-  "pageUrl": "http://localhost:4623/frozen/team-input-1440.html",
+  "pageUrl": "http://localhost:4653/frozen/team-input-1440.html",
   "viewport": {
     "width": 1440,
     "height": 900

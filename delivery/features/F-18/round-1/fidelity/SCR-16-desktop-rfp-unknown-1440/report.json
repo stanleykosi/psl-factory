@@ -1,10 +1,10 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T06:54:06.992Z",
+  "generatedAt": "2026-11-15T07:03:53.584Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-desktop-rfp-unknown.dc.html",
   "boardName": "SCR-16-desktop-rfp-unknown.dc.html",
-  "pageUrl": "http://localhost:4621/work/W-2108/outcome",
+  "pageUrl": "http://localhost:4651/work/W-2108/outcome",
   "viewport": {
     "width": 1440,
     "height": 900
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 86.7 is below 90.",
+    "Visual match 86.5 is below 90.",
     "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 82.4,
     "coverageWithExceptions": 100,
-    "visual": 86.7
+    "visual": 86.5
   },
   "visual": {
-    "score": 86.7,
-    "allCellsScore": 92.3,
+    "score": 86.5,
+    "allCellsScore": 92.2,
     "width": 1440,
     "height": 958,
     "boardHeight": 958,
     "pageHeight": 986,
     "cell": 12,
-    "contentCells": 5534,
-    "mismatchedCells": 738
+    "contentCells": 5549,
+    "mismatchedCells": 751
   },
   "coverage": {
     "total": 34,
