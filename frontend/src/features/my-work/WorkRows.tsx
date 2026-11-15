@@ -31,6 +31,17 @@ function Stations({ item, className }: { item: WorkItem; className: string }) {
   return <MiniStationBar className={className} stations={miniSegments(item.station, item.state).map((cls) => STATUS[cls])} text={stationText(item.station, item.state)} />;
 }
 
+/** The phone card draws the bar alone (the state tag beside it carries the words), so it is not the MiniStationBar, which always writes its words. */
+function CardBar({ item }: { item: WorkItem }) {
+  return (
+    <span className="psl-mini__bar my-work__cardbar" aria-hidden="true">
+      {miniSegments(item.station, item.state).map((cls, i) => (
+        <i key={i} className={cls || undefined} />
+      ))}
+    </span>
+  );
+}
+
 const COLUMNS: Column<WorkItem>[] = [
   {
     key: 'work',
@@ -83,7 +94,7 @@ export function WorkCards({ items }: { items: WorkItem[] }) {
               </span>
               <span className="my-work__age">{formatAge(item.age_seconds)}</span>
             </span>
-            <Stations item={item} className="my-work__cardbar" />
+            <CardBar item={item} />
             <span className="my-work__cardstate">
               <StateTag state={item.state} />
               <span className="my-work__cardnote">{item.waiting_on}</span>

@@ -4,15 +4,17 @@ import Link from 'next/link';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { TaskDecision, WorkItem } from '@/api/types';
-import { AgentAvatar, agentKey, Breadcrumb, MiniStationBar, PersonAvatar, Unknown, When as WhenValue, type StationStatus } from '@/components';
+import { formatWat } from '@/features/work-item/labels';
+import { AgentAvatar, agentKey, Breadcrumb, MiniStationBar, PersonAvatar, Unknown, type StationStatus } from '@/components';
 import { showSampleLabel } from '@/shell/sample';
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import { AGENT_NAMES, formatAmount, personStationIndex, STEP_STATUS, type Amount } from './format';
 import type { DecidePresentation } from './presentation';
 
+// The boards write these as "12 Nov 10:30" (no year, no WAT); the shared formatter's "12 Nov 2026 10:30 WAT" stays for the screens whose boards do not draw one.
 export function When({ at }: { at: string }) {
-  return <WhenValue value={at} show="datetime" />;
+  return <time dateTime={at}>{formatWat(at)}</time>;
 }
 
 type HeaderProps = {

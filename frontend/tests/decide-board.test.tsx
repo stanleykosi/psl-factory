@@ -109,7 +109,7 @@ describe('default board W-1901 (criterion 8)', () => {
       Basis: 'Contract stage 2 of 4 · terms v1',
       To: 'accounts@lagoonhealth.example',
       'Changed since Invoice v1': 'PO number, as you asked',
-      Version: 'Invoice v2 · drafted 12 Nov 2026 10:30 WAT',
+      Version: 'Invoice v2 · drafted 12 Nov 10:30',
     });
     expect(factTexts().slice(0, 2)).toEqual(['DRAFTEDEarned: v2', 'REVIEWEDIn progress: Waiting']);
     expect(factTexts()[4]).toBe('RECEIPT RECORDEDUnknown');
@@ -146,7 +146,7 @@ describe('done board (criterion 15)', () => {
     fireEvent.click(button('Approve v2'));
     const heading = await screen.findByRole('heading', { level: 1, name: 'Invoice v2 for Lagoon Health is approved' });
     expect(heading.closest('.decide-banner')!.className).toBe('decide-banner decide-banner--success');
-    expect(screen.getByText(/^YOU APPROVED ·/).textContent).toBe('YOU APPROVED · 10:47 WAT');
+    expect(screen.getByText(/^YOU APPROVED ·/).textContent).toBe('YOU APPROVED · 10:47');
     await screen.findByText(/^Chidi will issue it and email it to Lagoon Health\./);
     expect(factTexts().slice(0, 4)).toEqual(['DRAFTEDEarned: v2', 'REVIEWEDEarned: You', 'APPROVEDEarned: 10:47', 'SENTNot yet: Next']);
     // the board's next_step already says it: the page does not repeat it
@@ -257,7 +257,7 @@ describe('not-yours board W-1903 (criterion 16)', () => {
       '₦4,250,000.00',
       'SOW v2 stage 2',
       'Waiting for Finance Lead',
-      'Ada Okafor (Finance Lead) was alerted at 12 Nov 2026 10:42 WAT by WhatsApp and email',
+      'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:42 by WhatsApp and email',
     ]) {
       expect(text(), value).toContain(value);
     }
@@ -296,7 +296,7 @@ describe('own board W-1904 (criterion 17)', () => {
       '₦4,250,000.00',
       'Contract stage 2 of 4 · terms v1',
       'Prepared by You with Chidi',
-      'Ada Okafor (Finance Lead) was alerted at 12 Nov 2026 10:20 WAT',
+      'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:20',
       'Waiting · Finance Lead',
     ]) {
       expect(text(), value).toContain(value);

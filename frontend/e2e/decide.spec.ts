@@ -143,7 +143,7 @@ test('the approve done view has the green success banner; return has the neutral
   const banner = page.locator('.decide-banner');
   await expect(banner.getByRole('heading', { level: 1 })).toHaveText('Invoice v2 is approved');
   await expect(banner).toHaveCSS('background-color', 'rgb(221, 239, 227)');
-  await expect(banner.getByText(/^YOU APPROVED · \d\d:\d\d WAT$/)).toHaveCSS('color', 'rgb(22, 80, 47)');
+  await expect(banner.getByText(/^YOU APPROVED · \d\d:\d\d$/)).toHaveCSS('color', 'rgb(22, 80, 47)');
   await expect(banner.getByRole('heading', { level: 1 })).toHaveCSS('color', 'rgb(22, 80, 47)');
 
   await page.request.post(`${MOCK}/__mock/reset`);
@@ -230,7 +230,7 @@ test('stale flow on the mock: one decide, then Review version 3 claims revision 
   });
   await openDecision(page, 'W-1207', 'T-1207');
   await page.getByRole('button', { name: 'Approve v2' }).click();
-  await expect(page.getByText('Version 3 was drafted at 12 Nov 2026 10:46 WAT.')).toBeVisible();
+  await expect(page.getByText('Version 3 was drafted at 12 Nov 10:46.')).toBeVisible();
   await expect(page.getByText('Version 2 can no longer be approved.')).toBeVisible();
   const current = page.getByRole('region', { name: 'VERSION 3 · CURRENT' });
   await expect(page.getByRole('region', { name: 'VERSION 2 · REPLACED' })).toBeVisible();

@@ -78,9 +78,9 @@ describe('overview', () => {
     expect(itemUrls()[0].pathname).toBe('/api/v1/work/W-1004');
     const boxes = facts();
     expect(boxes.map((li) => li.textContent)).toEqual([
-      'DRAFTEDEarned12 Nov 2026 10:58 WAT',
-      'REVIEWEDEarned12 Nov 2026 16:12 WAT',
-      'APPROVEDEarned12 Nov 2026 16:40 WAT',
+      'DRAFTEDEarned12 Nov 10:58',
+      'REVIEWEDEarned12 Nov 16:12',
+      'APPROVEDEarned12 Nov 16:40',
       'SENT—Not yet',
       'RECEIPT RECORDEDUnknown',
       'VERIFIED—Not yet',
@@ -107,7 +107,7 @@ describe('overview', () => {
     const crumb = screen.getByRole('navigation', { name: 'Breadcrumb' });
     expect(crumb.textContent).toBe('My work / Prepare an invoice / INV-0419');
     expect(within(crumb).getByRole('link', { name: 'My work' }).getAttribute('href')).toBe('/my-work');
-    expect(crumb.querySelector('[aria-current="page"]')!.textContent).toBe('Prepare an invoice / INV-0419');
+    expect(crumb.querySelector('.psl-mono')!.textContent).toBe('INV-0419');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · Milestone 3 invoice');
     expect(screen.getByText('Ready to continue').className).toBe('psl-tag psl-tag--done work-state');
     expect(screen.getByText('revision 4')).toBeTruthy();
@@ -350,8 +350,8 @@ describe('history', () => {
     const shown = rows();
     expect(shown).toHaveLength(12);
     expect(shown.map((tr) => tr.querySelector('time')!.getAttribute('dateTime'))).toEqual(page.items.map((e) => e.at));
-    expect(shown[0].querySelector('time')!.textContent).toBe('12 Nov 2026 16:40 WAT');
-    expect(shown[0].textContent).toBe('12 Nov 2026 16:40 WATPERSON Ada Okafor · Finance LeadApproved invoice v2Note: "Matches SOW-0198 stage 3."Version: v2');
+    expect(shown[0].querySelector('time')!.textContent).toBe('12 Nov 16:40');
+    expect(shown[0].textContent).toBe('12 Nov 16:40PERSON Ada Okafor · Finance LeadApproved invoice v2Note: "Matches SOW-0198 stage 3."Version: v2');
     expect(shown.map((tr) => tr.querySelector('.psl-tag')!.textContent)).toEqual(page.items.map((e) => e.actor_kind.toUpperCase()));
     expect(shown[0].querySelector('.psl-tag')!.className).toBe('psl-tag psl-tag--neutral');
     expect(shown[3].querySelector('.psl-tag')!.className).toBe('psl-tag psl-tag--agent');
@@ -381,7 +381,7 @@ describe('history', () => {
     );
     await open('W-1004', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
-    expect(rows()[0].textContent).toBe('12 Nov 2026 15:20 WATPERSON Bisi Ade · FinanceRestrictedVersion: —');
+    expect(rows()[0].textContent).toBe('12 Nov 15:20PERSON Bisi Ade · FinanceRestrictedVersion: —');
     expect(document.body.innerHTML).not.toMatch(/SECRET-EVENT|SECRET-DETAIL|SECRET-VERSION|payroll/);
   });
 

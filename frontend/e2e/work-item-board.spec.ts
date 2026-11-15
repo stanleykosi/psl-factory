@@ -163,7 +163,7 @@ test.describe('history on the boards (AC 18)', () => {
     await expect(page.getByRole('tablist', { name: 'Work item' }).getByRole('tab')).toHaveText(['Overview', 'History7']);
     await expect(page.getByRole('radio')).toHaveText(['All7', 'Decisions2', 'Agent work2', 'Evidence1']);
     await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(7);
-    await expect(page.getByRole('table').locator('tbody tr').first().locator('time')).toHaveText('12 Nov 2026 16:40 WAT');
+    await expect(page.getByRole('table').locator('tbody tr').first().locator('time')).toHaveText('12 Nov 16:40');
     await expect(page.getByRole('complementary', { name: 'About history' })).toBeVisible();
   });
 

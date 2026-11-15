@@ -8,8 +8,9 @@
 import Link from 'next/link';
 import { Fragment, useId, type ReactNode } from 'react';
 
-import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, formatDateTime, formatTime, Panel, PersonAvatar, SampleLabel, Tag, useIsPhone } from '@/components';
+import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, Panel, PersonAvatar, SampleLabel, Tag, useIsPhone } from '@/components';
 import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
+import { formatClock } from '@/features/decide/format';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
@@ -20,6 +21,7 @@ import {
   AGENT_TAGS,
   agentPose,
   currentStationIndex,
+  formatWat,
   FACTS,
   nextStepKind,
   STATIONS,
@@ -50,7 +52,7 @@ function FactValue({ fact, detail }: { fact: Fact | undefined; detail?: string }
     return (
       <>
         <strong>Earned</strong>
-        {fact?.at && <time dateTime={fact.at}>{formatDateTime(fact.at)}</time>}
+        {fact?.at && <time dateTime={fact.at}>{formatWat(fact.at)}</time>}
       </>
     );
   }
@@ -250,7 +252,7 @@ function AgentSection({ agent, view }: { agent: WorkItem['agent']; view: WorkIte
                 <span className="work-agentsec__text">{step.text}</span>
                 {step.source && <span className="work-agentsec__src">Read: {step.source}</span>}
               </span>
-              {step.at ? <time className="psl-mono" dateTime={step.at}>{formatTime(step.at)}</time> : <span />}
+              {step.at ? <time className="psl-mono" dateTime={step.at}>{formatClock(step.at)}</time> : <span />}
             </li>
           ))}
         </ol>
@@ -358,7 +360,7 @@ function AgentPanel({ agent, view, panel }: { agent: WorkItem['agent']; view: Wo
           {(agent.started_at || panel?.note || links.length > 0) && (
             <div className="work-agentpanel__foot">
               <span>
-                {agent.started_at && `Started ${formatTime(agent.started_at)}`}
+                {agent.started_at && `Started ${formatClock(agent.started_at)}`}
                 {agent.started_at && panel?.note && ' · '}
                 {panel?.note}
               </span>

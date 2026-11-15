@@ -65,8 +65,11 @@ export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRet
       </p>
       <TextArea
         ref={noteRef}
-        label="Note"
-        hint="Needed to return or reject."
+        label={
+          <>
+            Note <span className="psl-opt">(needed to return or reject)</span>
+          </>
+        }
         value={note}
         limit={NOTE_MAX}
         error={noteError ?? undefined}

@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { DecideResult, TaskDecision, WorkItem, WorkTask } from '@/api/types';
-import { Button, buttonClass, Callout, EmptyState, formatTime, Panel, Tag, TextArea, Unknown, useIsPhone } from '@/components';
+import { Button, buttonClass, Callout, EmptyState, Panel, Tag, TextArea, Unknown, useIsPhone } from '@/components';
 import { FactsStrip } from '@/features/work-item/WorkItemOverview';
 import { FACTS } from '@/features/work-item/labels';
 import { presentationOf } from '@/features/work-item/presentation';
 
 import { AmountValue, ApprovalChain, DecideHeader, When } from './DecisionContent';
-import { AGENT_NAMES, channelWords, formatAmount, VERDICT_WORDS, type Asked, type CannotActReason, type Verdict } from './format';
+import { AGENT_NAMES, channelWords, formatAmount, formatClock, VERDICT_WORDS, type Asked, type CannotActReason, type Verdict } from './format';
 import { nextDecision, type DecidePresentation } from './presentation';
 
 const workHref = (id: string) => `/work/${encodeURIComponent(id)}`;
@@ -203,15 +203,19 @@ export function CannotActView({ id, task, facts, view }: CannotActProps) {
             )}
           </dl>
         </Panel>
-        <Panel className="decide-own__review" head={`Waiting · ${task.required_role}`}>
-          <Callout kind="info" announce={false}>
-            <h2 id="decide-readonly-title" className="decide-callout-text">
-              {copy.heading}
-            </h2>
-          </Callout>
-          <AskedList asked={asked} />
-          {open}
-        </Panel>
+        {/* the boards draw this card as the page's side panel, so it stays an aside (Panel is a section) */}
+        <aside className="psl-panel decide-own__review" aria-labelledby="decide-readonly-title">
+          <p className="psl-panel__head">Waiting · {task.required_role}</p>
+          <div className="psl-panel__body">
+            <Callout kind="info" announce={false}>
+              <h2 id="decide-readonly-title" className="decide-callout-text">
+                {copy.heading}
+              </h2>
+            </Callout>
+            <AskedList asked={asked} />
+            {open}
+          </div>
+        </aside>
         <div className="decide-own__chain">
           <ApprovalChain chain={task.decision.chain} />
         </div>
@@ -309,7 +313,8 @@ export function StaleView({ replaced, current, agent, onReview }: StaleProps) {
   useEffect(() => head.current?.focus(), []);
   return (
     <section className="decide-stale" aria-labelledby="decide-stale-title">
-      <Callout kind="warning" className="decide-stale__notice">
+      {/* written out: the boards set this notice as running text with no icon (block flow, see decide.css) */}
+      <div className="psl-callout psl-callout--warning decide-stale__notice" role="alert">
         <h2 id="decide-stale-title" ref={head} tabIndex={-1} className="decide-stale__head">
           A newer version arrived while you were reading.
         </h2>{' '}
@@ -321,7 +326,7 @@ export function StaleView({ replaced, current, agent, onReview }: StaleProps) {
           )}
           Version {oldN} can no longer be approved.
         </p>
-      </Callout>
+      </div>
       <div className="decide-compare">
         <section className="decide-compare__old" aria-labelledby="decide-old-title">
           <h3 id="decide-old-title" className="decide-colhead">
@@ -389,6 +394,7 @@ type DoneProps = {
 /** An echo other than the three verdicts gets neutral words: the page never claims a decision it wasn't told. */
 const RECORDED = { eyebrow: 'DECISION RECORDED', heading: (label: string) => `Decision recorded on ${label}` };
 
+// The next-step card is the callout's markup written out: the boards draw Chidi's pose where the callout has its icon.
 export function DoneView({ id, item, result, label, reloaded, refreshFailed, view }: DoneProps) {
   const known = Object.hasOwn(VERDICT_WORDS, result.verdict);
   const words = known ? VERDICT_WORDS[result.verdict as Verdict] : RECORDED;
@@ -410,7 +416,7 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
         banner={approved ? 'success' : 'neutral'}
         eyebrow={
           <>
-            {words.eyebrow} · <time dateTime={result.decided_at}>{formatTime(result.decided_at)}</time>
+            {words.eyebrow} · <time dateTime={result.decided_at}>{formatClock(result.decided_at)}</time>
           </>
         }
         title={words.heading(view?.client ? `${label} for ${view.client}` : label)}
@@ -426,12 +432,12 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
         {reloaded && <FactsStrip facts={reloaded.facts} details={facts?.facts} tones={facts?.fact_tones} paidNote={false} />}
         <div className="decide-done__row">
           {reloaded && (
-            <Callout kind={approved ? 'success' : 'info'} announce={false} className="decide-next">
+            <div className={`psl-callout psl-callout--${approved ? 'success' : 'info'} decide-next`}>
               {image && <Image className="decide-next__img" src={image} alt="" width={96} height={136} unoptimized />}
               <p className="decide-plain">
                 <strong>Next step.</strong> {nextStep}
               </p>
-            </Callout>
+            </div>
           )}
           <p className="decide-links">
             {next && (

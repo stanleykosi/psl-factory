@@ -85,7 +85,7 @@ describe('header (AC 9) and titles (AC 5)', () => {
     expect(h1.textContent).toBe('Lagoon Health · Milestone 2 invoice');
     expect(h1.className).toBe('shell-title');
     expect(h1.parentElement!.querySelector('.psl-tag')!.textContent).toBe(STATE_TAGS.waiting.text);
-    expect(screen.getByText('Started by Tunde Bello (PMO) · 10 Nov 2025 14:05 WAT · revision 2')).toBeTruthy();
+    expect(screen.getByText('Started by Tunde Bello (PMO) · Mon 10 Nov 14:05 · revision 2')).toBeTruthy();
     expect(document.querySelectorAll('h1')).toHaveLength(1);
   });
 
@@ -428,15 +428,15 @@ describe('history on the boards (AC 18)', () => {
     expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual(['WHEN', 'WHAT HAPPENED', 'VERSION']);
     const rows = within(screen.getByRole('table')).getAllByRole('row').slice(1);
     expect(rows).toHaveLength(7);
-    expect(rows[0].textContent).toBe('12 Nov 2026 16:40 WATPERSON Ada Okafor · Finance LeadApproved invoice v2 for ₦4,250,000.00Note: "Matches SOW-0198 stage 2."Version: v2');
+    expect(rows[0].textContent).toBe('12 Nov 16:40PERSON Ada Okafor · Finance LeadApproved invoice v2 for ₦4,250,000.00Note: "Matches SOW-0198 stage 2."Version: v2');
     expect(rows.map((r) => r.querySelector('time')!.textContent)).toEqual([
-      '12 Nov 2026 16:40 WAT',
-      '12 Nov 2026 16:12 WAT',
-      '12 Nov 2026 15:58 WAT',
-      '12 Nov 2026 11:04 WAT',
-      '11 Nov 2026 17:30 WAT',
-      '11 Nov 2026 17:05 WAT',
-      '11 Nov 2026 17:02 WAT',
+      '12 Nov 16:40',
+      '12 Nov 16:12',
+      '12 Nov 15:58',
+      '12 Nov 11:04',
+      '11 Nov 17:30',
+      '11 Nov 17:05',
+      '11 Nov 17:02',
     ]);
     expect(screen.getByRole('complementary', { name: 'About history' })).toBeTruthy();
   });
@@ -454,7 +454,7 @@ describe('history on the boards (AC 18)', () => {
     const cards = within(screen.getByRole('list', { name: 'History, newest first' })).getAllByRole('listitem');
     // the phone board lists the five newest entries; "+ 2 earlier entries" shows the rest in place
     expect(cards).toHaveLength(5);
-    expect(cards[0].textContent).toContain('12 Nov 2026 16:40 WAT · ');
+    expect(cards[0].textContent).toContain('12 Nov 16:40 · ');
     fireEvent.click(screen.getByRole('button', { name: '+ 2 earlier entries' }));
     expect(within(screen.getByRole('list', { name: 'History, newest first' })).getAllByRole('listitem')).toHaveLength(7);
   });

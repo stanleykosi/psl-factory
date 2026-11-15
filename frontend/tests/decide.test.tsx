@@ -149,8 +149,8 @@ describe('default view', () => {
     expect(text()).toContain('Step 3 of 3');
     const steps = within(screen.getByRole('region', { name: 'Approval chain' })).getAllByRole('listitem');
     expect(steps.map((li) => li.textContent)).toEqual([
-      '1PM · Tunde BelloApproved 12 Nov 2026 09:05 WAT',
-      '2PMO Lead · Ngozi EzeApproved 12 Nov 2026 09:40 WAT',
+      '1PM · Tunde BelloApproved 12 Nov 09:05',
+      '2PMO Lead · Ngozi EzeApproved 12 Nov 09:40',
       '3Finance Lead · Ada Okafor (you)Current',
     ]);
     expect(steps[0].querySelector('time')!.getAttribute('dateTime')).toBe('2026-11-12T08:05:00Z');
@@ -187,7 +187,7 @@ describe('claim and decide', () => {
     expect(counts().decides).toEqual([
       { method: 'POST', path: '/api/v1/tasks/T-1201/decision', body: { expected_revision: 2, verdict: 'approve' }, csrf: 'mock-csrf-finance_lead' },
     ]);
-    expect(screen.getByText(/^YOU APPROVED ·/).textContent).toBe('YOU APPROVED · 10:47 WAT');
+    expect(screen.getByText(/^YOU APPROVED ·/).textContent).toBe('YOU APPROVED · 10:47');
     // SCR-03-desktop-done: the eyebrow and heading sit in the green success banner.
     const banner = screen.getByText(/^YOU APPROVED ·/).closest('.decide-banner')!;
     expect(banner.className).toBe('decide-banner decide-banner--success');
@@ -196,7 +196,7 @@ describe('claim and decide', () => {
     await screen.findByText('Chidi issues invoice v2 and emails it to Lagoon Health.');
     expect(screen.getByText('Chidi issues invoice v2 and emails it to Lagoon Health.').closest('.psl-callout')!.className).toContain('psl-callout--success');
     const approved = within(screen.getByRole('list', { name: 'Facts' })).getAllByRole('listitem')[2];
-    expect(approved.textContent).toBe('APPROVEDEarned12 Nov 2026 10:47 WAT');
+    expect(approved.textContent).toBe('APPROVEDEarned12 Nov 10:47');
     expect(screen.getByText('Paid is tracked separately by Finance and is not part of this decision.')).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1201');
     expect(screen.getByRole('link', { name: 'Back to my work' }).getAttribute('href')).toBe('/my-work');
@@ -221,7 +221,7 @@ describe('claim and decide', () => {
     await ready();
     fireEvent.click(button('Approve v2'));
     await screen.findByText('Decision recorded on Invoice v2');
-    expect(screen.getByText(/^DECISION RECORDED ·/).textContent).toBe('DECISION RECORDED · 10:47 WAT');
+    expect(screen.getByText(/^DECISION RECORDED ·/).textContent).toBe('DECISION RECORDED · 10:47');
     expect(screen.getByText(/^DECISION RECORDED ·/).closest('.decide-banner')!.className).toBe('decide-banner decide-banner--neutral');
     await screen.findByText('Chidi issues invoice v2 and emails it to Lagoon Health.');
     expect(screen.getByText('Chidi issues invoice v2 and emails it to Lagoon Health.').closest('.psl-callout')!.className).toContain('psl-callout--info');
@@ -307,7 +307,7 @@ describe('stale (A-STALE)', () => {
     await screen.findByText('A newer version arrived while you were reading.');
     expect(counts().decides).toHaveLength(1);
     expect(counts().gets).toBe(2);
-    expect(text()).toContain('Version 3 was drafted at 12 Nov 2026 10:46 WAT.');
+    expect(text()).toContain('Version 3 was drafted at 12 Nov 10:46.');
     expect(text()).toContain('Version 2 can no longer be approved.');
     const old = screen.getByRole('region', { name: 'VERSION 2 · REPLACED' });
     const now = screen.getByRole('region', { name: 'VERSION 3 · CURRENT' });
@@ -373,8 +373,8 @@ describe('cannot act (A-NOT-YOURS)', () => {
 
   it('copy follows cannot_act_reason, with who was asked', async () => {
     const cases: [string, string[]][] = [
-      ['W-1203', ['NOT YOUR DECISION', 'This decision needs a Finance Lead.', 'You can read it, but you can’t approve, return or reject it.', 'Ada Okafor (Finance Lead) was alerted at 12 Nov 2026 10:42 WAT by WhatsApp and email', 'Waiting for Finance Lead', 'SOW v2 stage 2']],
-      ['W-1204', ['WAITING FOR REVIEW', 'You prepared Invoice v2, so someone else must review it.', 'Ada Okafor (Finance Lead) was alerted at 12 Nov 2026 10:20 WAT']],
+      ['W-1203', ['NOT YOUR DECISION', 'This decision needs a Finance Lead.', 'You can read it, but you can’t approve, return or reject it.', 'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:42 by WhatsApp and email', 'Waiting for Finance Lead', 'SOW v2 stage 2']],
+      ['W-1204', ['WAITING FOR REVIEW', 'You prepared Invoice v2, so someone else must review it.', 'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:20']],
       ['W-1205', ['ALREADY DECIDED', 'This decision has already been made.', 'Nothing more is needed from you here.', 'Nobody has been asked yet.']],
       ['W-1206', ['NOT YOUR TURN YET', 'This needs PMO Lead first.', 'You’ll be asked when it’s your turn.', 'Step 3 of 3', 'Ngozi Eze (PMO Lead) has been asked.', 'Waiting for CEO']],
     ];
@@ -387,7 +387,7 @@ describe('cannot act (A-NOT-YOURS)', () => {
       );
       await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
       for (const value of expected) expect(text(), `${id}: ${value}`).toContain(value);
-      expect(text()).not.toContain('was alerted at 12 Nov 2026 10:20 WAT by');
+      expect(text()).not.toContain('was alerted at 12 Nov 10:20 by');
       unmount();
     }
   });

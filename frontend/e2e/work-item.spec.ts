@@ -55,9 +55,9 @@ test('W-1004 shows the A-WORKITEM facts', async ({ page }) => {
   await page.goto('/work/W-1004');
   await loaded(page);
   await expect(page.getByRole('list', { name: 'Facts' }).getByRole('listitem')).toHaveText([
-    'DRAFTEDEarned12 Nov 2026 10:58 WAT',
-    'REVIEWEDEarned12 Nov 2026 16:12 WAT',
-    'APPROVEDEarned12 Nov 2026 16:40 WAT',
+    'DRAFTEDEarned12 Nov 10:58',
+    'REVIEWEDEarned12 Nov 16:12',
+    'APPROVEDEarned12 Nov 16:40',
     'SENT—Not yet',
     'RECEIPT RECORDEDUnknown',
     'VERIFIED—Not yet',
@@ -206,6 +206,6 @@ test('history: 10 rows, Show more appends to 12, then no Show more; focus rings 
   await page.keyboard.press('Enter');
   await expect(rows).toHaveCount(12);
   await expect(more).toHaveCount(0);
-  await expect(rows.first().locator('time')).toHaveText('12 Nov 2026 16:40 WAT');
+  await expect(rows.first().locator('time')).toHaveText('12 Nov 16:40');
   await expectNoAxeViolations(page);
 });
