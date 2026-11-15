@@ -1,0 +1,342 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-15T11:22:14.385Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-34-mobile.dc.html",
+  "boardName": "SCR-34-mobile.dc.html",
+  "pageUrl": "http://localhost:4641/setup/templates",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-20/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 83.3 is below 90."
+  ],
+  "scores": {
+    "coverage": 15.4,
+    "coverageWithExceptions": 100,
+    "visual": 83.3
+  },
+  "visual": {
+    "score": 83.3,
+    "allCellsScore": 85.6,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1666,
+    "cell": 12,
+    "contentCells": 2025,
+    "mismatchedCells": 338
+  },
+  "coverage": {
+    "total": 13,
+    "found": 2,
+    "coverage": 15.4,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Templates",
+        "pageName": "Templates",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "All 8 are test templates until PSL supplies its own.",
+        "pageName": "All 8 are test templates until PSL supplies its own.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 56,
+          "y": 116,
+          "w": 306,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 56,
+          "y": 118,
+          "w": 306,
+          "h": 42
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Setup",
+        "key": "link: ← Setup",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 56,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflict 12: the phone bar link comes from useSetupPhoneBack and the frame names it 'Back to Setup' (the same F-11 request); its target is unchanged here.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoice",
+        "key": "text: Invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 194,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TEST TEMPLATE",
+        "key": "text: TEST TEMPLATE",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 218,
+          "w": 107,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Statement of work",
+        "key": "text: Statement of work",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 279,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TEST TEMPLATE",
+        "key": "text: TEST TEMPLATE",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 303,
+          "w": 107,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Weekly client report",
+        "key": "text: Weekly client report",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 364,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TEST TEMPLATE",
+        "key": "text: TEST TEMPLATE",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 388,
+          "w": 107,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Minutes",
+        "key": "text: Minutes",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 449,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TEST TEMPLATE",
+        "key": "text: TEST TEMPLATE",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 473,
+          "w": 107,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RFP response",
+        "key": "text: RFP response",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 534,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TEST TEMPLATE",
+        "key": "text: TEST TEMPLATE",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 558,
+          "w": 107,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 2 and 7: the phone cards carry a line, meta and an upload button the board does not draw, so each card is taller and the fidelity tool lists the drawn card text as missing (the same listing as the F-11 phone boards); the text is on the page in every card.",
+          "approved_by": "design engineer, 15 Nov (D-71)"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Setup",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 330,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Upload PSL's version",
+        "container": "main",
+        "pageBox": {
+          "x": 30,
+          "y": 1565,
+          "w": 330,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AS OF 12 NOV, 10:40",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1635,
+          "w": 358,
+          "h": 15
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
