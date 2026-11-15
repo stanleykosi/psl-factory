@@ -275,6 +275,7 @@ function TemplatesView() {
                           <div className="setup-docname">
                             {name(row)}
                             <span className="setup-meta">{metaParts(row).first}</span>
+                            {metaParts(row).second && <span className="setup-meta setup-docname__history">{metaParts(row).second}</span>}
                           </div>
                         </td>
                         <td>
@@ -284,7 +285,6 @@ function TemplatesView() {
                         <td>
                           <div className="setup-actioncell">
                             {uploadButton(row, 'setup-linkbtn')}
-                            {metaParts(row).second && <span className="setup-meta">{metaParts(row).second}</span>}
                           </div>
                         </td>
                       </tr>,
@@ -318,6 +318,7 @@ function TemplatesView() {
                 <span>All {rows.length} are test templates until PSL supplies its own.</span>
               </div>
             )}
+            {asOf && <p className="setup-more">AS OF {asOf.toUpperCase()}</p>}
             {notices}
             <ul className="setup-cards">
               {rows.map((row, i) => (
@@ -331,7 +332,6 @@ function TemplatesView() {
                 </li>
               ))}
             </ul>
-            {asOf && <p className="setup-more">AS OF {asOf.toUpperCase()}</p>}
             <ShowMore state={state} onMore={() => void loadMore()} noun="templates" />
           </>
         )}

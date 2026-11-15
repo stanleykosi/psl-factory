@@ -136,6 +136,27 @@ describe('the list (AC 4)', () => {
     expect(desktop().getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['DOCUMENT', 'USED BY LINE', 'STATUS', 'Action']);
   });
 
+  it('with history on every row, the line sits under the name in the Document cell, for read-only rows too', async () => {
+    const all = (rows: TemplatesPage['items']) => rows.map((r) => ({ ...r, versions: 2, updated_by: 'Ada Okafor', updated_at: '2025-06-30T10:00:00Z' }));
+    answers.list = () => json(200, withRows(fixture('readonly'), all));
+    await open();
+    const history = desktop().getAllByText(/^2 versions · Changed by Ada Okafor, /);
+    expect(history).toHaveLength(8);
+    for (const line of history) {
+      expect(line.closest('td')).toBe(within(line.closest('tr')!).getAllByRole('cell')[0]);
+    }
+    expect(desktop().queryByRole('button', { name: /Upload/ })).toBeNull();
+  });
+
+  it('the phone as-of line sits under the note, before the cards', async () => {
+    await open();
+    const asOf = phone().getByText('AS OF 12 NOV, 10:40');
+    const note = phone().getByText('All 8 are test templates until PSL supplies its own.');
+    const list = phone().getByRole('list');
+    expect(note.compareDocumentPosition(asOf) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(asOf.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it('follows the API order, and a name not in the fixture appears nowhere', async () => {
     const page = withRows(fixture('desktop'), (rows) => rows.reverse().map((r, i) => (i === 0 ? { ...r, name: 'Closure pack' } : r)));
     answers.list = () => json(200, page);
