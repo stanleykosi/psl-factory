@@ -76,7 +76,8 @@ function Card({ file, proof }: { file: ProofFile; proof: EvidenceUpload }) {
   );
 }
 
-export function ProofField({ proof, hint, layout = 'drop', label = 'Proof' }: { proof: EvidenceUpload; hint?: string; layout?: Layout; label?: string }) {
+/** `choose`: the picker's words where the layout's default does not fit (team input: "Choose a file"). */
+export function ProofField({ proof, hint, layout = 'drop', label = 'Proof', choose }: { proof: EvidenceUpload; hint?: string; layout?: Layout; label?: string; choose?: string }) {
   const input = useRef<HTMLInputElement>(null);
   const labelId = useId();
   const hintId = useId();
@@ -107,7 +108,7 @@ export function ProofField({ proof, hint, layout = 'drop', label = 'Proof' }: { 
         disabled={disabled}
         onClick={() => input.current?.click()}
       >
-        {BUTTON_TEXT[layout]}
+        {choose ?? BUTTON_TEXT[layout]}
       </button>
     </>
   );

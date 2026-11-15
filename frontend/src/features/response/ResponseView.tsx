@@ -9,6 +9,7 @@ import type { ReactNode } from 'react';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
+import { RfpFrame } from '@/features/rfp/RfpFrame';
 import { currentStationIndex } from '@/features/work-item/labels';
 import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
@@ -16,13 +17,21 @@ import type { Recorded, ResponseTask, ResponseWorkItem, TaskResponse } from './c
 import { CheckIcon, InfoIcon } from './icons';
 import { formatClock, formatDay, plural, RECORDABLE } from './labels';
 import { AgentAside, ClientResponseForm, SowSignatureForm } from './ResponseForm';
-import { findTask, useResponse, type Notice } from './useResponse';
+import { TeamInputForm } from './TeamInputForm';
+import { findTask, teamInputOpen, useResponse, type Notice } from './useResponse';
 import { useIsPhone } from './usePhone';
 
 import '@/features/work-item/work-item.css';
+import '@/features/rfp/rfp.css';
 import './response.css';
 
 const work = (id: string) => `/work/${encodeURIComponent(id)}`;
+
+/** Whether this page records the task's response: you can act, its variant is one this page records, and team input has teams and an action. */
+function recordable(task: ResponseTask | undefined, response: TaskResponse | undefined): response is TaskResponse {
+  if (!task?.you_can_act || !response || !RECORDABLE.has(response.variant)) return false;
+  return response.variant !== 'team_input' || teamInputOpen(response);
+}
 
 function Crumb({ item, response }: { item: ResponseWorkItem; response: TaskResponse }) {
   const project = response.context?.project;
@@ -185,7 +194,9 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
   const phone = useIsPhone();
   const { view, notice } = flow;
   const pathname = `${work(id)}/respond${taskId ? `?task=${encodeURIComponent(taskId)}` : ''}`;
-  const open = view.kind === 'form' && flow.task?.you_can_act === true && !!flow.response && RECORDABLE.has(flow.response.variant);
+  const open = view.kind === 'form' && recordable(flow.task, flow.response);
+  // Team input on an RFP (F-18): the phone bar goes back to the RFP, as the SCR-16 team input board draws it.
+  const rfpBack = open && flow.response?.variant === 'team_input' && view.item.rfp !== undefined;
   // The phone bar's way back, as the SCR-16 phone boards draw it: the form goes back to the queue, the SOW form
   // to its document and the success view (and anything else) to the work item. The reference sits at the bar's
   // right on the SOW form (the document's) and on success (the item's).
@@ -194,7 +205,9 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
   usePhoneBack(
     open && flow.response?.variant === 'client_response'
       ? { label: 'Queue', href: '/my-work' }
-      : { label: (open && flow.response?.context?.document?.label) || 'Work item', href: work(id), note },
+      : rfpBack
+        ? { label: 'RFP', href: work(id) }
+        : { label: (open && flow.response?.context?.document?.label) || 'Work item', href: work(id), note },
   );
 
   if (view.kind === 'loading') return <LoadingState />;
@@ -233,7 +246,7 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
   const item = view.item;
   const task = flow.task;
   const response = flow.response;
-  if (!task || !response || !task.you_can_act || !RECORDABLE.has(response.variant)) {
+  if (!task || !recordable(task, response)) {
     return (
       <div className="resp-page">
         <PageNotice notice={notice} onRecheck={recheck} />
@@ -257,6 +270,38 @@ export function ResponseView({ id, taskId }: { id: string; taskId: string | unde
     notice: <FormNotice notice={notice} />,
   };
   const current = currentStationIndex(item.stations);
+
+  if (response.variant === 'team_input') {
+    const rfp = item.rfp;
+    return (
+      <div className={phone ? 'resp-page resp-page--phone' : 'resp-page'}>
+        {phone ? (
+          <h1 className="shell-title">Record team input</h1>
+        ) : rfp ? (
+          <RfpFrame id={id} item={item} rfp={rfp} fallback={task.title} />
+        ) : (
+          <header className="resp-header">
+            <Crumb item={item} response={response} />
+            <h1 className="shell-title resp-title">{task.title}</h1>
+          </header>
+        )}
+        <PageNotice notice={notice} onRecheck={recheck} />
+        <div className="resp-board">
+          <div className="resp-main resp-main--team">
+            <TeamInputForm {...formProps} heading={!phone} />
+          </div>
+          {!phone && response.intro && (
+            <aside className="resp-aside resp-aside--team" aria-label="About team input">
+              <div className="psl-callout psl-callout--info">
+                <InfoIcon />
+                <span>{response.intro}</span>
+              </div>
+            </aside>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={phone ? 'resp-page resp-page--phone' : 'resp-page'}>

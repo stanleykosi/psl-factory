@@ -1,14 +1,17 @@
 // Contract mock for F-09's writes: E-EVIDENCE-UPLOAD, E-RESPONSE and E-WORK-ACTION, checked against the v7
-// proposal (D-RESPONSE-VIEW r2, D-WORK-ACTIONS-VIEW r2) while the base mock stays on v4. Local use only:
-// nothing is sent to anyone, and evidence lives in memory until /__mock/reset.
+// proposal (D-RESPONSE-VIEW r2, D-WORK-ACTIONS-VIEW r2) while the base mock stays on v4; and F-18's
+// E-RFP-OUTCOME (D-RFP-OUTCOME r2, proposed) with team input on E-RESPONSE. Local use only: nothing is sent to
+// anyone, and evidence lives in memory until /__mock/reset.
 //
-// Order of checks: scenario (numeric, or the F-09-only `record-then-fail`: apply the effect, then answer 502),
+// Order of checks: scenario (numeric, or `record-then-fail` on a write: apply the effect, then answer 502),
 // CSRF, persona `none` (403), the record (404), the body against the v7 request schema (422), the rules (422),
 // revisions (409), the grant from the fixture's flags (403), then success. Every reply is validated against
 // its declared v7 schema before it is sent.
 // Success: an upload stores the evidence and bumps the served item's case_revision through `overrides`; a
 // response swaps in fixtures/response/<work_id>.recorded.json with `recorded` filled from the request; a
-// reconcile swaps in fixtures/response/<work_id>.<outcome>.json. A sidecar whose `recorded` has a `summary` is
+// reconcile swaps in fixtures/response/<work_id>.<outcome>.json; an RFP outcome swaps in the recorded item of
+// its result (W-2105 won, W-2106 lost, W-2107 pending, W-2108 unknown) under the item's own id, case and next
+// revision, with recorded.at and .by from the request. A sidecar whose `recorded` has a `summary` is
 // board (r2) data and its 200 carries revision, recorded and next; otherwise the 200 is the bare
 // {task_id, work_state} and the reloaded item carries only recorded.by and .at.
 import { createHash } from 'node:crypto';
@@ -22,7 +25,7 @@ import addFormats from 'ajv-formats';
 import { DEFAULT_PERSONA, OPENAPI_PATH, PERSONAS, SCENARIO_BODIES } from './server.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-export const RESPONSE_OPERATIONS = ['E-EVIDENCE-UPLOAD', 'E-RESPONSE', 'E-WORK-ACTION'];
+export const RESPONSE_OPERATIONS = ['E-EVIDENCE-UPLOAD', 'E-RESPONSE', 'E-WORK-ACTION', 'E-RFP-OUTCOME'];
 
 const CSRF_FAILED = { code: 'csrf_failed', message: 'Your session check failed. Reload and try again.' };
 const NOT_MOCKED = { code: 'not_mocked', message: 'Not available in the mock yet.' };
@@ -99,7 +102,9 @@ function upload(body, ctx) {
   const inCase = [...items].filter(([, item]) => item.case_id === caseId);
   if (inCase.length === 0) return [404, SCENARIO_BODIES[404]];
   const all = inCase.map(([, item]) => item);
-  const kinds = all.flatMap((item) => [...responseTasks(item).map((t) => t.response.evidence_kind), item.reconcile?.evidence_kind]).filter(Boolean);
+  const kinds = all
+    .flatMap((item) => [...responseTasks(item).map((t) => t.response.evidence_kind), item.reconcile?.evidence_kind, item.rfp_outcome?.evidence_kind])
+    .filter(Boolean);
   const fields = [];
   if (!kinds.includes(body.kind)) fields.push('kind');
   const bytes = /^[A-Za-z0-9+/]+={0,2}$/.test(body.content_base64) ? Buffer.from(body.content_base64, 'base64') : Buffer.alloc(0);
@@ -108,7 +113,10 @@ function upload(body, ctx) {
   const current = all[0].case_revision;
   if (body.case_revision !== current) return [409, SCENARIO_BODIES[409]];
   const granted = all.some(
-    (item) => responseTasks(item).some((t) => t.you_can_act) || (Boolean(item.reconcile) && (item.allowed_actions ?? []).includes('reconcile')),
+    (item) =>
+      responseTasks(item).some((t) => t.you_can_act) ||
+      (Boolean(item.reconcile) && (item.allowed_actions ?? []).includes('reconcile')) ||
+      Boolean(item.rfp_outcome),
   );
   if (!granted) return [403, SCENARIO_BODIES[403]];
 
@@ -137,6 +145,12 @@ function respond(body, ctx) {
   if (body.version_id !== undefined && !(response.versions ?? []).some((v) => v.id === body.version_id)) fields.push('version_id');
   if (body.received_via !== undefined && !(response.channels ?? []).some((c) => c.value === body.received_via)) fields.push('received_via');
   if ((body.note?.length ?? 0) > NOTE_MAX) fields.push('note');
+  if (response.variant === 'team_input') {
+    const team = (response.teams ?? []).find((t) => t.key === body.team);
+    if (!team) fields.push('team');
+    if (team?.estimate_needed && body.estimate_person_days === undefined) fields.push('estimate_person_days');
+    if (typeof body.what !== 'string' || body.what.trim() === '') fields.push('what');
+  }
   if (fields.length) return invalid(fields);
   if (body.expected_revision !== task.revision) return [409, SCENARIO_BODIES[409]];
   if (body.case_revision !== undefined && body.case_revision !== item.case_revision) return [409, SCENARIO_BODIES[409]];
@@ -179,6 +193,43 @@ function act(body, ctx) {
   return [200, { work_id: workId, state: sidecar.state, revision: sidecar.revision }];
 }
 
+const OUTCOME_ITEMS = { won: 'W-2105', lost: 'W-2106', pending: 'W-2107', unknown: 'W-2108' };
+
+function recordOutcome(body, ctx) {
+  const { items, workId, overrides, work, me } = ctx;
+  const item = items.get(workId);
+  if (!item) return [404, SCENARIO_BODIES[404]];
+  const outcome = item.rfp_outcome;
+  // The rules read the block; an item without one (no grant) falls through to the 403 below.
+  if (outcome) {
+    const fields = [];
+    if (body.submission_id !== outcome.submission.id) fields.push('submission_id');
+    if (!outcome.results.includes(body.result)) fields.push('result');
+    if (!outcome.record_as.some((r) => r.value === body.record_as)) fields.push('record_as');
+    if (body.reason !== undefined && !(outcome.reasons ?? []).some((r) => r.value === body.reason)) fields.push('reason');
+    if ((body.note?.length ?? 0) > NOTE_MAX) fields.push('note');
+    if (body.awarded_amount?.unknown === true && body.awarded_amount.amount !== undefined) fields.push('awarded_amount');
+    if (body.awarded_amount?.unknown === false && body.awarded_amount.amount === undefined) fields.push('awarded_amount');
+    if (!issued(item.case_id, body.evidence_id)) fields.push('evidence_id');
+    if (fields.length) return invalid(fields);
+  }
+  if (body.expected_revision !== item.revision || body.case_revision !== item.case_revision) return [409, SCENARIO_BODIES[409]];
+  if (!outcome) return [403, SCENARIO_BODIES[403]];
+
+  const source = work[OUTCOME_ITEMS[body.result]];
+  if (!source) return [501, NOT_MOCKED];
+  const next = structuredClone(source);
+  Object.assign(next, { id: workId, case_id: item.case_id, case_revision: item.case_revision, revision: item.revision + 1 });
+  next.rfp_outcome.submission = outcome.submission;
+  next.rfp_outcome.recorded.at = new Date().toISOString();
+  next.rfp_outcome.recorded.by = me.name;
+  overrides.set(workId, next);
+  const result = { work_id: workId, result: body.result, state: next.state, revision: next.revision };
+  const engagement = next.rfp_outcome.recorded.engagement?.work_id;
+  if (body.result === 'won' && engagement) result.engagement_work_id = engagement;
+  return [200, result];
+}
+
 function handle(operationId, { req, url, raw, cookies, me, work, overrides }) {
   const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
   const { request, replies } = validators()[operationId];
@@ -207,13 +258,14 @@ function handle(operationId, { req, url, raw, cookies, me, work, overrides }) {
   }
   if (!request(body)) return invalid(errorFields(request.errors));
 
-  const ctx = { items, overrides, me: me[persona], caseId: segment, taskId: segment, workId: segment };
-  const result = operationId === 'E-EVIDENCE-UPLOAD' ? upload(body, ctx) : operationId === 'E-RESPONSE' ? respond(body, ctx) : act(body, ctx);
+  const ctx = { items, overrides, work, me: me[persona], caseId: segment, taskId: segment, workId: segment };
+  const writes = { 'E-EVIDENCE-UPLOAD': upload, 'E-RESPONSE': respond, 'E-WORK-ACTION': act, 'E-RFP-OUTCOME': recordOutcome };
+  const result = writes[operationId](body, ctx);
   if (scenario === RECORD_THEN_FAIL && operationId !== 'E-EVIDENCE-UPLOAD' && result[0] === 200) return [502, MOCK_LOST];
   return result;
 }
 
-/** One reply for an F-09 operation, validated against its v7 schema (undeclared 501 and 502 are not). */
+/** One reply for an F-09 or F-18 operation, validated against its v7 schema (undeclared 501 and 502 are not). */
 export function responseRoute(operationId, args) {
   const [status, body] = handle(operationId, args);
   const validate = validators()[operationId].replies[String(status)];

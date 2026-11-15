@@ -1,0 +1,62 @@
+/* SCR-16 RFP frame, team input and outcome (F-18). Token variables only; bundle classes are composed, and only
+   the boards' own layouts are added. */
+
+/* the RFP frame (desktop only) */
+.rfp-frame { display: flex; flex-direction: column; gap: 20px; }
+.rfp-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); text-transform: uppercase; }
+.rfp-titlerow { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.rfp-page .rfp-title, .resp-page .rfp-title { overflow-wrap: anywhere; }
+.rfp-tags { display: flex; gap: 8px; }
+.rfp-tags .psl-tag { align-self: flex-start; border-radius: var(--radius-none); line-height: normal; }
+.rfp-pm { text-transform: uppercase; }
+.rfp-tabs { align-self: flex-start; }
+/* the frame's 40px title (Conflicts 2) is 8px taller than the boards' 32px; the tabs keep the boards' place */
+.rfp-frame .rfp-tabs { margin-top: -8px; }
+.rfp-tab.is-current { background: var(--ink); color: var(--on-strong); cursor: default; }
+.rfp-tab.is-current .psl-badge { background: var(--on-strong-tint); color: var(--on-strong); }
+.rfp-tab.is-plain { cursor: default; }
+.rfp-tab.is-plain:hover { background: var(--surface); }
+.rfp-tab .psl-badge { box-sizing: border-box; vertical-align: 1px; }
+
+/* the boards' form sections: a panel with a dark rule, labels in the strong weight */
+.rfp-form, .resp-form--team { background: none; border: none; padding: 0; }
+.rfp-form .psl-panel__head, .resp-teampanel .psl-panel__head { margin: 0; }
+.rfp-form .resp-label, .resp-form--team .resp-label { font-weight: 600; }
+.rfp-main { flex: 999 1 600px; }
+.resp-main--team { max-width: 720px; }
+.rfp-sub { margin: 0; font-size: 14px; color: var(--ink-muted); }
+/* the boards' segmented choices fill the row; their boxes are 44px inside a 2px border */
+.resp-segbar { display: flex; }
+.rfp-form .psl-input:not(textarea), .resp-form--team .psl-input:not(textarea), .rfp-form .resp-static { min-height: calc(var(--control-md) + 4px); }
+.rfp-amountrow { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px 16px; margin-top: -6px; }
+.rfp-lessons { min-height: 112px; } /* room for a few sentences, as the lost board draws it */
+.rfp-unknown { min-height: 24px; padding: 0; font-size: 14px; }
+.rfp-actions { display: flex; flex-direction: column; gap: 12px; align-items: stretch; max-width: 320px; }
+.rfp-record { width: 100%; }
+
+/* team input: given teams are quieter, the ones still missing are in the strong weight */
+.resp-teams { display: flex; }
+.resp-teams .psl-seg__opt { font-weight: 600; }
+.resp-teams .psl-seg__opt.is-given { color: var(--ink-subtle); font-weight: 400; }
+.resp-teams .psl-seg__opt[aria-checked="true"] { color: var(--on-strong); font-weight: 600; }
+/* the team input board draws its note in a white panel beside the form */
+.resp-aside--team { flex: 1 1 300px; max-width: 380px; padding: 14px; background: var(--surface); border: 2px solid var(--ink); }
+.resp-stack { display: flex; flex-direction: column; gap: 14px; }
+.resp-teamsub { margin: 0; font-size: 13px; color: var(--ink-muted); }
+/* the boards draw a choice's label 12px above it, as a row of the panel */
+.rfp-form .resp-field:has(> .resp-segbar), .resp-form--team .resp-field:has(> .resp-segbar) { gap: 12px; }
+.resp-blocking { margin: 0; font-size: 13px; color: var(--signal-ink); }
+.resp-form--team .resp-actions { flex-direction: column; align-items: stretch; }
+.resp-form--team .resp-record { width: 100%; }
+
+/* recorded states */
+.rfp-recorded { display: flex; flex-direction: column; gap: 14px; max-width: 760px; }
+.rfp-recorded__title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 26px; line-height: 1.08; }
+.rfp-recorded__again { margin: 0; }
+
+@media (max-width: 719.98px) {
+  .rfp-form .psl-panel, .resp-form--team .psl-panel { border: none; background: none; }
+  .rfp-actions { max-width: none; }
+  /* 44px targets on the phone */
+  .resp-segbar .psl-seg__opt { min-height: var(--control-md); }
+}
