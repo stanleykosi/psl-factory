@@ -1391,3 +1391,13 @@
 {"at":"2026-11-15T12:31:53Z","feature":"F-19","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"95903eeb853b","written_at":"2026-11-15T12:31:44Z"}
 {"at":"2026-11-15T12:31:53Z","feature":"F-19","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"95903eeb853b","written_at":"2026-11-15T12:31:45Z"}
 {"at":"2026-11-15T12:31:53Z","feature":"F-19","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"95903eeb853b","written_at":"2026-11-15T12:31:50Z"}
+{"at":"2026-11-15T12:32:22Z","feature":"F-19","round":3,"kind":"finding","action":"verify","finding":"QA-2-1","by":"reviewer-ux"}
+{"at":"2026-11-15T12:32:22Z","feature":"F-19","round":3,"kind":"transition","head":"95903eeb853b","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-15T12:32:53Z","feature":"F-20","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"777d9a3f11f1","findings":{"PMO-2-1":"low","PMO-2-2":"low","PMO-2-3":"low","PMO-2-4":"low"},"written_at":"2026-11-15T12:32:25Z"}
+{"at":"2026-11-15T12:35:56Z","feature":"F-19","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"95903eeb853b","written_at":"2026-11-15T12:35:37Z"}
+{"at":"2026-11-15T12:38:59Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T12:38:59Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T12:38:59Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T12:38:59Z","feature":"F-20","round":2,"kind":"finding","action":"add","finding":"PMO-2-4","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-15T12:39:09Z","feature":"F-19","round":3,"kind":"finding","action":"verify","finding":"QA-2-2","by":"qa"}
+{"at":"2026-11-15T12:39:09Z","feature":"F-19","round":3,"kind":"transition","head":"95903eeb853b","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

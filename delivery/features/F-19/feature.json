@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-19",
   "outcome": "A signed-in person sees the client register and each client's billing contact, projects and money, and can set the billing contact, on the contract mock",
-  "state": "IN_REVIEW",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CLIENTS"
   ],
@@ -128,11 +128,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "evidence_refs": [
+        "delivery/features/F-19/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -765,7 +767,7 @@
         "delivery/features/F-19/round-2/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -782,11 +784,25 @@
           ],
           "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-15T12:32:22Z",
+          "refs": [
+            "delivery/features/F-19/round-3/review-ux.md"
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": "round-3 UX review: failure notices are role=alert and take focus; QA re-checks in the browser next"
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "95903eeb"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "delivery/features/F-19/round-3/review-ux.md"
       ]
     },
     {
@@ -802,7 +818,7 @@
         "delivery/features/F-19/round-2/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -819,11 +835,25 @@
           ],
           "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-15T12:39:09Z",
+          "refs": [
+            "After a keyboard press of Save, focus lands on the notice (a `tabIndex=-1` div with a visible outline), never on `body`. Shift+Tab returns to Save or the email field, and Tab reaches \"Try again\" where it is shown. Typing in a field afterwards does not pull focus back to the notice."
+          ],
+          "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "95903eeb"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "After a keyboard press of Save, focus lands on the notice (a `tabIndex=-1` div with a visible outline), never on `body`. Shift+Tab returns to Save or the email field, and Tab reaches \"Try again\" where it is shown. Typing in a field afterwards does not pull focus back to the notice."
       ]
     },
     {
@@ -1141,6 +1171,22 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-15T12:31:03Z",
+      "round": 3,
+      "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-15T12:32:22Z",
+      "round": 3,
+      "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-15T12:39:09Z",
       "round": 3,
       "head": "95903eeb853bc2c9a244eb2e4d19174871d875de",
       "reason": null
