@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-18",
   "outcome": "Team input and the RFP outcome are recorded inside the RFP frame, and the drafted follow-up goes only when a person sends it",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M2B-RFP"
   ],
@@ -74,7 +74,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T06:58:38Z",
+      "seconds": 99.0,
+      "evidence_ref": "delivery/features/F-18/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -152,7 +165,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
     "task_branch": "fe-m2b-rfp-team-input-and-the-rfp-outcome-are-recor",
-    "head_sha": "79f25e57c411711efe9d0376a1f123251292c737",
+    "head_sha": "352893425c8d197b3de15ab04eac6c68d1d05782",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-18",
     "pr_url": null,
     "pr_number": null,
@@ -163,7 +176,53 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/rfp.spec.ts",
+      "frontend/mock/fixtures/response/W-2101.recorded.json",
+      "frontend/mock/fixtures/response/work/W-2101.json",
+      "frontend/mock/fixtures/response/work/W-2102.json",
+      "frontend/mock/fixtures/response/work/W-2103.json",
+      "frontend/mock/fixtures/response/work/W-2104.json",
+      "frontend/mock/fixtures/response/work/W-2105.json",
+      "frontend/mock/fixtures/response/work/W-2106.json",
+      "frontend/mock/fixtures/response/work/W-2107.json",
+      "frontend/mock/fixtures/response/work/W-2108.json",
+      "frontend/mock/fixtures/response/work/W-2108.sent.json",
+      "frontend/mock/fixtures/response/work/W-2109.json",
+      "frontend/mock/fixtures/response/work/W-2110.json",
+      "frontend/mock/fixtures/response/work/W-2111.json",
+      "frontend/mock/fixtures/response/work/W-2112.json",
+      "frontend/mock/fixtures/response/work/W-2112.next.json",
+      "frontend/mock/fixtures/response/work/W-2113.json",
+      "frontend/mock/fixtures/response/work/W-2114.json",
+      "frontend/mock/response.mjs",
+      "frontend/src/app/work/[id]/outcome/page.tsx",
+      "frontend/src/features/response/ProofField.tsx",
+      "frontend/src/features/response/ResponseForm.tsx",
+      "frontend/src/features/response/ResponseView.tsx",
+      "frontend/src/features/response/Segmented.tsx",
+      "frontend/src/features/response/TeamInputForm.tsx",
+      "frontend/src/features/response/contract.ts",
+      "frontend/src/features/response/labels.ts",
+      "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/rfp/FollowupCard.tsx",
+      "frontend/src/features/rfp/OutcomeForm.tsx",
+      "frontend/src/features/rfp/OutcomeView.tsx",
+      "frontend/src/features/rfp/RecordedView.tsx",
+      "frontend/src/features/rfp/RfpFrame.tsx",
+      "frontend/src/features/rfp/RfpOutcomeLink.tsx",
+      "frontend/src/features/rfp/api.ts",
+      "frontend/src/features/rfp/contract.ts",
+      "frontend/src/features/rfp/index.ts",
+      "frontend/src/features/rfp/labels.ts",
+      "frontend/src/features/rfp/rfp.css",
+      "frontend/src/features/rfp/useFollowup.ts",
+      "frontend/src/features/rfp/useOutcome.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/tests/response-mock.test.ts",
+      "frontend/tests/rfp-mock.test.ts",
+      "frontend/tests/rfp.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -214,6 +273,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-15T06:58:40Z",
+      "round": 1,
+      "head": "352893425c8d197b3de15ab04eac6c68d1d05782",
+      "reason": null
     }
   ],
   "routing": {
@@ -231,9 +298,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "352893425c8d197b3de15ab04eac6c68d1d05782"
   },
   "blocked": null
 }
