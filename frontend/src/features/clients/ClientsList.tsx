@@ -5,14 +5,14 @@
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
+import { Button, Callout, EmptyState, groupDigits, Money as MoneyValue, PageTitle, ShowMore, Table, Tag, Unknown, useIsPhone, VisuallyHidden, type Column } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
-import { useIsPhone } from '@/features/alerts/useIsPhone';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import type { ClientRow, MoneyAmount } from './api';
-import { amountText, clientPath, countLine, NOT_GIVEN, UNKNOWN } from './labels';
+import { clientPath, countLine, NOT_GIVEN } from './labels';
 import { ClientNoAccess } from './ClientStates';
 import { useClients } from './useClients';
 
@@ -21,15 +21,17 @@ import './clients.css';
 /** A known amount, or the word "Unknown" (with a spoken explanation); nothing at all is "Not given". */
 export function Money({ amount }: { amount?: MoneyAmount }) {
   if (!amount) return <>{NOT_GIVEN}</>;
-  const text = amountText(amount);
-  return text === UNKNOWN ? (
-    <>
-      {UNKNOWN}
-      <span className="clients__sr"> amount not known</span>
-    </>
-  ) : (
-    <>{text}</>
-  );
+  if (amount.unknown || !amount.amount) {
+    return (
+      <>
+        <Unknown />
+        <VisuallyHidden> amount not known</VisuallyHidden>
+      </>
+    );
+  }
+  // The amount is a decimal string; a currency other than naira is written with its code, as given.
+  if (amount.currency === 'NGN') return <MoneyValue value={amount.amount} />;
+  return <span className="psl-mono">{`${amount.currency} ${groupDigits(amount.amount)}`}</span>;
 }
 
 const projectsText = (row: ClientRow) => (row.projects === undefined ? NOT_GIVEN : String(row.projects));
@@ -39,53 +41,30 @@ function ContactCell({ row }: { row: ClientRow }) {
 }
 
 function ContactTag({ row }: { row: ClientRow }) {
-  return row.billing_contact_set ? (
-    <span className="psl-tag psl-tag--done">Set</span>
-  ) : (
-    <span className="psl-tag psl-tag--person">Billing contact missing</span>
-  );
+  return row.billing_contact_set ? <Tag tone="neutral">Set</Tag> : <Tag tone="person">Billing contact missing</Tag>;
 }
 
+const COLUMNS: Column<ClientRow>[] = [
+  {
+    key: 'client',
+    header: 'CLIENT',
+    cell: (row) => (
+      <span className="clients__namecell">
+        <Link href={clientPath(row.client_id)} className="clients__name" data-client-link="">
+          {row.name}
+        </Link>
+        <SampleLabel show={row.sample} />
+      </span>
+    ),
+  },
+  { key: 'projects', header: 'PROJECTS', cell: projectsText },
+  { key: 'owed', header: 'OWED', cell: (row) => <Money amount={row.owed} /> },
+  { key: 'contact', header: 'BILLING CONTACT', cell: (row) => <ContactCell row={row} /> },
+  { key: 'state', header: 'STATE', cell: (row) => <ContactTag row={row} /> },
+];
+
 function ClientTable({ items }: { items: ClientRow[] }) {
-  return (
-    <div className="psl-tablewrap">
-      <table className="psl-table clients__table">
-        <thead>
-          <tr>
-            <th scope="col">CLIENT</th>
-            <th scope="col">PROJECTS</th>
-            <th scope="col">OWED</th>
-            <th scope="col">BILLING CONTACT</th>
-            <th scope="col">STATE</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((row) => (
-            <tr key={row.client_id}>
-              <td>
-                <span className="clients__namecell">
-                  <Link href={clientPath(row.client_id)} className="clients__name" data-client-link="">
-                    {row.name}
-                  </Link>
-                  <SampleLabel show={row.sample} />
-                </span>
-              </td>
-              <td>{projectsText(row)}</td>
-              <td>
-                <Money amount={row.owed} />
-              </td>
-              <td>
-                <ContactCell row={row} />
-              </td>
-              <td>
-                <ContactTag row={row} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  return <Table className="clients__table" caption="Clients" columns={COLUMNS} rows={items} rowKey={(row) => row.client_id} empty="No clients to show yet." />;
 }
 
 function ClientCards({ items }: { items: ClientRow[] }) {
@@ -139,9 +118,7 @@ export function ClientsList() {
     body = <WorkErrorCard message="We couldn’t load the clients. Your work is safe; nothing was changed." error={state.error} onRetry={() => void retry()} />;
   } else if (state.items.length === 0 && !state.nextCursor) {
     body = (
-      <div className="psl-empty">
-        <p>No clients to show yet.</p>
-      </div>
+      <EmptyState title="No clients">No clients to show yet.</EmptyState>
     );
   } else {
     body = (
@@ -149,16 +126,14 @@ export function ClientsList() {
         <div ref={rows}>{phone ? <ClientCards items={state.items} /> : <ClientTable items={state.items} />}</div>
         {state.nextCursor && (
           <div className="clients__more">
-            <button type="button" className="psl-btn psl-btn--secondary clients__morebtn" disabled={more === 'loading'} aria-busy={more === 'loading'} onClick={() => void press()}>
-              {more === 'loading' ? 'Loading…' : 'Show more'}
-            </button>
+            <ShowMore shown={state.items.length} hasMore busy={more === 'loading'} onMore={() => void press()} />
             {more === 'error' && (
-              <div role="alert" className="psl-callout psl-callout--problem clients__morefail">
-                <span>We couldn’t load more clients. Nothing was changed.</span>
-                <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" onClick={() => void press()}>
+              <Callout kind="problem">
+                We couldn’t load more clients. Nothing was changed.{' '}
+                <Button kind="secondary" size="sm" onClick={() => void press()}>
                   Try again
-                </button>
-              </div>
+                </Button>
+              </Callout>
             )}
           </div>
         )}
@@ -169,7 +144,7 @@ export function ClientsList() {
   return (
     <div className="clients__page">
       <p className="clients__eyebrow">PROJECTS</p>
-      <h1 className="shell-title">Clients</h1>
+      <PageTitle>Clients</PageTitle>
       {state.status === 'ready' && <p className="clients__count">{countLine(state.items, !state.nextCursor, state.asOf)}</p>}
       {body}
     </div>

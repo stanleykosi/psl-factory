@@ -5,9 +5,9 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { Breadcrumb, Callout, PageTitle, Panel } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { usePhoneBack } from '@/shell/AppShell';
-import { WarningIcon } from '@/shell/icons';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { SampleLabel } from '@/shell/SampleLabel';
 
@@ -27,22 +27,17 @@ const MONEY_ROWS = [
 
 function ProjectsPanel({ projects }: { projects: Client['projects'] }) {
   return (
-    <section className="psl-panel clients__panel" aria-labelledby="client-projects-title">
-      <h2 id="client-projects-title" className="psl-panel__head clients__h2">
-        Projects
-      </h2>
-      <div className="clients__panelbody">
-        {projects.length === 0 && <p className="clients__plain">No projects yet.</p>}
-        {projects.map((project) => (
-          <div key={project.case_id} className="clients__project">
-            <Link href={`/projects/${encodeURIComponent(project.case_id)}`} className="clients__name">
-              {project.title}
-            </Link>
-            {project.stage && <span className="clients__meta">{project.stage}</span>}
-          </div>
-        ))}
-      </div>
-    </section>
+    <Panel head="Projects" className="clients__panel" bodyClassName="clients__panelbody">
+      {projects.length === 0 && <p className="clients__plain">No projects yet.</p>}
+      {projects.map((project) => (
+        <div key={project.case_id} className="clients__project">
+          <Link href={`/projects/${encodeURIComponent(project.case_id)}`} className="clients__name">
+            {project.title}
+          </Link>
+          {project.stage && <span className="clients__meta">{project.stage}</span>}
+        </div>
+      ))}
+    </Panel>
   );
 }
 
@@ -50,11 +45,8 @@ function MoneyPanel({ money }: { money: NonNullable<Client['money']> }) {
   const rows = MONEY_ROWS.filter(([key]) => money[key]);
   if (rows.length === 0) return null;
   return (
-    <section className="psl-panel clients__panel" aria-labelledby="client-money-title">
-      <h2 id="client-money-title" className="psl-panel__head clients__h2">
-        Money
-      </h2>
-      <dl className="clients__panelbody clients__money">
+    <Panel head="Money" className="clients__panel" bodyClassName="clients__panelbody">
+      <dl className="clients__money">
         {rows.map(([key, label]) => (
           <div key={key} className="clients__moneyrow">
             <dt>{label}</dt>
@@ -64,27 +56,26 @@ function MoneyPanel({ money }: { money: NonNullable<Client['money']> }) {
           </div>
         ))}
       </dl>
-    </section>
+    </Panel>
   );
 }
 
 function ClientView({ client, refresh, onSignedOut, onNoAccess }: { client: Client } & Pick<React.ComponentProps<typeof BillingContactForm>, 'refresh' | 'onSignedOut' | 'onNoAccess'>) {
   return (
     <div className="clients__page">
-      <p className="psl-crumb clients__crumb">
-        <Link href="/clients">Clients</Link> / <span aria-current="page">{client.name}</span>
-      </p>
+      <div className="clients__crumb">
+        <Breadcrumb items={[{ label: 'Clients', href: '/clients' }]} current={client.name} />
+      </div>
       <div className="clients__titlerow">
-        <h1 className="shell-title">{client.name}</h1>
+        <PageTitle>{client.name}</PageTitle>
         <SampleLabel show={client.sample} />
       </div>
       <div className="clients__body">
         <div className="clients__main">
           {(client.blocked ?? []).map((line, i) => (
-            <div key={i} className="psl-callout psl-callout--problem">
-              <WarningIcon />
-              <span>{line}</span>
-            </div>
+            <Callout key={i} kind="problem" announce={false}>
+              {line}
+            </Callout>
           ))}
           <BillingContactForm client={client} refresh={refresh} onSignedOut={onSignedOut} onNoAccess={onNoAccess} />
         </div>
