@@ -94,7 +94,7 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
         {agent ? `Follow-up email · drafted by ${agent.name}` : 'Follow-up email'}
       </h2>
       <div className="psl-panel__body">
-        <Checks followup={followup} showNote={status === 'drafted'} />
+        <Checks followup={followup} showNote={status === 'drafted' && (canSend || canEdit)} />
         <p className="rfp-followup__to">
           To <span className="rfp-followup__addr">{followup.to}</span> · draft v{followup.version}
         </p>

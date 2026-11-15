@@ -87,11 +87,16 @@
   /* the phone boards: framed rows with a plain heading (none over the recorded rows), the follow-up unframed with
      Send and Edit pinned to the bottom */
   .rfp-recorded { gap: 12px; }
+  .rfp-recorded .resp-board, .rfp-recorded__main { gap: 12px; }
+  .rfp-recorded__main > .psl-hint { margin: 0; }
+  .rfp-recorded .rfp-panel:not(.rfp-panel--rows) > .psl-panel__head { padding: 12px 12px 0; font-size: 14px; font-weight: 700; }
+  .rfp-recorded .rfp-panel:not(.rfp-panel--rows) > .psl-panel__body { padding: 6px 12px 14px; gap: 8px; }
   .rfp-recorded .rfp-panel > .psl-panel__head, .rfp-recorded .rfp-followup > .psl-panel__head { padding: 12px 14px 0; border: none; font-family: var(--font-sans); font-size: 15px; font-weight: 600; text-transform: none; letter-spacing: normal; }
   .rfp-recorded .rfp-panel--rows > .psl-panel__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
   .rfp-recorded .rfp-panel > .psl-panel__body { gap: 10px; }
   .rfp-recorded .rfp-followup { border: none; background: none; }
   .rfp-recorded .rfp-followup > .psl-panel__head, .rfp-recorded .rfp-followup > .psl-panel__body { padding-left: 0; padding-right: 0; }
+  .rfp-recorded .rfp-followup > .psl-panel__head { padding-top: 0; font-weight: 700; }
   .rfp-page:has(.rfp-followup__actions) { padding-bottom: 150px; }
   .rfp-page:has(.rfp-pin) { padding-bottom: 110px; }
   .rfp-pin { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 14px 16px; background: var(--surface); border-top: 2px solid var(--ink); }
