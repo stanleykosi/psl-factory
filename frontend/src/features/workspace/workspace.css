@@ -98,6 +98,8 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 /* a narrow screen scrolls the table; a reference never breaks; the source sits on its own line under the words */
 .ws-table { min-width: 560px; }
 .ws-table td { min-width: 0; }
+.ws-table td.num { font-family: var(--font-sans); }
+.ws-table .num { text-align: left; }
 .ws-table td.psl-mono, .ws-table .ws-cite { white-space: nowrap; }
 .ws-table .ws-cite { display: block; font-family: var(--font-sans); font-size: 12px; text-transform: none; }
 .ws-table td:has(> .ws-cite) { font-weight: 600; }

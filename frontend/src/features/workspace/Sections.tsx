@@ -8,6 +8,7 @@ import { Fragment, useId, type ReactNode } from 'react';
 
 import { isAppPath } from '@/features/work-item/presentation';
 import { formatWat } from '@/features/work-item/labels';
+import { WarningIcon } from '@/shell/icons';
 
 import {
   agentName,
@@ -460,7 +461,12 @@ export function SectionView({ section, level, controls }: { section: Section; le
             )}
             <Paging section={section} position="bottom" noteId={noteId} />
             {!empty && controls?.foot?.(section)}
-            {section.note && <p className="psl-callout psl-callout--warning ws-note">{section.note}</p>}
+            {section.note && (
+              <p className="psl-callout psl-callout--warning ws-note">
+                <WarningIcon />
+                <span>{section.note}</span>
+              </p>
+            )}
           </>
         )}
       </div>

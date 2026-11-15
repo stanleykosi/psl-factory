@@ -2,6 +2,16 @@
   "about": "F-17 provisional exceptions for the region check (D-59). Region-check approval itself: design engineer, 14 Nov (D-59). Every entry below is a builder proposal until the design engineer confirms it. `regions` scopes an entry to the named regions.",
   "exceptions": [
     {
+      "role": "text",
+      "name": "January receipts are Unknown: Kola Foods hasn't confirmed its payment date. The forecast shows Unknown, not 0.",
+      "category": "frame data",
+      "reason": "The note text comes from the contract fixture, which writes the apostrophe as a typographic one; the board has a straight one. The words are the same.",
+      "approved_by": "builder proposal, pending design engineer",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
       "role": "complementary",
       "name": "",
       "category": "frame layout",
