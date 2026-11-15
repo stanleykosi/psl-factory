@@ -61,7 +61,7 @@ test.describe('desktop 1440', () => {
     const order = [
       'FINANCE / MONTH-END',
       'Month-end · October 2026',
-      'FROM RECORDS YOU CAN SEE · UPDATED 10:42 WAT',
+      'FROM RECORDS YOU CAN SEE · UPDATED 10:42',
       'DONE',
       '2 of 7',
       'WAITING',

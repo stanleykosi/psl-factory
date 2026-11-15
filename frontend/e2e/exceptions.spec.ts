@@ -103,7 +103,8 @@ test.describe('desktop 1440', () => {
     await dialog.getByRole('radio', { name: 'Follow-up needed' }).check();
     await dialog.getByRole('button', { name: 'Show results' }).click();
     await expect(rows).toHaveCount(1);
-    await expect(rows.first().locator('.psl-tag')).toHaveText('FOLLOW-UP NEEDED');
+    // the README's state words (D-92); the tag shows them in capitals by CSS
+    await expect(rows.first().locator('.psl-tag')).toHaveText('Stopped: invoice follow-up needed');
     await expect(page.getByText('1 OPEN')).toBeVisible();
     await page.getByRole('searchbox', { name: 'Search' }).fill('Sable');
     await expect(page.getByRole('heading', { level: 2, name: 'No exceptions match your search and filter.' })).toBeVisible();

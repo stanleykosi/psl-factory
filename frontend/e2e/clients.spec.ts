@@ -83,8 +83,9 @@ for (const [label, viewport] of [
       await expect(clientLinks(page)).toHaveCount(6);
       await expect(clientLinks(page).first()).toHaveAttribute('href', '/clients/CL-3501');
       await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-      expect(await h1Size(page)).toBe(phone ? '26px' : '34px');
-      await expect(page.getByText('6 clients as of 14 Nov 2026 10:00 WAT · 2 missing billing contact')).toBeVisible();
+      // the SCR-35 boards' title sizes (D-93): 34px, 24px on the phone list
+      expect(await h1Size(page)).toBe(phone ? '24px' : '34px');
+      await expect(page.getByText('6 clients as of 14 Nov, 10:00 · 2 missing billing contact')).toBeVisible();
       await expect(page.getByText('Billing contact missing')).toHaveCount(2);
       await expect(page.getByRole('main').getByRole('link', { name: /^Back to/ })).toHaveCount(0);
       if (phone) {
@@ -152,7 +153,8 @@ for (const [label, viewport] of [
       await page.goto('/clients/CL-3501');
       await detailLoaded(page, 'Lagoon Health Ltd');
       await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-      expect(await h1Size(page)).toBe(phone ? '26px' : '34px');
+      // the SCR-35 detail boards' title sizes (D-93): 34px, 22px on the phone
+      expect(await h1Size(page)).toBe(phone ? '22px' : '34px');
       await expect(page.getByText("No billing contact, so invoices for this client can't start. Add one here.")).toBeVisible();
       await expect(page.getByRole('link', { name: 'Patient app' })).toHaveAttribute('href', '/projects/P-0101');
       await expect(page.getByRole('main').getByRole('link', { name: /^Back to/ })).toHaveCount(0);

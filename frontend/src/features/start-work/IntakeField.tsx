@@ -125,8 +125,9 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
         />,
       );
     case 'long_text':
+      // an optional note starts one line tall, as the SCR-04 boards draw "Anything Chidi should know"
       return frame(
-        <TextArea id={controlId} label={label} optional={optional} placeholder={field.placeholder} value={text} readOnly={readOnly} hint={hint} error={error} onChange={(event) => onChange(event.target.value)} {...common} />,
+        <TextArea id={controlId} label={label} optional={optional} oneLine={optional} placeholder={field.placeholder} value={text} readOnly={readOnly} hint={hint} error={error} onChange={(event) => onChange(event.target.value)} {...common} />,
       );
     case 'date':
       return frame(<DateField id={controlId} label={label} optional={optional} value={text} disabled={readOnly} hint={hint} error={error} onChange={(iso) => onChange(iso)} />);

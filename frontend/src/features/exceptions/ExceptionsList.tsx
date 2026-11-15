@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button, Callout, EmptyState, formatDayTime, Icon, ListToolbar, PageTitle, Segmented, ShowMore, Table, Tag, useIsPhone, type Column } from '@/components';
+import { Button, Callout, EmptyState, formatDayTime, ListToolbar, PageTitle, Segmented, ShowMore, Table, Tag, useIsPhone, type Column } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
@@ -220,7 +220,7 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
         {phone && (
           // The board draws "← Queue" in the phone top bar, which the app frame owns; until it does, it sits here.
           <Link className="exc-back" href="/my-work">
-            <Icon name="back" /> Queue
+            ← Queue
           </Link>
         )}
         {!phone && (

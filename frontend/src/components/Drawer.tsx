@@ -3,8 +3,8 @@
 // Drawer (design/system/project/components/Drawer): opens from the right over the page (500px), so people never
 // lose the queue. Head: mono eyebrow, display title, one line of context, close button; the body scrolls and the
 // footer stays. Modal: focus moves in and stays in, Esc, the close button and the scrim close it, and focus
-// returns to the opener. Below 720px it is a sheet that leaves the top of the page in view, with an 18px title, as
-// the boards draw it (D-93). "Needs fixing" puts a ValidationSummary first in the body; "submitting" is a busy
+// returns to the opener. Below 720px it is a full-height sheet with an 18px title; `keepTop` leaves the top of the
+// page in view, as SCR-04-mobile draws the Start work sheet (D-93). "Needs fixing" puts a ValidationSummary first in the body; "submitting" is a busy
 // Button in the footer; "done" closes and shows a Toast (the consumer's).
 import { useId, useRef, type ReactNode, type RefObject } from 'react';
 
@@ -12,7 +12,7 @@ import { IconButton } from './IconButton';
 import { cx, useModal, usePhone } from './internal';
 import { Layer } from './Overlay';
 
-export function Drawer({ title, eyebrow, subline, onClose, footer, children, initialFocus, className }: {
+export function Drawer({ title, eyebrow, subline, onClose, footer, children, initialFocus, keepTop = false, className }: {
   title: string;
   /** START WORK; desktop only, as the phone sheet head has none. */
   eyebrow?: string;
@@ -22,6 +22,8 @@ export function Drawer({ title, eyebrow, subline, onClose, footer, children, ini
   children: ReactNode;
   /** What takes focus on opening; the first field otherwise. */
   initialFocus?: RefObject<HTMLElement | null>;
+  /** On phones, the sheet stops 70px under the phone bar so the page's top stays in view. */
+  keepTop?: boolean;
   className?: string;
 }) {
   const phone = usePhone();
@@ -39,7 +41,7 @@ export function Drawer({ title, eyebrow, subline, onClose, footer, children, ini
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={cx(kind, 'cmp-panel', phone && 'cmp-panel--full', className)}
+        className={cx(kind, 'cmp-panel', phone && 'cmp-panel--full', phone && keepTop && 'cmp-panel--keeptop', className)}
         onKeyDown={onKeyDown}
       >
         {phone && <span className="psl-sheet__grab" aria-hidden="true" />}

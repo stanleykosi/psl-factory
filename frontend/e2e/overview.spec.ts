@@ -63,7 +63,7 @@ test.describe('desktop 1440', () => {
     await page.goto('/overview');
     await loaded(page);
     await expect(page).toHaveTitle('Overview · PSL Factory');
-    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT')).toBeVisible();
+    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT')).toBeVisible();
     await expect(tiles(page)).toHaveText(['IN PROGRESS18', 'NEED A PERSON5', 'STOPPED3', 'VERIFIED THIS MONTH28']);
     await expect(rows(page).locator('.overview__name')).toHaveText(LINES);
     await expect(rows(page).locator('.psl-tag')).toHaveText(NOTES);
@@ -224,7 +224,7 @@ test.describe('desktop 1440', () => {
 
     await setCookies(context, { psl_mock_overview: 'changed' });
     await page.clock.fastForward(15_000);
-    await expect(page.locator('.overview__eyebrow')).toHaveText('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT');
+    await expect(page.locator('.overview__eyebrow')).toHaveText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT');
     await expect.poll(async () => (await stationTexts(page))[0][0]).toBe('Brief: 2 items');
     expect((await stationTexts(page))[4][0]).toBe('Milestone: 1 item');
     expect((await stationTexts(page))[7][2]).toBe('Approve: 1 item');
@@ -292,7 +292,7 @@ test.describe('phone 390', () => {
     await expect(viewSwitch(page)).toHaveCount(0);
     await expect(page.locator('.overview__hint')).toHaveCount(0);
     await expect(page.locator('.overview__summary')).toHaveText('18 in progress · 5 need a person');
-    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 2026 16:40 WAT')).toBeVisible();
+    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT')).toBeVisible();
     expect(await page.locator('.overview__sq').first().evaluate((el) => el.getBoundingClientRect().width)).toBe(18);
     for (const [i, name] of LINES.entries()) {
       await expect(rows(page).nth(i).locator('.overview__name')).toHaveText(name);

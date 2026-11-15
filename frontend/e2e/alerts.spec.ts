@@ -44,8 +44,8 @@ async function settingsLoaded(page: Page) {
 }
 
 const BOARD_ROWS = [
-  ['Invoice for Lagoon Health is waiting for your review', 'Chidi · WhatsApp and email · 10:42 WAT'],
-  ['The UAT response for Lagoon Health is due tomorrow', 'Tola · Email · 09:00 WAT daily digest'],
+  ['Invoice for Lagoon Health is waiting for your review', 'Chidi · WhatsApp and email · 10:42'],
+  ['The UAT response for Lagoon Health is due tomorrow', 'Tola · Email · 09:00 daily digest'],
   ['October payroll has 2 problems for HR', 'Zainab · In app only (you are not HR)'],
   ['Milestone 1 invoice was verified', 'Chidi · In app · yesterday'],
 ];
@@ -271,7 +271,7 @@ test.describe('list states', () => {
     await listLoaded(page);
     await page.route('**/api/v1/notifications?*', (route) => route.abort());
     await page.getByRole('searchbox', { name: 'Search' }).fill('lagoon');
-    await expect(page.locator('main').getByRole('alert')).toContainText(/Last loaded \d+ \w+ \d{4} \d\d:\d\d WAT\. Reference network_error for support\./);
+    await expect(page.locator('main').getByRole('alert')).toContainText(/Last loaded \d\d:\d\d\. Reference network_error for support\./);
   });
 
   test('many: Show more loads rows 21-25 and goes; a failed Show more keeps the 20 rows', async ({ page, context }) => {
@@ -305,7 +305,7 @@ test('bare: nothing a v4 backend lacks is shown; opening still works; settings s
   await page.goto('/notifications');
   await listLoaded(page);
   await expect(rows(page).locator('.alerts-text')).toHaveText(BOARD_ROWS.map((r) => r[0]));
-  await expect(rows(page).locator('.alerts-meta')).toHaveText(['Chidi · 10:42 WAT', /^Tola · \d\d:\d\d WAT$/, /^Zainab · \d\d:\d\d WAT$/, 'Chidi · yesterday']);
+  await expect(rows(page).locator('.alerts-meta')).toHaveText(['Chidi · 10:42', /^Tola · \d\d:\d\d$/, /^Zainab · \d\d:\d\d$/, 'Chidi · yesterday']);
   await expect(page.getByRole('search')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /Filter/ })).toHaveCount(0);
   expect(await page.locator('main').textContent()).not.toMatch(/ALERTS?|unread/);

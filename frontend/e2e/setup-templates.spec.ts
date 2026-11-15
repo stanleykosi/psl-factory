@@ -59,7 +59,7 @@ test.describe('desktop', () => {
     await expect(page.locator('.setup-tabs .psl-badge')).toHaveCount(0);
     await expect(page.getByText(/^Every document currently uses a test template\./)).toBeVisible();
     await expect(page.getByText('8 TEMPLATES · 8 TEST')).toBeVisible();
-    await expect(page.locator('.setup-desktop').getByText('AS OF 12 NOV 2026 10:40 WAT')).toBeVisible();
+    await expect(page.locator('.setup-desktop').getByText('AS OF 12 NOV, 10:40')).toBeVisible();
     await expect(page.locator('.setup-desktop table tbody tr strong')).toHaveText(['Invoice', 'Statement of work', 'Weekly client report', 'Minutes', 'RFP response', 'Go-live document', 'Support handover', 'Closure report']);
     await expect(page.locator('.setup-desktop').getByText('TEST TEMPLATE', { exact: true })).toHaveCount(8);
     await expect(page.locator('.setup-desktop').getByRole('button', { name: UPLOAD })).toHaveCount(8);

@@ -130,7 +130,7 @@ test.describe('desktop 1440', () => {
     expect([...at].sort((a, b) => a - b)).toEqual(at);
     await expect(d.locator('.alerts-grp')).toHaveText(['Needs you, 3', 'For your information, 3']);
     expect(await d.locator('.alerts-grp--need').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(251, 227, 217)');
-    await expect(d.locator('.alerts-meta').first()).toHaveText('Chidi · WhatsApp · 09:42 WAT');
+    await expect(d.locator('.alerts-meta').first()).toHaveText('Chidi · WhatsApp · 09:42');
     await expect(d.locator('.psl-tag')).toHaveCount(0);
     const fills = await opens(page).evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor));
     expect(fills).toEqual([...Array(3).fill('rgb(36, 89, 214)'), ...Array(3).fill('rgb(255, 255, 255)')]);
@@ -414,7 +414,7 @@ test.describe('phone 390', () => {
     expect(close.width).toBeGreaterThanOrEqual(44);
     expect(close.height).toBeGreaterThanOrEqual(44);
     const tabs = d.getByRole('tab');
-    await expect(tabs).toHaveText(['Needs you3', 'For your information']);
+    await expect(tabs).toHaveText(['Needs you 3', 'For your information']);
     for (const t of await tabs.all()) expect((await box(t)).height).toBeGreaterThanOrEqual(44);
     await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
     await expect(d.locator('.alerts-text')).toHaveText(NEED);

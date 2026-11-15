@@ -55,9 +55,9 @@ const setupRequests = (page: Page) => {
 
 const today = () => {
   const parts = Object.fromEntries(
-    new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'short', year: 'numeric' }).formatToParts(new Date()).map((p) => [p.type, p.value]),
+    new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: '2-digit', month: 'short' }).formatToParts(new Date()).map((p) => [p.type, p.value]),
   );
-  return `${parts.day} ${parts.month} ${parts.year}`;
+  return `${parts.day} ${parts.month}`;
 };
 
 const WITHDRAWN = 'Your role does not allow this. You can no longer change these rules, so the Set a rule panel has closed. Nothing you entered was saved.';
@@ -92,7 +92,7 @@ test.describe('desktop rules', () => {
     ]);
     await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
     await expect(table(page).locator('tbody tr')).toHaveCount(10);
-    await expect(row(page, 'Who reviews client documents').locator('td')).toHaveText(['Who reviews client documents', 'All lines', 'PMO Lead', 'v2 · since 1 Oct 2026']);
+    await expect(row(page, 'Who reviews client documents').locator('td')).toHaveText(['Who reviews client documents', 'All lines', 'PMO Lead', 'v2 · since 01 Oct']);
     await expect(row(page, 'Who may assign an RFP to a PM').locator('td').nth(3)).toHaveText('HOLDS WORK');
     await expect(page.getByRole('link', { name: 'PSL standard pricing v4' })).toHaveAttribute('href', '/setup/costing-rule');
     await expect(page.getByText(/^8 rules aren’t set yet\./)).toBeVisible();

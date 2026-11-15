@@ -63,7 +63,7 @@ for (const [label, viewport] of [
       await loaded(page);
       const tabs = page.getByRole('tab');
       await expect(tabs).toHaveText(['Needs me 24', 'Waiting on others 12', 'Done 6', 'Unassigned 2']);
-      if (!phone) await expect(page.getByText('44 records you can see · updated 10:42 WAT')).toBeVisible();
+      if (!phone) await expect(page.getByText('44 records you can see · updated 10:42')).toBeVisible();
       await expect(panel(page).locator('[data-work-link]')).toHaveCount(20);
       await expect(page.locator('.psl-showmore')).toContainText('20 of 24 showing');
       await expect(page.getByRole('button', { name: 'Show 4 more' })).toBeVisible();
@@ -143,7 +143,7 @@ for (const [label, viewport] of [
       await page.getByRole('tab', { name: /Done/ }).click();
       const card = page.getByRole('main').getByRole('alert');
       await expect(card).toContainText('We couldn’t load your queue. Your work is safe; nothing was changed.');
-      await expect(card).toContainText('Last loaded 10:42 WAT. Reference server_error for support.');
+      await expect(card).toContainText('Last loaded 10:42. Reference server_error for support.');
       await shot(page, `my-work-${viewport.width}-error`);
       await expectNoAxeViolations(page);
       fail = false;

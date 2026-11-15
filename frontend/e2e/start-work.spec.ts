@@ -82,7 +82,8 @@ for (const [label, viewport, phone] of [
         await expect(dialog(page).getByText('LINES YOU CAN START · 8')).toBeVisible();
         await expect(dialog(page).getByRole('searchbox', { name: 'Find a line' })).toBeFocused();
       }
-      const card = dialog(page).locator('label.sw-line').first();
+      // the line cards are the shared choice cards (RadioGroup cards), drawn as the board's line cards
+      const card = dialog(page).locator('label.psl-choice').first();
       expect(await card.evaluate((el) => getComputedStyle(el).borderTopWidth)).toBe('2px');
       await expectNoAxeViolations(page);
       if (phone) {
@@ -160,7 +161,8 @@ for (const [label, viewport, phone] of [
       await openMyWork(page, context, 'pm');
       for (const [line, title, labels, start] of LINES) {
         await openLine(page, phone, line, title);
-        const fieldLabels = await dialog(page).locator('[data-field] > .psl-label').allTextContents();
+        // the shared TextArea draws its own field wrapper, so its label sits one level down
+        const fieldLabels = await dialog(page).locator('[data-field] > .psl-label, [data-field] > .psl-field > .psl-label').allTextContents();
         expect(fieldLabels, title).toEqual(labels);
         await expect(dialog(page).getByRole('button', { name: start })).toBeVisible();
         await expect(dialog(page).getByText('Proof upload comes next')).toHaveCount(labels.includes('Proof') ? 1 : 0);

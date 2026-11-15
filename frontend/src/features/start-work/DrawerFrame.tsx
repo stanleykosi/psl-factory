@@ -36,7 +36,7 @@ export function DrawerFrame({ eyebrow, title, subline, onClose, footer, children
     (body.current?.querySelector<HTMLElement>(FIRST_FIELD) ?? panel)?.focus();
   }, [focusKey]);
   return (
-    <Drawer eyebrow={eyebrow} title={title} subline={subline} onClose={onClose} footer={footer} className="sw-panel">
+    <Drawer eyebrow={eyebrow} title={title} subline={subline} onClose={onClose} footer={footer} keepTop className="sw-panel">
       <div ref={body} className="sw-body">
         {children}
       </div>

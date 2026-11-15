@@ -128,10 +128,10 @@ test.describe('focus outlines (AC 20)', () => {
   test('phone: the disclosures show a ring and toggle', async ({ page }) => {
     await page.setViewportSize(PHONE);
     await go(page, '/work/W-1701', 'finance_lead');
-    const steps = page.locator('summary', { hasText: 'See his steps' });
+    const steps = page.getByRole('button', { name: 'See his steps' });
     expect(await tabTo(page, steps)).toEqual(ring);
     await page.keyboard.press('Enter');
-    await expect(steps.locator('xpath=..')).toHaveAttribute('open', '');
+    await expect(page.getByRole('button', { name: 'Hide his steps' })).toHaveAttribute('aria-expanded', 'true');
     await go(page, '/work/W-1706', 'finance_lead');
     const preview = page.locator('summary', { hasText: 'Preview the invoice' });
     expect(await tabTo(page, preview)).toEqual(ring);
