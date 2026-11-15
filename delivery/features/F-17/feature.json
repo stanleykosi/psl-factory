@@ -152,11 +152,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -1285,6 +1287,98 @@
       "verified_by": "reviewer-ui",
       "verification_refs": [
         "in round-4/fidelity/unknown-money-1440/side-by-side.png the money cells are now left-aligned in the body sans, as on SCR-56, and the amber note shows the warning icon. unknown-money 72.3 -> 75.6, coverage 100%."
+      ]
+    },
+    {
+      "id": "QA-5-1",
+      "round": 5,
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "**Phone reconcile is unreachable behind the Decide bar.** Steps: persona finance_lead, viewport 390x844 (also 320x640), `/work/W-2008`, press \"Approve and send\". The mock returns `effect_uncertain`, the item is read again, and ReconcilePanel mounts. Expected: the person can choose \"It didn't arrive\" and tap \"Record and continue\" (spec criterion 19; INV-RESEND recovery). Actual: two fixed bottom bars are stacked. F-09's `.resp-actionbar` (`frontend/src/features/response/response.css:146`, z-index 5) is at y 762-844, and F-17's `.ws-decide` (`frontend/src/features/workspace/workspace.css:153`, z-index 5, later in the DOM) is at y 722-844 on top of it. The Decide bar holds only aria-disabled steps and \"Confirm what happened first.\" At maximum scroll (565 at 390) \"Record and continue\" is still at 776-826, inside the Decide bar's area. Playwright's click fails with \"`<div class=\"ws-steps__buttons\">` intercepts pointer events\". Focusing it and pressing Enter does send the one POST to `/actions`, so the keyboard path works and the touch path does not. At 1440 the click works. `.ws { padding-bottom: var(--ws-bar-h) }` (`workspace.css:151`) clears only the workspace's own content, not another fixed bar. The phone e2e did not catch this because the W-2008 e2e runs at desktop only (`e2e/workspace.spec.ts:208`). Expected fix: while a reconcile action bar is shown, or whenever every step is locked by the uncertain state, do not draw the fixed Decide bar on top of it. Either let it flow statically or stack it above the reconcile bar and reserve both heights. Then add a 390 e2e that taps \"Record and continue\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T08:56:58Z",
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        }
+      ]
+    },
+    {
+      "id": "QA-5-2",
+      "round": 5,
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Long step labels in the 320 Decide bar.** I checked this at the UX reviewer's request. Every fixture label fits at 320: the buttons are 288px wide, no text is clipped and the page is 320 wide. With labels injected into the W-2007 read (a stress test, not fixture data), a label of up to about 36 characters fits. At 40 or more characters it runs off the right edge and is clipped, not wrapped: \"Ask Tola to reassemble the weekly client report\" ends at x=359 on a 320 screen. The cause is `.ws-decide .psl-btn { white-space: nowrap }` (`workspace.css:29`). At 390, labels of up to 40 characters fit. This does not affect today's fixtures. The line tasks should allow wrapping (`white-space: normal` in the phone media block) before they return longer labels.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T08:56:58Z",
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        }
+      ]
+    },
+    {
+      "id": "QA-5-3",
+      "round": 5,
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On a phone, the uncertain callout \"Delivery to Lagoon Health couldn't be confirmed.\" is below the fold after the press (y 938 on an 844-high viewport at 390). The reconcile choices are visible higher up, so the journey is not blocked once QA-5-1 is fixed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T08:56:58Z",
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        }
+      ]
+    },
+    {
+      "id": "QA-5-4",
+      "round": 5,
+      "snapshot_ref": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In the \"Return with a note\" form on W-2001, a 2001-character note shows \"Keep the note to 2000 characters.\" twice (once as help text and once as the error). It is correctly refused before any request: 0 extra POSTs.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-17/round-5/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-15T08:56:58Z",
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022"
+        }
       ]
     }
   ],

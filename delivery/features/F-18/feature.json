@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-18",
   "outcome": "Team input and the RFP outcome are recorded inside the RFP frame, and the drafted follow-up goes only when a person sends it",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M2B-RFP"
   ],
@@ -135,11 +135,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "evidence_refs": [
+        "delivery/features/F-18/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -1132,7 +1134,7 @@
         "delivery/features/F-18/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1149,11 +1151,25 @@
           ],
           "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-15T08:56:57Z",
+          "refs": [
+            "Before the fix the note showed to someone who could not send. Retest on /work/W-2113/outcome (pm) at 1440 and at 390: no \"It goes only if you send it\" text, no Send, no Edit, and the hint \"You can\u2019t send this follow-up\u2026\" is shown. On W-2108 (can_send and can_edit) the note is still shown."
+          ],
+          "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "9d0fc66"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "Before the fix the note showed to someone who could not send. Retest on /work/W-2113/outcome (pm) at 1440 and at 390: no \"It goes only if you send it\" text, no Send, no Edit, and the hint \"You can\u2019t send this follow-up\u2026\" is shown. On W-2108 (can_send and can_edit) the note is still shown."
       ]
     },
     {
@@ -1529,6 +1545,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-15T08:33:55Z",
+      "round": 3,
+      "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-15T08:57:10Z",
       "round": 3,
       "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
       "reason": null
