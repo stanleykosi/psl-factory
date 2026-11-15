@@ -191,15 +191,26 @@
         "delivery/features/F-18/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design-engineer",
+          "at": "2026-11-15T08:23:51Z",
+          "refs": [
+            "delivery/OVERNIGHT-DECISIONS.md"
+          ],
+          "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+          "reason": "14 boards accepted at measured scores (forced gaps only: D-60 omissions, approved titles, contract-required fields, date box, tag colours); UI-2-1 spacing fix applied in round 3 (rfp-lost 83.1, rfp-unknown 86.9), D-65"
         }
-      ]
+      ],
+      "risk_authority": "design engineer"
     },
     {
       "id": "TECH-1-2",
@@ -987,15 +998,26 @@
         "delivery/features/F-18/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-15T07:11:03Z",
           "head": "352893425c8d197b3de15ab04eac6c68d1d05782"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design-engineer",
+          "at": "2026-11-15T08:23:51Z",
+          "refs": [
+            "delivery/OVERNIGHT-DECISIONS.md"
+          ],
+          "head": "9d0fc66882834dc35d0116738d46c0bb5f12da58",
+          "reason": "14 boards accepted at measured scores (forced gaps only: D-60 omissions, approved titles, contract-required fields, date box, tag colours); UI-2-1 spacing fix applied in round 3 (rfp-lost 83.1, rfp-unknown 86.9), D-65"
         }
-      ]
+      ],
+      "risk_authority": "design engineer"
     },
     {
       "id": "UI-1-8",

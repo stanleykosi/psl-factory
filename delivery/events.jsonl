@@ -1211,3 +1211,9 @@
 {"at":"2026-11-15T08:16:14Z","feature":"F-17","round":4,"kind":"finding","action":"fix","finding":"UI-3-1","by":"builder"}
 {"at":"2026-11-15T08:16:14Z","feature":"F-17","round":4,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":94.5,"commit":"5dea11efbc33"}
 {"at":"2026-11-15T08:16:14Z","feature":"F-17","round":4,"kind":"transition","head":"5dea11efbc33","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-15T08:22:23Z","feature":"F-17","round":4,"kind":"transition","head":"f91bc63ff412","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-15T08:22:23Z","feature":"F-17","round":5,"kind":"transition","head":"f91bc63ff412","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-15T08:23:50Z","feature":"F-17","round":5,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":87.0,"commit":"f91bc63ff412"}
+{"at":"2026-11-15T08:23:50Z","feature":"F-17","round":5,"kind":"finding","action":"accept-risk","finding":"FID-1-1","by":"design-engineer"}
+{"at":"2026-11-15T08:23:51Z","feature":"F-18","round":3,"kind":"finding","action":"accept-risk","finding":"UI-1-7","by":"design-engineer"}
+{"at":"2026-11-15T08:23:51Z","feature":"F-18","round":3,"kind":"finding","action":"accept-risk","finding":"TECH-1-1","by":"design-engineer"}

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-17",
   "outcome": "The work item page renders a line workspace from the data alone and takes a step safely (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-WORKSPACE-FRAME"
   ],
@@ -127,6 +127,18 @@
       "at": "2026-11-15T08:16:14Z",
       "seconds": 94.5,
       "evidence_ref": "delivery/features/F-17/round-4/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 5,
+      "attempt": 1,
+      "commit": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-15T08:23:50Z",
+      "seconds": 87.0,
+      "evidence_ref": "delivery/features/F-17/round-5/checks.md"
     }
   ],
   "reviews": {
@@ -196,7 +208,7 @@
         "delivery/features/F-17/round-1/fidelity/region-scores.txt"
       ],
       "raised_by": "coordinator",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
@@ -221,12 +233,23 @@
           "refs": [],
           "head": "a5e803ab09ccd3122a4c252be8658a9138314be0",
           "reason": "Partial. The D-62 side column, Decide panel (orange head, green primary, full-width buttons), blue suggestion and form heads, and phone pinned bar are present. Region check rerun at a5e803a gives coverage 100% in 26 of 26 and visual >= 85 in 9 of 26. Of the gaps still open, UI-2-1 to UI-2-7 can be fixed in the frame, and the rest are listed below for the design engineer."
+        },
+        {
+          "action": "accept-risk",
+          "by": "design-engineer",
+          "at": "2026-11-15T08:23:50Z",
+          "refs": [
+            "delivery/OVERNIGHT-DECISIONS.md"
+          ],
+          "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+          "reason": "Remaining region gaps are forced (line designs, contract gaps, 44px targets); frame accepted at measured scores, D-65"
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "a5e803a"
-      ]
+      ],
+      "risk_authority": "design engineer"
     },
     {
       "id": "TECH-1-1",
@@ -1429,6 +1452,62 @@
           "evidence_refs": []
         }
       }
+    },
+    {
+      "round": 4,
+      "reviews": {
+        "technical": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-17/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ui": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        }
+      }
     }
   ],
   "run_controls": {
@@ -1453,7 +1532,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "79f25e57c411711efe9d0376a1f123251292c737",
     "task_branch": "fe-workspace-frame-the-work-item-page-renders-a-line-worksp",
-    "head_sha": "5dea11efbc33d8f40c3f9c3beb40934067bb7fba",
+    "head_sha": "f91bc63ff41283e698faf47b356721f4ce2ec022",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-17",
     "pr_url": null,
     "pr_number": null,
@@ -1692,7 +1771,7 @@
     }
   },
   "created_at": "2026-11-14T21:38:05Z",
-  "round": 4,
+  "round": 5,
   "round_limit": 5,
   "history": [
     {
@@ -1790,6 +1869,22 @@
       "round": 4,
       "head": "5dea11efbc33d8f40c3f9c3beb40934067bb7fba",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-15T08:22:23Z",
+      "round": 4,
+      "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-15T08:22:23Z",
+      "round": 5,
+      "head": "f91bc63ff41283e698faf47b356721f4ce2ec022",
+      "reason": null
     }
   ],
   "routing": {
@@ -1806,10 +1901,10 @@
     ]
   },
   "gate": {
-    "round": 4,
+    "round": 5,
     "attempts": 1,
     "verdict": "PASS",
-    "commit": "5dea11efbc33d8f40c3f9c3beb40934067bb7fba"
+    "commit": "f91bc63ff41283e698faf47b356721f4ce2ec022"
   },
   "blocked": null
 }
