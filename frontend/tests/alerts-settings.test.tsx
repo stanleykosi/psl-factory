@@ -112,10 +112,12 @@ describe('settings (SCR-15-desktop-settings)', () => {
       ['Work I started is verified', 'false', 'true', 'In the daily digest'],
       ['Everything else', 'false', 'true', 'In the daily digest'],
     ]);
-    const digest = screen.getByLabelText('Daily digest at') as HTMLSelectElement;
-    expect([digest.value, [...digest.options].map((o) => o.textContent)]).toEqual(['08:00', ['07:00', '08:00', '09:00']]);
-    const quiet = screen.getByLabelText('Quiet hours') as HTMLSelectElement;
-    expect(quiet.selectedOptions[0].textContent).toBe('20:00 to 07:00, and weekends');
+    const digest = screen.getByRole('combobox', { name: 'Daily digest at' });
+    expect(digest.textContent).toBe('08:00');
+    fireEvent.click(digest);
+    expect(screen.getAllByRole('option').map((o) => o.textContent)).toEqual(['07:00', '08:00', '09:00']);
+    fireEvent.keyDown(digest, { key: 'Escape' });
+    expect(screen.getByRole('combobox', { name: 'Quiet hours' }).textContent).toBe('20:00 to 07:00, and weekends');
     expect(screen.getByText('WhatsApp number')).toBeTruthy();
     expect(screen.getByText('+234 803 *** 4412 · verified')).toBeTruthy();
     expect(screen.getByText('Alerts never include amounts or client details beyond the name.')).toBeTruthy();
@@ -138,7 +140,8 @@ describe('settings (SCR-15-desktop-settings)', () => {
   it('save sends exactly the contract body with X-CSRFToken, shows saved, and the next save sends revision 4', async () => {
     await open();
     fireEvent.click(sw('Email, Work I started is stuck'));
-    fireEvent.change(screen.getByLabelText('Daily digest at'), { target: { value: '09:00' } });
+    fireEvent.click(screen.getByRole('combobox', { name: 'Daily digest at' }));
+    fireEvent.click(screen.getByRole('option', { name: '09:00' }));
     save();
     await until(() => expect(screen.getByRole('status').textContent).toBe('Your alert settings are saved.'));
     expect(puts().map((c) => c.csrf)).toEqual(['mock-csrf-finance_lead']);
@@ -167,7 +170,7 @@ describe('settings (SCR-15-desktop-settings)', () => {
     }
   });
 
-  it('one save in flight: Saving… with aria-disabled, a second press sends nothing', async () => {
+  it('one save in flight: Saving… with aria-busy, a second press sends nothing', async () => {
     let release!: () => void;
     const gate = new Promise<void>((r) => (release = r));
     hook = async (call) => {
@@ -177,7 +180,7 @@ describe('settings (SCR-15-desktop-settings)', () => {
     };
     await open();
     save();
-    await until(() => expect(screen.getByRole('button', { name: 'Saving…' }).getAttribute('aria-disabled')).toBe('true'));
+    await until(() => expect(screen.getByRole('button', { name: 'Saving…' }).getAttribute('aria-busy')).toBe('true'));
     save();
     save();
     release();
@@ -192,8 +195,8 @@ describe('settings (SCR-15-desktop-settings)', () => {
     expect(checked('WhatsApp, A decision is waiting for me')).toBe('false');
     save();
     const text = 'Someone changed these settings since you opened them. This is the latest version; make your changes again.';
-    await until(() => expect(screen.getByRole('alert').textContent).toBe(text));
-    expect(document.activeElement).toBe(screen.getByRole('alert'));
+    await until(() => expect(screen.getByText(text)).toBeTruthy());
+    expect(document.activeElement).toBe(screen.getByText(text).closest('.psl-callout'));
     expect(checked('WhatsApp, A decision is waiting for me')).toBe('true');
     expect(checked('Email, Work I started is stuck')).toBe('false');
     expect(calls.map((c) => c.method)).toEqual(['GET', 'PUT', 'GET']);

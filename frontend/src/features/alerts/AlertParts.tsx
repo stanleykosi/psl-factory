@@ -7,28 +7,23 @@ import { useCallback, useRef, type MouseEvent } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError } from '@/api/errors';
-import { formatClock } from '@/features/decide/format';
+import { AgentAvatar, agentKey, ErrorState, formatDateTime, VisuallyHidden } from '@/components';
 
 import type { Alert } from './types';
-import { agentImage, metaLine, workHref } from './model';
+import { metaLine, workHref } from './model';
 
 export function AlertAvatar({ agent }: { agent: string }) {
-  const image = agentImage(agent);
-  return (
-    <span className={image ? `psl-avatar psl-avatar--40 psl-avatar--${agent}` : 'psl-avatar psl-avatar--40'}>
-      {/* Decorative: the agent's name is in the meta line. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      {image && <img src={image} alt="" width={40} height={40} />}
-    </span>
-  );
+  // Decorative: the agent's name is in the meta line. An agent we do not know gets a plain circle.
+  const key = agentKey(agent);
+  return key ? <AgentAvatar agent={key} size={40} /> : <span className="psl-avatar psl-avatar--40" aria-hidden="true" />;
 }
 
-/** The alert's sentence over its meta line ("Chidi · WhatsApp · 09:42"). */
+/** The alert's sentence over its meta line ("Chidi · WhatsApp · 09:42 WAT"). */
 export function AlertBody({ alert, now }: { alert: Alert; now: number }) {
   return (
     <span className="alerts-body">
       <span className="alerts-text">{alert.text}</span>
-      <span className="alerts-sr">, </span>
+      <VisuallyHidden>, </VisuallyHidden>
       <span className="alerts-meta">{metaLine(alert, now)}</span>
     </span>
   );
@@ -64,20 +59,11 @@ export function useOpenAlert(onRead?: (alert: Alert) => void, onError?: (error: 
   );
 }
 
-/** STATES error card for the alerts list: when it was last loaded, the reference, and one Try again. */
+/** STATES error: when it was last loaded, the reference, and one Try again. */
 export function AlertsLoadError({ error, asOf, onRetry }: { error: ApiError; asOf?: string; onRetry: () => void }) {
   return (
-    <div className="shell-errorcard" role="alert">
-      <span className="shell-eyebrow">ERROR · COULDN&rsquo;T LOAD</span>
-      <span>We couldn&rsquo;t load your alerts. Your work is safe; nothing was changed.</span>
-      <span className="shell-reference">
-        {asOf && `Last loaded ${formatClock(asOf)}. `}Reference {error.code} for support.
-      </span>
-      <div className="shell-errorcard__action">
-        <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" onClick={onRetry}>
-          Try again
-        </button>
-      </div>
-    </div>
+    <ErrorState title="We couldn’t load your alerts." retryLabel="Try again" onRetry={onRetry}>
+      Your work is safe; nothing was changed. {asOf && `Last loaded ${formatDateTime(asOf)}. `}Reference {error.code} for support.
+    </ErrorState>
   );
 }

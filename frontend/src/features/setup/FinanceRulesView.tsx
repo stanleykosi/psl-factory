@@ -3,10 +3,9 @@
 // /setup/rules/finance (SCR-13-desktop-finance-rules, SCR-13-mobile-finance-rules): E-SETUP-RULES with area=finance,
 // grouped by the rows' group in first-appearance order. "Set … rules" opens the Set a rule panel for that group's
 // editable rows only (PMO-0-3); one panel is open at a time.
-import Link from 'next/link';
 import { useState } from 'react';
 
-import { WarningIcon } from '@/shell/icons';
+import { Breadcrumb, Button, Callout, PageTitle, Panel, Tag } from '@/components';
 
 import type { RuleRow } from './contract-proposal';
 import { groupButtonLabel, isEditable, valueText } from './format';
@@ -39,7 +38,7 @@ export function RuleList({ rows }: { rows: RuleRow[] }) {
         return (
           <li key={row.component}>
             <span>{row.name}</span>
-            {text === null ? <span className="psl-tag psl-tag--person setup-tag">NOT SET</span> : <span className="setup-list__value">{text}</span>}
+            {text === null ? <Tag tone="person">NOT SET</Tag> : <span className="setup-list__value">{text}</span>}
           </li>
         );
       })}
@@ -49,11 +48,13 @@ export function RuleList({ rows }: { rows: RuleRow[] }) {
 
 export function AreaCrumb({ area }: { area: string }) {
   return (
-    <nav aria-label="Breadcrumb">
-      <p className="psl-crumb setup-crumb">
-        <Link href="/setup/rules">SETUP</Link> / <Link href="/setup/rules">RULES</Link> / <span aria-current="page">{area}</span>
-      </p>
-    </nav>
+    <Breadcrumb
+      items={[
+        { label: 'SETUP', href: '/setup' },
+        { label: 'RULES', href: '/setup/rules' },
+      ]}
+      current={area}
+    />
   );
 }
 
@@ -86,8 +87,8 @@ function FinanceRulesView() {
     <>
       <div className="setup-page setup-desktop">
         <AreaCrumb area="FINANCE" />
-        <h1 className="setup-title setup-title--area">Finance rules</h1>
-        <p className="setup-lead">
+        <PageTitle>Finance rules</PageTitle>
+        <p className="psl-hint">
           Every value the Finance lines need before they can run. Each is decided by PSL; the factory never guesses. A line stops at
           “Setup needed” only at the step that needs a missing value.
         </p>
@@ -95,10 +96,7 @@ function FinanceRulesView() {
           <RulesEmpty />
         ) : (
           <>
-            <div className="psl-callout psl-callout--warning">
-              <WarningIcon />
-              <span>{countText}Real reviewers and approvers come from PSL; none are invented here.</span>
-            </div>
+            <Callout kind="warning">{countText}Real reviewers and approvers come from PSL; none are invented here.</Callout>
             {closedNotice && <OutcomeNotice notice={closedNotice} />}
             <div className="setup-groups">
               {groups.map((group, index) => {
@@ -106,43 +104,39 @@ function FinanceRulesView() {
                 const panelId = `setup-group-panel-${index}`;
                 const isOpen = open === group.key;
                 return (
-                  <section key={group.key} className="psl-panel setup-group" aria-labelledby={`setup-group-${index}`}>
-                    <h2 className="psl-panel__head" id={`setup-group-${index}`}>
-                      {group.label}
-                    </h2>
-                    <div className="psl-panel__body">
-                      <RuleList rows={group.rows} />
-                      {editable.length > 0 && (
-                        <div className="setup-groupaction">
-                          <button
-                            type="button"
-                            className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block"
-                            aria-expanded={isOpen}
-                            aria-controls={panelId}
-                            onClick={() => {
-                              setClosedNotice(null);
-                              setOpen(isOpen ? null : group.key);
-                            }}
-                          >
-                            {groupButtonLabel(group.label)}
-                          </button>
-                        </div>
-                      )}
-                      {editable.length > 0 && (
-                        <div id={panelId} hidden={!isOpen}>
-                          {isOpen && (
-                            <SetRulePanel
-                              rows={editable}
-                              refresh={refresh}
-                              signOut={signOut}
-                              staysOpen={(next) => groupRows(next.items).some((g) => g.key === group.key && g.rows.some(isEditable))}
-                              onEditorGone={setClosedNotice}
-                            />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </section>
+                  <Panel key={group.key} head={<h2>{group.label}</h2>} className="setup-group">
+                    <RuleList rows={group.rows} />
+                    {editable.length > 0 && (
+                      <div className="setup-groupaction">
+                        <Button
+                          kind="secondary"
+                          size="lg"
+                          block
+                          aria-expanded={isOpen}
+                          aria-controls={panelId}
+                          onClick={() => {
+                            setClosedNotice(null);
+                            setOpen(isOpen ? null : group.key);
+                          }}
+                        >
+                          {groupButtonLabel(group.label)}
+                        </Button>
+                      </div>
+                    )}
+                    {editable.length > 0 && (
+                      <div id={panelId} hidden={!isOpen}>
+                        {isOpen && (
+                          <SetRulePanel
+                            rows={editable}
+                            refresh={refresh}
+                            signOut={signOut}
+                            staysOpen={(next) => groupRows(next.items).some((g) => g.key === group.key && g.rows.some(isEditable))}
+                            onEditorGone={setClosedNotice}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </Panel>
                 );
               })}
             </div>
@@ -152,16 +146,13 @@ function FinanceRulesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <h1 className="setup-phone-title setup-phone-title--area">Finance rules</h1>
+        <PageTitle>Finance rules</PageTitle>
         {empty ? (
           <RulesEmpty />
         ) : (
           <>
             {notSet !== undefined && (
-              <div className="psl-callout psl-callout--warning">
-                <WarningIcon />
-                <span>{notSet} values Not set.</span>
-              </div>
+              <Callout kind="warning">{notSet} values Not set.</Callout>
             )}
             {phoneGroups.map((group) => (
               <div key={group.key} className="setup-card">

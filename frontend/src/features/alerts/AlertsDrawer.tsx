@@ -1,23 +1,22 @@
 'use client';
 
 // The bell's drawer (F-15): concept 3 inside concept 1's drawer (design/concepts/alerts-bell-concepts.html), with
-// SCR-15's rows. From 720px a 420px panel at the right under the top bar; below, a full-height sheet with the two
-// groups as tabs. A modal dialog: focus moves to Close and stays inside, Esc, the scrim and Close shut it, and the
-// shell gives focus back to the bell that opened it. The page lists what the server returned for this person only;
-// which group an alert sits in comes from `needs_you` (PROPOSAL), never from its text.
-import Link from 'next/link';
-import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react';
+// SCR-15's rows, in the shared 500px Drawer (a full-height sheet below 720px, with the two groups as tabs). The
+// Drawer holds focus, closes on Esc and the scrim and gives focus back to the bell that opened it. The page lists
+// what the server returned for this person only; which group an alert sits in comes from `needs_you` (PROPOSAL),
+// never from its text.
+import NextLink from 'next/link';
+import { useState, type MouseEvent } from 'react';
 
+import { buttonClass, Drawer, Link, Tabs, VisuallyHidden } from '@/components';
 import { ForbiddenState, LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { AlertAvatar, AlertBody, AlertsLoadError, useOpenAlert, type OpenAlert } from './AlertParts';
-import { ALERTS_DRAWER_ID } from './AlertsBell';
 import type { AlertWithNeed } from './types';
 import type { AlertsFeed } from './useAlertsFeed';
 import { needsYou, needsYouKnown, workHref } from './model';
 import './alerts.css';
 
-const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 type Tab = 'need' | 'info';
 
 type Props = { feed: AlertsFeed; phone: boolean; pathname: string; onClose: () => void; onLeave: (href: string) => void };
@@ -25,55 +24,9 @@ type Props = { feed: AlertsFeed; phone: boolean; pathname: string; onClose: () =
 const plainClick = (event: MouseEvent) => event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
 export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props) {
-  const layerRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
   const [chosen, setChosen] = useState<Tab>();
   const { data, error, refresh, markRead } = feed;
   const openAlert = useOpenAlert((alert) => markRead(alert.id), feed.stop);
-
-  // The drawer starts at the bar's bottom edge as it is on screen now (again when the viewport crosses 720px).
-  useLayoutEffect(() => {
-    const bar = document.querySelector('.shell-topbar')?.getBoundingClientRect();
-    layerRef.current?.style.setProperty('--alerts-top', `${Math.max(0, bar?.bottom ?? 0)}px`);
-  }, [phone]);
-
-  // The page behind does not scroll.
-  useLayoutEffect(() => {
-    const root = document.documentElement;
-    const overflow = root.style.overflow;
-    root.style.overflow = 'hidden';
-    return () => {
-      root.style.overflow = overflow;
-    };
-  }, []);
-
-  useEffect(() => closeRef.current?.focus(), []);
-
-  useEffect(() => {
-    function onKeyDown(event: globalThis.KeyboardEvent) {
-      if (event.key !== 'Escape') return;
-      event.preventDefault();
-      onClose();
-    }
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [onClose]);
-
-  function trapTab(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key !== 'Tab' || !panelRef.current) return;
-    const items = [...panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)];
-    const first = items[0];
-    const last = items[items.length - 1];
-    const active = document.activeElement;
-    if (event.shiftKey && (active === first || active === panelRef.current)) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && active === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  }
 
   const open: OpenAlert = (event, alert) => {
     void openAlert(event, alert);
@@ -102,7 +55,7 @@ export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props)
     else if (phone && known) {
       const shown = tab === 'need' ? need : info;
       list = (
-        <div role="tabpanel" id="alerts-panel" aria-labelledby={`alerts-tab-${tab}`}>
+        <div role="tabpanel" id="alerts-panel" aria-label={tab === 'need' ? 'Needs you' : 'For your information'}>
           <Rows items={shown} now={now} primary={tab === 'need'} onOpen={open} empty={tab === 'need' ? 'Nothing needs you right now.' : 'No other alerts.'} />
         </div>
       );
@@ -123,71 +76,38 @@ export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props)
   }
   const stateBody = error?.kind === 'unauthenticated' || error?.kind === 'forbidden' || (!data && !error);
 
-  function onTabKey(event: KeyboardEvent<HTMLButtonElement>) {
-    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-    event.preventDefault();
-    const next: Tab = tab === 'need' ? 'info' : 'need';
-    setChosen(next);
-    document.getElementById(`alerts-tab-${next}`)?.focus();
-  }
-
   const showTabs = phone && known && items.length > 0 && !stateBody;
 
   return (
-    <div ref={layerRef} className={`alerts-layer alerts-layer--${phone ? 'sheet' : 'drawer'}`}>
-      {/* Pointer-only dismissal; Esc and Close are the keyboard equivalents. */}
-      <div className="alerts-dscrim" aria-hidden="true" onClick={onClose} />
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-      <div
-        ref={panelRef}
-        id={ALERTS_DRAWER_ID}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="alerts-drawer-title"
-        className="alerts-drawer"
-        onKeyDown={trapTab}
-      >
-        {phone && <div className="alerts-grab" aria-hidden="true" />}
-        <div className="alerts-dhead">
-          <h2 id="alerts-drawer-title" className="alerts-dtitle">
-            Alerts
-          </h2>
-          <button ref={closeRef} type="button" className="alerts-close" onClick={onClose}>
-            Close
-          </button>
-        </div>
-        {showTabs && (
-          <div role="tablist" aria-label="Alerts" className="alerts-tabs">
-            {(['need', 'info'] as const).map((key) => (
-              <button
-                key={key}
-                type="button"
-                role="tab"
-                id={`alerts-tab-${key}`}
-                aria-selected={tab === key}
-                aria-controls="alerts-panel"
-                tabIndex={tab === key ? 0 : -1}
-                className="alerts-tab"
-                onClick={() => setChosen(key)}
-                onKeyDown={onTabKey}
-              >
-                {key === 'need' ? 'Needs you' : 'For your information'}
-                {key === 'need' && need.length > 0 && <span className="alerts-tabcount">{need.length}</span>}
-              </button>
-            ))}
-          </div>
-        )}
-        <div className={stateBody ? 'alerts-dbody alerts-dstate' : 'alerts-dbody'}>{body}</div>
-        <div className="alerts-dfoot">
+    <Drawer
+      title="Alerts"
+      onClose={onClose}
+      className="alerts-drawer"
+      footer={
+        <>
           <Link href="/notifications" onClick={follow}>
             See all alerts
           </Link>
           <Link href="/settings/alerts" onClick={follow}>
             Alert settings
           </Link>
-        </div>
-      </div>
-    </div>
+        </>
+      }
+    >
+      {showTabs && (
+        <Tabs
+          label="Alerts"
+          panelId="alerts-panel"
+          selected={tab}
+          onSelect={setChosen}
+          tabs={[
+            { key: 'need', label: 'Needs you', count: need.length > 0 ? need.length : undefined },
+            { key: 'info', label: 'For your information' },
+          ]}
+        />
+      )}
+      <div className={stateBody ? 'alerts-dstate' : undefined}>{body}</div>
+    </Drawer>
   );
 }
 
@@ -200,7 +120,7 @@ function Group({ id, title, items, now, onOpen, empty }: GroupProps) {
       <h3 id={`alerts-grp-${id}`} className={`alerts-grp${id === 'need' ? ' alerts-grp--need' : ''}`}>
         <span>{title}</span>
         <span>
-          <span className="alerts-sr">, </span>
+          <VisuallyHidden>, </VisuallyHidden>
           {items.length}
         </span>
       </h3>
@@ -220,14 +140,14 @@ function Rows({ items, now, primary, onOpen, empty }: RowsProps) {
         <li key={alert.id} className={alert.read === false ? 'alerts-row alerts-row--unread alerts-drow' : 'alerts-row alerts-drow'}>
           <AlertAvatar agent={alert.agent} />
           <AlertBody alert={alert} now={now} />
-          <Link
+          <NextLink
             href={workHref(alert)}
-            className={primary ? 'alerts-open alerts-open--pri' : 'alerts-open'}
+            className={buttonClass(primary ? 'primary' : 'secondary', 'sm')}
             aria-label={`Open: ${alert.text}`}
             onClick={(event) => onOpen(event, alert)}
           >
             Open
-          </Link>
+          </NextLink>
         </li>
       ))}
     </ul>

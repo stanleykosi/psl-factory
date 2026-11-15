@@ -8,11 +8,9 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
-import { WarningIcon } from '@/shell/icons';
+import { Button, Callout, EmptyState, formatDate, formatDateTime, PageTitle, SampleLabel, SearchField, VisuallyHidden } from '@/components';
 
 import type { TemplateRow } from './api';
-import { lagosDay, lagosStamp } from './format';
-import { SearchIcon } from './icons';
 import { OutcomeNotice, type Notice } from './SetRulePanel';
 import { RulesReadState, SetupFrame, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
 import { TemplateUploadPanel, type Invalid } from './TemplateUploadPanel';
@@ -34,7 +32,7 @@ const uploadLabel = (row: TemplateRow) => (isTest(row) ? "Upload PSL's version" 
 
 /** Muted text after the name: "Version 3 · DOCX", then "3 versions · Changed by Ada Okafor, 12 Nov"; each part only when the API returned it. */
 function metaParts(row: TemplateRow): { first: string; second: string } {
-  const day = lagosDay(row.updated_at);
+  const day = row.updated_at ? formatDate(row.updated_at) : null;
   const by = row.updated_by ? `by ${row.updated_by}` : null;
   const when = [by, day].filter(Boolean);
   return {
@@ -85,7 +83,11 @@ function TemplatesView() {
     const closed = state.status === 'error' && (state.error.kind === 'forbidden' || state.error.kind === 'not_found');
     return (
       <>
-        {closed && <h1 className="setup-sr">Setup</h1>}
+        {closed && (
+          <h1>
+            <VisuallyHidden>Setup</VisuallyHidden>
+          </h1>
+        )}
         <RulesReadState state={state} retry={() => void retry()} what="templates" />
       </>
     );
@@ -100,7 +102,7 @@ function TemplatesView() {
   const allTest = !empty && !state.nextCursor && testCount === rows.length;
   const needle = query.trim().toLowerCase();
   const matching = needle ? rows.filter((r) => r.name.toLowerCase().includes(needle) || r.line.toLowerCase().includes(needle)) : rows;
-  const asOf = lagosStamp(state.asOf);
+  const asOf = state.asOf ? formatDateTime(state.asOf) : null;
 
   const close = (id: string, target: Focus['kind']) => {
     setOpen(null);
@@ -175,17 +177,17 @@ function TemplatesView() {
       />
     ) : null;
 
-  const uploadButton = (row: TemplateRow, className: string) =>
+  const uploadButton = (row: TemplateRow, asLink: boolean) =>
     canUpload(row) && (
-      <button
-        type="button"
-        className={className}
+      <Button
+        kind={asLink ? 'text' : 'secondary'}
+        block={!asLink}
         data-upload-for={row.template_id}
         aria-expanded={open === row.template_id}
         onClick={() => openPanel(row.template_id)}
       >
         {uploadLabel(row)}
-      </button>
+      </Button>
     );
 
   const notices = (
@@ -193,9 +195,9 @@ function TemplatesView() {
       {notice && <OutcomeNotice notice={notice} />}
       {locked && (
         <div>
-          <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" onClick={() => void tryAgain()}>
+          <Button kind="secondary" size="sm" onClick={() => void tryAgain()}>
             Try again
-          </button>
+          </Button>
         </div>
       )}
     </>
@@ -205,7 +207,7 @@ function TemplatesView() {
       {row.name}
     </strong>
   );
-  const badge = (row: TemplateRow) => isTest(row) && <span className="psl-tag psl-tag--waiting setup-tag">TEST TEMPLATE</span>;
+  const badge = (row: TemplateRow) => isTest(row) && <SampleLabel kind="test" />;
   const meta = (row: TemplateRow) => {
     const { first, second } = metaParts(row);
     return (
@@ -221,26 +223,17 @@ function TemplatesView() {
       <div className="setup-page setup-desktop">
         <SetupFrame current="templates" />
         {empty ? (
-          <div className="psl-empty">
-            <h2>No templates to show.</h2>
-            <p>Document templates your role may read will appear here.</p>
-          </div>
+          <EmptyState title="No templates to show.">Document templates your role may read will appear here.</EmptyState>
         ) : (
           <>
             {allTest && (
-              <div className="psl-callout psl-callout--warning">
-                <WarningIcon />
-                <span>
-                  Every document currently uses a test template. When PSL supplies its real template, upload it here; documents already sent keep the template they were made with.
-                </span>
-              </div>
+              <Callout kind="warning">
+                Every document currently uses a test template. When PSL supplies its real template, upload it here; documents already sent keep the template they were made with.
+              </Callout>
             )}
             {notices}
             <div role="search" className="psl-toolbar">
-              <div className="psl-search setup-search">
-                <SearchIcon />
-                <input type="search" className="psl-input" aria-label="Search" placeholder="Search templates" value={query} onChange={(e) => setQuery(e.target.value)} />
-              </div>
+              <SearchField label="Search" fieldClassName="setup-search" placeholder="Search templates" value={query} onChange={setQuery} />
               {state.nextCursor && needle && <span className="setup-more">Searching the {rows.length} shown</span>}
               <span className="setup-counts">
                 <span className="setup-more">
@@ -257,7 +250,7 @@ function TemplatesView() {
                     <th scope="col">USED BY LINE</th>
                     <th scope="col">STATUS</th>
                     <th scope="col">
-                      <span className="setup-sr">Action</span>
+                      <VisuallyHidden>Action</VisuallyHidden>
                     </th>
                   </tr>
                 </thead>
@@ -284,7 +277,7 @@ function TemplatesView() {
                         <td>{badge(row)}</td>
                         <td>
                           <div className="setup-actioncell">
-                            {uploadButton(row, 'setup-linkbtn')}
+                            {uploadButton(row, true)}
                           </div>
                         </td>
                       </tr>,
@@ -304,19 +297,13 @@ function TemplatesView() {
       </div>
 
       <div className="setup-page setup-phone">
-        <h1 className="setup-phone-title">Templates</h1>
+        <PageTitle>Templates</PageTitle>
         {empty ? (
-          <div className="psl-empty">
-            <h2>No templates to show.</h2>
-            <p>Document templates your role may read will appear here.</p>
-          </div>
+          <EmptyState title="No templates to show.">Document templates your role may read will appear here.</EmptyState>
         ) : (
           <>
             {allTest && (
-              <div className="psl-callout psl-callout--warning">
-                <WarningIcon />
-                <span>All {rows.length} are test templates until PSL supplies its own.</span>
-              </div>
+              <Callout kind="warning">All {rows.length} are test templates until PSL supplies its own.</Callout>
             )}
             {asOf && <p className="setup-more">AS OF {asOf.toUpperCase()}</p>}
             {notices}
@@ -327,7 +314,7 @@ function TemplatesView() {
                   {badge(row)}
                   <span className="setup-card__line">{row.line}</span>
                   {meta(row)}
-                  {uploadButton(row, 'psl-btn psl-btn--secondary psl-btn--block')}
+                  {uploadButton(row, false)}
                   {panelFor(row)}
                 </li>
               ))}
@@ -337,8 +324,8 @@ function TemplatesView() {
         )}
       </div>
 
-      <div role="status" aria-live="polite" className="setup-sr">
-        {announcement}
+      <div role="status" aria-live="polite">
+        <VisuallyHidden>{announcement}</VisuallyHidden>
       </div>
     </>
   );

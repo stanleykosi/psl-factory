@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import { Button } from '@/components';
+
 import { FloorScene } from './scene';
 import { floorLabel, type FloorProps } from './support';
 import './floor.css';
@@ -91,9 +93,9 @@ export default function Floor3D({ lines, onFailure }: FloorProps) {
         <p className={`floor__readout${readout.person ? ' floor__readout--person' : ''}`} aria-live="polite">
           {readout.text ?? HINT}
         </p>
-        <button type="button" className="psl-btn psl-btn--secondary" onClick={() => floor.current?.reset()}>
+        <Button kind="secondary" onClick={() => floor.current?.reset()}>
           Reset view
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 // Display rules for Setup rows. A rule is Not set only when `set` is false; the value object is never read.
+import { formatDate } from '@/components';
+
 import type { RuleRow } from './contract-proposal';
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const LAGOS = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit' });
 
 function lagosParts(value: Date) {
@@ -15,23 +16,6 @@ export function lagosToday(now = new Date()): string {
   return `${year}-${month}-${day}`;
 }
 
-/** "12 Nov" in Africa/Lagos, with the year added outside the current Lagos year. Null for a missing or unreadable date. */
-export function lagosDay(value: string | undefined, now = new Date()): string | null {
-  const date = value ? new Date(value) : null;
-  if (!date || Number.isNaN(date.getTime())) return null;
-  const at = lagosParts(date);
-  const year = at.year === lagosParts(now).year ? '' : ` ${at.year}`;
-  return `${Number(at.day)} ${MONTHS[Number(at.month) - 1]}${year}`;
-}
-
-/** "12 Nov, 10:40" in Africa/Lagos (no year inside the current Lagos year). Null for an unreadable date. */
-export function lagosStamp(value: string | undefined, now = new Date()): string | null {
-  const day = lagosDay(value, now);
-  if (!day) return null;
-  const time = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(value!));
-  return `${day}, ${time}`;
-}
-
 /** The file's bytes as base64 (the E-TEMPLATE-VERSION and evidence bodies carry no other encoding). */
 export async function fileToBase64(file: File): Promise<string> {
   const bytes = new Uint8Array(await file.arrayBuffer());
@@ -40,13 +24,11 @@ export async function fileToBase64(file: File): Promise<string> {
   return btoa(text);
 }
 
-/** "v2 · since 01 Oct" (year added outside the current Lagos year), "v2" without a date, null when not set. */
-export function versionText(row: RuleRow, now = new Date()): string | null {
+/** "v2 · since 1 Oct 2026", "v2" without a date, null when not set. */
+export function versionText(row: RuleRow): string | null {
   if (!row.set) return null;
   if (!row.effective_from) return `v${row.revision}`;
-  const from = lagosParts(new Date(row.effective_from));
-  const year = from.year === lagosParts(now).year ? '' : ` ${from.year}`;
-  return `v${row.revision} · since ${from.day} ${MONTHS[Number(from.month) - 1]}${year}`;
+  return `v${row.revision} · since ${formatDate(row.effective_from)}`;
 }
 
 /** The value as text, or null for Not set. A set rule without display_value reads "Set". */
@@ -65,12 +47,6 @@ export const areaHref = (row: RuleRow) => (row.area && Object.hasOwn(AREA_ROUTES
 /** The backend's per-row right only: can_change, a role_set editor with options, and no other screen. */
 export function isEditable(row: RuleRow): boolean {
   return row.can_change === true && row.editor?.kind === 'role_set' && (row.editor.options?.length ?? 0) > 0 && row.link === undefined;
-}
-
-/** "120 KB" below 1024 KB, else "1.5 MB". */
-export function formatSize(bytes: number): string {
-  if (bytes < 1024 * 1024) return `${Math.ceil(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 export type RuleField = 'roles' | 'starts' | 'reason' | 'evidence_id';

@@ -49,9 +49,7 @@ async function open(body: unknown, status = 200) {
 }
 
 const strip = () =>
-  within(screen.getByRole('region', { name: 'Facts earned' }))
-    .getAllByText(/./, { selector: '.monthend-cell__value' })
-    .map((el) => el.textContent);
+  [...screen.getByRole('region', { name: 'Month-end counts' }).querySelectorAll('.monthend-cell__value')].map((el) => el.textContent);
 const rows = () => within(screen.getByRole('table')).getAllByRole('row').slice(1) as HTMLTableRowElement[];
 const amount = (value: string, currency = 'NGN') => ({ amount: value, currency, unknown: false });
 
@@ -116,8 +114,8 @@ describe('period, heading, as-of, counts and tags', () => {
   });
 
   it('as-of line from coverage and as_of, either alone, or none', () => {
-    expect(asOfLine({ coverage: 'FROM RECORDS YOU CAN SEE', as_of: '2026-11-14T09:42:00Z' })).toBe('FROM RECORDS YOU CAN SEE · UPDATED 10:42');
-    expect(asOfLine({ as_of: '2026-11-14T09:42:00Z' })).toBe('UPDATED 10:42');
+    expect(asOfLine({ coverage: 'FROM RECORDS YOU CAN SEE', as_of: '2026-11-14T09:42:00Z' })).toBe('FROM RECORDS YOU CAN SEE · UPDATED 10:42 WAT');
+    expect(asOfLine({ as_of: '2026-11-14T09:42:00Z' })).toBe('UPDATED 10:42 WAT');
     expect(asOfLine({ coverage: 'FROM RECORDS YOU CAN SEE' })).toBe('FROM RECORDS YOU CAN SEE');
     expect(asOfLine({})).toBeUndefined();
   });
@@ -132,11 +130,11 @@ describe('period, heading, as-of, counts and tags', () => {
 
   it('tag text and colour from the backend, else from the state', () => {
     const task = (extra: Partial<MonthEndTask>): MonthEndTask => ({ line: 'L', where: 'W', state: 'waiting', ...extra });
-    expect(taskTag(task({}))).toEqual({ text: 'WAITING', className: 'psl-tag psl-tag--waiting' });
-    expect(taskTag(task({ state: 'action_needed' })).text).toBe('ACTION NEEDED');
-    const tones = { neutral: 'neutral', person: 'person', stopped: 'person', agent: 'agent', uncertain: 'waiting', restricted: 'waiting', verified: 'done' } as const;
+    expect(taskTag(task({}))).toEqual({ text: 'Waiting', tone: 'waiting' });
+    expect(taskTag(task({ state: 'action_needed' })).text).toBe('Action needed');
+    const tones = { neutral: 'neutral', person: 'person', stopped: 'person', agent: 'agent', uncertain: 'waiting', restricted: 'neutral', verified: 'done' } as const;
     for (const [tone, cls] of Object.entries(tones)) {
-      expect(taskTag(task({ tone: tone as MonthEndTask['tone'], status_label: 'X' }))).toEqual({ text: 'X', className: `psl-tag psl-tag--${cls}` });
+      expect(taskTag(task({ tone: tone as MonthEndTask['tone'], status_label: 'X' }))).toEqual({ text: 'X', tone: cls });
     }
   });
 
@@ -155,7 +153,7 @@ describe('MonthEndView', () => {
     expect(urls().map((u) => u.pathname + u.search)).toEqual(['/api/v1/finance/month-end?period=2026-10']);
     expect(screen.getByText('FINANCE / MONTH-END')).toBeTruthy();
     expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('Month-end · October 2026');
-    expect(screen.getByText('FROM RECORDS YOU CAN SEE · UPDATED 10:42')).toBeTruthy();
+    expect(screen.getByText('FROM RECORDS YOU CAN SEE · UPDATED 10:42 WAT')).toBeTruthy();
     expect(strip()).toEqual(['2 of 7', '3', '2', '₦4.7M + Unknown']);
     const cash = screen.getByText('₦4.7M + Unknown');
     expect(document.getElementById(cash.getAttribute('aria-describedby')!)!.textContent).toBe(
@@ -172,7 +170,7 @@ describe('MonthEndView', () => {
     ]);
     expect(within(rows()[1]).getByText('NEEDS FINANCE DECISION').className).toBe('psl-tag psl-tag--person');
     expect(within(rows()[2]).getByText('DONE').className).toBe('psl-tag psl-tag--done');
-    expect(within(rows()[6]).getByText('WAITING ON HR').className).toBe('psl-tag psl-tag--waiting');
+    expect(within(rows()[6]).getByText('WAITING ON HR').className).toBe('psl-tag psl-tag--neutral');
     expect(within(rows()[6]).queryByRole('link')).toBeNull();
     expect(rows().slice(0, 6).map((row) => within(row).getByRole('link').getAttribute('href'))).toEqual(
       ['W-1601', 'W-1602', 'W-1603', 'W-1604', 'W-1605', 'W-1606'].map((id) => `/work/${id}`),
@@ -233,13 +231,13 @@ describe('MonthEndView', () => {
     expect(container.querySelector('.monthend-asof')).toBeNull();
     expect(strip()).toEqual(['Unknown', 'Unknown', 'Unknown', 'Unknown']);
     expect(rows().map((row) => [row.cells[0].textContent, row.cells[2].textContent])).toEqual([
-      ['Bank statements', 'WAITING'],
-      ['Management accounts', 'ACTION NEEDED'],
-      ['Income detail and schedules', 'VERIFIED'],
-      ['Fixed asset schedule', 'WAITING'],
-      ['Cash forecast', 'VERIFIED'],
-      ['Business-unit totals', 'WAITING'],
-      ['Payroll', 'WAITING'],
+      ['Bank statements', 'Waiting'],
+      ['Management accounts', 'Action needed'],
+      ['Income detail and schedules', 'Verified'],
+      ['Fixed asset schedule', 'Waiting'],
+      ['Cash forecast', 'Verified'],
+      ['Business-unit totals', 'Waiting'],
+      ['Payroll', 'Waiting'],
     ]);
     expect(rows().filter((row) => within(row).queryByRole('link'))).toHaveLength(6);
     expect(rows()[6].cells[3].textContent).toBe('');
