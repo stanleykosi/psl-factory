@@ -288,10 +288,10 @@ describe('fields by kind', () => {
     const area = within(dialog()).getByRole('textbox', { name: 'Long text (optional)' });
     expect([area.tagName, area.getAttribute('placeholder')]).toEqual(['TEXTAREA', 'Say more']);
     const date = within(dialog()).getByLabelText('Date');
-    expect([date.getAttribute('type'), document.getElementById(date.getAttribute('aria-describedby')!)!.textContent]).toEqual(['date', 'Date help']);
+    expect([date.getAttribute('type'), document.getElementById(date.getAttribute('aria-describedby')!)!.textContent]).toEqual(['text', 'Date help']);
     expect(within(dialog()).getByRole('group', { name: 'Range' })).toBeTruthy();
-    expect(within(dialog()).getByLabelText('From').getAttribute('type')).toBe('date');
-    expect(within(dialog()).getByLabelText('To').getAttribute('type')).toBe('date');
+    expect(within(dialog()).getByLabelText('From').getAttribute('placeholder')).toBe('DD Mmm YYYY');
+    expect(within(dialog()).getByLabelText('To').getAttribute('placeholder')).toBe('DD Mmm YYYY');
     expect(within(dialog()).getByLabelText('Period (optional)').getAttribute('type')).toBe('month');
     expect(within(dialog()).getByLabelText('When (optional)').getAttribute('type')).toBe('datetime-local');
     expect(within(dialog()).getByLabelText('Count (optional)').getAttribute('type')).toBe('number');
@@ -310,8 +310,8 @@ describe('fields by kind', () => {
     override = (_, url) => (url.pathname === '/api/v1/lines' ? json(200, synthetic([{ name: 'pick', label: 'Pick', type: 'choice', required: true, options }])) : undefined);
     await openMain();
     const select = within(dialog()).getByRole('combobox', { name: 'Pick' });
-    expect(select.tagName).toBe('SELECT');
-    fireEvent.change(select, { target: { value: 'c' } });
+    fireEvent.click(select);
+    fireEvent.click(within(dialog()).getByRole('option', { name: 'C' }));
     press('Start work');
     await waitFor(() => expect(posts).toHaveLength(1));
     expect(posts[0].body.intake).toEqual({ pick: 'c' });
@@ -448,7 +448,9 @@ describe('the case and the start request', () => {
     press('Next');
     expect(within(dialog()).queryByRole('combobox', { name: 'Project' })).toBeNull();
     fireEvent.click(within(dialog()).getByRole('radio', { name: 'Internal Tuesday' }));
-    fireEvent.change(within(dialog()).getByLabelText('Period'), { target: { value: '2026-11-17' } });
+    const period = within(dialog()).getByLabelText('Period');
+    fireEvent.change(period, { target: { value: '17 Nov 2026' } });
+    fireEvent.blur(period);
     expect(within(dialog()).getByText('PMO staff')).toBeTruthy();
     press('Start report');
     await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/W-1408'));
@@ -726,7 +728,7 @@ describe('"What happens next" and the phone sheet', () => {
 
   describe('below 720px', () => {
     beforeEach(() => {
-      vi.stubGlobal('matchMedia', (query: string) => ({ matches: false, media: query, addEventListener: () => {}, removeEventListener: () => {} }));
+      vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width'), media: query, addEventListener: () => {}, removeEventListener: () => {} }));
     });
 
     it('the chooser sheet counts lines in its head, shows titles only, and its footer is Next alone', async () => {
@@ -752,7 +754,7 @@ describe('"What happens next" and the phone sheet', () => {
       expect(screen.getByRole('dialog', { name: 'Invoice preparation' })).toBeTruthy();
       expect(within(dialog()).getByText(/Step 2 of 2/)).toBeTruthy();
       expect(dialog().querySelector('p.sw-next')!.textContent).toBe('Next: Chidi drafts · a Finance Lead decides');
-      expect([...dialog().querySelectorAll('.sw-foot button')].map((b) => b.textContent)).toEqual(['Start the invoice']);
+      expect([...dialog().querySelectorAll('.psl-sheet__foot button')].map((b) => b.textContent)).toEqual(['Start the invoice']);
       press('change line');
       expect(screen.getByRole('dialog', { name: 'Choose a line' })).toBeTruthy();
     });

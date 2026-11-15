@@ -6,6 +6,8 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
+import { Loading } from '@/components';
+
 import { DrawerFrame } from './DrawerFrame';
 import { LineChooser } from './LineChooser';
 import { LineForm } from './LineForm';
@@ -40,14 +42,7 @@ export function StartWorkDrawer({ entry, onClose }: { entry: StartEntry; onClose
     else if (entry === 'default' && state.status === 'loading') {
       return (
         <DrawerFrame eyebrow="START WORK" title="Start work" onClose={onClose} focusKey="entry-loading">
-          <span className="psl-loading" role="status">
-            <span className="psl-busy" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
-            Loading…
-          </span>
+          <Loading>Loading…</Loading>
         </DrawerFrame>
       );
     } else view = { kind: 'chooser' };

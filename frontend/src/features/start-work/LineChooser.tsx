@@ -4,12 +4,11 @@
 // (named groups for assistive technology; the board draws no visible group headings),
 // with a search on title and subtitle. Only returned lines are offered; nothing is added from /me or from roles.
 // On the phone (SCR-04-mobile-lines) the sheet shows the count in its head and the titles only, with no search.
-import Image from 'next/image';
 import Link from 'next/link';
 import { useId, useMemo, useState } from 'react';
 
+import { AgentAvatar, Button, Callout, Loading, RadioGroup, SearchField, Skeleton, VisuallyHidden } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
-import { WarningIcon } from '@/shell/icons';
 
 import { DrawerFrame, useWide } from './DrawerFrame';
 import type { Line } from './types';
@@ -26,7 +25,7 @@ type Props = {
 function TolaLink({ onClose }: { onClose: () => void }) {
   return (
     <Link href="/assistant" className="psl-callout psl-callout--info sw-tola" onClick={onClose}>
-      <Image className="psl-avatar psl-avatar--tola" src="/agents/tola.png" alt="" width={28} height={28} />
+      <AgentAvatar agent="tola" size={32} />
       <span>
         <strong>Not sure which line?</strong> Describe it to Tola
       </span>
@@ -34,22 +33,11 @@ function TolaLink({ onClose }: { onClose: () => void }) {
   );
 }
 
-function Loading() {
+function LoadingLines() {
   return (
     <div className="sw-loading">
-      <div className="shell-skel" aria-hidden="true">
-        <span className="psl-skel" style={{ width: '90%' }} />
-        <span className="psl-skel" style={{ width: '70%' }} />
-        <span className="psl-skel" style={{ width: '80%' }} />
-      </div>
-      <span className="psl-loading" role="status">
-        <span className="psl-busy" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        Loading…
-      </span>
+      <Skeleton widths={[90, 70, 80]} />
+      <Loading>Loading…</Loading>
     </div>
   );
 }
@@ -70,27 +58,21 @@ export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props
   const selected = items.find((line) => line.key === chosen);
 
   let body;
-  if (state.status === 'loading') body = <Loading />;
+  if (state.status === 'loading') body = <LoadingLines />;
   else if (state.status === 'error') {
     const { error } = state;
     if (error.kind === 'unauthenticated') body = <SignedOutState pathname={pathname} />;
     else if (error.kind === 'forbidden' || error.kind === 'not_found') {
       body = (
-        <div className="psl-callout psl-callout--problem" role="alert">
-          <WarningIcon />
-          <span>{error.message}</span>
-        </div>
+        <Callout kind="problem">{error.message}</Callout>
       );
     } else {
       body = (
         <>
-          <div className="psl-callout psl-callout--problem" role="alert">
-            <WarningIcon />
-            <span>We couldn&rsquo;t load your lines. Nothing was started.</span>
-          </div>
-          <button type="button" className="psl-btn psl-btn--secondary sw-retry" onClick={onRetry}>
+          <Callout kind="problem">We couldn&rsquo;t load your lines. Nothing was started.</Callout>
+          <Button kind="secondary" className="sw-retry" onClick={onRetry}>
             Try again
-          </button>
+          </Button>
         </>
       );
     }
@@ -106,20 +88,7 @@ export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props
       <>
         {wide && (
           <>
-            <div className="psl-search">
-              <svg className="psl-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="7.5" cy="7.5" r="5.5" />
-                <path d="M11.5 11.5L16 16" />
-              </svg>
-              <input
-                type="search"
-                className="psl-input"
-                aria-label="Find a line"
-                placeholder="Find a line…"
-                value={q}
-                onChange={(event) => setQ(event.target.value)}
-              />
-            </div>
+            <SearchField label="Find a line" placeholder="Find a line…" value={q} onChange={setQ} />
             <span className="psl-drawer__eyebrow" id={countId}>
               LINES YOU CAN START · {items.length}
             </span>
@@ -130,21 +99,16 @@ export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props
         ) : (
           <div role="radiogroup" aria-labelledby={countId} className="sw-lines">
             {groups.map(([group, lines]) => (
-              <div role="group" aria-label={group} key={group} className="sw-group">
-                {lines.map((line) => (
-                  <label key={line.key} className="sw-line">
-                    <input
-                      type="radio"
-                      name="start-line"
-                      value={line.key}
-                      checked={chosen === line.key}
-                      onChange={() => setChosen(line.key)}
-                    />
-                    <strong>{line.title}</strong>
-                    {wide && line.subtitle && <span className="sw-line__sub">{line.subtitle}</span>}
-                  </label>
-                ))}
-              </div>
+              <RadioGroup
+                key={group}
+                className="sw-group"
+                legend={<VisuallyHidden>{group}</VisuallyHidden>}
+                name="start-line"
+                cards
+                value={chosen ?? undefined}
+                onChange={setChosen}
+                options={lines.map((line) => ({ value: line.key, label: line.title, detail: wide ? line.subtitle : undefined }))}
+              />
             ))}
           </div>
         )}
@@ -158,7 +122,6 @@ export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props
     <DrawerFrame
       eyebrow="START WORK"
       title="Choose a line"
-      narrow
       subline={
         wide ? (
           'Step 1 of 2'
@@ -171,13 +134,13 @@ export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props
       footer={
         <>
           {wide && (
-            <button type="button" className="psl-btn psl-btn--secondary sw-secondary" onClick={onClose}>
+            <Button kind="secondary" className="sw-secondary" onClick={onClose}>
               Back
-            </button>
+            </Button>
           )}
-          <button type="button" className="psl-btn psl-btn--start sw-primary" disabled={!selected} onClick={() => selected && onNext(selected)}>
+          <Button kind="start" className="sw-primary" disabled={!selected} onClick={() => selected && onNext(selected)}>
             Next
-          </button>
+          </Button>
         </>
       }
     >

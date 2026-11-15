@@ -5,6 +5,8 @@
 // the reason and can't be chosen. Search waits 250 ms; "Show more" appends the next page while next_cursor is present.
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
 
+import { Button, Icon, Loading, SearchField, ShowMore } from '@/components';
+
 import { fetchOptions } from './useStartWork';
 import type { Field, LineOption } from './types';
 
@@ -35,7 +37,8 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
   const [query, setQuery] = useState('');
   const [list, setList] = useState<ListState>({ status: 'loading', items: [] });
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const focusSearch = () => popupRef.current?.querySelector<HTMLElement>('input[type="search"]')?.focus();
   const listRef = useRef<HTMLUListElement>(null);
   const request = useRef(0);
   // The cursor of the page last asked for, so Try again repeats that page.
@@ -74,7 +77,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
   }, [q, query]);
 
   useEffect(() => {
-    if (open) searchRef.current?.focus();
+    if (open) popupRef.current?.querySelector<HTMLElement>('input[type="search"]')?.focus();
   }, [open]);
 
   function close() {
@@ -102,7 +105,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
       const to = event.key === 'ArrowDown' ? Math.min(at + 1, items.length - 1) : at - 1;
-      if (to < 0) searchRef.current?.focus();
+      if (to < 0) focusSearch();
       else items[to].focus();
     } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -138,45 +141,30 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
         onClick={() => (open ? close() : setOpen(true))}
       >
         <span className="sw-picker__value">{shown || placeholder}</span>
-        <span className="psl-chev" aria-hidden="true">
-          ▾
-        </span>
+        <Icon name="chev" className="psl-chev" />
       </button>
       {open && (
         // The popup only catches Esc for its own controls; it is not itself interactive.
         // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-        <div id={popupId} className="psl-pop sw-picker__pop" onKeyDown={popupKeys}>
-          <div className="psl-search">
-            <svg className="psl-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="7.5" cy="7.5" r="5.5" />
-              <path d="M11.5 11.5L16 16" />
-            </svg>
-            <input
-              ref={searchRef}
-              type="search"
-              className="psl-input"
-              aria-label={`Search ${field.label}`}
-              placeholder="Search…"
-              value={q}
-              onChange={(event) => setQ(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key !== 'ArrowDown') return;
-                event.preventDefault();
-                listRef.current?.querySelector<HTMLElement>('[role="option"]')?.focus();
-              }}
-            />
-          </div>
-          {list.status === 'loading' && (
-            <span className="psl-loading" role="status">
-              Loading…
-            </span>
-          )}
+        <div ref={popupRef} id={popupId} className="psl-pop sw-picker__pop" onKeyDown={popupKeys}>
+          <SearchField
+            label={`Search ${field.label}`}
+            placeholder="Search…"
+            value={q}
+            onChange={setQ}
+            onKeyDown={(event) => {
+              if (event.key !== 'ArrowDown') return;
+              event.preventDefault();
+              listRef.current?.querySelector<HTMLElement>('[role="option"]')?.focus();
+            }}
+          />
+          {list.status === 'loading' && <Loading className="sw-picker__loading">Loading…</Loading>}
           {list.status === 'error' && list.items.length === 0 && (
             <p className="psl-error sw-picker__error">
               We couldn&rsquo;t load these options.{' '}
-              <button type="button" className="psl-btn psl-btn--text psl-btn--sm" onClick={() => void load()}>
+              <Button kind="text" size="sm" onClick={() => void load()}>
                 Try again
-              </button>
+              </Button>
             </p>
           )}
           {list.status === 'ready' && list.items.length === 0 && <p className="psl-hint sw-picker__empty">Nothing to choose from.</p>}
@@ -205,23 +193,13 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
           {list.status === 'error' && list.items.length > 0 && (
             <p className="psl-error sw-picker__error">
               We couldn&rsquo;t load these options.{' '}
-              <button type="button" className="psl-btn psl-btn--text psl-btn--sm" onClick={() => void load(lastCursor.current)}>
+              <Button kind="text" size="sm" onClick={() => void load(lastCursor.current)}>
                 Try again
-              </button>
+              </Button>
             </p>
           )}
           {list.status === 'ready' && list.next && (
-            <div className="psl-showmore">
-              <span>{list.items.length} shown</span>
-              <button
-                type="button"
-                className="psl-btn psl-btn--text psl-btn--sm"
-                disabled={list.more}
-                onClick={() => void load(list.next)}
-              >
-                Show more
-              </button>
-            </div>
+            <ShowMore shown={list.items.length} hasMore busy={list.more} onMore={() => void load(list.next)} />
           )}
         </div>
       )}
