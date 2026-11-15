@@ -143,7 +143,8 @@ async function fillW1601({ file = true, attest = true } = {}) {
 describe('entry from the work item (SCR-02 waiting)', () => {
   it('W-1601 links to the response form instead of the decision; W-1608 has neither; W-1201 keeps the decision', () => {
     const view = render(<WorkItemOverview id="W-1601" item={item('W-1601') as WorkItem} />);
-    const panel = screen.getByRole('region', { name: 'Current human task' });
+    // the task panel is the shared Panel, named by its head (the task's title), not by a fixed label
+    const panel = screen.getByRole('link', { name: 'Record the client’s response' }).closest('section') as HTMLElement;
     const link = within(panel).getByRole('link', { name: 'Record the client’s response' });
     expect(link.getAttribute('href')).toBe('/work/W-1601/respond?task=T-1601');
     expect(within(panel).queryByRole('link', { name: 'Open the decision' })).toBeNull();

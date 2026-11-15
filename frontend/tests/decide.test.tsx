@@ -111,7 +111,8 @@ describe('default view', () => {
     const crumb = screen.getByRole('navigation', { name: 'Breadcrumb' });
     expect(crumb.textContent).toBe('My work / Prepare an invoice / INV-0412');
     const label = screen.getByLabelText(/^Note/) as HTMLTextAreaElement;
-    expect(label.maxLength).toBe(2000);
+    // the shared TextArea never cuts text: a note over the limit is refused when a button is pressed
+    expect(label.maxLength).toBe(-1);
     expect(screen.getByText('0 / 2000')).toBeTruthy();
   });
 
@@ -286,8 +287,9 @@ describe('claim and decide', () => {
     fireEvent.click(approve);
     await screen.findByText('Approving…');
     expect(counts().decides).toHaveLength(1);
-    for (const name of ['Approving…', 'Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled).toBe(true);
-    expect(screen.getByRole('region', { name: 'Your decision' }).getAttribute('aria-busy')).toBe('true');
+    // the pressed button is busy (it ignores presses, so it is not disabled); the others wait
+    expect(button('Approving…').getAttribute('aria-busy')).toBe('true');
+    for (const name of ['Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(button('Approving…'));
     await act(async () => release());
     await screen.findByText('Invoice v2 is approved');

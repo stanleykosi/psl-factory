@@ -2,9 +2,9 @@
 
 // SCR-03 decision (/work/[id]/decide?task=<task id>). The only switches are the task's you_can_act and
 // cannot_act_reason from E-WORK-ITEM; /me roles never decide what is offered (INV-ACCESS).
+import { Button, Callout, Tag } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
-import { WarningIcon } from '@/shell/icons';
 import { FactsStrip } from '@/features/work-item/WorkItemOverview';
 import { presentationOf } from '@/features/work-item/presentation';
 import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemStates';
@@ -22,27 +22,19 @@ import '@/features/work-item/work-item.css';
 import './decide.css';
 
 function UncertainNotice() {
-  return (
-    <div className="psl-callout psl-callout--warning" role="alert">
-      <WarningIcon />
-      <span>We couldn&rsquo;t confirm your decision. We&rsquo;ve reloaded this item so you can see whether it was recorded.</span>
-    </div>
-  );
+  return <Callout kind="warning">We couldn&rsquo;t confirm your decision. We&rsquo;ve reloaded this item so you can see whether it was recorded.</Callout>;
 }
 
 /** The decide had an uncertain effect and the reload failed: say so plainly; Try again only reads the item. */
 function UnconfirmedNotice({ checking, onRecheck }: { checking: boolean; onRecheck: () => void }) {
   return (
-    <div className="psl-callout psl-callout--warning decide-retry" role="alert">
-      <WarningIcon />
-      <span>
-        <strong>We couldn&rsquo;t confirm whether your decision was recorded.</strong> We also couldn&rsquo;t reload this item to
-        check, so the decision buttons stay off. Try again reloads the item; it doesn&rsquo;t send your decision again.
-      </span>
-      <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={checking} onClick={onRecheck}>
-        {checking ? 'Checking…' : 'Try again'}
-      </button>
-    </div>
+    <Callout kind="warning" className="decide-retry">
+      <strong>We couldn&rsquo;t confirm whether your decision was recorded.</strong> We also couldn&rsquo;t reload this item to check, so the
+      decision buttons stay off. Try again reloads the item; it doesn&rsquo;t send your decision again.{' '}
+      <Button kind="secondary" size="sm" busy={checking} busyLabel="Checking…" onClick={onRecheck}>
+        Try again
+      </Button>
+    </Callout>
   );
 }
 
@@ -82,7 +74,7 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
     if (error.kind === 'unauthenticated') {
       return (
         <>
-          <h1 className="decide-sr">Decision</h1>
+          <h1 className="cmp-sr">Decision</h1>
           <SignedOutState pathname={pathname} />
         </>
       );
@@ -97,7 +89,7 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
     }
     return (
       <>
-        <h1 className="decide-sr">Decision</h1>
+        <h1 className="cmp-sr">Decision</h1>
         <WorkErrorCard
           message="We couldn’t load this decision. Your work is safe; nothing was changed."
           error={error}
@@ -149,7 +141,9 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
     // the own board sets its tag at the end of the title line; the others inside the card
     const tag =
       task.cannot_act_reason === 'prepared_by_you' ? (
-        <span className="psl-tag psl-tag--waiting decide-owntag">{cannotActCopy(task.cannot_act_reason, task).eyebrow}</span>
+        <Tag tone="waiting" className="decide-owntag">
+          {cannotActCopy(task.cannot_act_reason, task).eyebrow}
+        </Tag>
       ) : undefined;
     return (
       <>

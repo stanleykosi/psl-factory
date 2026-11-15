@@ -44,7 +44,7 @@ function useProjects() {
  * phones. Line, Project, State and Waiting on edit a draft; "Show N items" applies it, where N comes from the
  * same list request with the draft. Esc or a click outside discards it.
  */
-export function FilterPanel({ phone, lines, applied, anchor, preview, onApply, onClose }: Props) {
+export function MyWorkFilter({ phone, lines, applied, anchor, preview, onApply, onClose }: Props) {
   const [draft, setDraft] = useState<Filters>(applied);
   const [allLines, setAllLines] = useState(false);
   const [count, setCount] = useState<Preview>();

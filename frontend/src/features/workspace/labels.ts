@@ -1,8 +1,9 @@
 // PROPOSAL (D-LINE-WORKSPACE, contract mock only): the `workspace` block's enum values to the words and classes
 // the frame draws. Presentation only: which sections and steps exist, their values and who may act are the
 // backend's. A value outside these lists is shown as it came, never hidden.
+import { formatDate, formatDateTime, type TagTone } from '@/components';
 import { formatAmount } from '@/features/decide/format';
-import { formatWat, type WorkItem } from '@/features/work-item/labels';
+import type { WorkItem } from '@/features/work-item/labels';
 
 export type Workspace = NonNullable<WorkItem['workspace']>;
 export type Section = Workspace['sections'][number];
@@ -16,20 +17,18 @@ export type Ref = NonNullable<Cell['link']>;
 export type Money = NonNullable<Item['money']>;
 export type DateValue = NonNullable<Item['due']>;
 
-/** Tone to the design system's existing tag colours (tokens only); an unlisted tone draws the neutral tag. */
-const TONE_CLASS: Record<Tone, string> = {
-  neutral: 'psl-tag--neutral',
-  person: 'psl-tag--person',
-  agent: 'psl-tag--agent',
-  stopped: 'psl-tag--person',
-  uncertain: 'psl-tag--waiting',
-  verified: 'psl-tag--done',
-  restricted: 'psl-tag--neutral',
+/** Tone to the design system's tag families (README); an unlisted tone draws the neutral tag. */
+const TONE: Record<Tone, TagTone> = {
+  neutral: 'neutral',
+  person: 'person',
+  agent: 'agent',
+  stopped: 'person',
+  uncertain: 'waiting',
+  verified: 'done',
+  restricted: 'neutral',
 };
 
-export function tagClass(tone: string | undefined): string {
-  return `psl-tag ${TONE_CLASS[tone as Tone] ?? 'psl-tag--neutral'}`;
-}
+export const tagTone = (tone: string | undefined): TagTone => TONE[tone as Tone] ?? 'neutral';
 
 export const STATUS_WORDS: Record<NonNullable<Item['status']>, string> = {
   done: 'Done',
@@ -78,20 +77,16 @@ export const WS_TEXT = {
   you: 'You',
 } as const;
 
-/** "As of 14 Nov 10:40 WAT". */
-export const asOfLine = (value: string) => `As of ${formatWat(value)} WAT`;
+/** "As of 14 Nov 2026 10:40 WAT". */
+export const asOfLine = (value: string) => `As of ${formatDateTime(value)}`;
 
 /** Money in the decide page's format; null when unknown or absent, so the caller draws Unknown (never 0). */
 export const moneyText = (money: Money) => formatAmount(money);
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 /** A calendar date ("2026-11-28") as "28 Nov 2026"; null when unknown or missing (INV-UNKNOWN). */
 export function dateText(value: DateValue): string | null {
-  if (value.unknown || !value.date) return null;
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.date);
-  if (!match) return null;
-  return `${Number(match[3])} ${MONTHS[Number(match[2]) - 1]} ${match[1]}`;
+  if (value.unknown || !value.date || !/^\d{4}-\d{2}-\d{2}$/.test(value.date)) return null;
+  return formatDate(value.date);
 }
 
 const RECORD_ID = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;

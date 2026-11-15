@@ -51,7 +51,7 @@ function track(page: Page) {
 
 async function ready(page: Page, path = '/my-work') {
   await page.goto(path);
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('.psl-loading')).toHaveCount(0);
   await expect(page.locator('main#main > *').first()).toBeVisible();
 }
 

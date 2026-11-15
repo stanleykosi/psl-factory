@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import type { Me } from '@/api/types';
+import { Icon } from '@/components';
 import { AlertsBell, type BellProps } from '@/features/alerts/AlertsBell';
 import { StartWorkButton } from '@/features/start-work/StartWorkButton';
 
 import type { DestinationInfo } from './destinations';
-import { MenuIcon } from './icons';
 import { SampleLabel } from './SampleLabel';
 
 /** A sub-page's way back, drawn in the phone bar as "← label", with an optional mono note at the right ("RULES"). */
@@ -57,7 +57,7 @@ export function PhoneBar({ me, destinations, current, back = null, bell }: Props
             aria-controls="phone-menu"
             onClick={() => setOpen((value) => !value)}
           >
-            <MenuIcon />
+            <Icon name="menu" />
           </button>
         )}
         {back ? (

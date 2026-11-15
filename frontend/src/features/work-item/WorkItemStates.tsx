@@ -4,8 +4,7 @@
 import Link from 'next/link';
 
 import type { ApiError } from '@/api/errors';
-
-import { useIsPhone } from './usePhone';
+import { Button, buttonClass, Tag, useIsPhone } from '@/components';
 
 /** STATES error card (the frame's classes) with this page's message and a Try again that re-reads. */
 export function WorkErrorCard({ message, error, onRetry }: { message: string; error: ApiError; onRetry: () => void }) {
@@ -15,9 +14,9 @@ export function WorkErrorCard({ message, error, onRetry }: { message: string; er
       <span>{message}</span>
       <span className="shell-reference">Reference {error.code} for support.</span>
       <div className="shell-errorcard__action">
-        <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" onClick={onRetry}>
+        <Button kind="secondary" size="lg" block onClick={onRetry}>
           Try again
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -28,14 +27,16 @@ export function WorkErrorCard({ message, error, onRetry }: { message: string; er
 export function NoAccessState() {
   const phone = useIsPhone();
   const back = (
-    <Link className="psl-btn psl-btn--dark psl-btn--lg" href="/my-work">
+    <Link className={buttonClass("dark", "lg")} href="/my-work">
       Back to my queue
     </Link>
   );
   return (
     <section className="psl-panel work-noaccess" aria-labelledby="work-noaccess-title">
       <div className="psl-panel__body">
-        <span className="psl-tag psl-tag--neutral work-noaccess__tag">NO ACCESS</span>
+        <Tag tone="neutral" className="work-noaccess__tag">
+          NO ACCESS
+        </Tag>
         <h1 id="work-noaccess-title" className="shell-title">
           You can&rsquo;t open this work item
         </h1>

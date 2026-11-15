@@ -97,12 +97,12 @@ describe('header (AC 9) and titles (AC 5)', () => {
 
   it('board overviews carry the Overview / History tabs (D-45) and no next-step block; the next step stays for screen readers', async () => {
     await open('W-1701');
-    const tabs = screen.getByRole('navigation', { name: 'Work item' });
-    expect(within(tabs).getByRole('link', { name: 'Overview' }).getAttribute('aria-current')).toBe('page');
-    expect(within(tabs).getByRole('link', { name: /^History/ }).getAttribute('href')).toBe('/work/W-1701/history');
+    const tabs = screen.getByRole('tablist', { name: 'Work item' });
+    expect(within(tabs).getByRole('tab', { name: 'Overview' }).getAttribute('aria-selected')).toBe('true');
+    expect(within(tabs).getByRole('tab', { name: /^History/ }).getAttribute('href')).toBe('/work/W-1701/history');
     const next = document.querySelector('.work-next')!;
     expect(next.textContent).toContain('A Finance Lead decides invoice v2.');
-    expect(next.closest('.work-sr')).not.toBeNull();
+    expect(next.closest('.cmp-sr')).not.toBeNull();
   });
 
   it('the state boards draw the reference and client line instead of the breadcrumb', async () => {
@@ -196,8 +196,8 @@ describe('stations (AC 8)', () => {
 describe('decision summary (AC 10)', () => {
   it('W-1701: rows from tasks[].decision, who can decide, and Open the decision; no decision controls', async () => {
     await open('W-1701');
-    const task = screen.getByRole('region', { name: 'Current human task' });
-    const dl = task.querySelector('dl.decide-rows')!;
+    const dl = document.querySelector('.work-aside dl.decide-rows')!;
+    const task = dl.closest('section')!;
     expect([...dl.querySelectorAll('.decide-row')].map((r) => [r.querySelector('dt')!.textContent, r.querySelector('dd')!.textContent])).toEqual([
       ['Amount', '₦4,250,000.00'],
       ['Basis', 'Contract stage 2 of 4 · terms v1'],
@@ -213,7 +213,7 @@ describe('decision summary (AC 10)', () => {
 
   it('W-1002 (you_can_act false): no link or button in its task panel', async () => {
     await open('W-1002');
-    const task = screen.getByRole('region', { name: 'Current human task' });
+    const task = screen.getByText(/^Only a .* can decide\.$/).closest('section')!;
     expect(within(task).queryAllByRole('link')).toEqual([]);
     expect(within(task).queryAllByRole('button')).toEqual([]);
   });
@@ -232,7 +232,7 @@ describe('agent card (AC 11)', () => {
     ['W-1003', 'Tola', undefined, 'Writing the progress section'],
   ];
 
-  it.each(AGENTS)('%s: %s, the role, the mascot with alt text and the message; never a decision control', async (id, name, role, message) => {
+  it.each(AGENTS)('%s: %s, the role, the decorative mascot and the message; never a decision control', async (id, name, role, message) => {
     await open(id);
     const cards = screen.getAllByRole('region', { name: 'Agent at work' });
     const text = cards.map((c) => c.textContent).join(' ');
@@ -242,7 +242,8 @@ describe('agent card (AC 11)', () => {
     expect(text).toContain('Cannot approve, send or pay.');
     if (role) {
       const img = document.querySelector(`img[src^="/agents/${name.toLowerCase()}"]`)!;
-      expect(img.getAttribute('alt')).toBe(`${name}, ${role}`);
+      // the avatar is decorative (the name and role are the text beside it); a full pose keeps its description
+      expect(['', `${name}, ${role}`]).toContain(img.getAttribute('alt'));
     }
     const scope = cards[0].closest('.work-agentpanel') ?? cards[0];
     const controls = [...scope.querySelectorAll('a, button')].map((el) => el.textContent ?? '');
@@ -277,7 +278,7 @@ describe('state panels (AC 12) and links (AC 13)', () => {
     expect(next!.className).toBe(`psl-callout psl-callout--${nextStepKind(item(id).state)} work-next`);
     // the exceptions link is drawn on its own, never inside the hidden text
     expect(next!.textContent).toBe(`Next step. ${item(id).next_step}`);
-    expect(next!.closest('.work-sr')).not.toBeNull();
+    expect(next!.closest('.cmp-sr')).not.toBeNull();
     expect(next!.querySelector('a')).toBeNull();
   });
 
@@ -332,8 +333,9 @@ describe('read only (AC 14) and no role guesses (AC 15)', () => {
   it('history: filter, rows per page and Show more send GETs only', async () => {
     await open('W-1705', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
-    fireEvent.click(screen.getByRole('radio', { name: 'Decisions 2' }));
-    fireEvent.change(screen.getByRole('combobox', { name: 'Rows per page' }), { target: { value: '10' } });
+    fireEvent.click(screen.getByRole('radio', { name: 'Decisions2' }));
+    fireEvent.click(screen.getByRole('combobox', { name: 'Rows per page' }));
+    fireEvent.click(screen.getByRole('option', { name: '10' }));
     await waitFor(() => expect(calls().filter((c) => c.url.pathname.endsWith('/history')).length).toBeGreaterThanOrEqual(3));
     for (const button of [...main().querySelectorAll('button')]) expect(allowed(button)).toBe(true);
     for (const call of calls()) expect(call.method).toBe('GET');
@@ -356,28 +358,26 @@ describe('phone disclosures', () => {
     phone();
     await open('W-1701');
     const before = calls().length;
-    const toggle = screen.getByRole('button', { name: 'See his steps' });
-    const steps = document.getElementById(toggle.getAttribute('aria-controls')!)!;
-    expect(toggle.getAttribute('aria-expanded')).toBe('false');
-    expect(steps.hidden).toBe(true);
-    fireEvent.click(toggle);
-    expect(toggle.getAttribute('aria-expanded')).toBe('true');
-    expect(steps.hidden).toBe(false);
-    expect(within(steps).getAllByRole('listitem')).toHaveLength(4);
-    fireEvent.click(toggle);
-    expect(steps.hidden).toBe(true);
+    const summary = screen.getByText('See his steps');
+    const details = summary.closest('details')!;
+    expect(details.open).toBe(false);
+    fireEvent.click(summary);
+    expect(details.open).toBe(true);
+    expect(within(details).getAllByRole('listitem')).toHaveLength(4);
+    fireEvent.click(summary);
+    expect(details.open).toBe(false);
     expect(calls()).toHaveLength(before);
   });
 
   it('W-1706 "Preview the invoice" shows the test-template preview in place', async () => {
     phone();
     await open('W-1706');
-    const toggle = screen.getByRole('button', { name: 'Preview the invoice' });
-    const preview = document.getElementById(toggle.getAttribute('aria-controls')!)!;
-    expect(preview.hidden).toBe(true);
-    fireEvent.click(toggle);
-    expect(toggle.getAttribute('aria-expanded')).toBe('true');
-    expect(within(preview).getByRole('article', { name: 'Invoice preview' }).textContent).toContain("TEST TEMPLATE · NOT PSL'S REAL INVOICE");
+    const summary = screen.getByText('Preview the invoice');
+    const details = summary.closest('details')!;
+    expect(details.open).toBe(false);
+    fireEvent.click(summary);
+    expect(details.open).toBe(true);
+    expect(within(details).getByRole('article', { name: 'Invoice preview' }).textContent).toContain("TEST TEMPLATE · NOT PSL'S REAL INVOICE");
   });
 });
 
@@ -395,24 +395,24 @@ describe('round 3 fixes', () => {
     await open('W-1710');
     const link = screen.getByRole('link', { name: 'See all exceptions' });
     expect(link.className).toContain('psl-btn--secondary');
-    expect(link.closest('.work-sr')).toBeNull();
-    expect(document.querySelectorAll('.work-sr a, .work-sr button')).toHaveLength(0);
+    expect(link.closest('.cmp-sr')).toBeNull();
+    expect(document.querySelectorAll('.cmp-sr a, .cmp-sr button')).toHaveLength(0);
   });
 
   it('keeps the link visible on the other exception boards and on the phone', async () => {
     await open('W-1708');
-    expect(screen.getByRole('link', { name: 'See all exceptions' }).closest('.work-sr')).toBeNull();
+    expect(screen.getByRole('link', { name: 'See all exceptions' }).closest('.cmp-sr')).toBeNull();
     cleanup();
     phone();
     await open('W-1710');
-    expect(screen.getByRole('link', { name: 'See all exceptions' }).closest('.work-sr')).toBeNull();
+    expect(screen.getByRole('link', { name: 'See all exceptions' }).closest('.cmp-sr')).toBeNull();
   });
 
   it('puts the tabs in the header on phones, and keeps the contract title and started line', async () => {
     phone();
     await open('W-1701');
     const header = document.querySelector('header.work-header')!;
-    expect(within(header as HTMLElement).getByRole('navigation', { name: 'Work item' })).toBeTruthy();
+    expect(within(header as HTMLElement).getByRole('tablist', { name: 'Work item' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 1 }).textContent).toContain('Lagoon Health · Milestone 2 invoice');
     expect(header.textContent).toContain('Started by Tunde Bello (PMO)');
   });
@@ -422,9 +422,9 @@ describe('history on the boards (AC 18)', () => {
   it('W-1705 at desktop: History 7, filter counts, the table with detail lines, About history', async () => {
     await open('W-1705', 'history');
     await waitFor(() => expect(screen.getByRole('table')).toBeTruthy());
-    const tabs = within(screen.getByRole('navigation', { name: 'Work item' })).getAllByRole('link');
-    expect(tabs.map((a) => a.textContent)).toEqual(['Overview', 'History 7']);
-    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All 7', 'Decisions 2', 'Agent work 2', 'Evidence 1']);
+    const tabs = within(screen.getByRole('tablist', { name: 'Work item' })).getAllByRole('tab');
+    expect(tabs.map((a) => a.textContent)).toEqual(['Overview', 'History7']);
+    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All7', 'Decisions2', 'Agent work2', 'Evidence1']);
     expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual(['WHEN', 'WHAT HAPPENED', 'VERSION']);
     const rows = within(screen.getByRole('table')).getAllByRole('row').slice(1);
     expect(rows).toHaveLength(7);
@@ -448,9 +448,9 @@ describe('history on the boards (AC 18)', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('History · INV-0412');
     expect(screen.getByText('HISTORY')).toBeTruthy();
     // the phone board's three segments, and the paging control the contract keeps
-    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All 7', 'Decisions 2', 'Agents 2']);
-    expect(screen.getByLabelText('Rows per page')).toBeTruthy();
-    expect(screen.getByRole('navigation', { name: 'Work item' })).toBeTruthy();
+    expect(screen.getAllByRole('radio').map((r) => r.textContent)).toEqual(['All7', 'Decisions2', 'Agents2']);
+    expect(screen.getByRole('combobox', { name: 'Rows per page' })).toBeTruthy();
+    expect(screen.getByRole('tablist', { name: 'Work item' })).toBeTruthy();
     const cards = within(screen.getByRole('list', { name: 'History, newest first' })).getAllByRole('listitem');
     // the phone board lists the five newest entries; "+ 2 earlier entries" shows the rest in place
     expect(cards).toHaveLength(5);

@@ -5,7 +5,7 @@
 import { useId, useRef, useState } from 'react';
 
 import type { TaskDecision, WorkItem, WorkTask } from '@/api/types';
-import { WarningIcon } from '@/shell/icons';
+import { Button, Callout, Panel, TextArea } from '@/components';
 
 import { NOTE_MAX, personStationIndex, VERDICT_WORDS, type Verdict } from './format';
 import type { ClaimState, SubmitState } from './useDecision';
@@ -25,7 +25,7 @@ export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRet
   const [note, setNote] = useState('');
   const [noteError, setNoteError] = useState<string | null>(null);
   const noteRef = useRef<HTMLTextAreaElement>(null);
-  const ids = { note: useId(), hint: useId(), count: useId(), error: useId(), reason: useId() };
+  const ids = { reason: useId() };
 
   const busy = submit.status === 'busy';
   const ready = claim.status === 'ready';
@@ -47,111 +47,68 @@ export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRet
     onDecide(verdict, note);
   }
 
-  const label = (verdict: Verdict) =>
-    busy && submit.verdict === verdict
-      ? VERDICT_WORDS[verdict].busy
-      : verdict === 'approve'
-        ? `Approve v${task.decision.version.number}`
-        : VERDICT_WORDS[verdict].button;
-  const describedBy = [ids.hint, ids.count, noteError ? ids.error : null].filter(Boolean).join(' ');
+
+  const hold = !ready || locked;
+  const reasonFor = claim.status === 'pending' ? ids.reason : undefined;
+  // One write at a time: while one decision is recorded the pressed button shows busy and the others wait.
+  const state = (verdict: Verdict) => ({
+    busy: busy && submit.verdict === verdict,
+    busyLabel: VERDICT_WORDS[verdict].busy,
+    disabled: hold || (busy && submit.verdict !== verdict),
+    'aria-describedby': reasonFor,
+  });
 
   return (
-    <section className="psl-panel psl-panel--decide decide-panel" aria-labelledby="decide-panel-title" aria-busy={busy}>
-      <h2 id="decide-panel-title" className="psl-panel__head psl-panel__head--decide">
-        Your decision
-      </h2>
-      <div className="psl-panel__body">
-        <p className="decide-plain decide-who">
-          Only a {task.required_role} can decide. You are {task.required_role}.
+    <Panel kind="decide" head="Your decision" className="decide-panel">
+      <p className="decide-plain decide-who">
+        Only a {task.required_role} can decide. You are {task.required_role}.
+      </p>
+      <TextArea
+        ref={noteRef}
+        label={
+          <>
+            Note <span className="psl-opt">(needed to return or reject)</span>
+          </>
+        }
+        value={note}
+        limit={NOTE_MAX}
+        error={noteError ?? undefined}
+        onChange={(e) => {
+          setNote(e.target.value);
+          setNoteError(null);
+        }}
+      />
+      {claim.status === 'invalid' && <Callout kind="problem">{claim.message}</Callout>}
+      {claim.status === 'failed' && (
+        <Callout kind="warning" className="decide-retry">
+          We couldn&rsquo;t get this decision ready. Try again.{' '}
+          <Button kind="secondary" size="sm" onClick={onRetryClaim}>
+            Try again
+          </Button>
+        </Callout>
+      )}
+      {submit.status === 'invalid' && <Callout kind="problem">{submit.message}</Callout>}
+      <div className="psl-actionbar decide-actions">
+        {claim.status === 'pending' && (
+          <p className="psl-hint decide-reason" id={ids.reason} role="status">
+            Getting this decision ready…
+          </p>
+        )}
+        <Button size="lg" block className="decide-approve" {...state('approve')} onClick={() => press('approve')}>
+          {`Approve v${task.decision.version.number}`}
+        </Button>
+        <div className="psl-actionbar__pair">
+          <Button kind="secondary" size="lg" {...state('return')} onClick={() => press('return')}>
+            {VERDICT_WORDS.return.button}
+          </Button>
+          <Button kind="reject" size="lg" {...state('reject')} onClick={() => press('reject')}>
+            {VERDICT_WORDS.reject.button}
+          </Button>
+        </div>
+        <p className="psl-doesnt decide-doesnt">
+          Approving earns APPROVED only.{next && ` ${next.name} is the next station.`}
         </p>
-        <div className="psl-field">
-          <label className="psl-label" htmlFor={ids.note}>
-            Note <span className="psl-opt" id={ids.hint}>(needed to return or reject)</span>
-          </label>
-          <textarea
-            ref={noteRef}
-            id={ids.note}
-            className="psl-input psl-input--area"
-            value={note}
-            maxLength={NOTE_MAX}
-            aria-invalid={noteError ? true : undefined}
-            aria-describedby={describedBy}
-            onChange={(e) => {
-              setNote(e.target.value);
-              setNoteError(null);
-            }}
-          />
-          <span className="psl-hint" id={ids.count}>
-            {note.length} / {NOTE_MAX}
-          </span>
-          {noteError && (
-            <span className="psl-error" id={ids.error}>
-              <WarningIcon />
-              {noteError}
-            </span>
-          )}
-        </div>
-        {claim.status === 'invalid' && (
-          <p className="psl-callout psl-callout--problem" role="alert">
-            <WarningIcon />
-            <span>{claim.message}</span>
-          </p>
-        )}
-        {claim.status === 'failed' && (
-          <div className="psl-callout psl-callout--warning decide-retry" role="alert">
-            <WarningIcon />
-            <span>We couldn&rsquo;t get this decision ready. Try again.</span>
-            <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" onClick={onRetryClaim}>
-              Try again
-            </button>
-          </div>
-        )}
-        {submit.status === 'invalid' && (
-          <p className="psl-callout psl-callout--problem" role="alert">
-            <WarningIcon />
-            <span>{submit.message}</span>
-          </p>
-        )}
-        <div className="psl-actionbar decide-actions">
-          {claim.status === 'pending' && (
-            <p className="psl-hint decide-reason" id={ids.reason} role="status">
-              Getting this decision ready…
-            </p>
-          )}
-          <button
-            type="button"
-            className="psl-btn psl-btn--lg psl-btn--block decide-approve"
-            disabled={disabled}
-            aria-describedby={claim.status === 'pending' ? ids.reason : undefined}
-            onClick={() => press('approve')}
-          >
-            {label('approve')}
-          </button>
-          <div className="psl-actionbar__pair">
-            <button
-              type="button"
-              className="psl-btn psl-btn--secondary psl-btn--lg"
-              disabled={disabled}
-              aria-describedby={claim.status === 'pending' ? ids.reason : undefined}
-              onClick={() => press('return')}
-            >
-              {label('return')}
-            </button>
-            <button
-              type="button"
-              className="psl-btn psl-btn--reject psl-btn--lg"
-              disabled={disabled}
-              aria-describedby={claim.status === 'pending' ? ids.reason : undefined}
-              onClick={() => press('reject')}
-            >
-              {label('reject')}
-            </button>
-          </div>
-          <p className="psl-doesnt decide-doesnt">
-            Approving earns APPROVED only.{next && ` ${next.name} is the next station.`}
-          </p>
-        </div>
       </div>
-    </section>
+    </Panel>
   );
 }

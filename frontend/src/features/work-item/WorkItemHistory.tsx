@@ -2,12 +2,11 @@
 
 // SCR-02 History: read-only (INV-AUDIT). The only controls are the filter, rows per page, Show more and
 // Try again. Restricted entries show who and when only (INV-RESTRICTED).
-import { useRef, useState, type KeyboardEvent } from 'react';
+import { useState } from 'react';
 
+import { Button, Callout, EmptyState, formatDateTime, Panel, Segmented, Select, Table, Tag, type Column } from '@/components';
 import { LoadingState } from '@/shell/FrameStates';
-import { WarningIcon } from '@/shell/icons';
 
-import { InfoIcon } from './InfoIcon';
 import { ACTOR_TAGS, formatWat, HISTORY_FILTERS, HISTORY_LIMITS, type HistoryKind, type HistoryLimit } from './labels';
 import type { BoardHistoryEntry, WorkItemPresentation } from './presentation';
 import { useWorkHistory } from './useWorkHistory';
@@ -18,71 +17,36 @@ type Counts = WorkItemPresentation['history_counts'];
 type FilterProps = { kind: HistoryKind; onChange: (kind: HistoryKind) => void; counts: Counts; phoneBoard: boolean };
 
 function HistoryFilter({ kind, onChange, counts, phoneBoard }: FilterProps) {
-  const options = useRef<(HTMLButtonElement | null)[]>([]);
   // the phone board draws three segments: All, Decisions, Agents (Evidence is on the desktop filter)
   const filters = phoneBoard ? HISTORY_FILTERS.filter((f) => f.kind !== 'evidence').map((f) => (f.kind === 'agent_work' ? { ...f, label: 'Agents' } : f)) : HISTORY_FILTERS;
-  const index = filters.findIndex((f) => f.kind === kind);
-
-  // Radio-group keys: arrows move and choose, Home and End jump to the ends.
-  function onKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
-    const last = filters.length - 1;
-    const keys: Record<string, number> = {
-      ArrowRight: index === last ? 0 : index + 1,
-      ArrowDown: index === last ? 0 : index + 1,
-      ArrowLeft: index === 0 ? last : index - 1,
-      ArrowUp: index === 0 ? last : index - 1,
-      Home: 0,
-      End: last,
-    };
-    if (!(event.key in keys)) return;
-    event.preventDefault();
-    const next = keys[event.key];
-    onChange(filters[next].kind);
-    options.current[next]?.focus();
-  }
-
   return (
-    <div className="psl-seg work-filter" role="radiogroup" aria-label="Show">
-      {filters.map((f, i) => (
-        <button
-          key={f.kind}
-          ref={(el) => {
-            options.current[i] = el;
-          }}
-          type="button"
-          role="radio"
-          aria-checked={f.kind === kind}
-          tabIndex={f.kind === kind || (index < 0 && i === 0) ? 0 : -1}
-          className="psl-seg__opt"
-          onClick={() => onChange(f.kind)}
-          onKeyDown={onKeyDown}
-        >
-          {f.label}
-          {counts && (
-            <>
-              {' '}
-              <span className="psl-badge">{counts[f.kind]}</span>
-            </>
-          )}
-        </button>
-      ))}
-    </div>
+    <Segmented
+      label="Show"
+      className="work-filter"
+      value={kind}
+      onChange={onChange}
+      options={filters.map((f) => ({ value: f.kind, label: f.label, count: counts?.[f.kind] }))}
+    />
   );
 }
 
-function HistoryRow({ entry, inline }: { entry: BoardHistoryEntry; inline: boolean }) {
-  const tag = ACTOR_TAGS[entry.actor_kind];
+function Actor({ kind }: { kind: BoardHistoryEntry['actor_kind'] }) {
+  const tag = ACTOR_TAGS[kind];
+  return <Tag tone={tag.tone}>{tag.text}</Tag>;
+}
+
+function historyColumns(inline: boolean): Column<BoardHistoryEntry>[] {
   // On the boards the detail continues the event's line ("Approved invoice v2 for ₦4,250,000.00").
   const detailClass = inline ? 'work-detail work-detail--inline' : 'work-detail';
-  return (
-    <tr>
-      <td className="work-when psl-mono">
-        <time dateTime={entry.at}>{formatWat(entry.at)}</time>
-      </td>
-      <td>
+  return [
+    { key: 'when', header: 'WHEN', mono: true, cell: (entry) => <time dateTime={entry.at}>{formatWat(entry.at)}</time> },
+    {
+      key: 'what',
+      header: 'WHAT HAPPENED',
+      cell: (entry) => (
         <div className="work-what">
           <span className="work-who">
-            <span className={tag.className}>{tag.text}</span> {entry.actor}
+            <Actor kind={entry.actor_kind} /> {entry.actor}
           </span>
           {entry.restricted ? (
             <strong className="work-event">Restricted</strong>
@@ -101,13 +65,20 @@ function HistoryRow({ entry, inline }: { entry: BoardHistoryEntry; inline: boole
             </>
           )}
         </div>
-      </td>
-      <td className="work-version psl-mono">
-        <span className="work-sr">Version: </span>
-        {(!entry.restricted && entry.version) || '—'}
-      </td>
-    </tr>
-  );
+      ),
+    },
+    {
+      key: 'version',
+      header: 'VERSION',
+      mono: true,
+      cell: (entry) => (
+        <>
+          <span className="cmp-sr">Version: </span>
+          {(!entry.restricted && entry.version) || '—'}
+        </>
+      ),
+    },
+  ];
 }
 
 /** Phone: one card per entry, the time and version on its first line (SCR-02-mobile-history). */
@@ -116,12 +87,14 @@ function HistoryCard({ entry, board }: { entry: BoardHistoryEntry; board: boolea
   return (
     <div role="listitem" className="work-hcard">
       <span className="work-hcard__when">
-        <time dateTime={entry.at}>{formatWat(entry.at)}</time> · <span className="work-sr">Version: </span>
+        <time dateTime={entry.at}>{formatWat(entry.at)}</time> · <span className="cmp-sr">Version: </span>
         {(!entry.restricted && entry.version) || '—'}
       </span>
       <div className="work-who">
         {/* the phone board draws the actor without the kind tag or the extra lines; they stay for screen readers */}
-        <span className={board ? `${tag.className} work-sr` : tag.className}>{tag.text}</span>
+        <Tag tone={tag.tone} className={board ? 'cmp-sr' : undefined}>
+          {tag.text}
+        </Tag>
         <span>{entry.actor}</span>
       </div>
       {entry.restricted ? (
@@ -133,7 +106,7 @@ function HistoryCard({ entry, board }: { entry: BoardHistoryEntry; board: boolea
             {entry.detail && ` ${entry.detail}`}
           </span>
           {entry.lines?.map((line, i) => (
-            <span key={i} className={board ? 'work-line work-sr' : 'work-line'}>
+            <span key={i} className={board ? 'work-line cmp-sr' : 'work-line'}>
               {line}
             </span>
           ))}
@@ -158,18 +131,16 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
   // On the desktop board the paging controls sit in the side column, under the callout, where the board draws its own.
   const side = counts !== undefined && !phone;
   const limitControl = (
-    <label className="work-limit">
-      <span>Rows per page</span>
-      <select className="psl-input" value={limit} onChange={(e) => setLimit(Number(e.target.value) as HistoryLimit)}>
-        {HISTORY_LIMITS.map((n) => (
-          <option key={n} value={n}>
-            {n}
-          </option>
-        ))}
-      </select>
-    </label>
+    <Select
+      fieldClassName="work-limit"
+      label="Rows per page"
+      placeholder="Rows per page"
+      value={String(limit)}
+      onChange={(value) => setLimit(Number(value) as HistoryLimit)}
+      options={HISTORY_LIMITS.map((n) => ({ value: String(n), label: String(n) }))}
+    />
   );
-  const asOf = ready && ready.items.length > 0 && !board && <p className="work-note">As of {formatWat(ready.asOf)}</p>;
+  const asOf = ready && ready.items.length > 0 && !board && <p className="work-note">As of {formatDateTime(ready.asOf)}</p>;
 
   let body;
   if (state.status === 'loading') body = <LoadingState />;
@@ -182,11 +153,7 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
       />
     );
   } else if (state.items.length === 0) {
-    body = (
-      <div className="psl-empty">
-        <h3>Nothing recorded for this filter yet.</h3>
-      </div>
-    );
+    body = <EmptyState title="Nothing recorded for this filter yet.">Try another filter.</EmptyState>;
   } else if (phone) {
     body = (
       <div className="work-hcards" role="list" aria-label="History, newest first">
@@ -197,23 +164,14 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
     );
   } else {
     body = (
-      <div className="psl-tablewrap work-history">
-        <table className="psl-table">
-          <caption className="work-sr">History, newest first</caption>
-          <thead>
-            <tr>
-              <th scope="col">WHEN</th>
-              <th scope="col">WHAT HAPPENED</th>
-              <th scope="col">VERSION</th>
-            </tr>
-          </thead>
-          <tbody>
-            {state.items.map((entry, i) => (
-              <HistoryRow key={i} entry={entry} inline={counts !== undefined} />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table
+        className="work-history"
+        caption="History, newest first"
+        columns={historyColumns(counts !== undefined)}
+        rows={state.items}
+        rowKey={(entry) => `${state.items.indexOf(entry)}`}
+        empty="Nothing recorded for this filter yet."
+      />
     );
   }
 
@@ -230,45 +188,36 @@ export function WorkItemHistory({ id, revision, counts, phone = false }: History
           {(ready?.nextCursor || hidden > 0) && (
             <div className="psl-showmore">
               {!board && <span>Showing {ready!.items.length}</span>}
-              <button
-                type="button"
-                className={ready!.more === 'loading' ? 'psl-btn psl-btn--text is-busy' : 'psl-btn psl-btn--text'}
-                aria-disabled={ready!.more === 'loading' || undefined}
+              <Button
+                kind="text"
+                busy={ready!.more === 'loading'}
+                busyLabel="Loading…"
                 onClick={() => {
                   if (hidden > 0) setExpanded(true);
-                  else if (ready!.more !== 'loading') void showMore();
+                  else void showMore();
                 }}
               >
                 {board ? `+ ${counts[kind] - (ready!.items.length - hidden)} earlier entries` : 'Show more'}
-              </button>
+              </Button>
             </div>
           )}
         </div>
         {ready?.more === 'failed' && (
-          <div className="psl-callout psl-callout--warning">
-            <WarningIcon />
-            <span>We couldn&rsquo;t load more entries. Choose Show more to try again.</span>
-          </div>
+          <Callout kind="warning">We couldn&rsquo;t load more entries. Choose Show more to try again.</Callout>
         )}
         {!side && asOf}
       </div>
-      <aside className={board ? 'work-column work-sr' : 'work-column'} aria-label="About history">
-        <section className="psl-panel">
-          <h2 className="psl-panel__head">About history</h2>
-          <div className="psl-panel__body">
-            <p className="work-plain">
-              Every decision, agent step, piece of evidence and send is recorded here as it happens. Nothing can be
-              edited or deleted; a correction is a new entry that points to the one it corrects.
-            </p>
-          </div>
-        </section>
-        <div className="psl-callout psl-callout--info">
-          <InfoIcon />
-          <span>
-            Times are WAT. You see only entries on records you may open; restricted entries show as &ldquo;Restricted&rdquo;
-            with who and when.
-          </span>
-        </div>
+      <aside className={board ? 'work-column cmp-sr' : 'work-column'} aria-label="About history">
+        <Panel head="About history">
+          <p className="work-plain">
+            Every decision, agent step, piece of evidence and send is recorded here as it happens. Nothing can be
+            edited or deleted; a correction is a new entry that points to the one it corrects.
+          </p>
+        </Panel>
+        <Callout kind="info" announce={false}>
+          Times are WAT. You see only entries on records you may open; restricted entries show as &ldquo;Restricted&rdquo;
+          with who and when.
+        </Callout>
         {side && (
           <div className="work-historymeta">
             {limitControl}

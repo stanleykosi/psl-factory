@@ -1,17 +1,18 @@
 // SCR-03 decision content: the header, the version rows, the approval chain, the phone station line and the
 // agent note. Only values from tasks[].decision and E-WORK-ITEM are shown; absent fields are left out.
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { TaskDecision, WorkItem } from '@/api/types';
-import { agentImage, avatarClass, formatWat } from '@/features/work-item/labels';
+import { formatWat } from '@/features/work-item/labels';
+import { AgentAvatar, agentKey, Breadcrumb, MiniStationBar, PersonAvatar, Unknown, type StationStatus } from '@/components';
 import { showSampleLabel } from '@/shell/sample';
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import { AGENT_NAMES, formatAmount, personStationIndex, STEP_STATUS, type Amount } from './format';
 import type { DecidePresentation } from './presentation';
 
+// The boards write these as "12 Nov 10:30" (no year, no WAT); the shared formatter's "12 Nov 2026 10:30 WAT" stays for the screens whose boards do not draw one.
 export function When({ at }: { at: string }) {
   return <time dateTime={at}>{formatWat(at)}</time>;
 }
@@ -49,11 +50,9 @@ export function DecideHeader({ item, title, trail, phoneEyebrow, eyebrow, sub, t
   const sample = item.sample && showSampleLabel();
   return (
     <header className={`decide-header${quietOnPhone ? ' decide-header--quiet' : ''}`}>
-      <nav aria-label="Breadcrumb" className="decide-sr">
-        <p className="psl-crumb">
-          <Link href="/my-work">My work</Link> / {item.line} / <span className="psl-mono">{item.reference}</span>
-        </p>
-      </nav>
+      <div className="cmp-sr">
+        <Breadcrumb items={[{ label: 'My work', href: '/my-work' }]} current={`${item.line} / ${item.reference}`} />
+      </div>
       {trail && <p className="decide-trail">{trail}</p>}
       {phoneEyebrow && <p className="decide-phone-eyebrow">{phoneEyebrow}</p>}
       {banner ? (
@@ -96,7 +95,7 @@ export function stationEyebrow(item: WorkItem): string {
 
 export function AmountValue({ amount }: { amount: Amount }) {
   const text = formatAmount(amount);
-  if (text === null) return <span className="psl-unknown">Unknown</span>;
+  if (text === null) return <Unknown />;
   return <span className="psl-amount">{text}</span>;
 }
 
@@ -149,9 +148,7 @@ export function DecisionRows({ decision, only }: { decision: TaskDecision; only?
             {by.with_agent && (
               <>
                 {' with '}
-                <span className={`${avatarClass(by.with_agent)} psl-avatar--20`} aria-hidden="true">
-                  {AGENT_NAMES[by.with_agent].charAt(0)}
-                </span>
+                <AgentAvatar agent={by.with_agent} size={20} />
                 {AGENT_NAMES[by.with_agent]}
               </>
             )}
@@ -195,13 +192,14 @@ export function ApprovalChain({ chain }: { chain: TaskDecision['chain'] }) {
   );
 }
 
-const MINI_CLASS: Partial<Record<WorkItem['stations'][number]['status'], string>> = {
-  done: 'd',
-  current_person: 'p',
-  current_agent: 'a',
-  waiting: 'w',
-  stopped: 's',
-  verified: 'v',
+const MINI_STATUS: Record<WorkItem['stations'][number]['status'], StationStatus> = {
+  done: 'done',
+  current_person: 'person',
+  current_agent: 'agent',
+  waiting: 'waiting',
+  stopped: 'stopped',
+  verified: 'verified',
+  not_started: 'todo',
 };
 
 /** CMP-03 on the phone: "Station 4 of 7 · Finance review · only a Finance Lead can decide". */
@@ -209,16 +207,11 @@ export function MiniLine({ item, requiredRole, waiting }: { item: WorkItem; requ
   const index = personStationIndex(item.stations);
   if (index < 0) return null;
   return (
-    <div className="psl-mini decide-mini">
-      <span className="psl-mini__bar" aria-hidden="true">
-        {item.stations.map((s, i) => (
-          <i key={i} className={MINI_CLASS[s.status]} />
-        ))}
-      </span>
-      <span className="psl-mini__text">
-        Station {index + 1} of {item.stations.length} · {item.stations[index].name} · {waiting && `${waiting} · `}only a {requiredRole} can decide
-      </span>
-    </div>
+    <MiniStationBar
+      className="decide-mini"
+      stations={item.stations.map((s) => MINI_STATUS[s.status])}
+      text={`Station ${index + 1} of ${item.stations.length} · ${item.stations[index].name} · ${waiting ? `${waiting} · ` : ''}only a ${requiredRole} can decide`}
+    />
   );
 }
 
@@ -231,18 +224,12 @@ type AgentProps = { id: string; agent: WorkItem['agent']; view?: DecidePresentat
  */
 export function AgentNote({ id, agent, view, mode = 'steps' }: AgentProps) {
   if (agent.status === 'none' || !agent.name) return null;
-  const image = agentImage(agent.name);
+  const key = agentKey(agent.name);
   const desktop = mode === 'note' ? view?.note : view?.summary;
   const phone = mode === 'note' ? view?.phone_note : view?.phone_summary;
   return (
     <section className={`decide-agent${phone ? ' decide-agent--phone' : ''}`} aria-label="Agent">
-      {image ? (
-        <Image className="decide-agent__img" src={image} alt="" width={36} height={36} unoptimized />
-      ) : (
-        <span className={avatarClass(agent.name)} aria-hidden="true">
-          {agent.name.charAt(0).toUpperCase()}
-        </span>
-      )}
+      {key ? <AgentAvatar agent={key} className="decide-agent__img" /> : <PersonAvatar name={agent.name} />}
       <span className="decide-agent__text">
         <span className="decide-agent__head">
           <span className="decide-agent__who">

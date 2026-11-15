@@ -6,11 +6,11 @@ import { createContext, useCallback, useContext, useEffect, useLayoutEffect, use
 import { api, call, setCsrfToken } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 import type { Me } from '@/api/types';
+import { useIsPhone } from '@/components';
 import { AlertsDrawer } from '@/features/alerts/AlertsDrawer';
 import type { BellProps } from '@/features/alerts/AlertsBell';
 import { needsYou, needsYouKnown } from '@/features/alerts/model';
 import { useAlertsFeed } from '@/features/alerts/useAlertsFeed';
-import { useIsPhone } from '@/features/alerts/useIsPhone';
 
 import { destinationForPath, visibleDestinations } from './destinations';
 import { ForbiddenState, LoadErrorState, LoadingState, NoSectionsState, SignedOutState } from './FrameStates';
