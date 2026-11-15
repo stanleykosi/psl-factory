@@ -16,8 +16,8 @@
       "board": { "desktop_file": "canvas/project/SCR-25-desktop-review.dc.html", "mobile_file": "canvas/project/SCR-25-mobile-review.dc.html",
         "text": "Approving sends this exact version to Lagoon Health.", "root": "section",
         "mobile": { "text": "Approve and send", "root": "div" } },
-      "page": { "path": "/work/W-2001", "text": "Approving sends this exact version to Lagoon Health.", "root": ".ws-steps",
-        "mobile": { "path": "/work/W-2001", "text": "Approve and send", "root": ".ws-steps__buttons" } }
+      "page": { "path": "/work/W-2001", "text": "Approving sends this exact version to Lagoon Health.", "root": ".ws-decide",
+        "mobile": { "path": "/work/W-2001", "text": "Approve and send", "root": ".ws-decide" } }
     },
     {
       "name": "recipients",

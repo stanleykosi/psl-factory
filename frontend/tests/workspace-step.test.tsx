@@ -5,13 +5,15 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { StrictMode } from 'react';
 
-import { act, configure, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, configure, fireEvent, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { reloadPage } from '@/features/response';
 import type { WorkItem } from '@/features/work-item/labels';
+import { ApiError } from '@/api/errors';
+import { useWorkspacePage } from '@/features/workspace/usePageReload';
 import { WorkItemView } from '@/features/work-item/WorkItemView';
 import { AppShell } from '@/shell/AppShell';
 import { withoutBellFeed } from './bell-feed';
@@ -565,6 +567,79 @@ describe('422 (AC 21)', () => {
   });
 });
 
+describe('422 for a field the form does not show (UX-1-1)', () => {
+  it('shows the message at the top of the form, with the matched ones under their inputs', async () => {
+    stepAnswers = [
+      json(422, {
+        code: 'invalid',
+        message: 'This answer can’t be saved yet.',
+        fields: [
+          { name: 'answer', message: 'Say how approvals are recorded.' },
+          { name: 'reviewer', message: 'A reviewer must be free.' },
+        ],
+      }),
+    ];
+    await open(item('W-2006'));
+    await press('Check my answer');
+    const f = within(screen.getByRole('form', { name: 'Check my answer' }));
+    fireEvent.change(f.getByLabelText('Your answer'), { target: { value: 'Yes.' } });
+    await act(async () => {
+      fireEvent.click(f.getByRole('button', { name: 'Check my answer' }));
+    });
+    const top = await f.findByText('A reviewer must be free.');
+    expect(top.closest('[role="alert"]')).toBeTruthy();
+    expect(f.getByText('This answer can’t be saved yet.')).toBeTruthy();
+    expect(f.getByLabelText('Your answer').getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('a message for a field the form has is shown once, under its input, and not on top', async () => {
+    stepAnswers = [json(422, { code: 'invalid', message: 'Fix the answer.', fields: [{ name: 'answer', message: 'Say how approvals are recorded.' }] })];
+    await open(item('W-2006'));
+    await press('Check my answer');
+    const f = within(screen.getByRole('form', { name: 'Check my answer' }));
+    fireEvent.change(f.getByLabelText('Your answer'), { target: { value: 'Yes.' } });
+    await act(async () => {
+      fireEvent.click(f.getByRole('button', { name: 'Check my answer' }));
+    });
+    await waitFor(() => expect(f.getByLabelText('Your answer').getAttribute('aria-invalid')).toBe('true'));
+    expect(f.queryByText('Fix the answer.')).toBeNull();
+  });
+});
+
+describe('notices name the step (UX-1-2, UX-1-4, UX-1-5)', () => {
+  it('a returned message that does not name the step gets the step name beside it', async () => {
+    stepAnswers = [ok({ message: 'Sent.' })];
+    await open(item('W-2001'));
+    await press('Approve and send');
+    const line = (await ws().findByText('Sent.')).closest('.psl-callout')!;
+    expect(line.textContent).toBe('Approve and send Sent.');
+  });
+
+  it('a failed step is named in the message', async () => {
+    stepAnswers = [json(500, { code: 'server', message: 'Boom.' })];
+    await open(item('W-2007'));
+    await press('Send to the client');
+    const alert = (await ws().findByText('We couldn’t confirm this step. Check the page before trying again.')).closest('[role="alert"]') as HTMLElement;
+    expect(within(alert).getByText('Send to the client')).toBeTruthy();
+  });
+
+  it('after an uncertain effect the buttons say why they are off', async () => {
+    stepAnswers = [ok({ outcome: 'effect_uncertain', message: 'We are not sure it was sent.' })];
+    await open(item('W-2001'));
+    await press('Approve and send');
+    await screen.findByText('We are not sure it was sent.');
+    expect(ws().getByText('Confirm what happened first.')).toBeTruthy();
+  });
+
+  it('a 409 whose re-read fails does not name a version', async () => {
+    stepAnswers = [json(409, { code: 'stale_revision', message: 'Changed.' })];
+    await open(item('W-2007'), () => json(500, { code: 'server', message: 'Boom.' }));
+    await press('Send to the client');
+    await screen.findByText('This changed while you were working, and we couldn’t reload it.');
+    expect(document.body.textContent).not.toContain('version unknown');
+  });
+});
+
 describe('other errors (AC 22)', () => {
   it('401 shows the signed-out callout with next = this page', async () => {
     stepAnswers = [json(401, { code: 'not_signed_in', message: 'Sign in.' })];
@@ -628,5 +703,16 @@ describe('decision steps (AC 23)', () => {
     fireEvent.click(later);
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(sent.filter((r) => r.method === 'POST')).toEqual([]);
+  });
+});
+
+describe('a different item starts clean (TECH-1-1)', () => {
+  it('access lost on one item is not carried to the next id', () => {
+    const { result, rerender } = renderHook(({ id }) => useWorkspacePage(id), { initialProps: { id: 'W-2001' } });
+    act(() => result.current.page.onAccessLost(new ApiError(404, 'not_found', 'not_found', 'Not here.')));
+    expect(result.current.lost).not.toBeNull();
+    rerender({ id: 'W-2002' });
+    expect(result.current.lost).toBeNull();
+    expect(result.current.fresh).toBeNull();
   });
 });

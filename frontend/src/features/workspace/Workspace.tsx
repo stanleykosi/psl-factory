@@ -5,7 +5,7 @@
 // Nothing here reads /me or decides who may act; the backend composes every section and step. Steps write through
 // E-WORK-STEP (useWorkspaceStep); a decision step links to the decision page; a reconcile goes to the existing
 // ReconcilePanel, which the page shows from the re-read item.
-import { useRef, useState, type ReactNode } from 'react';
+import { useId, useRef, useState, type ReactNode } from 'react';
 
 import type { WorkItem } from '@/features/work-item/labels';
 import { WarningIcon } from '@/shell/icons';
@@ -81,6 +81,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   // The attempt a manual Try again repeats (same key), after a network or server failure on a step that doesn't send.
   const last = useRef<Attempt | null>(null);
   const titled = workspace.title !== undefined && workspace.title !== item.title;
+  const decideId = useId();
   const hasReconcile = Boolean(item.reconcile) && (item.allowed_actions ?? []).includes('reconcile');
 
   const off = (step: Step) => flow.pending !== null || flow.allLocked || flow.locked.has(step.key) || page.refreshFailed;
@@ -206,11 +207,18 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     };
   }
 
+  const side = workspace.sections.filter((section) => section.kind === 'suggestions');
+  const main = workspace.sections.filter((section) => section.kind !== 'suggestions');
   const notice = flow.notice;
   return (
     <>
       <div role="status" aria-live="polite" className="ws-live">
-        {(notice?.kind === 'done' || notice?.kind === 'queued') && <p className="psl-callout psl-callout--success">{notice.text}</p>}
+        {(notice?.kind === 'done' || notice?.kind === 'queued') && (
+          <p className="psl-callout psl-callout--success">
+            {notice.kind === 'done' && notice.label && <strong>{notice.label} </strong>}
+            <span>{notice.text}</span>
+          </p>
+        )}
       </div>
       {notice?.kind === 'uncertain' && (
         <div className="psl-callout psl-callout--warning ws-notice" role="alert">
@@ -235,7 +243,10 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       {(notice?.kind === 'forbidden' || notice?.kind === 'problem' || notice?.kind === 'failed') && (
         <div className="psl-callout psl-callout--problem ws-notice" role="alert">
           <WarningIcon />
-          <span>{notice.kind === 'forbidden' ? STEP_TEXT.forbidden : notice.kind === 'problem' ? notice.text : STEP_TEXT.failed}</span>
+          <span className="ws-stack">
+            {notice.kind === 'failed' && <strong>{notice.label}</strong>}
+            <span>{notice.kind === 'forbidden' ? STEP_TEXT.forbidden : notice.kind === 'problem' ? notice.text : STEP_TEXT.failed}</span>
+          </span>
           {notice.kind === 'failed' && !notice.sends && !open && (
             <button
               type="button"
@@ -256,11 +267,35 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           </button>
         </p>
       )}
-      <StepRow steps={workspaceSteps}>{(s, describedBy) => control(s, `ws:${s.key}`, undefined, { describedBy })}</StepRow>
-      {workspaceSteps.map((s) => form(`ws:${s.key}`))}
-      {workspace.sections.map((section) => (
-        <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
-      ))}
+      {/* The line boards' shared layout, by section kind and step type (D-62): suggestions and the workspace
+          steps sit in a side column with a coloured head; on a phone the steps pin to the bottom. */}
+      <div className="ws-cols">
+        <div className="ws-main">
+          {main.map((section) => (
+            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
+          ))}
+        </div>
+        {(side.length > 0 || workspaceSteps.length > 0) && (
+          <aside className="ws-side" aria-label="Review and decide">
+            {side.map((section) => (
+              <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
+            ))}
+            {workspaceSteps.length > 0 && (
+              <section className="psl-panel psl-panel--decide ws-decide" aria-labelledby={`${decideId}-head`}>
+                <h2 id={`${decideId}-head`} className="psl-panel__head psl-panel__head--decide ws-decide__head">
+                  {STEP_TEXT.decide}
+                </h2>
+                <div className="psl-panel__body ws-decide__body">
+                  <StepRow steps={workspaceSteps} hint={flow.allLocked ? STEP_TEXT.confirmFirst : undefined}>
+                    {(s, describedBy) => control(s, `ws:${s.key}`, undefined, { describedBy })}
+                  </StepRow>
+                </div>
+              </section>
+            )}
+            {workspaceSteps.map((s) => form(`ws:${s.key}`))}
+          </aside>
+        )}
+      </div>
     </>
   );
 }
@@ -277,7 +312,24 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
       {writable ? (
         <WorkspaceSteps id={id} item={item} workspace={workspace} page={page} />
       ) : (
-        workspace.sections.map((section) => <SectionView key={section.key} section={section} level={titled ? 3 : 2} />)
+        <div className="ws-cols">
+          <div className="ws-main">
+            {workspace.sections
+              .filter((section) => section.kind !== 'suggestions')
+              .map((section) => (
+                <SectionView key={section.key} section={section} level={titled ? 3 : 2} />
+              ))}
+          </div>
+          {workspace.sections.some((section) => section.kind === 'suggestions') && (
+            <aside className="ws-side" aria-label="Review and decide">
+              {workspace.sections
+                .filter((section) => section.kind === 'suggestions')
+                .map((section) => (
+                  <SectionView key={section.key} section={section} level={titled ? 3 : 2} />
+                ))}
+            </aside>
+          )}
+        </div>
       )}
     </div>
   );

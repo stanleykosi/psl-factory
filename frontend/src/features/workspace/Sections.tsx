@@ -43,6 +43,9 @@ export type ItemControls = {
   foot?: (section: Section) => ReactNode;
 };
 
+/** A blank or missing value is Unknown, never an empty box. */
+const hasValue = (value: string | null | undefined): value is string => typeof value === 'string' && value.trim() !== '';
+
 export function Unknown() {
   return <span className="psl-unknown">{WS_TEXT.unknown}</span>;
 }
@@ -149,7 +152,7 @@ function FactsList({ section }: { section: Section }) {
           ) : (
             <>
               <dt>{item.label ?? item.text}</dt>
-              <dd>{item.money ? <MoneyValue money={item.money} /> : item.value !== undefined ? item.value : <Unknown />}</dd>
+              <dd>{item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? item.value : <Unknown />}</dd>
             </>
           )}
         </div>
@@ -337,7 +340,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 <span>{item.label ?? item.text}</span>
                 <Detail text={item.detail} />
               </span>,
-              item.money ? <MoneyValue money={item.money} /> : item.value !== undefined ? <span className="ws-value">{item.value}</span> : <Unknown />,
+              item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? <span className="ws-value">{item.value}</span> : <Unknown />,
             );
           case 'timeline':
             return row(
@@ -369,14 +372,15 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
   );
 }
 
-/** Filters, total and Show more are drawn when returned, and inert: no section-page read exists in the contract. */
-function Paging({ section, position }: { section: Section; position: 'top' | 'bottom' }) {
-  const id = useId();
+/** Filters, total and Show more are drawn when returned, and inert: no section-page read exists in the contract.
+ *  One line says so for the whole section, and both controls point at it. */
+function Paging({ section, position, noteId }: { section: Section; position: 'top' | 'bottom'; noteId: string }) {
   const filters = section.filters ?? [];
+  const hasTop = filters.length > 0 || section.total !== undefined;
   if (position === 'top') {
-    if (filters.length === 0 && section.total === undefined) return null;
+    if (!hasTop) return null;
     return (
-      <div className="ws-filters" role="group" aria-label={`${section.title ?? 'Section'} filters`} aria-describedby={`${id}-note`}>
+      <div className="ws-filters" role="group" aria-label={`${section.title ?? 'Section'} filters`} aria-describedby={noteId}>
         {filters.length > 0 && (
           <>
             <button type="button" className="psl-btn psl-btn--secondary" disabled>
@@ -394,7 +398,7 @@ function Paging({ section, position }: { section: Section; position: 'top' | 'bo
             {section.items.length} of {section.total}
           </span>
         )}
-        <span id={`${id}-note`} className="ws-detail">
+        <span id={noteId} className="ws-detail">
           {WS_TEXT.noMore}
         </span>
       </div>
@@ -403,18 +407,21 @@ function Paging({ section, position }: { section: Section; position: 'top' | 'bo
   if (!section.next_cursor) return null;
   return (
     <div className="ws-more">
-      <button type="button" className="psl-btn psl-btn--secondary" disabled aria-describedby={`${id}-more`}>
+      <button type="button" className="psl-btn psl-btn--secondary" disabled aria-describedby={noteId}>
         {WS_TEXT.showMore}
       </button>
-      <span id={`${id}-more`} className="ws-detail">
-        {WS_TEXT.noMore}
-      </span>
+      {!hasTop && (
+        <span id={noteId} className="ws-detail">
+          {WS_TEXT.noMore}
+        </span>
+      )}
     </div>
   );
 }
 
 export function SectionView({ section, level, controls }: { section: Section; level: 2 | 3; controls?: ItemControls }) {
   const headId = useId();
+  const noteId = useId();
   const Heading = level === 2 ? 'h2' : 'h3';
   const restricted = section.restricted === true;
   const empty = !restricted && section.items.length === 0;
@@ -438,7 +445,7 @@ export function SectionView({ section, level, controls }: { section: Section; le
               </p>
             )}
             {section.note && <p className="ws-note">{section.note}</p>}
-            <Paging section={section} position="top" />
+            <Paging section={section} position="top" noteId={noteId} />
             {empty ? (
               <p className="ws-empty">{WS_TEXT.empty}</p>
             ) : section.kind === 'facts' ? (
@@ -448,7 +455,7 @@ export function SectionView({ section, level, controls }: { section: Section; le
             ) : (
               <Items section={section} controls={controls} />
             )}
-            <Paging section={section} position="bottom" />
+            <Paging section={section} position="bottom" noteId={noteId} />
             {!empty && controls?.foot?.(section)}
           </>
         )}

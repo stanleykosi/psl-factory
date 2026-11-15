@@ -18,13 +18,13 @@ import type { WorkspacePage } from './usePageReload';
 export type StepBody = paths['/api/v1/work/{work_id}/steps']['post']['requestBody']['content']['application/json'];
 
 export type StepNotice =
-  | { kind: 'done'; text: string }
+  | { kind: 'done'; text: string; label?: string }
   | { kind: 'queued'; text: string }
   | { kind: 'uncertain'; message?: string }
   | { kind: 'stale'; revision: number | undefined }
   | { kind: 'forbidden' }
   | { kind: 'problem'; text: string }
-  | { kind: 'failed'; sends: boolean; attempt: string };
+  | { kind: 'failed'; sends: boolean; attempt: string; label: string };
 
 /** What a submit tells its form: field messages and a message for the top of the form, or a closed form. */
 export type SubmitResult =
@@ -38,11 +38,14 @@ export const STEP_TEXT = {
   done: (label: string) => `Done: ${label}.`,
   queued: 'This step is queued.',
   uncertainNoReconcile: 'We are checking what happened. Nothing was sent again.',
-  stale: (revision: number | undefined) => `This changed while you were working. Showing version ${revision ?? 'unknown'}.`,
+  stale: (revision: number | undefined) =>
+    revision === undefined ? 'This changed while you were working, and we couldn’t reload it.' : `This changed while you were working. Showing version ${revision}.`,
   forbidden: 'You can’t take that step.',
   failed: 'We couldn’t confirm this step. Check the page before trying again.',
   sends: 'This sends to the client.',
   claim: 'Claim it first',
+  confirmFirst: 'Confirm what happened first.',
+  decide: 'Decide',
 } as const;
 
 export type StepResult = paths['/api/v1/work/{work_id}/steps']['post']['responses'][200]['content']['application/json'];
@@ -105,7 +108,8 @@ export function useWorkspaceStep({ id, revision, page }: Args) {
         } else if (result.outcome === 'queued') {
           setNotice({ kind: 'queued', text: `Waiting: ${result.message ?? STEP_TEXT.queued}` });
         } else {
-          setNotice({ kind: 'done', text: result.message ?? STEP_TEXT.done(step.label) });
+          // a returned message that doesn't name the step gets the step's name beside it
+          setNotice(result.message ? { kind: 'done', text: result.message, label: result.message.includes(step.label) ? undefined : step.label } : { kind: 'done', text: STEP_TEXT.done(step.label) });
         }
         await page.reload();
         return { kind: 'done' };
@@ -141,7 +145,7 @@ export function useWorkspaceStep({ id, revision, page }: Args) {
               drop();
               setLocked((current) => new Set(current).add(step.key));
             }
-            setNotice({ kind: 'failed', sends: step.sends === true, attempt: attempt.token });
+            setNotice({ kind: 'failed', sends: step.sends === true, attempt: attempt.token, label: step.label });
             await page.reload();
             return { kind: 'kept' };
           }

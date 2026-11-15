@@ -331,6 +331,17 @@ describe('INV-RESTRICTED', () => {
   });
 });
 
+describe('a blank value is Unknown (TECH-1-3)', () => {
+  it('a fact or figure whose value is empty or blank reads Unknown', async () => {
+    const body = item('W-2001');
+    const facts = { key: 'f', kind: 'facts', title: 'Blank facts', items: [{ id: 'a', label: 'Empty', value: '' }, { id: 'b', label: 'Spaces', value: '   ' }] };
+    const figures = { key: 'g', kind: 'figures', title: 'Blank figures', items: [{ id: 'c', label: 'Empty', value: '' }] };
+    await open({ ...body, workspace: { ...body.workspace!, sections: [facts, figures] } } as WorkItem);
+    expect([...section('Blank facts').querySelectorAll('dd')].map(text)).toEqual(['Unknown', 'Unknown']);
+    expect(text(section('Blank figures').querySelector('.ws-row__end'))).toBe('Unknown');
+  });
+});
+
 describe('as_of, coverage and sample', () => {
   it('W-2004 shows as_of in WAT and the coverage text; the record’s sample label shows when switched on', async () => {
     vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
@@ -382,6 +393,23 @@ describe('paging and filters are inert', () => {
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(requests()).toEqual(before);
     expect(before.filter((r) => !r.endsWith('/api/v1/me'))).toEqual(['GET /api/v1/work/W-2002']);
+  });
+
+  it('the "more rows" line shows once per section and both controls point at it (UX-1-3)', async () => {
+    await open(item('W-2002'));
+    const table = section('Requirements');
+    expect(within(table).getAllByText('More rows aren’t available yet.')).toHaveLength(1);
+    const filters = within(table).getByRole('group', { name: 'Requirements filters' });
+    expect(filters.getAttribute('aria-describedby')).toBe(within(table).getByRole('button', { name: 'Show more' }).getAttribute('aria-describedby'));
+  });
+
+  it('a section with only a cursor shows the line beside Show more, once', async () => {
+    const body = item('W-2002');
+    const only = { ...body.workspace!.sections[0], filters: undefined, total: undefined };
+    await open({ ...body, workspace: { ...body.workspace!, sections: [only] } });
+    const table = section('Requirements');
+    expect(within(table).getAllByText('More rows aren’t available yet.')).toHaveLength(1);
+    expect(document.getElementById(within(table).getByRole('button', { name: 'Show more' }).getAttribute('aria-describedby')!)?.textContent).toBe('More rows aren’t available yet.');
   });
 
   it('a section without filters, total or cursor draws none of them', async () => {

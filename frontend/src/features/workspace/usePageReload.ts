@@ -24,6 +24,14 @@ export function useWorkspacePage(id: string) {
   const [fresh, setFresh] = useState<{ item: WorkItem; at: Date } | null>(null);
   const [lost, setLost] = useState<ApiError | null>(null);
   const [refreshFailed, setRefreshFailed] = useState(false);
+  // A different item starts clean: nothing read or lost for the last one carries over.
+  const [forId, setForId] = useState(id);
+  if (forId !== id) {
+    setForId(id);
+    setFresh(null);
+    setLost(null);
+    setRefreshFailed(false);
+  }
 
   const reload = useCallback(async () => {
     try {

@@ -85,7 +85,7 @@ export function StepControl({ workId, step, off, pending, none, onPress, control
 }
 
 /** The workspace-scope row: each step's consequence above the buttons, as the boards' decide panels draw it. */
-export function StepRow({ steps, children }: { steps: Step[]; children: (step: Step, describedBy: string | undefined) => ReactNode }) {
+export function StepRow({ steps, children, hint }: { steps: Step[]; children: (step: Step, describedBy: string | undefined) => ReactNode; hint?: string }) {
   const base = useId();
   if (steps.length === 0) return null;
   return (
@@ -99,6 +99,7 @@ export function StepRow({ steps, children }: { steps: Step[]; children: (step: S
           return <span key={step.key}>{children(step, has ? `${base}-${i}` : undefined)}</span>;
         })}
       </div>
+      {hint && <p className="psl-reason ws-hint">{hint}</p>}
     </div>
   );
 }

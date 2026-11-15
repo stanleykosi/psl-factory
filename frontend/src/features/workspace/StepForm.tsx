@@ -192,7 +192,7 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [evidence, setEvidence] = useState<Record<string, string[]>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [message, setMessage] = useState<string | undefined>(undefined);
+  const [messages, setMessages] = useState<string[]>([]);
   const labels = Object.fromEntries(fields.map((f) => [f.name, f.label]));
 
   useEffect(() => {
@@ -236,15 +236,17 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
     if (pending || off) return;
     const found = checkFields(fields, values, evidence);
     setErrors(found);
-    setMessage(undefined);
+    setMessages([]);
     const named = fields.map((f) => f.name).filter((name) => found[name]);
     if (named.length > 0) return focusFirst(named);
     const result = await onSubmit(stepRequest(fields, values, evidence));
     if (result.kind !== 'invalid') return;
     const known = fields.map((f) => f.name).filter((name) => result.fields[name]);
     setErrors(Object.fromEntries(known.map((name) => [name, result.fields[name]])));
-    const unnamed = Object.keys(result.fields).length === 0 || Object.keys(result.fields).some((name) => !known.includes(name));
-    setMessage(unnamed ? result.message : undefined);
+    // A message for a field the form doesn't show still reaches the person, at the top.
+    const unmatched = Object.entries(result.fields).filter(([name]) => !known.includes(name)).map(([, text]) => text);
+    const unnamed = Object.keys(result.fields).length === 0 || unmatched.length > 0;
+    setMessages(unnamed ? [result.message, ...unmatched].filter((m): m is string => Boolean(m)) : []);
     if (known.length > 0) focusFirst(known);
   };
 
@@ -264,10 +266,14 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
       </h3>
       <div className="psl-panel__body ws-form__body">
         {consequence}
-        {message && (
+        {messages.length > 0 && (
           <div className="psl-callout psl-callout--problem" role="alert">
             <WarningIcon />
-            <span>{message}</span>
+            <span className="ws-stack">
+              {messages.map((m, i) => (
+                <span key={i}>{m}</span>
+              ))}
+            </span>
           </div>
         )}
         {fields.map((field) => {

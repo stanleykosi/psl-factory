@@ -1,0 +1,48 @@
+{
+  "region": "findings",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-49-desktop-blocked.dc.html",
+  "page": "/work/W-2003",
+  "boardText": "What closure needs",
+  "pageText": "Open findings",
+  "boardRegion": {
+    "width": 1320,
+    "height": 315
+  },
+  "pageRegion": {
+    "width": 1320,
+    "height": 266
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 100,
+    "visual": 71.6
+  },
+  "missing": [
+    {
+      "role": "text",
+      "name": "WHAT CLOSURE NEEDS",
+      "exception": "The findings region is anchored on SCR-49's list (the spec's choice); the frame's findings section has its own returned title."
+    }
+  ],
+  "misplaced": [],
+  "extra": [
+    {
+      "role": "heading",
+      "name": "OPEN FINDINGS"
+    }
+  ],
+  "visual": {
+    "score": 71.6,
+    "allCellsScore": 71.6,
+    "width": 1320,
+    "height": 315,
+    "boardHeight": 315,
+    "pageHeight": 266,
+    "cell": 12,
+    "contentCells": 2970,
+    "mismatchedCells": 844
+  },
+  "notes": []
+}
