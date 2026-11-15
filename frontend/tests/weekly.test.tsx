@@ -132,6 +132,22 @@ describe('default state from data (AC 6)', () => {
     expect(document.querySelector('.ws-byline')).toBeNull();
     expect(document.querySelector('.ws-status')).toBeNull();
   });
+
+  it('W-2201 to W-2204 draw only the rows their boards have: no byline or version, and no subtitle on invalid, assembling and review', async () => {
+    for (const [id, subtitle] of [['W-2201', true], ['W-2202', false], ['W-2203', false], ['W-2204', false]] as const) {
+      const w = item(id).workspace!;
+      expect(w.byline, id).toBeUndefined();
+      expect(w.version, id).toBeUndefined();
+      expect(w.subtitle !== undefined, id).toBe(subtitle);
+    }
+  });
+
+  it('W-2204 shows the board’s short references for the timeline and risks parts', async () => {
+    await open(item('W-2204'));
+    const text = document.querySelector('.ws')!.textContent!;
+    expect(text).toContain('ISS-0233');
+    expect(text).toContain('MIN-0141');
+  });
 });
 
 describe('the form carries the PM’s words (AC 7, 9)', () => {
@@ -164,6 +180,19 @@ describe('the form carries the PM’s words (AC 7, 9)', () => {
 });
 
 describe('write request (AC 8, 9)', () => {
+  it('opening the form and saving sends no cites the person did not touch (an empty list never replaces the saved cites)', async () => {
+    await open(item('W-2201'));
+    await press('Save draft');
+    const f = form('Save draft');
+    expect(f.getAllByText('Records you cited in the saved draft stay on it until you choose new ones.')).toHaveLength(4);
+    await submit('Save draft');
+    await waitFor(() => expect(posts()).toHaveLength(1));
+    const inputs = posts()[0].body!.inputs as Record<string, unknown>;
+    expect(Object.keys(inputs).filter((k) => k.endsWith('_cites'))).toEqual([]);
+    expect(Object.values(inputs).some((v) => Array.isArray(v) && v.length === 0)).toBe(false);
+    expect(inputs.status).toContain('Milestone 2 is complete');
+  });
+
   it('Send sends one POST with CSRF, the revision, all eight names, cites as lists of option values, a UUID key, no note and no evidence', async () => {
     await open(item('W-2201'), item('W-2203'));
     await press('Send to Tola to assemble');

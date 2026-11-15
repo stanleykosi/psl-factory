@@ -62,7 +62,6 @@
     "line_key": "weekly_report",
     "screen": "SCR-25",
     "view": "invalid",
-    "subtitle": "Lagoon Health · week ending 11 Nov",
     "context": {
       "project": {
         "case_id": "C-0211",
@@ -85,7 +84,6 @@
     },
     "revision": 4,
     "title": "Weekly client report · 5–11 Nov",
-    "byline": "Written by Tunde Bello",
     "agent_note": {
       "agent": "tola",
       "lines": [

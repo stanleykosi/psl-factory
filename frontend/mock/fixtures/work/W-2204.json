@@ -69,7 +69,6 @@
     "line_key": "weekly_report",
     "screen": "SCR-25",
     "view": "review",
-    "subtitle": "Lagoon Health · week ending 11 Nov",
     "context": {
       "project": {
         "case_id": "C-0211",
@@ -95,12 +94,6 @@
     "status": {
       "label": "Your review",
       "tone": "person"
-    },
-    "byline": "Written by Tunde Bello, assembled by Tola",
-    "version": {
-      "label": "Report v1",
-      "number": 1,
-      "document_id": "D-WCR-0216-1"
     },
     "sections": [
       {
@@ -133,7 +126,8 @@
                 "label": "ISS-0233 Login fails on older Android phones · High",
                 "reference": "ISS-0233"
               }
-            ]
+            ],
+            "cite_label": "ISS-0233"
           },
           {
             "id": "P-3",
@@ -144,7 +138,8 @@
                 "label": "Weekly sync with Lagoon Health · 10 Nov",
                 "reference": "MTG-0140"
               }
-            ]
+            ],
+            "cite_label": "MIN-0141"
           },
           {
             "id": "P-4",

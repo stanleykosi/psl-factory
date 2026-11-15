@@ -85,7 +85,6 @@
     },
     "revision": 4,
     "title": "Write this week's client update",
-    "byline": "Written by Tunde Bello",
     "agent_note": {
       "agent": "tola",
       "lines": [
@@ -216,7 +215,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Records you cited in the saved draft stay on it until you choose new ones."
           },
           {
             "name": "risks",
@@ -232,7 +232,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Records you cited in the saved draft stay on it until you choose new ones."
           },
           {
             "name": "timeline",
@@ -247,7 +248,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Records you cited in the saved draft stay on it until you choose new ones."
           },
           {
             "name": "next_steps",
@@ -262,7 +264,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Records you cited in the saved draft stay on it until you choose new ones."
           }
         ]
       },
@@ -286,7 +289,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Records you cited in the saved draft stay on it until you choose new ones."
           },
           {
             "name": "risks",
@@ -302,7 +306,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Records you cited in the saved draft stay on it until you choose new ones."
           },
           {
             "name": "timeline",
@@ -317,7 +322,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Records you cited in the saved draft stay on it until you choose new ones."
           },
           {
             "name": "next_steps",
@@ -332,7 +338,8 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "help": "Records you cited in the saved draft stay on it until you choose new ones."
           }
         ]
       }

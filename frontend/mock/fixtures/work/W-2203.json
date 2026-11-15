@@ -68,7 +68,6 @@
     "line_key": "weekly_report",
     "screen": "SCR-25",
     "view": "assembling",
-    "subtitle": "Lagoon Health · week ending 11 Nov",
     "context": {
       "project": {
         "case_id": "C-0211",
