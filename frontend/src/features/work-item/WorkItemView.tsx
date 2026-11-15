@@ -9,6 +9,7 @@ import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
 import { SampleLabel } from '@/shell/SampleLabel';
+import { useWorkspacePage } from '@/features/workspace/usePageReload';
 
 import { formatWat, startedLine, STATE_TAGS, type WorkItem } from './labels';
 import { presentationOf, viewFor } from './presentation';
@@ -133,6 +134,8 @@ function WorkItemTabs({ base, tab, count }: { base: string; tab: WorkItemTab; co
 
 export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   const { state, retry } = useWorkItem(id);
+  // F-17: the line workspace's quiet re-read after a step; the newer of the two reads is drawn.
+  const workspace = useWorkspacePage(id);
   const phone = useIsPhone();
   const base = `/work/${encodeURIComponent(id)}`;
   const item = state.status === 'ready' ? state.item : undefined;
@@ -154,12 +157,16 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
     );
   }
 
-  const { loadedAt, refreshFailed } = state;
+  if (workspace.lost) return workspace.lost.kind === 'unauthenticated' ? <SignedOutState pathname={base} /> : <NoAccessState />;
+  const fresh = workspace.fresh && workspace.fresh.at > state.loadedAt ? workspace.fresh : null;
+  const shown = fresh?.item ?? state.item;
+  const loadedAt = fresh?.at ?? state.loadedAt;
+  const refreshFailed = state.refreshFailed || workspace.page.refreshFailed;
   // D-45: the Overview / History strip is on every work item page, boards included, so History is reachable.
   const tabs = <WorkItemTabs base={base} tab={tab} count={view?.history_counts?.all} />;
   return (
     <>
-      <WorkItemHeader item={state.item} tab={tab} phone={phone} tabs={tabs} />
+      <WorkItemHeader item={shown} tab={tab} phone={phone} tabs={tabs} />
       {refreshFailed && (
         <div className="psl-callout psl-callout--warning">
           <WarningIcon />
@@ -169,9 +176,9 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
         </div>
       )}
       {tab === 'overview' ? (
-        <WorkItemOverview id={id} item={state.item} />
+        <WorkItemOverview id={id} item={shown} workspace={workspace.page} />
       ) : (
-        <WorkItemHistory id={id} revision={state.item.revision} counts={view?.history_counts} phone={phone} />
+        <WorkItemHistory id={id} revision={shown.revision} counts={view?.history_counts} phone={phone} />
       )}
     </>
   );

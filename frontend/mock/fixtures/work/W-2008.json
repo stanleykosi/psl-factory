@@ -1,0 +1,133 @@
+{
+  "id": "W-2008",
+  "title": "Weekly client report · 29 Oct–4 Nov",
+  "line": "Weekly client report",
+  "reference": "WCR-0210",
+  "state": "action_needed",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Assembled this from the week’s records",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "weekly_client_report",
+    "screen": "SCR-25",
+    "view": "review",
+    "status": {
+      "label": "Your review",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "update",
+        "kind": "text",
+        "title": "Report v2 · written by Tunde Bello, assembled by Tola",
+        "items": [
+          {
+            "id": "P-1",
+            "label": "Status",
+            "text": "Milestone 2 complete; go-live work started",
+            "cite_label": "2 RECORDS",
+            "cites": [
+              {
+                "reference": "MS-0002"
+              },
+              {
+                "reference": "UAT-0031"
+              }
+            ]
+          },
+          {
+            "id": "P-2",
+            "label": "Risks",
+            "text": "Login fails on older Android phones (high)",
+            "cites": [
+              {
+                "reference": "ISS-0233"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_send",
+        "label": "Approve and send",
+        "emphasis": "primary",
+        "sends": true,
+        "consequence": "Approving sends this exact version to Lagoon Health."
+      },
+      {
+        "key": "return",
+        "label": "Return with a note",
+        "emphasis": "secondary",
+        "fields": [
+          {
+            "name": "note",
+            "label": "Note",
+            "type": "long_text",
+            "required": true
+          }
+        ]
+      }
+    ],
+    "revision": 3
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "region": "steps",
+  "width": 1440,
+  "board": "design/canvas/project/SCR-25-desktop-review.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "Approving sends this exact version to Lagoon Health.",
+  "pageText": "Approving sends this exact version to Lagoon Health.",
+  "boardRegion": {
+    "width": 440,
+    "height": 317
+  },
+  "pageRegion": {
+    "width": 440,
+    "height": 153
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 100,
+    "visual": 54.6
+  },
+  "missing": [
+    {
+      "role": "complementary",
+      "name": "(side panel)",
+      "exception": "The boards put this area in the line page's side column; the frame draws every section in returned order in the Overview after the standard blocks (Conflicts 3). Where a line page puts it is that line task's board."
+    },
+    {
+      "role": "text",
+      "name": "DECIDE · PMO LEAD",
+      "exception": "The decide panel title names the deciding role; workspace.steps carries no panel title or role (contract proposal in build.md)."
+    },
+    {
+      "role": "text",
+      "name": "Note (needed to return or refuse)",
+      "exception": "The note is a field of the Return step's form, drawn when Return is pressed (Contract: a step with fields opens its form)."
+    },
+    {
+      "role": "text",
+      "name": "(needed to return or refuse)",
+      "exception": "As the note label above."
+    }
+  ],
+  "misplaced": [
+    {
+      "name": "Approving sends this exact version to Lagoon Health."
+    },
+    {
+      "name": ""
+    },
+    {
+      "name": "Approve and send"
+    },
+    {
+      "name": "Return with a note"
+    }
+  ],
+  "extra": [
+    {
+      "role": "button",
+      "name": "Refuse"
+    },
+    {
+      "role": "text",
+      "name": "Only the PMO Lead can refuse a report once it is assembled."
+    }
+  ],
+  "visual": {
+    "score": 54.6,
+    "allCellsScore": 53.7,
+    "width": 440,
+    "height": 317,
+    "boardHeight": 317,
+    "pageHeight": 153,
+    "cell": 12,
+    "contentCells": 981,
+    "mismatchedCells": 445
+  },
+  "notes": []
+}

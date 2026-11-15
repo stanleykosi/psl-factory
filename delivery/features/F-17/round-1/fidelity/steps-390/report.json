@@ -1,0 +1,46 @@
+{
+  "region": "steps",
+  "width": 390,
+  "board": "design/canvas/project/SCR-25-mobile-review.dc.html",
+  "page": "/work/W-2001",
+  "boardText": "Approve and send",
+  "pageText": "Approve and send",
+  "boardRegion": {
+    "width": 390,
+    "height": 140
+  },
+  "pageRegion": {
+    "width": 390,
+    "height": 122
+  },
+  "pass": false,
+  "scores": {
+    "coverage": 100,
+    "coverageWithExceptions": 100,
+    "visual": 33.8
+  },
+  "missing": [],
+  "misplaced": [],
+  "extra": [
+    {
+      "role": "button",
+      "name": "Refuse"
+    },
+    {
+      "role": "text",
+      "name": "Only the PMO Lead can refuse a report once it is assembled."
+    }
+  ],
+  "visual": {
+    "score": 33.8,
+    "allCellsScore": 43.4,
+    "width": 390,
+    "height": 140,
+    "boardHeight": 140,
+    "pageHeight": 122,
+    "cell": 12,
+    "contentCells": 328,
+    "mismatchedCells": 217
+  },
+  "notes": []
+}

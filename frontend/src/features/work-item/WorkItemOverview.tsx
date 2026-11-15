@@ -15,6 +15,8 @@ import { WarningIcon } from '@/shell/icons';
 import { InfoIcon } from './InfoIcon';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
+import type { WorkspacePage } from '@/features/workspace/usePageReload';
+import { Workspace } from '@/features/workspace/Workspace';
 import { RfpOutcomeLink } from '@/features/rfp';
 
 import {
@@ -653,7 +655,7 @@ export function boardLayout(item: WorkItem): Layout | undefined {
   return LAYOUTS[item.state];
 }
 
-export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
+export function WorkItemOverview({ id, item, workspace }: { id: string; item: WorkItem; workspace?: WorkspacePage }) {
   const phone = useIsPhone();
   const view = viewFor(presentationOf(item), phone);
   const layout = boardLayout(item);
@@ -776,6 +778,7 @@ export function WorkItemOverview({ id, item }: { id: string; item: WorkItem }) {
         </div>
       </div>
       {after}
+      {item.workspace && <Workspace id={id} item={item} page={workspace} />}
     </div>
   );
 }

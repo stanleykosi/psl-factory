@@ -1,0 +1,2 @@
+FAIL  table                  1440  coverage 100% (11/11, 1 by exception)  visual 77.5
+FAIL  unknown-money          1440  coverage 100% (24/24, 13 by exception)  visual 75.6

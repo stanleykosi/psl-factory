@@ -1,0 +1,240 @@
+{
+  "id": "W-2006",
+  "title": "Tamarind Loans · R-07 answer",
+  "line": "RFP response",
+  "reference": "TL-RFP-2026-014",
+  "state": "action_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Assembled this from the week’s records",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0101",
+  "case_revision": 6,
+  "workspace": {
+    "line_key": "invoice",
+    "screen": "SCR-26",
+    "view": "edit",
+    "sections": [
+      {
+        "key": "suggestion",
+        "kind": "suggestions",
+        "title": "Review Tola’s suggestion",
+        "items": [
+          {
+            "id": "S-07",
+            "label": "R-07 · RFP p.6",
+            "text": "Loan officers approve applications above a set amount",
+            "detail": "From PSL’s past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
+            "agent": "tola"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "save_answer",
+        "label": "Save and accept",
+        "emphasis": "primary",
+        "fields": [
+          {
+            "name": "answer",
+            "label": "Your answer",
+            "type": "long_text",
+            "required": true,
+            "help": "Your words replace Tola’s once you save; Tola’s version stays in the history."
+          },
+          {
+            "name": "heading",
+            "label": "Short title",
+            "type": "text",
+            "required": false,
+            "placeholder": "e.g. Approval threshold"
+          },
+          {
+            "name": "due",
+            "label": "Answer due",
+            "type": "date",
+            "required": false
+          },
+          {
+            "name": "covers",
+            "label": "Covers",
+            "type": "date_range",
+            "required": false
+          },
+          {
+            "name": "month",
+            "label": "Reporting month",
+            "type": "period",
+            "required": false
+          },
+          {
+            "name": "discussed",
+            "label": "Discussed at",
+            "type": "datetime",
+            "required": false
+          },
+          {
+            "name": "hours",
+            "label": "Hours to build",
+            "type": "integer",
+            "required": false
+          },
+          {
+            "name": "price",
+            "label": "Price for this requirement",
+            "type": "money",
+            "required": false,
+            "help": "Leave it blank if it isn’t known yet."
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "type": "choice",
+            "required": true,
+            "options": [
+              {
+                "value": "addressed",
+                "label": "Addressed"
+              },
+              {
+                "value": "clarify",
+                "label": "Clarify"
+              },
+              {
+                "value": "out_of_scope",
+                "label": "Out of scope"
+              }
+            ]
+          },
+          {
+            "name": "project",
+            "label": "Project",
+            "type": "record",
+            "required": false,
+            "options_source": "line_options"
+          },
+          {
+            "name": "milestone",
+            "label": "Milestones",
+            "type": "records",
+            "required": false,
+            "options_source": "line_options",
+            "depends_on": "project",
+            "multiple": true
+          },
+          {
+            "name": "proof",
+            "label": "Supporting document",
+            "type": "evidence",
+            "required": false,
+            "evidence_kind": "client_document"
+          },
+          {
+            "name": "template",
+            "label": "Template",
+            "type": "display",
+            "required": false,
+            "value": "RFP answer · test template v1"
+          },
+          {
+            "name": "cost_code",
+            "label": "Cost code",
+            "type": "text",
+            "required": false,
+            "restricted": true,
+            "value": "HIDDEN-COST-CODE"
+          },
+          {
+            "name": "note",
+            "label": "Note",
+            "type": "long_text",
+            "required": false
+          }
+        ],
+        "consequence": "Accepting records your name. Tola’s original suggestion stays in the history."
+      },
+      {
+        "key": "check_answer",
+        "label": "Check my answer",
+        "emphasis": "secondary",
+        "fields": [
+          {
+            "name": "answer",
+            "label": "Your answer",
+            "type": "long_text",
+            "required": true
+          },
+          {
+            "name": "hours",
+            "label": "Hours to build",
+            "type": "integer",
+            "required": false
+          }
+        ]
+      },
+      {
+        "key": "mark_addressed",
+        "label": "Mark as addressed",
+        "emphasis": "secondary",
+        "confirm": "This marks R-07 as addressed with Tola’s suggested answer."
+      }
+    ],
+    "revision": 2
+  }
+}

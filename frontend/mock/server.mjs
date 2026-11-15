@@ -30,6 +30,7 @@ import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { workList } from './work-list.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
+import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
@@ -232,11 +233,15 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetResponses();
         resetSetup();
         alerts.reset();
+        resetWorkspace();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
+      if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
+      // F-17: E-WORK-STEP goes to workspace.mjs (fixture scripts, the mock's idempotency map and log).
+      if (WORKSPACE_OPERATIONS.includes(route.operationId)) return send(res, ...workspaceRoute({ req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
       // E-EVIDENCE-UPLOAD has two mock owners: Setup proof cases (C-SETUP-*, F-11, evidence.mjs) and work-item cases (F-09, response.mjs).
       const setupProof = route.operationId === 'E-EVIDENCE-UPLOAD' && decodeURIComponent(url.pathname.split('/')[4] ?? '').startsWith('C-SETUP-');
       if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {

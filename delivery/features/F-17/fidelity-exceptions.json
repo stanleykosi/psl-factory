@@ -1,0 +1,559 @@
+{
+  "about": "F-17 provisional exceptions for the region check (D-59). Region-check approval itself: design engineer, 14 Nov (D-59). Every entry below is a builder proposal until the design engineer confirms it. `regions` scopes an entry to the named regions.",
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "January receipts are Unknown: Kola Foods hasn't confirmed its payment date. The forecast shows Unknown, not 0.",
+      "category": "frame data",
+      "reason": "The note text comes from the contract fixture, which writes the apostrophe as a typographic one; the board has a straight one. The words are the same.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "complementary",
+      "name": "",
+      "category": "frame layout",
+      "reason": "The boards put this area in the line page's side column; the frame draws every section in returned order in the Overview after the standard blocks (Conflicts 3). Where a line page puts it is that line task's board.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "steps",
+        "suggestions",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "DECIDE · PMO LEAD",
+      "category": "no field",
+      "reason": "The decide panel title names the deciding role; workspace.steps carries no panel title or role (contract proposal in build.md).",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "steps"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Note (needed to return or refuse)",
+      "category": "drawn on press",
+      "reason": "The note is a field of the Return step's form, drawn when Return is pressed (Contract: a step with fields opens its form).",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "steps"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "(needed to return or refuse)",
+      "category": "drawn on press",
+      "reason": "As the note label above.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "steps"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Open the report as the client will see it",
+      "category": "no field",
+      "reason": "No workspace field carries a client preview link (contract proposal).",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "text-cites"
+      ]
+    },
+    {
+      "role": "checkbox",
+      "name": "Select all 41 suggestions",
+      "category": "no field",
+      "reason": "Select all is not in the contract; the frame draws a checkbox per item offering the items step only.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "table"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "WHAT CLOSURE NEEDS",
+      "category": "anchor",
+      "reason": "The findings region is anchored on SCR-49's list (the spec's choice); the frame's findings section has its own returned title.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "findings"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "WHAT HAPPENED",
+      "category": "anchor",
+      "reason": "Recipients are anchored on SCR-25's What happened list; the frame's recipients section has its own returned title.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "recipients"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Delivered to 2 client contacts. Verified.",
+      "category": "phone composition",
+      "reason": "The phone received board draws only a one-line summary; the frame draws the returned section. The phone composition is the line task's board.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "recipients",
+        "timeline",
+        "notice-done"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦22.6M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦18.4M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦21.0M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦20.0M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦12.1M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦24.3M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦7.8M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "₦19.8M",
+      "category": "amount format",
+      "reason": "The board abbreviates money (₦22.6M); the frame shows the full decimal amount from the contract in the decide page's format (₦22,600,000.00). Unknown cells read Unknown on both.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "category": "amount format",
+      "reason": "Matched by position in the table pattern, not as a standalone label; the page draws Unknown in the same cells (tests/workspace.test.tsx INV-UNKNOWN).",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "unknown-money"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "R-07 · RFP p.6",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Loan officers approve applications above a set amount",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "From PSL's past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "From Harmattan Bank RFP 2025 · R-12",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Tola's suggested answer",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "REVIEW TOLA'S SUGGESTION",
+      "category": "copy split",
+      "reason": "The board splits the item into separate lines (reference, requirement, answer, source); the frame draws the item's label · text, detail and agent as returned, so the words are on the page in a different grouping.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Harmattan Bank RFP 2025 · R-12",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Write my own",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Edit",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Reject",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "1 of 41 · swipe for the next",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "heading",
+      "name": "Suggested by Tola41",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Accepting records your name. Tola's original suggestion stays in the history, so reviewers can see what was changed.",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Cancel keeps Tola's suggestion as it was. If you've typed changes, we ask before throwing them away.",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Cancel keeps Tola's suggestion. If you've typed changes, we ask first.",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Tola's version stays in the history.",
+      "category": "no field",
+      "reason": "Board control or copy with no field in workspace (sources, swipe paging, edit/reject on the phone card, a count in the heading); listed as a contract proposal.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions",
+        "table",
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Your answer",
+      "category": "form layout",
+      "reason": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Editing in place. Your words replace Tola's once you save; Tola's version stays in the history.",
+      "category": "form layout",
+      "reason": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Status",
+      "category": "form layout",
+      "reason": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "step-form"
+      ]
+    },
+    {
+      "role": "link",
+      "name": "Save and accept",
+      "category": "form layout",
+      "reason": "The step form draws its fields from the descriptor through IntakeField; the board's edit card draws them inside the suggestion card. The words are the field's own (label, help, choice) and are on the page in the form.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "step-form"
+      ]
+    },
+    {
+      "role": "text",
+      "name": "Status",
+      "category": "form layout",
+      "reason": "The status choice is in the edit form, not in the review card.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "suggestions"
+      ]
+    },
+    {
+      "role": "section",
+      "name": "restricted section",
+      "category": "no board",
+      "reason": "No line board draws a restricted section label; the frame's restricted label is proven by tests/workspace.test.tsx (INV-RESTRICTED).",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "restricted"
+      ]
+    },
+    {
+      "role": "section",
+      "name": "waiting, uncertain and stale notices",
+      "category": "no board",
+      "reason": "No SCR-25 board draws these sentences; they are proven by tests/workspace-step.test.tsx and e2e.",
+      "approved_by": "design engineer, 15 Nov (D-65)",
+      "regions": [
+        "notice-queued-uncertain-stale"
+      ]
+    }
+  ],
+  "visual_exceptions": [
+    {
+      "region": "steps",
+      "width": 1440,
+      "category": "no field",
+      "reason": "The board panel holds an inline Note field and the head \"DECIDE · PMO LEAD\"; the contract opens a form on Return and has no deciding-role field. The fixture adds a disabled Refuse button with its reason.",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "steps",
+      "width": 390,
+      "category": "frame layout",
+      "reason": "The phone bar keeps the consequence sentence (D-63) and the three buttons share rows to stay compact on a 375x667 phone; the board stacks two full-width buttons without the sentence.",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "table",
+      "width": 1440,
+      "category": "line board",
+      "reason": "Board row height comes from a 40px row; the frame rows hold a 44px checkbox target. Remaining: the board has no per-row Edit/Accept buttons in the table.",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "table",
+      "width": 390,
+      "category": "line board",
+      "reason": "SCR-26 mobile draws one suggestion as a swipe card, not a table.",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "suggestions",
+      "width": 1440,
+      "category": "no field",
+      "reason": "The Status radio group, \"Write my own\", \"Tola's suggested answer\" label and the requirement title are not in the suggestion item (contract question for the backend developer).",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "checklist",
+      "width": 390,
+      "category": "line board",
+      "reason": "The phone board omits owner, held-by and due lines and the section head; the frame draws them when returned.",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "checklist-gates",
+      "width": 390,
+      "category": "line board",
+      "reason": "Same as checklist 390; fixture words differ (RUNNING / IN PROGRESS).",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "findings",
+      "width": 1440,
+      "category": "no board",
+      "reason": "No board draws a findings list; anchored on SCR-49 \"What closure needs\".",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "findings",
+      "width": 390,
+      "category": "line board",
+      "reason": "The SCR-25 phone row is one line \"Risks · text (high)\" with a cite; the frame draws a detail line and a severity pill.",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "unknown-money",
+      "width": 1440,
+      "category": "line board",
+      "reason": "SCR-56 draws compact left-aligned sans amounts and plain \"Unknown\"; the frame draws full amounts (D-63) in the design system number style with the amber Unknown chip. Compact figures are a line task.",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "step-form",
+      "width": 1440,
+      "category": "no field",
+      "reason": "The contract has no prefill from the item's answer, no submit label (\"Save and accept\") and no item context in the form (contract question, D-63).",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    },
+    {
+      "region": "notice-done",
+      "width": 390,
+      "category": "line board",
+      "reason": "The phone board shows the short summary \"Delivered to 2 client contacts. Verified.\"; the frame shows the returned sentence.",
+      "approved_by": "design engineer, 15 Nov (D-65)"
+    }
+  ]
+}

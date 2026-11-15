@@ -1,0 +1,437 @@
+{
+  "id": "W-2002",
+  "title": "Tamarind Loans · loan origination RFP",
+  "line": "RFP response",
+  "reference": "TL-RFP-2026-014",
+  "state": "action_needed",
+  "revision": 7,
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Assembled this from the week’s records",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "workspace": {
+    "line_key": "rfp_response",
+    "screen": "SCR-26",
+    "view": "review",
+    "title": "Requirements",
+    "status": {
+      "label": "Deadline 28 Nov · 16 days",
+      "tone": "uncertain"
+    },
+    "sections": [
+      {
+        "key": "requirements",
+        "kind": "table",
+        "title": "Requirements",
+        "total": 64,
+        "next_cursor": "o:4",
+        "filters": [
+          {
+            "value": "suggested",
+            "label": "Status: Suggested by Tola"
+          }
+        ],
+        "columns": [
+          {
+            "key": "ref",
+            "label": "#",
+            "kind": "reference"
+          },
+          {
+            "key": "requirement",
+            "label": "Requirement",
+            "kind": "text"
+          },
+          {
+            "key": "answer",
+            "label": "Suggested answer",
+            "kind": "text"
+          },
+          {
+            "key": "status",
+            "label": "Status",
+            "kind": "tag"
+          }
+        ],
+        "items": [
+          {
+            "id": "R-07",
+            "steps": [
+              "accept_selected"
+            ],
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-07"
+              },
+              {
+                "column": "requirement",
+                "text": "Loan officers approve applications above a set amount",
+                "link": {
+                  "label": "RFP p.6",
+                  "document_id": "D-RFP-014"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "Suggested by Tola",
+                  "tone": "agent"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-08",
+            "steps": [
+              "accept_selected"
+            ],
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-08"
+              },
+              {
+                "column": "requirement",
+                "text": "Borrowers see repayment schedule in the app",
+                "link": {
+                  "label": "RFP p.6",
+                  "document_id": "D-RFP-014"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "The app shows each instalment, its due date and what has been paid."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "Suggested by Tola",
+                  "tone": "agent"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-09",
+            "steps": [
+              "accept_selected"
+            ],
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-09"
+              },
+              {
+                "column": "requirement",
+                "text": "Daily export to their core banking system",
+                "link": {
+                  "label": "RFP p.7",
+                  "document_id": "D-RFP-014"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "A nightly file export in their required format, with a delivery receipt."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "Suggested by Tola",
+                  "tone": "agent"
+                }
+              }
+            ]
+          },
+          {
+            "id": "R-10",
+            "steps": [
+              "accept_selected"
+            ],
+            "cells": [
+              {
+                "column": "ref",
+                "text": "R-10"
+              },
+              {
+                "column": "requirement",
+                "text": "Accessibility for low-vision users",
+                "link": {
+                  "label": "RFP p.9",
+                  "document_id": "D-RFP-014"
+                }
+              },
+              {
+                "column": "answer",
+                "text": "Screens meet WCAG 2.2 AA; tested with screen readers on Android."
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "Suggested by Tola",
+                  "tone": "agent"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "pricing",
+        "kind": "table",
+        "title": "Pricing lines",
+        "columns": [
+          {
+            "key": "line",
+            "label": "Line",
+            "kind": "text"
+          },
+          {
+            "key": "amount",
+            "label": "Amount",
+            "kind": "money"
+          },
+          {
+            "key": "due",
+            "label": "Due",
+            "kind": "date"
+          },
+          {
+            "key": "days",
+            "label": "Days",
+            "kind": "integer"
+          },
+          {
+            "key": "work",
+            "label": "Work item",
+            "kind": "reference"
+          }
+        ],
+        "items": [
+          {
+            "id": "L-1",
+            "cells": [
+              {
+                "column": "line",
+                "text": "Discovery and design"
+              },
+              {
+                "column": "amount",
+                "money": {
+                  "amount": "4250000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "due",
+                "date": {
+                  "date": "2026-11-28",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "days",
+                "text": "12"
+              },
+              {
+                "column": "work",
+                "link": {
+                  "reference": "WCR-0216",
+                  "work_id": "W-2001"
+                }
+              }
+            ]
+          },
+          {
+            "id": "L-2",
+            "cells": [
+              {
+                "column": "line",
+                "text": "Build and test"
+              },
+              {
+                "column": "amount",
+                "money": {
+                  "amount": "18600000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "due",
+                "date": {
+                  "date": "2027-01-15",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "days",
+                "text": "48"
+              },
+              {
+                "column": "work",
+                "link": {
+                  "reference": "D-RFP-014",
+                  "document_id": "D-RFP-014"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "suggestions",
+        "kind": "suggestions",
+        "title": "Review Tola’s suggestion",
+        "agent": "tola",
+        "items": [
+          {
+            "id": "S-07",
+            "label": "R-07 · RFP p.6",
+            "text": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+            "detail": "From PSL’s past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
+            "agent": "tola",
+            "tag": {
+              "label": "Suggested by Tola",
+              "tone": "agent"
+            },
+            "cites": [
+              {
+                "label": "RFP p.6",
+                "document_id": "D-RFP-014"
+              }
+            ],
+            "steps": [
+              "accept_answer",
+              "edit_answer"
+            ]
+          },
+          {
+            "id": "S-08",
+            "label": "R-08 · RFP p.6",
+            "text": "The app shows each instalment, its due date and what has been paid.",
+            "agent": "tola",
+            "tag": {
+              "label": "Suggested by Tola",
+              "tone": "agent"
+            },
+            "steps": [
+              "accept_answer"
+            ]
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "accept_selected",
+        "label": "Accept selected",
+        "emphasis": "primary",
+        "applies_to": "items",
+        "consequence": "Bulk accept still records each answer under your name."
+      },
+      {
+        "key": "accept_answer",
+        "label": "Accept answer",
+        "emphasis": "primary",
+        "applies_to": "item",
+        "consequence": "Accepting records your name. Tola’s original suggestion stays in the history."
+      },
+      {
+        "key": "edit_answer",
+        "label": "Edit answer",
+        "emphasis": "secondary",
+        "applies_to": "item",
+        "fields": [
+          {
+            "name": "answer",
+            "label": "Your answer",
+            "type": "long_text",
+            "required": true,
+            "help": "Editing in place. Your words replace Tola’s once you save; Tola’s version stays in the history."
+          },
+          {
+            "name": "status",
+            "label": "Status",
+            "type": "choice",
+            "required": true,
+            "options": [
+              {
+                "value": "addressed",
+                "label": "Addressed"
+              },
+              {
+                "value": "clarify",
+                "label": "Clarify"
+              },
+              {
+                "value": "out_of_scope",
+                "label": "Out of scope"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "revision": 7
+  }
+}
