@@ -1,6 +1,17 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+/** A date field takes "11 Nov 2026"; a when field also has its time (WAT) beside it. */
+async function fillWhen(page: Page, label: string | RegExp, value: string) {
+  const [date, time] = value.split('T');
+  const [y, m, d] = date.split('-');
+  const box = page.getByLabel(label, { exact: typeof label === 'string' }).first();
+  await box.fill(`${Number(d)} ${MONTHS[Number(m) - 1]} ${y}`);
+  await box.blur();
+  if (time) await page.locator('.resp-when', { has: box }).getByLabel('At (WAT)').fill(time);
+}
+
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
@@ -13,7 +24,7 @@ async function expectNoAxeViolations(page: Page) {
 }
 
 async function loaded(page: Page) {
-  await expect(page.getByRole('status').filter({ hasText: 'Loading…' })).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.locator('main#main h1').first()).toBeVisible();
 }
 
@@ -27,17 +38,17 @@ const pdf = (name: string, size: number) => ({ name, mimeType: 'application/pdf'
 
 async function fill(page: Page, { file = true, attest = true } = {}) {
   await page.getByRole('radio', { name: 'Approved' }).check();
-  await page.getByLabel('When they responded').fill('2026-11-11T16:20');
+  await fillWhen(page, 'When they responded', '2026-11-11T16:20');
   if (file) {
     await page.locator('input[type="file"]').setInputFiles(pdf('Lagoon_UAT_signoff_11Nov.pdf', 184 * 1024));
-    await expect(page.getByText('Lagoon_UAT_signoff_11Nov.pdf · 184 KB')).toBeVisible();
+    await expect(page.getByText('Uploaded · 184 KB')).toBeVisible();
   }
   if (attest) await page.getByRole('checkbox').check();
 }
 
 async function record(page: Page) {
   await page.getByRole('button', { name: 'Record response' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Response recorded.' })).toBeVisible();
+  await expect(page.getByText('Response recorded.')).toBeVisible();
 }
 
 test.beforeEach(async ({ request, context, baseURL }) => {
@@ -61,7 +72,7 @@ const STATES: [string, 'pm' | 'finance_lead', (page: Page) => Promise<unknown>][
   ['W-1603 reconcile', 'finance_lead', async (page) => {
     await page.goto('/work/W-1603');
     await loaded(page);
-    await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   }],
 ];
 
@@ -121,7 +132,7 @@ test('SCR-16 tab order is Who, When, the actions, Version, Note, the proof butto
     page.getByRole('radio', { name: 'Approved' }),
     page.getByLabel('For which version'),
     page.getByLabel(/^Note/),
-    page.getByRole('button', { name: 'Add another file' }),
+    page.locator('.psl-drop input[type="file"]'),
     page.getByRole('checkbox'),
     page.getByRole('button', { name: 'Record response' }),
   ];
@@ -141,7 +152,7 @@ test('every radio group is named and nothing animates with reduced motion', asyn
   await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
   await page.goto('/work/W-1603');
   await loaded(page);
-  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Confirm what happened' })).toBeVisible();
   await page.getByRole('radio', { name: /It arrived/ }).check();
   expect(await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length)).toBe(0);
 });
@@ -156,7 +167,7 @@ test('an uncertain record (record-then-fail) is re-read, shows the success view 
   await fill(page);
   await page.getByRole('button', { name: 'Record response' }).click();
   await expect(page.getByText('We couldn’t confirm your response was recorded. We’ve reloaded this item so you can see whether it was.')).toBeVisible();
-  await expect(page.getByRole('status').filter({ hasText: 'Response recorded.' })).toBeVisible();
+  await expect(page.getByText('Response recorded.')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Client UAT response');
   expect(sent).toBe(1);
 });

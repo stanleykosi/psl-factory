@@ -6,9 +6,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { InfoIcon } from '@/features/response/icons';
-import { formatClock, formatDay } from '@/features/response/labels';
-import { useIsPhone } from '@/features/response/usePhone';
+import { Button, buttonClass, Callout, formatDate, formatTime, PageTitle, Panel as DsPanel, Tag, useIsPhone } from '@/components';
 
 import type { RecordedOutcome, RfpOutcome } from './contract';
 import { recordedHeading } from './labels';
@@ -26,10 +24,9 @@ function Row({ text, meta }: { text: string; meta?: string }) {
 
 function Panel({ title, children, className }: { title: string; children: ReactNode; className?: string }) {
   return (
-    <section className={`psl-panel rfp-panel${className ? ` ${className}` : ''}`} aria-label={title}>
-      <h2 className="psl-panel__head">{title}</h2>
-      <div className="psl-panel__body">{children}</div>
-    </section>
+    <DsPanel head={title} className={`rfp-panel${className ? ` ${className}` : ''}`}>
+      {children}
+    </DsPanel>
   );
 }
 
@@ -56,11 +53,11 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
   // single action of won and pending, keeps unknown's as a secondary button and lost's as a quiet link.
   const pinned = phone && (recorded.result === 'won' || recorded.result === 'pending');
   const action = again ? (
-    <button type="button" className={`psl-btn psl-btn--lg psl-btn--block${phone && recorded.result === 'unknown' ? ' psl-btn--secondary' : ''}`} onClick={onReopen}>
+    <Button size="lg" block kind={phone && recorded.result === 'unknown' ? 'secondary' : 'primary'} onClick={onReopen}>
       Record the outcome
-    </button>
+    </Button>
   ) : recorded.result === 'won' && engagement?.work_id ? (
-    <Link className={`psl-btn psl-btn--lg psl-btn--block${phone ? '' : ' psl-btn--secondary'}`} href={work(engagement.work_id)}>
+    <Link className={buttonClass(phone ? 'primary' : 'secondary', 'lg', true)} href={work(engagement.work_id)}>
       Open engagement {engagement.reference}
     </Link>
   ) : recorded.result === 'lost' ? (
@@ -69,7 +66,7 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
         Back to projects
       </Link>
     ) : (
-      <Link className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" href="/projects">
+      <Link className={buttonClass('secondary', 'lg', true)} href="/projects">
         Back to projects
       </Link>
     )
@@ -88,7 +85,7 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
   const listed = rows.length > 0 || reminder || engagement;
   return (
     <div className="rfp-recorded">
-      {title === 'h1' && <h1 className="shell-title">{heading}</h1>}
+      {title === 'h1' && <PageTitle>{heading}</PageTitle>}
       {title === 'h2' && <h2 className="rfp-recorded__title">{heading}</h2>}
       <div className="resp-board">
         <div className="rfp-recorded__main">
@@ -96,10 +93,10 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
             <Panel title="What’s recorded" className="rfp-panel--rows">
               <ul className="rfp-rows">
                 {rows.map((r, i) => (
-                  <Row key={i} text={r.at ? `${r.label} · ${r.value}` : r.label} meta={r.at ? formatDay(r.at) : r.value} />
+                  <Row key={i} text={r.at ? `${r.label} · ${r.value}` : r.label} meta={r.at ? formatDate(r.at) : r.value} />
                 ))}
                 {engagement && <Row text={`Engagement ${engagement.reference} created`} />}
-                {reminder && <Row text={`Reminder for ${reminder.holder.name}`} meta={`${formatDay(reminder.at)} ${formatClock(reminder.at)}`} />}
+                {reminder && <Row text={`Reminder for ${reminder.holder.name}`} meta={`${formatDate(reminder.at)} ${formatTime(reminder.at)}`} />}
               </ul>
             </Panel>
           )}
@@ -110,7 +107,11 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
                   {lessons.map((l, i) => (
                     <li key={i} className="rfp-row">
                       <span>{l.category ? `${l.category.label} · ${l.text}` : l.text}</span>
-                      {l.category && <span className="psl-tag psl-tag--neutral rfp-row__tag">{l.category.label}</span>}
+                      {l.category && (
+                        <Tag tone="neutral" className="rfp-row__tag">
+                          {l.category.label}
+                        </Tag>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -127,10 +128,7 @@ export function RecordedView({ outcome, recorded, title, onReopen, followup }: {
             (phone ? (
               <p className="psl-hint">Archived as {recorded.archive_reference}.</p>
             ) : (
-              <p className="psl-callout psl-callout--info">
-                <InfoIcon />
-                <span>Archived as {recorded.archive_reference}.</span>
-              </p>
+              <Callout kind="info">Archived as {recorded.archive_reference}.</Callout>
             ))}
           {followup}
         </div>

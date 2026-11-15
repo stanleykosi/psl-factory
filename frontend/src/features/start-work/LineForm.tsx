@@ -7,15 +7,15 @@
 // "Line chosen from the Start work menu · change line" over Back or Cancel and the start button; on the phone the
 // sheet head reads "Step 2 of 2 · change line" and the footer is the start button alone.
 import Link from 'next/link';
-import { Fragment, useEffect, useRef, type ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 
+import { Button, Callout, Icon } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
-import { WarningIcon } from '@/shell/icons';
 
 import { DrawerFrame, useWide } from './DrawerFrame';
 import { caseOptionUnusable, parentValue, startableHere } from './intake';
 import { IntakeField } from './IntakeField';
-import { AGENT_NAMES, drawerTitle, footerGoesBack, journeyLabel, narrowDrawer, startLabel } from './labels';
+import { AGENT_NAMES, drawerTitle, footerGoesBack, journeyLabel, startLabel } from './labels';
 import type { Field, FieldProblem, Line } from './types';
 import { useStartForm, type Notice } from './useStartWork';
 
@@ -30,30 +30,19 @@ type Props = {
 
 export const CASE_UNUSABLE = 'This project can’t be started on from here.';
 
-function InfoIcon() {
-  return (
-    <svg className="psl-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="9" cy="9" r="7" />
-      <path d="M9 8v5" />
-      <rect x="8.1" y="4.6" width="1.8" height="1.8" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
 export function toFix(count: number): string {
   return `${count} ${count === 1 ? 'thing' : 'things'} to fix`;
 }
 
-type CalloutProps = { notice: Notice; agent: string | undefined; wide: boolean; calloutRef: React.Ref<HTMLDivElement> };
+type CalloutProps = { notice: Notice; agent: string | undefined; wide: boolean; seq: number };
 
-function NoticeCallout({ notice, agent, wide, calloutRef }: CalloutProps) {
+function NoticeCallout({ notice, agent, wide, seq }: CalloutProps) {
   switch (notice.kind) {
     case 'invalid':
       // SCR-04-mobile-validation keeps only the count.
       return (
-        <div ref={calloutRef} tabIndex={-1} className="psl-callout psl-callout--problem" role="alert">
-          {wide && <WarningIcon />}
-          <span>
+        <>
+          <Callout key={seq} kind="problem" focusOnShow>
             {wide ? `${toFix(notice.count)} before ${agent ? `${agent} can start` : 'this can start'}.` : toFix(notice.count)}
             {notice.general && (
               <>
@@ -61,46 +50,36 @@ function NoticeCallout({ notice, agent, wide, calloutRef }: CalloutProps) {
                 {notice.general}
               </>
             )}
-          </span>
-        </div>
+          </Callout>
+        </>
       );
     case 'stale':
       return (
-        <div className="psl-callout psl-callout--warning" role="alert">
-          <WarningIcon />
-          <span>
+        <div role="alert">
+          <Callout kind="warning">
             {notice.fixed ? 'This record' : 'This project'} changed since you opened the form. We&rsquo;ve loaded the latest
             version; check your entries and press start again.
-          </span>
+          </Callout>
         </div>
       );
     case 'problem':
       return (
-        <div className="psl-callout psl-callout--problem" role="alert">
-          <WarningIcon />
-          <span>
-            {notice.lead && <strong>{notice.lead} </strong>}
-            {notice.message}
-          </span>
-        </div>
+        <Callout kind="problem">
+          {notice.lead && <strong>{notice.lead} </strong>}
+          {notice.message}
+        </Callout>
       );
     case 'uncertain':
       return (
-        <div className="psl-callout psl-callout--warning" role="alert">
-          <WarningIcon />
-          <span>
+        <div role="alert">
+          <Callout kind="warning">
             We couldn&rsquo;t confirm the start. Check again: if it already started you&rsquo;ll go straight to it, and nothing
             starts twice.
-          </span>
+          </Callout>
         </div>
       );
     case 'gone':
-      return (
-        <div className="psl-callout psl-callout--problem" role="alert">
-          <WarningIcon />
-          <span>You can no longer start this line.</span>
-        </div>
-      );
+      return <Callout kind="problem">You can no longer start this line.</Callout>;
   }
 }
 
@@ -111,7 +90,10 @@ function ProblemBox({ problem }: { problem: FieldProblem }) {
     <div className="psl-field sw-field" data-field={problem.name}>
       <span className="psl-label">{name.charAt(0).toUpperCase() + name.slice(1)}</span>
       <span className="psl-input is-error sw-display">—</span>
-      <span className="psl-error">{problem.message}</span>
+      <span className="psl-error">
+        <Icon name="warn" />
+        <span>{problem.message}</span>
+      </span>
     </div>
   );
 }
@@ -192,23 +174,18 @@ function movedHelp(fields: Field[], at: number): { id: string; text?: string } |
 export function LineForm({ line, onBack, onClose, onStarted, pathname }: Props) {
   const wide = useWide();
   const form = useStartForm(line, onStarted);
-  const calloutRef = useRef<HTMLDivElement>(null);
   const here = startableHere(line);
   const agent = line.next?.agent ? AGENT_NAMES[line.next.agent] : undefined;
   const { notice, noticeSeq } = form;
-
-  useEffect(() => {
-    if (notice?.kind === 'invalid') calloutRef.current?.focus();
-  }, [notice, noticeSeq]);
 
   const readOnly = form.uncertain || form.busy;
   const unusable = caseOptionUnusable(line, form.values);
   const labels = Object.fromEntries(form.fields.map((f) => [f.name, f.label]));
   const title = drawerTitle(line, !wide);
   const changeLine = (
-    <button type="button" className="psl-btn psl-btn--text psl-btn--sm sw-change" onClick={onBack}>
+    <Button kind="text" size="sm" className="sw-change" onClick={onBack}>
       change line
-    </button>
+    </Button>
   );
   const subline =
     notice?.kind === 'invalid' ? (
@@ -221,14 +198,14 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname }: Props) 
 
   const goesBack = footerGoesBack(line.key);
   const back = (
-    <button type="button" className="psl-btn psl-btn--secondary sw-secondary" onClick={goesBack ? onBack : onClose}>
+    <Button kind="secondary" className="sw-secondary" onClick={goesBack ? onBack : onClose}>
       {goesBack ? 'Back' : 'Cancel'}
-    </button>
+    </Button>
   );
 
   if (form.signedOut) {
     return (
-      <DrawerFrame eyebrow="START WORK" title={title} narrow={narrowDrawer(line.key)} subline={subline} onClose={onClose} focusKey="signed-out" footer={back}>
+      <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={back} focusKey="signed-out">
         <SignedOutState pathname={pathname} />
       </DrawerFrame>
     );
@@ -236,53 +213,38 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname }: Props) 
 
   if (!here) {
     return (
-      <DrawerFrame eyebrow="START WORK" title={title} narrow={narrowDrawer(line.key)} subline={subline} onClose={onClose} focusKey={`cant-${line.key}`} footer={back}>
-        <div className="psl-callout psl-callout--info">
-          <InfoIcon />
-          <span>
-            You can&rsquo;t start this line from here yet. <Link href="/assistant" onClick={onClose}>Describe it to Tola</Link> and
-            she&rsquo;ll help you start it.
-          </span>
-        </div>
+      <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={back} focusKey={`cant-${line.key}`}>
+        <Callout kind="info">
+          You can&rsquo;t start this line from here yet. <Link href="/assistant" onClick={onClose}>Describe it to Tola</Link> and
+          she&rsquo;ll help you start it.
+        </Callout>
       </DrawerFrame>
     );
   }
 
-  const canPress = !form.busy && !form.awaitingChange && notice?.kind !== 'gone' && (form.uncertain || form.caseRef !== null);
+  const canPress = !form.awaitingChange && notice?.kind !== 'gone' && (form.uncertain || form.caseRef !== null);
   const footer = (
     <>
       {form.uncertain && <span className="psl-hint sw-foothint">If it started, it will appear in My work.</span>}
       {wide && back}
       {notice?.kind !== 'gone' && (
-        <button
-          type="button"
-          className={`psl-btn psl-btn--start sw-primary${form.busy ? ' is-busy' : ''}`}
+        <Button
+          kind="start"
+          className="sw-primary"
           disabled={!canPress}
-          aria-busy={form.busy || undefined}
+          busy={form.busy}
+          busyLabel="Starting…"
           onClick={() => void form.submit()}
         >
-          {form.busy ? (
-            <>
-              <span className="psl-busy" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-              Starting…
-            </>
-          ) : form.uncertain ? (
-            'Check again'
-          ) : (
-            startLabel(line.key)
-          )}
-        </button>
+          {form.uncertain ? 'Check again' : startLabel(line.key)}
+        </Button>
       )}
     </>
   );
 
   return (
-    <DrawerFrame eyebrow="START WORK" title={title} narrow={narrowDrawer(line.key)} subline={subline} onClose={onClose} focusKey={`line-${line.key}`} footer={footer}>
-      {notice && <NoticeCallout notice={notice} agent={agent} wide={wide} calloutRef={calloutRef} />}
+    <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={footer} focusKey={`line-${line.key}`}>
+      {notice && <NoticeCallout notice={notice} agent={agent} wide={wide} seq={noticeSeq} />}
       {form.fields.map((field, at) => (
         <IntakeField
           key={field.name}

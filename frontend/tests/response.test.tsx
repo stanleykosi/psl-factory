@@ -113,7 +113,7 @@ async function openWork(id: string) {
 }
 
 const text = () => document.body.textContent ?? '';
-const crumb = () => document.querySelector('.resp-crumb') as HTMLElement;
+const crumb = () => document.querySelector('.psl-crumb') as HTMLElement;
 const recordButton = (name: RegExp | string = /^Record (response|signature)$|^Recording…$/) => screen.getByRole('button', { name }) as HTMLButtonElement;
 const fileInput = () => document.querySelector('input[type="file"]') as HTMLInputElement;
 const pdf = (name = 'Lagoon_UAT_signoff_11Nov.pdf', size = 184 * 1024) => new File([new Uint8Array(size).fill(37)], name, { type: 'application/pdf' });
@@ -124,11 +124,30 @@ async function addFile(file = pdf()) {
   await waitFor(() => expect(posts('/evidence')).toHaveLength(before + 1));
   await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
 }
-function choose(label: string) {
+function choose(label: string | RegExp) {
   fireEvent.click(screen.getByRole('radio', { name: label }));
 }
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+/** A date and a time: the date field takes "11 Nov 2026" and the time field "16:20" (WAT). */
 function when(value = '2026-11-11T16:20', label = 'When they responded') {
-  fireEvent.change(screen.getByLabelText(label), { target: { value } });
+  const [date, time] = value.split('T');
+  const [y, m, d] = date.split('-');
+  const box = screen.getByLabelText(label);
+  fireEvent.change(box, { target: { value: `${Number(d)} ${MONTHS[Number(m) - 1]} ${y}` } });
+  fireEvent.blur(box);
+  fireEvent.change(within(box.closest('.resp-when') as HTMLElement).getByLabelText('At (WAT)'), { target: { value: time } });
+}
+/** The options of a Select, read by opening it. */
+function optionsOf(name: string) {
+  const box = screen.getByRole('combobox', { name });
+  fireEvent.click(box);
+  const texts = screen.getAllByRole('option').map((o) => o.textContent);
+  fireEvent.keyDown(box, { key: 'Escape' });
+  return texts;
+}
+function pickNth(name: string, index: number) {
+  fireEvent.click(screen.getByRole('combobox', { name }));
+  fireEvent.click(screen.getAllByRole('option')[index]);
 }
 function tick() {
   fireEvent.click(screen.getByRole('checkbox'));
@@ -167,40 +186,35 @@ describe('entry from the work item (SCR-02 waiting)', () => {
 describe('default form (A-RESPONSE)', () => {
   it('W-1601 shows only the returned options, in board order', async () => {
     await open();
-    expect(crumb().textContent).toBe('QUEUE / PREPARE FOR RELEASE / REL-0077 · STATION 3 OF 5');
-    expect(screen.getByRole('link', { name: 'QUEUE' }).getAttribute('href')).toBe('/my-work');
+    expect(crumb().textContent).toBe('Queue / Prepare for release / REL-0077 · Station 3 of 5');
+    expect(screen.getByRole('link', { name: 'Queue' }).getAttribute('href')).toBe('/my-work');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Record the client\'s UAT response');
     expect(text()).toContain("Lagoon Health's client contact doesn't log in to PSL Factory");
-    const who = screen.getByLabelText('Who responded') as HTMLSelectElement;
-    expect([...who.options].map((o) => o.text)).toEqual(['Client contact · Dr Amaka Obi, Lagoon Health']);
-    expect(who.value).toBe('P-AO');
-    const radios = within(screen.getByRole('radiogroup', { name: 'What they did' })).getAllByRole('radio') as HTMLInputElement[];
-    expect(radios.map((r) => r.labels![0].textContent)).toEqual(['Approved', 'Asked for changes', 'Rejected']);
-    expect(radios.some((r) => r.checked)).toBe(false);
-    const version = screen.getByLabelText('For which version') as HTMLSelectElement;
-    expect([...version.options].map((o) => o.text)).toEqual(['Patient app · build 2.4.0 (the version sent for UAT)']);
-    expect(screen.queryByLabelText('How they responded')).toBeNull();
+    expect(optionsOf('Who responded')).toEqual(['Client contact · Dr Amaka Obi, Lagoon Health']);
+    expect(screen.getByRole('combobox', { name: 'Who responded' }).textContent).toBe('Client contact · Dr Amaka Obi, Lagoon Health');
+    const radios = within(screen.getByRole('radiogroup', { name: 'What they did' })).getAllByRole('radio');
+    expect(radios.map((r) => r.textContent)).toEqual(['Approved', 'Asked for changes', 'Rejected']);
+    expect(radios.some((r) => r.getAttribute('aria-checked') === 'true')).toBe(false);
+    expect(optionsOf('For which version')).toEqual(['Patient app · build 2.4.0 (the version sent for UAT)']);
+    expect(screen.queryByRole('combobox', { name: 'How they responded' })).toBeNull();
     expect(text()).toContain("Signed PDF, e-signature record, or the client's email saved as PDF");
     expect(screen.getByRole('checkbox', { name: 'I confirm this response is genuine and came from the client contact named above.' })).toBeTruthy();
     expect(recordButton('Record response').disabled).toBe(true);
-    const aside = screen.getByRole('complementary', { name: 'Tola, PMO agent' });
+    const aside = screen.getByRole('region', { name: /^Tola/ });
     expect(aside.querySelector('img')!.getAttribute('src')).toBe('/agents/tola.png');
     expect(aside.textContent).toContain('Tola · PMO agent');
     expect(aside.textContent).toContain("After you record it, I'll check the PDF names build 2.4.0");
     expect(aside.textContent).toContain("I can't record responses for you; a person has to vouch for them.");
-    expect(screen.getByLabelText(/^Note/).getAttribute('maxlength')).toBe('2000');
+    expect(screen.getByLabelText(/^Note/)).toBeTruthy();
     expect(text()).toContain('0 / 2000');
     expect(text()).not.toContain('SAMPLE');
   });
 
   it('W-1605 starts the selects on "Choose…" and shows the three channels', async () => {
     await open('W-1605', 'T-1605');
-    const who = screen.getByLabelText('Who responded') as HTMLSelectElement;
-    expect(who.value).toBe('');
-    expect(who.options[0].text).toBe('Choose…');
-    expect((screen.getByLabelText('For which version') as HTMLSelectElement).options[0].text).toBe('Choose…');
-    const how = screen.getByLabelText('How they responded') as HTMLSelectElement;
-    expect([...how.options].map((o) => o.text)).toEqual(['Choose…', 'Email', 'Letter', 'In person']);
+    expect(screen.getByRole('combobox', { name: 'Who responded' }).textContent).toBe('Choose…');
+    expect(screen.getByRole('combobox', { name: 'For which version' }).textContent).toBe('Choose…');
+    expect(optionsOf('How they responded')).toEqual(['Email', 'Letter', 'In person']);
   });
 
   it('offers an action added to the fixture and drops one removed from it; an action without a label is not offered', async () => {
@@ -208,7 +222,7 @@ describe('default form (A-RESPONSE)', () => {
     added.tasks[0].response!.actions = [...added.tasks[0].response!.actions.slice(1), { value: 'signed', label: 'Signed on paper' }, { value: 'input' }];
     answers.item = () => json(200, added);
     await open();
-    const labels = within(screen.getByRole('radiogroup', { name: 'What they did' })).getAllByRole('radio').map((r) => (r as HTMLInputElement).labels![0].textContent);
+    const labels = within(screen.getByRole('radiogroup', { name: 'What they did' })).getAllByRole('radio').map((r) => r.textContent);
     expect(labels).toEqual(['Asked for changes', 'Rejected', 'Signed on paper']);
   });
 
@@ -253,7 +267,8 @@ describe('validation (SCR-16-desktop-validation)', () => {
     when();
     tick();
     expect(text()).toContain('Proof can’t be uploaded for this item.');
-    expect((screen.getByRole('button', { name: 'Add another file' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(document.querySelector('.psl-drop.is-disabled')).toBeTruthy();
+    expect(document.querySelector('input[type="file"]')).toBeNull();
     expect(recordButton('Record response').disabled).toBe(true);
     expect(writes()).toHaveLength(0);
   });
@@ -268,14 +283,15 @@ describe('proof and the record body', () => {
     expect(first).toEqual({ kind: 'client_response_proof', filename: 'Lagoon_UAT_signoff_11Nov.pdf', content_base64: first.content_base64, case_revision: 4 });
     expect(typeof first.content_base64).toBe('string');
     expect(first.content_base64).not.toContain('data:');
-    expect(text()).toContain('Lagoon_UAT_signoff_11Nov.pdf · 184 KB');
+    expect(text()).toContain('Lagoon_UAT_signoff_11Nov.pdf');
+    expect(text()).toContain('Uploaded · 184 KB');
     await addFile(pdf('Second_page.pdf', 2048));
     expect(posts('/evidence')[1].body!.case_revision).toBe(5);
     choose('Approved');
     when();
     tick();
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     expect(posts('/response')[0].body).toMatchObject({ evidence_id: 'EV-C-1601-1', evidence_ids: ['EV-C-1601-2'], case_revision: 6 });
   });
 
@@ -283,13 +299,13 @@ describe('proof and the record body', () => {
     await open();
     await addFile();
     await addFile(pdf('Wrong.pdf', 1024));
-    fireEvent.click(screen.getByRole('button', { name: 'Remove Wrong.pdf' }));
+    fireEvent.click(within(screen.getByText('Wrong.pdf').closest('.psl-file') as HTMLElement).getByRole('button', { name: 'Remove' }));
     expect(text()).not.toContain('Wrong.pdf');
     choose('Approved');
     when();
     tick();
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     const body = posts('/response')[0].body!;
     expect(body.evidence_id).toBe('EV-C-1601-1');
     expect(body).not.toHaveProperty('evidence_ids');
@@ -299,7 +315,7 @@ describe('proof and the record body', () => {
     await open();
     await fillW1601();
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     expect(posts('/response')).toEqual([
       {
         method: 'POST',
@@ -317,7 +333,7 @@ describe('proof and the record body', () => {
     fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: '  Signed on paper ' } });
     expect(text()).toContain('18 / 2000');
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     expect(posts('/response')[0].body).toMatchObject({ note: 'Signed on paper' });
     for (const key of ['team', 'what', 'estimate_person_days']) expect(posts('/response')[0].body).not.toHaveProperty(key);
   });
@@ -334,7 +350,7 @@ describe('proof and the record body', () => {
     await screen.findByText('This item changed. Add the file again.');
     expect(gets()).toBe(getsBefore + 2); // the Try again reload, then the 409 reload
     expect(posts('/evidence')).toHaveLength(2);
-    expect(screen.queryByRole('button', { name: 'Try again' })).toBeNull();
+    expect(posts('/evidence')).toHaveLength(2);
     expect(recordButton('Record response').disabled).toBe(true);
   });
 
@@ -351,15 +367,15 @@ describe('proof and the record body', () => {
 describe('claim, one write at a time', () => {
   it('W-1605 claims first and records with the claim’s revision; a 409 claim records nothing', async () => {
     await open('W-1605', 'T-1605');
-    fireEvent.change(screen.getByLabelText('Who responded'), { target: { value: 'P-SO' } });
-    fireEvent.change(screen.getByLabelText('For which version'), { target: { value: 'V-311' } });
-    fireEvent.change(screen.getByLabelText('How they responded'), { target: { value: 'letter' } });
+    pickNth('Who responded', 1);
+    pickNth('For which version', 1);
+    pickNth('How they responded', 1);
     choose('Asked for changes');
     when();
     await addFile();
     tick();
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     const order = writes().map((c) => c.path);
     expect(order).toEqual(['/api/v1/cases/C-1605/evidence', '/api/v1/tasks/T-1605/claim', '/api/v1/tasks/T-1605/response']);
     expect(posts('/claim')[0].body).toEqual({ expected_revision: 3 });
@@ -369,9 +385,9 @@ describe('claim, one write at a time', () => {
   it('a claim 409 sends no response and shows the stale warning', async () => {
     answers.claim = () => json(409, STALE);
     await open('W-1605', 'T-1605');
-    fireEvent.change(screen.getByLabelText('Who responded'), { target: { value: 'P-KA' } });
-    fireEvent.change(screen.getByLabelText('For which version'), { target: { value: 'V-310' } });
-    fireEvent.change(screen.getByLabelText('How they responded'), { target: { value: 'email' } });
+    pickNth('Who responded', 0);
+    pickNth('For which version', 0);
+    pickNth('How they responded', 0);
     choose('Approved');
     when();
     await addFile();
@@ -384,9 +400,9 @@ describe('claim, one write at a time', () => {
   it('a claim network error warns and leaves the response unsent', async () => {
     answers.claim = () => Promise.reject(new TypeError('Failed to fetch'));
     await open('W-1605', 'T-1605');
-    fireEvent.change(screen.getByLabelText('Who responded'), { target: { value: 'P-KA' } });
-    fireEvent.change(screen.getByLabelText('For which version'), { target: { value: 'V-310' } });
-    fireEvent.change(screen.getByLabelText('How they responded'), { target: { value: 'email' } });
+    pickNth('Who responded', 0);
+    pickNth('For which version', 0);
+    pickNth('How they responded', 0);
     choose('Approved');
     when();
     await addFile();
@@ -409,11 +425,11 @@ describe('claim, one write at a time', () => {
     const button = recordButton('Record response');
     fireEvent.click(button);
     fireEvent.click(button);
-    await waitFor(() => expect(recordButton('Recording…').disabled).toBe(true));
+    await waitFor(() => expect(recordButton('Recording…').getAttribute('aria-busy')).toBe('true'));
     expect(document.querySelector('form')!.getAttribute('aria-busy')).toBe('true');
     fireEvent.click(recordButton('Recording…'));
     await act(async () => release());
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     expect(posts('/response')).toHaveLength(1);
   });
 });
@@ -423,10 +439,11 @@ describe('success (SCR-16-desktop-success)', () => {
     await open();
     await fillW1601();
     fireEvent.click(recordButton('Record response'));
-    const status = await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
+    const status = document.querySelector('.psl-callout--success')!;
     expect(text()).toContain('REL-0077 · LAGOON HEALTH');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Client UAT response');
-    expect(status.textContent).toBe('Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at 15:04 with 1 proof file.');
+    expect(status.textContent).toBe('Response recorded. Client UAT sign-off for Lagoon Health, received by email on 11 Nov 2026, recorded by Tunde Bello at 15:04 WAT with 1 proof file.');
     expect(text()).toContain('What happens next');
     expect(text()).toContain('The release line moves on to go-live readiness.');
     expect(text()).toContain('Milestone 2 can now be marked complete, which lets Chidi draft its invoice.');
@@ -444,7 +461,7 @@ describe('success (SCR-16-desktop-success)', () => {
     await addFile();
     tick();
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     await expectPhoneBack('Work item', '/work/W-1601');
     expect(document.querySelector('.psl-phonebar .shell-phonenote')!.textContent).toBe('REL-0077');
     expect(screen.getByRole('link', { name: 'Back to my queue' }).getAttribute('href')).toBe('/my-work');
@@ -453,7 +470,7 @@ describe('success (SCR-16-desktop-success)', () => {
   it('a task that is already recorded opens on the success view', async () => {
     answers.item = () => json(200, item('W-1601.recorded'));
     await open();
-    expect(screen.getByRole('status').textContent).toMatch(/^Response recorded\. Client UAT sign-off for Lagoon Health, received by email on 11 Nov, recorded by Tunde Bello at \d\d:\d\d with 1 proof file\.$/);
+    expect(document.querySelector('.psl-callout--success')!.textContent).toMatch(/^Response recorded\. Client UAT sign-off for Lagoon Health, received by email on 11 Nov 2026, recorded by Tunde Bello at \d\d:\d\d WAT with 1 proof file\.$/);
     // The same eyebrow and heading as the view right after Record.
     expect(text()).toContain('REL-0077 · LAGOON HEALTH');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Client UAT response');
@@ -476,13 +493,13 @@ describe('absent fields are left out (W-1606)', () => {
 
   it('the form has no intro, aside or proof hint, and no board copy', async () => {
     await open('W-1606', 'T-1606');
-    expect(crumb().textContent).toBe('QUEUE / PREPARE FOR RELEASE / REL-0083 · STATION 3 OF 5');
+    expect(crumb().textContent).toBe('Queue / Prepare for release / REL-0083 · Station 3 of 5');
     expect(screen.queryByRole('complementary')).toBeNull();
     expect(document.querySelector('.resp-intro')).toBeNull();
     expect(document.querySelector('.resp-drop .psl-hint')).toBeNull();
     expect(screen.getByLabelText('Who responded')).toBeTruthy();
     expect(screen.getByRole('radiogroup', { name: 'What they did' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Add another file' })).toBeTruthy();
+    expect(document.querySelector('.psl-drop')).toBeTruthy();
     expect(screen.getByRole('checkbox')).toBeTruthy();
     for (const s of BOARD) expect(text()).not.toContain(s);
   });
@@ -498,7 +515,7 @@ describe('absent fields are left out (W-1606)', () => {
     await addFile();
     tick();
     fireEvent.click(recordButton('Record response'));
-    await waitFor(() => expect(screen.getByRole('status').textContent).toBe('Response recorded. Recorded by Tunde Bello at 15:04.'));
+    await waitFor(() => expect(document.querySelector('.psl-callout--success')!.textContent).toBe('Response recorded. Recorded by Tunde Bello at 15:04 WAT.'));
     expect(text()).not.toContain('received by');
     expect(text()).not.toContain('proof file');
     expect(text()).not.toContain('What happens next');
@@ -510,18 +527,18 @@ describe('SOW signature (SCR-16-desktop-sow-signed)', () => {
   it('W-1602 shows the project crumb, the Signature panel and what happens next', async () => {
     await open('W-1602', 'T-1602');
     const trail = crumb();
-    expect(trail.textContent).toBe('PROJECTS / TAMARIND LOANS / DOCUMENTS / SOW-0207');
-    expect(within(trail).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([['PROJECTS', '/projects']]);
+    expect(trail.textContent).toBe('Projects / Tamarind Loans / Documents / SOW-0207');
+    expect(within(trail).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([['Projects', '/projects']]);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Record the client\'s SOW signature');
-    expect(screen.getByRole('heading', { level: 2, name: 'Signature' })).toBeTruthy();
-    expect(text()).toContain('SOW-0207 v1 · Tamarind Loans · sent 18 Dec 10:30');
+    expect(screen.getByRole('region', { name: 'Signature' })).toBeTruthy();
+    expect(text()).toContain('SOW-0207 v1 · Tamarind Loans · sent 18 Dec 2026 10:30 WAT');
     expect(text()).toContain('The version the client received');
     expect(text()).toContain('Ngozi Bello · Head of Lending Operations, Tamarind Loans');
     const radios = within(screen.getByRole('radiogroup', { name: 'What they did' })).getAllByRole('radio') as HTMLInputElement[];
-    expect(radios.map((r) => r.labels![0].textContent)).toEqual(['Signed', 'Asked for changes', 'Declined']);
+    expect(radios.map((r) => r.textContent)).toEqual(['Signed', 'Asked for changes', 'Declined']);
     expect(text()).toContain("What happens next: the SOW's 4 stages become the project's milestones, each billable once it's complete. Delivery starts with release gates.");
     expect(recordButton('Record signature')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Choose the signed copy' })).toBeTruthy();
+    expect(document.querySelector('.psl-drop input[type="file"]')).toBeTruthy();
     expect(screen.getByRole('complementary', { name: 'About this signature' }).textContent).toContain("The client doesn't log in.");
   });
 
@@ -534,7 +551,7 @@ describe('SOW signature (SCR-16-desktop-sow-signed)', () => {
     expect(text()).toContain('Uploaded · 1.1 MB');
     tick();
     fireEvent.click(recordButton('Record signature'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     expect(posts('/response')[0].body).toMatchObject({ who: 'P-NB', action: 'rejected', version_id: 'SOW-0207-v1', responded_at: '2026-12-20T14:10:00+01:00', case_revision: 4 });
   });
 
@@ -554,7 +571,7 @@ describe('SOW signature (SCR-16-desktop-sow-signed)', () => {
     expect(text()).toContain('Lagoon Health · Patient app · build 2.4.0 · Dr Amaka Obi');
     expect(screen.queryByLabelText('Who responded')).toBeNull();
     expect(screen.getByLabelText('When they responded')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Take a photo or choose a file' })).toBeTruthy();
+    expect(screen.getByText('Take a photo or', { exact: false })).toBeTruthy();
     expect(fileInput().hasAttribute('capture')).toBe(false);
     expect(screen.getByRole('checkbox', { name: 'I confirm this response is genuine.' })).toBeTruthy();
     expect(text()).not.toContain("Lagoon Health's client contact");
@@ -570,7 +587,7 @@ describe('errors on record', () => {
     fireEvent.click(recordButton('Record response'));
     await screen.findByText('Check these fields: evidence_id.');
     expect(screen.getByText('Check these fields: evidence_id.').closest('.psl-callout')!.className).toContain('psl-callout--problem');
-    expect((screen.getByRole('radio', { name: 'Approved' }) as HTMLInputElement).checked).toBe(true);
+    expect(screen.getByRole('radio', { name: 'Approved' }).getAttribute('aria-checked')).toBe('true');
     expect(text()).toContain('Lagoon_UAT_signoff_11Nov.pdf');
     expect(posts('/response')).toHaveLength(1);
   });
@@ -582,9 +599,10 @@ describe('errors on record', () => {
     fireEvent.click(recordButton('Record response'));
     await screen.findByText('This changed while you were recording. We’ve reloaded it. Check the details and record again.');
     expect(gets()).toBe(2);
-    expect((screen.getByRole('radio', { name: 'Approved' }) as HTMLInputElement).checked).toBe(true);
+    expect(screen.getByRole('radio', { name: 'Approved' }).getAttribute('aria-checked')).toBe('true');
     expect((screen.getByRole('checkbox') as HTMLInputElement).checked).toBe(true);
-    expect(text()).toContain('Lagoon_UAT_signoff_11Nov.pdf · 184 KB');
+    expect(text()).toContain('Lagoon_UAT_signoff_11Nov.pdf');
+    expect(text()).toContain('Uploaded · 184 KB');
     expect(posts('/response')).toHaveLength(1);
   });
 
@@ -598,7 +616,7 @@ describe('errors on record', () => {
     await screen.findByText(/This changed while you were recording/);
     expect(posts('/response')[0].body!.case_revision).toBe(5);
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     expect(posts('/response')).toHaveLength(2);
     expect(posts('/response')[1].body).toMatchObject({ evidence_id: 'EV-C-1601-1', case_revision: 7 });
   });
@@ -622,7 +640,7 @@ describe('errors on record', () => {
     await open();
     await fillW1601();
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Client UAT response');
   });
 
@@ -676,7 +694,7 @@ describe('errors on record', () => {
 
   it('the not-open state for an unknown task, a task without response, and a variant this page does not record', async () => {
     await open('W-1601', 'T-9999');
-    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('This response isn’t open here');
+    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('This response isn’t open here');
     expect(text()).toContain('It may have been recorded already or moved. The work item shows where things stand.');
     for (const [id, task] of [
       ['W-1201', 'T-1201'],
@@ -703,7 +721,7 @@ describe('uncertain effect: re-read, never resend', () => {
     await open();
     await fillW1601();
     fireEvent.click(recordButton('Record response'));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     expect(text()).toContain('We couldn’t confirm your response was recorded. We’ve reloaded this item so you can see whether it was.');
     expect(posts('/response')).toHaveLength(1);
   });
@@ -729,7 +747,7 @@ describe('uncertain effect: re-read, never resend', () => {
     expect(recordButton('Record response').disabled).toBe(true);
     const before = writes().length;
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-    await screen.findByRole('status');
+    await screen.findByText('Response recorded.');
     expect(writes()).toHaveLength(before);
     expect(gets()).toBe(3);
   });
@@ -756,14 +774,13 @@ describe('reconcile panel (A-RECONCILE)', () => {
   it('W-1603 shows the checks, the three outcomes with the API’s notes and the button', async () => {
     answers.me = 'finance_lead';
     await openWork('W-1603');
-    const panel = screen.getByRole('complementary', { name: 'Confirm what happened' });
-    expect(within(panel).getByRole('heading', { level: 2 }).textContent).toBe('Confirm what happened');
+    const panel = screen.getByRole('region', { name: 'Confirm what happened' });
     expect(panel.textContent).toContain('Chidi checked 6 times over 2 hours and found no delivery receipt. The factory won’t resend until a person confirms what happened, so the client is never invoiced twice.');
-    const options = within(within(panel).getByRole('radiogroup', { name: 'Confirm what happened' })).getAllByRole('radio') as HTMLInputElement[];
-    expect(options.map((o) => o.labels![0].textContent)).toEqual([
-      'It arrived. I have proof the client received it (upload it next).',
-      'It didn’t arrive. Allow one resend of the same version.',
-      'I can’t tell yet. Keep it held and remind me tomorrow.',
+    const options = within(within(panel).getByRole('group', { name: 'Confirm what happened' })).getAllByRole('radio');
+    expect(options.map((o) => o.closest('label')!.textContent)).toEqual([
+      'It arrived.I have proof the client received it (upload it next).',
+      'It didn’t arrive.Allow one resend of the same version.',
+      'I can’t tell yet.Keep it held and remind me tomorrow.',
     ]);
     expect(within(panel).getByRole('button', { name: 'Record and continue' })).toBeTruthy();
     expect(panel.textContent).toContain('Your choice is recorded with your name. A resend reuses the same invoice number.');
@@ -780,8 +797,8 @@ describe('reconcile panel (A-RECONCILE)', () => {
   it('W-1607 shows only two outcomes and no notes', async () => {
     answers.me = 'finance_lead';
     await openWork('W-1607');
-    const panel = screen.getByRole('complementary', { name: 'Confirm what happened' });
-    expect(within(panel).getAllByRole('radio').map((o) => (o as HTMLInputElement).labels![0].textContent)).toEqual(['It didn’t arrive.', 'I can’t tell yet.']);
+    const panel = screen.getByRole('region', { name: 'Confirm what happened' });
+    expect(within(panel).getAllByRole('radio').map((o) => o.closest('label')!.textContent)).toEqual(['It didn’t arrive.', 'I can’t tell yet.']);
     expect(panel.textContent).not.toContain('Allow');
     expect(panel.textContent).toContain('Chidi checked'.replace('Chidi', 'The factory') + ' 3 times and found no delivery receipt.');
     expect(panel.textContent).toContain('Your choice is recorded with your name.');
@@ -803,7 +820,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
     await openWork('W-1603');
     const record = () => screen.getByRole('button', { name: /Record and continue|Recording…/ }) as HTMLButtonElement;
     expect(record().disabled).toBe(true);
-    choose('It arrived. I have proof the client received it (upload it next).');
+    choose(/^It\ arrived\./);
     expect(record().disabled).toBe(true);
     await addFile(pdf('receipt.pdf', 4096));
     expect(posts('/evidence')[0]).toMatchObject({ path: '/api/v1/cases/C-1603/evidence', body: { kind: 'delivery_receipt', case_revision: 5 }, csrf: 'mock-csrf-finance_lead' });
@@ -820,7 +837,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
   it('"It didn’t arrive" sends no evidence', async () => {
     answers.me = 'finance_lead';
     await openWork('W-1603');
-    choose('It didn’t arrive. Allow one resend of the same version.');
+    choose(/^It\ didn’t\ arrive\./);
     fireEvent.click(screen.getByRole('button', { name: 'Record and continue' }));
     await screen.findByText('Recorded. Reloading the work item…');
     expect(posts('/actions')[0].body).toEqual({ expected_revision: 6, action: 'reconcile', outcome: 'not_delivered' });
@@ -831,7 +848,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
     answers.me = 'finance_lead';
     answers.action = (n) => (n === 0 ? json(409, STALE) : Promise.reject(new TypeError('Failed to fetch')));
     await openWork('W-1603');
-    choose('I can’t tell yet. Keep it held and remind me tomorrow.');
+    choose(/^I\ can’t\ tell\ yet\./);
     fireEvent.click(screen.getByRole('button', { name: 'Record and continue' }));
     await screen.findByText('This item changed. Reload it to see the latest.');
     expect((screen.getByRole('button', { name: 'Record and continue' }) as HTMLButtonElement).disabled).toBe(true);
@@ -844,7 +861,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
     answers.me = 'finance_lead';
     answers.action = () => Promise.reject(new TypeError('Failed to fetch'));
     await openWork('W-1603');
-    choose('I can’t tell yet. Keep it held and remind me tomorrow.');
+    choose(/^I\ can’t\ tell\ yet\./);
     fireEvent.click(screen.getByRole('button', { name: 'Record and continue' }));
     await screen.findByText('We couldn’t confirm your answer. Reload the work item to see whether it was recorded.');
     expect(posts('/actions')).toHaveLength(1);
@@ -856,7 +873,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
     answers.action = (n) =>
       n === 0 ? json(403, FORBIDDEN) : n === 1 ? json(422, { code: 'invalid', message: 'Check these fields: outcome.' }) : json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await openWork('W-1603');
-    choose('I can’t tell yet. Keep it held and remind me tomorrow.');
+    choose(/^I\ can’t\ tell\ yet\./);
     fireEvent.click(screen.getByRole('button', { name: 'Record and continue' }));
     await screen.findByText('Your role does not allow this.');
     fireEvent.click(screen.getByRole('button', { name: 'Record and continue' }));

@@ -29,9 +29,6 @@ const PHONE_TITLES: Record<string, string> = {
 /** Lines whose footer reads "Back" (to the chooser) on the board; every other line reads "Cancel" (closes). */
 const BACK_LINES = new Set(['invoice']);
 
-/** SCR-04-desktop draws the invoice drawer (and the chooser) 480px wide; the other line boards draw 500px. */
-const NARROW_LINES = new Set(['invoice']);
-
 /** "See the full <noun> journey"; a line not listed reads "See the full journey". */
 const JOURNEY_NOUNS: Record<string, string> = {
   invoice: 'invoice',
@@ -47,10 +44,6 @@ export function drawerTitle(line: Pick<Line, 'key' | 'title'>, phone: boolean): 
 
 export function footerGoesBack(lineKey: string): boolean {
   return BACK_LINES.has(lineKey);
-}
-
-export function narrowDrawer(lineKey: string): boolean {
-  return NARROW_LINES.has(lineKey);
 }
 
 export function journeyLabel(lineKey: string): string {

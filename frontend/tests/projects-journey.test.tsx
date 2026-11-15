@@ -7,7 +7,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProjectJourneyPage } from '@/features/projects/ProjectJourney';
-import { STATE_TAGS } from '@/features/work-item/labels';
+import { STATE_TAGS } from '@/components';
 import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
@@ -79,7 +79,7 @@ const page = (caseId: string, tab?: 'milestones' | 'money') => (
 async function open(caseId = 'P-0101', tab?: 'milestones' | 'money') {
   const result = render(page(caseId, tab));
   await until(() => expect(calls.length).toBeGreaterThan(0));
-  await until(() => expect(screen.queryByRole('status')).toBeNull());
+  await until(() => expect(screen.queryByText('Loading…')).toBeNull());
   return result;
 }
 
@@ -106,7 +106,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
       ['Registers6', '/projects/P-0101/registers', 'false'],
       ['Actions9', '/projects/P-0101/actions', 'false'],
     ]);
-    expect(screen.getByRole('tabpanel').getAttribute('aria-labelledby')).toBe(projectTabs()[0].id);
+    expect(screen.getByRole('tabpanel', { name: 'Journey' })).toBeTruthy();
     expect(document.querySelector('.projects__route')!.textContent).toBe('PM Tunde Bello · Route A from RFP-0031 · 8 pieces of work across 6 lines');
     expect(document.querySelector('.projects__phoneline')!.textContent).toBe('8 pieces of work · 2 waiting on people · 1 stopped');
     expect(screen.getByRole('region', { name: 'Facts earned' })).toBeTruthy();
@@ -118,7 +118,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
       ['NEXT MILESTONE', 'UAT sign-off', 'psl-fact'],
       ['PAID', 'Finance tracks', 'psl-fact'],
     ]);
-    expect(screen.getByRole('heading', { level: 2, name: 'The whole journey, oldest first' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'The whole journey, oldest first' })).toBeTruthy();
     expect(lineItems()).toHaveLength(8);
     expect(lineItems().map((li) => within(li).getAllByRole('link').map((a) => a.getAttribute('href')))).toEqual(
       body.lines.map((l) => [`/work/${l.work_id}`]),
@@ -136,7 +136,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
       'person',
     ]);
     expect(document.querySelector('.projects__next')!.textContent).toBe(`What is next ${body.next}`);
-    const tola = screen.getByRole('complementary', { name: "Tola's summary" });
+    const tola = screen.getByRole('region', { name: /^Tola/ });
     expect(tola.textContent).toContain('Tola · PMO agent');
     const paragraphs = body.agent_summary!.text.split('\n\n');
     expect(paragraphs).toHaveLength(2);
@@ -156,7 +156,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(lineItems().map((li) => li.querySelector('a')!.textContent)).toEqual(['Zulu line, Verified', 'Alpha line', 'Zulu line, INV-5']);
   });
 
-  it('a body without the PROPOSAL fields still draws every board element, with unknowns as Not known', async () => {
+  it('a body without the PROPOSAL fields still draws every board element, with unknowns as Unknown', async () => {
     respond = () =>
       json(200, { case_id: 'P-7', title: 'Kora Logistics · fleet tracker', lines: [{ line: 'RFP response', state: 'verified', work_id: 'W-9' }], next: 'Next.' });
     await open('P-7');
@@ -164,13 +164,13 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
     expect(document.querySelector('.projects__route')!.textContent).toBe('1 piece of work across 1 line');
     expect(document.querySelector('.projects__phoneline')!.textContent).toBe('1 piece of work');
-    expect(facts().map(([, value, cls]) => [value, cls])).toEqual(Array(6).fill(['Not known', 'psl-fact psl-fact--unknown']));
+    expect(facts().map(([, value, cls]) => [value, cls])).toEqual(Array(6).fill(['Unknown', 'psl-fact psl-fact--unknown']));
     expect(lineItems()[0].querySelector('.projects__linename')!.textContent).toBe('RFP response');
-    expect(screen.getByRole('complementary').textContent).toContain('Tola has not summarised this project yet.');
+    expect(screen.getByRole('region', { name: /summary|agent/i }).textContent).toContain('Tola has not summarised this project yet.');
     expect(document.querySelector('main')!.textContent).not.toContain('undefined');
   });
 
-  it('PROPOSAL fields in another shape degrade to Not known instead of throwing; a line station stands in for detail (TECH-2-1)', async () => {
+  it('PROPOSAL fields in another shape degrade to Unknown instead of throwing; a line station stands in for detail (TECH-2-1)', async () => {
     respond = () =>
       json(200, {
         case_id: 'P-7',
@@ -187,10 +187,10 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
       });
     await open('P-7');
     expect(document.querySelector('.projects__route')!.textContent).toBe('1 piece of work across 1 line');
-    expect(facts().map(([, value]) => value)).toEqual(Array(6).fill('Not known'));
+    expect(facts().map(([, value]) => value)).toEqual(Array(6).fill('Unknown'));
     expect(lineItems()[0].textContent).toBe('Prepare an invoiceStation 4 of 7 · Finance reviewWaiting');
     expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Milestones', 'Documents2', 'Money', 'Registers', 'Actions']);
-    expect(screen.getByRole('complementary').textContent).toContain('Tola has not summarised this project yet.');
+    expect(screen.getByRole('region', { name: /summary|agent/i }).textContent).toContain('Tola has not summarised this project yet.');
     expect(document.querySelector('main')!.textContent).not.toMatch(/undefined|object Object/);
   });
 
@@ -217,10 +217,10 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(document.querySelector('.projects__phoneline')!.textContent).toBe('12 pieces of work · 0 stopped');
     expect(facts()).toEqual([
       ['Paid', '₦4,250,000.00', 'psl-fact'],
-      ['Invoiced', 'Not known', 'psl-fact psl-fact--unknown'],
+      ['Invoiced', 'Unknown', 'psl-fact psl-fact--unknown'],
       ['Stopped', '0', 'psl-fact'],
     ]);
-    const chidi = screen.getByRole('complementary', { name: "Chidi's summary" });
+    const chidi = screen.getByRole('region', { name: /^Chidi/ });
     expect(chidi.textContent).toContain('Chidi · Finance agent');
     expect(chidi.textContent).toContain('One paragraph.');
   });
@@ -246,9 +246,8 @@ describe('tabs other than Journey (contents come with FE-M3-PROJECT-TABS)', () =
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
     expect(projectTabs()[index].getAttribute('aria-selected')).toBe('true');
     expect(projectTabs()[index].tabIndex).toBe(0);
-    const panel = screen.getByRole('tabpanel');
-    expect(panel.getAttribute('aria-labelledby')).toBe(projectTabs()[index].id);
-    expect(within(panel).getByRole('heading', { level: 2, name: heading })).toBeTruthy();
+    const panel = screen.getByRole('tabpanel', { name: projectTabs()[index].textContent!.replace(/\d+$/, '') });
+    expect(within(panel).getByRole('heading', { level: 3, name: heading })).toBeTruthy();
     expect(within(panel).getByRole('link', { name: 'Open the journey' }).getAttribute('href')).toBe('/projects/P-0101');
     expect(lineItems()).toHaveLength(0);
     expect(calls).toHaveLength(1);
@@ -284,7 +283,7 @@ describe('empty, no access and not open', () => {
     expect(screen.getByRole('tablist', { name: 'Project' })).toBeTruthy();
     expect(document.querySelector('.projects__next')!.textContent).toContain('What is next');
     expect(document.querySelector('ol')).toBeNull();
-    expect(document.querySelector('.psl-empty')!.textContent).toBe('No work on this project yet.');
+    expect(document.querySelector('.psl-empty')!.textContent).toBe('No work yetNo work on this project yet.');
   });
 
   it.each([404, 403])('%s shows the no-access state and nothing from the response or the request', async (status) => {
@@ -356,7 +355,7 @@ describe('signed out, failures and stale responses', () => {
     respond = (url) => new Promise<Response>((resolve) => (pending[url.pathname.split('/')[4]] = () => resolve(mockResponse(url))));
     const view = render(page('P-0101'));
     await until(() => expect(pending['P-0101']).toBeTruthy());
-    expect(screen.getByRole('status')).toBeTruthy();
+    expect(screen.getByText('Loading…')).toBeTruthy();
     view.rerender(page('P-0104'));
     await until(() => expect(pending['P-0104']).toBeTruthy());
     await act(async () => pending['P-0104']());

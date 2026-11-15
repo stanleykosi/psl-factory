@@ -65,8 +65,8 @@ describe('projects view and query', () => {
 
 describe('PROPOSAL field guards (TECH-2-1)', () => {
   it('read the v7 shapes and return undefined for any other shape', () => {
-    expect(nextMilestoneText({ name: 'UAT sign-off', due: { date: '2026-11-14', unknown: false } })).toBe('UAT sign-off · due 14 Nov');
-    expect(nextMilestoneText({ name: 'Go-live', due: { unknown: true } })).toBe('Go-live · due not known');
+    expect(nextMilestoneText({ name: 'UAT sign-off', due: { date: '2026-11-14', unknown: false } })).toBe('UAT sign-off · due 14 Nov 2026');
+    expect(nextMilestoneText({ name: 'Go-live', due: { unknown: true } })).toBe('Go-live · due Unknown');
     expect(nextMilestoneText({ name: 'SOW signed' })).toBe('SOW signed');
     for (const value of ['UAT sign-off', { due: { unknown: true } }, null, 3]) expect(nextMilestoneText(value)).toBeUndefined();
     expect([countOf(0), countOf(4), countOf(-1), countOf(1.5), countOf('2')]).toEqual([0, 4, undefined, undefined, undefined]);

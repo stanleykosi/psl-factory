@@ -105,16 +105,41 @@ async function addFile(f = file()) {
   await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
 }
 const choose = (name: string) => fireEvent.click(screen.getByRole('radio', { name }));
-const type = (label: string | RegExp, value: string): void => {
-  fireEvent.change(screen.getByLabelText(label), { target: { value } });
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const dateText = (iso: string) => {
+  const [y, m, d] = iso.split('-');
+  return `${Number(d)} ${MONTHS[Number(m) - 1]} ${y}`;
 };
+/** Types into a field by its label: a date field takes "4 Dec 2026", a when field a date and a time (WAT). */
+const type = (label: string | RegExp, value: string): void => {
+  const box = screen.getByLabelText(label);
+  if (/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(value)) {
+    const [date, time] = value.split('T');
+    fireEvent.change(box, { target: { value: dateText(date) } });
+    fireEvent.blur(box);
+    if (time) fireEvent.change(within(box.closest('.resp-when') as HTMLElement).getByLabelText('At (WAT)'), { target: { value: time } });
+    return;
+  }
+  fireEvent.change(box, { target: { value } });
+};
+function pickNth(name: string, index: number) {
+  fireEvent.click(screen.getByRole('combobox', { name }));
+  fireEvent.click(screen.getAllByRole('option')[index]);
+}
+function optionsOf(name: string) {
+  const box = screen.getByRole('combobox', { name });
+  fireEvent.click(box);
+  const texts = screen.getAllByRole('option').map((o) => o.textContent);
+  fireEvent.keyDown(box, { key: 'Escape' });
+  return texts;
+}
 
 describe('RFP frame (from rfp only)', () => {
   it('W-2101 draws reference, title, status, PM and the five tabs with only the returned counts', async () => {
     await openTeam();
     expect(document.querySelector('.rfp-eyebrow')!.textContent).toBe('Pre-sale / RFP · TL-RFP-2026-014');
     expect(screen.getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Tamarind Loans · loan origination RFP']);
-    expect(screen.getByRole('heading', { level: 1 }).className).toContain('shell-title');
+    expect(screen.getByRole('heading', { level: 1 }).className).toContain('cmp-page-title');
     expect(text()).toContain('DEADLINE 28 NOV · 16 DAYS');
     expect(text()).toContain('PM Tunde Bello');
     const nav = screen.getByRole('navigation', { name: 'RFP' });
@@ -162,7 +187,7 @@ describe('RFP frame (from rfp only)', () => {
   });
 
   it('tones the status tag by kind only', async () => {
-    const kinds = { deadline: 'psl-tag--waiting', pending: 'psl-tag--waiting', submitted: 'psl-tag--neutral', won: 'psl-tag--done', lost: 'psl-tag--neutral', unknown: 'psl-tag--waiting' } as const;
+    const kinds = { deadline: 'psl-tag--person', pending: 'psl-tag--waiting', submitted: 'psl-tag--neutral', won: 'psl-tag--neutral', lost: 'psl-tag--neutral', unknown: 'psl-tag--waiting' } as const;
     for (const [kind, tone] of Object.entries(kinds)) {
       const body = item('W-2103');
       body.rfp!.status = { kind: kind as keyof typeof kinds, label: `STATUS ${kind}`, days_left: 1 };
@@ -191,16 +216,15 @@ describe('team input (FE-M2B-RFP)', () => {
     await openTeam();
     const group = screen.getByRole('radiogroup', { name: 'Team' });
     const teams = within(group).getAllByRole('radio');
-    expect(teams.map((r) => r.textContent)).toEqual(['Engineering', 'QA', 'Security', 'Product']);
-    expect(teams.map((r) => r.getAttribute('aria-label'))).toEqual(['Engineering, given', 'QA, given', 'Security, missing', 'Product, missing']);
+    expect(teams.map((r) => r.textContent)).toEqual(['Engineering (given)', 'QA (given)', 'Security', 'Product']);
     expect(teams.some((r) => r.getAttribute('aria-checked') === 'true')).toBe(false);
     expect(text()).toContain("Security and Product haven't given input yet. Review can't start until they do.");
-    expect(screen.getByRole('heading', { level: 2, name: 'Record team input' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Record team input' })).toBeTruthy();
     expect(screen.queryByLabelText('Estimate (person-days)')).toBeNull();
-    choose('Security, missing');
+    choose('Security');
     expect(screen.getByLabelText('Estimate (person-days)')).toBeTruthy();
     expect(text()).toContain('Needed for the costing sheet. Shown for Engineering and Security.');
-    choose('QA, given');
+    choose('QA (given)');
     expect(screen.queryByLabelText('Estimate (person-days)')).toBeNull();
     expect(screen.queryByLabelText('Who gave it')).toBeNull();
     expect(button('Record input').disabled).toBe(true);
@@ -215,14 +239,13 @@ describe('team input (FE-M2B-RFP)', () => {
     answers.item = () => json(200, body);
     await openTeam();
     expect(screen.queryByRole('radio', { name: /^Product/ })).toBeNull();
-    const who = screen.getByLabelText('Who gave it') as HTMLSelectElement;
-    expect([...who.options].map((o) => o.text)).toEqual(['Choose…', 'Security lead · Kemi Adeyemi, PSL', 'QA lead · Ola Bakare']);
+    expect(optionsOf('Who gave it')).toEqual(['Security lead · Kemi Adeyemi, PSL', 'QA lead · Ola Bakare']);
   });
 
   it('Record input stays off until every entry is there: a neutral hint, then the alert', async () => {
     await openTeam();
     expect(screen.getByText('Add the team, what they gave and when it was received to record this.').className).toContain('resp-alert--hint');
-    choose('Security, missing');
+    choose('Security');
     expect(screen.getByRole('alert').textContent).toBe('Add the estimate, what they gave and when it was received to record this.');
     type('Estimate (person-days)', '18');
     type('What they gave', 'Security estimate and data-protection notes');
@@ -237,7 +260,7 @@ describe('team input (FE-M2B-RFP)', () => {
 
   async function fillSecurity() {
     await openTeam();
-    choose('Security, missing');
+    choose('Security');
     type('Estimate (person-days)', '18');
     type('What they gave', '  Security estimate and data-protection notes ');
     type('Received', '2026-11-12T15:10');
@@ -274,9 +297,9 @@ describe('team input (FE-M2B-RFP)', () => {
 
   it('a team without an estimate sends action input and no estimate, even after one was typed for another team', async () => {
     await openTeam();
-    choose('Security, missing');
+    choose('Security');
     type('Estimate (person-days)', '18');
-    choose('Product, missing');
+    choose('Product');
     type('What they gave', 'Scope notes');
     type('Received', '2026-11-12T15:10');
     await addFile();
@@ -306,7 +329,7 @@ describe('team input (FE-M2B-RFP)', () => {
     expect(gets()).toBe(before + 1);
     expect((screen.getByLabelText('Estimate (person-days)') as HTMLInputElement).value).toBe('18');
     expect((screen.getByLabelText('What they gave') as HTMLInputElement).value).toBe('  Security estimate and data-protection notes ');
-    expect(screen.getByRole('radio', { name: 'Security, missing' }).getAttribute('aria-checked')).toBe('true');
+    expect(screen.getByRole('radio', { name: 'Security' }).getAttribute('aria-checked')).toBe('true');
     fireEvent.click(button('Record input'));
     await screen.findByText('Check these fields: what.');
     expect((screen.getByLabelText('What they gave') as HTMLInputElement).value).toContain('Security estimate');
@@ -378,7 +401,7 @@ describe('team input (FE-M2B-RFP)', () => {
     expect(back.closest('.psl-phonebar')!.textContent).not.toMatch(/OUTCOME|WON|LOST/);
     expect(screen.getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Record team input']);
     expect(screen.queryByRole('navigation', { name: 'RFP' })).toBeNull();
-    expect(screen.getByRole('radio', { name: 'Engineering, given' })).toBeTruthy();
+    expect(screen.getByRole('radio', { name: 'Engineering (given)' })).toBeTruthy();
     expect(document.querySelector('.resp-phonebar')!.textContent).toBe('Record input');
   });
 });
@@ -406,20 +429,20 @@ async function fillOutcome(result: string, extra?: () => void | Promise<void>) {
   type(result === 'Unknown' ? 'Last contact with the client' : 'When you learned it', WHEN);
   await extra?.();
   await addFile(file('tamarind-award-letter.pdf', 310 * 1024));
-  fireEvent.change(screen.getByLabelText('You are recording as'), { target: { value: 'relationship_owner' } });
+  pickNth('You are recording as', 0);
 }
 const BASE = { expected_revision: 5, case_revision: 4, submission_id: 'SUB-0031', learned_at: '2026-12-04T11:00:00+01:00', record_as: 'relationship_owner', evidence_id: 'EV-C-2103-1' };
 
 describe('outcome form: options and gating', () => {
   it('W-2103 offers the four results with none chosen, both roles, and Record off until result, time, proof and role', async () => {
     await openOutcome();
-    expect(screen.getByRole('heading', { level: 2, name: 'Record the outcome' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Record the outcome' })).toBeTruthy();
     expect(text()).toContain('What Tamarind Loans decided about our response.');
     expect(text()).toContain('Submission pack v1 · emailed 26 Nov 15:42 · delivery confirmed');
     const radios = within(screen.getByRole('radiogroup', { name: 'Result' })).getAllByRole('radio');
     expect(radios.map((r) => r.textContent)).toEqual(['Won', 'Lost', 'Pending', 'Unknown']);
     expect(radios.some((r) => r.getAttribute('aria-checked') === 'true')).toBe(false);
-    expect([...(screen.getByLabelText('You are recording as') as HTMLSelectElement).options].map((o) => o.text)).toEqual(['Choose…', 'Relationship owner', 'PM']);
+    expect(optionsOf('You are recording as')).toEqual(['Relationship owner', 'PM']);
     expect(button('Record the outcome').disabled).toBe(true);
     expect(screen.queryByLabelText('When you learned it')).toBeNull();
     choose('Won');
@@ -429,10 +452,10 @@ describe('outcome form: options and gating', () => {
     expect(text()).toContain('Choose who you are recording as, and add the proof, to record this.');
     await addFile();
     // one proof file only: E-RFP-OUTCOME takes one evidence_id, so no second picker is offered
-    expect(document.querySelectorAll('input[type="file"]')).toHaveLength(0);
+    expect(document.querySelector('.psl-drop')).toBeNull();
     expect(button('Record won').disabled).toBe(true);
     expect(screen.getByRole('alert').textContent).toBe('Choose who you are recording as to record this.');
-    fireEvent.change(screen.getByLabelText('You are recording as'), { target: { value: 'pm' } });
+    pickNth('You are recording as', 1);
     expect(button('Record won').disabled).toBe(false);
     fireEvent.click(button('Record won'));
     await waitFor(() => expect(posts('/rfp-outcome')).toHaveLength(1));
@@ -460,7 +483,7 @@ describe('outcome form: options and gating', () => {
     expect(shown()).toEqual(['Expected decision date', 'Remind me on', 'When you learned it']);
     choose('Unknown');
     expect(shown()).toEqual(['Remind me on', 'Last contact with the client']);
-    expect(screen.getByRole('group', { name: 'Proof' })).toBeTruthy();
+    expect(screen.getByText('Proof')).toBeTruthy();
     expect(text()).not.toContain('No proof needed');
   });
 
@@ -565,7 +588,7 @@ describe('unknown stays unknown (INV-UNKNOWN)', () => {
     await openOutcome();
     await fillOutcome('Won', setup);
   }
-  it('blank sends no awarded_amount; "Amount not known" sends unknown with no amount', async () => {
+  it('blank sends no awarded_amount; "Mark as unknown" sends unknown with no amount', async () => {
     await wonWith(() => {});
     fireEvent.click(button('Record won'));
     await waitFor(() => expect(posts('/rfp-outcome')).toHaveLength(1));
@@ -574,28 +597,30 @@ describe('unknown stays unknown (INV-UNKNOWN)', () => {
     calls = [];
     await wonWith(() => {
       type('Awarded amount', '500');
-      fireEvent.click(screen.getByRole('checkbox', { name: 'Amount not known' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Mark as unknown' }));
     });
-    expect((screen.getByLabelText('Awarded amount') as HTMLInputElement).value).toBe('');
+    expect(screen.queryByRole('textbox', { name: 'Awarded amount' })).toBeNull();
+    expect(document.querySelector('.psl-unknown')).toBeTruthy();
     fireEvent.click(button('Record won'));
     await waitFor(() => expect(posts('/rfp-outcome')).toHaveLength(1));
     expect(posts('/rfp-outcome')[0].body!.awarded_amount).toEqual({ currency: 'NGN', unknown: true });
   });
 
-  it('"40,951,000" sends 40951000.00; "abc" and "1.234" send nothing and show a message', async () => {
+  it('"40,951,000" sends 40951000.00; "abc" and "1.234" are not kept as typed', async () => {
     await wonWith(() => type('Awarded amount', '40,951,000'));
     fireEvent.click(button('Record won'));
     await waitFor(() => expect(posts('/rfp-outcome')).toHaveLength(1));
     expect(posts('/rfp-outcome')[0].body!.awarded_amount).toEqual({ currency: 'NGN', amount: '40951000.00', unknown: false });
-    for (const bad of ['abc', '1.234']) {
-      cleanup();
-      calls = [];
-      await wonWith(() => type('Awarded amount', bad));
-      expect(screen.getByRole('alert').textContent).toBe('Enter the amount in naira with at most two decimals, for example 40,951,000.');
-      expect(button('Record won').disabled).toBe(true);
-      fireEvent.click(button('Record won'));
-      expect(posts('/rfp-outcome')).toHaveLength(0);
-    }
+    // The field keeps digits and one point with at most two decimals, so text that is not an amount is not kept:
+    // "abc" leaves the box empty (no amount is sent) and "1.234" keeps "1.23" as written.
+    cleanup();
+    calls = [];
+    await wonWith(() => type('Awarded amount', 'abc'));
+    expect((screen.getByLabelText('Awarded amount') as HTMLInputElement).value).toBe('');
+    cleanup();
+    calls = [];
+    await wonWith(() => type('Awarded amount', '1.234'));
+    expect((screen.getByLabelText('Awarded amount') as HTMLInputElement).value).toBe('1.23');
     expect(text()).not.toMatch(/₦0|0\.00/);
   });
 });
@@ -613,7 +638,7 @@ describe('outcome guards', () => {
     fireEvent.click(button('Record won'));
     await screen.findByText(/This changed while you were recording/);
     expect(gets()).toBe(before + 1);
-    expect((screen.getByLabelText('Awarded amount') as HTMLInputElement).value).toBe('1000');
+    expect((screen.getByLabelText('Awarded amount') as HTMLInputElement).value).toBe('1,000');
     expect(screen.getByRole('radio', { name: 'Won' }).getAttribute('aria-checked')).toBe('true');
     expect(text()).toContain('tamarind-award-letter.pdf');
     fireEvent.click(button('Record won'));
@@ -629,7 +654,7 @@ describe('outcome guards', () => {
     fireEvent.click(button('Save as unknown'));
     await screen.findByText('Check these fields: learned_at.');
     expect(gets()).toBe(before);
-    expect((screen.getByLabelText('Last contact with the client') as HTMLInputElement).value).toBe(WHEN);
+    expect((screen.getByLabelText('Last contact with the client') as HTMLInputElement).value).toBe('4 Dec 2026');
   });
 
   it('403 reloads and removes the form with the server message', async () => {
@@ -696,7 +721,7 @@ describe('outcome guards', () => {
     await fillOutcome('Won');
     fireEvent.click(button('Record won'));
     await screen.findByText('Outcome recorded.');
-    expect(screen.getByRole('status').textContent).toBe('Outcome recorded. Won');
+    expect(document.querySelector('.psl-callout--success')!.textContent).toBe('Outcome recorded. Won');
     expect(text()).not.toContain('What’s recorded');
   });
 
@@ -730,7 +755,7 @@ describe('recorded states', () => {
   it('W-2106 (lost): the three lessons with their tags, the debrief proof, the archive and "Back to projects"', async () => {
     await openOutcome('W-2106');
     expect(screen.getByRole('heading', { level: 2, name: 'Lost' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 2, name: 'Lessons · recorded by Tunde Bello' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Lessons · recorded by Tunde Bello' })).toBeTruthy();
     expect([...document.querySelectorAll('.rfp-row__tag')].map((t) => t.textContent)).toEqual(['Price', 'Timeline', 'Strength']);
     expect(document.querySelector('.rfp-row__tag')!.className).toContain('rfp-row__tag');
     expect(text()).toContain('Price · our total was 18% above the winning bid');
@@ -744,7 +769,7 @@ describe('recorded states', () => {
     await openOutcome('W-2107');
     expect(screen.getByRole('heading', { level: 2, name: 'Decision pending' })).toBeTruthy();
     expect(text()).toContain('Expected decision12 Dec');
-    expect(text()).toContain('Reminder for Tunde Bello12 Dec 09:00');
+    expect(text()).toContain('Reminder for Tunde Bello12 Dec 2026 09:00 WAT');
     expect(text()).not.toContain('delayed to 12 Dec. The RFP stays open');
     fireEvent.click(button('Record the outcome'));
     expect(screen.getByRole('radiogroup', { name: 'Result' })).toBeTruthy();
@@ -757,17 +782,17 @@ describe('recorded states', () => {
     expect(screen.getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Outcome unknown']);
     expect(screen.getByRole('link', { name: 'Back to RFP' }).closest('.psl-phonebar')!.textContent).toContain('UNKNOWN');
     expect(text()).toContain('Heard from the client sinceNothing yet');
-    expect(text()).toContain('Reminder for Tunde Bello10 Dec 09:00');
+    expect(text()).toContain('Reminder for Tunde Bello10 Dec 2026 09:00 WAT');
     expect(screen.getByRole('region', { name: 'Follow-up email · drafted by Tola' })).toBeTruthy();
   });
 
   it('desktop won has no Next panel: the sentence and an outlined button; pending keeps the panel and its primary button', async () => {
     await openOutcome('W-2105');
-    expect(screen.queryByRole('heading', { name: 'Next' })).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Next' })).toBeNull();
     expect(screen.getByRole('link', { name: 'Open engagement EN-0042' }).className).toContain('psl-btn--secondary');
     cleanup();
     await openOutcome('W-2107');
-    expect(screen.getByRole('heading', { level: 2, name: 'Next' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Next' })).toBeTruthy();
     expect(button('Record the outcome').className).not.toContain('psl-btn--secondary');
   });
 
@@ -776,7 +801,7 @@ describe('recorded states', () => {
     for (const id of ['W-2105', 'W-2107', 'W-2108', 'W-2106']) {
       cleanup();
       await openOutcome(id);
-      expect(screen.queryByRole('heading', { name: 'Next' })).toBeNull();
+      expect(screen.queryByRole('region', { name: 'Next' })).toBeNull();
       expect(document.querySelector('.rfp-recorded__aside .psl-panel')).toBeNull();
       const pin = document.querySelector('.rfp-pin');
       if (id === 'W-2105' || id === 'W-2107') expect(pin?.querySelector('a, button')).toBeTruthy();
@@ -849,7 +874,7 @@ describe('follow-up display', () => {
     cleanup();
     answers.item = () => json(200, { ...item('W-2108.sent'), id: 'W-2108' });
     await openOutcome('W-2108');
-    expect(screen.getByRole('status').textContent).toBe('Sent 03 Dec 10:30');
+    expect(screen.getByRole('status').textContent).toBe('Sent 3 Dec 2026 10:30 WAT');
     expect(screen.queryByRole('button', { name: /Send follow-up|Edit/ })).toBeNull();
   });
 });

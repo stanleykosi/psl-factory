@@ -74,7 +74,7 @@ function renderList() {
 async function openList() {
   renderList();
   await screen.findByRole('heading', { level: 1, name: 'Clients' });
-  await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+  await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 }
 async function openDetail(id: string) {
   render(
@@ -116,7 +116,7 @@ describe('Clients list (SCR-35)', () => {
     ]);
     const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-client-link]')].map((a) => a.getAttribute('href'));
     expect(links).toEqual(['CL-3501', 'CL-3502', 'CL-3503', 'CL-3504', 'CL-3505', 'CL-3506'].map((id) => `/clients/${id}`));
-    expect(screen.getByText('6 clients as of 14 Nov, 10:00 · 2 missing billing contact')).toBeTruthy();
+    expect(screen.getByText('6 clients as of 14 Nov 2026 10:00 WAT · 2 missing billing contact')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     expect(screen.queryByRole('button', { name: /Filter/ })).toBeNull();
     const text = document.body.textContent ?? '';
@@ -229,7 +229,7 @@ describe('Client detail (SCR-35 detail)', () => {
     expect(emailBox().value).toBe('');
     expect(screen.getByText('Needed before any invoice can start')).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Patient app' }).getAttribute('href')).toBe('/projects/P-0101');
-    const money = screen.getByRole('heading', { name: 'Money' }).closest('section')!;
+    const money = screen.getByRole('region', { name: 'Money' });
     expect(within(money).getAllByRole('term').map((t) => t.textContent)).toEqual(['Invoiced', 'Received', 'Owed']);
     expect(within(money).getAllByRole('definition').map((d) => d.textContent)).toEqual(['₦6,000,000.00', '₦3,000,000.00', 'Unknown amount not known']);
     expect(screen.getByRole('link', { name: 'Clients' }).getAttribute('href')).toBe('/clients');
@@ -240,7 +240,7 @@ describe('Client detail (SCR-35 detail)', () => {
   it('CL-3509 (only required fields): no banner, no money, "No projects yet.", no placeholders', async () => {
     await openDetail('CL-3509');
     expect(screen.getByText('No projects yet.')).toBeTruthy();
-    expect(screen.queryByRole('heading', { name: 'Money' })).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Money' })).toBeNull();
     expect(document.querySelector('.psl-callout')).toBeNull();
     expect(screen.queryByText('Unknown')).toBeNull();
   });
@@ -257,7 +257,7 @@ describe('Client detail (SCR-35 detail)', () => {
 
   it('CL-3507: the sample client reads Unknown for every amount, never 0', async () => {
     await openDetail('CL-3507');
-    const money = screen.getByRole('heading', { name: 'Money' }).closest('section')!;
+    const money = screen.getByRole('region', { name: 'Money' });
     expect(within(money).getAllByRole('definition').map((d) => d.textContent)).toEqual(['Unknown amount not known', 'Unknown amount not known', 'Unknown amount not known']);
   });
 
@@ -291,7 +291,7 @@ describe('Client detail (SCR-35 detail)', () => {
     expect(reads()).toHaveLength(2);
     expect(nameBox().value).toBe('Ada Okoye');
     expect(emailBox().value).toBe('ada@lagoon.example');
-    expect(document.querySelector('.psl-callout')).toBeNull();
+    expect(document.querySelector('.psl-callout--problem, .psl-callout--warning')).toBeNull();
     expect(screen.getByRole('status').textContent).toBe('Billing contact saved.');
     expect(saveButton()!.textContent).toBe('Save billing contact');
   });

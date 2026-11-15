@@ -1,54 +1,47 @@
 /* Clients (SCR-35 list and detail). Token variables only; layout switches at 720px (bp-phone). No bundle or shell
    class is restyled: the clients__ classes sit beside them. */
 
-.clients__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .clients__plain { margin: 0; }
-.clients__page { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
-.clients__eyebrow { margin: 0; line-height: normal; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
-.psl .clients__page .shell-title { line-height: 1.08; overflow-wrap: anywhere; }
-.clients__count { margin: 0; min-height: var(--control-md); display: flex; align-items: center; justify-content: flex-end; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+.clients__page { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; }
+.clients__eyebrow { margin: 0; font-family: var(--font-mono); font-size: var(--text-eyebrow-size); line-height: var(--text-eyebrow-line); color: var(--ink-muted); }
+.clients__page .cmp-page-title { overflow-wrap: anywhere; }
+.clients__count { margin: 0; min-height: var(--control-md); display: flex; align-items: center; justify-content: flex-end; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 
 /* list */
-.clients__table { min-width: 860px; }
-.clients__table td { vertical-align: middle; line-height: normal; }
+.clients__table .psl-table { min-width: 860px; }
+.clients__table td { vertical-align: middle; }
 .clients__namecell { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .psl .clients__table .clients__name { font-weight: 600; color: var(--ink); }
 .psl .clients__panel .clients__name { font-weight: 600; }
 .clients__missing { color: var(--signal-ink); font-weight: 600; }
 .clients__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-.clients__card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: var(--control-md); padding: var(--space-3); background: var(--surface); border: 2px solid var(--ink); line-height: 1.3; }
+.clients__card { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); min-height: var(--control-md); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
 /* the whole card opens the client */
 .psl .clients__card .clients__name { font-weight: 700; color: var(--ink); text-decoration: none; }
 .clients__card .clients__name::after { content: ""; position: absolute; inset: 0; }
 .clients__cardhead { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); width: 100%; }
-.clients__meta { font-size: 13px; color: var(--ink-muted); }
+.clients__meta { font-size: var(--text-hint-size); color: var(--ink-muted); }
 .clients__more { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
-.clients__morefail { align-items: center; flex-wrap: wrap; }
 
 /* detail */
-.clients__crumb { line-height: normal; }
 /* a colour-only link inside the crumb text fails WCAG 1.4.1 */
 .psl .clients__crumb a { text-decoration: underline; text-underline-offset: 2px; }
 .clients__titlerow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 .clients__titlerow .shell-title { margin: 0; }
-.clients__body { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
-.clients__main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-.clients__aside { flex: 1 1 320px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-.psl .clients__h2 { margin: 0; }
-.clients__panelbody { padding: 14px; display: flex; flex-direction: column; gap: 12px; margin: 0; }
-.clients__form { display: flex; flex-direction: column; gap: 12px; }
-.clients__help { margin: 0; font-size: 13px; color: var(--signal-ink); }
-.clients__value { min-height: var(--control-md); display: flex; align-items: center; padding: 0 12px; border: 2px solid var(--rule-soft); background: var(--surface-subtle); overflow-wrap: anywhere; }
-.clients__current { font-size: 13px; color: var(--ink-muted); }
+.clients__body { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: flex-start; }
+.clients__main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
+.clients__aside { flex: 1 1 320px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
+.clients__panelbody { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; }
+.clients__form { display: flex; flex-direction: column; gap: var(--space-3); }
+.clients__fieldgroup { display: flex; flex-direction: column; gap: var(--space-1); }
+.clients__help { margin: 0; font-size: var(--text-hint-size); color: var(--signal-ink); }
+.clients__value { min-height: var(--control-md); display: flex; align-items: center; padding: 0 12px; border: var(--rule-strong) solid var(--rule-soft); background: var(--surface-subtle); overflow-wrap: anywhere; }
+.clients__current { font-size: var(--text-hint-size); color: var(--ink-muted); }
 .clients__block { display: block; }
 .clients__save { align-self: flex-start; min-width: 200px; }
 .psl .clients__needed { border-color: var(--signal); }
 .clients__bar { display: contents; }
-.clients__notice p, .clients__status { margin: 0; }
-.clients__notice { display: flex; flex-direction: column; gap: var(--space-1); padding: 10px 12px; background: var(--waiting-tint); color: var(--waiting-ink); }
 .clients__notice { scroll-margin-bottom: 96px; outline-offset: 2px; }
-.clients__status:empty { display: none; }
-.clients__status { color: var(--verified-ink); font-weight: 600; }
 .clients__retry { align-self: flex-start; }
 .clients__project { display: flex; flex-direction: column; gap: var(--space-1); }
 .clients__money { display: flex; flex-direction: column; }
@@ -57,7 +50,6 @@
 .clients__moneyrow dd { margin: 0; font-family: var(--font-mono); font-weight: 600; text-align: right; }
 
 .clients__noaccess { max-width: 720px; }
-.clients__noaccess .shell-title { margin: 0; }
 .clients__noaccesstag { align-self: flex-start; }
 
 @media (max-width: 719.98px) {
@@ -69,8 +61,8 @@
   .clients__save { width: 100%; }
   /* the form sits straight on the page; the Save bar is pinned at the bottom (as .monthend-bar) */
   .psl .clients__formpanel { border: 0; background: none; display: contents; }
-  .psl .clients__h2--panel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; border: 0; }
+  .clients__formpanel > .psl-panel__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; border: 0; }
   .clients__formbody, .clients__form, .clients__body, .clients__main { display: contents; }
   .clients__page:has(.clients__bar) { min-height: calc(100dvh - 88px); }
-  .clients__bar { display: block; order: 1; position: sticky; bottom: 0; margin: auto calc(-1 * var(--space-4)) calc(-1 * var(--space-4)); padding: var(--space-3) var(--space-4) 18px; background: var(--surface); border-top: 2px solid var(--ink); }
+  .clients__bar { display: block; order: 1; position: sticky; bottom: 0; margin: auto calc(-1 * var(--space-4)) calc(-1 * var(--space-4)); padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); }
 }

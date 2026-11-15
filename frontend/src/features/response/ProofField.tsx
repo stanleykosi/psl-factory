@@ -1,163 +1,78 @@
 'use client';
 
-// CMP proof field (SCR-16, SCR-02 reconcile): the uploaded files and one button that opens the file picker.
-// Layouts follow the boards: "drop" is the dashed area with chips, "phone" the large dashed button, "card" the
-// SOW board's uploaded-file card. The hidden file input has no `capture`, so the phone offers camera or files.
-import { useId, useRef } from 'react';
+// The proof field of SCR-16 and the SCR-02 reconcile panel: the shared FileUpload (one drop zone that says what is
+// accepted), one row for each file with its state. A file may be added while no upload is running; each upload
+// carries the case revision of the one before (useEvidenceUpload). A file that failed on the network keeps its
+// own Try again, which reloads the item and sends the same bytes (the shared row's Try again asks for a new file).
+import { Button, FileUpload, Icon, type FileState } from '@/components';
 
-import { fileSize } from './labels';
 import type { EvidenceUpload, ProofFile } from './useEvidenceUpload';
 
-type Layout = 'drop' | 'phone' | 'card';
+const NO_UPLOAD = 'Proof can’t be uploaded for this item.';
 
-const BUTTON_TEXT: Record<Layout, string> = {
-  drop: 'Add another file',
-  phone: 'Take a photo or choose a file',
-  card: 'Choose the signed copy',
-};
-
-function PaperclipIcon() {
-  return (
-    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" className="resp-clip">
-      <path d="M12.5 5.5L6.5 11.5a1.8 1.8 0 0 0 2.5 2.5l6.5-6.5a3.5 3.5 0 0 0-5-5L4 9a5 5 0 0 0 7 7l4.5-4.5" />
-    </svg>
-  );
+function stateOf(file: ProofFile): FileState {
+  if (file.status === 'uploading') return { status: 'uploading', name: file.name, total: undefined };
+  if (file.status === 'uploaded') return { status: 'uploaded', name: file.name, size: file.size };
+  return { status: 'error', name: file.name, message: file.problem ?? 'Not uploaded' };
 }
 
-function FileProblem({ file, proof }: { file: ProofFile; proof: EvidenceUpload }) {
-  if (!file.problem) return null;
+/** A file that failed on the network: the row keeps its bytes, so Try again sends the same file again. */
+function RetryRow({ file, proof }: { file: ProofFile; proof: EvidenceUpload }) {
   return (
-    <span className="resp-chip__problem">
-      {file.problem}
-      {file.retryable && (
-        <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" disabled={proof.uploading} onClick={() => proof.retry(file.key)}>
-          Try again
-        </button>
-      )}
-    </span>
-  );
-}
-
-function Chip({ file, proof }: { file: ProofFile; proof: EvidenceUpload }) {
-  return (
-    <span className={file.problem ? 'resp-chip resp-chip--problem' : 'resp-chip'}>
-      <span className="resp-chip__name">
-        {file.name} · {fileSize(file.size)}
-        {file.status === 'uploading' && <span className="resp-chip__state"> · Uploading…</span>}
-      </span>
-      {file.status !== 'uploading' && (
-        <button type="button" className="resp-chip__remove" aria-label={`Remove ${file.name}`} onClick={() => proof.remove(file.key)}>
-          <span aria-hidden="true">×</span>
-        </button>
-      )}
-      <FileProblem file={file} proof={proof} />
-    </span>
-  );
-}
-
-function Card({ file, proof }: { file: ProofFile; proof: EvidenceUpload }) {
-  const state = file.status === 'uploading' ? 'Uploading…' : file.status === 'uploaded' ? 'Uploaded' : 'Not uploaded';
-  return (
-    <div className={file.problem ? 'resp-card resp-card--problem' : 'resp-card'}>
-      <PaperclipIcon />
-      <span className="resp-card__text">
+    <div className="psl-file is-error">
+      <Icon name="clip" />
+      <span className="psl-file__name">
         <strong>{file.name}</strong>
-        <span className="resp-card__meta">
-          {state} · {fileSize(file.size)}
-        </span>
-        <FileProblem file={file} proof={proof} />
+        <small role="status">{file.problem}</small>
       </span>
-      {file.status !== 'uploading' && (
-        <button type="button" className="resp-chip__remove" aria-label={`Remove ${file.name}`} onClick={() => proof.remove(file.key)}>
-          <span aria-hidden="true">×</span>
-        </button>
-      )}
+      <Button kind="text" disabled={proof.uploading} onClick={() => proof.retry(file.key)}>
+        Try again
+      </Button>
+      <Button kind="text" onClick={() => proof.remove(file.key)} aria-label={`Remove ${file.name}`}>
+        Remove
+      </Button>
     </div>
   );
 }
 
-/** `choose`: the picker's words where the layout's default does not fit (team input: "Choose a file"). */
-export function ProofField({ proof, hint, layout = 'drop', label = 'Proof', choose }: { proof: EvidenceUpload; hint?: string; layout?: Layout; label?: string; choose?: string }) {
-  const input = useRef<HTMLInputElement>(null);
-  const labelId = useId();
-  const hintId = useId();
-  const disabled = !proof.available || proof.uploading;
-  const shownHint = proof.available ? hint : 'Proof can’t be uploaded for this item.';
+/**
+ * `prompt`: the zone's words where the default does not fit (the phone offers the camera too). `single`: one file
+ * only (the signed copy, the outcome's proof): once a file is there no second zone is offered. `accept`: the file
+ * types the zone takes (the shared proof types by default).
+ */
+export function ProofField({ proof, hint, label = 'Proof', prompt, single = false, accept }: { proof: EvidenceUpload; hint?: string; label?: string; prompt?: string; single?: boolean; accept?: string[] }) {
   const empty = proof.files.length === 0;
-  // The phone and card layouts leave proof_hint out (as the boards do) but keep the can't-upload hint.
-  const hintShown = shownHint !== undefined && (layout === 'drop' || !proof.available);
-
-  const picker = (
-    <>
-      <input
-        ref={input}
-        type="file"
-        hidden
-        aria-labelledby={labelId}
-        disabled={!proof.available}
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          e.target.value = '';
-          if (file) proof.add(file);
-        }}
-      />
-      <button
-        type="button"
-        className={layout === 'phone' && empty ? 'resp-filebtn resp-filebtn--phone' : 'resp-filebtn'}
-        aria-describedby={hintShown ? hintId : undefined}
-        disabled={disabled}
-        onClick={() => input.current?.click()}
-      >
-        {choose ?? BUTTON_TEXT[layout]}
-      </button>
-    </>
-  );
-
+  const noop = () => {};
   return (
-    <div className="resp-field" role="group" aria-labelledby={labelId}>
-      <span id={labelId} className="resp-label">
-        {label}
-      </span>
-      {layout === 'drop' && (
-        <div className={proof.available ? 'resp-drop' : 'resp-drop is-disabled'}>
-          {empty && <span className="resp-drop__empty">No proof added yet</span>}
-          {proof.files.map((f) => (
-            <Chip key={f.key} file={f} proof={proof} />
-          ))}
-          {picker}
-          {hintShown && (
-            <span id={hintId} className="psl-hint">
-              {shownHint}
-            </span>
-          )}
-        </div>
+    <div className="resp-field resp-proof">
+      {proof.files.map((file) =>
+        file.status === 'failed' && file.retryable ? (
+          <RetryRow key={file.key} file={file} proof={proof} />
+        ) : (
+          <FileUpload
+            key={file.key}
+            label={<span className="cmp-sr">{`${label}: ${file.name}`}</span>}
+            state={stateOf(file)}
+            onFile={proof.add}
+            onRemove={() => proof.remove(file.key)}
+            onCancel={noop}
+            accept={accept}
+          />
+        ),
       )}
-      {layout === 'phone' && (
-        <>
-          {proof.files.map((f) => (
-            <Chip key={f.key} file={f} proof={proof} />
-          ))}
-          {empty && picker}
-          {hintShown && (
-            <span id={hintId} className="psl-hint">
-              {shownHint}
-            </span>
-          )}
-        </>
+      {!proof.uploading && !(single && !empty) && (
+        <FileUpload
+          label={empty ? label : 'Add another file'}
+          state={{ status: 'empty' }}
+          onFile={proof.add}
+          onRemove={noop}
+          accept={accept}
+          prompt={prompt ?? (empty ? 'Drop the proof here or' : 'Drop another file here or')}
+          disabledReason={proof.available ? undefined : NO_UPLOAD}
+        />
       )}
-      {layout === 'card' && (
-        <>
-          {proof.files.map((f) => (
-            <Card key={f.key} file={f} proof={proof} />
-          ))}
-          {empty && picker}
-          {hintShown && (
-            <span id={hintId} className="psl-hint">
-              {shownHint}
-            </span>
-          )}
-        </>
-      )}
+      {empty && <span className="resp-drop__empty">No proof added yet</span>}
+      {proof.available && hint && <span className="psl-hint">{hint}</span>}
     </div>
   );
 }

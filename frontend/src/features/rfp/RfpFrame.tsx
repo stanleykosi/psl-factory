@@ -5,6 +5,7 @@
 import Link from 'next/link';
 
 import type { WorkItem } from '@/api/types';
+import { CountBadge, PageTitle, Tag } from '@/components';
 
 import type { Rfp, RfpTab } from './contract';
 import { frameHeading, statusTone } from './labels';
@@ -13,7 +14,7 @@ const work = (id: string) => `/work/${encodeURIComponent(id)}`;
 
 function Count({ tab }: { tab: RfpTab }) {
   if (tab.count === undefined) return null;
-  return <span className="psl-badge">{tab.of === undefined ? tab.count : `${tab.count}/${tab.of}`}</span>;
+  return tab.of === undefined ? <CountBadge count={tab.count} /> : <span className="psl-badge">{`${tab.count}/${tab.of}`}</span>;
 }
 
 function Tab({ id, tab, outcome }: { id: string; tab: RfpTab; outcome: boolean }) {
@@ -53,10 +54,14 @@ export function RfpFrame({ id, item, rfp, fallback }: { id: string; item: Pick<W
     <header className="rfp-frame">
       <p className="rfp-eyebrow">{[item.line, rfp.reference].filter(Boolean).join(' · ')}</p>
       <div className="rfp-titlerow">
-        <h1 className="shell-title rfp-title">{heading}</h1>
+        <PageTitle className="rfp-title">{heading}</PageTitle>
         <span className="rfp-tags">
-          <span className={`psl-tag ${statusTone(rfp.status.kind)}`}>{rfp.status.label}</span>
-          {rfp.pm && <span className="psl-tag psl-tag--neutral rfp-pm">PM {rfp.pm.name}</span>}
+          <Tag tone={statusTone(rfp.status.kind)}>{rfp.status.label}</Tag>
+          {rfp.pm && (
+            <Tag tone="neutral" className="rfp-pm">
+              PM {rfp.pm.name}
+            </Tag>
+          )}
         </span>
       </div>
       {rfp.tabs && rfp.tabs.length > 0 && (

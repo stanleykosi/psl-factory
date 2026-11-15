@@ -1,5 +1,7 @@
 // RFP values to the words on the SCR-16 boards. Presentation only: which results, reasons and roles are offered,
 // and who may record or send, come from the API.
+import type { TagTone } from '@/components';
+
 import type { OutcomeResult, Rfp } from './contract';
 
 /** The result words the boards use (results is an enum with no labels). */
@@ -21,11 +23,13 @@ export function recordedHeading(result: string): string {
 /** The phone bar's note on recorded states. */
 export const resultNote = (result: string) => (result in RESULT_LABELS ? result.toUpperCase() : undefined);
 
-/** The frame's status tag tone, by kind only (nothing derived from days_left or at). Lost is grey and unknown amber, as the boards draw them. */
-export function statusTone(kind: Rfp['status']['kind']): string {
-  if (kind === 'deadline' || kind === 'pending' || kind === 'unknown') return 'psl-tag--waiting';
-  if (kind === 'won') return 'psl-tag--done';
-  return 'psl-tag--neutral';
+/** The frame's status tag tone, by kind only (nothing derived from days_left or at). A deadline needs a person (orange);
+ *  pending and unknown are waiting on someone else (amber); won and the rest are information (grey), as a won bid is not
+ *  a verified output. */
+export function statusTone(kind: Rfp['status']['kind']): TagTone {
+  if (kind === 'deadline') return 'person';
+  if (kind === 'pending' || kind === 'unknown') return 'waiting';
+  return 'neutral';
 }
 
 /** "Tamarind Loans · loan origination RFP", or whichever of the two is present. */

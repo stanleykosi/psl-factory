@@ -25,12 +25,12 @@ const lineLinks = (page: Page) => page.locator('ol.projects__lines a');
 const projectTabs = (page: Page) => page.getByRole('tablist', { name: 'Project' }).getByRole('tab');
 
 async function listLoaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1, name: 'Projects' })).toBeVisible();
 }
 
 async function journeyLoaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 }
 
@@ -140,7 +140,7 @@ for (const [label, viewport] of [
         await route.continue();
       });
       await page.goto('/projects');
-      await expect(page.getByRole('status')).toBeVisible();
+      await expect(page.getByText('Loading…')).toBeVisible();
       await expect(projectLinks(page)).toHaveCount(0);
       expect(await motion(page)).toEqual({ transitions: [], running: 0 });
       await expectNoAxeViolations(page);
@@ -319,6 +319,8 @@ test.describe('desktop 1440 details', () => {
     await expect(projectLinks(page)).toHaveText(['Sabi Market · web store']);
     await page.getByRole('tab', { name: /Closed/ }).focus();
     await page.keyboard.press('ArrowRight');
+    await expect(page.getByRole('tab', { name: /All I can see/ })).toBeFocused();
+    await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/\?status=all$/);
     await expect(projectLinks(page)).toHaveCount(5);
     await expect(page.getByRole('tab', { name: /All I can see/ })).toBeFocused();
