@@ -1047,3 +1047,11 @@
 {"at":"2026-11-14T21:25:55Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
 {"at":"2026-11-14T21:25:55Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-14T21:25:55Z","feature":"F-16","round":2,"kind":"transition","head":"df180ca0716d","from":"MERGED","to":"DONE"}
+{"at":"2026-11-14T21:38:05Z","feature":"F-17","round":0,"kind":"created","tasks":["FE-WORKSPACE-FRAME"]}
+{"at":"2026-11-14T21:38:06Z","feature":"F-18","round":0,"kind":"created","tasks":["FE-M2B-RFP"]}
+{"at":"2026-11-14T21:59:32Z","feature":"F-17","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","external-messaging"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-14T21:59:34Z","feature":"F-17","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-14T21:59:35Z","feature":"F-18","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change","external-messaging"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-14T21:59:36Z","feature":"F-18","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-14T22:00:12Z","feature":"F-17","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-14T22:00:32Z","feature":"F-18","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
