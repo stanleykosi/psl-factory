@@ -1,0 +1,35 @@
+{
+  "client_id": "CL-3501",
+  "name": "Lagoon Health Ltd",
+  "revision": 3,
+  "billing_contact": {
+    "set": false
+  },
+  "projects": [
+    {
+      "case_id": "P-0101",
+      "title": "Patient app",
+      "stage": "Delivery"
+    }
+  ],
+  "money": {
+    "invoiced": {
+      "amount": "6000000.00",
+      "currency": "NGN",
+      "unknown": false
+    },
+    "received": {
+      "amount": "3000000.00",
+      "currency": "NGN",
+      "unknown": false
+    },
+    "owed": {
+      "currency": "NGN",
+      "unknown": true
+    }
+  },
+  "blocked": [
+    "No billing contact, so invoices for this client can't start. Add one here."
+  ],
+  "can_change": true
+}
