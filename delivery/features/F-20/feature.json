@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-20",
   "outcome": "The Templates tab on Setup lists each document template and uploads a new version of one",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-SETUP-TEMPLATES"
   ],
@@ -132,7 +132,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO acceptance",
-      "snapshot_ref": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "snapshot_ref": "1bf933da30fd5e895b5b35f48e89149984c4a305",
       "evidence_refs": [
         "delivery/features/F-20/round-2/acceptance-pmo.md"
       ]
@@ -140,11 +140,13 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-20/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb)",
+      "authority": "the design engineer's answer on 15 Nov 2026: \"Accept and merge\" (F-20, merge into dlv-00 and then main)",
+      "snapshot_ref": "1bf933da30fd5e895b5b35f48e89149984c4a305",
+      "evidence_refs": [
+        "delivery/features/F-20/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -771,11 +773,11 @@
     "task_branch": "fe-setup-templates-the-templates-tab-on-setup-lists-each-do",
     "head_sha": "1bf933da30fd5e895b5b35f48e89149984c4a305",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-20",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/34",
+    "pr_number": 34,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -1246,6 +1248,14 @@
       "at": "2026-11-15T12:31:42Z",
       "round": 2,
       "head": "777d9a3f11f10544e6d43ffa7d52a86f7202df99",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-15T12:54:39Z",
+      "round": 2,
+      "head": "1bf933da30fd5e895b5b35f48e89149984c4a305",
       "reason": null
     }
   ],
