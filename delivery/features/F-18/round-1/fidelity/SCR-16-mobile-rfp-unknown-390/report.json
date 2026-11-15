@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T06:43:13.707Z",
+  "generatedAt": "2026-11-15T06:54:44.565Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-mobile-rfp-unknown.dc.html",
   "boardName": "SCR-16-mobile-rfp-unknown.dc.html",
   "pageUrl": "http://localhost:4621/work/W-2108/outcome",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 86.4 is below 90.",
+    "Visual match 86 is below 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 85.7,
     "coverageWithExceptions": 100,
-    "visual": 86.4
+    "visual": 86
   },
   "visual": {
-    "score": 86.4,
-    "allCellsScore": 86.6,
+    "score": 86,
+    "allCellsScore": 86.2,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
-    "pageHeight": 1063,
+    "pageHeight": 1040,
     "cell": 12,
-    "contentCells": 2313,
-    "mismatchedCells": 315
+    "contentCells": 2303,
+    "mismatchedCells": 323
   },
   "coverage": {
     "total": 7,
@@ -108,7 +108,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 288,
+          "y": 276,
           "w": 358,
           "h": 37
         }
@@ -129,7 +129,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 609,
+          "y": 586,
           "w": 358,
           "h": 108
         }
@@ -266,7 +266,7 @@
         "container": "main",
         "pageBox": {
           "x": 16,
-          "y": 753,
+          "y": 730,
           "w": 358,
           "h": 144
         }
@@ -278,7 +278,7 @@
         "container": "complementary",
         "pageBox": {
           "x": 18,
-          "y": 755,
+          "y": 732,
           "w": 354,
           "h": 31
         }
@@ -290,7 +290,7 @@
         "container": "complementary",
         "pageBox": {
           "x": 32,
-          "y": 800,
+          "y": 777,
           "w": 326,
           "h": 21
         }
@@ -302,7 +302,7 @@
         "container": "complementary",
         "pageBox": {
           "x": 32,
-          "y": 831,
+          "y": 808,
           "w": 326,
           "h": 50
         }

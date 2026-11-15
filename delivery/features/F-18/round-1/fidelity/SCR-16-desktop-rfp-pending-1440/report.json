@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T06:42:21.777Z",
+  "generatedAt": "2026-11-15T06:54:02.053Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-desktop-rfp-pending.dc.html",
   "boardName": "SCR-16-desktop-rfp-pending.dc.html",
   "pageUrl": "http://localhost:4621/work/W-2107/outcome",
@@ -756,7 +756,8 @@
     "unexcepted": 0
   },
   "warnings": [
-    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: these board fonts did not load and fell back to system fonts: Archivo."
   ],
   "images": {
     "board": "board.png",

@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T06:42:28.629Z",
+  "generatedAt": "2026-11-15T06:54:06.992Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-desktop-rfp-unknown.dc.html",
   "boardName": "SCR-16-desktop-rfp-unknown.dc.html",
   "pageUrl": "http://localhost:4621/work/W-2108/outcome",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 83.7 is below 90.",
+    "Visual match 86.7 is below 90.",
     "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 82.4,
     "coverageWithExceptions": 100,
-    "visual": 83.7
+    "visual": 86.7
   },
   "visual": {
-    "score": 83.7,
-    "allCellsScore": 90.2,
+    "score": 86.7,
+    "allCellsScore": 92.3,
     "width": 1440,
     "height": 958,
     "boardHeight": 958,
-    "pageHeight": 1009,
+    "pageHeight": 986,
     "cell": 12,
-    "contentCells": 5782,
-    "mismatchedCells": 943
+    "contentCells": 5534,
+    "mismatchedCells": 738
   },
   "coverage": {
     "total": 34,
@@ -237,7 +237,7 @@
           "x": 60,
           "y": 57,
           "w": 1320,
-          "h": 952
+          "h": 929
         }
       },
       {
@@ -412,7 +412,7 @@
         },
         "pageBox": {
           "x": 90,
-          "y": 506,
+          "y": 494,
           "w": 898,
           "h": 37
         }
@@ -433,7 +433,7 @@
         },
         "pageBox": {
           "x": 162,
-          "y": 580,
+          "y": 557,
           "w": 127,
           "h": 18
         }
@@ -454,7 +454,7 @@
         },
         "pageBox": {
           "x": 162,
-          "y": 598,
+          "y": 575,
           "w": 127,
           "h": 15
         }
@@ -475,7 +475,7 @@
         },
         "pageBox": {
           "x": 909,
-          "y": 585,
+          "y": 562,
           "w": 49,
           "h": 23
         }
@@ -496,7 +496,7 @@
         },
         "pageBox": {
           "x": 106,
-          "y": 730,
+          "y": 707,
           "w": 866,
           "h": 36
         }
@@ -517,7 +517,7 @@
         },
         "pageBox": {
           "x": 104,
-          "y": 809,
+          "y": 786,
           "w": 870,
           "h": 66
         }
@@ -539,7 +539,7 @@
         },
         "pageBox": {
           "x": 104,
-          "y": 887,
+          "y": 864,
           "w": 431,
           "h": 50
         }
@@ -561,7 +561,7 @@
         },
         "pageBox": {
           "x": 543,
-          "y": 887,
+          "y": 864,
           "w": 431,
           "h": 50
         }
@@ -820,23 +820,23 @@
         ]
       },
       {
-        "label": "Text \"Tola · PMO agent · done\"",
-        "kind": "Text",
-        "name": "Tola · PMO agent · done",
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
         "boardBox": {
-          "x": 162,
-          "y": 576,
-          "w": 127,
-          "h": 15
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 902
         },
         "pageBox": {
-          "x": 162,
-          "y": 598,
-          "w": 127,
-          "h": 15
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 929
         },
         "reasons": [
-          "order: on the board it comes after Text \"Follow-up email\"; on the page it comes after Text \"DONE\""
+          "order: on the board it comes after Link \"Record the outcome\"; on the page it comes after Text \"FOLLOW-UP EMAIL · DRAFTED BY TOLA\""
         ]
       }
     ],

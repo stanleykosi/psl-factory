@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-15T06:42:08.227Z",
+  "generatedAt": "2026-11-15T06:53:47.927Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-16-desktop-rfp-won.dc.html",
   "boardName": "SCR-16-desktop-rfp-won.dc.html",
   "pageUrl": "http://localhost:4621/work/W-2105/outcome",
@@ -36,7 +36,7 @@
     "pageHeight": 820,
     "cell": 12,
     "contentCells": 3722,
-    "mismatchedCells": 987
+    "mismatchedCells": 988
   },
   "coverage": {
     "total": 30,
