@@ -205,6 +205,18 @@ test('W-2007: queued is announced as Waiting; the 409 re-bases the next press on
   expect(done.idempotency_key).not.toBe(stale.idempotency_key);
 });
 
+test('W-2008 on a phone: after an uncertain send, Record and continue is tappable', async ({ page, context, baseURL }) => {
+  await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
+  await page.setViewportSize(PHONE);
+  await openItem(page, 'W-2008');
+  await page.getByRole('button', { name: 'Approve and send' }).click();
+  await expect(page.getByRole('radiogroup', { name: 'Confirm what happened' })).toBeVisible();
+  await page.getByRole('radio', { name: /It didn’t arrive/ }).check();
+  const answered = page.waitForResponse((r) => new URL(r.url()).pathname === '/api/v1/work/W-2008/actions');
+  await page.getByRole('button', { name: 'Record and continue' }).click();
+  expect((await answered).status()).toBe(200);
+});
+
 test('W-2008: effect uncertain turns every step off; the reconcile answer goes once to E-WORK-ACTION and nothing to steps', async ({ page, context, baseURL }) => {
   await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
   await page.setViewportSize(DESKTOP);
