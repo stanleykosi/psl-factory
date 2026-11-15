@@ -231,17 +231,19 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
         )}
       </header>
       {searchable && (
-        <ListToolbar
-          className="exc-toolbar"
-          search={{ label: 'Search', placeholder: 'Search exceptions', value: text, onChange: setText, onSearch: applySearch }}
-          filterCount={filters.what ? 1 : 0}
-          filterOpen={filterOpen}
-          onFilterToggle={() => setFilterOpen((open) => !open)}
-          filterPanel={<ExceptionsFilter applied={filters.what} onApply={applyKind} onClose={() => setFilterOpen(false)} />}
-          resultText={!phone && openCount !== undefined ? `${openCount} OPEN` : ''}
-          chips={filters.what ? [{ key: 'what', name: 'What happened', value: KIND_TAGS[filters.what].words, onRemove: () => applyKind(undefined) }] : []}
-          onClearAll={clearAll}
-        />
+        <div role="search">
+          <ListToolbar
+            className="exc-toolbar"
+            search={{ label: 'Search', placeholder: 'Search exceptions', value: text, onChange: setText, onSearch: applySearch }}
+            filterCount={filters.what ? 1 : 0}
+            filterOpen={filterOpen}
+            onFilterToggle={() => setFilterOpen((open) => !open)}
+            filterPanel={<ExceptionsFilter applied={filters.what} onApply={applyKind} onClose={() => setFilterOpen(false)} />}
+            resultText={!phone && openCount !== undefined ? `${openCount} OPEN` : ''}
+            chips={filters.what ? [{ key: 'what', name: 'What happened', value: KIND_TAGS[filters.what].words, onRemove: () => applyKind(undefined) }] : []}
+            onClearAll={clearAll}
+          />
+        </div>
       )}
       {body}
     </div>

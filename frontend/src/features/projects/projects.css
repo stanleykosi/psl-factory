@@ -78,6 +78,8 @@
 .projects__noaccesstag { align-self: flex-start; }
 
 @media (max-width: 719.98px) {
+  .projects__toolbar .psl-toolbar { flex-wrap: nowrap; gap: var(--space-2); }
+  .projects__toolbar .cmp-toolsearch { flex: 1 1 0; min-width: 0; max-width: none; }
   .projects__page, .projects__panel { gap: var(--space-3); }
   .projects__eyebrow, .projects__listtabs, .projects__total, .projects__note { display: none; }
   .projects__search { flex: 1 1 0; min-width: 0; max-width: none; }

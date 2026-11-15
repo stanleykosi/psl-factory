@@ -285,20 +285,22 @@ export function ProjectsList() {
         onSelect={(tab) => navigate({ tab })}
         panelId={LIST_PANEL_ID}
       />
-      <ListToolbar
-        className="projects__toolbar"
-        search={{ label: 'Search', placeholder: phone ? 'Search projects' : 'Search projects or clients', value: text, onChange: setText, onSearch: applySearch }}
-        filterCount={0}
-        filterOpen={filterOpen}
-        onFilterToggle={() => setFilterOpen((open) => !open)}
-        filterPanel={
-          <FilterPanel title="Filter projects" applyLabel="Close" onApply={closeFilter} onClear={closeFilter} onClose={closeFilter}>
-            <strong>Filters come next</strong>
-            <p>Search finds a project by its name or its client today.</p>
-          </FilterPanel>
-        }
-        resultText={list.status === 'ready' ? (total === undefined ? `${list.items.length} shown` : `${total} ${total === 1 ? 'PROJECT' : 'PROJECTS'}`) : ''}
-      />
+      <div role="search">
+        <ListToolbar
+          className="projects__toolbar"
+          search={{ label: 'Search', placeholder: phone ? 'Search projects' : 'Search projects or clients', value: text, onChange: setText, onSearch: applySearch }}
+          filterCount={0}
+          filterOpen={filterOpen}
+          onFilterToggle={() => setFilterOpen((open) => !open)}
+          filterPanel={
+            <FilterPanel title="Filter projects" applyLabel="Close" onApply={closeFilter} onClear={closeFilter} onClose={closeFilter}>
+              <strong>Filters come next</strong>
+              <p>Search finds a project by its name or its client today.</p>
+            </FilterPanel>
+          }
+          resultText={list.status === 'ready' ? (total === undefined ? `${list.items.length} shown` : `${total} ${total === 1 ? 'PROJECT' : 'PROJECTS'}`) : ''}
+        />
+      </div>
       <div role="tabpanel" id={LIST_PANEL_ID} aria-label={LIST_TABS.find((tab) => tab.key === view.tab)?.label} className="projects__panel">
         {body}
       </div>
