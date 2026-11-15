@@ -283,6 +283,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                   <span>
                     <Lead item={item} />
                     {item.detail && <> · {item.detail}</>}
+                    {item.tag && <> <span className={tagClass(item.tag.tone)}>{item.tag.label}</span></>}
                   </span>
                   <Owner item={item} />
                 </span>

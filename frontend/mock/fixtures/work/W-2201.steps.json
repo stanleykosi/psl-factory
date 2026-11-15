@@ -1,0 +1,15 @@
+{
+  "save_draft": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    },
+    "next": false
+  },
+  "send_to_tola": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    }
+  }
+}

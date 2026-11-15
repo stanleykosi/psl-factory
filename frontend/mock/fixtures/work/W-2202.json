@@ -1,0 +1,331 @@
+{
+  "id": "W-2202",
+  "title": "Weekly client report · 5–11 Nov",
+  "line": "Weekly client report",
+  "reference": "WCR-0216",
+  "revision": 4,
+  "tasks": [],
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "state": "action_needed",
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "current_person"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "workspace": {
+    "line_key": "weekly_report",
+    "screen": "SCR-25",
+    "view": "invalid",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "WCR-0216",
+          "label": "Weekly client report · WCR-0216"
+        }
+      ]
+    },
+    "revision": 4,
+    "title": "Weekly client report · 5–11 Nov",
+    "agent_note": {
+      "agent": "tola",
+      "lines": [
+        "Since last week: 1 milestone completed, 3 actions now overdue, 1 new change request. I've listed the records; the words to the client are yours."
+      ]
+    },
+    "sections": [
+      {
+        "key": "update",
+        "kind": "text",
+        "title": "Your update",
+        "items": [
+          {
+            "id": "P-1",
+            "label": "Risks",
+            "text": "TBD"
+          },
+          {
+            "id": "P-2",
+            "label": "Next steps",
+            "text": "Finish the login fix and plan go-live."
+          }
+        ],
+        "note": "The report can't start before the week has ended. This week ended 11 Nov."
+      },
+      {
+        "key": "meetings",
+        "kind": "facts",
+        "title": "MEETINGS",
+        "items": [
+          {
+            "id": "meetings-1",
+            "label": "Weekly sync with Lagoon Health",
+            "value": "10 Nov"
+          },
+          {
+            "id": "meetings-2",
+            "label": "UAT walkthrough",
+            "value": "11 Nov"
+          }
+        ]
+      },
+      {
+        "key": "milestones",
+        "kind": "facts",
+        "title": "MILESTONES COMPLETED",
+        "items": [
+          {
+            "id": "milestones-1",
+            "label": "Milestone 2 · UAT signed",
+            "value": "11 Nov"
+          }
+        ]
+      },
+      {
+        "key": "actions",
+        "kind": "facts",
+        "title": "ACTIONS",
+        "items": [
+          {
+            "id": "actions-1",
+            "label": "Client to send test accounts",
+            "value": "Due 13 Nov"
+          }
+        ],
+        "note": "3 overdue · 1 without an owner"
+      },
+      {
+        "key": "issues",
+        "kind": "facts",
+        "title": "ISSUES OPEN",
+        "items": [
+          {
+            "id": "issues-1",
+            "label": "ISS-0233 Login fails on older Android phones",
+            "value": "High"
+          }
+        ]
+      },
+      {
+        "key": "changes",
+        "kind": "facts",
+        "title": "CHANGES",
+        "items": [
+          {
+            "id": "changes-1",
+            "label": "CR-0031 Add SMS reminders",
+            "value": "Being assessed"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "send_to_tola",
+        "label": "Send to Tola to assemble",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "consequence": "Next: Tola assembles the report on the client template; the PMO Lead reviews it before it goes to Lagoon Health.",
+        "fields": [
+          {
+            "name": "status",
+            "label": "Status",
+            "type": "long_text",
+            "required": false,
+            "value": "Milestone 2 is complete: Lagoon Health signed UAT on 11 Nov. Work on milestone 3 (go-live) has started."
+          },
+          {
+            "name": "status_cites",
+            "label": "Cites for status",
+            "type": "records",
+            "required": false,
+            "multiple": true,
+            "options_source": "line_options",
+            "placeholder": "+ cite a record"
+          },
+          {
+            "name": "risks",
+            "label": "Risks",
+            "type": "long_text",
+            "required": false,
+            "value": "TBD"
+          },
+          {
+            "name": "risks_cites",
+            "label": "Cites for risks",
+            "type": "records",
+            "required": false,
+            "multiple": true,
+            "options_source": "line_options",
+            "placeholder": "+ cite a record"
+          },
+          {
+            "name": "timeline",
+            "label": "Timeline",
+            "type": "long_text",
+            "required": false,
+            "value": "Go-live remains planned for 4 Dec, subject to the login fix and test accounts from your team."
+          },
+          {
+            "name": "timeline_cites",
+            "label": "Cites for timeline",
+            "type": "records",
+            "required": false,
+            "multiple": true,
+            "options_source": "line_options",
+            "placeholder": "+ cite a record"
+          },
+          {
+            "name": "next_steps",
+            "label": "Next steps",
+            "type": "long_text",
+            "required": false,
+            "value": "Finish the login fix and plan go-live."
+          },
+          {
+            "name": "next_steps_cites",
+            "label": "Cites for next steps",
+            "type": "records",
+            "required": false,
+            "multiple": true,
+            "options_source": "line_options",
+            "placeholder": "+ cite a record"
+          }
+        ]
+      },
+      {
+        "key": "save_draft",
+        "label": "Save draft",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "fields": [
+          {
+            "name": "status",
+            "label": "Status",
+            "type": "long_text",
+            "required": false,
+            "value": "Milestone 2 is complete: Lagoon Health signed UAT on 11 Nov. Work on milestone 3 (go-live) has started."
+          },
+          {
+            "name": "status_cites",
+            "label": "Cites for status",
+            "type": "records",
+            "required": false,
+            "multiple": true,
+            "options_source": "line_options",
+            "placeholder": "+ cite a record"
+          },
+          {
+            "name": "risks",
+            "label": "Risks",
+            "type": "long_text",
+            "required": false,
+            "value": "TBD"
+          },
+          {
+            "name": "risks_cites",
+            "label": "Cites for risks",
+            "type": "records",
+            "required": false,
+            "multiple": true,
+            "options_source": "line_options",
+            "placeholder": "+ cite a record"
+          },
+          {
+            "name": "timeline",
+            "label": "Timeline",
+            "type": "long_text",
+            "required": false,
+            "value": "Go-live remains planned for 4 Dec, subject to the login fix and test accounts from your team."
+          },
+          {
+            "name": "timeline_cites",
+            "label": "Cites for timeline",
+            "type": "records",
+            "required": false,
+            "multiple": true,
+            "options_source": "line_options",
+            "placeholder": "+ cite a record"
+          },
+          {
+            "name": "next_steps",
+            "label": "Next steps",
+            "type": "long_text",
+            "required": false,
+            "value": "Finish the login fix and plan go-live."
+          },
+          {
+            "name": "next_steps_cites",
+            "label": "Cites for next steps",
+            "type": "records",
+            "required": false,
+            "multiple": true,
+            "options_source": "line_options",
+            "placeholder": "+ cite a record"
+          }
+        ]
+      }
+    ],
+    "status": {
+      "label": "Needs fixing",
+      "tone": "stopped"
+    }
+  }
+}

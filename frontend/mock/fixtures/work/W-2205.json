@@ -1,0 +1,193 @@
+{
+  "id": "W-2205",
+  "title": "Weekly client report · 5–11 Nov",
+  "line": "Weekly client report",
+  "reference": "WCR-0216",
+  "revision": 3,
+  "tasks": [],
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "state": "action_needed",
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Assembled this from the week's records",
+        "status": "done"
+      }
+    ]
+  },
+  "workspace": {
+    "line_key": "weekly_report",
+    "screen": "SCR-25",
+    "view": "review",
+    "subtitle": "Lagoon Health · week ending 11 Nov",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "WCR-0216",
+          "label": "Weekly client report · WCR-0216"
+        }
+      ]
+    },
+    "revision": 3,
+    "title": "Weekly client report · 5–11 Nov",
+    "status": {
+      "label": "Your review",
+      "tone": "person"
+    },
+    "byline": "Written by Tunde Bello, assembled by Tola",
+    "version": {
+      "label": "Report v1",
+      "number": 1,
+      "document_id": "D-WCR-0216-1"
+    },
+    "sections": [
+      {
+        "key": "report",
+        "kind": "text",
+        "title": "Report v1 · written by Tunde Bello, assembled by Tola",
+        "items": [
+          {
+            "id": "P-1",
+            "label": "Status",
+            "text": "Milestone 2 complete; go-live work started",
+            "cites": [
+              {
+                "label": "Milestone 2 · UAT signed 11 Nov",
+                "reference": "MS-0002"
+              },
+              {
+                "label": "UAT walkthrough · 11 Nov",
+                "reference": "MTG-0141"
+              }
+            ],
+            "cite_label": "2 RECORDS"
+          },
+          {
+            "id": "P-2",
+            "label": "Risks",
+            "text": "Login fails on older Android phones (high)",
+            "cites": [
+              {
+                "label": "ISS-0233 Login fails on older Android phones · High",
+                "reference": "ISS-0233"
+              }
+            ]
+          },
+          {
+            "id": "P-3",
+            "label": "Timeline",
+            "text": "Go-live 4 Dec, subject to the login fix",
+            "cites": [
+              {
+                "label": "Weekly sync with Lagoon Health · 10 Nov",
+                "reference": "MTG-0140"
+              }
+            ]
+          },
+          {
+            "id": "P-4",
+            "label": "Next steps",
+            "text": "Fix verification; go-live plan",
+            "cites": [
+              {
+                "label": "Client to send test accounts · due 13 Nov",
+                "reference": "ACT-0412"
+              },
+              {
+                "label": "CR-0031 Add SMS reminders · being assessed",
+                "reference": "CR-0031"
+              }
+            ],
+            "cite_label": "2 ACTIONS"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_send",
+        "label": "Approve and send",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "sends": true,
+        "consequence": "Approving sends this exact version to Lagoon Health."
+      },
+      {
+        "key": "return",
+        "label": "Return with a note",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "fields": [
+          {
+            "name": "note",
+            "label": "Note (needed to return or refuse)",
+            "type": "long_text",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}
