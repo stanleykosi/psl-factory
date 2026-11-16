@@ -1,0 +1,78 @@
+{
+  "conversation_id": "CV-2403",
+  "agent": "chidi",
+  "title": "Can we bill Harmattan stage 3?",
+  "status": "answered",
+  "context": {
+    "project": {
+      "case_id": "C-0102",
+      "title": "Harmattan Bank · mobile onboarding"
+    },
+    "access": [
+      "Finance · read"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "What is going on with the Harmattan Bank go-live? Can we invoice the final stage yet?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-16T08:05:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "Not yet. The go-live report was sent to the client at 10:02, but the delivery result is unknown, so the factory is checking for a receipt before anything is resent. The client has not signed go-live acceptance, and milestone 3 is not marked complete. Stage 3 can be invoiced after the PM records that milestone.",
+      "steps": [
+        "Read the go-live work item and its activity",
+        "Read the delivery job for the client report",
+        "Checked the milestone list for stage 3"
+      ],
+      "sources": [],
+      "at": "2026-11-16T08:07:00Z",
+      "step_details": [
+        {
+          "text": "Read the go-live work item and its activity",
+          "state": "done",
+          "reference": {
+            "label": "GO-LIVE · GLV-0087"
+          }
+        },
+        {
+          "text": "Read the delivery job for the client report",
+          "state": "done",
+          "reference": {
+            "label": "DELIVERY JOB · 10:02"
+          }
+        },
+        {
+          "text": "Checked the milestone list for stage 3",
+          "state": "done",
+          "reference": {
+            "label": "MILESTONES · HB-M3"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "GO-LIVE",
+          "label": "GO-LIVE · GLV-0087",
+          "restricted": false,
+          "link": {
+            "work_id": "W-1005"
+          }
+        },
+        {
+          "kind": "DELIVERY JOB",
+          "label": "DELIVERY JOB · 10:02",
+          "restricted": false
+        },
+        {
+          "kind": "MILESTONES",
+          "label": "MILESTONES · HB-M3",
+          "restricted": true
+        }
+      ]
+    }
+  ]
+}

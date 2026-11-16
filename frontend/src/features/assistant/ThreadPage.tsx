@@ -1,0 +1,92 @@
+'use client';
+
+// /assistant/[conversationId]: one conversation. Reads E-CONVERSATION, polls while it is working, and holds the
+// composer for the agent that answered. A conversation that is not the person's, or unknown, shows nothing of it.
+import { usePathname, useRouter } from 'next/navigation';
+
+import { AGENTS, EmptyState, ErrorState, Loading, Skeleton, VisuallyHidden } from '@/components';
+import { usePhoneBack } from '@/shell/AppShell';
+import { SignedOutState } from '@/shell/FrameStates';
+
+import { useAssistant } from './AssistantContext';
+import { TalkTo } from './Chrome';
+import { ComposerBar } from './ComposerBar';
+import { NOT_FOUND, REFRESH_FAILED, sideSentence } from './labels';
+import { poseFor, SidePanel } from './SidePanel';
+import { Thread } from './Thread';
+import { useConversation } from './useConversation';
+import { useSend } from './useSend';
+import type { Conversation } from './types';
+
+function PhoneHeader({ title }: { title: string }) {
+  usePhoneBack({ label: 'Assistant', href: '/assistant', note: title });
+  return null;
+}
+
+function Open({ id, conversation, refreshFailed, reload }: { id: string; conversation: Conversation; refreshFailed: boolean; reload: () => Promise<Conversation | undefined> }) {
+  const { agents, list } = useAssistant();
+  const router = useRouter();
+  const pathname = usePathname() ?? '/assistant';
+  const agent = conversation.agent;
+  const send = useSend({ agent: agent ?? 'tola', conversationId: id, reload, listChanged: list.refresh });
+  const name = agent ? AGENTS[agent].name : '';
+  return (
+    <>
+      <div className="as__center">
+        {conversation.title && <PhoneHeader title={conversation.title} />}
+        <TalkTo agents={agents} onPick={(next) => router.push(`/assistant?agent=${next}`)} />
+        <VisuallyHidden>
+          <h1>{conversation.title ?? 'Conversation'}</h1>
+        </VisuallyHidden>
+        <Thread conversation={conversation} reread={reload} />
+        {refreshFailed && (
+          <p className="psl-hint as__refresh" role="status">
+            {REFRESH_FAILED}
+          </p>
+        )}
+        {agent && <ComposerBar agent={agent} send={send} pathname={pathname} />}
+      </div>
+      {agent && (
+        <SidePanel
+          agent={agent}
+          pose={poseFor(conversation)}
+          status={sideSentence(name, conversation)}
+          project={conversation.context?.project?.title}
+          access={conversation.context?.access}
+        />
+      )}
+    </>
+  );
+}
+
+export function ThreadPage({ id }: { id: string }) {
+  const { agents, list } = useAssistant();
+  const router = useRouter();
+  const pathname = usePathname() ?? '/assistant';
+  const { state, reload, retry } = useConversation(id, list.refresh);
+
+  if (state.status === 'ready') return <Open id={id} conversation={state.data} refreshFailed={state.refreshFailed} reload={reload} />;
+  let body;
+  if (state.status === 'loading') {
+    body = (
+      <>
+        <Skeleton widths={[60, 80, 50]} />
+        <Loading>Loading…</Loading>
+      </>
+    );
+  } else if (state.status === 'signed_out') body = <SignedOutState pathname={pathname} />;
+  else if (state.status === 'missing') body = <EmptyState title={NOT_FOUND} level={2}>It may belong to someone else, or it may be gone.</EmptyState>;
+  else
+    body = (
+      <ErrorState title="Couldn’t load this conversation" onRetry={retry} retryLabel="Try again">
+        Nothing was changed.
+      </ErrorState>
+    );
+  return (
+    <div className="as__center">
+      <TalkTo agents={agents} onPick={(next) => router.push(`/assistant?agent=${next}`)} />
+      {state.status !== 'missing' && state.status !== 'error' && <VisuallyHidden><h1>Conversation</h1></VisuallyHidden>}
+      <div className="as__state">{body}</div>
+    </div>
+  );
+}

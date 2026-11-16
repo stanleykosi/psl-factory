@@ -26,6 +26,8 @@ type Props = {
   onClose: () => void;
   onStarted: (workId: string) => void;
   pathname: string;
+  /** The assistant's draft: the form opens filled from it, for the person to check (see useStartForm). */
+  initialIntake?: Record<string, unknown>;
 };
 
 export const CASE_UNUSABLE = 'This project can’t be started on from here.';
@@ -171,14 +173,14 @@ function movedHelp(fields: Field[], at: number): { id: string; text?: string } |
   return owner === fields[at] ? { id } : { id, text: owner.help };
 }
 
-export function LineForm({ line, onBack, onClose, onStarted, pathname }: Props) {
+export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIntake }: Props) {
   const wide = useWide();
-  const form = useStartForm(line, onStarted);
+  const form = useStartForm(line, onStarted, initialIntake);
   const here = startableHere(line);
   const agent = line.next?.agent ? AGENT_NAMES[line.next.agent] : undefined;
   const { notice, noticeSeq } = form;
 
-  const readOnly = form.uncertain || form.busy;
+  const readOnly = form.uncertain || form.busy || form.prefilling;
   const unusable = caseOptionUnusable(line, form.values);
   const labels = Object.fromEntries(form.fields.map((f) => [f.name, f.label]));
   const title = drawerTitle(line, !wide);
@@ -222,7 +224,7 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname }: Props) 
     );
   }
 
-  const canPress = !form.awaitingChange && notice?.kind !== 'gone' && (form.uncertain || form.caseRef !== null);
+  const canPress = !form.prefilling && !form.awaitingChange && notice?.kind !== 'gone' && (form.uncertain || form.caseRef !== null);
   const footer = (
     <>
       {form.uncertain && <span className="psl-hint sw-foothint">If it started, it will appear in My work.</span>}

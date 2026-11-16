@@ -136,6 +136,66 @@
 .psl-doesnt.cmp-paidnote { margin: var(--space-2) 0 0; }
 .psl-step--done .psl-step__box .cmp-steptick { color: var(--on-strong); }
 
+/* agent steps, inline (the assistant thread, SCR-05): a mono header line over the steps, no avatar head */
+.psl-agent.cmp-agent--inline { padding: var(--space-6px) var(--space-3); max-width: calc(var(--space-7) * 14.5); }
+.cmp-agent__line { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.04em; color: var(--action-ink); }
+.cmp-agent--inline .psl-steps { padding: 0; margin-top: var(--space-1); }
+.cmp-agent--inline .psl-step { padding-block: var(--space-6px); }
+
+/* source tag (SourceTag): mono type and reference, outlined; restricted is dashed with a lock */
+.cmp-source { display: inline-flex; align-items: center; text-decoration: none; color: var(--ink); }
+.cmp-source__box { display: inline-flex; align-items: center; gap: var(--space-6px); font-family: var(--font-mono); font-size: var(--text-reference-size); line-height: var(--text-reference-line); padding: var(--space-1) var(--space-2); border: 1.5px solid var(--action); }
+.cmp-source--link:hover .cmp-source__box { background: var(--action-tint); color: var(--action-ink); }
+.cmp-source--link:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.cmp-source--restricted { color: var(--ink-muted); }
+.cmp-source--restricted .cmp-source__box { border: 1.5px dashed var(--ink-muted); }
+.cmp-source .psl-icon { width: var(--space-14px); height: var(--space-14px); }
+
+/* draft card (DraftCard): action-tint head, label and value rows, the start line, the started line */
+.cmp-draft { background: var(--surface); border: var(--rule-strong) solid var(--action); max-width: calc(var(--space-7) * 14.5); }
+.cmp-draft__head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); padding: var(--space-10px) var(--space-14px); background: var(--action-tint); border-bottom: var(--rule-strong) solid var(--action); }
+.cmp-draft__title { font-family: var(--font-display); font-weight: 700; }
+.cmp-draft__status { font-family: var(--font-mono); font-size: var(--text-label-size); padding: 3px var(--space-6px); background: var(--surface); border: 1.5px solid var(--ink); }
+.cmp-draft__rows { margin: 0; padding: var(--space-14px); display: grid; gap: var(--space-2); }
+.cmp-draft__row { display: grid; grid-template-columns: minmax(var(--space-7), auto) minmax(0, 1fr); gap: var(--space-2) var(--space-4); }
+.cmp-draft__row dt { color: var(--ink-muted); }
+.cmp-draft__row dd { margin: 0; overflow-wrap: anywhere; }
+.cmp-draft__foot { padding: 0 var(--space-14px) var(--space-14px); display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; }
+.cmp-draft__next { font-size: var(--text-small-size); color: var(--ink-muted); }
+.cmp-draft__started { margin: 0; padding: var(--space-10px) var(--space-14px); border-top: var(--rule-strong) solid var(--ink); background: var(--verified-tint); color: var(--verified-ink); font-weight: 500; }
+.cmp-draft__started a { color: inherit; }
+
+/* chat message (ChatMessage): your ink box on the right; an agent's avatar, name, hand-off, steps, answer, sources */
+.cmp-chat__text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.cmp-chat--person { align-self: flex-end; max-width: calc(var(--space-7) * 13 + var(--space-2)); background: var(--ink); color: var(--on-strong); padding: var(--space-3) var(--space-4); }
+.cmp-chat--agent { display: grid; grid-template-columns: var(--control-sm) minmax(0, 1fr); grid-template-areas: "av who" "av body"; column-gap: var(--space-3); row-gap: var(--space-10px); align-items: start; }
+.cmp-chat__avatar { grid-area: av; }
+.cmp-chat__who { grid-area: who; font-weight: 600; }
+.cmp-chat__who span { font-weight: 400; color: var(--ink-muted); }
+.cmp-chat__body { grid-area: body; display: flex; flex-direction: column; gap: var(--space-10px); min-width: 0; }
+.cmp-chat__handoff { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
+.cmp-chat__answer { line-height: 1.6; }
+.cmp-chat__cannot { color: var(--signal-ink); }
+.cmp-chat__sources { display: flex; flex-wrap: wrap; gap: var(--space-6px); }
+
+/* composer (Composer): the focus ring is on the whole box */
+.cmp-composer { display: flex; flex-direction: column; gap: var(--space-1); }
+.cmp-composer__box { display: flex; flex-direction: column; border: var(--rule-strong) solid var(--ink); background: var(--surface); }
+.cmp-composer__box:focus-within { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.cmp-composer__chips { list-style: none; margin: 0; padding: var(--space-10px) var(--space-3) 0; display: flex; flex-wrap: wrap; gap: var(--space-6px); }
+.cmp-composer__chip { display: inline-flex; align-items: center; gap: var(--space-6px); padding: 3px var(--space-2); background: var(--neutral-tint); color: var(--neutral-ink); font-size: var(--text-hint-size); font-weight: 500; }
+.cmp-composer__remove { border: none; background: none; padding: 0; font: inherit; color: var(--ink-muted); cursor: pointer; }
+.cmp-composer__input { border: none; resize: none; padding: var(--space-3) var(--space-14px); font: inherit; font-size: var(--text-lead-size); min-height: calc(var(--space-7) + var(--space-3)); outline: none; background: none; color: var(--ink); }
+.cmp-composer__input::placeholder { color: var(--ink-subtle); }
+.cmp-composer__tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-10px); border-top: 1.5px solid var(--rule-soft); }
+.cmp-composer__end { margin-left: auto; display: flex; gap: var(--space-2); }
+.cmp-composer__mic.psl-iconbtn { box-shadow: none; border: 1.5px solid var(--disabled); cursor: not-allowed; color: var(--ink-muted); }
+.cmp-composer__send { width: var(--control-md); height: var(--control-md); border: none; background: var(--ink); color: var(--on-strong); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.cmp-composer__send:hover { background: var(--ink-strong); }
+.cmp-composer__send[aria-disabled="true"] { background: var(--disabled); color: var(--ink-subtle); cursor: not-allowed; }
+.cmp-composer__send[aria-busy="true"] { background: var(--ink); color: var(--on-strong); cursor: progress; }
+.cmp-composer__send:focus-visible, .cmp-composer__mic:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+
 /* phones: every target at least 44px (D-92 c) */
 @media (max-width: 719.98px) {
   /* a link standing on its own (crumb, empty-state action, an inline disclosure, cmp-target) is a 44px target; the
@@ -152,4 +212,16 @@
   .psl-btn.cmp-btn-sm { min-height: var(--control-md); }
   .psl-check.cmp-check, .psl-radio.cmp-check { min-height: var(--control-md); }
   .psl-link.cmp-linkbutton { display: inline-flex; align-items: center; min-height: var(--control-md); }
+  /* a link tag is a 44px target: the link is the full height and the drawn box sits in the middle of it */
+  .cmp-source--link { min-height: var(--control-md); }
+  .cmp-chat--agent { grid-template-columns: var(--chip-height) minmax(0, 1fr); grid-template-areas: "av who" "body body"; align-items: center; }
+  .cmp-chat--person { max-width: calc(var(--space-7) * 6 + var(--space-4) * 2 + var(--space-2)); padding: var(--space-10px) var(--space-3); font-size: var(--text-body-size); }
+  .cmp-draft__head { padding: var(--space-2) var(--space-3); }
+  .cmp-draft__rows { padding: var(--space-10px) var(--space-3); gap: var(--space-1); }
+  .cmp-draft__foot { padding: 0 var(--space-3) var(--space-3); }
+  .cmp-draft__foot > .psl-btn { flex: 1 1 100%; }
+  .psl-agent.cmp-agent--inline { padding: var(--space-1) var(--space-10px); }
+  .cmp-composer__input { font-size: var(--text-body-phone-size); min-height: auto; padding: var(--space-10px) var(--space-3); }
+  .cmp-composer__remove { width: var(--control-md); height: var(--control-md); margin: calc((var(--control-md) - var(--chip-height)) / -2) calc(var(--space-2) * -1) calc((var(--control-md) - var(--chip-height)) / -2) 0; }
+  .cmp-composer__chips { row-gap: var(--space-3); }
 }

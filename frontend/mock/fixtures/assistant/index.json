@@ -1,0 +1,59 @@
+{
+  "as_of": "2026-11-16T14:30:00Z",
+  "items": [
+    {
+      "conversation_id": "CV-2401",
+      "_persona": "pm",
+      "title": "Invoice · Harmattan Bank M2",
+      "agent": "chidi",
+      "status": "drafted",
+      "status_line": "Drafted · ready to start",
+      "updated_at": "2026-11-16T09:13:00Z"
+    },
+    {
+      "conversation_id": "CV-2402",
+      "_persona": "pm",
+      "title": "SOW · Kora Logistics phase 2",
+      "agent": "tola",
+      "status": "drafted",
+      "status_line": "Drafted · 3 open questions",
+      "updated_at": "2026-11-16T08:42:00Z"
+    },
+    {
+      "conversation_id": "CV-2403",
+      "_persona": "pm",
+      "title": "Can we bill Harmattan stage 3?",
+      "agent": "chidi",
+      "status": "answered",
+      "status_line": "Answered",
+      "updated_at": "2026-11-16T08:07:00Z"
+    },
+    {
+      "conversation_id": "CV-2404",
+      "_persona": "pm",
+      "title": "A staff member’s salary",
+      "agent": "zainab",
+      "status": "cannot_answer",
+      "status_line": "Can’t share",
+      "updated_at": "2026-11-16T07:51:00Z"
+    },
+    {
+      "conversation_id": "CV-2405",
+      "_persona": "pm",
+      "title": "Planning packet · Tamarind Loans",
+      "agent": "tola",
+      "status": "working",
+      "status_line": "Working · step 3 of 5",
+      "updated_at": "2026-11-16T13:03:00Z"
+    },
+    {
+      "conversation_id": "CV-2411",
+      "_persona": "finance_lead",
+      "title": "Weekly report · Lagoon Health",
+      "agent": "chidi",
+      "status": "drafted",
+      "status_line": "Drafted · ready to start",
+      "updated_at": "2026-11-16T08:17:00Z"
+    }
+  ]
+}
