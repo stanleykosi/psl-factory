@@ -1,0 +1,617 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-16T18:42:14.473Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-12-mobile.dc.html",
+  "boardName": "SCR-12-mobile.dc.html",
+  "pageUrl": "http://localhost:4780/projects/P-0101/money",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-26/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 71.4 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 63.6,
+    "coverageWithExceptions": 100,
+    "visual": 71.4
+  },
+  "visual": {
+    "score": 71.4,
+    "allCellsScore": 79.5,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1682,
+    "mismatchedCells": 481
+  },
+  "coverage": {
+    "total": 22,
+    "found": 14,
+    "coverage": 63.6,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · billing",
+        "pageName": "Lagoon Health · billing by contract stage",
+        "pageRole": "heading",
+        "similarity": 82,
+        "looks": [
+          "heading level 1 on the board, 2 on the page",
+          "text size 24px on the board, 15px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 26
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 168,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 374,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 110,
+          "w": 84,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 110,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones",
+        "pageName": "Milestones",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 102,
+          "y": 110,
+          "w": 103,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 110,
+          "w": 104,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents",
+        "pageName": "Documents",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 205,
+          "y": 110,
+          "w": 107,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 208,
+          "y": 110,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 312,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers",
+        "pageName": "Registers",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 387,
+          "y": 110,
+          "w": 93,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 391,
+          "y": 110,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦3,000,000",
+        "pageName": "₦3,000,000.00",
+        "pageRole": "link",
+        "similarity": 91,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 207,
+          "w": 330,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 216,
+          "w": 125,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified 03 Nov",
+        "pageName": "Verified 03 Nov , INV-0398",
+        "pageRole": "link",
+        "similarity": 83,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #4A5357 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 233,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 260,
+          "w": 89,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000",
+        "pageName": "₦4,250,000.00",
+        "pageRole": "link",
+        "similarity": 91,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 315,
+          "w": 330,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 347,
+          "w": 125,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Awaiting Finance decision",
+        "pageName": "Awaiting Finance decision , INV-0412",
+        "pageRole": "link",
+        "similarity": 88,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #4A5357 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 341,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 391,
+          "w": 151,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000",
+        "pageName": "₦4,250,000.00",
+        "pageRole": "link",
+        "similarity": 91,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 423,
+          "w": 330,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 455,
+          "w": 125,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Held · owner needed",
+        "pageName": "Held · owner needed , INV-0419",
+        "pageRole": "link",
+        "similarity": 85,
+        "note": "a link on the page, plain text on the board",
+        "looks": [
+          "text colour #4A5357 on the board, #2459D6 on the page",
+          "underlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 449,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 499,
+          "w": 121,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 64,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 15: the shared phone bar's back link reads \"← Projects\" (usePhoneBack, F-07), as on every project tab.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Stage 1 · kick-off",
+        "key": "text: Stage 1 · kick-off",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 182,
+          "w": 330,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Stage 2 · UAT",
+        "key": "text: Stage 2 · UAT",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 290,
+          "w": 330,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Stage 3 · go-live",
+        "key": "text: Stage 3 · go-live",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 398,
+          "w": 330,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Stage 4 · hypercare",
+        "key": "text: Stage 4 · hypercare",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 506,
+          "w": 330,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown",
+        "key": "text: Unknown",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 531,
+          "w": 330,
+          "h": 20
+        },
+        "exception": {
+          "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts. Stage 4's amount is the amber Unknown inside its card.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not yet due · amount set at go-live",
+        "key": "text: Not yet due · amount set at go-live",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 557,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 4: this is the row's amount_note, a fact about the amount; it is shown under the amount in the AMOUNT cell at both widths (D-104), not in the INVOICE column.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Tap an amount to see where it comes from",
+        "key": "link: Tap an amount to see where it comes from",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 600,
+          "w": 358,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 8: the sentence has no destination, so it is plain text, shown when at least one amount is a link; each amount opens the bottom sheet.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Heading \"Lagoon Health · billing\"",
+        "kind": "Heading",
+        "name": "Lagoon Health · billing",
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 26
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 168,
+          "w": 358,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Start\"; on the page it comes after Tab \"Registers\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Projects",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · patient app",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 24
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Money",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 168,
+          "w": 358,
+          "h": 535
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tap an amount to see where it comes from",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 652,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As of 12 Nov 16:40",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 685,
+          "w": 358,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
