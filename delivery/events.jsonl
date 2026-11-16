@@ -1524,3 +1524,43 @@
 {"at":"2026-11-16T03:30:18Z","feature":"F-24","round":0,"kind":"created","tasks":["FE-ASSISTANT"]}
 {"at":"2026-11-16T04:26:04Z","feature":"F-22","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","external-messaging"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-16T04:26:09Z","feature":"F-22","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-16T04:26:33Z","feature":"F-22","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-16T04:36:18Z","feature":"F-24","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-16T04:36:18Z","feature":"F-24","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-16T04:36:34Z","feature":"F-24","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-16T04:46:54Z","feature":"F-22","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":141.9,"commit":"6d857c318ffb"}
+{"at":"2026-11-16T04:47:00Z","feature":"F-22","round":1,"kind":"transition","head":"6d857c318ffb","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-16T04:47:54Z","feature":"F-22","round":1,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"6d857c318ffb","findings":{"TECH-1-1":"frontend/src/features/workspace/workspace.tsx:237","TECH-1-2":"frontend/src/features/workspace/sections.tsx:379","TECH-1-3":"delivery/features/f-22/round-1/build.md"},"written_at":"2026-11-16T04:47:48Z"}
+{"at":"2026-11-16T04:48:53Z","feature":"F-22","round":1,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"6d857c318ffb","findings":{"UX-1-1":"low","UX-1-2":"low","UX-1-3":"low","UX-1-4":"low"},"written_at":"2026-11-16T04:48:45Z"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"review","role":"ui","verdict":"CHANGES","reviewer":"reviewer-ui","commit":"6d857c318ffb","findings":{"UI-1-1":"medium","UI-1-2":"medium","UI-1-3":"low","UI-1-4":"low"},"written_at":"2026-11-16T04:48:55Z"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"6d857c318ffb","findings":{"SEC-1-1":"medium","SEC-1-2":"low","SEC-1-3":"low"},"written_at":"2026-11-16T04:48:58Z"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"TECH-1-1","by":"reviewer-technical","severity":"frontend/src/features/workspace/workspace.tsx:237","owner":"The `said` filter drops a `next` line equal to a step consequence, so that line shows only if the step row draws its own consequence. Expected: the page shows the data line in every state. Actual: it relies on Steps.tsx drawing it, and the form-open state was not checked.","blocking":false,"role":"technical"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"TECH-1-2","by":"reviewer-technical","severity":"frontend/src/features/workspace/sections.tsx:379","owner":"Text rows now draw an item `tag` for every text section. The only existing text-kind fixtures are unaffected, but this is wider than the recipients change.","blocking":false,"role":"technical"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"TECH-1-3","by":"reviewer-technical","severity":"delivery/features/f-22/round-1/build.md","owner":"Criterion 12 is marked partial: the 401/403 paths are not re-tested for W-2209 to W-2214. They are the unchanged F-21 handling.","blocking":false,"role":"technical"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"UX-1-1","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"UX-1-2","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"UX-1-3","by":"reviewer-ux","severity":"low","owner":"backend","blocking":false,"role":"ux"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"UX-1-4","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"UI-1-1","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"UI-1-2","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"UI-1-3","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"UI-1-4","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"SEC-1-1","by":"reviewer-security","severity":"medium","owner":"frontend","blocking":false,"role":"security"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"SEC-1-2","by":"reviewer-security","severity":"low","owner":"frontend","blocking":false,"role":"security"}
+{"at":"2026-11-16T04:49:23Z","feature":"F-22","round":1,"kind":"finding","action":"add","finding":"SEC-1-3","by":"reviewer-security","severity":"low","owner":"frontend","blocking":false,"role":"security"}
+{"at":"2026-11-16T04:49:30Z","feature":"F-22","round":1,"kind":"transition","head":"6d857c318ffb","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-16T04:49:40Z","feature":"F-22","round":2,"kind":"transition","head":"6d857c318ffb","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-16T05:05:05Z","feature":"F-22","round":2,"kind":"finding","action":"fix","finding":"TECH-1-1","by":"builder"}
+{"at":"2026-11-16T05:05:05Z","feature":"F-22","round":2,"kind":"finding","action":"fix","finding":"TECH-1-3","by":"builder"}
+{"at":"2026-11-16T05:05:05Z","feature":"F-22","round":2,"kind":"finding","action":"fix","finding":"UX-1-2","by":"builder"}
+{"at":"2026-11-16T05:05:05Z","feature":"F-22","round":2,"kind":"finding","action":"fix","finding":"UI-1-1","by":"builder"}
+{"at":"2026-11-16T05:05:05Z","feature":"F-22","round":2,"kind":"finding","action":"fix","finding":"UI-1-2","by":"builder"}
+{"at":"2026-11-16T05:05:05Z","feature":"F-22","round":2,"kind":"finding","action":"fix","finding":"UI-1-3","by":"builder"}
+{"at":"2026-11-16T05:05:05Z","feature":"F-22","round":2,"kind":"finding","action":"fix","finding":"SEC-1-1","by":"builder"}
+{"at":"2026-11-16T05:05:05Z","feature":"F-22","round":2,"kind":"finding","action":"fix","finding":"SEC-1-2","by":"builder"}
+{"at":"2026-11-16T05:05:04Z","feature":"F-22","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":274.7,"commit":"7202d804508b"}
+{"at":"2026-11-16T05:05:08Z","feature":"F-22","round":2,"kind":"transition","head":"7202d804508b","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-16T05:05:57Z","feature":"F-22","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"7202d804508b","written_at":"2026-11-16T05:05:36Z"}
+{"at":"2026-11-16T05:05:57Z","feature":"F-22","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"7202d804508b","written_at":"2026-11-16T05:05:54Z"}
+{"at":"2026-11-16T05:06:55Z","feature":"F-22","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"7202d804508b","written_at":"2026-11-16T05:06:31Z"}
+{"at":"2026-11-16T05:06:55Z","feature":"F-22","round":2,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"7202d804508b","written_at":"2026-11-16T05:06:03Z"}

@@ -3,26 +3,68 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-24",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "The Assistant: pick an agent, ask, watch it work, read the answer with its steps and sources, and start the normal work item from its draft (contract mock only)",
+  "state": "READY",
   "task_ids": [
     "FE-ASSISTANT"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop boards at 1440.** The four `SCR-05-desktop*` boards each report `pass: true`, `scores.coverageWithExceptions` = 100 and `scores.visual` >= 90, or a D-83-style visual waiver signed per board by the design engineer where the gap is a field the API lacks. \u2014 verify: the command per board exits 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual and pass.",
+    "**Phone boards at 390.** The four `SCR-05-mobile*` boards pass at `--width 390` with the same thresholds. \u2014 verify: same, rows in `scores.txt`.",
+    "**Driven states are the real UI.** `drive-states.mjs` resets the mock, opens CV-2401, presses \"Start this invoice\", confirms in the real Start work drawer against the real mock, waits for the re-read and freezes. The only DOM edits are for freezing. \u2014 verify: the script and `frozen/*.html`.",
+    "**Exceptions are limited and explained.** Each entry has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until signed) and a Conflicts number. None covers a value the data can supply. The mic and \"Edit draft\" entries cite D-SPEECH-INPUT/D-96 and G-SCR05-2. \u2014 verify: file content and the build.md mapping.",
+    "**Agents only from E-ME.** Persona `pm` sees Tola, Chidi and Zainab. `finance_lead` sees only Chidi, and `/assistant?agent=tola` selects Chidi. `admin` (empty list) sees \"No agents are available to you.\" with no composer. No code reads `roles` to choose agents. \u2014 verify: `tests/assistant.test.tsx`; `grep -n \"roles\" frontend/src/features/assistant` shows nothing.",
+    "**Default state.** `/assistant` (pm) shows the five conversation rows with their `status_line`s under \"TODAY\", the pressed Tola chip, the h1 \"Hi Tunde, I'm Tola. What should we get moving?\", the ability line, the composer with the Tola placeholder, and the side panel \"Tola is ready.\" with the two context lines and the agents-cannot box. \u2014 verify: component test; page at 1440 and 390.",
+    "**Start a conversation.** Typing on the home and pressing Send (or Enter) sends exactly one E-CONVERSATION-NEW `{agent:\"tola\"}` and then one E-MESSAGE `{text}` with CSRF, with no extra field, and lands on `/assistant/CV-N1`. A double click or a double Enter sends one of each. Shift+Enter adds a line. Blank text cannot be sent. 4,001 characters shows \"Keep it under 4,000 characters.\" and sends nothing. \"+ New request\" posts nothing. \u2014 verify: component test with a recording `fetch`; `assistant-mock.test.ts` and `GET /__mock/assistant-log`.",
+    "**Errors keep the text.** `[422]`: the returned message under the composer, text kept. `[409]`: one re-read and \"This conversation changed. Showing the latest.\" `[500]` and a network error: no automatic resend (fake timers advanced 60 s, POST count stays 1), one re-read, and \"Try again\" only if the person message is not on the re-read. 403 on E-CONVERSATION-NEW (an agent not allowed for the persona) shows the returned message. \u2014 verify: component tests.",
+    "**Working and polling.** `/assistant/CV-2405` shows \"WORKING \u00b7 STEP 3 OF 5\" (desktop) and the card \"Tola \u00b7 PMO agent \u00b7 step 3 of 5\", WORKING and \"Started 14:02\" (phone). The five steps show their words for screen readers and their references. The side panel reads \"Tola is working on it. You can leave; you'll be alerted.\" The page re-reads every 5 s (fake timers). It does not read while `document.visibilityState` is `hidden` and resumes when visible. It stops after the `answered` read (no further GET in 30 s), the sentence \"You can leave\u2026\" disappears, and the list re-reads once. \u2014 verify: component tests with fake timers.",
+    "**Durable across reload.** Reloading `/assistant/CV-2405` after two polls shows the advanced step (step 5 now), not step 3. A second tab shows the same. No write is sent by opening or reloading a thread. \u2014 verify: e2e reading the mock log (zero POSTs).",
+    "**Thread.** `/assistant/CV-2401` shows, in order: the person's ask; \"Chidi \u00b7 Finance agent\"; the hand-off note; \"3 STEPS \u00b7 DONE\" with three steps and references; the answer; three source tags; the draft card with \"DRAFTED \u00b7 NOT REVIEWED\", Amount \"\u20a66,800,000.00 (contract stage 2 of 3)\", To, Due terms, Template \"Invoice \u00b7 TEST TEMPLATE\", \"Next: Finance review by a Finance Lead\" and \"Start this invoice\". It has no \"Edit draft\", no attach button and no Approve, Send or Pay control. The side panel shows the project, \"PMO on this project\" and \"Chidi has a draft ready for you to check.\" \u2014 verify: component test; `grep -niE \"approve|send for|pay\" frontend/src/features/assistant` shows only the static agents-cannot sentence.",
+    "**Agent text is text.** A fixture message containing `<img src=x onerror=alert(1)>` and `**bold**` renders those characters literally. No element is created from it. \u2014 verify: component test; `grep -rn \"dangerouslySetInnerHTML\\|innerHTML\" frontend/src/features/assistant frontend/src/components/{ChatMessage,Composer,SourceTag,DraftCard}.tsx` is empty.",
+    "**Restricted and unknown.** On CV-2403 the restricted source shows the lock and \"Restricted\" only. Its fixture label and reference are not in `document.body.textContent`, and it is not a link. On CV-2406 the unknown amount reads \"Unknown\" (amber tag), never \"\u20a60\", \"0\", \"-\" or blank. \u2014 verify: component tests.",
+    "**Start opens the normal drawer, prefilled.** \"Start this invoice\" opens the Start work drawer on the invoice line with Project \"Harmattan Bank \u00b7 mobile onboarding\" and Completed milestone \"Milestone 2 \u00b7 beta signed 30 Oct\" chosen. Nothing is sent until the person presses the drawer's start button. Then exactly one POST `/api/v1/work` with `{line:\"invoice\", case_id:\"C-0102\", case_revision:3, intake:{project:\"P-0102\", milestone:\"M-0202\"}, idempotency_key}` and CSRF. \u2014 verify: component test and e2e (request recorded).",
+    "**Started.** After the 201 the drawer closes, the page stays on the thread, E-CONVERSATION is re-read, and the draft card shows \"Started INV-0415.\" with \"Open the work item\" linking to `/work/W-1401`, announced politely with focus on it. The start button is gone. The list row reads \"Started \u00b7 INV-0415\". Reloading keeps it. \u2014 verify: component test and e2e.",
+    "**No second start.** A second tab that still shows the button, opened before the start, gets the mock's 409 through the drawer's existing message. After the drawer closes the thread re-reads and shows the started line. Only one 201 exists in the mock. An uncertain start (network error) shows Start work's own uncertain notice, and the assistant sends nothing itself. \u2014 verify: e2e with two pages; component test for the uncertain path.",
+    "**A draft with no start or a line the person can't start.** CV-2402 shows no start button. A draft whose `start.line_key` is not in E-LINES for the persona (`finance_lead` on CV-2411, whose draft names `weekly_report`) opens the drawer with \"You can't start this here.\" and no form. \u2014 verify: component tests.",
+    "**Mentions.** \"@ Mention a project or record\" sends no request for an empty query. Typing \"harm\" sends one GET `/api/v1/assistant/mentions?q=harm` (after the pause), and the list shows only returned items with their sample labels. Choosing one adds the chip \"@Harmattan Bank \u00b7 mobile onboarding\" with a remove button. Send carries `mentions:[{kind:\"project\", id:\"P-0102\"}]`. Removing the chip removes it from the body. \u2014 verify: component test.",
+    "**Wrong user, unknown id, signed out.** `finance_lead` opening `/assistant/CV-2401` and anyone opening `/assistant/CV-2499` see \"We could not find that conversation.\" with no title, agent or message text. 401 on any read shows the signed-out callout with `next` = this URL. \u2014 verify: component tests; e2e at 1440.",
+    "**Held mic.** The desktop composer has a 44px \"Speak your request\" button with `aria-disabled=\"true\"` and the tooltip \"Not available yet\". Pressing it, by click or keyboard, sends nothing and changes nothing. `grep -rn \"SpeechRecognition\\|getUserMedia\\|webkitSpeech\" frontend/src` is empty. \u2014 verify: component test and the command.",
+    "**Reduced motion.** With `reducedMotion: 'reduce'` the `now` step box and the working avatar ring have no running animation. \u2014 verify: e2e.",
+    "**Mock matches the contract.** `assistant-mock.test.ts` covers the five operations: every fixture and reply validates against v7 (no stripping); a bad body is 422 naming the field; a missing CSRF is 403; another persona's conversation is 404; CV-2405 advances and ends; `[409]`/`[422]`/`[500]` answer once; the draft start rules above (armed only after a read; matching body 201 and `draft.started`; repeat key replay; second start 409; unarmed start falls through to the pinned billing-contact 422); reset restores everything. `mock-contract.test.ts` no longer expects 501 for E-CONVERSATIONS. \u2014 verify: the tests.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**` or `design/**`. The assistant writes send only typed fields (no `idempotency_key`, no `source`). Every wanted field is a contract proposal in build.md. \u2014 verify: `git diff --stat`; build.md; a typecheck (`npx tsc --noEmit`).",
+    "**Accessibility and layout.** For `/assistant`, CV-2401 (before and after start), CV-2403 and CV-2405 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), no sideways scroll, visible focus, 44px targets on phones, one h1, the composer label \"Message <Name>\", Talk to chips with `aria-pressed`, errors in `role=\"alert\"`, live region for started and refresh notes, and focus back to the draft button when the drawer closes without a start. \u2014 verify: `e2e/assistant.spec.ts`.",
+    "**Library first, tokens only.** The new components live in `src/components/` with tests and README rows. `features/assistant/**` imports no local re-implementation of a library component. `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" ` on the feature and component CSS in the diff returns nothing. \u2014 verify: the command; the README diff.",
+    "**Existing behaviour not weakened.** `tests/start-work*.test.*`, `tests/components/**`, `shell.test.tsx`, `mock-contract.test.ts` (other operations), `e2e/start-work.spec.ts`, `e2e/workspace.spec.ts` and every other suite in `delivery/checks.sh` pass. No assertion is removed or loosened, and the only existing fixtures edited are `me.*.json` (the field added). \u2014 verify: `delivery/checks.sh`; `git diff` on tests and fixtures.",
+    "**No real call, no overclaim.** Every request in the e2e run goes to the mock (4771). build.md and the PR state the limits below and do not claim a real agent, idempotent writes, a backend link from draft to work item, or a working assistant. \u2014 verify: build.md; recorded requests.",
+    "**build.md evidence.** It lists the commands run and their results, the 8 scores, every exception with its Conflicts number, every Start work and library change with its reason, the contract proposals, and the limits. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The work adds a new route, a new mock and possibly new shared components, and it sits on a proposed contract (D-ASSISTANT-VIEW, D-CONVERSATION-MODEL) the backend may change. It has several behaviours (list, polling, send, mentions, start from a draft), and the start-from-draft step is a cross-layer contract with E-WORK-START. It is not high because everything runs on the mock, the start goes through the existing Start work drawer and idempotency path, speech is not built, and nothing reaches a client or a provider. SURFACES: ui (8 boards), api (five assistant operations plus the start), contract-change (the proposals above), product-decision (the disabled speech control under D-SPEECH-INPUT, and the missing \"Edit draft\"). PRODUCT-ACCEPTANCE is required: this is a new flow with agent copy and the rule that the agent drafts but a person starts, and the client must see it before release."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-24/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +101,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-24/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +194,28 @@
   "created_at": "2026-11-16T03:30:18Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-16T04:36:18Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-24/readiness.md",
+      "delivery/features/F-24/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
