@@ -1691,3 +1691,4 @@
 {"at":"2026-11-16T14:33:12Z","feature":"F-22","round":4,"kind":"finding","action":"accept-risk","finding":"QA-2-2","by":"coordinator"}
 {"at":"2026-11-16T14:33:12Z","feature":"F-22","round":4,"kind":"finding","action":"accept-risk","finding":"UX-3-1","by":"coordinator"}
 {"at":"2026-11-16T14:33:12Z","feature":"F-22","round":4,"kind":"finding","action":"accept-risk","finding":"UX-4-1","by":"coordinator"}
+{"at":"2026-11-16T14:33:59Z","feature":"F-22","round":4,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"a0be1442b1c6","findings":{"PMO-4-2":"/users/hunchoo/psl-factory-worktrees/f-22/delivery/features/f-22/fidelity-exceptions.json (four `visual_waivers`)","PMO-4-4":"delivery/features/f-22/round-4/build.md"},"written_at":"2026-11-16T14:33:49Z"}
