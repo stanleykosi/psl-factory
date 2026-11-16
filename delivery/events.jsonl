@@ -1726,3 +1726,8 @@
 {"at":"2026-11-16T15:41:08Z","feature":"F-23","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-16T15:41:08Z","feature":"F-24","round":3,"kind":"finding","action":"add","finding":"QA-3-1","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-16T15:41:08Z","feature":"F-24","round":3,"kind":"transition","head":"2075d4aa29aa","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-16T15:42:58Z","feature":"F-24","round":3,"kind":"review","role":"pmo_acceptance","verdict":"CHANGES","reviewer":"pmo-acceptance","commit":"2075d4aa29aa","findings":{"PMO-3-1":"medium","PMO-3-2":"low","PMO-3-3":"low","PMO-3-4":"low"},"written_at":"2026-11-16T15:42:33Z"}
+{"at":"2026-11-16T15:42:58Z","feature":"F-24","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"medium","owner":"pmo","blocking":true,"role":"pmo_acceptance"}
+{"at":"2026-11-16T15:42:58Z","feature":"F-24","round":3,"kind":"finding","action":"add","finding":"PMO-3-2","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-16T15:42:58Z","feature":"F-24","round":3,"kind":"finding","action":"add","finding":"PMO-3-3","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-16T15:42:58Z","feature":"F-24","round":3,"kind":"finding","action":"add","finding":"PMO-3-4","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}

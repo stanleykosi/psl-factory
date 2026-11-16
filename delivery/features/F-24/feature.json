@@ -135,11 +135,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -1143,6 +1145,98 @@
           "action": "add",
           "by": "qa",
           "at": "2026-11-16T15:41:08Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The F-24 contract proposals are only partly in the backend handoff. `delivery/BACKEND-HANDOFF.md` has no F-24 entry; it only links `delivery/backend-handoff/gaps-a-project-setup.md`. That file (lines 21-36) carries the design-time items G-SCR05-1 (`source` on E-WORK-START plus stable `message_id`, with 409 on second start), G-SCR05-2 (Edit draft), G-SCR05-3 (idempotency_key on E-CONVERSATION-NEW and E-MESSAGE), G-SCR05-4 (mentions echo, milestone kind), G-SCR05-6 (agent copy), G-SCR05-7 (alert when a conversation ends), G-SCR05-8, and the questions on privacy and polling. Missing or not recorded as the F-24 outcome: (a) QA-3-1, the stale-tab 409 `draft_already_started` handling. The drawer shows the \"project changed\" notice and re-enables start, and the backend's \"This draft was already started.\" message is never shown. (b) The `started` status word for the list, or deriving it from `draft.started` (\"Started \u00b7 INV-0415\"; build.md Conflicts 15). It is only implied in G-SCR05-1 and is not stated as a proposal. (c) `draft.started.note` (backend-composed started line, Conflicts 6). (d) The status that the mock returns for each case: the 409 code `draft_already_started` and the exact reply shape the mock simulates, so the backend matches it. (e) Restricted-source question: the mock sends the restricted label in the body and the frontend drops it (INV-RESTRICTED); this is not in the handoff. (f) A pointer that the whole F-24 round (mock behaviour, \"all five assistant operations unimplemented\") is on the mock only. | Add an F-24 section to `delivery/BACKEND-HANDOFF.md` (or `gaps-a-project-setup.md`) that lists G-SCR05-1, 2, 3, 4, 6, 7 as proposals still open, plus items (a) to (f) above. Name which are blocking for a real backend (G-SCR05-1 and G-SCR05-3, as the spec says) and which are not. No code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-16T15:42:58Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`fidelity-exceptions.json`: UI-3-2 is still open. The \"\u2190 Assistant\" reason still says the \"\u2190 Home\" link \"is not drawn\". The real cause is the frame name \"Back to Assistant\" (as with \"\u2190 Home\"). UI-3-1 (the underlined \"N earlier\") is not in `notes`, though D-100 does sign it. | Reword the \"\u2190 Assistant\" reason. Add the one-line note on the underline. This changes the file's text only; D-100 already approves the substance, so it can go with the next touch.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-16T15:42:58Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-3-1, TECH-3-1 and TECH-1-3 are open non-blocking findings (stale-tab notice, a loose e2e dock assertion `>= 840`, the 5-page prefill cap). None is a spec break. | Carry them as follow-ups. Tighten the e2e assertion with the next frontend change (`Math.abs(bottom - viewport height) <= 4`). QA-3-1 goes to the backend handoff with G-SCR05-1.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-16T15:42:58Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Files outside the readiness scope (\"`src/shell/**` beyond wiring\") changed: `shell/AppShell.tsx`, `shell/PhoneBar.tsx`, `styles/shell.css`. The round-1 UI findings (UI-1-2, UI-1-7) asked for these, so they are in scope by review. The reasons are not in round-1 `build.md` \"Start work and library changes\". | Add a line to the PR description naming these three files and the finding that required them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-16T15:42:58Z",
           "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
         }
       ]
