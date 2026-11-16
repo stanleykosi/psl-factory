@@ -14,7 +14,7 @@ export function useFocusAfterMore(rows: RefObject<HTMLElement | null>, count: nu
     if (count <= previous || previous === 0) return;
     const active = document.activeElement;
     if (active && active !== document.body && active.isConnected) return;
-    const rowEls = rows.current?.querySelectorAll<HTMLElement>('tbody tr, li');
+    const rowEls = rows.current?.querySelectorAll<HTMLElement>('tbody tr, [role="listitem"]');
     (rowEls?.[previous]?.querySelector<HTMLElement>('a') ?? rows.current?.querySelector<HTMLElement>('.psl-tablewrap'))?.focus();
   }, [rows, count]);
 }
