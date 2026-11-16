@@ -1,0 +1,238 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-26",
+  "outcome": "A project's Money tab: each contract stage's amount, invoice and paid state as the backend sends them, and where each amount comes from (contract mock only)",
+  "state": "IMPLEMENTING",
+  "task_ids": [
+    "FE-M3-REPORT"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Desktop board.** `SCR-12-desktop` at 1440 on `/projects/P-0101/money?figure=FIG-0101-S2`: `report.json` `pass: true`, `scores.coverageWithExceptions` = 100, `scores.visual` >= 90. \u2014 verify: the command, exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass.",
+    "**Phone board.** `SCR-12-mobile` at 390 on `/projects/P-0101/money`, same thresholds. \u2014 verify: same command with `--width 390`; row in `scores.txt`.",
+    "**No D-83 waiver.** D-83 covers line screens only; a board under 90 needs a signed per-board waiver from the design engineer, not a builder note. \u2014 verify: `fidelity-exceptions.json` has no visual waiver unless signed.",
+    "**Exceptions are limited and explained.** Each entry has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until confirmed) and maps to a Conflicts number; none covers a value the data can supply (an amount, a status, a source). \u2014 verify: file content; build.md maps each to a Conflicts number.",
+    "**One fidelity run per round** (D-64). \u2014 verify: build.md.",
+    "**Board rows from data.** `/projects/P-0101/money` (finance_lead) shows four stages in `position` order with \"\u20a63,000,000.00\", \"\u20a64,250,000.00\", \"\u20a64,250,000.00\", \"Unknown\"; \"Verified 03 Nov\", \"Awaiting Finance decision\", \"Held \u00b7 owner needed\"; PAID \"Finance tracks\" then \"\u2014\" three times; \"Not yet due \u00b7 amount set at go-live\" under Stage 4's amount; \"As of 12 Nov 16:40\". \u2014 verify: `tests/money.test.tsx`; page at 1440 and 390.",
+    "**Unknown is not zero.** For every unknown amount, unknown owed and unknown figure value (P-0101 S4, P-0102 edges including `unknown: false` with no `amount`): the text is \"Unknown\" with the amber `psl-unknown` class; `document.body.textContent` of the Money panel contains no \"\u20a60\", \"0.00\" or \"NaN\" and the unknown cells are not \"\u2014\" or empty. \u2014 verify: `tests/money.test.tsx`, `tests/money-model.test.ts`.",
+    "**No total, no computation.** No row, footer, heading or text on the tab shows a sum, total, balance, percentage, count of money or \"outstanding\"; P-0101 renders exactly four stage rows and no footer row. `moneyModel.ts`, `MoneyTab.tsx` and `useMoney.ts` contain no `parseFloat`, `Number(`, `+amount`, `reduce(` over amounts or arithmetic on amount strings. \u2014 verify: component test (row count, no `tfoot`); `grep -nE \"parseFloat|Number\\(|\\.reduce\\(\" frontend/src/features/projects/{moneyModel.ts,MoneyTab.tsx,useMoney.ts}` returns nothing on amount values (any hit explained in build.md).",
+    "**Exact decimals.** `formatAmount` output is used for every amount: \"4250000.00\" \u2192 \"\u20a64,250,000.00\"; a USD row reads \"1,200.00 USD\"; a 19-digit amount renders every digit unchanged. \u2014 verify: `tests/money-model.test.ts`.",
+    "**Invoice and paid are separate (INV-FACTS).** P-0102: a row with `paid` absent reads \"Unknown\" in PAID whatever its INVOICE says; `part_paid` with owed reads \"Part paid \u00b7 \u20a6\u2026 owed\"; `not_paid` with unknown owed reads \"Not paid \u00b7 owed Unknown\"; `not_due` reads \"\u2014\" with accessible text \"Not due\"; changing only `invoice_status` in a test body never changes the PAID cell. The words come from one `PAID_WORDS` constant. \u2014 verify: `tests/money.test.tsx`, `tests/money-model.test.ts`.",
+    "**Invoice cell.** \"Verified 03 Nov\" is a link to `/work/W-1713` whose accessible name includes \"INV-0398\"; a row with only `invoice.reference` shows the reference; a row with neither shows \"\u2014\" with accessible text \"No invoice\". \u2014 verify: component test.",
+    "**Deep link opens the figure.** `/projects/P-0101/money?figure=FIG-0101-S2` at 1440 shows the aside titled \"Where \u20a64,250,000.00 comes from\" (accessible name includes the figure label) with three sources in order: \"Signed SOW v2, stage table, row 2\" with \"SOW-0198 v2\", \"Stage terms v1, active since 30 Jun\" with \"RULE \u00b7 stage terms\", \"Milestone 2 completion, recorded by Tunde Bello\" with \"HB-M2\"; none of the three is a link. A reload keeps it. \u2014 verify: e2e and component test.",
+    "**Press to select.** Pressing Stage 3's amount replaces the URL with `?figure=FIG-0101-S3` (no new history entry), updates the aside to FIG-0101-S3's own sources, keeps focus on the pressed amount with `aria-current=\"true\"`, and announces \"Showing where \u20a64,250,000.00 comes from\". \u2014 verify: e2e at 1440.",
+    "**Title comes from the figure.** In P-0102 the differing figure's panel title uses the figure's value, not the row's, and the warning reads \"These figures differ: the table shows <row>; the report shows <figure>.\" with both values. \u2014 verify: component test.",
+    "**No source, never empty.** P-0101 Stage 4 (no `figure_id`) shows \"Unknown\" as plain text, not a link. P-0102: an unmatched `figure_id` is plain text; `?figure=<unmatched id>` shows \"Where this figure comes from\" and \"No source recorded\"; a figure with no sources shows \"No source recorded\"; a figure with `sources[]` only lists those strings; a source with `work_id` links to `/work/<id>`; a `document_id` source is text. \u2014 verify: component tests.",
+    "**Phone sheet.** At 390, P-0101 shows four cards, the hint \"Tap an amount to see where it comes from\" as plain text, and \"Paid \u00b7 Finance tracks\" on Stage 1 only; each linked amount is at least 44px tall; pressing Stage 2's amount opens a `BottomSheet` with the same title and sources; Esc and the close button close it, remove `figure` from the URL and return focus to that amount; `?figure=FIG-0101-S2` opens the sheet on load. \u2014 verify: e2e at 390.",
+    "**Chidi card.** With finance_lead, the card shows \"Chidi \u00b7 Finance agent\", the agreed sentence (Conflicts 10) and \"Ask me\" linking to `/assistant?agent=chidi`; with a `/me` that lacks `assistant` (component test) the link is absent; with no `agent` in the report the card is absent. The link carries no figure or report id. \u2014 verify: component test.",
+    "**Report failure keeps the table.** P-0103 (E-REPORT 500): the four rows show; amounts are plain text; the aside shows \"We couldn't load where these figures come from. Your work is safe; nothing was changed.\" and \"Try again\", which makes exactly one more E-REPORT request and no E-PROJECT-TAB request. \u2014 verify: component test with a recording `fetch`; e2e.",
+    "**Report refused.** P-0106 (E-REPORT 403): rows show, amounts plain, the aside says \"You can't see where these figures come from.\" and no figure label, source label or reference from the report body appears in the DOM. \u2014 verify: component test.",
+    "**Money refused or hidden.** P-0107 (403) and P-0108 (404) show `ProjectNoAccess` in the tab panel; no stage name, amount, report title or server `message` appears in `document.body.textContent`; no E-REPORT request is made. \u2014 verify: component test with a recording `fetch`; e2e.",
+    "**Wrong user, wrong tenant.** Persona `pm` opening `/projects/P-0104/money` (a project not in pm's rows) gets 404 from E-PROJECT and shows `ProjectNoAccess` with no stage or amount in the DOM and no E-REPORT request; `/projects/P-0099/money` the same. A 401 on the money read shows the signed-out callout with `next` `/projects/<id>/money`. \u2014 verify: e2e with cookie `psl_mock_persona=pm`; component test for 401.",
+    "**Money read failure.** A 500 or network failure on E-PROJECT-TAB shows \"We couldn't load this project's money. Your work is safe; nothing was changed.\" with \"Try again\"; a body without `money` or with a malformed row shows the same card and no partial table. \u2014 verify: component tests.",
+    "**Empty.** P-0105 shows \"No contract stages yet\" and no table, total or aside. \u2014 verify: component test.",
+    "**No role logic.** `MoneyTab.tsx`, `moneyModel.ts` and `useMoney.ts` read nothing from `/me` except the `assistant` destination for the Chidi link; the same fixture renders the same rows for finance_lead and pm. \u2014 verify: `grep -n \"useMe\\|roles\" frontend/src/features/projects/{MoneyTab.tsx,moneyModel.ts,useMoney.ts}`; component test with two personas.",
+    "**Mock matches the contract.** `tests/mock-money.test.ts`: every money and report 200 body validates against the generated schema with no stripping; P-0107 403, P-0108 404, P-0099 404, pm on P-0104 404, R-0103 500, R-0106 403; `GET /api/v1/projects/P-0101/milestones` (and the other non-money tabs) still answers exactly `501 {code: not_mocked, message: \"Not available in the mock yet.\"}`; `X-Mock-Scenario: 403` still wins. \u2014 verify: the test.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `src/components/**`; every wanted field is a contract proposal in build.md (G-SCR12-1, G-SCR12-2, G-SCR12-3, figure `as_of`, report title/eyebrow) with the backend questions of Conflicts 5. \u2014 verify: `git diff --stat`; build.md.",
+    "**Shared-file footprint.** `git diff` of `frontend/src/features/projects/ProjectJourney.tsx` is one import line and one branch; `model.ts`, `projects.css`, `ProjectTabs.tsx`, `ProjectStates.tsx`, `useProject.ts` are unchanged; existing fixtures are byte-for-byte unchanged. \u2014 verify: `git diff --stat` and `git diff frontend/src/features/projects/ProjectJourney.tsx`.",
+    "**Accessibility and layout.** For P-0101 (with and without `?figure`), P-0102, P-0103 and P-0105 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), no sideways page scroll at 390 (the desktop table may scroll inside its own box as drawn), visible focus rings, the table has a caption or accessible name, column headers are `th` with `scope`, 44px standalone targets on phones (D-92c, D-95). \u2014 verify: `e2e/money.spec.ts`.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/projects/money.css` returns nothing. \u2014 verify: the command.",
+    "**New tests run; nothing weakened.** `money.test.tsx`, `money-model.test.ts` and `mock-money.test.ts` run under `npm test` in `delivery/checks.sh`, covering criteria 6 to 25; `e2e/money.spec.ts` runs with the ports above and its output is in build.md. `tests/projects*.test.tsx`, `mock-projects.test.ts`, `mock-contract.test.ts`, `e2e/projects*.spec.ts` and `shell.test.tsx` pass with no assertion removed or loosened (the one E-REPORT 501 case is swapped, not deleted). \u2014 verify: `delivery/checks.sh`; `git diff` on those files.",
+    "**No overclaim.** Every e2e request goes to the mock (4781). The PR description and build.md state the limits: contract mock only, D-PROJECT-TAB-ROWS is a proposal, the backend developer may change or refuse any field, nothing released; they do not claim real money data, real access rules or a working backend. \u2014 verify: build.md; recorded requests.",
+    "**build.md evidence.** Lists the `design.py check` result, commands and results, both scores, every exception with its Conflicts number, every contract proposal and backend question, and the shared-file diff. \u2014 verify: file content."
+  ],
+  "risk": {
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High, because this screen shows money and a mistake (a missing unknown shown as 0, a total, a paid state inferred from an invoice) is what the product rules forbid most (AGENTS.md invariants: unknown is not zero, invoices and receipts are separate). The work itself is a read-only display on the contract mock with no calculation, which keeps it contained and easy to verify against fixtures. SURFACES: ui (2 boards), api (E-PROJECT-TAB money rows, E-REPORT), contract-change (D-PROJECT-TAB-ROWS proposal and four optional field additions below), product-decision (what Finance is allowed to see on a money figure is a backend access rule, not decided here). PRODUCT-ACCEPTANCE is not-required: the work conforms to client-approved boards, adds no flow, no copy beyond the boards and no business rule."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-26/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": false,
+      "assessment_reason": "delivery/features/F-26/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-M3-REPORT",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "7ec9929619c2138cf814036c65eedc58f05a577a",
+    "task_branch": "fe-m3-report-a-project-s-money-tab-each-contract-stag",
+    "head_sha": "7ec9929619c2138cf814036c65eedc58f05a577a",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-26",
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": []
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-16T17:39:35Z",
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-16T17:53:13Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T17:53:32Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-26/readiness.md",
+      "delivery/features/F-26/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 1,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}

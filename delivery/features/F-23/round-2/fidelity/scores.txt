@@ -1,0 +1,9 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-28-desktop-1440	1440	77.8	100	69.2	False
+SCR-28-desktop-suggesting-1440	1440	57.1	100	81.3	False
+SCR-28-desktop-drafted-1440	1440	61.3	100	85.4	False
+SCR-28-desktop-review-1440	1440	53.1	100	78.7	False
+SCR-28-mobile-390	390	47.4	100	74.2	False
+SCR-28-mobile-suggesting-390	390	50	100	82	False
+SCR-28-mobile-drafted-390	390	80	100	82.5	False
+SCR-28-mobile-review-390	390	83.3	100	78.7	False
