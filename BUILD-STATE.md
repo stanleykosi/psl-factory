@@ -2,6 +2,12 @@
 
 ## Design consolidation · 16 November 2026
 
+Finance close now has company and project views of reviewed figures, verified cash by receipt date, dated receivables, unallocated cash and captured exceptions. Exact workspace coverage stays visible and missing figures remain unknown. The close view links to native accounting, corrections, forecasts, schedules, assets, recognition, transaction, payroll and business-unit workspaces under their own grants. The browser recorded a current receivables capture and reopened the reviewed October figure. Company-wide totals and final sign-off require an agreed Finance close policy.
+
+Release and closure use dedicated decision and recovery routes. The server queues long native continuation in the standard worker. On Railway the release route verified successor readiness from three source approvals on the replacement deployment request and retained the original record. The restarted closure required a new Head of PMO decision and reached verified closure. Go-live, escalation, leadership and accounting recovered the original synthetic deliveries after simulated lost responses. See BUILD-TESTS.md for exact browser outcomes, PostgreSQL results and the earlier closure timeout.
+
+### Earlier reminder, payroll and screen walkthroughs
+
 Scheduled reminders now bind an explicitly checked private invoice PDF to the reviewed draft. Finance can reserve or cancel an exact future release under configured timing rules. The isolated mailbox stores the actual message and attachment, and receipt recovery checks the original message before another send could occur. The browser verified the before-due hold, scheduled delivery and cancellation. Railway returned the authorized message as an attachment. Browser download completion timed out, and PostgreSQL verified the response and attached bytes.
 
 The new browser walk reached all 59 mapped destinations. It verified one weekly report through approval and delivery and continued a second report through verification of the original recovered receipt. Emergency implementation evidence was accepted while its preauthorization remained missing. The final Railway PostgreSQL run passed all 58 tests. Full approval and recovery variant acceptance remains open.

@@ -1,5 +1,23 @@
 # Actual test execution ledger
 
+16 November 2026. Signed-in Codex browser evidence from Railway `design-acceptance`, using synthetic data and local recipient inboxes.
+
+| Path | Observed result |
+| --- | --- |
+| Release | Work 6 recorded Planning exit. Work 7 kept readiness 9 when QA evidence changed, accepted the reviewed reassessment, and held for the replacement request. Recorded `BROWSER-CLOSE-GLPI-2`, verified three exact Security, Technology and executive approvals, queued the work and saw successor readiness 45 verified. |
+| Go-live | Work 8 recorded exact report approval. In work 9, the original receipt 4 was recovered, the actual PM and Client signatures for that report were separately recorded, and the work reached Verified. |
+| Closure | Work 11 restarted from a stopped attempt, required a fresh approval and retained its recorded Head of PMO decision. The repaired action queued native continuation, and the final decision page showed Verified and the recorded closure. The earlier synchronous continuation aborted at the web worker's timeout. An approval posted successfully later, but the subsequent decision read also timed out while recalculating worker state. The final web deployment `6e5ed235` avoids that read and rendered the recorded closure. |
+| Escalation | Work 12 recorded both the client-communication decision and exact document review, then verified publication and receipt 14. Work 17 recovered and verified the original receipt 11. |
+| Leadership reporting | Work 13 approved the exact monthly report and verified delivery. Work 14 reconciled and verified the original report receipt 9 following lost response. |
+| Finance | Work 15 claimed and approved the exact accounting report. Verified the reported synthetic result 609.99 and the scoped recipient receipt. Work 16 recovered original receipt 10 and reached Verified. |
+| Finance close | Project capture 1 showed NGN 12.25 outstanding and NGN 30.00 unallocated. The company view showed that workspace among 12 workspaces on the page, preserved the reporting month on pagination, and displayed the reviewed 609.99 October figure. October cases without a matching capture showed the missing coverage. |
+
+The browser covered those exact paths. Other branch, device and role variants retain their separate test status. Original-receipt failures were injected only for these named synthetic cases. No external recipients, live deployment requests or ledger postings were used. The first web upload `af483a7e` failed before startup and Railway retained the prior deployment. A retry `723755b0` started, and the final closure performance changes shipped separately.
+
+Final runtime source `5ea7844d` matched 1,691 tracked file hashes across the staged web, normal worker and checks bundles. Railway web `6e5ed235` and standard worker `4b85c942` became active. Django and template compilation passed on the final source. Browser retest passed on the final closure decision read.
+
+The first hosted test attempt `65f6057b` failed the unknown-ageing assertion in the new close test with the fixture ageing rule active. The corrected test withdraws that rule after capturing the test allocation and verifies that overdue becomes unknown while outstanding and unallocated cash remain. The subsequent hosted run passed the corrected case.
+
 16 November 2026. Railway PostgreSQL `c48d6112` passed 58 tests in 320.674 seconds. Django system and model drift checks passed. Covered the checked invoice PDF, scheduled delivery, cancellation, changed-recipient hold, commit-before-receipt recovery and private exact message download. The run also exercised native weekly report approval, return, retry and receipt recovery, dedicated go-live attestation by a separate authorised Project Manager, and Emergency lost-response recovery. Test message delivery used the isolated test mailbox. SHA-256 comparisons matched all 1,572 tracked runtime files across source, web, normal worker and checks bundles.
 
 16 November 2026. Codex's signed-in browser revisited all 59 mapped destinations, each with its expected application heading and no server error, forbidden or not-found landing. Browser wrote a PDF-backed reminder draft, scheduled release for 19:53 WAT, confirmed no early test mailbox message, saw the original verified receipt after the due time and cancelled a separate future release with confirmed undelivered status. The browser initiated the verified message download. Railway web access logs recorded HTTP 200 and 1,635 response bytes. The in-app browser download event timed out. The PostgreSQL HTTP test matched the response to the stored message and exact PDF bytes.

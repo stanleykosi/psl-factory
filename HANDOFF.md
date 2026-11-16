@@ -1,6 +1,14 @@
 # PSL operations factory cloud handoff — 6 November 2026
 
-## Single-design consolidation · 16 November 2026
+## Close and workflow recovery · 16 November 2026
+
+Resume `build/design-consolidation` from source checkpoint `5ea7844d`. Railway `design-acceptance` is the isolated test environment. The close web deployment is `6e5ed235` and the normal worker is `4b85c942`. The corrected Release path links directly to the owning teams' approvals. Release and Closure have dedicated decision and recovery pages and submit worker continuation in the background. Closure's decision page skips execution planning and shares one read-only native observation. The actual human decision, its evidence and the worker's verified result remain independent.
+
+Company and project Month-end show reviewed monthly figures, receipts dated in the selected month, dated receivables, unallocated cash and reconciliation exceptions. The company view counts exact coverage for the workspaces on the current page. Close areas link to authorised native Finance records. A historical month with no capture shows missing evidence. An earlier capture in the month is labelled with its own date. No historical balances are reconstructed and no workspace totals are combined under an invented rule.
+
+Browser fixtures are in `tests/railway_close_seed.py`. Use the existing `psl-agent-trial` sign-in in Codex's in-app browser. These fixtures use synthetic operators and local test recipients. The closure recovery reached Verified in the browser. Continue from the exact work and receipt IDs in BUILD-TESTS.md. Keep the standard worker after one-time scenario setup. For subsequent acceptance, prioritize unresolved and returned variants and separate operators for the remaining screens. Actual Finance close scope, group totals, final sign-off and operational sources belong with the owners.
+
+## Earlier single-design consolidation checkpoints · 16 November 2026
 
 The Railway reminder checkpoint adds `finance.0079_scheduled_reminder_mailbox`. The draft pins a checked, privately uploaded invoice PDF. Finance can approve a future release under typed rules, cancel an unprocessed release, or verify the original stored message. The synthetic mailbox uses reserved test addresses and an exact message fingerprint. It has no external mail connection. Current preview deployment `d36fac54` and standard worker `2186f0ca` use source checkpoint `eaa492b8`. The one-time synthetic fixture and run guards are in `tests/railway_reminder_mailbox_seed.py`.
 
