@@ -1522,3 +1522,5 @@
 {"at":"2026-11-16T03:30:17Z","feature":"F-22","round":0,"kind":"created","tasks":["FE-LINE-WEEKLY"]}
 {"at":"2026-11-16T03:30:17Z","feature":"F-23","round":0,"kind":"created","tasks":["FE-LINE-MINUTES"]}
 {"at":"2026-11-16T03:30:18Z","feature":"F-24","round":0,"kind":"created","tasks":["FE-ASSISTANT"]}
+{"at":"2026-11-16T04:26:04Z","feature":"F-22","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","external-messaging"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-16T04:26:09Z","feature":"F-22","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
