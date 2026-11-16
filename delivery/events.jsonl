@@ -1786,3 +1786,18 @@
 {"at":"2026-11-16T17:53:13Z","feature":"F-26","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-16T17:53:13Z","feature":"F-27","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","security","contract-change"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-16T17:53:13Z","feature":"F-27","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-16T17:53:27Z","feature":"F-25","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-16T17:53:32Z","feature":"F-26","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-16T17:53:40Z","feature":"F-27","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UX-1-1","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UI-1-1","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UI-1-2","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UI-1-3","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UI-1-4","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"SEC-1-1","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":222.0,"commit":"0d6dabf7e5d6"}
+{"at":"2026-11-16T17:57:54Z","feature":"F-23","round":2,"kind":"transition","head":"0d6dabf7e5d6","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-16T17:58:32Z","feature":"F-23","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"0d6dabf7e5d6","findings":{"TECH-2-1":"frontend/tests/mock-contract.test.ts:~76-110","TECH-2-2":"frontend/src/features/work-item/workitemoverview.tsx:719"},"written_at":"2026-11-16T17:58:32Z"}
+{"at":"2026-11-16T17:59:05Z","feature":"F-23","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"0d6dabf7e5d6","findings":{"UX-2-1":"w-2301 default"},"written_at":"2026-11-16T17:59:03Z"}
+{"at":"2026-11-16T17:59:17Z","feature":"F-23","round":2,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"0d6dabf7e5d6","findings":{"SEC-2-1":"low"},"written_at":"2026-11-16T17:59:15Z"}
+{"at":"2026-11-16T17:59:29Z","feature":"F-23","round":2,"kind":"review","role":"ui","verdict":"CHANGES","reviewer":"reviewer-ui","commit":"0d6dabf7e5d6","findings":{"UI-2-1":"low","UI-2-2":"low","UI-2-3":"low"},"written_at":"2026-11-16T17:59:28Z"}
