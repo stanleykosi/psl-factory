@@ -1,0 +1,81 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "REPORT · LAGOON HEALTH · PROJECT MONEY",
+      "category": "frame item",
+      "reason": "Conflicts 1: E-PROJECT and E-REPORT carry no eyebrow; the frontend composes no title. The project title stays the page heading and the report title is the Money panel's h2 (D-104).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "—",
+      "category": "data words",
+      "reason": "Conflicts 5: PAID for paid.status not_due shows the board's dash with the visually hidden words \"Not due\", so the cell's text is \"—Not due\"; an absent paid object reads Unknown, never a dash.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Not yet due · amount set at go-live",
+      "category": "position",
+      "reason": "Conflicts 4: this is the row's amount_note, a fact about the amount; it is shown under the amount in the AMOUNT cell at both widths (D-104), not in the INVOICE column.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Where ₦4,250,000 comes from",
+      "category": "amount format",
+      "reason": "Conflicts 3: amounts keep the shared two-decimal format, never rounded (D-104); the page reads \"Where ₦4,250,000.00 comes from\", from the figure's own value.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "link",
+      "name": "← Project",
+      "category": "frame item",
+      "reason": "Conflicts 15: the shared phone bar's back link reads \"← Projects\" (usePhoneBack, F-07), as on every project tab.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Stage 1 · kick-off",
+      "category": "data cards",
+      "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Stage 2 · UAT",
+      "category": "data cards",
+      "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Stage 3 · go-live",
+      "category": "data cards",
+      "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Stage 4 · hypercare",
+      "category": "data cards",
+      "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "category": "data cards",
+      "reason": "Conflicts 7 and 8: on phones each stage is a card in a list (the amount and invoice are links, with a Paid line); the same words are on the page inside the card list, which the tool reads as one repeated pattern rather than as separate texts. Stage 4's amount is the amber Unknown inside its card.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "link",
+      "name": "Tap an amount to see where it comes from",
+      "category": "copy",
+      "reason": "Conflicts 8: the sentence has no destination, so it is plain text, shown when at least one amount is a link; each amount opens the bottom sheet.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    }
+  ]
+}

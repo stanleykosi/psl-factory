@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-25",
   "outcome": "A project's Milestones, Registers and Actions tabs show their rows, read-only (contract mock only)",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M3-PROJECT-TABS"
   ],
@@ -87,7 +87,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -103,7 +103,7 @@
     "product_acceptance": {
       "required": false,
       "assessment_reason": "delivery/features/F-25/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -145,11 +145,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-M3-PROJECT-TABS",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "7ec9929619c2138cf814036c65eedc58f05a577a",
+    "task_branch": "fe-m3-project-tabs-a-project-s-milestones-registers-and-act",
+    "head_sha": "7ec9929619c2138cf814036c65eedc58f05a577a",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-25",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -159,7 +159,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -192,14 +192,22 @@
     }
   },
   "created_at": "2026-11-16T17:39:35Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-16T17:53:13Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T17:53:27Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -217,7 +225,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
