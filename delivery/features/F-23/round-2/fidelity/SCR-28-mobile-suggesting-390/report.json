@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-16T17:41:26.467Z",
+  "generatedAt": "2026-11-16T17:42:46.776Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-28-mobile-suggesting.dc.html",
   "boardName": "SCR-28-mobile-suggesting.dc.html",
   "pageUrl": "http://localhost:4761/work/W-2302",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 81.5 is below 90.",
+    "Visual match 82 is below 90.",
     "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 50,
     "coverageWithExceptions": 100,
-    "visual": 81.5
+    "visual": 82
   },
   "visual": {
-    "score": 81.5,
-    "allCellsScore": 88.4,
+    "score": 82,
+    "allCellsScore": 88.7,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 1468,
-    "mismatchedCells": 271
+    "contentCells": 1473,
+    "mismatchedCells": 265
   },
   "coverage": {
     "total": 8,

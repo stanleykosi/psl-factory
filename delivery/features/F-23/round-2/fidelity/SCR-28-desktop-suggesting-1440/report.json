@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-16T17:41:10.008Z",
+  "generatedAt": "2026-11-16T17:42:29.536Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-28-desktop-suggesting.dc.html",
   "boardName": "SCR-28-desktop-suggesting.dc.html",
   "pageUrl": "http://localhost:4761/work/W-2302",
@@ -19,24 +19,24 @@
   "pass": false,
   "passReasons": [
     "Every board item is on the page or approved as an exception (100%).",
-    "Visual match 81.4 is below 90.",
+    "Visual match 81.3 is below 90.",
     "5 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 57.1,
     "coverageWithExceptions": 100,
-    "visual": 81.4
+    "visual": 81.3
   },
   "visual": {
-    "score": 81.4,
+    "score": 81.3,
     "allCellsScore": 94.5,
     "width": 1440,
     "height": 800,
     "boardHeight": 800,
     "pageHeight": 823,
     "cell": 12,
-    "contentCells": 2362,
-    "mismatchedCells": 439
+    "contentCells": 2363,
+    "mismatchedCells": 441
   },
   "coverage": {
     "total": 28,
