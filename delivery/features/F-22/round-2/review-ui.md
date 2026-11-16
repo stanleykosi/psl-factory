@@ -1,13 +1,16 @@
 VERDICT: PASS
-COMMIT: 7202d804508b579e6a819427e85fc6684bc413ee
+COMMIT: 0cc0a73b6ae0982016c6176c88972adf6247a6bc
 REVIEWER: reviewer-ui
 AUTHORITY: delivery UI review
 
 ## Summary
 - Both blocking findings are fixed. The "Next" panel is plain, with an ink rule and a plain head, at 1440 and 390. "Edit your update" is blue (`action`) at both widths, as the boards draw it.
 - The side panel's screen-reader name now follows its visible "Next" head when the panel is the only thing in the side column.
-- All four boards are at 100% coverage after exceptions. Visual scores: 78, 78.3, 83.3, 86.3 (each is at least 70). Reading the side-by-sides finds no fixable gap left, so all four D-83 visual waivers are justified. They still need the design engineer's signature.
+- All four boards are at 100% coverage after exceptions. Visual scores: 78, 78.3, 83.3, 86.3 (each is at least 70). Reading the side-by-sides finds no fixable gap left, so all four D-83 visual waivers are justified. The design engineer signed them under D-99.
 - One fidelity run this round (the builder's, D-64). I checked the round-2 side-by-side.png for each board and the code diff `6d857c31..7202d804`; I did not start a server.
+
+## Head update
+- Re-checked at 0cc0a73b6ae0982016c6176c88972adf6247a6bc: `git diff --stat 7202d804 0cc0a73b -- frontend` is empty (only delivery records changed), and fidelity-exceptions.json now carries "design engineer, 16 Nov 2026 — D-99" on 16 entries (the exceptions and the four visual waivers), plus the D-97 entry, with no "pending" left. Verdict unchanged.
 
 ## Findings
 None.

@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 7202d804508b579e6a819427e85fc6684bc413ee
+COMMIT: 0cc0a73b6ae0982016c6176c88972adf6247a6bc
 REVIEWER: reviewer-security
 AUTHORITY: delivery security review
 
@@ -20,3 +20,4 @@ None.
 ## Notes
 - Carried forward from round 1 by impact assessment. Sections.tsx gains only a `ws-section--untitled` class, and Workspace.tsx changes only class names and `aria-label`/`aria-labelledby`. Steps still come only from `workspace.steps`, the reconcile lock from `item.reconcile`/`allowed_actions`, and tags and status from the data. The round-1 conclusions on delivery truthfulness, no resend, access and secrets still hold.
 - No new dependency, fixture or mock-handler change in this round. No secrets in the diff (the fidelity reports contain only the mock persona cookie `psl_mock_persona=pm`).
+- Head moved 7202d804 -> 0cc0a73b. Checked in /Users/Hunchoo/psl-factory-worktrees/f-22: `git diff --stat 7202d804 0cc0a73b -- frontend` is empty. `git diff --name-only` lists only `delivery/**` files: the F-22 exceptions sign-off (D-99), round records and review files, the F-23/F-24 specs, OVERNIGHT-DECISIONS.md and events.jsonl. A grep of the added lines finds no secrets. No code changed since 7202d804, so the verdict and the verifications above stand for 0cc0a73b.

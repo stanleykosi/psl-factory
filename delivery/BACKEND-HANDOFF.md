@@ -121,3 +121,17 @@ an answer changes v7, the frontend repoints its mock and types to the new versio
 
 - **Projects list rows need an open/closed state** (E-PROJECTS, D-PROJECTS-VIEW). D-94: a closed project's missing next milestone shows "—", an open one's shows "Unknown". Rows carry no open/closed field today (`additionalProperties: false`), so on "All I can see" a closed project still shows Unknown. Additive: a `closed` boolean or lifecycle state per row.
 - **Overview chips need `status.tone`** for waiting, uncertain and stopped work. The page never infers colour from text (F-08); without the tone, "Effect uncertain" can't show amber.
+
+## Added during F-22: weekly report returned and received (16 Nov)
+
+Screens: SCR-25 returned and received (W-2209 to W-2214 on the mock). All additive proposals; the backend may rename or refuse.
+
+- **Toned banner** (`workspace.banner {tone, text}`): the boards draw an amber "returned" banner and a green "received" banner. Today the page shows the return note as an amber callout and the received sentence as a row with a green "Verified" tag only when every delivery is confirmed (D-97). Green must never show unless every delivery is confirmed.
+- **Per-recipient receipt record**: each client recipient needs its own delivery state (`delivered | uncertain | unknown | failed`), a time (or none: the page shows "Time unknown"), the backend's own tag text (e.g. DELIVERED, Bounced) and the channel. Today `recipients` rows carry a tag and a receipt word; the "Approved" row is an item with no receipt. Uncertain must never read as received; reconcile is per recipient (priority 6).
+- **Step submit label** (`steps[].submit_label`): "Edit your update" reuses the `send_to_tola` step; the form's heading and button need their own label.
+- **Return note and returner**: where the PMO Lead's return note, who returned it and when are carried; whether a returned item also offers `save_draft` (the board shows one button).
+- **Next line for failed or unknown delivery**: `workspace.next` lines tell the PM what happens next; please send one for a failed or unknown delivery too (F-22 UX-1-1).
+- **Saved cites in step fields**: `value` as a list of `{value,label}` on `records` fields (priority 2), so "Edit your update" opens with the saved cites (F-22 QA-2-1; the mock carries this and the contract test strips it).
+- **Uncertain item without reconcile**: the page now locks every step whenever an item is `effect_uncertain`, with or without `reconcile`, and says "We are checking what happened. Nothing was sent again." Please always send `reconcile` with an uncertain item, and define the reconcile reply (still 501 on the mock, F-21 note; W-2212).
+- **Unknown work id is 404** (F-21 note): still served a default item by the mock (F-22 QA-2-2).
+- **Limits**: D-RETURN (what Return creates and how v2 is numbered) and D-ALERT-PROVIDERS (real delivery confirmations) are open; the frontend shows only what the data says and claims no real delivery.
