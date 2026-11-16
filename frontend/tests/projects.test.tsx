@@ -114,12 +114,12 @@ function renderPage(search = '') {
 async function open(search = '') {
   const result = renderPage(search);
   await until(() => expect(calls.length).toBeGreaterThan(0));
-  await until(() => expect(screen.queryByRole('status')).toBeNull());
+  await until(() => expect(screen.queryByText('Loading…')).toBeNull());
   return result;
 }
 
 const ACTIVE_20 = 'http://x/api/v1/projects?limit=20';
-const cellsOf = (i: Item) => [i.title, i.pm, i.stage, nextMilestoneText(i.next_milestone) ?? '—', String(i.needs_person ?? '—'), String(i.stopped ?? '—')];
+const cellsOf = (i: Item) => [i.title, i.pm, i.stage, nextMilestoneText(i.next_milestone) ?? 'Unknown', String(i.needs_person ?? 'Unknown'), String(i.stopped ?? 'Unknown')];
 
 describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
   it('finance_lead: one GET for the Active tab, the eyebrow, tabs with counts, six columns, rows in response order', async () => {
@@ -130,11 +130,11 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     expect(document.querySelector('.projects__eyebrow')!.textContent).toBe('PROJECTS');
     expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeTruthy();
     expect(tabs().map((t) => [t.textContent, t.getAttribute('aria-selected')])).toEqual([
-      ['Active22', 'true'],
-      ['Closed2', 'false'],
-      ['All I can see24', 'false'],
+      ['Active 22', 'true'],
+      ['Closed 2', 'false'],
+      ['All I can see 24', 'false'],
     ]);
-    expect(screen.getByRole('tabpanel').getAttribute('aria-labelledby')).toBe(tabs()[0].id);
+    expect(screen.getByRole('tabpanel', { name: 'Active' })).toBeTruthy();
     expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual([
       'PROJECT',
       'PM',
@@ -170,16 +170,26 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     await until(() => expect(titles()).toEqual(['Sabi Market · web store']));
     expect(query(lastCall())).toEqual({ limit: '20', status: 'closed' });
     expect(window.location.search).toBe('?status=closed');
+    // D-94: on the Closed tab the API says the project is closed, so there is no next milestone to come: "—"
     expect([...rows()[0].querySelectorAll('td')].map((td) => td.textContent)).toEqual(['Sabi Market · web store', 'Kemi Adebayo', 'Closed 09 Nov', '—', '0', '0']);
+    expect(rows()[0].querySelector('.psl-unknown')).toBeNull();
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
     tabs()[1].focus();
     fireEvent.keyDown(tabs()[1], { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(tabs()[2]);
+    // Arrows only move focus (Tabs); Enter or Space opens the focused tab.
+    fireEvent.click(tabs()[2]);
     await until(() => expect(rows()).toHaveLength(5));
     expect(query(lastCall())).toEqual({ limit: '20', status: 'all' });
+    // D-94: on All I can see the rows do not say which are closed, so an unsent next milestone is Unknown
+    const sabi = [...rows()].find((r) => r.textContent?.startsWith('Sabi Market'))!;
+    expect(sabi.querySelectorAll('td')[3].textContent).toBe('Unknown');
     expect(window.location.search).toBe('?status=all');
     expect(document.activeElement).toBe(tabs()[2]);
     expect(tabs().map((t) => t.tabIndex)).toEqual([-1, -1, 0]);
     fireEvent.keyDown(tabs()[2], { key: 'Home' });
+    expect(document.activeElement).toBe(tabs()[0]);
+    fireEvent.click(tabs()[0]);
     await until(() => expect(rows()).toHaveLength(4));
     expect(window.location.search).toBe('');
   });
@@ -187,12 +197,12 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
   it('Filter opens a panel that says filters come next; Escape closes it and returns focus', async () => {
     await open();
     const button = screen.getByRole('button', { name: 'Filter' });
-    expect(button.getAttribute('aria-haspopup')).toBe('dialog');
+    expect(button.getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(button);
     const dialog = screen.getByRole('dialog', { name: 'Filter projects' });
     expect(dialog.textContent).toContain('Filters come next');
     expect(button.getAttribute('aria-expanded')).toBe('true');
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(dialog, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(button);
     expect(calls).toHaveLength(1);
@@ -224,8 +234,8 @@ describe('a body without the PROPOSAL fields', () => {
     expect(screen.getByRole('button', { name: 'Filter' })).toBeTruthy();
     expect(document.querySelectorAll('th')).toHaveLength(6);
     expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual([
-      ['Alpha works', 'Ada Okafor', 'Planning', '—', '—', '—'],
-      ['Beta works', 'Kunle Ade', 'Go-live', '—', '—', '—'],
+      ['Alpha works', 'Ada Okafor', 'Planning', 'Unknown', 'Unknown', 'Unknown'],
+      ['Beta works', 'Kunle Ade', 'Go-live', 'Unknown', 'Unknown', 'Unknown'],
     ]);
     expect(document.body.textContent).not.toContain('undefined');
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 shown');
@@ -246,16 +256,16 @@ describe('PROPOSAL fields in another shape (TECH-2-1)', () => {
       });
     await open('?q=works');
     expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual([
-      ['Alpha works', 'Ada Okafor', 'Planning', '—', '—', '—'],
-      ['Beta works', 'Kunle Ade', 'Go-live', 'Go-live · due not known', '1', '0'],
+      ['Alpha works', 'Ada Okafor', 'Planning', 'Unknown', 'Unknown', 'Unknown'],
+      ['Beta works', 'Kunle Ade', 'Go-live', 'Go-live · due Unknown', '1', '0'],
     ]);
-    expect(tabs().map((t) => t.textContent)).toEqual(['Active', 'Closed3', 'All I can see']);
+    expect(tabs().map((t) => t.textContent)).toEqual(['Active', 'Closed 3', 'All I can see']);
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 shown');
   });
 });
 
 describe('search', () => {
-  it('sends one q=lagoon&limit=20 request 300 ms after the last keystroke; clearing drops q', async () => {
+  it('sends one q=lagoon&limit=20 request 200 ms after the last keystroke; clearing drops q', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
     await open();
     const box = screen.getByRole('searchbox', { name: 'Search' });
@@ -265,7 +275,7 @@ describe('search', () => {
       await act(() => vi.advanceTimersByTimeAsync(100));
     }
     expect(calls).toHaveLength(1);
-    await act(() => vi.advanceTimersByTimeAsync(199));
+    await act(() => vi.advanceTimersByTimeAsync(99));
     expect(calls).toHaveLength(1);
     await act(() => vi.advanceTimersByTimeAsync(1));
     await until(() => expect(calls).toHaveLength(2));
@@ -273,7 +283,7 @@ describe('search', () => {
     expect(window.location.search).toBe('?q=lagoon');
     await until(() => expect(titles()).toEqual(['Lagoon Health · patient app']));
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
-    expect(tabs()[0].textContent).toBe('Active22');
+    expect(tabs()[0].textContent).toBe('Active 22');
 
     fireEvent.change(box, { target: { value: '' } });
     await act(() => vi.advanceTimersByTimeAsync(300));
@@ -283,12 +293,12 @@ describe('search', () => {
     expect(calls.every((c) => c.searchParams.get('q') !== '')).toBe(true);
   });
 
-  it('no match shows No projects match; Clear search restores the full list', async () => {
+  it('no match shows No projects match; Show all projects restores the full list', async () => {
     await open('?q=zzz');
     expect(query(calls[0])).toEqual({ limit: '20', q: 'zzz' });
     expect(screen.getByRole('heading', { name: 'No projects match' })).toBeTruthy();
     expect(document.querySelector('.psl-showmore')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Clear search' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Show all projects' }));
     await until(() => expect(rows()).toHaveLength(20));
     expect(lastCall().searchParams.has('q')).toBe(false);
     expect((screen.getByRole('searchbox') as HTMLInputElement).value).toBe('');
@@ -307,6 +317,7 @@ describe('paging (D-PAGING r2)', () => {
   it('Show more sends cursor=o20&limit=20 and appends the rest, then All N showing with no button', async () => {
     await open();
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    await until(() => expect(rows()).toHaveLength(22));
     await until(() => expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull());
     expect(query(lastCall())).toEqual({ limit: '20', cursor: 'o20' });
     const all = fromMock(new URL('http://x/api/v1/projects?limit=50')).body.items;
@@ -438,12 +449,12 @@ describe('access and failures', () => {
       new Promise<Response>((resolve) => (pending[url.searchParams.get('q') ?? ''] = () => resolve(mockResponse(url))));
     const box = screen.getByRole('searchbox', { name: 'Search' });
     fireEvent.change(box, { target: { value: 'lagoon' } });
-    fireEvent.submit(box.closest('form')!);
+    await act(() => new Promise((r) => setTimeout(r, 260)));
     await until(() => expect(pending.lagoon).toBeTruthy());
-    expect(screen.getByRole('status')).toBeTruthy();
+    expect(screen.getByText('Loading…')).toBeTruthy();
     expect(rows()).toHaveLength(0);
     fireEvent.change(box, { target: { value: 'harmattan' } });
-    fireEvent.submit(box.closest('form')!);
+    await act(() => new Promise((r) => setTimeout(r, 260)));
     await until(() => expect(pending.harmattan).toBeTruthy());
     await act(async () => pending.harmattan());
     await until(() => expect(titles()).toEqual(['Harmattan Bank · mobile onboarding']));

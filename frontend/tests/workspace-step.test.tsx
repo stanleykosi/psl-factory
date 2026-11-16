@@ -190,7 +190,7 @@ describe('the step form (AC 14, 15)', () => {
     const f = within(form);
     expect(f.getByLabelText('Your answer').tagName).toBe('TEXTAREA');
     expect(f.getByLabelText('Short title (optional)').getAttribute('placeholder')).toBe('e.g. Approval threshold');
-    expect(f.getByLabelText('Answer due (optional)').getAttribute('type')).toBe('date');
+    expect(f.getByLabelText('Answer due (optional)').getAttribute('placeholder')).toBe('DD Mmm YYYY');
     expect(f.getByRole('group', { name: 'Covers (optional)' })).toBeTruthy();
     expect(f.getByLabelText('Reporting month (optional)').getAttribute('type')).toBe('month');
     expect(f.getByLabelText('Discussed at (optional)').getAttribute('type')).toBe('datetime-local');
@@ -226,7 +226,8 @@ describe('the step form (AC 14, 15)', () => {
     fireEvent.change(f.getByLabelText('Your answer'), { target: { value: '  Approvals above a threshold go to a named officer.  ' } });
     fireEvent.change(f.getByLabelText('Hours to build (optional)'), { target: { value: '12' } });
     fireEvent.change(f.getByLabelText('Price for this requirement (optional)'), { target: { value: '4250000' } });
-    fireEvent.change(f.getByLabelText('Answer due (optional)'), { target: { value: '2026-11-20' } });
+    fireEvent.change(f.getByLabelText('Answer due (optional)'), { target: { value: '20 Nov 2026' } });
+    fireEvent.blur(f.getByLabelText('Answer due (optional)'));
     fireEvent.click(f.getByRole('radio', { name: 'Clarify' }));
     fireEvent.change(f.getByLabelText('Note (optional)'), { target: { value: ' Checked with Tunde. ' } });
     await act(async () => {

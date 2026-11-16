@@ -44,12 +44,11 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 async function settled() {
-  await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+  await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 }
 const rowTitles = () => within(screen.getByRole('table')).queryAllByRole('link').map((a) => a.textContent);
 const search = (text: string) => {
   fireEvent.change(screen.getByRole('searchbox', { name: 'Search' }), { target: { value: text } });
-  fireEvent.submit(screen.getByRole('search'));
 };
 
 describe('exceptions list', () => {
@@ -60,7 +59,7 @@ describe('exceptions list', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('All exceptions');
     expect(screen.getByText(/^Everyone’s work that can’t move on by itself/)).toBeTruthy();
     expect(screen.getByRole('searchbox', { name: 'Search' }).getAttribute('placeholder')).toBe('Search exceptions');
-    expect(screen.getByRole('button', { name: 'Filter' }).getAttribute('aria-haspopup')).toBe('dialog');
+    expect(screen.getByRole('button', { name: 'Filter' }).getAttribute('aria-expanded')).toBe('false');
     expect(screen.getByText('25 OPEN')).toBeTruthy();
     const table = screen.getByRole('table', { name: 'Exceptions, in the order the factory reports them' });
     expect(within(table).getAllByRole('columnheader').map((th) => th.textContent)).toEqual([
@@ -71,10 +70,10 @@ describe('exceptions list', () => {
     ]);
     expect(rowTitles()).toEqual(fixture.items.slice(0, 20).map((r) => r.title));
     const first = within(table).getAllByRole('row')[1];
-    expect(within(first).getByText('SEND UNCERTAIN')).toBeTruthy();
+    expect(within(first).getByText('Effect uncertain')).toBeTruthy();
     expect(within(first).getByRole('link').getAttribute('href')).toBe('/work/W-1005');
     expect(within(first).getByText('INV-0405').className).toBe('exc-ref');
-    expect(screen.getByText('Showing 20')).toBeTruthy();
+    expect(screen.getByText('20 showing')).toBeTruthy();
     expect(screen.getByRole('radiogroup', { name: 'Rows per page' })).toBeTruthy();
     expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.getByText(/^The factory never resends after an unknown outcome/)).toBeTruthy();
@@ -95,23 +94,23 @@ describe('exceptions list', () => {
     render(<ExceptionsList />);
     await settled();
     const expected: Record<ExceptionKind, [string, string]> = {
-      effect_uncertain: ['SEND UNCERTAIN', 'psl-tag psl-tag--waiting'],
-      owner_needed: ['OWNER NEEDED', 'psl-tag psl-tag--person'],
-      setup_needed: ['SETUP NEEDED', 'psl-tag psl-tag--person'],
-      blocked: ['BLOCKED', 'psl-tag psl-tag--person'],
-      followup_needed: ['FOLLOW-UP NEEDED', 'psl-tag psl-tag--person'],
+      effect_uncertain: ['Effect uncertain', 'psl-tag psl-tag--waiting'],
+      owner_needed: ['Owner needed', 'psl-tag psl-tag--person'],
+      setup_needed: ['Setup needed', 'psl-tag psl-tag--person'],
+      blocked: ['Action needed', 'psl-tag psl-tag--person'],
+      followup_needed: ['Stopped: invoice follow-up needed', 'psl-tag psl-tag--person'],
     };
     const bodyRows = within(screen.getByRole('table')).getAllByRole('row').slice(1);
     bodyRows.forEach((tr, i) => {
       const tag = tr.querySelector('.psl-tag')!;
       expect([tag.textContent, tag.className]).toEqual(expected[kinds[i]]);
     });
-    expect(Object.entries(KIND_TAGS).filter(([, t]) => t.className.includes('psl-tag--waiting')).map(([k]) => k)).toEqual([
+    expect(Object.entries(KIND_TAGS).filter(([, t]) => t.tone === 'waiting').map(([k]) => k)).toEqual([
       'effect_uncertain',
     ]);
   });
 
-  it('times: same Lagos day reads HH:mm, an earlier day reads D Mon, with formatWat in the title', async () => {
+  it('times: same Lagos day reads HH:mm WAT, an earlier day reads D Mon YYYY', async () => {
     expect(sinceText('2026-11-14T10:02:00Z', '2026-11-14T10:05:00Z')).toBe('since 11:02');
     expect(sinceText('2026-11-10T08:30:00Z', '2026-11-14T10:05:00Z')).toBe('since 10 Nov');
     // 23:30Z on the 13th is 00:30 WAT on the 14th: the same Lagos day as as_of
@@ -139,7 +138,7 @@ describe('exceptions list', () => {
     expect(urls()[1].search).toBe('?limit=20&cursor=o%3A20');
     expect(rowTitles()).toEqual(fixture.items.map((r) => r.title));
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
-    expect(screen.getByText('Showing 25')).toBeTruthy();
+    expect(screen.getByText('25 showing')).toBeTruthy();
 
     fireEvent.click(screen.getByRole('radio', { name: '10' }));
     await waitFor(() => expect(rowTitles()).toHaveLength(10));
@@ -200,7 +199,7 @@ describe('exceptions list', () => {
     expect(screen.queryByRole('table')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     expect(screen.queryByText(/The factory never resends/)).toBeNull();
-    expect(screen.queryByText(/Showing|OPEN/)).toBeNull();
+    expect(screen.queryByText(/ showing|OPEN/)).toBeNull();
   });
 
   it('search and Filter send q and what, show the narrowed empty card, and Clear brings every row back', async () => {
@@ -218,7 +217,7 @@ describe('exceptions list', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Filter' }));
     const dialog = screen.getByRole('dialog', { name: 'Filter' });
-    fireEvent.click(within(dialog).getByRole('radio', { name: 'Blocked' }));
+    fireEvent.click(within(dialog).getByRole('radio', { name: 'Action needed' }));
     fireEvent.click(within(dialog).getByRole('button', { name: 'Show results' }));
     await screen.findByText('No exceptions match your search and filter.');
     expect(urls()[2].search).toBe('?limit=20&q=Kora&what=blocked');
@@ -258,7 +257,7 @@ describe('exceptions list', () => {
       expect(screen.getByText('Your own exceptions appear in My work, under Needs me.')).toBeTruthy();
       expect(screen.getByRole('link', { name: 'Go to My work' }).getAttribute('href')).toBe('/my-work');
       expect(screen.queryByRole('table')).toBeNull();
-      expect(screen.queryByText(/Showing|As of|OPEN/)).toBeNull();
+      expect(screen.queryByText(/ showing|As of|OPEN/)).toBeNull();
       expect(screen.queryByRole('searchbox')).toBeNull();
       expect(screen.queryByRole('radiogroup')).toBeNull();
     });
@@ -306,7 +305,7 @@ describe('exceptions list', () => {
     expect(screen.queryByRole('searchbox')).toBeNull();
     expect(screen.queryByRole('radiogroup')).toBeNull();
     expect(screen.queryByRole('button')).toBeNull();
-    expect(screen.queryByText(/The factory never resends|Showing|OPEN/)).toBeNull();
+    expect(screen.queryByText(/The factory never resends| showing|OPEN/)).toBeNull();
     expect(screen.getByText('As of 14 Nov 11:05')).toBeTruthy();
     expect(screen.getAllByRole('link', { name: 'See all exceptions' }).map((a) => a.getAttribute('href'))).toEqual(['/exceptions']);
     unmount();
@@ -320,12 +319,12 @@ describe('exceptions list', () => {
     serve(() => json(403, { code: 'forbidden', message: 'No.' }));
     const { unmount } = render(<ExceptionsList compact />);
     await screen.findByText('This list is for Leads');
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('This list is for Leads');
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('This list is for Leads');
     unmount();
     serve(() => json(200, { items: [], as_of: fixture.as_of }));
     render(<ExceptionsList compact />);
     await settled();
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('No exceptions.');
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('No exceptions.');
   });
 
   it('useExceptions is exported for reuse', () => {

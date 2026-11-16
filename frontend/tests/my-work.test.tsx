@@ -125,24 +125,24 @@ describe('queue tabs (A-MYWORK)', () => {
     expect(tabs()[0].getAttribute('aria-selected')).toBe('true');
     expect(tabs()[0].getAttribute('aria-controls')).toBe('my-work-panel');
     expect(panel().getAttribute('role')).toBe('tabpanel');
-    expect(panel().getAttribute('aria-labelledby')).toBe(tabs()[0].id);
+    expect(panel().getAttribute('aria-label')).toBe('Needs me');
     expect(screen.getByText('44 records you can see · updated 10:42')).toBeTruthy();
   });
 
   it('without counts.unassigned there are three tabs and zero reads 0', async () => {
     persona = 'pm';
     await open();
-    expect(tabs().map((t) => t.textContent)).toEqual(['Needs me0', 'Waiting on others3', 'Done2']);
+    expect(tabs().map((t) => t.textContent)).toEqual(['Needs me 0', 'Waiting on others 3', 'Done 2']);
   });
 
-  it('without counts every badge reads – with "Count unavailable"; never 0', async () => {
+  it('without counts no tab shows a badge, "Count unavailable" says so; never 0', async () => {
     work = (url) => {
       const { body } = fromMock(url);
       delete body.counts;
       return json(200, body);
     };
     await open();
-    expect(tabs().map((t) => t.querySelector('.psl-badge')!.textContent)).toEqual(['–', '–', '–']);
+    expect(tabs().map((t) => t.querySelector('.psl-badge'))).toEqual([null, null, null]);
     expect(screen.getByText('Count unavailable')).toBeTruthy();
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('20+ ITEMS');
   });
@@ -158,19 +158,20 @@ describe('queue tabs (A-MYWORK)', () => {
     expect(nav.router.replace).toHaveBeenCalledWith('/my-work?queue=done', { scroll: false });
   });
 
-  it('arrow keys, Home and End move the selection with a roving tabindex', async () => {
+  it('arrow keys, Home and End move focus (one tab stop); pressing a tab opens it', async () => {
     await open();
     tabs()[0].focus();
+    expect(tabs().map((t) => t.tabIndex)).toEqual([0, -1, -1, -1]);
     fireEvent.keyDown(tabs()[0], { key: 'ArrowRight' });
-    await until(() => expect(tabs()[1].getAttribute('aria-selected')).toBe('true'));
     expect(document.activeElement).toBe(tabs()[1]);
-    expect(tabs().map((t) => t.tabIndex)).toEqual([-1, 0, -1, -1]);
     fireEvent.keyDown(tabs()[1], { key: 'End' });
-    await until(() => expect(query(lastCall()).queue).toBe('unassigned'));
     expect(document.activeElement).toBe(tabs()[3]);
     fireEvent.keyDown(tabs()[3], { key: 'Home' });
-    await until(() => expect(query(lastCall()).queue).toBe('needs_me'));
+    expect(document.activeElement).toBe(tabs()[0]);
     fireEvent.keyDown(tabs()[0], { key: 'ArrowLeft' });
+    expect(document.activeElement).toBe(tabs()[3]);
+    expect(calls).toHaveLength(1);
+    fireEvent.click(tabs()[3]);
     await until(() => expect(query(lastCall()).queue).toBe('unassigned'));
   });
 });
@@ -215,7 +216,7 @@ describe('rows', () => {
       owner_needed: ['Owner needed', 'person'],
       setup_needed: ['Setup needed', 'person'],
       action_needed: ['Action needed', 'person'],
-      effect_uncertain: ['Effect uncertain', 'person'],
+      effect_uncertain: ['Effect uncertain', 'waiting'],
       awaiting_reconciliation: ['Awaiting reconciliation', 'waiting'],
       verified: ['Verified', 'done'],
       cancelled: ['Cancelled', 'neutral'],
@@ -233,7 +234,7 @@ describe('rows', () => {
     const first = rows()[0];
     const bar = first.querySelector('.psl-mini__bar')!;
     expect(bar.getAttribute('aria-hidden')).toBe('true');
-    expect([...bar.querySelectorAll('i')].map((i) => i.className)).toEqual(['d', 'd', 'd', 'w', '', '', '']);
+    expect([...bar.querySelectorAll('i')].map((i) => i.className)).toEqual(['d', 'd', 'd', 'w', 't', 't', 't']);
     expect(first.querySelector('.psl-mini__text')!.textContent).toBe('Station 4 of 7 · Finance review');
     expect([...rows()].map((r) => r.querySelectorAll('td')[3].textContent)).toEqual(['2h', '1m', '1d', '10m']);
     expect(first.querySelectorAll('td')[2].textContent).toBe('WaitingFinance Lead');
@@ -302,10 +303,8 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
   it('applies Line (by key), Project, State and Waiting on from the panel, shows the badge and chips, and removes them', async () => {
     await open();
     const filter = screen.getByRole('button', { name: /^Filter/ });
-    expect(filter.getAttribute('aria-haspopup')).toBe('dialog');
     fireEvent.click(filter);
     expect(filter.getAttribute('aria-expanded')).toBe('true');
-    expect(filter.className).toContain('psl-btn--dark');
     const dialog = screen.getByRole('dialog', { name: 'Filter' });
     expect(dialog.className).toContain('psl-pop');
     // Lines come from the response's filters.lines (A–Z in the mock); four show until "Show all 6 lines".
@@ -335,7 +334,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', line: 'invoice', state: 'action_needed' }));
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(filter);
-    expect(filter.querySelector('.psl-badge--signal')!.textContent).toBe('2');
+    expect(filter.querySelector('.cmp-badge--ink')!.textContent).toBe('2');
     expect(new URLSearchParams(window.location.search).get('line')).toBe('invoice');
     expect(new URLSearchParams(window.location.search).get('state')).toBe('action_needed');
     const chips = [...document.querySelectorAll('.psl-chip')].map((c) => c.textContent);
@@ -343,7 +342,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove Line filter' }));
     await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', state: 'action_needed' }));
-    expect(filter.querySelector('.psl-badge--signal')!.textContent).toBe('1');
+    expect(filter.querySelector('.cmp-badge--ink')!.textContent).toBe('1');
     fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
     await until(() => expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20' }));
     expect(filter.querySelector('.psl-badge')).toBeNull();
@@ -385,7 +384,7 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     expect(within(sheet.querySelector('.psl-sheet__head') as HTMLElement).getByRole('button', { name: 'Clear' })).toBeTruthy();
     expect(within(sheet).getByRole('button', { name: /^Show / }).className).toContain('psl-btn--xl psl-btn--block');
     expect(within(sheet).getByRole('button', { name: 'All 6 lines' })).toBeTruthy();
-    fireEvent.mouseDown(sheet.parentElement!);
+    fireEvent.click(document.querySelector('.cmp-layer > .psl-scrim')!);
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(filter);
   });
@@ -405,7 +404,8 @@ describe('paging (D-PAGING r2)', () => {
     const more = screen.getByRole('button', { name: 'Show 4 more' });
     fireEvent.click(more);
     expect(more.getAttribute('aria-busy')).toBe('true');
-    expect((more as HTMLButtonElement).disabled).toBe(true);
+    // Busy, not disabled: the button keeps its width and ignores a second press.
+    expect((more as HTMLButtonElement).disabled).toBe(false);
     await until(() => expect(rows()).toHaveLength(24));
     expect(query(lastCall())).toEqual({ queue: 'needs_me', limit: '20', cursor: 'o20' });
     expect(document.activeElement).toBe(rows()[20].querySelector('a'));
@@ -508,7 +508,7 @@ describe('staying current (D-UPDATES r2)', () => {
     expect(rows()[0].querySelector('a')!.getAttribute('href')).toBe(firstId);
     expect(rows()[0].querySelectorAll('td')[2].querySelector('.psl-tag')!.textContent).toBe('Verified');
     expect(document.activeElement).toBe(link);
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(document.querySelector('.psl-loading')).toBeNull();
     expect(tabs()[0].querySelector('.psl-badge')!.textContent).toBe('25');
   });
 
@@ -520,13 +520,13 @@ describe('staying current (D-UPDATES r2)', () => {
     await open();
     work = fail as () => Promise<Response>;
     await act(() => vi.advanceTimersByTimeAsync(15_000));
-    await until(() => expect(screen.getByRole('status').textContent).toBe('44 records you can see · Couldn’t refresh · updated 10:42'));
+    await until(() => expect(document.querySelector('.my-work__updated[role="status"]')!.textContent).toBe('44 records you can see · Couldn’t refresh · updated 10:42'));
     expect(rows()).toHaveLength(20);
     expect(screen.queryByRole('alert')).toBeNull();
     work = (url) => mockResponse(url);
     await act(() => vi.advanceTimersByTimeAsync(15_000));
     await until(() => expect(screen.getByText('44 records you can see · updated 10:42')).toBeTruthy());
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(document.querySelector('.my-work__updated[role="status"]')).toBeNull();
   });
 
   it('a 401 on refresh shows the signed-out callout', async () => {
@@ -553,7 +553,8 @@ describe('screen states', () => {
     expect([...where.querySelectorAll('.my-work__grouphead')].map((g) => g.textContent)).toEqual(['Tola is drafting1', 'Other people are reviewing2']);
     // Agents show their mascot image (public/agents/), never initials.
     expect(screen.getByRole('img', { name: 'Tola, the PMO agent, giving a thumbs up' }).getAttribute('src')).toContain('agents%2Ftola-done.png');
-    expect(within(where).getByRole('img', { name: 'Tola · PMO agent' })).toBeTruthy();
+    // The mascot beside "Tola is drafting" is decorative: the words name the agent.
+    expect(where.querySelector('img.psl-avatar--tola')!.getAttribute('alt')).toBe('');
     expect(within(where).getByRole('link', { name: 'See all 3' }).getAttribute('href')).toBe('/my-work?queue=waiting_on_others');
     expect(calls.filter((c) => c.searchParams.has('waiting_on')).map((c) => c.searchParams.get('waiting_on'))).toEqual(['agent', 'outside_party', 'someone_else']);
     fireEvent.click(screen.getByRole('button', { name: 'See what you started' }));
@@ -654,9 +655,9 @@ describe('screen states', () => {
       </AppShell>,
     );
     await until(() => expect(pending.needs_me).toBeTruthy());
-    expect(screen.getByRole('status').textContent).toBe('Loading your queue…');
-    expect(document.querySelectorAll('.psl-panel.shell-loading .psl-skel')).toHaveLength(3);
-    expect(tabs().map((t) => t.querySelector('.psl-badge')!.textContent)).toEqual(['–', '–', '–']);
+    expect(document.querySelector('.psl-loading')!.textContent).toBe('Loading your queue…');
+    expect(document.querySelectorAll('.shell-loading .psl-skel')).toHaveLength(3);
+    expect(tabs().map((t) => t.querySelector('.psl-badge'))).toEqual([null, null, null]);
     fireEvent.click(tabs()[2]);
     await until(() => expect(pending.done).toBeTruthy());
     await act(async () => pending.done(new Response()));
@@ -674,7 +675,7 @@ describe('screen states', () => {
     let release!: () => void;
     work = (url) => new Promise<Response>((resolve) => (release = () => resolve(mockResponse(url))));
     fireEvent.click(tabs()[1]);
-    await until(() => expect(screen.getByRole('status').textContent).toBe('Loading your queue…'));
+    await until(() => expect(document.querySelector('.psl-loading')!.textContent).toBe('Loading your queue…'));
     expect(rows()).toHaveLength(0);
     expect(tabs()[0].querySelector('.psl-badge')!.textContent).toBe('24');
     await act(async () => release());

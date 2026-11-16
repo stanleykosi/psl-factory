@@ -6,3 +6,4 @@ A dark bar at the bottom centre after an action that changed something, with Und
 - Stays 6 seconds, or until dismissed; stays while hovered or focused. Never used for errors that need action (use a callout).
 - A problem toast (orange top edge) only for a failure that happened in the background, with a link to the fix.
 - States: success, success with Undo, problem, dismissible.
+- The live region is drawn first and the words written into it a moment later, so screen readers announce them.

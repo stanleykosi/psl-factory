@@ -5,64 +5,63 @@
 .decide-plain { margin: 0; }
 .decide-muted { color: var(--ink-muted); }
 .decide-changed { color: var(--signal-ink); font-weight: 600; }
-.decide-h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 18px; line-height: 1.25; }
-.decide-h3 { margin: 0 0 var(--space-1); font-size: 14px; font-weight: 600; }
-.decide-list { margin: 0; padding-left: 18px; }
-.decide-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.decide-h2 { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: var(--text-sheet-title-size); line-height: 1.25; }
+.decide-h3 { margin: 0 0 var(--space-1); font-size: var(--text-body-size); font-weight: 600; }
+.decide-list { margin: 0; padding-left: var(--space-18px); }
 
 /* header: the trail, the title line, the sub-line */
-.decide-header { display: flex; flex-direction: column; gap: 20px; }
+.decide-header { display: flex; flex-direction: column; gap: var(--space-20px); }
 .decide-header .shell-title { overflow-wrap: anywhere; }
-.decide-trail { margin: 0; font-family: var(--font-mono); font-size: 12px; line-height: 15px; color: var(--ink-muted); text-transform: uppercase; }
-.decide-phone-eyebrow { display: none; margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+.decide-trail { margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); line-height: 15px; color: var(--ink-muted); text-transform: uppercase; }
+.decide-phone-eyebrow { display: none; margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 /* the frame's 40px title is taller than the boards' 34px: the header's gaps give the difference back */
 @media (min-width: 720px) {
-  .decide-header { gap: 14px; margin-bottom: -4px; }
+  .decide-header { gap: var(--space-14px); margin-bottom: calc(var(--space-1) * -1); }
 }
 .decide-trail a { color: var(--action); text-decoration: underline; text-underline-offset: 2px; }
 .decide-titleline { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); }
 .decide-titleline .shell-title { flex: 0 1 auto; }
 .decide-owntag { margin-left: auto; align-self: flex-start; }
-.decide-eyebrow { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--signal-ink); }
+.decide-eyebrow { margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--signal-ink); }
 /* done: SCR-03-desktop-done / -mobile-done banner; return and reject (no board) use the neutral one */
-.decide-banner { display: flex; flex-direction: column; gap: 6px; padding: var(--space-4) 18px; border: 2px solid; }
+.decide-banner { display: flex; flex-direction: column; gap: var(--space-6px); padding: var(--space-4) var(--space-18px); border: var(--rule-strong) solid; }
 .decide-banner--success { background: var(--verified-tint); border-color: var(--verified); color: var(--verified-ink); }
 .decide-banner--neutral { background: var(--neutral-tint); border-color: var(--neutral-ink); color: var(--neutral-ink); }
 .decide-banner .decide-eyebrow, .decide-banner .shell-title { color: inherit; }
 @media (min-width: 720px) {
-  .decide-banner { padding: 8px 18px; }
+  .decide-banner { padding: var(--space-2) var(--space-18px); }
 }
 .decide-sub { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); color: var(--ink-muted); }
 
 /* decision rows (the unscoped rules are the read-only fallbacks; the board card below sets its own grid) */
 .decide-rows { margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .decide-row { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: var(--space-3); align-items: baseline; }
-.decide-row dt { font-size: 13px; color: var(--ink-muted); }
+.decide-row dt { font-size: var(--text-hint-size); color: var(--ink-muted); }
 .decide-row dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .decide-by { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
 
 /* approval chain: kept after the board content */
 .decide-chain { display: flex; flex-direction: column; gap: var(--space-2); }
-.decide-steps { margin: 0; padding: 0; list-style: none; background: var(--surface); border: 2px solid var(--rule-soft); }
-.decide-step { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: var(--space-2); align-items: baseline; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--rule-soft); }
+.decide-steps { margin: 0; padding: 0; list-style: none; background: var(--surface); border: var(--rule-strong) solid var(--rule-soft); }
+.decide-step { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: var(--space-2); align-items: baseline; padding: var(--space-2) var(--space-3); border-bottom: var(--rule-thin) solid var(--rule-soft); }
 .decide-step:last-child { border-bottom: none; }
-.decide-step__pos { font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
+.decide-step__pos { font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 .decide-step__who strong { font-weight: 600; }
-.decide-step__status { font-size: 13px; text-align: right; }
+.decide-step__status { font-size: var(--text-hint-size); text-align: right; }
 .decide-step--current { background: var(--signal-tint); color: var(--signal-ink); }
 .decide-step--approved .decide-step__status { color: var(--verified-ink); }
 
 /* the default board: content on the left, "Your decision" on the right (wrapping as the board's flex row does) */
-.decide-board { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+.decide-board { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
 .decide-main { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-4); }
 .decide-aside { flex: 1 1 320px; max-width: 420px; min-width: 0; }
 .decide-what { display: flex; flex-direction: column; gap: var(--space-4); }
-.decide-what > .decide-rows { display: grid; grid-template-columns: fit-content(170px) minmax(0, 1fr); gap: 10px 18px; padding: var(--space-4); background: var(--surface); border: 2px solid var(--ink); }
+.decide-what > .decide-rows { display: grid; grid-template-columns: fit-content(170px) minmax(0, 1fr); gap: var(--space-10px) var(--space-18px); padding: var(--space-4); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
 .decide-what .decide-row { display: contents; }
 .decide-what .decide-row > * { line-height: 1.3; }
-.decide-what .decide-row dt { font-size: 14px; }
+.decide-what .decide-row dt { font-size: var(--text-body-size); }
 .decide-what .decide-list { padding: 0; list-style: none; }
-.decide-what .psl-amount { font-size: 18px; }
+.decide-what .psl-amount { font-size: var(--text-sheet-title-size); }
 /* wide desktops: Version and Prepared by (rows 5 and 6) sit beside the first rows, so the card keeps the board's height */
 @media (min-width: 1080px) {
   .decide-what > .decide-rows { grid-template-columns: fit-content(170px) minmax(0, 1fr) auto minmax(0, auto); }
@@ -75,22 +74,22 @@
 }
 
 /* agent card */
-.decide-agent { display: flex; gap: 10px; align-items: flex-start; padding: 10px var(--space-3); background: var(--action-tint); border: 2px solid var(--action); color: var(--action-ink); font-size: 14px; line-height: 1.45; }
+.decide-agent { display: flex; gap: var(--space-10px); align-items: flex-start; padding: var(--space-10px) var(--space-3); background: var(--action-tint); border: var(--rule-strong) solid var(--action); color: var(--action-ink); font-size: var(--text-body-size); line-height: 1.45; }
 .decide-agent__img { width: 36px; height: 36px; flex: none; border-radius: var(--radius-round); object-fit: cover; background: var(--mascot-chidi-tint); }
 .decide-agent__text { min-width: 0; }
 .decide-agent__head { display: block; }
-.decide-agent__text small { font-size: 14px; }
+.decide-agent__text small { font-size: var(--text-body-size); }
 .decide-agent__short { display: none; }
 
 /* "Your decision" */
-.decide-panel .psl-panel__head { margin: 0; padding: var(--space-3) var(--space-4); font-size: 16px; line-height: 1.2; font-stretch: 112%; letter-spacing: .04em; }
+.decide-panel .psl-panel__head { margin: 0; padding: var(--space-3) var(--space-4); font-size: var(--text-lead-size); line-height: 1.2; font-stretch: 112%; letter-spacing: .04em; }
 .decide-panel .psl-panel__body { padding: var(--space-4); line-height: 1.3; }
 .decide-panel .psl-label { font-weight: 500; }
 .decide-panel .psl-input--area { min-height: 80px; }
 /* the counter sits at the end of the label line, so the buttons keep the board's place */
 .decide-panel .psl-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; column-gap: var(--space-2); }
-.decide-panel .psl-field { row-gap: 6px; }
-.decide-panel .psl-field > .psl-hint { grid-row: 1; grid-column: 2; }
+.decide-panel .psl-field { row-gap: var(--space-6px); }
+.decide-panel .psl-field > .psl-hint, .decide-panel .psl-field > .psl-count { grid-row: 1; grid-column: 2; }
 .decide-panel .psl-field > textarea, .decide-panel .psl-field > .psl-error { grid-column: 1 / -1; }
 .decide-reason { margin: 0; }
 .decide-doesnt { margin: 0; }
@@ -98,25 +97,25 @@
 /* inside the panel the action bar is plain content; it becomes a bar only on the phone */
 @media (min-width: 720px) {
   .decide-panel .psl-actionbar { padding: 0; border-top: none; background: none; gap: var(--space-3); }
-  .decide-panel .psl-actionbar__pair { gap: 10px; }
+  .decide-panel .psl-actionbar__pair { gap: var(--space-10px); }
   .decide-panel .psl-actionbar__pair .psl-btn { min-height: var(--control-md); }
 }
 
 /* read-only: amount, basis and who it waits for as boxes, then the card (SCR-03-*-not-yours) */
-.decide-readonly { display: flex; flex-direction: column; gap: 20px; }
-.decide-strip { margin: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); border: 2px solid var(--ink); background: var(--surface); }
-.decide-strip__box { padding: var(--space-3) 14px; border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: var(--space-1); color: var(--ink-subtle); min-width: 0; }
+.decide-readonly { display: flex; flex-direction: column; gap: var(--space-20px); }
+.decide-strip { margin: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); border: var(--rule-strong) solid var(--ink); background: var(--surface); }
+.decide-strip__box { padding: var(--space-3) var(--space-14px); border-right: var(--rule-strong) solid var(--ink); display: flex; flex-direction: column; gap: var(--space-1); color: var(--ink-subtle); min-width: 0; }
 .decide-strip__box:last-child { border-right: none; }
 .decide-strip dt, .decide-strip dd { line-height: normal; }
-.decide-strip dt { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
-.decide-strip dd { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 16px; overflow-wrap: anywhere; }
+.decide-strip dt { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: .06em; text-transform: uppercase; }
+.decide-strip dd { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: var(--text-lead-size); overflow-wrap: anywhere; }
 .decide-strip .psl-amount { font-family: inherit; font-size: inherit; font-weight: inherit; }
 .decide-strip__box--strong { background: var(--ink); color: var(--on-strong); }
 .decide-strip__box--waiting { background: var(--signal-tint); color: var(--signal-ink); }
 .decide-strip__box--phone { display: none; }
-.decide-card { max-width: 760px; box-sizing: content-box; padding: 20px; display: flex; flex-direction: column; gap: var(--space-3); background: var(--surface); border: 2px solid var(--ink); }
+.decide-card { max-width: 760px; box-sizing: content-box; padding: var(--space-20px); display: flex; flex-direction: column; gap: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
 .decide-tag { align-self: flex-start; }
-.decide-lead { font-size: 16px; }
+.decide-lead { font-size: var(--text-lead-size); }
 .decide-lead__head { display: inline; margin: 0; font: inherit; font-weight: 700; }
 .decide-lead p { display: inline; }
 .decide-asked { color: var(--ink-muted); }
@@ -126,97 +125,97 @@
 .decide-comment__action { margin: 0; max-width: 260px; }
 /* drawn as the board's secondary button, greyed: it cannot be used yet */
 .decide-comment__action .psl-btn[disabled] { background: var(--surface); box-shadow: inset 0 0 0 2px var(--disabled); color: var(--ink-muted); }
-.decide-open { font-size: 14px; }
+.decide-open { font-size: var(--text-body-size); }
 .decide-readonly .decide-chain { max-width: 760px; }
 
 /* own (SCR-03-*-own): the version card, and the review card beside it */
-.decide-own { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+.decide-own { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
 .decide-own__version { flex: 999 1 600px; min-width: 0; }
 .decide-own__review { flex: 1 1 340px; max-width: 440px; min-width: 0; }
 .decide-own__chain { flex: 1 1 100%; }
 .decide-own .psl-panel__head { margin: 0; line-height: 1.2; }
 .decide-own__rows { margin: 0; gap: 0; }
-.decide-own .decide-asked li { min-height: 40px; padding: 10px 0 0; box-sizing: border-box; border-top: 1px solid var(--rule-soft); font-size: 14px; }
-.decide-own__rows > div { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 40px; border-top: 1px solid var(--rule-soft); font-size: 14px; }
-.decide-own__rows dd { margin: 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); text-transform: uppercase; text-align: right; }
+.decide-own .decide-asked li { min-height: var(--control-sm); padding: var(--space-10px) 0 0; box-sizing: border-box; border-top: var(--rule-thin) solid var(--rule-soft); font-size: var(--text-body-size); }
+.decide-own__rows > div { display: flex; justify-content: space-between; align-items: center; gap: var(--space-10px); min-height: var(--control-sm); border-top: var(--rule-thin) solid var(--rule-soft); font-size: var(--text-body-size); }
+.decide-own__rows dd { margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); text-transform: uppercase; text-align: right; }
 .decide-own__rows dd .psl-amount { font-size: inherit; font-weight: 400; }
 .decide-own .decide-asked { color: var(--ink); }
 .decide-callout-text { margin: 0; font: inherit; }
 
 /* stale: the notice, then the versions as one table (desktop) */
-.decide-stale { display: flex; flex-direction: column; gap: 20px; }
+.decide-stale { display: flex; flex-direction: column; gap: var(--space-20px); }
 .decide-stale p { margin: 0; }
-.decide-stale__foot { display: flex; flex-direction: column; gap: 20px; }
-.decide-stale__notice { display: block; padding: 14px var(--space-4); border: 2px solid var(--waiting); }
+.decide-stale__foot { display: flex; flex-direction: column; gap: var(--space-20px); }
+.decide-stale__notice { display: block; padding: var(--space-14px) var(--space-4); border: var(--rule-strong) solid var(--waiting); }
 .decide-stale__head { display: inline; margin: 0; font: inherit; font-weight: 700; }
 .decide-stale__notice p { display: inline; }
 .decide-stale__action { max-width: 360px; }
-.decide-compare { display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr); background: var(--surface); border: 2px solid var(--ink); }
+.decide-compare { display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
 .decide-compare > section { min-width: 0; }
-.decide-colhead { margin: 0; padding: 10px 14px; border-bottom: 2px solid var(--ink); font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .06em; color: var(--ink-muted); }
-.decide-compare__old .decide-colhead { padding-left: calc(160px + 14px); }
+.decide-colhead { margin: 0; padding: var(--space-10px) var(--space-14px); border-bottom: var(--rule-strong) solid var(--ink); font-family: var(--font-mono); font-size: var(--text-label-size); font-weight: 500; letter-spacing: .06em; color: var(--ink-muted); }
+.decide-compare__old .decide-colhead { padding-left: calc(160px + var(--space-14px)); }
 .decide-compare .decide-rows { display: grid; gap: 0; }
 .decide-compare__old .decide-rows { grid-template-columns: 160px minmax(0, 1fr); }
 .decide-compare .decide-row { display: contents; }
-.decide-compare .decide-row > * { margin: 0; padding: var(--space-1) 14px; border-bottom: 1px solid var(--rule-soft); font-size: 14px; line-height: 1.3; color: var(--ink); }
+.decide-compare .decide-row > * { margin: 0; padding: var(--space-1) var(--space-14px); border-bottom: var(--rule-thin) solid var(--rule-soft); font-size: var(--text-body-size); line-height: 1.3; color: var(--ink); }
 .decide-compare .psl-amount { font-family: inherit; font-size: inherit; font-weight: inherit; }
 .decide-colhead { line-height: 1.3; padding-top: var(--space-2); padding-bottom: var(--space-2); }
 .decide-compare .decide-row--changed > * { background: var(--waiting-tint); }
 .decide-compare__new dt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.decide-compare__changes { padding: var(--space-1) 14px; font-size: 13px; line-height: 1.3; color: var(--ink-muted); }
+.decide-compare__changes { padding: var(--space-1) var(--space-14px); font-size: var(--text-hint-size); line-height: 1.3; color: var(--ink-muted); }
 /* desktop: what the producer changed sits at the right of the current values, so the table keeps its height */
 @media (min-width: 720px) {
   .decide-compare__new { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, max-content); align-content: start; }
   .decide-compare__new > .decide-colhead { grid-column: 1 / -1; }
-  .decide-compare__changes { grid-column: 2; grid-row: 2; max-width: 240px; border-left: 1px solid var(--rule-soft); }
+  .decide-compare__changes { grid-column: 2; grid-row: 2; max-width: 240px; border-left: var(--rule-thin) solid var(--rule-soft); }
 }
 .decide-compare__changes > * { display: inline; margin: 0; padding: 0; font-size: inherit; }
 .decide-compare__changes li { display: inline; }
 .decide-compare__changes li + li::before { content: ', '; }
 
 /* done */
-.decide-done { display: flex; flex-direction: column; gap: 20px; }
-.decide-done__row { display: flex; flex-wrap: wrap; gap: 22px; align-items: stretch; }
-.decide-next { flex: 1 1 480px; margin: 0; padding: 10px var(--space-3) 0; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--space-3); align-items: end; }
-.decide-next p { margin: 0 0 var(--space-3); font-size: 14px; line-height: 1.45; color: var(--ink); }
+.decide-done { display: flex; flex-direction: column; gap: var(--space-20px); }
+.decide-done__row { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: stretch; }
+.decide-next { flex: 1 1 480px; margin: 0; padding: var(--space-10px) var(--space-3) 0; display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--space-3); align-items: end; }
+.decide-next p { margin: 0 0 var(--space-3); font-size: var(--text-body-size); line-height: 1.45; color: var(--ink); }
 .psl-callout.decide-next { background: var(--action-tint); color: var(--action-ink); }
 .decide-next__img { width: 96px; height: auto; display: block; }
-.decide-links { margin: 0; flex: 1 1 280px; max-width: 360px; display: flex; flex-direction: column; gap: 10px; }
+.decide-links { margin: 0; flex: 1 1 280px; max-width: 360px; display: flex; flex-direction: column; gap: var(--space-10px); }
 .decide-links .psl-btn { display: flex; width: 100%; box-sizing: border-box; }
 .decide-back a { min-height: var(--control-md); display: inline-flex; align-items: center; }
-.decide-paid, .decide-done__by { font-size: 13px; color: var(--ink-muted); }
+.decide-paid, .decide-done__by { font-size: var(--text-hint-size); color: var(--ink-muted); }
 
 /* no access: the frame's title size, as every decision state (the work item's permission board sets it smaller) */
-.decide-noaccess .shell-title { font-size: 40px; }
+.decide-noaccess .shell-title { font-size: var(--text-display-xl-size); }
 
 /* the phone station line */
 .decide-mini { display: none; margin: 0; }
 
 @media (max-width: 719.98px) {
-  .decide-noaccess .shell-title { font-size: 26px; }
-  .decide-header { gap: 10px; }
+  .decide-noaccess .shell-title { font-size: var(--text-page-title-phone-size); }
+  .decide-header { gap: var(--space-10px); }
   .decide-trail { display: none; }
   .decide-phone-eyebrow { display: block; }
   .decide-desktop-only { display: none; }
-  .decide-main { gap: 14px; }
-  .decide-mini { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+  .decide-main { gap: var(--space-14px); }
+  .decide-mini { display: flex; flex-direction: column; align-items: stretch; gap: var(--space-10px); }
   .decide-mini .psl-mini__bar { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 3px; }
   .decide-mini .psl-mini__bar i { width: auto; }
-  .decide-mini .psl-mini__text { font-size: 13px; line-height: 1.3; white-space: normal; }
+  .decide-mini .psl-mini__text { font-size: var(--text-hint-size); line-height: 1.3; white-space: normal; }
   .decide-row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 
   /* the rows and the agent are one card */
-  .decide-what { gap: 0; background: var(--surface); border: 2px solid var(--ink); }
-  .decide-what > .decide-rows { grid-template-columns: fit-content(80px) minmax(0, 1fr); gap: 10px 14px; padding: 14px; border: none; }
-  .decide-what .decide-row dt { font-size: 15px; }
+  .decide-what { gap: 0; background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+  .decide-what > .decide-rows { grid-template-columns: fit-content(80px) minmax(0, 1fr); gap: var(--space-10px) var(--space-14px); padding: var(--space-14px); border: none; }
+  .decide-what .decide-row dt { font-size: var(--text-body-phone-size); }
   .decide-what .psl-amount { font-size: 17px; }
-  .decide-what .decide-agent { align-items: center; border: none; border-top: 2px solid var(--ink); padding: 10px 14px; font-size: 13px; }
+  .decide-what .decide-agent { align-items: center; border: none; border-top: var(--rule-strong) solid var(--ink); padding: var(--space-10px) var(--space-14px); font-size: var(--text-hint-size); }
   .decide-agent__img { width: 32px; height: 32px; }
   .decide-agent--phone .decide-agent__head { display: inline; }
   .decide-agent--phone .decide-agent__who, .decide-agent--phone .decide-agent__summary { display: none; }
   .decide-agent--phone .decide-agent__short { display: inline; }
   .decide-agent--phone small::after { content: ' '; }
-  .decide-agent__text small { font-size: 13px; }
+  .decide-agent__text small { font-size: var(--text-hint-size); }
 
   /* "Your decision": the note on the page, the buttons and the one line pinned to the bottom */
   .decide-board { padding-bottom: 180px; }
@@ -225,10 +224,13 @@
   .decide-panel .psl-panel__body { padding: 0; }
   /* the station line above already says who can decide */
   .decide-panel .decide-who { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .decide-panel .psl-actionbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; padding: 10px 18px 18px; gap: 10px; background: var(--steel); border-top: none; }
-  .decide-panel .psl-actionbar__pair { gap: 10px; }
+  /* the note field, its message included, scrolls above the pinned bar (Approve, then Return and Reject) when it takes
+     focus */
+  .decide-panel .psl-field { scroll-margin-bottom: calc(var(--control-xl) + var(--control-md) + var(--space-5) * 3 + var(--space-2)); }
+  .decide-panel .psl-actionbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); padding: var(--space-10px) var(--space-18px) var(--space-18px); gap: var(--space-10px); background: var(--steel); border-top: none; }
+  .decide-panel .psl-actionbar__pair { gap: var(--space-10px); }
   .decide-panel .decide-approve { min-height: var(--control-xl); font-size: 17px; } /* phone footer, as on SCR-03-mobile */
-  .decide-panel .decide-doesnt { font-size: 12px; }
+  .decide-panel .decide-doesnt { font-size: var(--text-small-size); }
   .decide-step { grid-template-columns: 24px minmax(0, 1fr); }
   .decide-step__status { grid-column: 2; text-align: left; }
 
@@ -237,51 +239,51 @@
   .decide-strip { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .decide-strip__box { padding: var(--space-2); gap: 0; }
   .decide-strip__box:nth-child(3n) { border-right: none; }
-  .decide-strip__box:nth-child(-n + 3):nth-last-child(n + 4) { border-bottom: 2px solid var(--ink); }
+  .decide-strip__box:nth-child(-n + 3):nth-last-child(n + 4) { border-bottom: var(--rule-strong) solid var(--ink); }
   .decide-strip__box--phone { display: flex; }
   .decide-strip dd { overflow-wrap: normal; }
   .decide-strip dt { font-size: 10px; letter-spacing: 0; }
-  .decide-strip dd { font-family: var(--font-sans); font-size: 15px; }
+  .decide-strip dd { font-family: var(--font-sans); font-size: var(--text-body-phone-size); }
   .decide-card { padding: 0; border: none; background: none; }
   /* the comment button sits in a bar at the bottom, as SCR-03-mobile-not-yours draws it */
   .decide-readonly--comment { padding-bottom: 80px; }
-  .decide-comment__action { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; max-width: none; padding: var(--space-3) var(--space-4) 18px; background: var(--surface); border-top: 2px solid var(--ink); }
+  .decide-comment__action { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); max-width: none; padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); }
 
   /* own: the version card, then the review card */
   .decide-own { gap: var(--space-3); }
-  .decide-lead { font-size: 15px; }
+  .decide-lead { font-size: var(--text-body-phone-size); }
 
   /* stale: stacked cards */
-  .decide-stale { gap: 14px; }
-  .decide-stale__notice { padding: 14px; }
-  .decide-stale__head { display: block; margin-bottom: 6px; font-weight: 600; }
-  .decide-compare { grid-template-columns: minmax(0, 1fr); gap: 14px; background: none; border: none; }
-  .decide-compare > section { background: var(--surface); border: 2px solid var(--ink); }
+  .decide-stale { gap: var(--space-14px); }
+  .decide-stale__notice { padding: var(--space-14px); }
+  .decide-stale__head { display: block; margin-bottom: var(--space-6px); font-weight: 600; }
+  .decide-compare { grid-template-columns: minmax(0, 1fr); gap: var(--space-14px); background: none; border: none; }
+  .decide-compare > section { background: var(--surface); border: var(--rule-strong) solid var(--ink); }
   .decide-compare > .decide-compare__old { border-color: var(--disabled); }
-  .decide-compare__old .decide-colhead { padding-left: 14px; }
-  .decide-compare .decide-rows, .decide-compare__old .decide-rows { grid-template-columns: auto minmax(0, 1fr); padding: 10px 0; }
-  .decide-compare .decide-row > * { padding: 4px 14px; border-bottom: none; font-size: 15px; }
+  .decide-compare__old .decide-colhead { padding-left: var(--space-14px); }
+  .decide-compare .decide-rows, .decide-compare__old .decide-rows { grid-template-columns: auto minmax(0, 1fr); padding: var(--space-10px) 0; }
+  .decide-compare .decide-row > * { padding: var(--space-1) var(--space-14px); border-bottom: none; font-size: var(--text-body-phone-size); }
   .decide-compare__new dt { position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
   /* the phone's current card: the figure in mono, the marks small and muted, the agent note inside the card */
   .decide-compare__new .psl-amount { font-family: var(--font-mono); font-size: 17px; font-weight: 500; }
-  .decide-compare__new .decide-changed, .decide-compare__new .decide-muted { font-size: 12px; font-weight: 400; color: var(--ink-muted); }
-  .decide-compare__new .decide-agent { border: none; border-top: 2px solid var(--ink); margin-top: 10px; font-size: 13px; }
+  .decide-compare__new .decide-changed, .decide-compare__new .decide-muted { font-size: var(--text-small-size); font-weight: 400; color: var(--ink-muted); }
+  .decide-compare__new .decide-agent { border: none; border-top: var(--rule-strong) solid var(--ink); margin-top: var(--space-10px); font-size: var(--text-hint-size); }
   .decide-header--quiet { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .decide-stale { padding-bottom: 120px; }
-  .decide-stale__foot { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; gap: 10px; padding: 10px 18px 18px; background: var(--steel); }
-  .decide-stale__foot .psl-doesnt { font-size: 12px; }
+  .decide-stale__foot { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); gap: var(--space-10px); padding: var(--space-10px) var(--space-18px) var(--space-18px); background: var(--steel); }
+  .decide-stale__foot .psl-doesnt { font-size: var(--text-small-size); }
   .decide-stale__action { max-width: none; }
   .decide-stale__action .psl-btn { min-height: var(--control-xl); font-size: 17px; }
 
   /* done: the agent card, the Paid line, then the links */
-  .decide-done { gap: 14px; padding-bottom: 130px; }
-  .decide-done .work-facts .psl-fact { padding: 10px; }
-  .decide-banner { padding: 14px; }
+  .decide-done { gap: var(--space-14px); padding-bottom: 130px; }
+  .decide-done .work-facts .psl-fact { padding: var(--space-10px); }
+  .decide-banner { padding: var(--space-14px); }
   .decide-done__row { display: contents; }
   .decide-next { order: 1; flex: none; }
   .decide-paid, .decide-back, .decide-done__by { order: 2; }
   /* Next decision and Open the work item sit at the bottom, as SCR-03-mobile-done draws them */
-  .decide-links { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; max-width: none; padding: 10px 18px 18px; background: var(--steel); }
+  .decide-links { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); max-width: none; padding: var(--space-10px) var(--space-18px) var(--space-18px); background: var(--steel); }
   .decide-links .psl-btn--dark { min-height: 52px; }
   .decide-links a.psl-btn--secondary { background: none; box-shadow: none; color: var(--action); text-decoration: underline; min-height: var(--control-md); font-weight: 400; }
   .decide-next p { color: var(--action-ink); }

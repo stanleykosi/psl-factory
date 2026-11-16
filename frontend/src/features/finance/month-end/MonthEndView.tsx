@@ -2,11 +2,11 @@
 
 // SCR-36 Month-end checklist, desktop and phone boards. Data comes only from E-MONTH-END (plus the D-MONTH-END-VIEW
 // proposal fields); the backend decides access, counts, labels, tones and restriction (INV-ACCESS, INV-RESTRICTED).
-import Image from 'next/image';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { MouseEvent } from 'react';
 
+import { AgentAvatar, buttonClass, EmptyState, Link, PageTitle, Table, Tag, Unknown } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
@@ -20,6 +20,7 @@ import {
   periodNames,
   taskEnd,
   taskTag,
+  UNKNOWN,
 } from './model';
 import { MonthEndNoAccess } from './MonthEndStates';
 import type { MonthEnd, MonthEndTask } from './proposal';
@@ -44,25 +45,26 @@ function BackLink() {
   );
 }
 
+/** The count strip: task counts and cash, each in a neutral box. Colour is on the number, never a fill (green is for verified outputs). */
 function Strip({ body }: { body: MonthEnd }) {
   const cash = cashView(body);
   const cells = [
-    { label: 'DONE', value: doneText(body.summary), tone: 'done' },
+    { label: 'DONE', value: doneText(body.summary), tone: 'plain' },
     { label: 'WAITING', value: countText(body.summary?.waiting), tone: 'waiting' },
     { label: 'IN PROGRESS', value: countText(body.summary?.in_progress), tone: 'progress' },
   ];
   return (
-    <section aria-label="Facts earned" className="monthend-strip">
+    <section aria-label="Month-end counts" className="monthend-strip">
       {cells.map((cell) => (
-        <div key={cell.label} className={`monthend-cell monthend-cell--${cell.tone}`}>
+        <div key={cell.label} className="monthend-cell">
           <span className="monthend-cell__label">{cell.label}</span>
-          <span className="monthend-cell__value">{cell.value}</span>
+          <span className={`monthend-cell__value monthend-cell__value--${cell.tone}`}>{cell.value}</span>
         </div>
       ))}
-      <div className={`monthend-cell monthend-cell--${cash.unknown ? 'waiting' : 'plain'}`}>
+      <div className="monthend-cell">
         <span className="monthend-cell__label">CASH RECEIVED</span>
-        <span className="monthend-cell__value" aria-describedby="monthend-cash-full">
-          {cash.text}
+        <span className={`monthend-cell__value monthend-cell__value--${cash.unknown ? 'waiting' : 'plain'}`} aria-describedby="monthend-cash-full">
+          {cash.text === UNKNOWN ? <Unknown /> : cash.text}
         </span>
         <span id="monthend-cash-full" hidden>
           {cash.description}
@@ -74,6 +76,7 @@ function Strip({ body }: { body: MonthEnd }) {
 
 function TaskEnd({ task, titleId }: { task: MonthEndTask; titleId: string }) {
   const end = taskEnd(task);
+  // the SCR-36 board writes a restricted row's end as plain muted text, with no lock (D-93); it never links
   if (end.kind === 'restricted') return <span className="monthend-restricted">{end.text}</span>;
   // the name stays "Open" as drawn; the row's task title is its description, so each link is told apart
   if (end.kind === 'link')
@@ -88,43 +91,39 @@ function TaskEnd({ task, titleId }: { task: MonthEndTask; titleId: string }) {
 function TaskTable({ tasks }: { tasks: MonthEndTask[] }) {
   return (
     <section className="monthend-tasks">
-      <div className="monthend-frame">
-        <table className="monthend-table">
-          <thead>
-            <tr>
-              <th scope="col">TASK</th>
-              <th scope="col">WHERE IT IS</th>
-              <th scope="col">STATE</th>
-              <th scope="col" />
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.map((task, i) => {
+      <Table
+        caption="Month-end tasks"
+        columns={[
+          {
+            key: 'task',
+            header: 'TASK',
+            cell: (task) => (
+              <>
+                <strong id={`monthend-task-${tasks.indexOf(task)}`}>{task.title ?? task.line}</strong>
+                {task.detail && (
+                  <>
+                    <br />
+                    <span className="monthend-detail">{task.detail}</span>
+                  </>
+                )}
+              </>
+            ),
+          },
+          { key: 'where', header: 'WHERE IT IS', cell: (task) => task.where },
+          {
+            key: 'state',
+            header: 'STATE',
+            cell: (task) => {
               const tag = taskTag(task);
-              return (
-                <tr key={i}>
-                  <td>
-                    <strong id={`monthend-task-${i}`}>{task.title ?? task.line}</strong>
-                    {task.detail && (
-                      <>
-                        <br />
-                        <span className="monthend-detail">{task.detail}</span>
-                      </>
-                    )}
-                  </td>
-                  <td>{task.where}</td>
-                  <td>
-                    <span className={tag.className}>{tag.text}</span>
-                  </td>
-                  <td>
-                    <TaskEnd task={task} titleId={`monthend-task-${i}`} />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+              return <Tag tone={tag.tone}>{tag.text}</Tag>;
+            },
+          },
+          { key: 'open', header: '', cell: (task) => <TaskEnd task={task} titleId={`monthend-task-${tasks.indexOf(task)}`} /> },
+        ]}
+        rows={tasks}
+        rowKey={(task) => String(tasks.indexOf(task))}
+        empty="No month-end tasks."
+      />
     </section>
   );
 }
@@ -138,7 +137,7 @@ function TaskCards({ tasks }: { tasks: MonthEndTask[] }) {
           <div key={i} className="monthend-card">
             <span className="monthend-card__top">
               <strong>{task.title ?? task.line}</strong>
-              <span className={tag.className}>{tag.text}</span>
+              <Tag tone={tag.tone}>{tag.text}</Tag>
             </span>
             <span className="monthend-card__where">{task.where}</span>
           </div>
@@ -152,7 +151,7 @@ function AgentNote({ note }: { note: NonNullable<MonthEnd['agent_note']> }) {
   const agent = AGENT_NAMES[note.agent];
   return (
     <div className="monthend-note">
-      <Image src={`/agents/${note.agent}.png`} alt="" width={36} height={36} unoptimized className="monthend-note__avatar" />
+      <AgentAvatar agent={note.agent} />
       <span className="monthend-note__text">
         <strong>{agent.name}</strong> · {agent.role}
         <br />
@@ -173,10 +172,10 @@ function Board({ body }: { body: MonthEnd }) {
       <BackLink />
       <p className="monthend-eyebrow">FINANCE / MONTH-END</p>
       <div className="monthend-head">
-        <h1 className="monthend-title">
+        <PageTitle size={34} phoneSize={22} titleClassName="monthend-title">
           Month-end · <span className="monthend-wide">{names?.long ?? body.period}</span>
           <span className="monthend-narrow">{names?.short ?? body.period}</span>
-        </h1>
+        </PageTitle>
         {asOf && <span className="monthend-asof">{asOf}</span>}
       </div>
       <span className="monthend-summary">
@@ -185,9 +184,9 @@ function Board({ body }: { body: MonthEnd }) {
       <Strip body={body} />
       <div className="monthend-row">
         {empty ? (
-          <div className="psl-empty monthend-empty">
-            <h3>No month-end tasks you can see for {names?.long ?? body.period}.</h3>
-          </div>
+          <EmptyState className="monthend-empty" title={`No month-end tasks you can see for ${names?.long ?? body.period}.`}>
+            Tasks appear here when month-end work you can see starts.
+          </EmptyState>
         ) : (
           <TaskTable tasks={body.tasks} />
         )}
@@ -195,9 +194,9 @@ function Board({ body }: { body: MonthEnd }) {
           <aside className="monthend-aside">
             {body.agent_note && <AgentNote note={body.agent_note} />}
             {action && (
-              <Link className="monthend-action" href={action.href}>
+              <NextLink className={`${buttonClass('primary', 'lg')} monthend-action`} href={action.href}>
                 {action.label}
-              </Link>
+              </NextLink>
             )}
           </aside>
         )}
@@ -205,9 +204,9 @@ function Board({ body }: { body: MonthEnd }) {
       {!empty && <TaskCards tasks={body.tasks} />}
       {action && (
         <div className="monthend-bar">
-          <Link className="monthend-action" href={action.href}>
+          <NextLink className={`${buttonClass('primary', 'lg')} monthend-action`} href={action.href}>
             {action.label}
-          </Link>
+          </NextLink>
         </div>
       )}
     </div>

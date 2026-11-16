@@ -4,13 +4,15 @@
 // and closes the panel on every outcome except a 422, which keeps the entries and marks the named fields.
 import { useId, useState, type KeyboardEvent } from 'react';
 
-import { WarningIcon } from '@/shell/icons';
+import { Button, Callout, FileUpload, formatSize, TextArea } from '@/components';
 
 import type { FieldProblem } from './api';
-import { formatSize } from './format';
 
 export const NOTE_LIMIT = 2000;
 export type Invalid = { message: string; fields: FieldProblem[] };
+
+/** What a template can be uploaded as; the server still checks the file. */
+const TEMPLATE_TYPES = ['.docx', '.xlsx', '.pdf'];
 
 type Props = {
   name: string;
@@ -52,71 +54,42 @@ export function TemplateUploadPanel({ name, busy, locked, onSend, onCancel }: Pr
       <h2 className="setup-upload__head" id={`${id}-head`}>
         Upload a version of {name}
       </h2>
-      {invalid && (
-        <div className="psl-callout psl-callout--problem" role="alert">
-          <WarningIcon />
-          <span>{invalid.message}</span>
-        </div>
-      )}
-      <div className="psl-field">
-        <label className="psl-label" htmlFor={`${id}-file`}>
-          File
-        </label>
-        <input
-          id={`${id}-file`}
-          type="file"
-          className={`psl-input setup-fileinput${fileError ? ' is-error' : ''}`}
-          disabled={busy}
-          aria-invalid={fileError ? true : undefined}
-          aria-describedby={fileError ? `${id}-file-msg` : file ? `${id}-file-info` : undefined}
-          onChange={(e) => {
-            setFile(e.target.files?.[0] ?? null);
-            setInvalid(null);
-          }}
-        />
-        {file && !fileError && (
-          <p className="setup-help" id={`${id}-file-info`}>
-            {file.name} · {formatSize(file.size)}
-          </p>
-        )}
-        {fileError && (
-          <p className="setup-help setup-help--error" id={`${id}-file-msg`}>
-            {fileError}
-          </p>
-        )}
-      </div>
-      <div className="psl-field">
-        <label className="psl-label" htmlFor={`${id}-note`}>
-          Note (optional)
-        </label>
-        <textarea
-          id={`${id}-note`}
-          className={`psl-input psl-input--area${noteError ? ' is-error' : ''}`}
-          value={note}
-          disabled={busy}
-          aria-invalid={noteError ? true : undefined}
-          aria-describedby={`${id}-count${noteError ? ` ${id}-note-msg` : ''}`}
-          onChange={(e) => {
-            setNote(e.target.value);
-            setInvalid((i) => (i ? { ...i, fields: i.fields.filter((f) => f.name !== 'note') } : i));
-          }}
-        />
-        <span className={`psl-count${over ? ' is-over' : ''}`} id={`${id}-count`}>
-          {noteLength(note)} / {NOTE_LIMIT}
-        </span>
-        {noteError && (
-          <p className="setup-help setup-help--error" id={`${id}-note-msg`}>
-            {noteError}
-          </p>
-        )}
-      </div>
+      {invalid && <Callout kind="problem">{invalid.message}</Callout>}
+      <FileUpload
+        label="File"
+        prompt="Drop the template here or"
+        accept={TEMPLATE_TYPES}
+        state={{ status: 'empty' }}
+        error={fileError}
+        onFile={(chosen) => {
+          setFile(chosen);
+          setInvalid(null);
+        }}
+        onRemove={() => {
+          setFile(null);
+          setInvalid(null);
+        }}
+      />
+      {file && !fileError && <p className="setup-help">{file.name} · {formatSize(file.size)}</p>}
+      <TextArea
+        label="Note"
+        optional
+        value={note}
+        disabled={busy}
+        error={noteError}
+        hint={`${noteLength(note)} / ${NOTE_LIMIT}`}
+        onChange={(e) => {
+          setNote(e.target.value);
+          setInvalid((i) => (i ? { ...i, fields: i.fields.filter((f) => f.name !== 'note') } : i));
+        }}
+      />
       <div className="setup-upload__actions">
-        <button type="button" className="psl-btn" disabled={busy || locked || !file || empty || over} onClick={() => void send()}>
-          {busy ? 'Uploading…' : 'Upload version'}
-        </button>
-        <button type="button" className="psl-btn psl-btn--secondary" disabled={busy} onClick={onCancel}>
+        <Button busy={busy} busyLabel="Uploading…" disabled={locked || !file || empty || over} onClick={() => void send()}>
+          Upload version
+        </Button>
+        <Button kind="secondary" disabled={busy} onClick={onCancel}>
           Cancel
-        </button>
+        </Button>
       </div>
     </section>
   );

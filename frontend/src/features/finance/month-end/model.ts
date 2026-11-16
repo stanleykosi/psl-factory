@@ -1,8 +1,8 @@
 // SCR-36 month-end values to the words on the boards. Presentation only: every count, label, tone, restriction and
 // link comes from the response; nothing here counts tasks, buckets states, totals cash or picks a month.
 // Money is read from the decimal string (never a float) and unknown stays Unknown, never 0 (INV-UNKNOWN).
-import { formatAmount, formatClock } from '@/features/decide/format';
-import { STATE_TAGS } from '@/features/work-item/labels';
+import { formatAmount } from '@/features/decide/format';
+import { formatClock, STATE_TAGS, type TagTone } from '@/components';
 
 import type { AgentKey, MonthEnd, MonthEndTask, MonthEndTone } from './proposal';
 
@@ -23,7 +23,7 @@ export function periodNames(period: string): { long: string; short: string } | u
   return { long: `${month} ${period.slice(0, 4)}`, short: month.slice(0, 3) };
 }
 
-/** "FROM RECORDS YOU CAN SEE · UPDATED 10:42" (Africa/Lagos); either part alone when the other is missing. */
+/** "FROM RECORDS YOU CAN SEE · UPDATED 10:42" (Africa/Lagos, as the SCR-36 board writes it); either part alone when the other is missing. */
 export function asOfLine(body: Pick<MonthEnd, 'as_of' | 'coverage'>): string | undefined {
   const parts = [body.coverage, body.as_of ? `UPDATED ${formatClock(body.as_of)}` : undefined].filter(Boolean);
   return parts.length ? parts.join(' · ') : undefined;
@@ -93,7 +93,7 @@ export function cashView(body: Pick<MonthEnd, 'cash_received' | 'cash_received_d
   return { text: compactAmount(known), description: formatAmount(known)!, unknown: false };
 }
 
-const TONE_CLASS: Record<MonthEndTone, string> = {
+const TONE: Record<MonthEndTone, TagTone> = {
   neutral: 'neutral',
   person: 'person',
   stopped: 'person',
@@ -103,11 +103,10 @@ const TONE_CLASS: Record<MonthEndTone, string> = {
   verified: 'done',
 };
 
-/** CMP-05 tag: the backend's label and tone, else the STATE_TAGS words (upper case) and colour for the state. */
-export function taskTag(task: MonthEndTask): { text: string; className: string } {
+/** CMP-05 tag: the backend's label and tone, else the StateTag words and colour for the state. */
+export function taskTag(task: MonthEndTask): { text: string; tone: TagTone } {
   const tag = STATE_TAGS[task.state];
-  const tone = task.tone ? TONE_CLASS[task.tone] : tag.tone;
-  return { text: task.status_label ?? tag.text.toUpperCase(), className: `psl-tag psl-tag--${tone}` };
+  return { text: task.status_label ?? tag.text, tone: task.tone ? TONE[task.tone] : tag.tone };
 }
 
 export const workHref = (workId: string) => `/work/${encodeURIComponent(workId)}`;

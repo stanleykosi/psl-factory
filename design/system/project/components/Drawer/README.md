@@ -5,4 +5,4 @@ Opens from the right over the current page (500px), so people never lose the que
 - Head: mono eyebrow (START WORK), display title, one line of context, close button. Body scrolls; footer stays fixed with Cancel and the action.
 - The page behind gets the `scrim`; Esc and the close button close it; focus stays inside while open and returns to the opener.
 - States: open, needs fixing (validation summary at the top), submitting (busy button), done (closes and shows a toast).
-- On phones it becomes a full-height sheet.
+- On phones it becomes a bottom sheet that leaves the top of the page in view (its top 70px under the phone bar), with an 18px title, as SCR-04-mobile draws it.

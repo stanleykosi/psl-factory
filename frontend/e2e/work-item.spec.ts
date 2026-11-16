@@ -12,7 +12,7 @@ async function expectNoAxeViolations(page: Page) {
 }
 
 async function loaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('.psl-loading')).toHaveCount(0);
   await expect(page.locator('main#main h1').first()).toBeVisible();
 }
 
@@ -188,7 +188,7 @@ test('history: 10 rows, Show more appends to 12, then no Show more; focus rings 
   await expect(rows).toHaveCount(12);
 
   const ring = { style: 'solid', width: '2px' };
-  expect(await tabTo(page, page.getByRole('navigation', { name: 'Work item' }).getByRole('link', { name: 'Overview' }))).toEqual(ring);
+  expect(await tabTo(page, page.getByRole('tablist', { name: 'Work item' }).getByRole('tab', { selected: true }))).toEqual(ring); // one tab stop: the open tab
   expect(await tabTo(page, page.getByRole('radio', { name: 'All' }))).toEqual(ring);
   await page.keyboard.press('ArrowRight');
   await expect(page.getByRole('radio', { name: 'Decisions' })).toBeFocused();
@@ -196,11 +196,12 @@ test('history: 10 rows, Show more appends to 12, then no Show more; focus rings 
   await expect(rows).toHaveCount(4);
   await page.getByRole('radio', { name: 'All' }).click();
 
-  await page.getByLabel('Rows per page').selectOption('10');
+  await page.getByRole('combobox', { name: 'Rows per page' }).click();
+  await page.getByRole('option', { name: '10' }).click();
   await expect(rows).toHaveCount(10);
   const more = page.getByRole('button', { name: 'Show more' });
   await expect(more).toBeVisible();
-  await page.getByLabel('Rows per page').focus();
+  await page.getByRole('combobox', { name: 'Rows per page' }).focus();
   expect(await tabTo(page, more)).toEqual(ring);
   await page.keyboard.press('Enter');
   await expect(rows).toHaveCount(12);

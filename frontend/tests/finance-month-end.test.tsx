@@ -49,9 +49,7 @@ async function open(body: unknown, status = 200) {
 }
 
 const strip = () =>
-  within(screen.getByRole('region', { name: 'Facts earned' }))
-    .getAllByText(/./, { selector: '.monthend-cell__value' })
-    .map((el) => el.textContent);
+  [...screen.getByRole('region', { name: 'Month-end counts' }).querySelectorAll('.monthend-cell__value')].map((el) => el.textContent);
 const rows = () => within(screen.getByRole('table')).getAllByRole('row').slice(1) as HTMLTableRowElement[];
 const amount = (value: string, currency = 'NGN') => ({ amount: value, currency, unknown: false });
 
@@ -132,11 +130,11 @@ describe('period, heading, as-of, counts and tags', () => {
 
   it('tag text and colour from the backend, else from the state', () => {
     const task = (extra: Partial<MonthEndTask>): MonthEndTask => ({ line: 'L', where: 'W', state: 'waiting', ...extra });
-    expect(taskTag(task({}))).toEqual({ text: 'WAITING', className: 'psl-tag psl-tag--waiting' });
-    expect(taskTag(task({ state: 'action_needed' })).text).toBe('ACTION NEEDED');
+    expect(taskTag(task({}))).toEqual({ text: 'Waiting', tone: 'waiting' });
+    expect(taskTag(task({ state: 'action_needed' })).text).toBe('Action needed');
     const tones = { neutral: 'neutral', person: 'person', stopped: 'person', agent: 'agent', uncertain: 'waiting', restricted: 'waiting', verified: 'done' } as const;
     for (const [tone, cls] of Object.entries(tones)) {
-      expect(taskTag(task({ tone: tone as MonthEndTask['tone'], status_label: 'X' }))).toEqual({ text: 'X', className: `psl-tag psl-tag--${cls}` });
+      expect(taskTag(task({ tone: tone as MonthEndTask['tone'], status_label: 'X' }))).toEqual({ text: 'X', tone: cls });
     }
   });
 
@@ -233,13 +231,13 @@ describe('MonthEndView', () => {
     expect(container.querySelector('.monthend-asof')).toBeNull();
     expect(strip()).toEqual(['Unknown', 'Unknown', 'Unknown', 'Unknown']);
     expect(rows().map((row) => [row.cells[0].textContent, row.cells[2].textContent])).toEqual([
-      ['Bank statements', 'WAITING'],
-      ['Management accounts', 'ACTION NEEDED'],
-      ['Income detail and schedules', 'VERIFIED'],
-      ['Fixed asset schedule', 'WAITING'],
-      ['Cash forecast', 'VERIFIED'],
-      ['Business-unit totals', 'WAITING'],
-      ['Payroll', 'WAITING'],
+      ['Bank statements', 'Waiting'],
+      ['Management accounts', 'Action needed'],
+      ['Income detail and schedules', 'Verified'],
+      ['Fixed asset schedule', 'Waiting'],
+      ['Cash forecast', 'Verified'],
+      ['Business-unit totals', 'Waiting'],
+      ['Payroll', 'Waiting'],
     ]);
     expect(rows().filter((row) => within(row).queryByRole('link'))).toHaveLength(6);
     expect(rows()[6].cells[3].textContent).toBe('');

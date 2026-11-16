@@ -94,13 +94,13 @@ describe('the 3D floor loads only when chosen', () => {
     expect(floor.loaded).toBe(true);
     expect(screen.getByRole('img', { name: /^3D factory floor/ }).getAttribute('aria-label')).toBe('3D factory floor: 8 lines. The same figures are listed in the flat view below.');
     expect(flatRows()).toHaveLength(8);
-    expect(flatRows()[0].closest('.overview__sr')).not.toBeNull();
+    expect(flatRows()[0].closest('.cmp-sr')).not.toBeNull();
     expect(document.querySelectorAll('dl.overview__totals > div')).toHaveLength(4);
     expect(screen.getByRole('link', { name: 'See all exceptions' })).toBeTruthy();
 
     fireEvent.click(radio('Flat'));
     expect(screen.queryByRole('img', { name: /^3D factory floor/ })).toBeNull();
-    expect(flatRows()[0].closest('.overview__sr')).toBeNull();
+    expect(flatRows()[0].closest('.cmp-sr')).toBeNull();
   });
 
   it('arrow keys move the selection and the focus', async () => {
@@ -136,6 +136,6 @@ describe('the 3D floor loads only when chosen', () => {
     expect(screen.queryByRole('img', { name: /^3D factory floor/ })).toBeNull();
     expect(screen.queryByRole('radiogroup', { name: 'View' })).toBeNull();
     expect(flatRows()).toHaveLength(8);
-    expect(flatRows()[0].closest('.overview__sr')).toBeNull();
+    expect(flatRows()[0].closest('.cmp-sr')).toBeNull();
   });
 });

@@ -5,12 +5,10 @@
 // filters by grants (INV-ACCESS); this component shows exactly the rows it is sent and never reads roles.
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent } from 'react';
+import { useState } from 'react';
 
+import { Button, Callout, EmptyState, formatDayTime, ListToolbar, PageTitle, Segmented, ShowMore, Table, Tag, useIsPhone, type Column } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
-import { WarningIcon } from '@/shell/icons';
-import { FilterIcon, SearchIcon } from '@/features/my-work/icons';
-import { formatWat } from '@/features/work-item/labels';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
 import { ExceptionsFilter } from './ExceptionsFilter';
@@ -20,67 +18,46 @@ import { useExceptions } from './useExceptions';
 
 import './exceptions.css';
 
-const PHONE_QUERY = '(max-width: 719.98px)';
-const SEARCH_DEBOUNCE_MS = 300;
 const CAPTION = 'Exceptions, in the order the factory reports them';
-
-function subscribePhone(onChange: () => void) {
-  if (typeof window.matchMedia !== 'function') return () => {};
-  const media = window.matchMedia(PHONE_QUERY);
-  media.addEventListener('change', onChange);
-  return () => media.removeEventListener('change', onChange);
-}
-const isPhoneNow = () => typeof window.matchMedia === 'function' && window.matchMedia(PHONE_QUERY).matches;
-
-/** Below 720px the rows are cards and Filter is an icon button with a bottom sheet. */
-function useIsPhone() {
-  return useSyncExternalStore(subscribePhone, isPhoneNow, () => false);
-}
 
 const workHref = (row: ExceptionRow) => `/work/${encodeURIComponent(row.work_id)}`;
 
 function KindTag({ row }: { row: ExceptionRow }) {
   const tag = KIND_TAGS[row.what];
-  return <span className={tag.className}>{tag.text}</span>;
+  return <Tag tone={tag.tone}>{tag.words}</Tag>;
 }
 
 /** Desktop (SCR-10-desktop): the tag with "since" beneath, the title with its reference beneath, doing, who acts. */
 function ExceptionsTable({ rows, asOf }: { rows: ExceptionRow[]; asOf: string }) {
-  return (
-    <div className="psl-tablewrap">
-      <table className="psl-table exc-table">
-        <caption className="exc-sr">{CAPTION}</caption>
-        <thead>
-          <tr>
-            <th scope="col">WHAT HAPPENED</th>
-            <th scope="col">WORK</th>
-            <th scope="col">WHAT&rsquo;S BEING DONE</th>
-            <th scope="col">WHO ACTS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i}>
-              <td>
-                <KindTag row={row} />
-                <time className="exc-since" dateTime={row.since} title={formatWat(row.since)}>
-                  {sinceText(row.since, asOf)}
-                </time>
-              </td>
-              <td>
-                <Link className="exc-title" href={workHref(row)}>
-                  {row.title}
-                </Link>
-                {row.ref && <span className="exc-ref">{row.ref}</span>}
-              </td>
-              <td className="exc-doing">{row.doing}</td>
-              <td className="exc-who">{row.who_acts}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  const columns: Column<ExceptionRow>[] = [
+    {
+      key: 'what',
+      header: 'WHAT HAPPENED',
+      cell: (row) => (
+        <>
+          <KindTag row={row} />
+          <time className="exc-since" dateTime={row.since} title={formatDayTime(row.since)}>
+            {sinceText(row.since, asOf)}
+          </time>
+        </>
+      ),
+    },
+    {
+      key: 'work',
+      header: 'WORK',
+      cell: (row) => (
+        <>
+          <Link className="exc-title" href={workHref(row)}>
+            {row.title}
+          </Link>
+          {row.ref && <span className="exc-ref">{row.ref}</span>}
+        </>
+      ),
+    },
+    { key: 'doing', header: 'WHAT’S BEING DONE', cell: (row) => <span className="exc-doing">{row.doing}</span> },
+    { key: 'who', header: 'WHO ACTS', cell: (row) => <span className="exc-who">{row.who_acts}</span> },
+  ];
+  return <Table className="exc-tablewrap" caption={CAPTION} columns={columns} rows={rows} rowKey={(row) => `${row.work_id}:${row.what}:${row.since}`} empty="No exceptions." />;
 }
 
 /** Phone (SCR-10-mobile): separate outlined cards (tag, title, what's being done); the title link covers the whole card. */
@@ -100,16 +77,11 @@ function ExceptionsCards({ rows }: { rows: ExceptionRow[] }) {
   );
 }
 
-function NoAccess({ compact }: { compact: boolean }) {
-  const Heading = compact ? 'h3' : 'h2';
+function NoAccess() {
   return (
-    <div className="psl-empty exc-empty">
-      <Heading>This list is for Leads</Heading>
-      <p>Your own exceptions appear in My work, under Needs me.</p>
-      <p>
-        <Link href="/my-work">Go to My work</Link>
-      </p>
-    </div>
+    <EmptyState level={2} title="This list is for Leads" className="exc-empty" action={<Link href="/my-work">Go to My work</Link>}>
+      Your own exceptions appear in My work, under Needs me.
+    </EmptyState>
   );
 }
 
@@ -128,48 +100,21 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
   const pathname = usePathname() ?? '/exceptions';
   const phone = useIsPhone();
   const [filterOpen, setFilterOpen] = useState(false);
-  const filterButton = useRef<HTMLButtonElement>(null);
 
-  // Search: the box keeps what the person typed; the request takes it 300 ms after the last keystroke.
+  // Search: the box keeps what the person typed; the request takes the settled search (SearchField's pause).
   const [text, setText] = useState('');
-  const debounce = useRef<ReturnType<typeof setTimeout>>(undefined);
-  useEffect(() => () => clearTimeout(debounce.current), []);
   const applySearch = (value: string) => {
-    clearTimeout(debounce.current);
     const q = value.trim() || undefined;
     setFilters((f) => (f.q === q ? f : { ...f, q }));
   };
-  const onSearchInput = (value: string) => {
-    setText(value);
-    clearTimeout(debounce.current);
-    debounce.current = setTimeout(() => applySearch(value), SEARCH_DEBOUNCE_MS);
-  };
-  const onSearchSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    applySearch(text);
-  };
 
-  const closeFilter = useCallback(() => {
-    setFilterOpen(false);
-    filterButton.current?.focus();
-  }, []);
   const applyKind = (what: ExceptionKind | undefined) => {
-    closeFilter();
+    setFilterOpen(false);
     setFilters((f) => ({ ...f, what }));
   };
   const clearAll = () => {
-    clearTimeout(debounce.current);
     setText('');
     setFilters({});
-  };
-
-  const onLimitKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
-    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
-    if (step === undefined) return;
-    event.preventDefault();
-    const next = (index + step + EXCEPTIONS_LIMITS.length) % EXCEPTIONS_LIMITS.length;
-    event.currentTarget.parentElement?.querySelectorAll<HTMLElement>('[role="radio"]')[next]?.focus();
-    setLimit(EXCEPTIONS_LIMITS[next]);
   };
 
   const narrowed = Boolean(filters.q || filters.what);
@@ -179,7 +124,7 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
   if (state.status === 'error') {
     const { error } = state;
     if (error.kind === 'unauthenticated') body = <SignedOutState pathname={pathname} />;
-    else if (error.kind === 'forbidden' || error.kind === 'not_found') body = <NoAccess compact={compact} />;
+    else if (error.kind === 'forbidden' || error.kind === 'not_found') body = <NoAccess />;
     else {
       body = (
         <WorkErrorCard
@@ -192,31 +137,35 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
   } else if (state.status === 'loading') {
     body = <LoadingState />;
   } else {
-    const asOf = <p className="exc-note">As of {formatWat(state.asOf)}</p>;
+    const asOf = <p className="exc-note">As of {formatDayTime(state.asOf)}</p>;
     const seeAll = compact && (
       <p className="exc-seeall">
-        <Link href={seeAllHref}>See all exceptions</Link>
+        <Link href={seeAllHref} className="cmp-target">
+          See all exceptions
+        </Link>
       </p>
     );
-    const Heading = compact ? 'h3' : 'h2';
     if (state.items.length === 0) {
       body = (
         <>
           {narrowed && !compact ? (
-            <div className="psl-empty exc-empty">
-              <Heading>No exceptions match your search and filter.</Heading>
-              <p>Try other words, or clear them to see every exception.</p>
-              <p>
-                <button type="button" className="psl-btn psl-btn--secondary" onClick={clearAll}>
-                  Clear search and filter
-                </button>
-              </p>
-            </div>
+            <EmptyState level={2}
+              title="No exceptions match your search and filter."
+              className="exc-empty"
+              action={
+                <p>
+                  <Button kind="secondary" onClick={clearAll}>
+                    Clear search and filter
+                  </Button>
+                </p>
+              }
+            >
+              Try other words, or clear them to see every exception.
+            </EmptyState>
           ) : (
-            <div className="psl-empty exc-empty">
-              <Heading>No exceptions.</Heading>
-              <p>Everything is moving or verified.</p>
-            </div>
+            <EmptyState level={2} title="No exceptions." className="exc-empty">
+              Everything is moving or verified.
+            </EmptyState>
           )}
           {asOf}
           {seeAll}
@@ -231,49 +180,23 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
             asOf
           ) : (
             <div className="exc-foot">
-              <span className="exc-shown">Showing {state.items.length}</span>
-              <span className="exc-note">As of {formatWat(state.asOf)}</span>
+              <ShowMore className="exc-shown" shown={state.items.length} hasMore={Boolean(state.nextCursor)} busy={state.more === 'loading'} onMore={() => void showMore()} />
+              <span className="exc-note">As of {formatDayTime(state.asOf)}</span>
               <span className="exc-rows">
                 <span className="exc-rowslabel" aria-hidden="true">
                   ROWS PER PAGE
                 </span>
-                <span role="radiogroup" aria-label="Rows per page" className={phone ? 'psl-seg psl-seg--phone' : 'psl-seg'}>
-                  {EXCEPTIONS_LIMITS.map((n, i) => (
-                    <button
-                      key={n}
-                      type="button"
-                      role="radio"
-                      aria-checked={n === limit}
-                      tabIndex={n === limit ? 0 : -1}
-                      className="psl-seg__opt"
-                      onClick={() => setLimit(n)}
-                      onKeyDown={(e) => onLimitKey(e, i)}
-                    >
-                      {n}
-                    </button>
-                  ))}
-                </span>
+                <Segmented
+                  label="Rows per page"
+                  phone={phone}
+                  options={EXCEPTIONS_LIMITS.map((n) => ({ value: String(n), label: String(n) }))}
+                  value={String(limit)}
+                  onChange={(value) => setLimit(Number(value) as ExceptionsLimit)}
+                />
               </span>
-              {state.nextCursor && (
-                <button
-                  type="button"
-                  className={state.more === 'loading' ? 'psl-btn psl-btn--secondary psl-btn--sm exc-more is-busy' : 'psl-btn psl-btn--secondary psl-btn--sm exc-more'}
-                  aria-disabled={state.more === 'loading' || undefined}
-                  onClick={() => {
-                    if (state.more !== 'loading') void showMore();
-                  }}
-                >
-                  Show more
-                </button>
-              )}
             </div>
           )}
-          {!compact && state.more === 'failed' && (
-            <div className="psl-callout psl-callout--warning">
-              <WarningIcon />
-              <span>We couldn&rsquo;t load more exceptions. Choose Show more to try again.</span>
-            </div>
-          )}
+          {!compact && state.more === 'failed' && <Callout kind="problem">We couldn’t load more exceptions. Choose Show more to try again.</Callout>}
           {seeAll}
           {!compact && (
             <p className="exc-footer">
@@ -291,28 +214,15 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
   // The open total is a proposal field: drawn only when the backend sends it, never counted from loaded rows.
   const openCount = ready?.openCount;
   const searchable = state.status !== 'error';
-  const filterProps = {
-    ref: filterButton,
-    type: 'button' as const,
-    'aria-haspopup': 'dialog' as const,
-    'aria-expanded': filterOpen,
-    onClick: () => (filterOpen ? closeFilter() : setFilterOpen(true)),
-  };
-  const filterBadge = filters.what && <span className="psl-badge psl-badge--signal">1</span>;
-  const filterPanel = filterOpen && (
-    <ExceptionsFilter phone={phone} applied={filters.what} anchor={filterButton} onApply={applyKind} onClose={closeFilter} />
-  );
 
   return (
     <div className="exc-page">
       <header className="exc-header">
-        <h1 className="shell-title exc-h1">
-          {phone ? (openCount === undefined ? 'Exceptions' : `Exceptions · ${openCount}`) : 'All exceptions'}
-        </h1>
+        <PageTitle>{phone ? (openCount === undefined ? 'Exceptions' : `Exceptions · ${openCount}`) : 'All exceptions'}</PageTitle>
         {phone && (
           // The board draws "← Queue" in the phone top bar, which the app frame owns; until it does, it sits here.
           <Link className="exc-back" href="/my-work">
-            &larr; Queue
+            ← Queue
           </Link>
         )}
         {!phone && (
@@ -323,53 +233,20 @@ export function ExceptionsList({ limit: initialLimit = 20, compact = false, maxR
         )}
       </header>
       {searchable && (
-        <div className="exc-toolbar">
-          <form role="search" className="psl-toolbar" onSubmit={onSearchSubmit}>
-            <div className="psl-search exc-search">
-              <SearchIcon />
-              <label className="exc-sr" htmlFor="exc-q">
-                Search
-              </label>
-              <input
-                id="exc-q"
-                type="search"
-                className="psl-input"
-                placeholder="Search exceptions"
-                value={text}
-                onChange={(e) => onSearchInput(e.target.value)}
-              />
-            </div>
-            <div className="exc-filter">
-              {phone ? (
-                <button {...filterProps} className="psl-iconbtn exc-iconbtn" aria-label="Filter">
-                  <FilterIcon />
-                  {filterBadge}
-                </button>
-              ) : (
-                <button {...filterProps} className="psl-btn psl-btn--secondary">
-                  <FilterIcon />
-                  Filter
-                  {filterBadge}
-                </button>
-              )}
-              {!phone && filterPanel}
-            </div>
-            {!phone && openCount !== undefined && <span className="psl-resultcount">{openCount} OPEN</span>}
-          </form>
-          {filters.what && (
-            <div className="exc-chips">
-              <span className="psl-chip">
-                <span>What happened</span>
-                <strong>{KIND_TAGS[filters.what].words}</strong>
-                <button type="button" aria-label="Remove What happened filter" onClick={() => applyKind(undefined)}>
-                  ×
-                </button>
-              </span>
-            </div>
-          )}
+        <div role="search">
+          <ListToolbar
+            className="exc-toolbar"
+            search={{ label: 'Search', placeholder: 'Search exceptions', value: text, onChange: setText, onSearch: applySearch }}
+            filterCount={filters.what ? 1 : 0}
+            filterOpen={filterOpen}
+            onFilterToggle={() => setFilterOpen((open) => !open)}
+            filterPanel={<ExceptionsFilter applied={filters.what} onApply={applyKind} onClose={() => setFilterOpen(false)} />}
+            resultText={!phone && openCount !== undefined ? `${openCount} OPEN` : ''}
+            chips={filters.what ? [{ key: 'what', name: 'What happened', value: KIND_TAGS[filters.what].words, onRemove: () => applyKind(undefined) }] : []}
+            onClearAll={clearAll}
+          />
         </div>
       )}
-      {phone && filterPanel}
       {body}
     </div>
   );

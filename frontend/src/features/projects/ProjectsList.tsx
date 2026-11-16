@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEvent, type KeyboardEvent, type RefObject } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
-import { CloseIcon, FilterIcon, SearchIcon } from '@/features/my-work/icons';
+import { Button, Callout, EmptyState, FilterPanel, ListToolbar, PageTitle, Segmented, ShowMore, Table, Tabs, Unknown, useIsPhone, type Column } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
@@ -14,7 +14,6 @@ import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates'
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import {
-  allShowingText,
   buildProjectsQuery,
   countOf,
   isProjectList,
@@ -23,16 +22,10 @@ import {
   nextMilestoneText,
   parseProjectsView,
   projectsSearch,
-  shownText,
-  type Limit,
-  type ListTab,
   type ProjectListView,
   type ProjectRowView,
   type ProjectsView,
 } from './model';
-
-const SEARCH_DEBOUNCE_MS = 300;
-const PHONE_QUERY = '(max-width: 719.98px)';
 
 type ListState =
   | { status: 'loading' }
@@ -42,67 +35,45 @@ type ListState =
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 const malformed = () => new ApiError(200, 'server', 'unexpected_response', UNEXPECTED_MESSAGE);
 
-function subscribePhone(onChange: () => void) {
-  if (typeof window.matchMedia !== 'function') return () => {};
-  const media = window.matchMedia(PHONE_QUERY);
-  media.addEventListener('change', onChange);
-  return () => media.removeEventListener('change', onChange);
-}
-const isPhoneNow = () => typeof window.matchMedia === 'function' && window.matchMedia(PHONE_QUERY).matches;
-
-/** Below 720px the list is cards (SCR-22-mobile). */
-function useIsPhone() {
-  return useSyncExternalStore(subscribePhone, isPhoneNow, () => false);
-}
-
-/** A person-needed or stopped count (PROPOSAL); a count the response does not carry shows a dash, never 0. */
+/** A person-needed or stopped count (PROPOSAL); a count the response does not carry is Unknown, never 0. */
 function Count({ value: sent }: { value: unknown }) {
   const value = countOf(sent);
-  if (value === undefined) return <span className="projects__none">—</span>;
+  if (value === undefined) return <Unknown />;
   return <span className={value > 0 ? 'projects__count' : 'projects__zero'}>{value}</span>;
 }
 
+/**
+ * D-94: a closed project has no next milestone to come, so the cell is "—" as SCR-22 draws it; an open project whose
+ * next milestone the response did not send is Unknown. Open or closed comes from the API, never from text: the rows
+ * carry no state of their own, so a row is known to be closed only when the list was asked for closed projects.
+ */
+function nextMilestoneCell(item: ProjectRowView, closed: boolean) {
+  return nextMilestoneText(item.next_milestone) ?? (closed ? '—' : <Unknown />);
+}
+
+const columns = (closed: boolean): Column<ProjectRowView>[] => [
+  {
+    key: 'project',
+    header: 'PROJECT',
+    cell: (item) => (
+      <span className="projects__titlecell">
+        <Link href={`/projects/${encodeURIComponent(item.case_id)}`} className="projects__title" data-project-link="">
+          {item.title}
+        </Link>
+        <SampleLabel show={item.sample} />
+      </span>
+    ),
+  },
+  { key: 'pm', header: 'PM', cell: (item) => item.pm },
+  { key: 'stage', header: 'WHERE IT IS', cell: (item) => item.stage },
+  { key: 'next', header: 'NEXT MILESTONE', cell: (item) => nextMilestoneCell(item, closed) },
+  { key: 'needs', header: 'NEEDS A PERSON', cell: (item) => <Count value={item.needs_person} /> },
+  { key: 'stopped', header: 'STOPPED', cell: (item) => <Count value={item.stopped} /> },
+];
+
 /** SCR-22 desktop: Project, PM, Where it is, Next milestone, Needs a person, Stopped. */
-function ProjectTable({ items }: { items: ProjectRowView[] }) {
-  return (
-    <div className="psl-tablewrap">
-      <table className="psl-table projects__table">
-        <thead>
-          <tr>
-            <th scope="col">PROJECT</th>
-            <th scope="col">PM</th>
-            <th scope="col">WHERE IT IS</th>
-            <th scope="col">NEXT MILESTONE</th>
-            <th scope="col">NEEDS A PERSON</th>
-            <th scope="col">STOPPED</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => (
-            <tr key={item.case_id}>
-              <td>
-                <span className="projects__titlecell">
-                  <Link href={`/projects/${encodeURIComponent(item.case_id)}`} className="projects__title" data-project-link="">
-                    {item.title}
-                  </Link>
-                  <SampleLabel show={item.sample} />
-                </span>
-              </td>
-              <td>{item.pm}</td>
-              <td>{item.stage}</td>
-              <td>{nextMilestoneText(item.next_milestone) ?? '—'}</td>
-              <td>
-                <Count value={item.needs_person} />
-              </td>
-              <td>
-                <Count value={item.stopped} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+function ProjectTable({ items, closed }: { items: ProjectRowView[]; closed: boolean }) {
+  return <Table className="projects__table" caption="Projects" columns={columns(closed)} rows={items} rowKey={(item) => item.case_id} empty="No projects you can see yet." />;
 }
 
 /** The phone card's red line: "2 need a person · 1 stopped"; nothing when both are 0 or not carried. */
@@ -138,40 +109,6 @@ function ProjectCards({ items }: { items: ProjectRowView[] }) {
   );
 }
 
-/** The Filter button's panel. Project filters are not in the contract yet, so it says what works today. */
-function FilterSoon({ onClose, anchor }: { onClose: () => void; anchor: RefObject<HTMLButtonElement | null> }) {
-  const panel = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    panel.current?.querySelector<HTMLElement>('button')?.focus();
-    const onKey = (event: globalThis.KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    const onPointer = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (panel.current?.contains(target) || anchor.current?.contains(target)) return;
-      onClose();
-    };
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onPointer);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('mousedown', onPointer);
-    };
-  }, [anchor, onClose]);
-  return (
-    <div ref={panel} role="dialog" aria-label="Filter projects" className="psl-pop projects__filterpop">
-      <div className="projects__filterhead">
-        <strong>Filters come next</strong>
-        <button type="button" className="psl-iconbtn psl-iconbtn--bare" aria-label="Close" onClick={onClose}>
-          <CloseIcon />
-        </button>
-      </div>
-      <p>Search finds a project by its name or its client today.</p>
-    </div>
-  );
-}
-
-const listTabId = (key: ListTab) => `projects-tab-${key}`;
 const LIST_PANEL_ID = 'projects-panel';
 
 /** SCR-22 Projects: the projects the person's grants cover, from E-PROJECTS, with search and paging. */
@@ -186,7 +123,6 @@ export function ProjectsList() {
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const [signedOut, setSignedOut] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  const filterButton = useRef<HTMLButtonElement>(null);
 
   const seq = useRef(0);
   const focusRow = useRef<number | null>(null);
@@ -262,57 +198,27 @@ export function ProjectsList() {
     }
   }, [list]);
 
-  // Search: the box keeps what the person typed; the URL takes it 300 ms after the last keystroke.
+  // Search: the box keeps what the person typed; the URL takes the settled search (SearchField's pause).
   const [text, setText] = useState(view.q ?? '');
   const [syncedQ, setSyncedQ] = useState(view.q);
   if (view.q !== syncedQ) {
     setSyncedQ(view.q);
     if ((text.trim() || undefined) !== view.q) setText(view.q ?? '');
   }
-  const debounce = useRef<ReturnType<typeof setTimeout>>(undefined);
-  useEffect(() => () => clearTimeout(debounce.current), []);
   const applySearch = (value: string) => {
-    clearTimeout(debounce.current);
     const q = value.trim() || undefined;
     if (q !== viewRef.current.q) navigate({ q });
   };
-  const onSearchInput = (value: string) => {
-    setText(value);
-    clearTimeout(debounce.current);
-    debounce.current = setTimeout(() => applySearch(value), SEARCH_DEBOUNCE_MS);
-  };
-  const onSearchSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    applySearch(text);
-  };
   const clearSearch = () => {
-    clearTimeout(debounce.current);
     setText('');
     navigate({ q: undefined });
   };
 
-  const onLimitKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
-    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
-    if (step === undefined) return;
-    event.preventDefault();
-    const next = LIMITS[(index + step + LIMITS.length) % LIMITS.length];
-    event.currentTarget.parentElement?.querySelectorAll<HTMLElement>('[role="radio"]')[LIMITS.indexOf(next)]?.focus();
+  const changeLimit = (value: string) => {
     focusLimit.current = true;
-    navigate({ limit: next });
+    navigate({ limit: Number(value) as (typeof LIMITS)[number] });
   };
-
-  const onTabKey = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
-    const last = LIST_TABS.length - 1;
-    const next = { ArrowRight: index === last ? 0 : index + 1, ArrowLeft: index === 0 ? last : index - 1, Home: 0, End: last }[event.key];
-    if (next === undefined) return;
-    event.preventDefault();
-    document.getElementById(listTabId(LIST_TABS[next].key))?.focus();
-    navigate({ tab: LIST_TABS[next].key });
-  };
-  const closeFilter = useCallback(() => {
-    setFilterOpen(false);
-    filterButton.current?.focus();
-  }, []);
+  const closeFilter = useCallback(() => setFilterOpen(false), []);
 
   if (signedOut) return <SignedOutState pathname="/projects" />;
   if (list.status === 'error' && list.error.kind === 'forbidden') {
@@ -332,68 +238,38 @@ export function ProjectsList() {
     );
   } else if (list.items.length === 0 && view.q) {
     body = (
-      <div className="psl-empty">
-        <h3>No projects match</h3>
-        <p>No project you can see matches your search.</p>
-        <button type="button" className="psl-link projects__linkbutton" onClick={clearSearch}>
-          Clear search
-        </button>
-      </div>
+      <EmptyState
+        title="No projects match"
+        action={
+          <button type="button" className="psl-link cmp-linkbutton" onClick={clearSearch}>
+            Show all projects
+          </button>
+        }
+      >
+        No project you can see matches your search.
+      </EmptyState>
     );
   } else if (list.items.length === 0) {
-    body = (
-      <div className="psl-empty">
-        <h3>No projects you can see yet.</h3>
-        <p>You see projects your roles cover.</p>
-      </div>
-    );
+    body = <EmptyState title="No projects you can see yet.">You see projects your roles cover.</EmptyState>;
   } else {
     body = (
       <>
-        <div ref={rowsRef}>{phone ? <ProjectCards items={list.items} /> : <ProjectTable items={list.items} />}</div>
+        <div ref={rowsRef}>{phone ? <ProjectCards items={list.items} /> : <ProjectTable items={list.items} closed={view.tab === 'closed'} />}</div>
         <div className="projects__foot">
-          <div className="psl-showmore projects__showmore">
-            <span>{list.nextCursor ? '' : allShowingText(list.items.length)}</span>
-            <span className="projects__rows">
-              <span className="projects__rowslabel" aria-hidden="true">
-                ROWS PER PAGE
-              </span>
-              <span role="radiogroup" aria-label="Rows per page" className={phone ? 'psl-seg psl-seg--phone' : 'psl-seg'}>
-                {LIMITS.map((n: Limit, i) => (
-                  <button
-                    key={n}
-                    type="button"
-                    role="radio"
-                    aria-checked={n === view.limit}
-                    tabIndex={n === view.limit ? 0 : -1}
-                    className="psl-seg__opt"
-                    onClick={() => navigate({ limit: n })}
-                    onKeyDown={(e) => onLimitKey(e, i)}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </span>
+          <ShowMore className="projects__showmore" shown={list.items.length} total={list.nextCursor ? undefined : list.items.length} hasMore={Boolean(list.nextCursor)} busy={more === 'loading'} onMore={() => void showMore()} />
+          <span className="projects__rows">
+            <span className="projects__rowslabel" aria-hidden="true">
+              ROWS PER PAGE
             </span>
-            {list.nextCursor && (
-              <button
-                type="button"
-                className="psl-btn psl-btn--secondary psl-btn--sm projects__more"
-                disabled={more === 'loading'}
-                aria-busy={more === 'loading'}
-                onClick={() => void showMore()}
-              >
-                Show more
-              </button>
-            )}
-          </div>
+            <Segmented label="Rows per page" phone={phone} options={LIMITS.map((n) => ({ value: String(n), label: String(n) }))} value={String(view.limit)} onChange={changeLimit} />
+          </span>
           {more === 'error' && (
-            <div className="psl-callout psl-callout--problem projects__morefail">
-              <span>We couldn&rsquo;t load more. Nothing was changed.</span>
-              <button type="button" className="psl-btn psl-btn--secondary psl-btn--sm" onClick={() => void showMore()}>
+            <Callout kind="problem" className="projects__morefail">
+              We couldn&rsquo;t load more. Nothing was changed.{' '}
+              <Button kind="secondary" size="sm" onClick={() => void showMore()}>
                 Try again
-              </button>
-            </div>
+              </Button>
+            </Callout>
           )}
         </div>
         <p className="projects__note">You see projects your roles cover. Open one for its journey, documents, money and registers.</p>
@@ -405,74 +281,36 @@ export function ProjectsList() {
   // The count beside the search is the result's (UX-2-1): `total` matches the tab and the search; without it, the
   // tab's count stands in only when no search is active.
   const total = list.status !== 'ready' ? undefined : (list.total ?? (view.q ? undefined : countOf(counts?.[view.tab])));
-  const filterProps = {
-    ref: filterButton,
-    type: 'button' as const,
-    'aria-haspopup': 'dialog' as const,
-    'aria-expanded': filterOpen,
-    onClick: () => (filterOpen ? closeFilter() : setFilterOpen(true)),
-  };
 
   return (
     <div className="projects__page">
       <p className="projects__eyebrow">PROJECTS</p>
-      <h1 className="shell-title">Projects</h1>
-      <div role="tablist" aria-label="Projects" className="psl-tabs projects__listtabs">
-        {LIST_TABS.map((tab, i) => {
-          const selected = tab.key === view.tab;
-          const count = countOf(counts?.[tab.key]);
-          return (
-            <button
-              key={tab.key}
-              id={listTabId(tab.key)}
-              type="button"
-              role="tab"
-              className="psl-tab projects__listtab"
-              aria-selected={selected}
-              aria-controls={selected ? LIST_PANEL_ID : undefined}
-              tabIndex={selected ? 0 : -1}
-              onClick={() => navigate({ tab: tab.key })}
-              onKeyDown={(e) => onTabKey(e, i)}
-            >
-              {tab.label}
-              {count !== undefined && <span className="psl-badge">{count}</span>}
-            </button>
-          );
-        })}
+      <PageTitle>Projects</PageTitle>
+      <Tabs
+        label="Projects"
+        className="projects__listtabs"
+        tabs={LIST_TABS.map((tab) => ({ key: tab.key, label: tab.label, count: countOf(counts?.[tab.key]) }))}
+        selected={view.tab}
+        onSelect={(tab) => navigate({ tab })}
+        panelId={LIST_PANEL_ID}
+      />
+      <div role="search">
+        <ListToolbar
+          className="projects__toolbar"
+          search={{ label: 'Search', placeholder: phone ? 'Search projects' : 'Search projects or clients', value: text, onChange: setText, onSearch: applySearch }}
+          filterCount={0}
+          filterOpen={filterOpen}
+          onFilterToggle={() => setFilterOpen((open) => !open)}
+          filterPanel={
+            <FilterPanel title="Filter projects" applyLabel="Close" onApply={closeFilter} onClear={closeFilter} onClose={closeFilter}>
+              <strong>Filters come next</strong>
+              <p>Search finds a project by its name or its client today.</p>
+            </FilterPanel>
+          }
+          resultText={list.status === 'ready' ? (total === undefined ? `${list.items.length} shown` : `${total} ${total === 1 ? 'PROJECT' : 'PROJECTS'}`) : ''}
+        />
       </div>
-      <form role="search" className="psl-toolbar" onSubmit={onSearchSubmit}>
-        <div className="psl-search projects__search">
-          <SearchIcon />
-          <label className="projects__sr" htmlFor="projects-q">
-            Search
-          </label>
-          <input
-            id="projects-q"
-            type="search"
-            className="psl-input"
-            placeholder={phone ? 'Search projects' : 'Search projects or clients'}
-            value={text}
-            onChange={(e) => onSearchInput(e.target.value)}
-          />
-        </div>
-        <div className="projects__filter">
-          {phone ? (
-            <button {...filterProps} className="psl-iconbtn projects__iconbtn" aria-label="Filter">
-              <FilterIcon />
-            </button>
-          ) : (
-            <button {...filterProps} className="psl-btn psl-btn--secondary">
-              <FilterIcon />
-              Filter
-            </button>
-          )}
-          {filterOpen && <FilterSoon onClose={closeFilter} anchor={filterButton} />}
-        </div>
-        {list.status === 'ready' && (
-          <span className="psl-resultcount projects__total">{total === undefined ? shownText(list.items.length) : `${total} ${total === 1 ? 'PROJECT' : 'PROJECTS'}`}</span>
-        )}
-      </form>
-      <div role="tabpanel" id={LIST_PANEL_ID} aria-labelledby={listTabId(view.tab)} className="projects__panel">
+      <div role="tabpanel" id={LIST_PANEL_ID} aria-label={LIST_TABS.find((tab) => tab.key === view.tab)?.label} className="projects__panel">
         {body}
       </div>
     </div>

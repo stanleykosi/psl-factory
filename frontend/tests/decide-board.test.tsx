@@ -257,7 +257,7 @@ describe('not-yours board W-1903 (criterion 16)', () => {
       '₦4,250,000.00',
       'SOW v2 stage 2',
       'Waiting for Finance Lead',
-      'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:42 by WhatsApp and email',
+      'Ada Okafor (Finance Lead) was alerted at 10:42 by WhatsApp and email.',
     ]) {
       expect(text(), value).toContain(value);
     }
@@ -296,7 +296,7 @@ describe('own board W-1904 (criterion 17)', () => {
       '₦4,250,000.00',
       'Contract stage 2 of 4 · terms v1',
       'Prepared by You with Chidi',
-      'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:20',
+      'Ada Okafor (Finance Lead) was alerted at 10:20.',
       'Waiting · Finance Lead',
     ]) {
       expect(text(), value).toContain(value);

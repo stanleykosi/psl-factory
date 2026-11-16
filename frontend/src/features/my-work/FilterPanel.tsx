@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useState } from 'react';
 
 import { api, call } from '@/api/client';
+import { FilterPanel, useIsPhone } from '@/components';
 
 import { STATE_KEYS, STATES, WAITING_KEYS, WAITING_ON, type LineOption, type WaitingOn, type WorkState } from './model';
 
@@ -14,10 +15,8 @@ const LINES_SHOWN = 4;
 const PREVIEW_DEBOUNCE_MS = 250;
 
 type Props = {
-  phone: boolean;
   lines: LineOption[];
   applied: Filters;
-  anchor: RefObject<HTMLElement | null>;
   preview: (filters: Filters) => Promise<Preview>;
   onApply: (filters: Filters) => void;
   onClose: () => void;
@@ -40,37 +39,16 @@ function useProjects() {
 }
 
 /**
- * CMP-22 filter panel (SCR-01-*-filter): a popover under the Filter button on desktop, a bottom sheet on
- * phones. Line, Project, State and Waiting on edit a draft; "Show N items" applies it, where N comes from the
- * same list request with the draft. Esc or a click outside discards it.
+ * CMP-22 filter panel (SCR-01-*-filter), the shared FilterPanel: a popover under the Filter button on desktop, a
+ * bottom sheet on phones. Line, Project, State and Waiting on edit a draft; "Show N items" applies it, where N
+ * comes from the same list request with the draft. Esc or a click outside discards it.
  */
-export function FilterPanel({ phone, lines, applied, anchor, preview, onApply, onClose }: Props) {
+export function MyWorkFilter({ lines, applied, preview, onApply, onClose }: Props) {
   const [draft, setDraft] = useState<Filters>(applied);
   const [allLines, setAllLines] = useState(false);
   const [count, setCount] = useState<Preview>();
   const projects = useProjects();
-  const panel = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    panel.current?.querySelector<HTMLElement>('input, select, button')?.focus();
-  }, []);
-
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    const onPointer = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (panel.current?.contains(target) || anchor.current?.contains(target)) return;
-      onClose();
-    };
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onPointer);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('mousedown', onPointer);
-    };
-  }, [anchor, onClose]);
+  const phone = useIsPhone();
 
   // "Show N items": counts the draft with one list request, a moment after the last change.
   useEffect(() => {
@@ -102,7 +80,7 @@ export function FilterPanel({ phone, lines, applied, anchor, preview, onApply, o
           </label>
         ))}
         {shownLines.length < lines.length && (
-          <button type="button" className="psl-link my-work__linkbutton" onClick={() => setAllLines(true)}>
+          <button type="button" className="psl-link my-work__linkbutton cmp-target" onClick={() => setAllLines(true)}>
             {phone ? `All ${lines.length} lines` : `Show all ${lines.length} lines`}
           </button>
         )}
@@ -169,39 +147,9 @@ export function FilterPanel({ phone, lines, applied, anchor, preview, onApply, o
   const apply = () => onApply(draft);
   const showLabel = count ? `Show ${count.count}${count.more ? '+' : ''} ${count.count === 1 && !count.more ? 'item' : 'items'}` : 'Show results';
 
-  if (phone) {
-    return (
-      <div className="psl-scrim my-work__scrim">
-        <div ref={panel} className="psl-sheet my-work__sheet" role="dialog" aria-label="Filter">
-          <div className="psl-sheet__head">
-            <strong className="my-work__sheettitle">Filter</strong>
-            <button type="button" className="psl-link my-work__linkbutton" onClick={clear}>
-              Clear
-            </button>
-          </div>
-          <div className="psl-sheet__body my-work__sheetbody">{fields}</div>
-          <div className="psl-sheet__foot">
-            <button type="button" className="psl-btn psl-btn--dark psl-btn--xl psl-btn--block" onClick={apply}>
-              {showLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div ref={panel} className="psl-pop my-work__pop" role="dialog" aria-label="Filter">
-      <div className="my-work__pophead">Filter</div>
-      <div className="my-work__popbody">{fields}</div>
-      <div className="my-work__popfoot">
-        <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" onClick={clear}>
-          Clear
-        </button>
-        <button type="button" className="psl-btn psl-btn--dark psl-btn--lg psl-btn--block" onClick={apply}>
-          {showLabel}
-        </button>
-      </div>
-    </div>
+    <FilterPanel applyLabel={showLabel} onApply={apply} onClear={clear} onClose={onClose}>
+      {fields}
+    </FilterPanel>
   );
 }

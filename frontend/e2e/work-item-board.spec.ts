@@ -24,7 +24,7 @@ const PAGES: [string, string][] = [
 test.use({ timezoneId: 'Africa/Lagos' });
 
 async function loaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('.psl-loading')).toHaveCount(0);
   await expect(page.locator('main#main h1').first()).toBeVisible();
 }
 
@@ -120,9 +120,9 @@ test.describe('focus outlines (AC 20)', () => {
     await go(page, '/work/W-1705', 'finance_lead');
     expect(await tabTo(page, page.getByRole('link', { name: 'See in Verified outputs' }))).toEqual(ring);
     await go(page, '/work/W-1705/history', 'finance_lead');
-    expect(await tabTo(page, page.getByRole('navigation', { name: 'Work item' }).getByRole('link', { name: 'Overview' }))).toEqual(ring);
-    expect(await tabTo(page, page.getByRole('radio', { name: 'All 7' }))).toEqual(ring);
-    expect(await tabTo(page, page.getByLabel('Rows per page'))).toEqual(ring);
+    expect(await tabTo(page, page.getByRole('tablist', { name: 'Work item' }).getByRole('tab', { selected: true }))).toEqual(ring); // one tab stop: the open tab
+    expect(await tabTo(page, page.getByRole('radio', { name: /^All ?7$/ }))).toEqual(ring);
+    expect(await tabTo(page, page.getByRole('combobox', { name: 'Rows per page' }))).toEqual(ring);
   });
 
   test('phone: the disclosures show a ring and toggle', async ({ page }) => {
@@ -133,7 +133,7 @@ test.describe('focus outlines (AC 20)', () => {
     await page.keyboard.press('Enter');
     await expect(page.getByRole('button', { name: 'Hide his steps' })).toHaveAttribute('aria-expanded', 'true');
     await go(page, '/work/W-1706', 'finance_lead');
-    const preview = page.getByRole('button', { name: 'Preview the invoice' });
+    const preview = page.locator('summary', { hasText: 'Preview the invoice' });
     expect(await tabTo(page, preview)).toEqual(ring);
     await page.keyboard.press('Enter');
     await expect(page.getByRole('article', { name: 'Invoice preview' })).toBeVisible();
@@ -160,7 +160,7 @@ test.describe('history on the boards (AC 18)', () => {
   test('W-1705 at 1440: History 7, the filter counts, 7 rows and About history', async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await go(page, '/work/W-1705/history', 'finance_lead');
-    await expect(page.getByRole('navigation', { name: 'Work item' }).getByRole('link')).toHaveText(['Overview', 'History 7']);
+    await expect(page.getByRole('tablist', { name: 'Work item' }).getByRole('tab')).toHaveText(['Overview', 'History 7']);
     await expect(page.getByRole('radio')).toHaveText(['All 7', 'Decisions 2', 'Agent work 2', 'Evidence 1']);
     await expect(page.getByRole('table').locator('tbody tr')).toHaveCount(7);
     await expect(page.getByRole('table').locator('tbody tr').first().locator('time')).toHaveText('12 Nov 16:40');

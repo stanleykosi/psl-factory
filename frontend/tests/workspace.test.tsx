@@ -67,10 +67,12 @@ const text = (el: Element | null) => el?.textContent ?? '';
 describe('unchanged without a workspace', () => {
   it('W-2010 draws exactly what W-1002 draws, and no workspace', async () => {
     const before = await open(item('W-1002'));
-    const reference = before.container.innerHTML.replaceAll('W-1002', 'W-2010');
+    // React's generated ids (useId) differ per render; everything else must match.
+    const markup = (html: string) => html.replace(/_r_\w+_/g, 'id');
+    const reference = markup(before.container.innerHTML.replaceAll('W-1002', 'W-2010'));
     before.unmount();
     const after = await open(item('W-2010'));
-    expect(after.container.innerHTML).toBe(reference);
+    expect(markup(after.container.innerHTML)).toBe(reference);
     expect(workspace()).toBeNull();
   });
 

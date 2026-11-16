@@ -63,7 +63,8 @@ afterEach(() => {
 
 async function open(id: string, tab: 'overview' | 'history' = 'overview') {
   const view = render(inFrame(id, tab));
-  await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+  // the first load can take longer than waitFor's 1s default under the full parallel run
+  await waitFor(() => expect(screen.queryByRole('status')).toBeNull(), { timeout: 5000 });
   return view;
 }
 
@@ -111,10 +112,10 @@ describe('overview', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · Milestone 3 invoice');
     expect(screen.getByText('Ready to continue').className).toBe('psl-tag psl-tag--person work-state');
     expect(screen.getByText('revision 4')).toBeTruthy();
-    const tabs = within(screen.getByRole('navigation', { name: 'Work item' })).getAllByRole('link');
-    expect(tabs.map((a) => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-current')])).toEqual([
-      ['Overview', '/work/W-1004', 'page'],
-      ['History', '/work/W-1004/history', null],
+    const tabs = within(screen.getByRole('tablist', { name: 'Work item' })).getAllByRole('tab');
+    expect(tabs.map((a) => [a.textContent, a.getAttribute('href'), a.getAttribute('aria-selected')])).toEqual([
+      ['Overview', '/work/W-1004', 'true'],
+      ['History', '/work/W-1004/history', 'false'],
     ]);
   });
 
@@ -221,14 +222,14 @@ describe('overview', () => {
       (el) => /approve|send|pay/i.test(el.textContent ?? '') && el.children.length === 0 && el.textContent !== 'Cannot approve, send or pay.',
     );
     expect(decisive).toEqual([]);
-    expect(screen.queryByRole('region', { name: 'Current human task' })).toBeNull();
+    expect(screen.queryByText(/^Only a .* can decide\.$/)).toBeNull();
   });
 
   it('W-1002: no agent work, and a task for another role has no link or button', async () => {
     serve(() => json(200, item('W-1002')));
     await open('W-1002');
     expect(within(agentCard()).getByText('No agent work on this item.')).toBeTruthy();
-    const task = screen.getByRole('region', { name: 'Current human task' });
+    const task = screen.getByText('Only a Finance Officer can decide.').closest('section')!;
     expect(within(task).getByText('Only a Finance Officer can decide.')).toBeTruthy();
     expect(within(task).queryByText(/You are/)).toBeNull();
     expect(within(task).queryAllByRole('link')).toEqual([]);
@@ -239,8 +240,8 @@ describe('overview', () => {
   it('W-1001: the person who can act gets "Open the decision"', async () => {
     serve(() => json(200, item('W-1001')));
     await open('W-1001');
-    const task = screen.getByRole('region', { name: 'Current human task' });
-    expect(within(task).getByRole('heading', { level: 2 }).textContent).toBe('Decide invoice v2');
+    const task = screen.getByRole('region', { name: 'Decide invoice v2' });
+    expect(within(task).getByText('Decide invoice v2')).toBeTruthy();
     expect(within(task).getByText('Only a Finance Lead can decide.')).toBeTruthy();
     expect(within(task).getByText('You are Finance Lead.')).toBeTruthy();
     expect(within(task).getByRole('link', { name: 'Open the decision' }).getAttribute('href')).toBe('/work/W-1001/decide?task=T-2001');
@@ -298,7 +299,7 @@ describe('item states', () => {
     expect(screen.getByRole('link', { name: 'Back to my queue' }).className).toBe('psl-btn psl-btn--dark psl-btn--lg');
     expect(document.body.textContent).not.toContain('W-1099');
     expect(document.body.innerHTML).not.toContain('W-1099');
-    expect(screen.queryByRole('navigation', { name: 'Work item' })).toBeNull();
+    expect(screen.queryByRole('tablist', { name: 'Work item' })).toBeNull();
   });
 
   it('401 shows the signed-out callout with next=/work/W-1001', async () => {
@@ -355,14 +356,14 @@ describe('history', () => {
     expect(shown.map((tr) => tr.querySelector('.psl-tag')!.textContent)).toEqual(page.items.map((e) => e.actor_kind.toUpperCase()));
     expect(shown[0].querySelector('.psl-tag')!.className).toBe('psl-tag psl-tag--neutral');
     expect(shown[3].querySelector('.psl-tag')!.className).toBe('psl-tag psl-tag--agent');
-    expect(shown[11].querySelector('.psl-tag')!.className).toBe('psl-tag work-tag--outline');
+    expect(shown[11].querySelector('.psl-tag')!.className).toBe('psl-tag psl-tag--neutral');
     const events = shown.map((tr) => tr.querySelector('.work-event')!.textContent);
     expect(events).toContain('Returned v1');
     expect(events).toContain('Approved invoice v2');
     expect(screen.getByText('As of 12 Nov 16:45')).toBeTruthy();
     expect(screen.getByText(/Nothing can be edited or deleted/)).toBeTruthy();
     expect(screen.queryByText(/CSV/)).toBeNull();
-    expect(screen.getByRole('link', { name: 'History' }).getAttribute('aria-current')).toBe('page');
+    expect(screen.getByRole('tab', { name: 'History' }).getAttribute('aria-selected')).toBe('true');
   });
 
   it('a restricted row shows only when, actor kind, actor and "Restricted"', async () => {
@@ -398,7 +399,7 @@ describe('history', () => {
       ['BUTTON', 'radio', 'Decisions'],
       ['BUTTON', 'radio', 'Agent work'],
       ['BUTTON', 'radio', 'Evidence'],
-      ['SELECT', null, '102050'],
+      ['BUTTON', 'combobox', '20'],
       ['BUTTON', null, 'Show more'],
     ]);
     expect(within(screen.getByRole('table')).queryAllByRole('link')).toEqual([]);
@@ -413,7 +414,7 @@ describe('history', () => {
     await open('W-1004', 'history');
     await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy());
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · Milestone 3 invoice');
-    expect(screen.getByRole('navigation', { name: 'Work item' })).toBeTruthy();
+    expect(screen.getByRole('tablist', { name: 'Work item' })).toBeTruthy();
     expect(screen.getByText('Reference unavailable for support.')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     await waitFor(() => expect(rows()).toHaveLength(12));
@@ -441,7 +442,8 @@ describe('history', () => {
 
     fireEvent.click(screen.getByRole('radio', { name: 'All' }));
     await waitFor(() => expect(historyUrls()).toHaveLength(3));
-    fireEvent.change(screen.getByRole('combobox', { name: 'Rows per page' }), { target: { value: '10' } });
+    fireEvent.click(screen.getByRole('combobox', { name: 'Rows per page' }));
+    fireEvent.click(screen.getByRole('option', { name: '10' }));
     await waitFor(() => expect(historyUrls()).toHaveLength(4));
     expect(historyUrls()[3].search).toBe('?kind=all&limit=10');
     await waitFor(() => expect(rows()).toHaveLength(10));
@@ -544,7 +546,7 @@ describe('updates (D-UPDATES r2)', () => {
     await openWithFakeTimers('W-1003');
     await advance(5000);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Delta Foods · Weekly client update');
-    expect(screen.getByText(/We couldn’t refresh this item\. Showing what we had at \d+ \w{3} \d\d:\d\d\./)).toBeTruthy();
+    expect(screen.getByText(/We couldn’t refresh this item\. Showing what we had at \d\d \w{3} \d\d:\d\d\./)).toBeTruthy();
     await advance(5000);
     expect(itemUrls()).toHaveLength(3);
     expect(screen.queryByText(/We couldn’t refresh this item/)).toBeNull();

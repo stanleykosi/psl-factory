@@ -20,7 +20,7 @@ async function expectNoAxeViolations(page: Page) {
 
 /** The h1 reads "All exceptions" on desktop and "Exceptions · N" on phones (SCR-10-mobile). */
 async function loaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1, name: /^(All exceptions|Exceptions( · \d+)?)$/ })).toBeVisible();
 }
 
@@ -65,13 +65,13 @@ test.describe('desktop 1440', () => {
     await expect(table.getByRole('columnheader')).toHaveText(['WHAT HAPPENED', 'WORK', 'WHAT’S BEING DONE', 'WHO ACTS']);
     const rows = table.locator('tbody tr');
     await expect(rows).toHaveCount(20);
-    await expect(rows.first().locator('.psl-tag')).toHaveText('SEND UNCERTAIN');
+    await expect(rows.first().locator('.psl-tag')).toHaveText('Effect uncertain');
     await expect(rows.first().locator('time')).toHaveText('since 11:02');
     await expect(rows.first().getByRole('link')).toHaveAttribute('href', '/work/W-1005');
     await expect(rows.first().getByRole('link')).toHaveCSS('text-decoration-line', 'none');
     await expect(rows.first().getByRole('link')).toHaveCSS('color', 'rgb(31, 36, 39)');
     await expect(rows.first().locator('.exc-ref')).toHaveText('INV-0405');
-    await expect(page.getByText('Showing 20')).toBeVisible();
+    await expect(page.getByText('20 showing')).toBeVisible();
     await expect(page.getByRole('radio', { name: '20' })).toHaveAttribute('aria-checked', 'true');
     await expect(page.getByText('As of 14 Nov 11:05')).toBeVisible();
     await expect(page.getByText(FOOTER)).toBeVisible();
@@ -85,7 +85,7 @@ test.describe('desktop 1440', () => {
     await page.keyboard.press('Enter');
     await expect(rows).toHaveCount(25);
     await expect(more).toHaveCount(0);
-    await expect(page.getByText('Showing 25')).toBeVisible();
+    await expect(page.getByText('25 showing')).toBeVisible();
     expect(await scrollWidth(page)).toBeLessThanOrEqual(DESKTOP.width);
   });
 
@@ -103,7 +103,8 @@ test.describe('desktop 1440', () => {
     await dialog.getByRole('radio', { name: 'Follow-up needed' }).check();
     await dialog.getByRole('button', { name: 'Show results' }).click();
     await expect(rows).toHaveCount(1);
-    await expect(rows.first().locator('.psl-tag')).toHaveText('FOLLOW-UP NEEDED');
+    // the README's state words (D-92); the tag shows them in capitals by CSS
+    await expect(rows.first().locator('.psl-tag')).toHaveText('Stopped: invoice follow-up needed');
     await expect(page.getByText('1 OPEN')).toBeVisible();
     await page.getByRole('searchbox', { name: 'Search' }).fill('Sable');
     await expect(page.getByRole('heading', { level: 2, name: 'No exceptions match your search and filter.' })).toBeVisible();
@@ -136,7 +137,7 @@ test.describe('desktop 1440', () => {
       ['W-1006', 0],
     ] as const) {
       await page.goto(`/work/${id}`);
-      await expect(page.getByRole('status')).toHaveCount(0);
+      await expect(page.getByText('Loading…')).toHaveCount(0);
       await expect(page.locator('main#main h1')).toBeVisible();
       await expect(page.getByRole('link', { name: 'See all exceptions' })).toHaveCount(shown);
     }
@@ -231,7 +232,7 @@ test.describe('phone 390', () => {
     const cards = page.getByRole('list', { name: 'Exceptions, in the order the factory reports them' }).getByRole('listitem');
     await expect(cards).toHaveCount(20);
     const first = cards.first();
-    await expect(first.locator('.psl-tag')).toHaveText('SEND UNCERTAIN');
+    await expect(first.locator('.psl-tag')).toHaveText('Effect uncertain');
     await expect(first.getByRole('link')).toHaveText('Kora Logistics · Milestone 1 invoice');
     await expect(first).toContainText('Chidi is checking for a delivery receipt by reference. Nothing resent.');
     expect(await scrollWidth(page)).toBeLessThanOrEqual(390);

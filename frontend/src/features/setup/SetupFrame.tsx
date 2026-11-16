@@ -3,15 +3,14 @@
 // The Setup frame (SCR-13-desktop-rules): SETUP eyebrow, title and the seven-tab bar, plus the pieces every Setup
 // view shares (the destination gate, the read states, the phone bar's back link). Tabs are route links with
 // aria-current (Assumption A-7); badges show only the counts the API sends.
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import type { ApiError } from '@/api/errors';
+import { Callout, EmptyState, PageTitle, ShowMore as ShowMoreBar, Tabs } from '@/components';
 import { useMe, usePhoneBack } from '@/shell/AppShell';
 import { visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
-import { WarningIcon } from '@/shell/icons';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 
 import './setup.css';
@@ -33,18 +32,8 @@ export function SetupFrame({ current, rolesMissing, notSet }: { current: SetupTa
   return (
     <>
       <p className="psl-crumb setup-eyebrow">SETUP</p>
-      <h1 className="setup-title">Roles, rules and delegation</h1>
-      <nav aria-label="Setup" className="psl-tabs setup-tabs">
-        {SETUP_TABS.map((tab) => {
-          const badge = badges[tab.key];
-          return (
-            <Link key={tab.key} href={tab.href} className="psl-tab" aria-current={tab.key === current ? 'page' : undefined}>
-              {tab.label}
-              {badge !== undefined && <span className="psl-badge">{badge}</span>}
-            </Link>
-          );
-        })}
-      </nav>
+      <PageTitle size={34}>Roles, rules and delegation</PageTitle>
+      <Tabs label="Setup" tabs={SETUP_TABS.map((tab) => ({ ...tab, count: badges[tab.key] }))} selected={current} className="setup-tabs" />
     </>
   );
 }
@@ -76,12 +65,7 @@ export function useSetupPhoneBack(note?: string) {
 }
 
 export function RulesEmpty() {
-  return (
-    <div className="psl-empty">
-      <h2>No rules to show.</h2>
-      <p>Rules your role may read will appear here.</p>
-    </div>
-  );
+  return <EmptyState title="No rules to show.">Rules your role may read will appear here.</EmptyState>;
 }
 
 /** What ShowMore reads of a list state; rules and templates both fit it. */
@@ -99,30 +83,21 @@ export function ShowMore({ state, onMore, noun = 'rules' }: { state: PagedState;
   if (state.status !== 'ready') return null;
   return (
     <>
-      {state.more === 'failed' && (
-        <div className="psl-callout psl-callout--warning" role="alert">
-          <WarningIcon />
-          <span>We couldn’t load more {noun}. Choose Show more to try again.</span>
-        </div>
-      )}
+      {state.more === 'failed' && <Callout kind="problem">We couldn’t load more {noun}. Choose Show more to try again.</Callout>}
       {state.nextCursor && (
-        <div className="psl-showmore setup-showmore">
-          <span>{state.items.length} shown</span>
-          <button
-            type="button"
-            className="psl-btn psl-btn--secondary psl-btn--sm"
-            disabled={state.more === 'loading'}
-            onClick={() => {
-              setPressed(true);
-              onMore();
-            }}
-          >
-            Show more
-          </button>
-        </div>
+        <ShowMoreBar
+          className="setup-showmore"
+          shown={state.items.length}
+          hasMore
+          busy={state.more === 'loading'}
+          onMore={() => {
+            setPressed(true);
+            onMore();
+          }}
+        />
       )}
       {pressed && last && (
-        <span ref={end} tabIndex={-1} className="setup-sr">
+        <span ref={end} tabIndex={-1} className="cmp-sr">
           All {state.items.length} {noun} are shown.
         </span>
       )}

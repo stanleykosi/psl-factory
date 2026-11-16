@@ -111,7 +111,8 @@ describe('default view', () => {
     const crumb = screen.getByRole('navigation', { name: 'Breadcrumb' });
     expect(crumb.textContent).toBe('My work / Prepare an invoice / INV-0412');
     const label = screen.getByLabelText(/^Note/) as HTMLTextAreaElement;
-    expect(label.maxLength).toBe(2000);
+    // the shared TextArea never cuts text: a note over the limit is refused when a button is pressed
+    expect(label.maxLength).toBe(-1);
     expect(screen.getByText('0 / 2000')).toBeTruthy();
   });
 
@@ -286,8 +287,9 @@ describe('claim and decide', () => {
     fireEvent.click(approve);
     await screen.findByText('Approving…');
     expect(counts().decides).toHaveLength(1);
-    for (const name of ['Approving…', 'Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled).toBe(true);
-    expect(screen.getByRole('region', { name: 'Your decision' }).getAttribute('aria-busy')).toBe('true');
+    // the pressed button is busy (it ignores presses, so it is not disabled); the others wait
+    expect(button('Approving…').getAttribute('aria-busy')).toBe('true');
+    for (const name of ['Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(button('Approving…'));
     await act(async () => release());
     await screen.findByText('Invoice v2 is approved');
@@ -371,8 +373,8 @@ describe('cannot act (A-NOT-YOURS)', () => {
 
   it('copy follows cannot_act_reason, with who was asked', async () => {
     const cases: [string, string[]][] = [
-      ['W-1203', ['NOT YOUR DECISION', 'This decision needs a Finance Lead.', 'You can read it, but you can’t approve, return or reject it.', 'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:42 by WhatsApp and email', 'Waiting for Finance Lead', 'SOW v2 stage 2']],
-      ['W-1204', ['WAITING FOR REVIEW', 'You prepared Invoice v2, so someone else must review it.', 'Ada Okafor (Finance Lead) was alerted at 12 Nov 10:20']],
+      ['W-1203', ['NOT YOUR DECISION', 'This decision needs a Finance Lead.', 'You can read it, but you can’t approve, return or reject it.', 'Ada Okafor (Finance Lead) was alerted at 10:42 by WhatsApp and email.', 'Waiting for Finance Lead', 'SOW v2 stage 2']],
+      ['W-1204', ['WAITING FOR REVIEW', 'You prepared Invoice v2, so someone else must review it.', 'Ada Okafor (Finance Lead) was alerted at 10:20.']],
       ['W-1205', ['ALREADY DECIDED', 'This decision has already been made.', 'Nothing more is needed from you here.', 'Nobody has been asked yet.']],
       ['W-1206', ['NOT YOUR TURN YET', 'This needs PMO Lead first.', 'You’ll be asked when it’s your turn.', 'Step 3 of 3', 'Ngozi Eze (PMO Lead) has been asked.', 'Waiting for CEO']],
     ];
@@ -385,7 +387,7 @@ describe('cannot act (A-NOT-YOURS)', () => {
       );
       await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
       for (const value of expected) expect(text(), `${id}: ${value}`).toContain(value);
-      expect(text()).not.toContain('was alerted at 12 Nov 10:20 by');
+      expect(text()).not.toContain('was alerted at 10:20 by');
       unmount();
     }
   });
@@ -480,7 +482,9 @@ describe('errors', () => {
   it('claim network error offers Try again, which claims again', async () => {
     answers.claim = (n, c) => (n === 0 ? Promise.reject(new TypeError('offline')) : json(200, { task_id: 'T-1201', revision: (c.body as { expected_revision: number }).expected_revision, claimed_by: 'Ada Okafor' }));
     await open();
-    await screen.findByText('We couldn’t get this decision ready. Try again.');
+    const claimNotice = await screen.findByText('We couldn’t get this decision ready. Try again.');
+    // it answers the press: announced as an alert (QA-1)
+    expect(claimNotice.closest('[role="alert"]')).not.toBeNull();
     expect((button('Approve v2') as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(button('Try again'));
     await ready();
@@ -492,7 +496,9 @@ describe('errors', () => {
     await open();
     await ready();
     fireEvent.click(button('Approve v2'));
-    await screen.findByText(/We couldn’t confirm your decision\./);
+    const uncertain = await screen.findByText(/We couldn’t confirm your decision\./);
+    // the uncertain decision is announced as an alert, as on base (QA-1)
+    expect(uncertain.closest('[role="alert"]')).not.toBeNull();
     expect(text()).toContain('We’ve reloaded this item so you can see whether it was recorded.');
     await ready();
     expect(counts().gets).toBe(2);
@@ -508,7 +514,9 @@ describe('errors', () => {
     await ready();
     fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: 'Checked the PO' } });
     fireEvent.click(button('Approve v2'));
-    await screen.findByText('We couldn’t confirm whether your decision was recorded.');
+    const unconfirmed = await screen.findByText('We couldn’t confirm whether your decision was recorded.');
+    // announced as an alert, as on base (QA-1)
+    expect(unconfirmed.closest('[role="alert"]')).not.toBeNull();
     const off = () => {
       for (const name of [/^Approve v2/, 'Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled, String(name)).toBe(true);
     };

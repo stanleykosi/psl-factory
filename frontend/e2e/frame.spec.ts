@@ -16,7 +16,7 @@ async function expectNoAxeViolations(page: Page) {
 }
 
 async function loaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('.psl-loading')).toHaveCount(0);
   await expect(page.locator('main#main > *').first()).toBeVisible();
 }
 
@@ -181,7 +181,7 @@ test.describe('desktop 1440', () => {
       await route.continue();
     });
     await page.goto('/my-work');
-    await expect(page.getByRole('status')).toHaveText('Loading…');
+    await expect(page.locator('.psl-loading')).toHaveText('Loading…');
     await expect(page.getByRole('navigation', { name: 'Main' }).getByRole('link')).toHaveCount(0);
     await expect(page.locator('.psl-sample')).toHaveCount(0);
     expect(await motion(page)).toEqual({ transitions: [], running: 0 });

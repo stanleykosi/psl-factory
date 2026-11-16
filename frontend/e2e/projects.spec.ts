@@ -25,12 +25,12 @@ const lineLinks = (page: Page) => page.locator('ol.projects__lines a');
 const projectTabs = (page: Page) => page.getByRole('tablist', { name: 'Project' }).getByRole('tab');
 
 async function listLoaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1, name: 'Projects' })).toBeVisible();
 }
 
 async function journeyLoaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 }
 
@@ -95,7 +95,7 @@ for (const [label, viewport] of [
         ]);
       } else {
         await expect(page.locator('.projects__eyebrow')).toHaveText('PROJECTS');
-        await expect(page.getByRole('tab')).toHaveText(['Active22', 'Closed2', 'All I can see24']);
+        await expect(page.getByRole('tab')).toHaveText(['Active 22', 'Closed 2', 'All I can see 24']);
         await expect(page.locator('.psl-resultcount')).toHaveText('22 PROJECTS');
         await expect(page.getByRole('columnheader')).toHaveText(['PROJECT', 'PM', 'WHERE IT IS', 'NEXT MILESTONE', 'NEEDS A PERSON', 'STOPPED']);
         await expect(page.getByText('You see projects your roles cover. Open one for its journey, documents, money and registers.')).toBeVisible();
@@ -140,7 +140,7 @@ for (const [label, viewport] of [
         await route.continue();
       });
       await page.goto('/projects');
-      await expect(page.getByRole('status')).toBeVisible();
+      await expect(page.getByText('Loading…')).toBeVisible();
       await expect(projectLinks(page)).toHaveCount(0);
       expect(await motion(page)).toEqual({ transitions: [], running: 0 });
       await expectNoAxeViolations(page);
@@ -155,7 +155,7 @@ for (const [label, viewport] of [
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
       const tabs = projectTabs(page);
       // Phones draw the tabs without counts.
-      await expect(tabs).toHaveText(phone ? ['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions'] : ['Journey', 'Milestones4', 'Documents6', 'Money', 'Registers6', 'Actions9'], {
+      await expect(tabs).toHaveText(phone ? ['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions'] : ['Journey', 'Milestones 4', 'Documents 6', 'Money', 'Registers 6', 'Actions 9'], {
         useInnerText: phone,
       });
       await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
@@ -319,6 +319,8 @@ test.describe('desktop 1440 details', () => {
     await expect(projectLinks(page)).toHaveText(['Sabi Market · web store']);
     await page.getByRole('tab', { name: /Closed/ }).focus();
     await page.keyboard.press('ArrowRight');
+    await expect(page.getByRole('tab', { name: /All I can see/ })).toBeFocused();
+    await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/\?status=all$/);
     await expect(projectLinks(page)).toHaveCount(5);
     await expect(page.getByRole('tab', { name: /All I can see/ })).toBeFocused();

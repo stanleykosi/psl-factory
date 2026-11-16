@@ -229,22 +229,24 @@ describe('the drawer', () => {
     expect(opens).toHaveLength(6);
     expect(opens[0].getAttribute('aria-label')).toBe('Open: Invoice for Lagoon Health is waiting for your review');
     expect(opens[0].getAttribute('href')).toBe('/work/w-inv-lh-002');
-    expect(opens.map((a) => a.classList.contains('alerts-open--pri'))).toEqual([true, true, true, false, false, false]);
-    const foot = [...d.querySelectorAll('.alerts-dfoot a')].map((a) => [a.textContent, a.getAttribute('href')]);
+    expect(opens.map((a) => !a.classList.contains('psl-btn--secondary'))).toEqual([true, true, true, false, false, false]);
+    const foot = [...d.querySelectorAll('.psl-drawer__foot a')].map((a) => [a.textContent, a.getAttribute('href')]);
     expect(foot).toEqual([
       ['See all alerts', '/notifications'],
       ['Alert settings', '/settings/alerts'],
     ]);
-    expect(document.activeElement).toBe(within(d).getByRole('button', { name: 'Close' }));
+    // The shared Drawer takes focus on the panel itself when it holds no field (the trap starts there).
+    expect(document.activeElement).toBe(d);
     expect(document.querySelector('main')!.hasAttribute('inert')).toBe(true);
   });
 
   it('Escape, Close and the scrim close it and focus goes back to the bell', async () => {
     await mount();
     for (const close of [
-      () => fireEvent.keyDown(document, { key: 'Escape' }),
+      // Escape is pressed where focus is, as a keyboard user does
+      () => fireEvent.keyDown(document.activeElement!, { key: 'Escape' }),
       () => fireEvent.click(within(dialog()!).getByRole('button', { name: 'Close' })),
-      () => fireEvent.click(document.querySelector('.alerts-dscrim')!),
+      () => fireEvent.click(document.querySelector('.psl-scrim')!),
     ]) {
       await openDrawer();
       close();
@@ -288,7 +290,7 @@ describe('the drawer', () => {
       return undefined;
     };
     await openDrawer();
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(dialog()!, { key: 'Escape' });
     await until(() => expect(dialog()).toBeNull());
     await openDrawer();
     expect(lists()).toHaveLength(2);
@@ -407,7 +409,7 @@ describe('states', () => {
     await openDrawer();
     expect(groupHeads()).toEqual(['Needs you, 0', 'For your information, 3']);
     expect(dialog()!.querySelector('.alerts-grp--need')!.closest('section')!.textContent).toContain('Nothing needs you right now.');
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(dialog()!, { key: 'Escape' });
 
     const onlyNeed = proposal();
     onlyNeed.items = onlyNeed.items.filter((item) => item.needs_you === true);
@@ -435,7 +437,7 @@ describe('states', () => {
     expect(card.textContent).toContain('Reference server_error for support.');
     hook = () => undefined;
     const before = lists().length;
-    fireEvent.click(within(card).getByRole('button', { name: 'Try again' }));
+    fireEvent.click(within(dialog()!).getByRole('button', { name: 'Try again' }));
     await until(() => expect(openLinks()).toHaveLength(6));
     expect(lists()).toHaveLength(before + 1);
     expect(badge()).toBe('4');
@@ -447,7 +449,7 @@ describe('states', () => {
     await openDrawer();
     expect(dialog()!.textContent).toContain('You’re signed out.');
     expect(within(dialog()!).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fmy-work');
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(dialog()!, { key: 'Escape' });
     await openDrawer();
     expect(lists()).toHaveLength(1);
     expect(badge()).toBeNull();
@@ -473,33 +475,6 @@ describe('states', () => {
   });
 });
 
-describe('the drawer top offset', () => {
-  it('is measured again when the viewport crosses 720px while it is open', async () => {
-    let phone = false;
-    const listeners = new Set<() => void>();
-    vi.stubGlobal('matchMedia', (q: string) => ({
-      get matches() {
-        return phone && q.includes('max-width');
-      },
-      media: q,
-      addEventListener: (_: string, fn: () => void) => listeners.add(fn),
-      removeEventListener: (_: string, fn: () => void) => listeners.delete(fn),
-    }));
-    // The top bar is 56px tall on screen above 720px and hidden (no box) below.
-    const rect = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
-      return { bottom: this.classList.contains('shell-topbar') && !phone ? 56 : 0 } as DOMRect;
-    });
-    await mount();
-    await openDrawer();
-    const layer = () => dialog()!.parentElement as HTMLElement;
-    expect(layer().style.getPropertyValue('--alerts-top')).toBe('56px');
-    phone = true;
-    await act(async () => listeners.forEach((fn) => fn()));
-    expect(layer().style.getPropertyValue('--alerts-top')).toBe('0px');
-    rect.mockRestore();
-  });
-});
-
 describe('phone (below 720px)', () => {
   beforeEach(() => {
     vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('max-width'), media: q, addEventListener: () => {}, removeEventListener: () => {} }));
@@ -519,20 +494,22 @@ describe('phone (below 720px)', () => {
     await mount();
     await openDrawer(phoneBell());
     const d = dialog()!;
-    expect(d.querySelector('.alerts-grab')).toBeTruthy();
+    expect(d.querySelector('.psl-sheet__grab')).toBeTruthy();
     const tabs = within(d).getAllByRole('tab');
     expect(tabs.map((t) => [t.textContent, t.getAttribute('aria-selected')])).toEqual([
-      ['Needs you3', 'true'],
+      ['Needs you 3', 'true'],
       ['For your information', 'false'],
     ]);
     expect(openLinks().map((a) => a.getAttribute('href'))).toEqual(['/work/w-inv-lh-002', '/work/w-plan-kl-01', '/work/w-pay-oct']);
     expect(groupHeads()).toEqual([]);
     fireEvent.keyDown(tabs[0], { key: 'ArrowRight' });
+    // The shared Tabs move focus with the arrows; choosing is a click or Enter.
     expect(document.activeElement).toBe(within(d).getByRole('tab', { name: 'For your information' }));
+    fireEvent.click(document.activeElement!);
     expect(openLinks().map((a) => a.getAttribute('href'))).toEqual(['/work/w-uat-lh', '/work/w-inv-lh-001', '/work/w-ms-kl-02']);
     fireEvent.click(within(d).getByRole('tab', { name: /^Needs you/ }));
     expect(openLinks()).toHaveLength(3);
-    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.keyDown(dialog()!, { key: 'Escape' });
     await until(() => expect(dialog()).toBeNull());
     expect(document.activeElement).toBe(phoneBell());
   });

@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 import type { ApiError } from '@/api/errors';
+import { Button, Callout, Panel, TextField } from '@/components';
 
 import { saveBillingContact, type ClientDetail, type FieldMessage } from './api';
 import type { RefreshResult } from './useClient';
@@ -18,7 +19,6 @@ type Notice =
   | { kind: 'uncertain' }
   | { kind: 'invalid'; message: string; fields?: FieldMessage[] };
 
-const HELP_ID = 'client-name-help';
 const FIELDS = ['name', 'email'] as const;
 
 type Props = {
@@ -161,106 +161,79 @@ export function BillingContactForm({ client, refresh, onSignedOut, onNoAccess }:
   const needed = !contact.set;
 
   return (
-    <section className="psl-panel clients__panel clients__formpanel" aria-labelledby="client-contact-title">
-      <h2 id="client-contact-title" className="psl-panel__head clients__h2 clients__h2--panel">
-        Billing contact
-      </h2>
-      <div className="clients__panelbody clients__formbody">
-        {!editable ? (
-          <>
-            <ReadOnlyValue id="client-name-label" label="Billing contact name" value={contact.name} set={contact.set} />
-            <p className="clients__help">Needed before any invoice can start</p>
-            <ReadOnlyValue id="client-email-label" label="Billing email" value={contact.email} set={contact.set} />
-            <p className="clients__plain">You can’t change this client’s details.</p>
-          </>
-        ) : (
-          <form onSubmit={(e) => void submit(e)} noValidate className="clients__form">
-            {notice?.kind === 'invalid' && (
-              <div role="alert" className="psl-callout psl-callout--problem">
-                <span>
-                  {notice.fields ? 'Check the highlighted details.' : notice.message || 'Check the highlighted details.'}
-                  {summary.map((m, i) => (
-                    <span key={i} className="clients__block">
-                      {m}
-                    </span>
-                  ))}
+    <Panel head="Billing contact" className="clients__panel clients__formpanel" bodyClassName="clients__panelbody clients__formbody">
+      {!editable ? (
+        <>
+          <ReadOnlyValue id="client-name-label" label="Billing contact name" value={contact.name} set={contact.set} />
+          <p className="clients__help">Needed before any invoice can start</p>
+          <ReadOnlyValue id="client-email-label" label="Billing email" value={contact.email} set={contact.set} />
+          <p className="clients__plain">You can’t change this client’s details.</p>
+        </>
+      ) : (
+        <form onSubmit={(e) => void submit(e)} noValidate className="clients__form">
+          {notice?.kind === 'invalid' && (
+            <Callout kind="problem" focusOnShow={!firstInvalid}>
+              {notice.fields ? 'Check the highlighted details.' : notice.message || 'Check the highlighted details.'}
+              {summary.map((m, i) => (
+                <span key={i} className="clients__block">
+                  {m}
                 </span>
-              </div>
-            )}
-            <div className="psl-field">
-              <label className="psl-label" htmlFor="client-name">
-                Billing contact name
-              </label>
-              <input
-                id="client-name"
-                ref={nameInput}
-                className={`psl-input${needed ? ' clients__needed' : ''}`}
-                value={name}
-                readOnly={unread}
-                autoComplete="off"
-                aria-invalid={fieldMessages.has('name') || undefined}
-                aria-describedby={fieldMessages.has('name') ? `client-name-error ${HELP_ID}` : HELP_ID}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <span id={HELP_ID} className="clients__help">
-                Needed before any invoice can start
-              </span>
-              {fieldMessages.has('name') && (
-                <span id="client-name-error" className="psl-error">
-                  {fieldMessages.get('name')}
-                </span>
-              )}
-              {current?.name && <span className="clients__current">Current: {[current.name, current.email].filter(Boolean).join(' · ')}</span>}
-            </div>
-            <div className="psl-field">
-              <label className="psl-label" htmlFor="client-email">
-                Billing email
-              </label>
-              <input
-                id="client-email"
-                ref={emailInput}
-                className={`psl-input${needed ? ' clients__needed' : ''}`}
-                type="email"
-                value={email}
-                readOnly={unread}
-                autoComplete="off"
-                aria-invalid={fieldMessages.has('email') || undefined}
-                aria-describedby={fieldMessages.has('email') ? 'client-email-error' : undefined}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {fieldMessages.has('email') && (
-                <span id="client-email-error" className="psl-error">
-                  {fieldMessages.get('email')}
-                </span>
-              )}
-            </div>
-            {!unread && (
-              <div className="clients__bar">
-                <button type="submit" className="psl-btn psl-btn--lg clients__save" disabled={busy} aria-busy={busy}>
-                  {busy ? 'Saving…' : 'Save billing contact'}
-                </button>
-              </div>
-            )}
-          </form>
-        )}
-        {notice && showsNotice && (
-          <div ref={noticeBox} tabIndex={-1} role="alert" className="clients__notice">
-            {notice.kind === 'saved_unread' && <p>Saved. We couldn’t refresh the page; reload to see the latest.</p>}
-            {notice.kind === 'stale' && <p>This client changed while you were editing. Check the details and save again.</p>}
-            {notice.kind === 'stale' && notice.unread && <p>We couldn’t refresh the page, so nothing can be saved yet.</p>}
-            {notice.kind === 'forbidden' && <p>{notice.message || 'Your role does not allow this.'}</p>}
-            {notice.kind === 'uncertain' && <p>We couldn’t confirm the change was saved.</p>}
+              ))}
+            </Callout>
+          )}
+          <div className="clients__fieldgroup">
+            <TextField
+              id="client-name"
+              ref={nameInput}
+              label="Billing contact name"
+              className={needed ? 'clients__needed' : undefined}
+              value={name}
+              readOnly={unread}
+              autoComplete="off"
+              hint="Needed before any invoice can start"
+              error={fieldMessages.get('name')}
+              onChange={(e) => setName(e.target.value)}
+            />
+            {current?.name && <span className="clients__current">Current: {[current.name, current.email].filter(Boolean).join(' · ')}</span>}
           </div>
-        )}
-        <p role="status" className="clients__status">
-          {notice?.kind === 'saved' ? 'Billing contact saved.' : ''}
-        </p>
-        {unread && (
-          <button type="button" className="psl-btn psl-btn--secondary clients__retry" disabled={busy} onClick={() => void tryAgain()}>
-            Try again
-          </button>
-        )}
-      </div>
-    </section>
+          <TextField
+            id="client-email"
+            ref={emailInput}
+            label="Billing email"
+            className={needed ? 'clients__needed' : undefined}
+            type="email"
+            value={email}
+            readOnly={unread}
+            autoComplete="off"
+            error={fieldMessages.get('email')}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {!unread && (
+            <div className="clients__bar">
+              <Button type="submit" size="lg" className="clients__save" busy={busy} busyLabel="Saving…">
+                Save billing contact
+              </Button>
+            </div>
+          )}
+        </form>
+      )}
+      {notice && showsNotice && (
+        <div ref={noticeBox} tabIndex={-1} role="alert" className="clients__notice">
+          <Callout kind="warning">
+            {notice.kind === 'saved_unread' && <span className="clients__block">Saved. We couldn’t refresh the page; reload to see the latest.</span>}
+            {notice.kind === 'stale' && <span className="clients__block">This client changed while you were editing. Check the details and save again.</span>}
+            {notice.kind === 'stale' && notice.unread && <span className="clients__block">We couldn’t refresh the page, so nothing can be saved yet.</span>}
+            {notice.kind === 'forbidden' && <span className="clients__block">{notice.message || 'Your role does not allow this.'}</span>}
+            {notice.kind === 'uncertain' && <span className="clients__block">We couldn’t confirm the change was saved.</span>}
+          </Callout>
+        </div>
+      )}
+      {notice?.kind === 'saved' && <Callout kind="success">Billing contact saved.</Callout>}
+      {unread && (
+        <Button kind="secondary" className="clients__retry" busy={busy} busyLabel="Trying again…" onClick={() => void tryAgain()}>
+          Try again
+        </Button>
+      )}
+    </Panel>
   );
 }

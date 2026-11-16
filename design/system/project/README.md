@@ -21,7 +21,7 @@ The design system for PSL's operations factory, from concept C, Assembly line. E
   - `verified` (green) is for verified outputs.
   - `waiting` (amber) is for waiting on someone else (the client, an approver, a team) and for sample or test labels.
   - `neutral` (grey) is for tags that are closed, not applicable or just information: Cancelled, Out of scope, Not yet, people and role labels. Priority is a neutral tag with a small mono marker (■■■ high, ■■□ medium, ■□□ low), never a status colour.
-  - Tags use only these five families; a state has exactly one colour everywhere.
+  - Tags use only these five families; a state has exactly one colour everywhere. Tag words show in capitals, as the boards draw them.
   - Every state is also written in words, so colour is never the only signal.
 - **Facts strip:** earned facts are `ink` with `on-strong` text; the current one is `signal-tint` with `signal-ink` text; facts not yet earned are `surface` with `ink-muted` text.
 - **Type:**
@@ -38,9 +38,10 @@ The design system for PSL's operations factory, from concept C, Assembly line. E
 - **Sizes:** `control-md` (44px) is the default height of buttons, inputs and tabs; `control-sm` (40px) only in the top bar and dense toolbars; `control-phone` (48px) for phone inputs; `control-lg` (50px) for drawer and decision footers; `control-xl` (54px) for the full-width phone action.
 - **Elevation:** panels on the page never cast a shadow. Floating surfaces (menus, select lists, filter panels, date pickers, dialogs) use `shadow-pop`, a hard 6px offset in `ink`; toasts use `shadow-float`. Drawers, sheets and dialogs dim the page with `scrim`.
 - **Layout:** below `bp-phone` (720px) the top bar becomes the phone bar, rows stack, filters move to a bottom sheet and the main action goes full width in a footer; page content is at most 1320px wide.
-- **Text styles:** `page-title` for page titles, `drawer-title` for drawers and dialogs, `panel-head` (uppercase) for panel headers, `body` for reading text (`body-phone` on phones), `hint` for hints, errors and what-it-does-not-do lines, `tag` for state tags, `eyebrow` and `label` in mono caps, `amount` and `reference` in mono.
-- **Dates and amounts:** dates read "17 Nov 2026", times "14:30 WAT" in mono; amounts are mono with ₦ and two decimals, right-aligned in tables; Unknown is the amber Unknown tag.
-- **Spacing:** a 4px base. Panels use `space-4`, sections `space-5`, desktop page gutters `space-6`. Every touch target is at least `space-7` (44px).
+- **Text styles:** `page-title` for page titles (40px; record and form pages whose boards draw a smaller title use 36, 34 or 32px), `page-title-phone` on phones (26px; 24, 22 or 20px where the phone board draws it), `drawer-title` for drawers and dialogs, `panel-head` (uppercase) for panel headers, `body` for reading text (`body-phone` on phones), `hint` for hints, errors and what-it-does-not-do lines, `tag` for state tags, `eyebrow` and `label` in mono caps, `amount` and `reference` in mono.
+- **Dates and amounts:** where a board draws a date or time, the screen uses that board's format: "12 Nov 16:40" for a moment (two-digit day, 24-hour WAT), "Mon 10 Nov 14:05" on the work item's started line, "10:47" for a time alone ("YOU APPROVED · 10:47"), "14:30 WAT" where the board writes WAT, "12 Nov" or "01 Oct" for a day this year. Where no board draws one, dates read "17 Nov 2026" and moments "17 Nov 2026 · 14:30 WAT". A calendar date has no time, so it is never shown as one. Amounts are mono with ₦ and two decimals, from the decimal string the API sends, right-aligned in tables; Unknown is the amber Unknown tag.
+- **The boards decide (D-93):** where these specs and the client-approved boards disagree, the boards win and these pages are changed to match. Colour meaning, 44px targets on phones and the 500px drawer (D-92) still stand.
+- **Spacing:** the scale steps are `space-1` 4px, `space-2` 8px, `space-3` 12px, `space-4` 16px, `space-5` 24px, `space-6` 28px and `space-7` 44px; the in-between values the boards and bundle.css draw have their own tokens: `space-6px`, `space-10px`, `space-14px`, `space-18px`, `space-20px` and `space-22px` (D-92a, D-93). Panels use `space-4`, sections `space-5`, desktop page gutters `space-6`, the main and side columns `space-22px`. Every touch target is at least `space-7` (44px).
 - **Contrast:** the signal orange is #C8401C, deepened from concept C's #D8461F, which was 4.4:1 with white text. Every text pair in this system meets 4.5:1.
 
 ## Motion
