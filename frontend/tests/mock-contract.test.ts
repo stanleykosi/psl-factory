@@ -62,7 +62,22 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-TEMPLATE-VERSION': { pm: 403, none: 403 },
 };
 // Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06, F-10, F-11).
+// PROPOSAL (BACKEND-HANDOFF 2, F-22): a records step field carries its saved records as a list of {value, label} in `value`;
+// the generated type says string, so the list's shape is checked here and it is removed before the schema check.
+function savedRecordsStripped(body: unknown): unknown {
+  const copy = structuredClone(body) as { workspace?: { steps?: { fields?: { type: string; value?: unknown }[] }[] } };
+  for (const step of copy.workspace?.steps ?? []) {
+    for (const f of step.fields ?? []) {
+      if (f.type !== 'records' || f.value === undefined) continue;
+      const list = f.value as { value?: unknown; label?: unknown }[];
+      expect(Array.isArray(list) && list.length > 0 && list.every((o) => typeof o.value === 'string' && typeof o.label === 'string' && Object.keys(o).length === 2)).toBe(true);
+      delete f.value;
+    }
+  }
+  return copy;
+}
 const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
+  'E-WORK-ITEM': savedRecordsStripped,
   'E-EXCEPTIONS': exceptionsBody,
   'E-MONTH-END': monthEndBody,
   'E-SETUP-RULES': contractRules,
@@ -514,10 +529,24 @@ describe('F-17 step scripts and sidecars', () => {
 
 describe('F-21 weekly fixtures (W-2201 to W-2208)', () => {
   const dir = join(__dirname, '../mock/fixtures/work');
-  const files = readdirSync(dir).filter((name) => /^W-22\d\d(\.next)?\.json$/.test(name));
+  const files = readdirSync(dir).filter((name) => /^W-22(0\d|\d\d)(\.next)?\.json$/.test(name) && name.slice(0, 6) <= 'W-2208');
 
   it('every weekly item and sidecar is schema-valid and marked sample, with no stripping', () => {
     expect(files.filter((name) => !name.includes('.next'))).toHaveLength(8);
+    for (const name of files) {
+      const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
+      expectValid('E-WORK-ITEM', 200, body);
+      expect(body.sample, name).toBe(true);
+    }
+  });
+});
+
+describe('F-22 weekly fixtures (W-2209 to W-2214)', () => {
+  const dir = join(__dirname, '../mock/fixtures/work');
+  const files = readdirSync(dir).filter((name) => /^W-22(09|1[0-4])(\.next)?\.json$/.test(name));
+
+  it('every returned or received item and sidecar is schema-valid and marked sample, with no stripping', () => {
+    expect(files.filter((name) => !name.includes('.next'))).toHaveLength(6);
     for (const name of files) {
       const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
       expectValid('E-WORK-ITEM', 200, body);

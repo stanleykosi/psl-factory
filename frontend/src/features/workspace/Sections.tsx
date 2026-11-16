@@ -340,8 +340,9 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {item.channel && <span className="ws-detail">{item.channel}</span>}
               </span>,
               <>
-                {item.receipt && <StatusWord value={item.receipt} kind="receipt" />}
-                {item.at && <time dateTime={item.at}> {formatDayTime(item.at)}</time>}
+                {/* the backend's own tag, when it sends one, stands in for the receipt word (Conflicts 2) */}
+                {item.tag ? <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag> : item.receipt && <StatusWord value={item.receipt} kind="receipt" />}
+                {item.at ? <time dateTime={item.at}> {formatDayTime(item.at)}</time> : (item.receipt === 'received' || item.receipt === 'uncertain') && <span> {WS_TEXT.timeUnknown}</span>}
               </>,
             );
           case 'figures':
@@ -375,7 +376,10 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 </span>
                 <Detail text={item.detail} />
               </span>,
-              <Cites item={item} />,
+              <>
+                {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}
+                <Cites item={item} />
+              </>,
             );
         }
       })}
@@ -436,8 +440,16 @@ export function SectionView({ section, level, controls }: { section: Section; le
   const Heading = level === 2 ? 'h2' : 'h3';
   const restricted = section.restricted === true;
   const empty = !restricted && section.items.length === 0;
+  // Conflicts 1: a section with no items and no title but a note is the page's banner: the warning alone, no panel
+  if (!restricted && empty && !section.title && section.note) {
+    return (
+      <Callout kind="warning" announce={false} className="ws-note">
+        {section.note}
+      </Callout>
+    );
+  }
   return (
-    <section className={`psl-panel ws-section ws-section--${section.kind}`} aria-labelledby={section.title ? headId : undefined}>
+    <section className={`psl-panel ws-section ws-section--${section.kind}${section.title ? '' : ' ws-section--untitled'}`} aria-labelledby={section.title ? headId : undefined}>
       {section.title && (
         <Heading id={headId} className="psl-panel__head ws-section__head">
           {section.title}

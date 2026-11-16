@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-24",
   "outcome": "The Assistant: pick an agent, ask, watch it work, read the answer with its steps and sources, and start the normal work item from its draft (contract mock only)",
-  "state": "READY",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-ASSISTANT"
   ],
@@ -77,55 +77,1283 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T09:20:10Z",
+      "seconds": 170.0,
+      "evidence_ref": "delivery/features/F-24/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T14:19:41Z",
+      "seconds": 164.6,
+      "evidence_ref": "delivery/features/F-24/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T14:31:02Z",
+      "seconds": 162.7,
+      "evidence_ref": "delivery/features/F-24/round-3/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-24/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-ui.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/assistant/useSend.ts:101 | After an uncertain send, \"message is there\" is decided by comparing the last person message text with the typed text. If the person had already sent identical text earlier in the thread, a lost send looks like a delivered one, and the text is cleared with no resend. Expected: compare the person-message count with the count before the send, or the last message's `at`. Actual: text equality only. Fix: record the number of person messages before the post and require a new one (do not resend automatically either way).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "`useSend.ts` now compares the number of person messages after the re-read with `personCount` (the count shown before the send), so identical earlier text no longer counts as delivered. The uncertain path still never resends and still waits for \"Try again\". Round 2 adds a same-text lost-send test."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`useSend.ts` now compares the number of person messages after the re-read with `personCount` (the count shown before the send), so identical earlier text no longer counts as delivered. The uncertain path still never resends and still waits for \"Try again\". Round 2 adds a same-text lost-send test."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/mock/assistant.mjs:243 | The draft's start reply (201 `{work_id, state}`) returns directly from `draftStart` and skips the v7 response-schema check that every other mock reply gets. Fix: run it through `ops['E-WORK-START'].replies['201']` (and the 409 reply) before returning.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "`assistant.mjs` `draftStart` now checks both the 201 and the 409 replies against the v7 E-WORK-START response schema and answers 500 `mock_invalid_reply` on mismatch."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`assistant.mjs` `draftStart` now checks both the 201 and the 409 replies against the v7 E-WORK-START response schema and answers 500 `mock_invalid_reply` on mismatch."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/start-work/useStartWork.ts:176 | The prefill search of record options is capped at `PREFILL_PAGES` (5) pages. A served value beyond that is shown as \"no longer available\". This is acceptable for the mock, and the note is honest. Fix: leave as is, and revisit when the real options endpoint supports lookup by id.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "At 390 the \"\u2190 Assistant\" back label and the conversation title sit tight and the label's second line touches the title (\"Assistant\" next to \"Bank M2\"). Give the back label and note a gap or keep the label on one line.",
+      "severity": "phone thread top bar",
+      "blocking": false,
+      "summary": "frontend",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "phone bar screenshot: back label on one line, title ellipsised with a gap, no collision."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "phone bar screenshot: back label on one line, title ellipsised with a gap, no collision."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "The sticky composer covers the draft card's lower rows in a full-page capture; confirm the thread has bottom padding so \"Start this invoice\" is never hidden behind the composer at the end of scroll.",
+      "severity": "phone cv-2401",
+      "blocking": false,
+      "summary": "frontend",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "composer is in flow with scroll padding (code and builder e2e: focused draft button above composer); draft-started phone shows the full card and footer unobstructed."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "composer is in flow with scroll padding (code and builder e2e: focused draft button above composer); draft-started phone shows the full card and footer unobstructed."
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "After the drawer's stale notice the thread still shows \"Start this invoice\" until the person presses start again. Spec-accepted (Start work's own notice), but a re-read on that notice would show \"Started\" sooner.",
+      "severity": "second-start 409",
+      "blocking": false,
+      "summary": "frontend",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "code: 409 now triggers a thread re-read (onConflict); builder's second-tab e2e passes. Not live-tested."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "code: 409 now triggers a thread re-read (onConflict); builder's second-tab e2e passes. Not live-tested."
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "Moved columns. At 1440 the board renders the conversation list at 240px and the agent panel at 260px. Its flex rule is `flex: 1 1 240px; max-width: 270px` and `flex: 1 1 260px; max-width: 300px`, and report.json shows boardBox w 240 and 260. The page is a fixed `minmax(0,270px) 1fr minmax(0,300px)` grid (page 270 and 300), so the middle is about 70px narrower: composer 814 vs 883 wide. List titles truncate at a different point, side-panel sentences and \"Harmattan Bank \u00b7 mobile onboarding\" wrap differently, and the side panel content shifts. Owner frontend; frontend/src/features/assistant/assistant.css:4 (`.as` grid).",
+      "severity": "scr-05-desktop, -working, -thread, -draft-started (1440)",
+      "blocking": true,
+      "summary": "Match the board's widths at 1440: list 240px and panel 260px (for example `minmax(0,240px) minmax(0,1fr) minmax(0,260px)`, or the board's flex basis/max rule), with the middle taking the rest.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "assistant.css:4 is now `minmax(0,240px) minmax(0,1fr) minmax(0,260px)` (and 240 at <1080). Desktop-thread report: the list and panel match the board's 240 and 260, the composer form is 880 wide at x 268 (board 883 at 268), and DRAFTED tag x 783 (board 789). The side-by-sides at 1440 line up column for column."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "assistant.css:4 is now `minmax(0,240px) minmax(0,1fr) minmax(0,260px)` (and 240 at <1080). Desktop-thread report: the list and panel match the board's 240 and 260, the composer form is 880 wide at x 268 (board 883 at 268), and DRAFTED tag x 783 (board 789). The side-by-sides at 1440 line up column for column."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "Phone bar breaks. The conversation title is passed as the phone bar note (ThreadPage.tsx:23). `.shell-phonenote` (styles/shell.css:25) has no nowrap or ellipsis, and the back link can wrap. At 390, \"\u2190 Assistant\" splits into \"\u2190\" / \"Assistant\", and the two-line mono title \"Planning packet \u00b7 Tamarind Loans\" / \"Invoice \u00b7 Harmattan Bank M2\" butts against it (\"AssistantTamarind Loans\", \"AssistantBank M2\"). The boards draw \"\u2190 Assistant\" on one line and a short one-line note. Owner frontend.",
+      "severity": "scr-05-mobile-working, -thread, -draft-started (390)",
+      "blocking": true,
+      "summary": "Keep the back link on one line (`white-space: nowrap`) and make the note one line with `min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap` (shared shell CSS, so other pages' short notes are unchanged). Alternatively pass a shorter note, still from data.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "shell.css: the note is now `min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap`, and the back link is `white-space:nowrap; flex:none`. The 390 side-by-sides show \"\u2190 Assistant  Planning packet \u2026\" and \"\u2190 Assistant  Invoice \u00b7 Harmat\u2026\" on one line, with no collision."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "shell.css: the note is now `min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap`, and the back link is `white-space:nowrap; flex:none`. The 390 side-by-sides show \"\u2190 Assistant  Planning packet \u2026\" and \"\u2190 Assistant  Invoice \u00b7 Harmat\u2026\" on one line, with no collision."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "Composer not docked. On the phone home the board docks the composer to the bottom of the screen (white footer with a top rule, bottom at y\u2248824 of 844). On the page, `.as { min-height: 0 }` and `.as__home { justify-content: flex-start }` at <720px leave the composer straight after the content (box at y\u2248588 to 716), with empty steel below. `position: sticky; bottom: 0` only takes effect when the content overflows. The README phone rule puts the main action in a footer. Owner frontend; assistant.css:66-74.",
+      "severity": "scr-05-mobile (390)",
+      "blocking": true,
+      "summary": "Let the phone center column fill the viewport below the bar (for example `.as__center { min-height: calc(100dvh - <phone bar>) }` with the composer at `margin-top: auto`), so the composer sits at the bottom as drawn, with the agents note directly above it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "Below 720px, `.as__center` has a viewport min-height, the composer has `margin-top:auto`, and `.as__home` has flex-grow. In the SCR-05-mobile side-by-side the composer sits at the bottom with a top rule, matching the board. Visual is 89.9."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Below 720px, `.as__center` has a viewport min-height, the composer has `margin-top:auto`, and `.as__home` has flex-grow. In the SCR-05-mobile side-by-side the composer sits at the bottom with a top rule, matching the board. Visual is 89.9."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "A fixable gap is filed as \"no field\". After the start, the phone board replaces the composer with a docked full-width blue \"Open INV-0415\" action (50px, `action`, footer, the phone \"main action goes full width in a footer\" rule). The page leaves it out under the exception `\"Open INV-0415\"`, category \"no field\". But the reference and target are data (`draft.started.reference`, `work_id`), and spec acceptance 4 says no exception may cover a value the data can supply. On the page, the only confirmation is the green started line below the fold (y\u2248900, under the sticky composer). Owner frontend; DraftStart.tsx:88-95, ComposerBar; fidelity-exceptions.json entry \"Open INV-0415\".",
+      "severity": "scr-05-mobile-draft-started (390)",
+      "blocking": true,
+      "summary": "On phones, once `draft.started` exists, show the footer action \"Open {reference}\" \u2192 `/work/{work_id}` (Button primary, full width, control-lg) in the footer as the board draws it. Keep the started line in the card. Remove the \"Open INV-0415\" exception, or recategorise it if the design engineer chooses Conflicts 6's single wording instead. Leaving the rest of the thread in place (the board collapses the steps and answer, and draws Chidi's \"will tell you\" callout) can stay a listed difference.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": "The \"Open {reference}\" footer is built from `draft.started` (matched \"Open INV-0415\", 358\u00d750, 100% similarity) and its exception is removed. It is not docked as the board draws it: see UI-2-1."
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:37:06Z",
+          "refs": [
+            "delivery/features/F-24/round-3/build.md"
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:37:06Z",
+          "refs": [
+            "delivery/features/F-24/round-3/review-ui.md"
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-24/round-3/build.md"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-24/round-3/review-ui.md"
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "Step references restyled. The desktop boards draw the step reference line as the data string in mono 11px with no uppercase (\"SIGNED SOW v2 \u00b7 stage 2\", \"CLIENT \u00b7 Harmattan Bank\", \"RESPONSE v3 \u00b7 COSTING v2\"), matching the source tags under the answer. The inline AgentChecklist keeps the card's uppercase (\"SIGNED SOW V2 \u00b7 STAGE 2\", \"CLIENT \u00b7 HARMATTAN BANK\"), so the step references and the source tags under the same answer now disagree. The phone boards do draw them uppercase. Owner frontend; components.css `.cmp-agent--inline` (inherits the `.psl-step` source style).",
+      "severity": "scr-05-desktop-working, -thread, -draft-started (1440)",
+      "blocking": true,
+      "summary": "Above the phone breakpoint, add `text-transform: none` for the step source in `.cmp-agent--inline`; keep uppercase on phones and in the card variant.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "`.cmp-agent--inline .psl-step__ref { text-transform:none }`, with uppercase restored below 720px. Desktop side-by-sides read \"SIGNED SOW v2 \u00b7 stage 2\", \"CLIENT \u00b7 Harmattan Bank\", \"RESPONSE v3 \u00b7 COSTING v2\". Phones keep capitals, as their boards draw."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`.cmp-agent--inline .psl-step__ref { text-transform:none }`, with uppercase restored below 720px. Desktop side-by-sides read \"SIGNED SOW v2 \u00b7 stage 2\", \"CLIENT \u00b7 Harmattan Bank\", \"RESPONSE v3 \u00b7 COSTING v2\". Phones keep capitals, as their boards draw."
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "Extra byline and composer form. The page shows \"Tola \u00b7 PMO agent\" above the working card, and the card head already says \"Tola \u00b7 PMO agent \u00b7 step 3 of 5\", so the agent is named twice (board: card only). The board's working composer is a single \"Message Tola\" field. The page shows the full composer with \"@ Mention\" and Send. Owner frontend.",
+      "severity": "scr-05-mobile-working (390)",
+      "blocking": false,
+      "summary": "Drop the ChatMessage `who` line when the phone working card head is shown. List the composer form as a difference for the design engineer, or draw the compact field while working.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "ChatMessage `hideWho`: the phone working side-by-side shows the agent once, in the card head. The compact \"Message Tola\" composer stays a listed difference (exception \"Message Tola\", Conflicts 11)."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "ChatMessage `hideWho`: the phone working side-by-side shows the agent once, in the card head. The compact \"Message Tola\" composer stays a listed difference (exception \"Message Tola\", Conflicts 11)."
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "\"N earlier\" moved. The board puts \"3 earlier\" as plain mono white text in the phone bar. The page puts a blue underlined button on its own row under the bar (\"5 earlier\"), which pushes the agent row down about 44px. This follows Conflicts 10 (button opening a BottomSheet). The phone bar on the home is the frame's menu/brand bar, so the move is defensible.",
+      "severity": "scr-05-mobile (390)",
+      "blocking": false,
+      "summary": "Design engineer to sign as a listed difference (Conflicts 10/16).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "\"5 earlier\" is a 44px button in the phone bar (`shell-phonenote--action`), drawn as the plain mono note in the board's place. Its 44px size follows D-92c."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"5 earlier\" is a 44px button in the phone bar (`shell-phonenote--action`), drawn as the plain mono note in the board's place. Its 44px size follows D-92c."
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "Amount in mono. The draft card's amount renders in Plex Mono (Money) and the boards draw it in Plex Sans. The README says amounts are mono, but D-93 says the boards win on look. The fidelity tool did not flag it. The phone draft title is Archivo where the phone board uses Plex Sans 14/700 (desktop board does use Archivo).",
+      "severity": "scr-05-desktop-thread, -draft-started, scr-05-mobile-thread",
+      "blocking": false,
+      "summary": "Design engineer to choose; if the board wins, render the amount value as text in the row, and the phone title in sans.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "The draft amount is `formatAmount` in the row's sans (D-93), and the phone draft title is in sans at body size. Both match the boards."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The draft amount is `formatAmount` in the row's sans (D-93), and the phone draft title is in sans at body size. Both match the boards."
+      ]
+    },
+    {
+      "id": "UI-1-9",
+      "round": 1,
+      "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "owner": "Focus may sit under the sticky composer. The composer footer is about 155px and sticky. There is no `scroll-padding-bottom`/`scroll-margin`, so Tab focus near the fold (draft button, source tags, started line) can land under it (WCAG 2.4.11). Chromium's centre-if-needed focus scrolling usually avoids this, but other engines may not.",
+      "severity": "all phone thread boards",
+      "blocking": false,
+      "summary": "Add `scroll-padding-bottom` equal to the footer height on the phone assistant page; add an e2e check that the focused started line is not covered.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T09:37:47Z",
+          "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:19:41Z",
+          "refs": [
+            "0f94b4b21e40889bb0300b3cf6891bab76829677"
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "refs": [
+            "`html:has(.as) { scroll-padding-bottom: calc(var(--space-7) * 4) }` below 720px. The builder's e2e checks that the focused draft button sits above the composer."
+          ],
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`html:has(.as) { scroll-padding-bottom: calc(var(--space-7) * 4) }` below 720px. The builder's e2e checks that the focused draft button sits above the composer."
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+      "owner": "\"5 earlier\" reads as plain monospace text beside the bell; add a visible button affordance (border or underline) so it is discoverable as tappable.",
+      "severity": "phone home bar",
+      "blocking": false,
+      "summary": "frontend",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T14:22:15Z",
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:31:02Z",
+          "refs": [
+            "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T14:36:36Z",
+          "refs": [
+            "mobile home screenshot: \"5 earlier\" underlined next to the bell."
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "mobile home screenshot: \"5 earlier\" underlined next to the bell."
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+      "owner": "The footer action is not docked. After a start, the phone page swaps the composer for `<div class=\"as__open\">` (ThreadPage.tsx, assistant.css last line, `.as__open { padding \u2026 }` only). That wrapper has no `position: sticky; bottom: 0`, no `surface` background and no `rule-strong` ink top border, unlike `.as__composer` at <720px. The board draws \"Open INV-0415\" in a white footer with a 2px ink top rule, docked at the bottom of the screen: report.json boardBox y 776, pageBox y 971. On the page it only appears after scrolling past the whole draft card. Owner frontend.",
+      "severity": "scr-05-mobile-draft-started (390)",
+      "blocking": true,
+      "summary": "At <720px give `.as__open` the same footer treatment as `.as__composer`: `background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom: 0; z-index: var(--z-bar); margin-top: auto`. Extend the e2e Open-footer check to assert its bottom is within a few px of the viewport bottom, as for the home composer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:31:02Z",
+          "refs": [
+            "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:36:36Z",
+          "refs": [
+            "assistant.css: below 720px `.as__open { margin-top:auto; background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom:0; z-index: var(--z-bar) }`, all tokens, matching `.as__composer`. round-3 SCR-05-mobile-draft-started report: \"Open INV-0415\" matched at 100% similarity, pageBox 16,776 358\u00d750, the same as boardBox. The side-by-side shows the white docked footer with the top rule at the fold, as the board draws it. The builder's e2e asserts it is within 4px of the viewport bottom."
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "assistant.css: below 720px `.as__open { margin-top:auto; background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom:0; z-index: var(--z-bar) }`, all tokens, matching `.as__composer`. round-3 SCR-05-mobile-draft-started report: \"Open INV-0415\" matched at 100% similarity, pageBox 16,776 358\u00d750, the same as boardBox. The side-by-side shows the white docked footer with the top rule at the fold, as the board draws it. The builder's e2e asserts it is within 4px of the viewport bottom."
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+      "owner": "Exception file housekeeping. (a) The \"\u2190 Home\" link exception (Conflicts 9) is now stale, because the page draws \"\u2190 Home\" in the phone bar; remove it. (b) The mobile-thread visual waiver says 78.4, but scores.txt says 78.1; use the measured score. (c) The \"Start this invoice\" entry reads \"Applies to the draft-started boards only\", yet it also silently covers the desktop-thread board, where the button is present (see \"Open question\" below). Add a sentence to that reason naming the tool false-miss on SCR-05-desktop-thread, so the design engineer signs it knowingly. Owner frontend.",
+      "severity": "fidelity-exceptions.json",
+      "blocking": false,
+      "summary": "Edit the file as described.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:22:15Z",
+          "head": "0f94b4b21e40889bb0300b3cf6891bab76829677"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:31:02Z",
+          "refs": [
+            "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:36:36Z",
+          "refs": [
+            "(a) \"\u2190 Home\" kept with a new reason. It is accurate: the round-3 SCR-05-mobile report lists board \"\u2190 Home\" as missing and page \"Back to Home\" as extra, i.e. the frame's `aria-label` replaces the visible \"\u2190 Home\" as the accessible name. The visible words are the board's, and the side-by-side shows \"\u2190 Home\" in the bar's place, so this is a tool-vocabulary exception, not a missing element. Accepted. (b) The mobile-thread waiver now reads 78.1, matching scores.txt. (c) The \"Start this invoice\" reason now names the desktop-thread tool false-miss. One follow-up is UI-3-2."
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "(a) \"\u2190 Home\" kept with a new reason. It is accurate: the round-3 SCR-05-mobile report lists board \"\u2190 Home\" as missing and page \"Back to Home\" as extra, i.e. the frame's `aria-label` replaces the visible \"\u2190 Home\" as the accessible name. The visible words are the board's, and the side-by-side shows \"\u2190 Home\" in the bar's place, so this is a tool-vocabulary exception, not a missing element. Accepted. (b) The mobile-thread waiver now reads 78.1, matching scores.txt. (c) The \"Start this invoice\" reason now names the desktop-thread tool false-miss. One follow-up is UI-3-2."
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "UX-2-1 underline vs board. The board draws \"3 earlier\" as plain white mono text in the phone bar. The page now underlines it (`.shell-phonenote--action`, `text-decoration: underline; text-underline-offset: 3px`). The tool reports \"underlined on the page, not on the board\", and the board still passes at 90.6. The underline is the only cue that the note can be tapped, and it uses the bar's own colour, with no colour-meaning change. It is not recorded anywhere for the design engineer.",
+      "severity": "scr-05-mobile (390)",
+      "blocking": false,
+      "summary": "Add a line to `notes` in fidelity-exceptions.json: \"'N earlier' is underlined in the phone bar so it reads as tappable (UX-2-1); the board draws plain text.\"",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:36:36Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-2",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "Stale reason on \"\u2190 Assistant\". It still says '\"\u2190 Home\" on the phone default is a frame item and is not drawn', which is no longer true. The real cause on the thread boards is the same as for \"\u2190 Home\": the frame names the link \"Back to Assistant\", so the tool cannot match \"\u2190 Assistant\".",
+      "severity": "fidelity-exceptions.json",
+      "blocking": false,
+      "summary": "Reword the \"\u2190 Assistant\" reason to match the \"\u2190 Home\" entry (\"frame vocabulary\": same visible words, accessible name \"Back to Assistant\").",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:36:36Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Second start (stale tab), `frontend/src/features/start-work/LineForm.tsx:60` \"stale\" notice | After `409 draft_already_started`, the drawer says \"This project changed since you opened the form. We've loaded the latest version; check your entries and press start again.\" and turns the start button back on. Pressing it again just gets another 409 (seen live: replies `[409,409]`). The thread behind the drawer has already re-read, and Close shows the started line. The spec allows \"the drawer's existing message\", so this is not a spec break. But the drawer invites a start that can never succeed, and the backend's own \"This draft was already started.\" is never shown. Fix (later, with G-SCR05-1): when the 409 code is `draft_already_started`, show the returned message and offer only Close (or close the drawer and let the thread's started line speak).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-16T15:41:08Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The F-24 contract proposals are only partly in the backend handoff. `delivery/BACKEND-HANDOFF.md` has no F-24 entry; it only links `delivery/backend-handoff/gaps-a-project-setup.md`. That file (lines 21-36) carries the design-time items G-SCR05-1 (`source` on E-WORK-START plus stable `message_id`, with 409 on second start), G-SCR05-2 (Edit draft), G-SCR05-3 (idempotency_key on E-CONVERSATION-NEW and E-MESSAGE), G-SCR05-4 (mentions echo, milestone kind), G-SCR05-6 (agent copy), G-SCR05-7 (alert when a conversation ends), G-SCR05-8, and the questions on privacy and polling. Missing or not recorded as the F-24 outcome: (a) QA-3-1, the stale-tab 409 `draft_already_started` handling. The drawer shows the \"project changed\" notice and re-enables start, and the backend's \"This draft was already started.\" message is never shown. (b) The `started` status word for the list, or deriving it from `draft.started` (\"Started \u00b7 INV-0415\"; build.md Conflicts 15). It is only implied in G-SCR05-1 and is not stated as a proposal. (c) `draft.started.note` (backend-composed started line, Conflicts 6). (d) The status that the mock returns for each case: the 409 code `draft_already_started` and the exact reply shape the mock simulates, so the backend matches it. (e) Restricted-source question: the mock sends the restricted label in the body and the frontend drops it (INV-RESTRICTED); this is not in the handoff. (f) A pointer that the whole F-24 round (mock behaviour, \"all five assistant operations unimplemented\") is on the mock only. | Add an F-24 section to `delivery/BACKEND-HANDOFF.md` (or `gaps-a-project-setup.md`) that lists G-SCR05-1, 2, 3, 4, 6, 7 as proposals still open, plus items (a) to (f) above. Name which are blocking for a real backend (G-SCR05-1 and G-SCR05-3, as the spec says) and which are not. No code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-16T15:42:58Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`fidelity-exceptions.json`: UI-3-2 is still open. The \"\u2190 Assistant\" reason still says the \"\u2190 Home\" link \"is not drawn\". The real cause is the frame name \"Back to Assistant\" (as with \"\u2190 Home\"). UI-3-1 (the underlined \"N earlier\") is not in `notes`, though D-100 does sign it. | Reword the \"\u2190 Assistant\" reason. Add the one-line note on the underline. This changes the file's text only; D-100 already approves the substance, so it can go with the next touch.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-16T15:42:58Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-3-1, TECH-3-1 and TECH-1-3 are open non-blocking findings (stale-tab notice, a loose e2e dock assertion `>= 840`, the 5-page prefill cap). None is a spec break. | Carry them as follow-ups. Tighten the e2e assertion with the next frontend change (`Math.abs(bottom - viewport height) <= 4`). QA-3-1 goes to the backend handoff with G-SCR05-1.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-16T15:42:58Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Files outside the readiness scope (\"`src/shell/**` beyond wiring\") changed: `shell/AppShell.tsx`, `shell/PhoneBar.tsx`, `styles/shell.css`. The round-1 UI findings (UI-1-2, UI-1-7) asked for these, so they are in scope by review. The reasons are not in round-1 `build.md` \"Start work and library changes\". | Add a line to the PR description naming these three files and the finding that required them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-16T15:42:58Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+          "evidence_refs": [
+            "delivery/features/F-24/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-24/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+          "evidence_refs": [
+            "delivery/features/F-24/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+          "evidence_refs": [
+            "delivery/features/F-24/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "evidence_refs": [
+            "delivery/features/F-24/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-24/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "evidence_refs": [
+            "delivery/features/F-24/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+          "evidence_refs": [
+            "delivery/features/F-24/round-2/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -145,11 +1373,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-ASSISTANT",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "2426bd445392c02f178f4332e1f3f8c018ba7d37",
+    "task_branch": "fe-assistant-the-assistant-pick-an-agent-ask-watch-it",
+    "head_sha": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-24",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -159,7 +1387,73 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/assistant.spec.ts",
+      "frontend/mock/assistant.mjs",
+      "frontend/mock/fixtures/assistant/CV-2401.json",
+      "frontend/mock/fixtures/assistant/CV-2402.json",
+      "frontend/mock/fixtures/assistant/CV-2403.json",
+      "frontend/mock/fixtures/assistant/CV-2404.json",
+      "frontend/mock/fixtures/assistant/CV-2405.json",
+      "frontend/mock/fixtures/assistant/CV-2406.json",
+      "frontend/mock/fixtures/assistant/CV-2411.json",
+      "frontend/mock/fixtures/assistant/index.json",
+      "frontend/mock/fixtures/assistant/mentions.json",
+      "frontend/mock/fixtures/me.admin.json",
+      "frontend/mock/fixtures/me.ceo.json",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/me.pm.json",
+      "frontend/mock/server.mjs",
+      "frontend/public/agents/chidi-idle.png",
+      "frontend/public/agents/tola-idle.png",
+      "frontend/public/agents/tola-working.png",
+      "frontend/public/agents/zainab-done.png",
+      "frontend/public/agents/zainab-idle.png",
+      "frontend/public/agents/zainab-working.png",
+      "frontend/src/app/assistant/[conversationId]/page.tsx",
+      "frontend/src/app/assistant/layout.tsx",
+      "frontend/src/app/assistant/page.tsx",
+      "frontend/src/components/AgentChecklist.tsx",
+      "frontend/src/components/Avatar.tsx",
+      "frontend/src/components/ChatMessage.tsx",
+      "frontend/src/components/Composer.tsx",
+      "frontend/src/components/DraftCard.tsx",
+      "frontend/src/components/README.md",
+      "frontend/src/components/SourceTag.tsx",
+      "frontend/src/components/components.css",
+      "frontend/src/components/index.ts",
+      "frontend/src/features/assistant/AssistantContext.tsx",
+      "frontend/src/features/assistant/AssistantFrame.tsx",
+      "frontend/src/features/assistant/AssistantHome.tsx",
+      "frontend/src/features/assistant/Chrome.tsx",
+      "frontend/src/features/assistant/ComposerBar.tsx",
+      "frontend/src/features/assistant/ConversationList.tsx",
+      "frontend/src/features/assistant/DraftStart.tsx",
+      "frontend/src/features/assistant/MentionPicker.tsx",
+      "frontend/src/features/assistant/SidePanel.tsx",
+      "frontend/src/features/assistant/Thread.tsx",
+      "frontend/src/features/assistant/ThreadPage.tsx",
+      "frontend/src/features/assistant/api.ts",
+      "frontend/src/features/assistant/assistant.css",
+      "frontend/src/features/assistant/labels.ts",
+      "frontend/src/features/assistant/model.ts",
+      "frontend/src/features/assistant/types.ts",
+      "frontend/src/features/assistant/useConversation.ts",
+      "frontend/src/features/assistant/useConversationList.ts",
+      "frontend/src/features/assistant/useSend.ts",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/StartWorkDrawer.tsx",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/styles/shell.css",
+      "frontend/tests/assistant-bridge.ts",
+      "frontend/tests/assistant-mock.test.ts",
+      "frontend/tests/assistant.test.tsx",
+      "frontend/tests/components/assistant-components.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/start-work-prefill.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -192,8 +1486,8 @@
     }
   },
   "created_at": "2026-11-16T03:30:18Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 3,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
@@ -201,6 +1495,86 @@
       "at": "2026-11-16T04:36:18Z",
       "round": 0,
       "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T04:36:34Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-16T09:20:10Z",
+      "round": 1,
+      "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-16T09:37:47Z",
+      "round": 1,
+      "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T09:37:47Z",
+      "round": 2,
+      "head": "10c7accc2889434032b1addd7d8fad42fe71b9ce",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-16T14:19:42Z",
+      "round": 2,
+      "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-16T14:22:15Z",
+      "round": 2,
+      "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T14:22:15Z",
+      "round": 3,
+      "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-16T14:31:02Z",
+      "round": 3,
+      "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-16T14:37:07Z",
+      "round": 3,
+      "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-16T15:41:08Z",
+      "round": 3,
+      "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
       "reason": null
     }
   ],
@@ -217,10 +1591,10 @@
     ]
   },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 3,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
   },
   "blocked": null
 }

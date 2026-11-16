@@ -1,0 +1,9 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-05-desktop-1440	1440	83.9	100	83.8	False
+SCR-05-desktop-working-1440	1440	83.9	100	84.5	False
+SCR-05-desktop-thread-1440	1440	80.9	100	81.2	False
+SCR-05-desktop-draft-started-1440	1440	79.6	100	80.3	False
+SCR-05-mobile-390	390	66.7	100	76.5	False
+SCR-05-mobile-working-390	390	60	100	79.5	False
+SCR-05-mobile-thread-390	390	71.4	100	77.3	False
+SCR-05-mobile-draft-started-390	390	40	100	76.7	False

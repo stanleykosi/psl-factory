@@ -75,7 +75,7 @@ const itemName = (section: Section, item: Item) => item.text ?? item.label ?? it
 function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkItem; workspace: WorkspaceData; page: WorkspacePage }) {
   const steps = workspace.steps ?? [];
   const byKey = new Map(steps.map((s) => [s.key, s]));
-  const flow = useWorkspaceStep({ id, revision: workspace.revision, page, awaitingReconcile: Boolean(item.reconcile) });
+  const flow = useWorkspaceStep({ id, revision: workspace.revision, page, awaitingReconcile: Boolean(item.reconcile) || item.state === 'effect_uncertain' });
   const [open, setOpen] = useState<Open | null>(null);
   const [selected, setSelected] = useState<Record<string, string[]>>({});
   const controls = useRef(new Map<string, HTMLButtonElement | null>());
@@ -83,6 +83,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const last = useRef<Attempt | null>(null);
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   const decideId = useId();
+  // an uncertain item with no reconcile: nothing to confirm here, the notice says it is being checked
+  const noReconcile = item.state === 'effect_uncertain' && !item.reconcile;
   const hasReconcile = Boolean(item.reconcile) && (item.allowed_actions ?? []).includes('reconcile');
 
   // On a phone the Decide panel is pinned to the bottom: the page keeps its height clear below it (see workspace.css).
@@ -233,6 +235,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     };
   }
 
+  // Conflicts 4: when the backend returns `next` lines the panel is "Next" and carries them; lines a step already says are not repeated.
+  const said = new Set(workspaceSteps.map((s) => s.consequence));
+  const nextLines = (workspace.next ?? []).filter((line) => line.trim() !== '' && !said.has(line));
+  const hasNext = (workspace.next ?? []).length > 0;
+  const showPanel = workspaceSteps.length > 0 || nextLines.length > 0;
   const side = workspace.sections.filter(inSide(item));
   const main = workspace.sections.filter((section) => !inSide(item)(section));
   const notice = flow.notice;
@@ -261,6 +268,17 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                   Reload
                 </Button>
               )}
+            </Callout>
+          </div>
+        )}
+        {/* an uncertain item the reload returned with no reconcile: nothing can be answered or sent, and the page says so */}
+        {noReconcile && notice?.kind !== 'uncertain' && (
+          <div role="alert">
+            <Callout kind="warning" className="ws-notice">
+              <span>{STEP_TEXT.uncertainNoReconcile}</span>
+              <Button kind="secondary" onClick={() => void page.reload()}>
+                Reload
+              </Button>
             </Callout>
           </div>
         )}
@@ -306,18 +324,23 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
           ))}
         </div>
-        {(side.length > 0 || workspaceSteps.length > 0) && (
-          <aside className="ws-side" aria-label="Review and decide">
+        {(side.length > 0 || showPanel) && (
+          <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
             {side.map((section) => (
               <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
             ))}
-            {workspaceSteps.length > 0 && (
-              <section ref={decideRef} className={`psl-panel psl-panel--decide ws-decide${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
-                <h2 id={`${decideId}-head`} className="psl-panel__head psl-panel__head--decide ws-decide__head">
-                  {STEP_TEXT.decide}
+            {showPanel && (
+              <section ref={decideRef} className={`psl-panel ${hasNext ? 'ws-decide--next' : 'psl-panel--decide'} ws-decide${workspaceSteps.length === 0 ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
+                <h2 id={`${decideId}-head`} className={`psl-panel__head ${hasNext ? '' : 'psl-panel__head--decide '}ws-decide__head`}>
+                  {hasNext ? STEP_TEXT.next : STEP_TEXT.decide}
                 </h2>
                 <div className="psl-panel__body ws-decide__body">
-                  <StepRow steps={workspaceSteps} hint={flow.allLocked ? (item.reconcile && !hasReconcile ? STEP_TEXT.confirmFirstByOther : STEP_TEXT.confirmFirst) : undefined}>
+                  {nextLines.map((line, i) => (
+                    <p key={i} className="ws-consequence">
+                      {line}
+                    </p>
+                  ))}
+                  <StepRow steps={workspaceSteps} hint={flow.allLocked && !noReconcile ? (item.reconcile && !hasReconcile ? STEP_TEXT.confirmFirstByOther : STEP_TEXT.confirmFirst) : undefined}>
                     {(s, describedBy) => control(s, `ws:${s.key}`, undefined, { describedBy })}
                   </StepRow>
                 </div>
