@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: a3f43067bf20e8474e3a6bb54d273597154d6f28
+COMMIT: 2e5eab9e7453da8eae518308537eb91140cef6ee
 BUILDER: builder
 LANE: full
 
@@ -32,3 +32,10 @@ LANE: full
 
 ## Base merge
 The coordinator merged dlv-00 into the branch (head a3f43067bf20e8474e3a6bb54d273597154d6f28); I checked that `git diff --stat 7abfbcb9 a3f43067 -- frontend` is empty, so no frontend change and the round-3 evidence stands. My last own commit was 7abfbcb94384c4380adf6bb289961f547c735e98.
+
+## Sign-off and note tone
+- Merged origin/dlv-00-delivery-setup (delivery records only), then committed 2e5eab9e7453da8eae518308537eb91140cef6ee.
+- D-105: every entry and visual waiver in `fidelity-exceptions.json` that said "builder proposal, pending design engineer" now reads "design engineer, 16 Nov 2026 — D-105" (no pending entries remain). The waiver text no longer calls the desktop default an open decision.
+- Tola's third sentence (the part asking the PM to act) is amber, chosen by data. The frame had no way to tone one line of the agent note (its only amber line is a separate untitled section note, which sits in the main column). Smallest general addition: fixtures-only PROPOSAL `agent_note.warn_lines: [indexes]`, read by `warnLines` in `proposals.ts`; `AgentNote` draws those lines in a warning Callout under the info note. Nothing matches on the words. Without the key every line is drawn in the info note as before. Fixtures W-2301, W-2306 (+ .next), W-2307, W-2308 carry `warn_lines: [2]`; the contract test validates and strips it, and the "only in W-23xx" guard covers it. Component test covers flagged and unflagged.
+- Fidelity, single board SCR-28-desktop default (1440, round-3/fidelity/SCR-28-desktop-1440-signoff): coverage 100 after exceptions, visual 65.3, down from 69.1. It does drop. Cause: the amber line now is a full-width band under Tola's note, where the board puts it in the right column under Tola's card (a frame layout item, Conflicts 6); a first try as a section note in the main column scored 62.8 and 65.5, so I used the note band. The other seven boards were not re-run; only the four default-view fixtures changed, and the phone default may move too.
+- Validation: checks.sh exit 0; Playwright minutes, workspace, weekly 88 passed (an earlier run had one W-2006 390 timing flake under load that passed on re-run); servers stopped by PID; test-results deleted.

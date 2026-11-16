@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 5c9842ceb894fe957014ba2cfa3cb9502eafcac6
+COMMIT: 4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c
 BUILDER: builder
 LANE: full
 
@@ -55,8 +55,8 @@ None (round 1).
 28. [x] This file; see lists below.
 
 ## Validation
-- `bash delivery/checks.sh`: first run exit 0 (86 files, 1874 tests). The re-run after the last UI commit had one failure in `tests/work-item-board.test.tsx` (a loading timing assertion, file untouched); it passed twice in isolation, and a full `npm test` plus `npm run lint` then passed (86 files, 1874 tests). The final commit only changed a selector in `useFocusAfterMore.ts`; `project-tabs.test.tsx` (26) passes, typecheck and lint pass; the full checks.sh was not re-run after it.
-- `E2E_PORT=4790 MOCK_PORT=4791 npx playwright test e2e/project-tabs.spec.ts e2e/projects.spec.ts`: 57 of 58 passed on the second to last head; the one failure (phone focus after the last "Show more") was fixed in the final commit and its test passes on that head, desktop and phone. The whole spec pair was not re-run after the fix. All requests go to the mock on 4791.
+- On head 4686abda (the coordinator's merge of dlv-00, no frontend change; code last changed in 5c9842ce): `bash delivery/checks.sh` exit 0, 86 test files and 1874 tests passed, lint, typecheck and production build clean. Earlier, one run showed a loading-timing failure in `tests/work-item-board.test.tsx` (untouched file); it did not recur.
+- On the same head: `E2E_PORT=4790 MOCK_PORT=4791 npx playwright test e2e/project-tabs.spec.ts e2e/projects.spec.ts`: 58 passed, 0 failed (1.7 min). All requests go to the mock on 4791.
 - Fidelity: production build (`API_ORIGIN=http://127.0.0.1:4791 npm run build`, `next start -p 4790`), mock on 4791, `--wait-ms 1500`, one recorded run in `round-1/fidelity/` (scores in `scores.txt`). Servers stopped by PID, `test-results` deleted, disk 6.2 GB free.
 
 Fidelity scores (coverage / with exceptions / visual):
@@ -90,6 +90,7 @@ G-SCR38-1 `invoice.status_label`; G-SCR38-2 and G-SCR19-2 `milestone_id`, `refer
 - ListToolbar change is general: Filter drawn only when `onFilterToggle` is given.
 - Choices not dictated by the spec: switching register drops `q` from the URL; milestones also show "Show more" if the backend sends `next_cursor`; the register tab counts disappear while a read is loading; amounts are plain text (the boards draw them plain, not mono); card lists are `role="list"` divs (the fidelity tool skips text inside `li`/`td` parents).
 - F-26 merge: `ProjectJourney.tsx` branch and `mock/server.mjs` (`M1_OPERATIONS`, the fixture filter line, dispatch line) will conflict textually; keep both. `projectTab()` answers 501 for `money` until F-26's handler is routed.
+- Routing: the `tests/mock-contract.test.ts` PATH_VALUES addition goes to the technical reviewer; the visual waivers and the severity-marker exceptions go to the design engineer.
 - The scratchpad directory is shared between builders (a file `e2e.log` I read was another feature's); I used a private subfolder afterwards.
 
 ## Mock limits

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-26",
   "outcome": "A project's Money tab: each contract stage's amount, invoice and paid state as the backend sends them, and where each amount comes from (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M3-REPORT"
   ],
@@ -141,8 +141,226 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**A malformed report or amount crashes the tab instead of showing the error state, so the table disappears.** The spec says \"5xx, network or bad shape \u2192 the aside shows ErrorState \u2026 the table never disappears because the report failed\", and that a money body with a bad shape shows the error card.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**A row whose amount is Unknown cannot open its figure by press.** In `MoneyTab.tsx:90`, the amount becomes a link only when `figure && text`, so an Unknown row amount with a matching figure is plain text. The spec makes the link depend only on `figure_id` matching a loaded figure. This is the case where a \"These figures differ\" warning matters most, because the table says Unknown and the report may hold a value. Today it is reachable only by deep link. Fix: render the matched figure's link with the amber `<Unknown />` as its text (and count it in `anyLinked`), or record the narrowing in build.md as an assumption for the design engineer. Neither the P-0101 nor the P-0102 fixtures exercise it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**One test swap is in a file the spec's lane did not list.** `tests/projects-journey.test.tsx:73-79,243` swaps the `money` coming-next case for `documents` / \"Documents come next\" / index 2. The assertion is unchanged and the swap is required, because Money no longer renders `ComingNext`, so nothing is loosened.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "The selected amount is drawn at weight 600 (the tool reports \"weight 400 on the board, 600 on the page\" for Stage 2 \u20a64,250,000.00). The board draws all three amounts the same, as plain default links, and no exception covers a bold selected state. Source: `frontend/src/features/projects/money.css:27` `.money__amountlink[aria-current=\"true\"] { font-weight: 600; }`.",
+      "severity": "scr-12-desktop",
+      "blocking": true,
+      "summary": "Fix: remove the rule and keep `aria-current=\"true\"` (the panel title already names the stage and amount). If the design engineer wants a visible selected state, add it as an exception instead. Owner: frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "Stage 4's amber \"Unknown\" in the phone card is semibold. The board draws it as `IBM Plex Mono 16px`, regular weight, `#6E4700` (an amount in the amount's own type, just amber). The build note says \"as both boards draw it\", but that is true only of the desktop table, which is 600 weight in body type. Source: `money.css:29` applies `font-weight: 600` to `.money__card .psl-unknown` as well as the table.",
+      "severity": "scr-12-mobile",
+      "blocking": true,
+      "summary": "Fix: limit the 600 weight to `.money__table .psl-unknown`, and give `.money__card .psl-unknown` `font-weight: 400` with `font-family: var(--font-mono)` (16px is already `--text-amount-size`). Owner: frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "Tool gate: visual 85.7 (desktop) and 71.4 (phone) are below 90 at 100% coverage. Apart from UI-1-1 and UI-1-2 the gap comes from approved D-104 choices and the shared frame, so the builder cannot close it. Fixing UI-1-1 and UI-1-2 is worth well under 1 point on each board.",
+      "severity": "both",
+      "blocking": true,
+      "summary": "Fix: the design engineer signs one per-board waiver for each board (wording below), or chooses a different layout. Owner: product (design engineer).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "The tap-target padding uses raw pixel values rather than tokens: `money.css` `.money__card .money__amountlink { padding: 20px 0 3px; margin: -20px 0 -3px; }` and `.money__line > .psl-link { padding: 3px 0 24px; margin: -3px 0 -24px; }`. Side effect: the amount's 20px of upward padding is painted over the stage name, so tapping the left part of \"Stage 2 \u00b7 UAT\" opens the figure. That is harmless, but it is a target nobody can see.",
+      "severity": "scr-12-mobile",
+      "blocking": false,
+      "summary": "Fix: when this code is next touched, express the values as `calc(var(--control-md) - \u2026)` or with spacing tokens. Optional.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+          "evidence_refs": [
+            "delivery/features/F-26/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-26/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+          "evidence_refs": [
+            "delivery/features/F-26/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+          "evidence_refs": [
+            "delivery/features/F-26/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -301,7 +519,7 @@
     }
   },
   "created_at": "2026-11-16T17:39:35Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -327,6 +545,22 @@
       "round": 1,
       "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-16T19:01:08Z",
+      "round": 1,
+      "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T19:01:09Z",
+      "round": 2,
+      "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "reason": null
     }
   ],
   "routing": {
@@ -342,10 +576,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
