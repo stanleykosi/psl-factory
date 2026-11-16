@@ -49,7 +49,11 @@ Import from `@/components`. Tests are in `frontend/tests/components/` (render, s
 | `FactsStrip` | FactsStrip | CMP-04 | domain.test.tsx |
 | `StationTrack` | StationTrack | CMP-02 | domain.test.tsx |
 | `MiniStationBar` | MiniStationBar | CMP-03 | domain.test.tsx |
-| `AgentChecklist` | AgentChecklist | CMP-09 | domain.test.tsx |
+| `AgentChecklist` (`inline` for the assistant thread) | AgentChecklist | CMP-09 | domain.test.tsx, assistant-components.test.tsx |
+| `ChatMessage` | ChatMessage | | assistant-components.test.tsx |
+| `Composer` (held microphone, no attach) | ChatMessage | | assistant-components.test.tsx |
+| `SourceTag` (default, link, restricted) | SourceTag | | assistant-components.test.tsx |
+| `DraftCard` (drafted, started) | DraftCard | | assistant-components.test.tsx |
 | `PhoneActionBar` | PhoneActionBar | CMP-11 | domain.test.tsx |
 
 Foundations (the audit's step 1), not design-system components of their own:
@@ -64,8 +68,7 @@ Foundations (the audit's step 1), not design-system components of their own:
 
 Not built yet, because no feature implements them (D-91: domain components only where a feature already
 has one): DecisionPanel (the decide feature's panel is its own; PhoneActionBar is built), WorkList (My work
-draws a table), SourceTag, DraftCard, ChatMessage (the assistant page is a stub), TopNav and AlertMessage
-(the shell and the alerts feature own them).
+draws a table), TopNav and AlertMessage (the shell and the alerts feature own them).
 
 Rules the components hold for every caller:
 

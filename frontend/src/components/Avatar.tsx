@@ -7,10 +7,10 @@ import { cx } from './internal';
 
 export type AgentKey = 'tola' | 'chidi' | 'zainab';
 
-export const AGENTS: Record<AgentKey, { name: string; role: string }> = {
-  tola: { name: 'Tola', role: 'PMO agent' },
-  chidi: { name: 'Chidi', role: 'Finance agent' },
-  zainab: { name: 'Zainab', role: 'HR agent' },
+export const AGENTS: Record<AgentKey, { name: string; role: string; /** The team's own name ("PMO"), as the Talk to chips write it. */ team: string }> = {
+  tola: { name: 'Tola', role: 'PMO agent', team: 'PMO' },
+  chidi: { name: 'Chidi', role: 'Finance agent', team: 'Finance' },
+  zainab: { name: 'Zainab', role: 'HR agent', team: 'HR' },
 };
 
 /** The agent for a name ("Chidi" → chidi); undefined for anything else. */

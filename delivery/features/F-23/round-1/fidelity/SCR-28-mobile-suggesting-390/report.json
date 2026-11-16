@@ -1,0 +1,388 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-16T15:57:52.414Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-28-mobile-suggesting.dc.html",
+  "boardName": "SCR-28-mobile-suggesting.dc.html",
+  "pageUrl": "http://localhost:4761/work/W-2302",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-23/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 82 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 100,
+    "visual": 82
+  },
+  "visual": {
+    "score": 82,
+    "allCellsScore": 88.7,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1473,
+    "mismatchedCells": 265
+  },
+  "coverage": {
+    "total": 8,
+    "found": 4,
+    "coverage": 50,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MIN-0141",
+        "pageName": "MIN-0141",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Minutes",
+        "pageName": "Weekly sync · 10 Nov",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Minutes\" on the board, \"Weekly sync · 10 Nov\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 256,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Reading the meeting notes",
+        "pageName": "READING THE NOTES",
+        "pageRole": "text",
+        "similarity": 86,
+        "looks": [
+          "text size 14px on the board, 12px on the page",
+          "text colour #1F2427 on the board, #16388F on the page",
+          "capitals on the page, not on the board",
+          "background none on the board, #E9EEFB on the page"
+        ],
+        "boardBox": {
+          "x": 74,
+          "y": 116,
+          "w": 173,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 103,
+          "w": 141,
+          "h": 23
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 64,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 10: The phone back link is a frame item with its own wording.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent · step 3 of 4",
+        "key": "text: Tola · PMO agent · step 3 of 4",
+        "container": "page",
+        "boardBox": {
+          "x": 74,
+          "y": 134,
+          "w": 173,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WORKING",
+        "key": "text: WORKING",
+        "container": "page",
+        "boardBox": {
+          "x": 272,
+          "y": 122,
+          "w": 86,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Started 10 Nov 15:02",
+        "key": "text: Started 10 Nov 15:02",
+        "container": "page",
+        "boardBox": {
+          "x": 18,
+          "y": 336,
+          "w": 354,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"MIN-0141\"",
+        "kind": "Text",
+        "name": "MIN-0141",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Text \"Reading the meeting notes\"",
+        "kind": "Text",
+        "name": "Reading the meeting notes",
+        "boardBox": {
+          "x": 74,
+          "y": 116,
+          "w": 173,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 103,
+          "w": 141,
+          "h": 23
+        },
+        "reasons": [
+          "across the page: middle on the board (41% across), left on the page (22% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 149,
+          "w": 334,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Nothing Tola suggests becomes a decision or an action until you confirm it.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 172,
+          "w": 334,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 238,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "READING THE MEETING NOTES",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 310,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PMO agent · step 3 of 4 · Started 10 Nov 15:02",
+        "container": "complementary",
+        "pageBox": {
+          "x": 72,
+          "y": 581,
+          "w": 274,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

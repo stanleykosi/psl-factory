@@ -1,0 +1,95 @@
+/* The Assistant (SCR-05). Tokens only. The page fills the frame's width: the list, the middle and the agent panel meet
+   the edges as the boards draw them, so the frame's own padding is taken off while this page is in it. */
+main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
+.as { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr) minmax(0, 260px); grid-template-areas: "list center side"; align-items: stretch; min-height: calc(100dvh - var(--space-7) - var(--space-3)); }
+.as__list { grid-area: list; background: var(--surface); border-right: var(--rule-strong) solid var(--ink); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-10px); min-width: 0; }
+.as__new.psl-btn { white-space: nowrap; }
+.as__note { margin: auto 0 0; padding-top: var(--space-3); font-size: var(--text-small-size); color: var(--ink-muted); line-height: 1.5; }
+.as-list__group { display: flex; flex-direction: column; gap: var(--space-10px); }
+.as-list__day { margin: var(--space-2) 0 0; font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; color: var(--ink-muted); }
+.as-list__empty { margin: 0; color: var(--ink-muted); }
+.as .as-row { display: grid; grid-template-columns: var(--space-6) minmax(0, 1fr); gap: var(--space-10px); align-items: center; padding: var(--space-2) var(--space-10px); color: var(--ink); text-decoration: none; background: var(--surface); }
+.as-row .psl-avatar { width: var(--space-6); height: var(--space-6); }
+.as-row:hover { background: var(--steel); }
+.as-row:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: calc(var(--rule-strong) * -1); }
+.as-row[aria-current="page"] { background: var(--ink); color: var(--on-strong); }
+.as-row[aria-current="page"] .as-row__sub { color: var(--nav-muted); }
+.as-row__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.3; }
+.as-row__title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.as-row__sub { font-size: var(--text-small-size); color: var(--ink-muted); }
+
+.as__center { grid-area: center; min-width: 0; display: flex; flex-direction: column; }
+.as__talk { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; padding: var(--space-14px) var(--space-6); border-bottom: var(--rule-strong) solid var(--ink); background: var(--surface); }
+.as__eyebrow { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; color: var(--ink-muted); margin-right: var(--space-1); }
+.as-chip { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-sm); padding: 0 var(--space-14px) 0 var(--space-1); border: none; box-shadow: inset 0 0 0 var(--rule-strong) var(--disabled); border-radius: 999px; background: var(--surface); font: inherit; font-weight: 600; color: var(--ink); cursor: pointer; }
+.as-chip:hover { background: var(--steel); }
+.as-chip:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.as-chip[aria-pressed="true"] { box-shadow: inset 0 0 0 var(--rule-strong) var(--ink); }
+.as-chip--tola[aria-pressed="true"] { background: var(--mascot-tola-tint); }
+.as-chip--chidi[aria-pressed="true"] { background: var(--mascot-chidi-tint); }
+.as-chip--zainab[aria-pressed="true"] { background: var(--mascot-zainab-tint); }
+.as-chip__team { font-weight: 400; color: var(--ink-muted); }
+
+.as__home { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: var(--space-6px); padding: var(--space-5) var(--space-6) 0; }
+.as__idle { height: 300px; width: auto; display: block; }
+.as__hello { margin: var(--space-1) 0 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: var(--text-page-title-28-size); text-align: center; }
+.as__can { margin: 0 0 var(--space-2); color: var(--ink-muted); text-align: center; max-width: 560px; }
+.as__thread { flex-grow: 1; padding: var(--space-5) var(--space-6); display: flex; flex-direction: column; gap: var(--space-18px); max-width: 880px; min-width: 0; }
+.as__state { padding: var(--space-5) var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+.as__refresh { margin: 0 var(--space-6); }
+.as__composer { margin: 0 var(--space-6) var(--space-5); max-width: 880px; display: flex; flex-direction: column; gap: var(--space-2); }
+.as-tool { height: var(--control-sm); padding: 0 var(--space-3); border: 1.5px solid var(--disabled); background: var(--surface); font: inherit; color: var(--ink); cursor: pointer; white-space: nowrap; }
+.as-tool:hover { background: var(--steel); }
+.as-tool:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.as-mention__pop { width: calc(var(--space-7) * 8); max-width: calc(100vw - var(--space-5) * 2); padding: var(--space-2); display: flex; flex-direction: column; gap: var(--space-2); }
+.as-mention__list { list-style: none; margin: 0; padding: 0; max-height: calc(var(--space-7) * 5); overflow: auto; }
+.as-mention__item { width: 100%; border: none; background: none; font: inherit; text-align: left; }
+.as-mention__note { margin: 0; padding: var(--space-2) var(--space-3); }
+
+.as__side { grid-area: side; background: var(--surface); border-left: var(--rule-strong) solid var(--ink); padding: var(--space-18px); display: flex; flex-direction: column; gap: var(--space-14px); min-width: 0; }
+.as__pose { display: flex; flex-direction: column; align-items: center; padding: var(--space-3) var(--space-2) 0; }
+.as__pose img { height: 220px; width: auto; display: block; }
+.as__pose--tola { background: var(--mascot-tola-tint); }
+.as__pose--chidi { background: var(--mascot-chidi-tint); }
+.as__pose--zainab { background: var(--mascot-zainab-tint); }
+.as__status { margin: 0; font-weight: 600; }
+.as__fact { display: flex; flex-direction: column; gap: var(--space-1); }
+.as__fact > span:first-child { font-size: var(--text-small-size); color: var(--ink-muted); }
+.as__cannot { margin: auto 0 0; padding: var(--space-3); background: var(--action-tint); border: var(--rule-strong) solid var(--action); font-size: var(--text-hint-size); color: var(--action-ink); line-height: 1.5; }
+
+
+/* between phones and wide desktops the panel sits under the middle */
+@media (max-width: 1079.98px) {
+  .as { grid-template-columns: minmax(0, 240px) minmax(0, 1fr); grid-template-areas: "list center" "list side"; }
+  .as__side { border-left: none; border-top: var(--rule-strong) solid var(--ink); }
+}
+
+/* Keyboard focus is never hidden under the docked composer on phones */
+@media (max-width: 719.98px) {
+  html:has(.as) { scroll-padding-bottom: calc(var(--space-7) * 4); }
+}
+
+@media (max-width: 719.98px) {
+  .as { display: flex; flex-direction: column; min-height: 0; }
+  .as__center { flex: 1 1 auto; min-height: calc(100dvh - var(--control-md) - var(--space-3)); }
+  .as__composer { margin-top: auto; }
+  .as__home { flex-grow: 1; }
+  .as__talk { padding: var(--space-14px) var(--space-4); gap: var(--space-6px); border-bottom: none; background: none; }
+  .as__eyebrow, .as-chip__team { display: none; }
+  .as-chip { min-height: var(--control-md); padding-right: var(--space-3); font-size: var(--text-body-size); }
+  .as__home { padding: var(--space-1) var(--space-4); gap: var(--space-1); justify-content: flex-start; align-items: center; }
+  .as__idle { height: 220px; }
+  .as__hello { font-size: var(--text-page-title-phone-22-size); }
+  .as__can { font-size: var(--text-body-size); margin: 0; }
+  .as__home .as__note { margin: var(--space-3) 0 0; padding: 0; }
+  .as__thread { padding: var(--space-14px) var(--space-4); gap: var(--space-3); }
+  .as__refresh { margin: 0 var(--space-4); }
+  .as__state { padding: var(--space-4); }
+  .as__composer { margin: 0; max-width: none; padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom: 0; z-index: var(--z-bar); }
+  .as-tool { height: var(--control-md); padding: 0 var(--space-10px); font-size: var(--text-body-size); }
+  .as-row { min-height: var(--control-md); }
+  /* the Open footer docks like the composer it replaces */
+  .as__open { margin-top: auto; background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom: 0; z-index: var(--z-bar); }
+}
+
+.as__open { padding: var(--space-3) var(--space-4) var(--space-18px); }

@@ -1,0 +1,68 @@
+{
+  "conversation_id": "CV-2405",
+  "agent": "tola",
+  "title": "Planning packet · Tamarind Loans",
+  "status": "working",
+  "context": {
+    "project": {
+      "case_id": "C-0302",
+      "title": "Tamarind Loans · EN-0042"
+    },
+    "access": [
+      "PMO · this engagement"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "We won the Tamarind Loans RFP. Build the planning packet for the engagement.",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-16T13:02:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "Working on it. I will show the packet here when it is ready. Nothing is decided until you confirm the PM and register the engagement.",
+      "steps": [
+        "Read the award letter",
+        "Pulled the approved response and costing",
+        "Matching team estimates to the scope",
+        "List what is still unknown",
+        "Hand the packet to you"
+      ],
+      "sources": [],
+      "at": "2026-11-16T13:03:00Z",
+      "step_details": [
+        {
+          "text": "Read the award letter",
+          "state": "done",
+          "reference": {
+            "label": "AWARD LETTER · 04 DEC"
+          }
+        },
+        {
+          "text": "Pulled the approved response and costing",
+          "state": "done",
+          "reference": {
+            "label": "RESPONSE v3 · COSTING v2"
+          }
+        },
+        {
+          "text": "Matching team estimates to the scope",
+          "state": "now",
+          "reference": {
+            "label": "ENGINEERING 210D · SECURITY 18D"
+          }
+        },
+        {
+          "text": "List what is still unknown",
+          "state": "next"
+        },
+        {
+          "text": "Hand the packet to you",
+          "state": "next"
+        }
+      ]
+    }
+  ]
+}

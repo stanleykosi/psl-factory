@@ -22,7 +22,7 @@ import {
   type FieldValue,
   type Values,
 } from './intake';
-import type { FieldProblem, Line, LineOption, Lines, StartBody } from './types';
+import type { Field, FieldProblem, Line, LineOption, Lines, StartBody } from './types';
 
 export const START_TIMEOUT_MS = 20000;
 export const OPTIONS_LIMIT = 20;
@@ -83,8 +83,52 @@ export type Notice =
 
 export const NO_LONGER_AVAILABLE = 'That choice is no longer available. Choose again.';
 
-/** One line's drawer: values, the case, the key and the start request. */
-export function useStartForm(line: Line, onStarted: (workId: string) => void) {
+/** How many pages of options are searched for a prefilled value before it counts as not served. */
+const PREFILL_PAGES = 5;
+
+/** A prefilled value for one field, or undefined when it is not one this release prefills. */
+function plainValue(field: Field, raw: unknown): FieldValue | undefined {
+  switch (field.type) {
+    case 'text':
+    case 'long_text':
+    case 'date':
+    case 'period':
+    case 'datetime':
+    case 'choice':
+      return typeof raw === 'string' ? raw : undefined;
+    case 'integer':
+      return typeof raw === 'number' && Number.isSafeInteger(raw) ? String(raw) : undefined;
+    case 'date_range': {
+      const range = raw as { from?: unknown; to?: unknown } | null;
+      return range && typeof range === 'object' && (typeof range.from === 'string' || typeof range.to === 'string')
+        ? { from: typeof range.from === 'string' ? range.from : '', to: typeof range.to === 'string' ? range.to : '' }
+        : undefined;
+    }
+    default:
+      return undefined;
+  }
+}
+
+/** The options of a record field that match the wanted values, searched across a few pages; none is invented. */
+async function findOptions(lineKey: string, field: string, parent: string | undefined, wanted: string[]): Promise<LineOption[]> {
+  const found = new Map<string, LineOption>();
+  let cursor: string | undefined;
+  for (let page = 0; page < PREFILL_PAGES; page += 1) {
+    const result = await fetchOptions(lineKey, field, { parent, cursor });
+    for (const option of result.items) if (wanted.includes(option.value) && !option.disabled_reason) found.set(option.value, option);
+    cursor = result.next_cursor;
+    if (found.size === wanted.length || !cursor) break;
+  }
+  return wanted.flatMap((value) => found.get(value) ?? []);
+}
+
+/**
+ * One line's drawer: values, the case, the key and the start request. `initialIntake` (the assistant's draft) fills the
+ * form once as the person would: text is copied, record values are looked up in the options this person is served
+ * (a value not served stays empty with a note), and the case and revision come from the chosen option as always. The
+ * form is read-only meanwhile (`prefilling`). It is a starting point: nothing is sent until the person presses start.
+ */
+export function useStartForm(line: Line, onStarted: (workId: string) => void, initialIntake?: Record<string, unknown>, onConflict?: () => void) {
   const fields = useMemo(() => shownFields(line), [line]);
   const [values, setValues] = useState<Values>({});
   // A fixed case's revision as last read from E-LINES (it changes only after a 409 re-read).
@@ -100,10 +144,51 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
   const [fieldNotes, setFieldNotes] = useState<Record<string, string>>({});
   // After a 422 the start button waits for a change, as SCR-04-validation draws it greyed.
   const [awaitingChange, setAwaitingChange] = useState(false);
+  const [prefilling, setPrefilling] = useState(initialIntake !== undefined);
+  const initial = useRef(initialIntake);
   // One write at a time, checked synchronously so a double press cannot send two starts.
   const writing = useRef(false);
   // The exact body last sent; "Check again" resends it unchanged with the same key.
   const sent = useRef<StartBody | null>(null);
+
+  useEffect(() => {
+    const wanted = initial.current;
+    if (!wanted) return undefined;
+    let cancelled = false;
+    void (async () => {
+      const filled: Values = {};
+      const notes: Record<string, string> = {};
+      for (const field of fields) {
+        const raw = wanted[field.name];
+        if (raw === undefined || raw === null) continue;
+        if (field.type !== 'record' && field.type !== 'records') {
+          const value = plainValue(field, raw);
+          if (value !== undefined) filled[field.name] = value;
+          continue;
+        }
+        const values = (Array.isArray(raw) ? raw : [raw]).filter((v): v is string => typeof v === 'string');
+        const parent = parentValue(field, filled);
+        if (values.length === 0 || (field.depends_on && parent === undefined)) {
+          notes[field.name] = NO_LONGER_AVAILABLE;
+          continue;
+        }
+        try {
+          const options = await findOptions(line.key, field.name, parent, values);
+          if (options.length === 0) notes[field.name] = NO_LONGER_AVAILABLE;
+          else filled[field.name] = field.type === 'records' ? options : options[0];
+        } catch {
+          // Not read: the field stays empty and the person chooses.
+        }
+      }
+      if (cancelled) return;
+      setValues(filled);
+      setFieldNotes(notes);
+      setPrefilling(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [fields, line.key]);
 
   const caseLine = useMemo(() => ({ ...line, case_revision: fixedRevision }), [line, fixedRevision]);
   const caseRef = resolveCase(caseLine, values);
@@ -162,7 +247,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
   }, [fields, line, setValue, show, values]);
 
   const submit = useCallback(async () => {
-    if (writing.current) return;
+    if (writing.current || prefilling) return;
     const body: StartBody | null =
       uncertain && sent.current
         ? sent.current
@@ -210,6 +295,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
       if (response.status === 409) {
         setKey(newIdempotencyKey());
         if (apiError.code === 'idempotency_key_reused') return show({ kind: 'problem', message: apiError.message });
+        onConflict?.();
         return await reloadRevision();
       }
       const lead = response.status === 403 || response.status === 404 ? 'You can’t start this here.' : undefined;
@@ -218,7 +304,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
       writing.current = false;
       setBusy(false);
     }
-  }, [caseRef, fields, key, line.key, onStarted, reloadRevision, show, uncertain, values]);
+  }, [caseRef, fields, key, line.key, onConflict, onStarted, prefilling, reloadRevision, show, uncertain, values]);
 
   return {
     fields,
@@ -233,6 +319,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void) {
     fieldErrors,
     fieldNotes,
     awaitingChange,
+    prefilling,
     submit,
   };
 }

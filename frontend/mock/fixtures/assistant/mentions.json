@@ -1,0 +1,65 @@
+{
+  "as_of": "2026-11-16T14:30:00Z",
+  "items": [
+    {
+      "kind": "project",
+      "id": "P-0102",
+      "label": "Harmattan Bank · mobile onboarding",
+      "hint": "Project",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo",
+        "finance_lead"
+      ]
+    },
+    {
+      "kind": "project",
+      "id": "P-0101",
+      "label": "Lagoon Health · patient app",
+      "hint": "Project",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo",
+        "finance_lead"
+      ]
+    },
+    {
+      "kind": "work",
+      "id": "W-1005",
+      "label": "Harmattan Bank go-live report",
+      "hint": "Work item · GLV-0087",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo",
+        "finance_lead"
+      ]
+    },
+    {
+      "kind": "document",
+      "id": "D-0042",
+      "label": "Harmattan Bank signed SOW v2",
+      "hint": "Document",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo",
+        "finance_lead"
+      ]
+    },
+    {
+      "kind": "person",
+      "id": "U-0007",
+      "label": "Harriet Eze",
+      "hint": "Person · Finance",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo",
+        "finance_lead"
+      ]
+    }
+  ]
+}

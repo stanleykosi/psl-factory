@@ -95,7 +95,7 @@
       "role": "link",
       "name": "← Assistant",
       "category": "frame item",
-      "reason": "Conflicts 9: the back link is the app frame's phone bar (usePhoneBack \"← Assistant\" with the conversation title); \"← Home\" on the phone default is a frame item and is not drawn.",
+      "reason": "Conflicts 9: the back link is the app frame's phone bar (usePhoneBack \"← Assistant\" with the conversation title, one line with an ellipsis); the frame names the link for screen readers, so the tool cannot match the board text. The page draws the link.",
       "approved_by": "design engineer, 16 Nov 2026 — D-100"
     },
     {
@@ -192,7 +192,8 @@
   ],
   "notes": [
     "Held microphone (Conflicts 1): drawn, aria-disabled, \"Not available yet\", no handler; no coverage exception needed (D-SPEECH-INPUT, D-96).",
-    "Disabled Send is grey, not ink, while the text is blank (accessibility; visual difference only)."
+    "Disabled Send is grey, not ink, while the text is blank (accessibility; visual difference only).",
+    "\"N earlier\" in the phone bar is underlined so it reads as tappable (UI-3-1); the board draws it without an underline. Signed with the other differences under D-100."
   ],
   "visual_waivers": [
     {

@@ -13,6 +13,7 @@
 // Projects: E-PROJECTS and E-PROJECT answer from projects.mjs (persona rows, q, paging; P-0099 is the no-access id).
 // Overview: E-OVERVIEW serves fixtures/overview/<v>.json when cookie psl_mock_overview names a variant.
 // Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
+// Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
@@ -32,12 +33,13 @@ import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { workList } from './work-list.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
+import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, createAssistantMock } from './assistant.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DOCUMENT', ...CLIENT_OPERATIONS, ...START_OPERATIONS];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DOCUMENT', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS];
 export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -214,13 +216,14 @@ function send(res, status, body) {
 export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'))) {
   const routes = loadRoutes(openapi);
   const me = Object.fromEntries(PERSONAS.map((p) => [p, readFixture(`me.${p}`)]));
-  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME' && !START_OPERATIONS.includes(id)).map((id) => [id, readFixture(id)]));
+  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME' && !START_OPERATIONS.includes(id) && !ASSISTANT_OPERATIONS.includes(id)).map((id) => [id, readFixture(id)]));
   const work = readWorkFixtures();
   const validators = bodyValidators(openapi);
   const startWork = createStartWorkMock(openapi);
   // work_id -> the item served instead of its fixture; in memory only, cleared on restart and by /__mock/reset.
   const overrides = new Map();
   const alerts = createAlertsMock({ openapi });
+  const assistant = createAssistantMock({ openapi });
 
   return http.createServer((req, res) => {
     const chunks = [];
@@ -238,10 +241,12 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         alerts.reset();
         resetWorkspace();
         resetClients();
+        assistant.reset();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
       if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());
+      if (method === 'get' && url.pathname === ASSISTANT_LOG_PATH) return send(res, 200, assistant.log());
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       // F-17: E-WORK-STEP goes to workspace.mjs (fixture scripts, the mock's idempotency map and log).
@@ -263,6 +268,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         return send(res, 403, CSRF_FAILED);
       }
       if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
+      if (ASSISTANT_OPERATIONS.includes(route.operationId)) return send(res, ...assistant.handle({ operationId: route.operationId, url, raw, persona, agents: me[persona].assistant_agents ?? [] }));
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
       if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
@@ -277,6 +283,10 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       if (TASK_OPERATIONS.includes(route.operationId)) {
         return send(res, ...taskResponse(route.operationId, url, raw, { fixtures, work, overrides, validators, me: me[persona] }));
+      }
+      if (route.operationId === 'E-WORK-START') {
+        const fromDraft = assistant.draftStart(raw, persona);
+        if (fromDraft) return send(res, ...fromDraft);
       }
       if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona }));
       if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }

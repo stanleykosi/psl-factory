@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-23",
   "outcome": "The minutes line: the PM confirms Tola's suggested decisions and actions, and client minutes go to the PMO Lead for review (contract mock only)",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-LINE-MINUTES"
   ],
@@ -91,7 +91,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -107,7 +107,7 @@
     "product_acceptance": {
       "required": false,
       "assessment_reason": "delivery/features/F-23/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -156,11 +156,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-LINE-MINUTES",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "06e64168c3a74edd358fb74b1998203f4b709c95",
+    "task_branch": "fe-line-minutes-the-minutes-line-the-pm-confirms-tola-s",
+    "head_sha": "06e64168c3a74edd358fb74b1998203f4b709c95",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-23",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -170,7 +170,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -203,14 +203,22 @@
     }
   },
   "created_at": "2026-11-16T03:30:17Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-16T15:40:54Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T15:41:08Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -229,7 +237,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
