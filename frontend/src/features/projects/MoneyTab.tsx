@@ -8,13 +8,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 
 import type { ApiError } from '@/api/errors';
-import { AgentAvatar, AGENTS, BottomSheet, Callout, EmptyState, ErrorState, Link, Loading, Panel, Table, Unknown, useIsPhone, VisuallyHidden, When, type Column } from '@/components';
+import { AgentAvatar, agentKey, AGENTS, BottomSheet, Callout, EmptyState, ErrorState, Link, Loading, Panel, Table, Unknown, useIsPhone, VisuallyHidden, When, type Column } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { amountText, figureOf, figureTitle, invoiceText, paidWords, valuesDiffer, type Figure, type MoneyRow, type MoneyValue, type Paid, type Report, type SourceDetail } from './moneyModel';
-import { ProjectNoAccess } from './ProjectStates';
 import { useMoney, type ReportState } from './useMoney';
 
 import './money.css';
@@ -82,12 +81,12 @@ type Pick = {
   amountRef: (id: string) => (el: HTMLAnchorElement | null) => void;
 };
 
-/** The amount, a link to its figure only when the loaded report has that figure; then the backend's note under it. */
+/** The amount, a link to its figure only when the loaded report has that figure (an Unknown amount too: the report
+ *  may know it, and the panel then says the figures differ); then the backend's note under it. */
 function AmountCell({ row, pick }: { row: MoneyRow; pick: Pick }) {
   const figure = figureOf(pick.report, row.figure_id);
-  const text = amountText(row.amount);
   const amount =
-    figure && text ? (
+    figure ? (
       <Link
         ref={pick.amountRef(figure.id!)}
         href={`${pick.base}/money?figure=${encodeURIComponent(figure.id!)}`}
@@ -97,7 +96,7 @@ function AmountCell({ row, pick }: { row: MoneyRow; pick: Pick }) {
         className="money__amountlink"
         onClick={pick.onPress}
       >
-        {text}
+        <Value value={row.amount} />
       </Link>
     ) : (
       <span className="money__amount">
@@ -148,17 +147,18 @@ function Sources({ figure }: { figure: Figure | undefined }) {
 /** Chidi's card when the report names an agent and /me lists the Assistant; the link carries no figure (G-SCR12-2). */
 function AgentCard({ report }: { report: Report | undefined }) {
   const me = useMe();
-  if (!report?.agent) return null;
-  const { name, role } = AGENTS[report.agent];
+  const agent = agentKey(report?.agent);
+  if (!agent) return null;
+  const { name, role } = AGENTS[agent];
   return (
     <div className="money__agent">
-      <AgentAvatar agent={report.agent} size={40} />
+      <AgentAvatar agent={agent} size={40} />
       <span>
         <strong>{name}</strong> · {role}
         {me.destinations.includes('assistant') && (
           <>
             <br />
-            <Link href={`/assistant?agent=${report.agent}`}>Ask me</Link> about any figure here.
+            <Link href={`/assistant?agent=${agent}`}>Ask me</Link> about any figure here.
           </>
         )}
       </span>
@@ -265,6 +265,18 @@ function StageCards({ rows, pick }: { rows: MoneyRow[]; pick: Pick }) {
   );
 }
 
+/** A 403 or 404 on the money read (Conflicts 14, Option B): the project's name stays in the header above, so the
+ *  line says only that its money is not shown. No stage, amount, report title or server message appears. */
+function MoneyNoAccess() {
+  return (
+    <section className="psl-panel money__noaccess" aria-label="No access">
+      <div className="psl-panel__body">
+        <p className="money__plain">You can&rsquo;t see this project&rsquo;s money.</p>
+      </div>
+    </section>
+  );
+}
+
 function AsOf({ value }: { value: string | undefined }) {
   return (
     <p className="money__asof">
@@ -294,7 +306,7 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
     return <SignedOutState pathname={`${base}/money`} />;
   }
   if (money.status === 'error') {
-    if (refused(money.error)) return <ProjectNoAccess />;
+    if (refused(money.error)) return <MoneyNoAccess />;
     return <WorkErrorCard message="We couldn’t load this project’s money. Your work is safe; nothing was changed." error={money.error} onRetry={() => void retryMoney()} />;
   }
 
@@ -318,7 +330,7 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
       else amounts.current.delete(id);
     },
   };
-  const anyLinked = rows.some((row) => figureOf(loaded, row.figure_id) !== undefined && amountText(row.amount) !== undefined);
+  const anyLinked = rows.some((row) => figureOf(loaded, row.figure_id) !== undefined);
   const title = loaded && <h2 className="money__title">{loaded.title}</h2>;
   const explanation: ReactNode = <Explanation state={report} rows={rows} selectedId={selectedId} onRetry={retryReport} label />;
 
@@ -328,6 +340,7 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
         {title}
         <StageCards rows={rows} pick={pick} />
         {anyLinked && <p className="money__hint">Tap an amount to see where it comes from</p>}
+        {report.status === 'error' && <div className="money__explain">{explanation}</div>}
         <AsOf value={asOf} />
         {selectedId !== undefined && (
           <BottomSheet title={headOf(report, selectedId)} returnFocus={returnFocus} onClose={() => router.replace(`${base}/money`, { scroll: false })}>

@@ -130,7 +130,7 @@ for (const [label, viewport] of [
         await loaded(page);
         if (path.includes('P-0105')) await expect(panel(page).getByRole('heading', { level: 2, name: 'No contract stages yet' })).toBeVisible();
         if (path.includes('FIG-0102-S1')) await expect(page.getByText('These figures differ: the table shows ₦2,500,000.00; the report shows ₦2,400,000.00.')).toBeVisible();
-        if (path.includes('P-0103')) await expect(page.getByText('We couldn’t load where these figures come from.')).toBeVisible({ visible: !phone });
+        if (path.includes('P-0103')) await expect(page.getByText('We couldn’t load where these figures come from.')).toBeVisible();
         expect(await noHorizontalScroll(page), path).toBe(true);
         await expectNoAxeViolations(page);
         if (path.includes('FIG')) await page.keyboard.press('Escape');
@@ -142,7 +142,7 @@ for (const [label, viewport] of [
       for (const id of ['P-0107', 'P-0108']) {
         await page.goto(`/projects/${id}/money`);
         await loaded(page);
-        await expect(panel(page).getByText('You can’t open this project')).toBeVisible();
+        await expect(panel(page).getByText('You can’t see this project’s money.')).toBeVisible();
         const text = await page.locator('body').innerText();
         for (const word of ['Stage 1', '7,100,000', '₦', 'billing by contract stage', 'Your role does not allow this', 'We could not find that record']) expect(text).not.toContain(word);
         await expectNoAxeViolations(page);
@@ -160,9 +160,10 @@ for (const [label, viewport] of [
 
     test('P-0103: Try again makes exactly one more report request and no money request', async ({ page }) => {
       const calls = apiCalls(page);
-      await page.goto(phone ? '/projects/P-0103/money?figure=FIG-0101-S2' : '/projects/P-0103/money');
+      await page.goto('/projects/P-0103/money');
       await loaded(page);
-      const surface = phone ? page.getByRole('dialog') : page.getByRole('complementary');
+      // On phones the report's error sits under the cards (UX-1-1); on desktop in the aside.
+      const surface = phone ? panel(page).locator('.money__cards ~ .money__explain') : page.getByRole('complementary');
       await expect(surface).toContainText('We couldn’t load where these figures come from. Your work is safe; nothing was changed.');
       await expect(rows(page).or(cards(page))).toHaveCount(4);
       await expect(panel(page).locator('a[href*="figure="]')).toHaveCount(0);

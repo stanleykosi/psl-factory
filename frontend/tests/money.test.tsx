@@ -424,9 +424,11 @@ describe('errors and access', () => {
     for (const word of ['billing by contract stage', 'secret', 'SOW-OJO', 'Stage 2 · UAT amount', 'Your role does not allow this']) expect(document.body.textContent).not.toContain(word);
   });
 
-  it.each(['P-0107', 'P-0108'])('%s money refused: no access in the panel, no stage, amount, title or message; no report read', async (caseId) => {
+  it.each(['P-0107', 'P-0108'])('%s money refused: the money no-access line in the panel, no stage, amount, title or message; no report read', async (caseId) => {
     await open(caseId);
-    expect(within(panel()).getByText('You can’t open this project')).toBeTruthy();
+    expect(within(panel()).getByRole('region', { name: 'No access' }).textContent).toBe('You can’t see this project’s money.');
+    // Conflicts 14 Option B: the project-level sentence ("not even its name") is not used under the visible title.
+    expect(document.body.textContent).not.toContain('not even its name');
     const text = document.body.textContent!;
     for (const word of ['Stage 1', 'Atlas claims build', 'Brightpath portal', '7,100,000', '₦', 'billing by contract stage', 'Your role does not allow this', 'We could not find that record']) expect(text).not.toContain(word);
     expect(paths().some((p) => p.startsWith('/api/v1/reports/'))).toBe(false);
@@ -484,5 +486,63 @@ describe('errors and access', () => {
     expect(panel().querySelector('table')).toBeNull();
     expect(screen.queryByRole('complementary')).toBeNull();
     expect(paths()).toEqual(['/api/v1/projects/P-0105', '/api/v1/projects/P-0105/money']);
+  });
+});
+
+describe('round 2: malformed bodies, Unknown amounts with a figure, phone report states', () => {
+  it('TECH-1-1: a report figure without sources keeps the four rows and shows the report error with Try again', async () => {
+    const report = fixture('reports/R-0101.json') as { figures: Record<string, unknown>[] };
+    delete report.figures[0].sources;
+    respond = (url) => (url.pathname.startsWith('/api/v1/reports/') ? json(200, report) : fromMock(url, persona));
+    await open('P-0101', '?figure=FIG-0101-S2');
+    expect(bodyRows()).toHaveLength(4);
+    expect(panel().querySelectorAll('tbody a[href*="figure="]')).toHaveLength(0);
+    expect(aside().textContent).toContain('We couldn’t load where these figures come from.');
+    expect(within(aside()).getByRole('button', { name: 'Try again' })).toBeTruthy();
+  });
+
+  it.each([
+    ['a numeric amount', (rows: Body[]) => (rows[0].amount = { amount: 3000000, currency: 'NGN', unknown: false })],
+    ['a numeric owed amount', (rows: Body[]) => (rows[0].paid = { status: 'part_paid', owed: { amount: 1, currency: 'NGN', unknown: false } })],
+    ['an invoice without a reference', (rows: Body[]) => (rows[0].invoice = { work_id: 'W-1713' })],
+    ['a paid status that is not text', (rows: Body[]) => (rows[0].paid = { status: { paid: true } })],
+  ] as const)('TECH-1-1: a money row with %s shows the error card, not a crash or a partial table', async (_, spoil) => {
+    const body = fixture('projects/money/P-0101.json') as { money: Body[] };
+    spoil(body.money);
+    respond = (url) => (url.pathname.endsWith('/money') ? json(200, body) : fromMock(url, persona));
+    await open();
+    await until(() => expect(screen.getByRole('alert').textContent).toContain('We couldn’t load this project’s money.'));
+    expect(panel().querySelector('table')).toBeNull();
+  });
+
+  it('TECH-1-2: an Unknown amount whose figure the report has is a link, and the panel shows both values', async () => {
+    const body = fixture('projects/money/P-0101.json') as { money: Body[] };
+    body.money[3].figure_id = 'FIG-0101-S4';
+    const report = fixture('reports/R-0101.json') as { figures: Body[] };
+    report.figures.push({ id: 'FIG-0101-S4', label: 'Stage 4 · hypercare amount', value: { amount: '1500000.00', currency: 'NGN', unknown: false }, sources: ['Hypercare quote Q-17'] });
+    respond = (url) => (url.pathname.endsWith('/money') ? json(200, body) : url.pathname.startsWith('/api/v1/reports/') ? json(200, report) : fromMock(url, persona));
+    await open('P-0101', '?figure=FIG-0101-S4');
+    const link = within(cell(3, 1)).getByRole('link');
+    expect(link.getAttribute('href')).toBe('/projects/P-0101/money?figure=FIG-0101-S4');
+    expect(link.querySelector('.psl-unknown')!.textContent).toBe('Unknown');
+    expect(link.getAttribute('aria-current')).toBe('true');
+    expect(aside().querySelector('.psl-callout--warning')!.textContent).toBe('These figures differ: the table shows Unknown; the report shows ₦1,500,000.00.');
+  });
+
+  it('UX-1-1: on phones a failed report shows its error and Try again under the cards; a refused one says so', async () => {
+    phone();
+    await open('P-0103');
+    expect(panel().querySelectorAll('.money__card')).toHaveLength(4);
+    expect(panel().textContent).toContain('We couldn’t load where these figures come from. Your work is safe; nothing was changed.');
+    const before = paths().length;
+    fireEvent.click(within(panel()).getByRole('button', { name: 'Try again' }));
+    await until(() => expect(paths().length).toBe(before + 1));
+    expect(paths().slice(before)).toEqual(['/api/v1/reports/R-0103']);
+    expect(screen.queryByText('Tap an amount to see where it comes from')).toBeNull();
+    document.body.innerHTML = '';
+    calls = [];
+    await open('P-0106');
+    expect(within(panel()).getByText('You can’t see where these figures come from.')).toBeTruthy();
+    expect(document.body.textContent).not.toContain('secret');
   });
 });

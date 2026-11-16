@@ -19,12 +19,51 @@ export type MoneyView = { rows: MoneyRow[]; reportId?: string; asOf?: string };
 
 const isObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
+const optionalString = (value: unknown) => value === undefined || typeof value === 'string';
+
+/** A value the page can format: text currency, a boolean unknown, and the amount (when sent) as decimal text, never
+ *  a number. */
 function isMoneyValue(value: unknown): value is MoneyValue {
-  return isObject(value) && typeof value.currency === 'string' && typeof value.unknown === 'boolean';
+  return isObject(value) && typeof value.currency === 'string' && typeof value.unknown === 'boolean' && optionalString(value.amount);
 }
 
+function isInvoice(value: unknown): boolean {
+  return value === undefined || (isObject(value) && typeof value.reference === 'string' && optionalString(value.work_id));
+}
+
+function isPaid(value: unknown): boolean {
+  return value === undefined || (isObject(value) && typeof value.status === 'string' && (value.owed === undefined || isMoneyValue(value.owed)));
+}
+
+/** Every field the row draws has the shape it is drawn with; anything else is a bad body, not a crash. */
 function isMoneyRow(row: unknown): row is MoneyRow {
-  return isObject(row) && Number.isInteger(row.position) && typeof row.stage === 'string' && isMoneyValue(row.amount);
+  return (
+    isObject(row) &&
+    Number.isInteger(row.position) &&
+    typeof row.stage === 'string' &&
+    isMoneyValue(row.amount) &&
+    optionalString(row.amount_note) &&
+    optionalString(row.invoice_status) &&
+    optionalString(row.figure_id) &&
+    isInvoice(row.invoice) &&
+    isPaid(row.paid)
+  );
+}
+
+function isSourceDetail(value: unknown): boolean {
+  return isObject(value) && typeof value.label === 'string' && typeof value.reference === 'string' && optionalString(value.work_id);
+}
+
+function isFigure(value: unknown): boolean {
+  return (
+    isObject(value) &&
+    typeof value.label === 'string' &&
+    optionalString(value.id) &&
+    isMoneyValue(value.value) &&
+    Array.isArray(value.sources) &&
+    value.sources.every((s) => typeof s === 'string') &&
+    (value.source_details === undefined || (Array.isArray(value.source_details) && value.source_details.every(isSourceDetail)))
+  );
 }
 
 /** The view, or null when `money` is missing or any row fails the guard: the tab then shows its error card and
@@ -38,9 +77,10 @@ export function moneyViewOf(body: unknown): MoneyView | null {
   return { rows, reportId, asOf };
 }
 
-/** A report whose figures can be read (each an object with a label and a value); anything else is a report error. */
+/** A report whose figures can be drawn (label, value, `sources` strings, well-formed `source_details`); anything
+ *  else is a report error, shown in the drill-down while the table stays. */
 export function isReport(body: unknown): body is Report {
-  return isObject(body) && Array.isArray(body.figures) && body.figures.every((f) => isObject(f) && typeof f.label === 'string' && isMoneyValue(f.value));
+  return isObject(body) && optionalString(body.title) && Array.isArray(body.figures) && body.figures.every(isFigure);
 }
 
 /** "₦4,250,000.00", or "1,200.00 USD" for another currency (formatAmount knows only ₦). Undefined when the value is

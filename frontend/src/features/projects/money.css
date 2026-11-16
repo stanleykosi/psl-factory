@@ -10,7 +10,7 @@
 /* the board draws the table, the drill-down and the cards at the body's normal line height */
 .money__table th, .money__table td, .money__aside, .money__card { line-height: normal; }
 .money__lead { color: var(--ink-muted); }
-.money__empty { max-width: 720px; }
+.money__empty, .money__noaccess { max-width: 720px; }
 
 /* the table and the drill-down side by side, 22px apart, as the desktop board draws them */
 .money__body { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
@@ -24,11 +24,10 @@
 .money__note { font-size: var(--text-hint-size); color: var(--ink-muted); }
 /* the note wraps inside the amount column instead of widening it */
 .money__table .money__note { contain: inline-size; }
-.money__amountlink[aria-current="true"] { font-weight: 600; }
 /* Unknown as the boards draw it in the table and cards: amber text, no tint */
-.money__table .psl-unknown, .money__card .psl-unknown { padding: 0; background: none; font-weight: 600; }
-.money__table .psl-unknown { font-family: inherit; font-size: inherit; }
-.money__card .psl-unknown { font-size: var(--text-amount-size); }
+.money__table .psl-unknown, .money__card .psl-unknown { padding: 0; background: none; }
+.money__table .psl-unknown { font-family: inherit; font-size: inherit; font-weight: 600; }
+.money__card .psl-unknown { font-family: var(--font-mono); font-size: var(--text-amount-size); font-weight: 400; }
 .money__asof { margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
 
 .money__aside { flex: 1 1 320px; max-width: 420px; }
@@ -50,11 +49,11 @@
 .money__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
 .money__stage { font-weight: 600; }
 .money__card .money__amount, .money__card .money__amountlink { font-family: var(--font-mono); font-size: var(--text-amount-size); }
-/* The targets grow with padding that a matching negative margin takes back, so the cards keep the board's spacing:
-   the amount reaches up over the stage name, the invoice down into the card's foot; they meet in the 6px gap. */
+/* The amount reaches into the 6px gaps above and below it (never over the stage name) and grows the rest; the invoice
+   grows down into the card's foot and the gap after it. The two meet in the gap, so no target overlaps another. */
 .money__card .money__amountlink, .money__card .money__line > .psl-link { display: inline-block; box-sizing: border-box; min-height: var(--control-md); }
-.money__card .money__amountlink { padding: 20px 0 3px; margin: -20px 0 -3px; }
-.money__card .money__line > .psl-link { padding: 3px 0 24px; margin: -3px 0 -24px; }
+.money__card .money__amountlink { padding-top: var(--space-6px); margin: calc(-1 * var(--space-6px)) 0; }
+.money__card .money__line > .psl-link { margin-bottom: calc(-2 * var(--space-3)); }
 .money__line { font-size: var(--text-hint-size); color: var(--ink-muted); }
 .money__hint { margin: 0; font-size: var(--text-body-size); }
 

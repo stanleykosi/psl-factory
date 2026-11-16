@@ -71,6 +71,29 @@ describe('guards: the money body and the report', () => {
     expect(moneyViewOf({ money: [], items: [] })).toEqual({ rows: [], reportId: undefined, asOf: undefined });
   });
 
+  it('TECH-1-1: amounts must be text; invoice and paid fields must have the shape they are drawn with', () => {
+    const row = { position: 1, stage: 'S', amount: NGN('1.00') };
+    expect(moneyViewOf({ money: [{ ...row, amount: { amount: 4250000, currency: 'NGN', unknown: false } }] })).toBeNull();
+    expect(moneyViewOf({ money: [{ ...row, paid: { status: 'part_paid', owed: { amount: 5, currency: 'NGN', unknown: false } } }] })).toBeNull();
+    expect(moneyViewOf({ money: [{ ...row, paid: { status: 'part_paid', owed: { currency: 'NGN' } } }] })).toBeNull();
+    expect(moneyViewOf({ money: [{ ...row, paid: {} }] })).toBeNull();
+    expect(moneyViewOf({ money: [{ ...row, invoice: { work_id: 'W-1' } }] })).toBeNull();
+    expect(moneyViewOf({ money: [{ ...row, invoice_status: 3 }] })).toBeNull();
+    expect(moneyViewOf({ money: [{ ...row, amount_note: {} }] })).toBeNull();
+    expect(moneyViewOf({ money: [{ ...row, paid: { status: 'part_paid', owed: { currency: 'NGN', unknown: true } } }] })!.rows).toHaveLength(1);
+  });
+
+  it('TECH-1-1: a report figure needs a sources array of text and well-formed source details', () => {
+    const figure = { id: 'F', label: 'x', value: NGN('1.00'), sources: ['a'] };
+    expect(isReport({ figures: [figure] })).toBe(true);
+    expect(isReport({ figures: [{ ...figure, sources: undefined }] })).toBe(false);
+    expect(isReport({ figures: [{ ...figure, sources: [1] }] })).toBe(false);
+    expect(isReport({ figures: [{ ...figure, value: { amount: 1, currency: 'NGN', unknown: false } }] })).toBe(false);
+    expect(isReport({ figures: [{ ...figure, source_details: {} }] })).toBe(false);
+    expect(isReport({ figures: [{ ...figure, source_details: [{ label: 'x' }] }] })).toBe(false);
+    expect(isReport({ figures: [{ ...figure, source_details: [{ label: 'x', reference: 'R', kind: 'rule' }] }] })).toBe(true);
+  });
+
   it('a report needs figures with a label and a value', () => {
     expect(isReport(fixture('reports/R-0101.json'))).toBe(true);
     expect(isReport({ report_id: 'R', title: 'T' })).toBe(false);
