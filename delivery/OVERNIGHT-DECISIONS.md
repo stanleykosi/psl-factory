@@ -155,3 +155,6 @@ Signed all: left out until the contract has them ("Edit draft", attach "+", the 
 
 ## D-101 · F-24 assistant product acceptance (16 Nov 2026, design engineer: "accept")
 After a demo of the F-24 branch on localhost:3000 (contract mock), the design engineer accepted the assistant: a person starts every work item from the prefilled Start work drawer; nothing offers approve, send or pay; replies show steps and sources; the microphone is held; agent wording claims nothing the backend won't do. Known limits: the work item reached after a start is an existing sample item; a second start shows the generic 409 text (QA-3-1 follow-up).
+
+## D-102 · Run more features in parallel (16 Nov 2026, design engineer: "can we start other task as well")
+While F-23 is in rework: F-25 project tabs (FE-M3-PROJECT-TABS: SCR-11 registers and the project's tabs) starts now; F-26 report with drill-down (FE-M3-REPORT, SCR-12) and F-27 Setup delegation (FE-SETUP-DELEGATION, SCR-13 delegation) get readiness. Builds limited by disk (one working copy ~1 GB; keep ≥3 GB free).

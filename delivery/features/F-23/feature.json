@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-23",
   "outcome": "The minutes line: the PM confirms Tola's suggested decisions and actions, and client minutes go to the PMO Lead for review (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-LINE-MINUTES"
   ],
@@ -148,8 +148,511 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "Item-scope steps now send `item_ids` for every line, not only minutes (F-17 `accept_answer`, F-21/F-22 item steps). The contract allows it and the checks pass, but the backend handler for each line must accept or ignore it.",
+      "severity": "frontend/src/features/workspace/workspace.tsx:200",
+      "blocking": false,
+      "summary": "Add one line to build.md or the backend handoff: \"item-scope steps send `item_ids: [id]`\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "Edit forms do not prefill the row's current text, because item-scope descriptors are per step. A PM editing a decision must retype it, and `text` is required. This is the builder's own note.",
+      "severity": "frontend/mock/fixtures/work/w-2301.json (edit_item / edit_decision)",
+      "blocking": false,
+      "summary": "Record it as a backend ask: a per-item `value` on the descriptor, or a per-item step. Do not change the frame in this PR.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "`minutesProposalsStripped` strips `links` and `items_default` from every E-WORK-ITEM fixture, not only W-23xx. The \"exist on their own\" test limits where the keys occur and checks that they live only in W-23xx, which is acceptable. A malformed `items_default` in an older fixture would still be caught by `toBe('checked')`.",
+      "severity": "frontend/tests/mock-contract.test.ts:99",
+      "blocking": false,
+      "summary": "None needed. Keep the guard test.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The phone boards were not re-scored after the F-24 phone-bar change (the builder says so). Desktop default visual 69.7 is under the D-83 floor and needs the design engineer. This is the UI and fidelity lane, not technical.",
+      "severity": "delivery/features/f-23/round-1/build.md",
+      "blocking": false,
+      "summary": "Leave it to the UI review and the coordinator. Re-score the phone boards once after merge if the UI reviewer asks.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The form opens with \"Action\" and \"Due\" (or \"Decision\") empty and the owner on its placeholder. I measured `Action=`, `Due (optional)=`. To fix one typo the PM must retype the whole action, and a blank owner or due is \"left out\" of the request, so an edit can silently drop the owner and due Tola found. The spec (item 10) says Edit opens a form with text, owner and due; D-98 approved opening a form on press, not an empty one. build.md line 77 admits \"Edit forms do not prefill\".",
+      "severity": "edit on any decision or action (w-2301, 1440 and 390)",
+      "blocking": true,
+      "summary": "Prefill each form from the row it was opened on (text, owner, due), or if the frame cannot, show the current text above the form and send only what the PM changed. Get design engineer sign-off if left as is.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The result page says \"Paid is tracked separately by Finance and is not part of this decision\", and the reconcile panel says \"so the client is never invoiced twice\". Both are invoice wording on a minutes send.",
+      "severity": "w-2305 after approve: decision result and reconcile panel",
+      "blocking": false,
+      "summary": "Use minutes wording (for example \"so the client never gets the minutes twice\"); drop the Finance line for the minutes line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The work page says \"Approve and send\" and \"Approving sends this exact version to the client\". The decision page button is \"Approve v1\" with \"Approving earns APPROVED only. Send is the next station.\" The two pages promise different things for the same click. D-98 accepted the F-16 page, but the sentences contradict each other.",
+      "severity": "decision page `/work/w-2304/decide`",
+      "blocking": false,
+      "summary": "Make one sentence true for both, and say plainly whether Approve sends.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The Actions table keeps its 560px width inside a scroll region, so Due, Edit and Remove sit off screen (Remove starts at x=492 of 390). The region is focusable and labelled, so it is reachable, but the PM has to scroll sideways to edit or remove, and the board draws \"owner \u00b7 due\" rows.",
+      "severity": "w-2301 phone (390)",
+      "blocking": false,
+      "summary": "Stack action rows on a phone with Edit and Remove visible.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "Decisions sit in the right column with the tick above the text and a full-width Edit button, so the page reads Actions first, Decisions second. The board has decisions first, a tick beside the text and a link Edit. This is exception 6 (frame layout), which D-98 did not list as signed.",
+      "severity": "w-2301",
+      "blocking": false,
+      "summary": "Get the exception signed, or draw the tick inline.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "After \"+ Add an action\" the page says \"Done: + Add an action.\" with the plus sign in it, and a blank add says \"Add action to continue.\"",
+      "severity": "step result, w-2301",
+      "blocking": false,
+      "summary": "Say \"Done: action added.\" and \"Write the action to continue.\"",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-7",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "Tola's panel says \"step 1 of 1\" and \"Reading the meeting notes\", while the board and the checklist say \"step 3 of 4\".",
+      "severity": "w-2302",
+      "blocking": false,
+      "summary": "Return the same \"step 3 of 4\" in the agent block.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-8",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "A large empty area sits under the tab bar beside the \"Review client minutes\" card, and the same review is offered twice (card with \"Open the decision\", then the Decide panel). Disabled \"Approve and send\" on W-2305 has near-invisible text (also UX-1-3 in F-21 round 1).",
+      "severity": "w-2304 and w-2305 at 1440",
+      "blocking": false,
+      "summary": "Raise the disabled contrast in the frame and close the gap.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-28-desktop (and W-2306..W-2308, same view) | The default board has no project tab bar: crumbs, h1 and subtitle are followed straight by the panels at y 230. The page draws the Journey\u2026Actions bar because `WorkItemView.tsx:200` shows `ProjectBar` whenever `workspace.context.project` is set, and `mock/fixtures/work/W-2301.json` sets it. That puts the subtitle under the tabs and starts the panels about 60px lower (the agent band at y 292 and Meeting at 402, against 230 on the board). This is most of the shortfall below 70. Spec item `context.crumbs` (spec.md:91) needs only the crumbs. Fix: drop `context.project` from W-2301 and W-2306..W-2308 (keep `context.crumbs`), keep it on W-2302..W-2305, whose boards draw the tab bar, then do the round's one fidelity run. | fixture",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-28-desktop, SCR-28-mobile | The decision rows in the side column draw the ticked box centred on a line of its own above the words. The board draws the box at the left, level with the decision text. Cause: `workspace.css:44` (`.ws-side .ws-row { flex-direction: column; align-items: stretch }`) stretches `.ws-checkwrap` (`:136`, `justify-content: center`) across the whole column. F-23 is the first line to put tick boxes in the side column (items_default plus the cross-section confirm). Fix in workspace.css, general: `.ws-side .ws-row:has(> .ws-checkwrap) { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--space-10px); align-items: start; }` and `.ws-side .ws-row:has(> .ws-checkwrap) > :not(.ws-checkwrap) { grid-column: 2; }`. Check the same rows at 390.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-28-desktop-review, SCR-28-mobile-review | W-2304 has `tasks[]` (needed so the F-16 page works). Because of that, `WorkItemOverview.tsx:727` draws `TaskPanels`, a red \"REVIEW CLIENT MINUTES V1\" card with Basis/To/Version/Prepared by and a blue \"Open the decision\" button, above the workspace. Neither review board draws it. On desktop it sits alone in the right column, so the main column is empty from y 240 to 590 and \"Minutes v1 \u00b7 for Lagoon Health\" starts at y 600 against 255 on the board. On the phone it fills the first screen above the minutes. It also repeats the decision: \"Open the decision\", \"Approve and send\" and \"Return with a note\" all go to the same F-16 page. Fix (general): do not draw a `TaskPanels` card for a task that the workspace's steps already link to (some `workspace.steps[].task_id === task.id`). The tasks stay in the data for the F-16 page. Keep the recipients in \"Goes to\" (D-98 item 5).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-28-desktop-drafted, SCR-28-desktop-review, both phone counterparts | The fixtures draw headings and rows the boards don't have. This is the same kind of issue as F-21's UI-1-1. Drafted: the board has one panel \"MINUTES\" whose first row is \"Minutes v1 \u00b7 client version\" with a DRAFTED tag, then the three rows. The page has a separate h2 \"Minutes\" (`workspace.title`) and a panel titled \"Minutes v1 \u00b7 client version\" with no DRAFTED row. Review: the board has one panel titled \"MINUTES V1 \u00b7 FOR LAGOON HEALTH\" whose first row is \"Minutes v1 \u00b7 client version \u00b7 DRAFTED\". The page has a bare h2, a mono `version` byline repeating \"Minutes v1 \u00b7 client version\", and an untitled checklist. Fix in W-2303/W-2304/W-2305: drop `workspace.title` (and `version`'s byline, if links don't need it), give the summary checklist the board's title, and add the first row with tag DRAFTED. While there, make the IN tags `neutral`, not `verified`: \"IN\" is not a verification, and green means verified (D-92b). Note that the Conflicts 9 exception \"DRAFTED: no field\" is then no longer needed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-desktop | The board draws Due as \"13 Nov\" / \"15 Nov\" (D-93: the boards' date formats). The table cell reads \"13 Nov 2026\". This is the frame's `date` formatter, so it belongs in the frame backlog unless every line board drops the year.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-desktop | The third sentence of the Tola note (\"One action has no owner and its due date is Unknown\u2026\") is amber, a warning, on the board. The page shows it in the blue info band because the spec (spec.md:94) puts all three sentences in `agent_note`. The frame can already draw an amber line (an untitled, empty section with a `note`, `Sections.tsx:443`). This is for the design engineer: keep it as built, or move that sentence to a warning note.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Defence in depth for \"the set sent is the set shown\". At `frontend/src/features/workspace/Workspace.tsx:194-197`, `ticked`, `tickedFor` and `liveIds` skip restricted items (`it.restricted`) but not restricted sections. `Sections.tsx:441-460` draws a restricted section as its label only. So if a backend ever returned rows inside a `restricted: true` section, with the confirm step and `items_default: \"checked\"`, their ids would be sent in `item_ids` without being on screen. Rows in that section would also count towards the `cross` test at `Workspace.tsx:99`. The contract text at `schema.d.ts:1692` says restricted sections carry no rows, so today's data cannot trigger this. Expected: a section that is not drawn adds nothing to the confirm set. Fix: skip `section.restricted === true` in `ticked`/`tickedFor` (and in the `cross` count), and add one component test with a restricted section that has rows.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+          "evidence_refs": [
+            "delivery/features/F-23/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-23/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+          "evidence_refs": [
+            "delivery/features/F-23/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+          "evidence_refs": [
+            "delivery/features/F-23/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+          "evidence_refs": [
+            "delivery/features/F-23/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -403,7 +906,7 @@
     }
   },
   "created_at": "2026-11-16T03:30:17Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -429,6 +932,22 @@
       "round": 1,
       "head": "d5046515521bca99b4b7de220c4d524838cfff1f",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-16T16:26:08Z",
+      "round": 1,
+      "head": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T16:26:08Z",
+      "round": 2,
+      "head": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "reason": null
     }
   ],
   "routing": {
@@ -445,10 +964,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "d5046515521bca99b4b7de220c4d524838cfff1f"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
