@@ -159,6 +159,8 @@ urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
                 path('clients/<uuid:case_id>/', client_contacts.project, name='design_client_project')]
 urlpatterns += [path('finance/month-end/', month_end.company, name='design_company_month_end')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/', reminder_views.work, name='design_payment_reminder')]
+urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/drafts/<int:draft_id>/<str:file_kind>/',
+                     reminder_views.download, name='design_reminder_download')]
 urlpatterns += [path('projects/<uuid:case_id>/actions/<int:item_id>/', project_action_views.show, name='design_project_action')]
 urlpatterns += [path(f'cases/<uuid:case_id>/finance/payroll/{key}/', payroll_views.workbench, {'focus': key},
                      name=f'design_payroll_{key}') for key in payroll_views.SECTIONS]

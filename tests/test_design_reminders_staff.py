@@ -1,5 +1,10 @@
 from datetime import timedelta
+from email import policy
+from email.parser import BytesParser
+from hashlib import sha256
+from io import BytesIO
 import json
+from unittest.mock import patch
 from urllib.parse import urlsplit
 
 from django.contrib.auth import get_user_model
@@ -7,12 +12,14 @@ from django.core.exceptions import ValidationError
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
+from pypdf import PdfWriter
 
+from apps.agents.models import CaseUpload
 from apps.core.client_contacts import save as save_contact
 from apps.core.models import Case
 from apps.core.services import add_evidence
 from apps.finance import reminders
-from apps.finance.models import PaymentReminderDispatch, PaymentReminderReceipt
+from apps.finance.models import PaymentReminderDispatch, PaymentReminderMailboxMessage, PaymentReminderReceipt
 from apps.identity import intake, staff
 from apps.identity.models import Grant, StaffInvitation
 from apps.pmo.meetings import create_action
@@ -41,11 +48,14 @@ class PaymentReminderTests(TestCase):
             'customer':coverage.customer, 'client_name':'Synthetic client', 'name':'Accounts',
             'email':'billing@example.invalid', 'role':'Billing'})
 
-    def activate_delivery(self, mode):
+    def activate_delivery(self, mode, **options):
         values = {'contact_revision_ids':[self.contact.pk], 'sender_ids':[self.actor.pk],
-                  'receipt_recorder_ids':[self.actor.pk], 'mode':mode, 'days_after_due':0, 'minimum_days_between':1}
-        activate(self.actor, draft_operator_policy(self.actor, self.case.pk, COMPONENT, values, self.policy.pk,
-                                                   timezone.now() - timedelta(seconds=1)))
+                  'receipt_recorder_ids':[self.actor.pk], 'mode':mode, 'days_after_due':0, 'minimum_days_between':1,
+                  **options}
+        config = draft_operator_policy(self.actor, self.case.pk, COMPONENT, values, self.policy.pk,
+                                      timezone.now() - timedelta(seconds=1))
+        activate(self.actor, config)
+        return config
 
     def test_edited_exact_reminder_reaches_synthetic_inbox_once(self):
         self.client.force_login(self.actor)
@@ -88,6 +98,65 @@ class PaymentReminderTests(TestCase):
         valid = add_evidence(a,c.pk,'payment_reminder_receipt',json.dumps(body),'synthetic:test')
         receipt = reminders.confirm(a,c.pk,i.pk,dispatch.pk,body['reference'],True,valid.pk,rev(c))
         self.assertEqual(receipt.sha256, draft.sha256)
+
+    def test_schedule_preserves_exact_pdf_and_recovers_one_committed_message(self):
+        a, c, issue = self.actor, self.case, self.issue
+        config = self.activate_delivery('synthetic_mailbox', attachment_required=True, schedule_days_ahead=2)
+        writer, file = PdfWriter(), BytesIO()
+        writer.add_blank_page(width=240, height=150)
+        writer.write(file)
+        pdf = file.getvalue()
+        upload = CaseUpload.objects.create(case=c,actor=a,key='synthetic-invoice-pdf',name='test-invoice.pdf',
+                                           sha256=sha256(pdf).hexdigest(),size=len(pdf))
+        url = reverse('design_payment_reminder', args=[c.pk, issue.pk])
+        self.client.force_login(a)
+        values = {'action':'draft','revision':rev(c),'body':'Synthetic payment reminder.','subject':'Scheduled reminder',
+                  'attachment':upload.pk}
+        self.assertContains(self.client.post(url,values), 'Check the exact invoice')
+        with patch('adapters.case_uploads.read',return_value=pdf):
+            self.assertEqual(self.client.post(url,{**values,'attachment_checked':'on'}).status_code,302)
+            item = issue.reminder_drafts.get()
+            planned = (timezone.now()+timedelta(minutes=5)).replace(microsecond=0)
+            result = self.client.post(url, {'action':'schedule','revision':rev(c),'draft':item.pk,
+                                            'scheduled_for':planned.isoformat()},follow=True)
+            self.assertContains(result,'Scheduled for')
+            dispatched = PaymentReminderDispatch.objects.get()
+            self.assertEqual(dispatched.scheduled_for,planned)
+            self.assertIsNone(reminders.run_mailbox(dispatched.pk))
+            with patch('apps.finance.reminders.timezone.now', return_value=planned+timedelta(seconds=5)):
+                reminders.deliver_to_mailbox(dispatched.pk)
+            self.assertEqual(PaymentReminderReceipt.objects.count(),0)
+        # Simulate losing the worker after mailbox commit and before any business receipt.
+        transition(a,config.pk,'revoked')
+        receipt = reminders.run_mailbox(dispatched.pk)
+        self.assertEqual(reminders.run_mailbox(dispatched.pk).pk,receipt.pk)
+        self.assertTrue(receipt.delivered)
+        [message] = PaymentReminderMailboxMessage.objects.all()
+        parsed = BytesParser(policy=policy.default).parsebytes(bytes(message.message))
+        self.assertEqual(str(parsed['To']), 'billing@example.invalid')
+        self.assertEqual(next(parsed.iter_attachments()).get_payload(decode=True),pdf)
+        route = reverse('design_reminder_download',args=[c.pk,issue.pk,item.pk,'email'])
+        response = self.client.get(route)
+        self.assertEqual(b''.join(response.streaming_content),bytes(message.message))
+        self.assertIn('no-store',response['Cache-Control'])
+        Grant.objects.filter(case=c,user=a,action='finance.reminder.read').update(active=False)
+        self.assertEqual(self.client.get(route).status_code,403)
+
+    def test_cancelled_schedule_and_changed_recipient_leave_mailbox_empty(self):
+        a, c, issue = self.actor, self.case, self.issue
+        self.activate_delivery('synthetic_mailbox',schedule_days_ahead=2)
+        planned = timezone.now()+timedelta(minutes=5)
+        first = reminders.draft(a,c.pk,issue.pk,'First reminder','Work with approved figures.',rev(c))
+        reservation = reminders.dispatch(a,c.pk,issue.pk,first.pk,rev(c),scheduled_for=planned)
+        reminders.cancel_schedule(a,c.pk,issue.pk,reservation.pk,rev(c))
+        second = reminders.draft(a,c.pk,issue.pk,'Second reminder','Use the checked billing contact.',rev(c))
+        second_reservation = reminders.dispatch(a,c.pk,issue.pk,second.pk,rev(c),scheduled_for=planned)
+        save_contact(a,c,'billing',{'revision':rev(c),'evidence':self.policy,'customer':self.contact.customer,
+                     'client_name':'Synthetic client','name':'Revised contact','email':'revised@example.invalid','role':'Billing'})
+        with patch('apps.finance.reminders.timezone.now',return_value=planned+timedelta(seconds=5)):
+            self.assertFalse(reminders.run_mailbox(reservation.pk).delivered)
+            self.assertFalse(reminders.run_mailbox(second_reservation.pk).delivered)
+        self.assertEqual(PaymentReminderMailboxMessage.objects.count(),0)
 
 
 class StaffLifecycleTests(TestCase):

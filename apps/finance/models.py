@@ -93,3 +93,4 @@ from .draft_generation_models import DraftGeneration, DraftGenerationAttempt, Dr
 from .obligation_models import ObligationNamespace, ObligationClaim, ObligationLocalKey, ObligationAlias, ObligationBinding, ObligationEffect
 from .obligation_models import ObligationLegacyAttempt, ObligationLegacyObservation
 from .reminder_models import PaymentReminderDraft, PaymentReminderDispatch, PaymentReminderReceipt, PaymentReminderSetAside
+from .reminder_models import PaymentReminderMailboxMessage

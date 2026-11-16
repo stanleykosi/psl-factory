@@ -2,11 +2,15 @@
 
 ## Design consolidation · 16 November 2026
 
+Scheduled reminders now bind an explicitly checked private invoice PDF to the reviewed draft. Finance can reserve or cancel an exact future release under configured timing rules. The isolated mailbox stores the actual message and attachment, and receipt recovery checks the original message before another send could occur. The browser verified the before-due hold, scheduled delivery and cancellation. Railway returned the authorized message as an attachment. Browser download completion timed out, and PostgreSQL verified the response and attached bytes.
+
+The new browser walk reached all 59 mapped destinations. It verified one weekly report through approval and delivery and continued a second report through verification of the original recovered receipt. Emergency implementation evidence was accepted while its preauthorization remained missing. The final Railway PostgreSQL run passed all 58 tests. Full approval and recovery variant acceptance remains open.
+
 Payment reminders now use an issued invoice, current recorded balance and exact billing contact. Finance can edit, set aside and explicitly release a saved version. On isolated Railway the worker recorded a synthetic receipt for the original release. Manual channel evidence is checked against the exact version and recipient. Staff lifecycle adds expiring workspace invitation links, renewal, account setup and scoped access removal with same-role project action reassignment. Restricted payroll accepts mapped CSV and Excel exports and routes corrections to an HR-only decision desk. The browser verified payroll CSV intake and an HR approval with an exact successor pending Finance receipt.
 
 The browser also verified staff invitation creation, renewal and confirmed deactivation after reload. Final Railway PostgreSQL run `597731b5` passed all 12 tests, including secure signup, project action history and Finance receipt controls. The earlier four payroll tests and intermediate 11-case run passed separately.
 
-Operational recipient and delivery approvals, invitation delegation and timings, real payroll layout samples and HR authority remain deferred. Engineering coverage still includes the live message and invitation adapters, invoice attachment and reminder scheduling, and full browser verification across all 59 screens and their decision and recovery variants.
+Operational recipient and delivery approvals, invitation delegation and timings, real payroll layout samples and HR authority remain deferred. Engineering coverage still includes live message and invitation adapters, recurring review drafts driven by actual client-response evidence, and remaining decision and recovery variants.
 
 The Codex in-app browser is working. A signed-in synthetic operator reached the native route or shared workspace for all 59 screen IDs. The walkthrough verified Start Work, personal alert read state, a bid through ordered costing approvals, controlled submission, customer win and project handoff, and a project action with preserved history. Client amounts and reviewed Finance figures were checked against populated native records. Some screen destinations were permission-held or had empty data. Full board and branch acceptance remains open.
 

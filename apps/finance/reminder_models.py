@@ -10,6 +10,7 @@ class PaymentReminderDraft(AppendOnly):
     number = models.PositiveIntegerField()
     subject = models.CharField(max_length=180)
     body = models.TextField()
+    attachment = models.ForeignKey('agents.CaseUpload', null=True, on_delete=models.PROTECT)
     balance = models.JSONField()
     sha256 = models.CharField(max_length=64)
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
@@ -24,6 +25,7 @@ class PaymentReminderDispatch(AppendOnly):
     configuration = models.ForeignKey('policy.Configuration', on_delete=models.PROTECT)
     mode = models.CharField(max_length=20)
     operation_key = models.UUIDField(unique=True)
+    scheduled_for = models.DateTimeField(null=True, db_index=True)
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -42,4 +44,11 @@ class PaymentReminderSetAside(AppendOnly):
     draft = models.OneToOneField(PaymentReminderDraft, on_delete=models.PROTECT, related_name='set_aside')
     reason = models.CharField(max_length=1000)
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class PaymentReminderMailboxMessage(AppendOnly):
+    dispatch = models.OneToOneField(PaymentReminderDispatch, on_delete=models.PROTECT, related_name='mailbox_message')
+    message = models.BinaryField()
+    sha256 = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)

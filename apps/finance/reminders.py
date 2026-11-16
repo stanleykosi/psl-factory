@@ -1,15 +1,17 @@
 """Payment follow-up from the exact issued balance and reviewed billing contact."""
-from datetime import timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal, localcontext
+from hashlib import sha256
 from uuid import uuid4
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.utils import timezone
-from adapters.reminders import check_evidence
+from adapters.reminders import check_evidence, encode_message, invoice_pdf, message_id, verify_message
 
+from apps.agents.models import CaseUpload
 from apps.core.client_contacts import authorize
-from apps.core.models import ClientContactRevision
+from apps.core.models import Case, ClientContactRevision
 from apps.core.services import bump, event, lock_case
 from apps.documents.contracts import digest
 from apps.identity.services import require
@@ -19,7 +21,8 @@ from apps.policy.services import active_component, reference_values
 
 from . import corrections
 from .models import InvoiceIssue
-from .reminder_models import PaymentReminderDraft, PaymentReminderDispatch, PaymentReminderReceipt, PaymentReminderSetAside
+from .reminder_models import (PaymentReminderDraft, PaymentReminderDispatch, PaymentReminderMailboxMessage,
+                              PaymentReminderReceipt, PaymentReminderSetAside)
 from .rules import number
 
 
@@ -63,7 +66,7 @@ def _settings(case):
 
 
 @transaction.atomic
-def draft(actor, case_id, issue_id, title, body, expected):
+def draft(actor, case_id, issue_id, title, body, expected, *, attachment_id=None):
     case = lock_case(actor, case_id, 'finance.reminder.prepare', expected)
     issue = exact(actor, case, issue_id)
     destination = contact(issue)
@@ -76,11 +79,18 @@ def draft(actor, case_id, issue_id, title, body, expected):
         raise ValidationError('Enter a bounded subject and reminder message.')
     previous = issue.reminder_drafts.order_by('-number').first()
     values = {'issue': issue.pk, 'contact': destination.pk, 'subject': title, 'body': body, 'balance': balance}
+    attachment = None
+    if attachment_id is not None:
+        attachment = CaseUpload.objects.filter(case=case, actor=actor, pk=attachment_id).first()
+        if attachment is None:
+            raise ValidationError('Choose an invoice PDF uploaded by you in this workspace.')
+        invoice_pdf(attachment)
+        values['attachment'] = {'id': attachment.pk, 'sha256': attachment.sha256}
     hash_ = digest(values)
     if previous and previous.sha256 == hash_ and not hasattr(previous, 'set_aside'):
         return previous
     item = PaymentReminderDraft.objects.create(issue=issue, contact=destination, number=previous.number+1 if previous else 1,
-                                               subject=title, body=body, balance=balance, sha256=hash_, actor=actor)
+                                               subject=title, body=body, attachment=attachment, balance=balance, sha256=hash_, actor=actor)
     event(actor, case, 'reminder.draft_saved', draft=item.pk, issue=issue.pk)
     bump(case)
     return item
@@ -93,7 +103,7 @@ def _latest(issue, draft_id):
     return current
 
 
-def send_ready(actor, case, issue, item):
+def _bound_content(actor, case, issue, item):
     require(actor, case, 'finance.reminder.send')
     cfg, values = _settings(case)
     if actor.pk not in values['sender_ids']:
@@ -102,29 +112,45 @@ def send_ready(actor, case, issue, item):
         raise ValidationError('The current billing contact needs approval for reminder delivery.')
     if item.balance != facts(issue) or corrections.unresolved(issue):
         raise ValidationError('The balance changed or has an unresolved correction. Prepare a fresh draft.')
-    if issue.invoice.due_date is None or timezone.localdate() < issue.invoice.due_date + timedelta(days=values['days_after_due']):
+    if values.get('attachment_required') and not item.attachment_id:
+        raise ValidationError('Attach the issued invoice PDF before releasing this reminder.')
+    return cfg, values
+
+
+def send_ready(actor, case, issue, item, *, scheduled_for=None):
+    cfg, values = _bound_content(actor, case, issue, item)
+    now = timezone.now()
+    if scheduled_for is not None:
+        horizon = values.get('schedule_days_ahead')
+        if (not horizon or values['mode'] != 'synthetic_mailbox' or not isinstance(scheduled_for, datetime) or timezone.is_naive(scheduled_for) or
+                not now < scheduled_for <= now + timedelta(days=horizon)):
+            raise ValidationError('Choose a future time within the configured scheduling window.')
+    date = timezone.localdate(scheduled_for or now)
+    if issue.invoice.due_date is None or date < issue.invoice.due_date + timedelta(days=values['days_after_due']):
         raise ValidationError('The usual reminder date has not arrived or its due date is unknown.')
     deliveries = PaymentReminderDispatch.objects.filter(draft__issue=issue)
     if deliveries.filter(receipt__isnull=True).exists():
         raise ValidationError('Confirm the earlier delivery outcome before sending another reminder.')
     earlier = PaymentReminderReceipt.objects.filter(dispatch__in=deliveries, delivered=True).order_by('-created_at').first()
-    if earlier and timezone.localdate() < timezone.localdate(earlier.created_at) + timedelta(days=values['minimum_days_between']):
+    if earlier and date < timezone.localdate(earlier.created_at) + timedelta(days=values['minimum_days_between']):
         raise ValidationError('The configured interval between reminders has not elapsed.')
     return cfg, values
 
 
 @transaction.atomic
-def dispatch(actor, case_id, issue_id, draft_id, expected):
+def dispatch(actor, case_id, issue_id, draft_id, expected, *, scheduled_for=None):
     case = lock_case(actor, case_id, 'finance.reminder.send', expected)
     issue = exact(actor, case, issue_id)
     item = _latest(issue, draft_id)
     if hasattr(item, 'dispatch'):
         if item.dispatch.actor_id != actor.pk:
             raise PermissionDenied('The original reservation belongs to another sender.')
+        if item.dispatch.scheduled_for != scheduled_for:
+            raise ValidationError('This draft already has a release at a different time.')
         return item.dispatch
-    cfg, values = send_ready(actor, case, issue, item)
+    cfg, values = send_ready(actor, case, issue, item, scheduled_for=scheduled_for)
     row = PaymentReminderDispatch.objects.create(draft=item, configuration=cfg, mode=values['mode'],
-                                                 operation_key=uuid4(), actor=actor)
+                                                 operation_key=uuid4(), actor=actor, scheduled_for=scheduled_for)
     event(actor, case, 'reminder.dispatch_reserved', draft=item.pk, dispatch=row.pk)
     bump(case)
     return row
@@ -182,8 +208,85 @@ def simulate(dispatch_id):
         return prior
     issue = exact(actor, case, row.draft.issue_id)
     item = row.draft
-    cfg, values = _settings(case)
-    if (cfg.pk != row.configuration_id or actor.pk not in values['sender_ids'] or item.contact_id not in values['contact_revision_ids']
-            or item.contact != contact(issue) or item.balance != facts(issue) or corrections.unresolved(issue)):
+    cfg, _ = _bound_content(actor, case, issue, item)
+    if cfg.pk != row.configuration_id:
         raise ValidationError('Current scope or balance changed; hold this dispatch for reconciliation.')
     return _record(actor, case, row, f'synthetic-reminder:{row.operation_key}', True)
+
+
+def _mailbox_dispatch(dispatch_id):
+    row = PaymentReminderDispatch.objects.select_related('draft__issue__invoice', 'draft__attachment',
+                                                        'draft__contact', 'actor').get(pk=dispatch_id)
+    case = Case.objects.select_for_update().get(pk=row.draft.issue.invoice.case_id)
+    if row.mode != 'synthetic_mailbox' or not case.synthetic:
+        raise ValidationError('This reminder has a different delivery channel.')
+    return row, case
+
+
+@transaction.atomic
+def deliver_to_mailbox(dispatch_id):
+    """The isolated transport commits the exact MIME message before receipt readback."""
+    row, case = _mailbox_dispatch(dispatch_id)
+    if PaymentReminderMailboxMessage.objects.filter(dispatch=row).exists():
+        return
+    if PaymentReminderReceipt.objects.filter(dispatch=row).exists():
+        return
+    if row.scheduled_for and timezone.now() < row.scheduled_for:
+        return
+    try:
+        issue = exact(row.actor, case, row.draft.issue_id)
+        cfg, _ = _bound_content(row.actor, case, issue, row.draft)
+        if cfg.pk != row.configuration_id:
+            raise ValidationError('Review the changed release rules.')
+        wire = encode_message(row)
+    except (PermissionDenied, ValidationError):
+        # No mailbox record exists, and no external transfer has been attempted.
+        return _record(row.actor, case, row, 'Release held after changes to the source or authority', False)
+    PaymentReminderMailboxMessage.objects.create(dispatch=row, message=wire, sha256=sha256(wire).hexdigest())
+
+
+@transaction.atomic
+def verify_mailbox(dispatch_id):
+    row, case = _mailbox_dispatch(dispatch_id)
+    prior = PaymentReminderReceipt.objects.filter(dispatch=row).first()
+    if prior:
+        return prior
+    received = PaymentReminderMailboxMessage.objects.filter(dispatch=row).first()
+    if received is None:
+        return None
+    verify_message(row, bytes(received.message), received.sha256)
+    return _record(row.actor, case, row, message_id(row), True)
+
+
+def run_mailbox(dispatch_id):
+    receipt = verify_mailbox(dispatch_id)
+    if receipt is not None:
+        return receipt
+    deliver_to_mailbox(dispatch_id)
+    return verify_mailbox(dispatch_id)
+
+
+@transaction.atomic
+def check_mailbox(actor, case_id, issue_id, dispatch_id):
+    case = lock_case(actor, case_id, 'finance.reminder.confirm')
+    issue = exact(actor, case, issue_id)
+    _, values = _settings(case)
+    if actor.pk not in values['receipt_recorder_ids']:
+        raise PermissionDenied('A configured receipt reviewer is required.')
+    if not PaymentReminderDispatch.objects.filter(pk=dispatch_id, draft__issue=issue, mode='synthetic_mailbox').exists():
+        raise ValidationError('Choose the original test mailbox release.')
+    return verify_mailbox(dispatch_id)
+
+
+@transaction.atomic
+def cancel_schedule(actor, case_id, issue_id, dispatch_id, expected):
+    case = lock_case(actor, case_id, 'finance.reminder.send', expected)
+    issue = exact(actor, case, issue_id)
+    _, values = _settings(case)
+    if actor.pk not in values['sender_ids']:
+        raise PermissionDenied('A configured Finance sender is required.')
+    row = PaymentReminderDispatch.objects.filter(draft__issue=issue, pk=dispatch_id, mode='synthetic_mailbox',
+                                                 scheduled_for__isnull=False).select_related('draft').first()
+    if row is None or PaymentReminderMailboxMessage.objects.filter(dispatch=row).exists():
+        raise ValidationError('A message already accepted by the mailbox must be verified.')
+    return _record(actor, case, row, 'Scheduled release cancelled', False)
