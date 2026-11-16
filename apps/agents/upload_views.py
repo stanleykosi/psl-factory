@@ -12,10 +12,34 @@ from adapters import case_uploads
 from apps.core.views import accessible_case
 from apps.core.services import add_evidence, lock_case
 from apps.documents.services import review_document
-from apps.identity.services import require
+from apps.identity.services import active_case_grants, require
 from .models import AgentJob, CaseUpload
 from .upload_jobs import FOLLOW_UP, ROLES, authorize
 from . import workflow_handoffs
+
+
+def upload_file(actor, case, file):
+    require(actor, case, 'evidence.add')
+    if file is None or not 0 < file.size <= case_uploads.LIMIT:
+        raise ValidationError('Choose a file up to 5 MiB.')
+    data = file.read()
+    sha = hashlib.sha256(data).hexdigest()
+    key = hashlib.sha256(f'{case.pk}:{actor.pk}:{sha}'.encode()).hexdigest()
+    # Repeat uploads reuse a key only for the same case and uploader.
+    case_uploads.put(key, data)
+    upload, _ = CaseUpload.objects.get_or_create(key=key, defaults={
+        'case': case, 'actor': actor, 'sha256': sha, 'size': len(data), 'name': file.name[:160],
+    })
+    return upload
+
+
+def queue_draft(actor, upload, role):
+    authorize(actor, upload)
+    if role not in ROLES or not os.getenv('OPENROUTER_MODEL'):
+        raise ValidationError('Choose an available agent. A model must be configured to start a draft.')
+    job, _ = AgentJob.objects.get_or_create(upload=upload, actor=actor, role=role)
+    AgentJob.objects.filter(pk=job.pk, status='held').update(status='queued')
+    return job
 
 
 @transaction.atomic
@@ -46,26 +70,10 @@ def workbench(request, case_id):
     if request.method == 'POST':
         try:
             if request.POST.get('action') == 'upload':
-                require(request.user, case, 'evidence.add')
-                file = request.FILES.get('file')
-                if file is None or not 0 < file.size <= case_uploads.LIMIT:
-                    raise ValidationError('Choose a file up to 5 MiB.')
-                data = file.read()
-                sha = hashlib.sha256(data).hexdigest()
-                key = hashlib.sha256(f'{case.pk}:{request.user.pk}:{sha}'.encode()).hexdigest()
-                # Repeat uploads reuse a key only for the same case and uploader.
-                case_uploads.put(key, data)
-                CaseUpload.objects.get_or_create(key=key, defaults={
-                    'case': case, 'actor': request.user, 'sha256': sha, 'size': len(data), 'name': file.name[:160],
-                })
+                upload_file(request.user, case, request.FILES.get('file'))
             elif request.POST.get('action') == 'queue':
                 upload = get_object_or_404(uploads, pk=request.POST.get('upload'))
-                authorize(request.user, upload)
-                role = request.POST.get('role')
-                if role not in ROLES or not os.getenv('OPENROUTER_MODEL'):
-                    raise ValidationError('Agent testing needs a configured model and a valid role.')
-                job, _ = AgentJob.objects.get_or_create(upload=upload, actor=request.user, role=role)
-                AgentJob.objects.filter(pk=job.pk, status='held').update(status='queued')
+                queue_draft(request.user, upload, request.POST.get('role'))
             elif request.POST.get('action') == 'review':
                 retain_review(request.user, case, request.POST.get('job'), request.POST.get('note', ''))
             elif request.POST.get('action') == 'handoff':
@@ -77,8 +85,13 @@ def workbench(request, case_id):
             error = exc.messages[0]
         except (OSError, ValueError):
             error = 'The request could not be completed.'
-    jobs = list(AgentJob.objects.filter(upload__in=uploads).select_related('upload').order_by('-pk')[:50])
+    can_use_agent = case.synthetic and (case.pk, 'agent.extract') in active_case_grants(
+        request.user, [case.pk], actions=['agent.extract'],
+    )
+    jobs = list(AgentJob.objects.filter(upload__in=uploads, actor=request.user)
+                .select_related('upload').order_by('-pk')[:50]) if can_use_agent else []
     for job in jobs:
+        job.role_label = ROLES[job.role][0]
         job.follow_up = FOLLOW_UP.get(job.role)
         if job.status == 'reviewed' and not job.result.get('workflow_record'):
             job.handoff_form = workflow_handoffs.form_for(job)
@@ -86,6 +99,7 @@ def workbench(request, case_id):
     response = render(request, 'agents/uploads.html', {
         'case': case, 'uploads': uploads.order_by('-pk')[:50], 'roles': ROLES,
         'jobs': jobs,
+        'can_queue': can_use_agent and bool(os.getenv('OPENROUTER_MODEL')),
         'error': error,
     })
     response['Cache-Control'] = 'no-store'

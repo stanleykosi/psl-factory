@@ -30,6 +30,7 @@ from apps.finance import hrfinance_views
 from apps.finance import recognition_views
 from apps.finance import payment_views
 from apps.core import views
+from apps.core import design_views
 from apps.baas import views as baas_views, partner_views
 from apps.documents import views as document_views
 from apps.pmo import views as pmo_views
@@ -62,7 +63,9 @@ urlpatterns = [
     path('cases/<uuid:case_id>/emergencies/',emergency_views.workbench,name='emergencies'),
     path('cases/<uuid:case_id>/issues/',issue_views.workbench,name='issues'),
     path('cases/<uuid:case_id>/escalations/',escalation_views.workbench,name='escalations'),
-    path('cases/<uuid:case_id>/documents/',document_views.workbench,name='documents'),path('accounts/', include('django.contrib.auth.urls')),
+    path('cases/<uuid:case_id>/documents/',document_views.workbench,name='documents'),
+    path('accounts/login/', design_views.FactoryLogin.as_view(), name='login'),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('', views.home, name='home'), path('coverage/', views.coverage, name='coverage'),
     path('cases/<uuid:case_id>/', views.case_detail, name='case'),
     path('cases/<uuid:case_id>/policy/', views.policy_workbench, name='policy')]
@@ -127,3 +130,8 @@ urlpatterns += [path('cases/<uuid:case_id>/finance/contract-coverage/', coverage
 
 from apps.pmo import progress_views
 urlpatterns += [path('cases/<uuid:case_id>/delivery/<int:dossier_id>/progress/',progress_views.workbench,name='delivery_progress')]
+
+urlpatterns += [path('overview/', design_views.overview, name='design_overview'),
+                path('assistant/', design_views.agents, name='design_agents'),
+                path('getting-started/', design_views.getting_started, name='getting_started'),
+                path('projects/<uuid:case_id>/', design_views.project, name='design_project')]

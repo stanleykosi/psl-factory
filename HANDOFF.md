@@ -1,5 +1,13 @@
 # PSL operations factory cloud handoff — 6 November 2026
 
+## Single-design consolidation · 16 November 2026
+
+Resume on `build/design-consolidation`, based on the checked GitHub `main` at `4689cee`. Use [the 59-screen map](docs/design/consolidation.md) to distinguish native destinations from design states still needed. The new Django shell is the only runtime layout and covers sign-in, Start Work, first-login onboarding, password change, workspace access, My Work, Overview, the Project Journey and the Assistant. The standalone frontend remains a design reference. Finish the work item and decisions, project and Finance workspaces, and full screen acceptance before declaring consolidation complete.
+
+Use Railway environment `design-acceptance`, web `psl-design-web`, worker `psl-design-worker`, private `Postgres-5ywW` and bucket `psl-design-uploads`. Preview `https://psl-design-web-design-acceptance.up.railway.app/`. The scoped test account is `psl-agent-trial`. Run PostgreSQL acceptance in the private `psl-design-checks` service. See BUILD-TESTS.md for actual evidence. The older hosted service is still on its prior release. HOD decisions remain deferred.
+
+Open the preview using the Codex in-app browser only. The user declined desktop automation. Server-side synthetic verification can run on Railway. Keep test passwords and provider configuration out of Git. The optional `PSL_AGENT_TRIAL_CASE` setting selects an exact named synthetic trial case when preparing native handoffs.
+
 ## Railway checkpoint · 13 November 2026
 
 The post-handoff synthetic trial verified project registration and export, evidence currentness, issue acknowledgement, planning request creation, completed meeting follow-up and synthetic gate verification. Finance attestation and quality owner review held on missing scoped policy. See [owner decisions beyond the meeting sheet](docs/acceptance/RAILWAY-OWNER-DECISIONS.md). Railway now uses DeepSeek V4.1 Flash 1017 through OpenRouter for fresh drafts. The temporary post-handoff startup switch was removed after the checks.

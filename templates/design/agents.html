@@ -1,0 +1,27 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Assistant · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Assistant</h1><p class="lede">Choose a workspace and give an agent a file to review. You decide how to use its draft.</p></div></header>
+{% if draft_form %}
+<section class="card" aria-labelledby="new-draft-heading">
+  <h2 id="new-draft-heading">Start an agent draft</h2>
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}{{ draft_form.as_p }}<button type="submit">Start draft</button></form>
+</section>
+{% endif %}
+<section class="card" aria-labelledby="agent-workspace-heading">
+  <h2 id="agent-workspace-heading">Open an agent workspace</h2>
+  {% for case in cases %}<a class="floor-line" href="{% url 'case_uploads' case.pk %}">{{ case|workspace_name }} <span>Files and agent work →</span></a>
+  {% empty %}<p>There are no test workspaces where you can run an agent.</p>{% endfor %}
+</section>
+<section class="card" aria-labelledby="agent-job-heading">
+  <h2 id="agent-job-heading">Your recent agent work</h2>
+  {% for job in jobs %}
+  <a class="floor-line" href="{% url 'case_uploads' job.upload.case_id %}#agent-job-{{ job.pk }}">
+    <span><strong>{{ job.role_label }}</strong> · {{ job.upload.name }}</span><span>{{ job.status|readable }}</span>
+  </a>
+  {% empty %}<p>You have no agent drafts yet.</p>{% endfor %}
+</section>
+<section class="agent-role-grid" aria-label="Available agent roles">
+  {% for title, description in roles %}<article class="card"><h2>{{ title }}</h2><p>{{ description }}</p></article>{% endfor %}
+</section>
+{% endblock %}

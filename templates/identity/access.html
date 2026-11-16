@@ -1,1 +1,15 @@
-{% extends 'base.html' %}{% load studio_ui %}{% block content %}<h1>Record action access</h1><p>{{ case|workspace_name }} · {{ case.tenant }}</p><p>Delegate only the actions authorized by your current technical tenant configuration. Business roles and independent approval rules are configured separately.</p><form method="post">{% csrf_token %}{{ form.as_p }}<button>Record access change</button></form><section class="workflow-panel"><h2>Access change history</h2><table><tr><th>Account</th><th>Action</th><th>Enabled</th><th>Reason</th><th>When</th></tr>{% for r in history %}<tr><td>{{ r.subject_id }}</td><td>{{ r.action }}</td><td>{{ r.enabled }}</td><td>{{ r.reason }}</td><td>{{ r.created_at }}</td></tr>{% endfor %}</table></section>{% endblock %}
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Workspace access · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Workspace access</h1><p class="lede">{{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Back to workspace</a></header>
+<section class="card onboarding-card">
+  <h2>Grant or remove access</h2>
+  <p>Choose which action the account can take in this workspace.</p>
+  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary" type="submit">Save access change</button></form>
+</section>
+<section class="card table-wrap"><h2>Access history</h2>
+  <table><thead><tr><th>Account</th><th>Action</th><th>Access</th><th>Reason</th><th>When</th></tr></thead>
+    <tbody>{% for record in history %}<tr><td>{{ record.subject_id }}</td><td>{{ record.action }}</td><td>{{ record.enabled|yesno:'Granted,Removed' }}</td><td>{{ record.reason }}</td><td>{{ record.created_at }}</td></tr>{% empty %}<tr><td colspan="5">No access changes recorded.</td></tr>{% endfor %}</tbody>
+  </table>
+</section>
+{% endblock %}

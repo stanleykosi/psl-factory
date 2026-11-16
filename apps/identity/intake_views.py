@@ -12,10 +12,10 @@ from .intake_models import AccessChange
 from .intake_models import TenantAuthority
 
 class NewCase(forms.Form):
-    tenant=forms.ChoiceField()
-    reference=forms.SlugField(max_length=100)
-    title=forms.CharField(max_length=240)
-    kind=forms.ChoiceField(choices=[('project','PMO project'),('support','BaaS support')])
+    tenant=forms.ChoiceField(label='Organization')
+    reference=forms.SlugField(max_length=100, label='Reference')
+    title=forms.CharField(max_length=240, label='Workspace name')
+    kind=forms.ChoiceField(label='Workspace type', choices=[('project','Project'),('support','Customer support')])
 
 @login_required
 def create(request):

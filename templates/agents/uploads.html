@@ -12,7 +12,7 @@
 </form>
 {% for upload in uploads %}
   <p><a href="{% url 'case_upload_download' case.pk upload.pk %}">{{ upload.name }}</a></p>
-  {% if case.synthetic %}
+  {% if can_queue %}
   <form method="post">
     {% csrf_token %}
     <input type="hidden" name="action" value="queue">
@@ -24,8 +24,8 @@
 {% endfor %}
 <h2>Agent drafts</h2>
 {% for job in jobs %}
-<article>
-  <h3>{{ job.upload.name }} · {{ job.role }}</h3>
+<article class="card" id="agent-job-{{ job.pk }}">
+  <h3>{{ job.role_label }} · {{ job.upload.name }}</h3>
   <p>{{ job.status }}</p>
   {% if job.result %}<p>{{ job.result.summary }}</p>
   <ul>{% for quote in job.result.quotes %}<li>{{ quote }}</li>{% endfor %}</ul>

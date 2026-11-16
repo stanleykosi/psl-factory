@@ -511,8 +511,11 @@ def index(request):
         from apps.core.workbench_views import home
         return home(request)
     queue=request.GET.get('queue','needs_me');q=request.GET.get('q','').strip()[:120]
+    line=request.GET.get('line','')
+    if line not in DEFINITIONS:line=''
     if queue not in QUEUES:queue='needs_me'
     query=visible(request.user)
+    if line:query=query.filter(definition=line)
     if q:query=query.filter(Q(request__reference__icontains=q)|Q(case__title__icontains=q)|Q(key__icontains=q))
     if queue=='verified':query=query.filter(status='verified')
     elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','engagement/v1','pmo-minutes/v1','pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
@@ -531,7 +534,8 @@ def index(request):
         items.append(row)
     evaluated=query.count()
     response=render(request,'factory/queue.html',{'rows':items[:50],
-        'intake_available':bool(intake_options(request.user)),'queue':queue,'queues':QUEUES,'q':q,'as_of':timezone.now(),
+        'intake_available':bool(intake_options(request.user)),'queue':queue,'queues':QUEUES,'q':q,'line':line,
+        'line_title':DEFINITIONS[line]['title'] if line else '', 'as_of':timezone.now(),
         'evaluated':min(evaluated,101),'limited':len(items)>50 or evaluated>101,'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)})
     response['Cache-Control']='no-store';return response
 

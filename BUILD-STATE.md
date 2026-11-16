@@ -1,5 +1,9 @@
 # PSL operations factory build state — 6 November 2026
 
+## Design consolidation · 16 November 2026
+
+All 59 approved screens from GitHub `4689cee` have a native mapping and a remaining-work entry in [the consolidation table](docs/design/consolidation.md). The consolidation branch uses one current shell, native sign-in and workspace onboarding, My Work, an authorized factory overview, project journey and direct eight-role Assistant intake with the existing private upload, review and handoff. Railway `design-acceptance` has separate PostgreSQL, web, worker and private bucket services. Full board fidelity, remaining screen-specific forms and post-handoff acceptance remain open. HOD decisions remain deferred.
+
 ## Local development checkpoint · 9 November 2026
 
 GitHub main and local main matched `501b76f8304d971c3786223dcc91a863eec58cef` after a clean fast-forward. Development continues on `build/local-milestone-20261109`. All five nonapplied snapshots were reconstructed and hash verified in isolation. The build branch integrates selected D11 isolation, scalar policy loading and the exact template source reader.

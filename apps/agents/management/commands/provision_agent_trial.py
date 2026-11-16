@@ -33,11 +33,13 @@ class Command(BaseCommand):
 
 
 def prepare_workflows():
-    case = Case.objects.filter(pk='919b157e-f212-4a3e-8cf2-2082a72128e3', synthetic=True,
+    case_id = os.getenv('PSL_AGENT_TRIAL_CASE', '919b157e-f212-4a3e-8cf2-2082a72128e3')
+    case = Case.objects.filter(pk=case_id, synthetic=True,
                                tenant='psl-agent-trial', kind='project').first()
     if case is None:
         return
-    actor = get_user_model().objects.get(username='psl-agent-trial', is_superuser=False)
+    actor = get_user_model().objects.get(username='psl-agent-trial', is_active=True, is_superuser=False,
+                                         grant__case=case, grant__action='case.read', grant__active=True)
     for action in (
         'engagement.capture', 'engagement.read', 'issue.manage', 'issue.own', 'issue.read',
         'planning.read', 'planning.coordinate', 'recognition.prepare', 'recognition.read',

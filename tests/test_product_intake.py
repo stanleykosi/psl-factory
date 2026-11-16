@@ -54,7 +54,7 @@ class ProductIntakeTests(TransactionTestCase):
             with self.assertRaises(DatabaseError),transaction.atomic():model.objects.all().update(created_at=timezone.now())
         self.assertEqual(d.investigate(a,c.pk)['effect_tools'],[])
         client.force_login(a);self.assertEqual(client.get(reverse('intake_investigate',args=[c.pk])).json()['process_ids'],['P03','P16'])
-        client.force_login(root);self.assertContains(client.get(reverse('tenant_access')),'Version 1 and 2 schema')
+        client.force_login(root);self.assertContains(client.get(reverse('tenant_access')),'Configuration format')
         self.assertContains(client.get(reverse('home')),'Organization settings')
         csrf=Client(enforce_csrf_checks=True);csrf.force_login(a)
         self.assertEqual(csrf.post(reverse('case_create'),{}).status_code,403)

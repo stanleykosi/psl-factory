@@ -1,0 +1,27 @@
+<header class="factory-nav">
+  <a href="{% url 'home' %}" class="factory-wordmark">PSL Factory</a>
+  {% if control_plane %}
+  <nav aria-label="Main navigation"><a href="{% url 'home' %}">Recovery work</a></nav>
+  <form class="factory-menu" action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit">Sign out</button></form>
+  {% else %}
+  <nav aria-label="Main navigation">
+    <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>My work</a>
+    <a href="{% url 'workspace_overview' %}?kind=project" {% if request.resolver_match.url_name == 'workspace_overview' %}aria-current="page"{% endif %}>Projects</a>
+    <a href="{% url 'design_overview' %}" {% if request.resolver_match.url_name == 'design_overview' %}aria-current="page"{% endif %}>Overview</a>
+    <a href="{% url 'design_agents' %}" {% if request.resolver_match.url_name == 'design_agents' %}aria-current="page"{% endif %}>Assistant</a>
+  </nav>
+  <details class="factory-menu">
+    <summary>Menu</summary>
+    <div>
+      <a href="{% url 'work_inbox' %}">My assignments</a>
+      <a href="{% url 'workspace_overview' %}?area=finance">Finance workspaces</a>
+      <a href="{% url 'document_inbox' %}">Documents</a>
+      <a href="{% url 'project_views' %}">Project reports</a>
+      <a href="{% url 'case_create' %}">New workspace</a>
+      <a href="{% url 'password_change' %}">Change password</a>
+      {% if user.is_superuser %}<a href="{% url 'tenant_access' %}">Organization settings</a>{% endif %}
+      <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit">Sign out</button></form>
+    </div>
+  </details>
+  {% endif %}
+</header>

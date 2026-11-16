@@ -34,7 +34,8 @@ def page_name(value):
     names={'home':'Work queue','workspace_overview':'Workspaces','factory_detail':'Work item','factory_create':'Start work','factory_intake':'Start work','factory_configuration':'Execution profile','case':'Workspace','work_inbox':'My work','project_views':'Project reports','document_inbox':'Documents',
         'login':'Sign in','planning':'Project planning','costing':'Project costing','finance_analysis':'Financial analysis',
         'finance_settlement':'Invoices and receipts','finance_billing':'Billing','meetings':'Meetings and actions','policy':'Workspace settings',
-        'integration_readiness':'Connections','operations':'Business continuity','case_create':'New workspace','coverage':'Process directory','closure_preparation':'Prepare for closure'}
+        'integration_readiness':'Connections','operations':'Business continuity','case_create':'New workspace','coverage':'Process directory','closure_preparation':'Prepare for closure',
+        'design_overview':'Factory overview','design_agents':'Assistant','design_project':'Project journey'}
     return names.get(value,str(value or 'Workspace').replace('_',' ').capitalize())
 
 

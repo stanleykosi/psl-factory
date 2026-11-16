@@ -46,7 +46,7 @@ class FactoryConsoleTests(TestCase):
     def test_queue_case_agent_information_review_receipts_and_return_context(self):
         f=fixture(missing=True);a=f['actor'];w=f['work'];client=Client(enforce_csrf_checks=True);client.force_login(a)
         queue=reverse('home');url=reverse('factory_detail',args=[w.pk])+'?queue=active&q=FACTORY'
-        response=client.get(queue);self.assertContains(response,'Work queue');self.assertContains(response,'FACTORY-INVOICE')
+        response=client.get(queue);self.assertContains(response,'My work');self.assertContains(response,'FACTORY-INVOICE')
         self.assertContains(client.get(url),'queue=active&amp;q=FACTORY')
         self.assertEqual(client.post(url,{'action':'advance','revision':w.revision}).status_code,403)
         def post(**values):

@@ -1,4 +1,16 @@
 {
+  "design_consolidation_20261116": {
+    "branch": "build/design-consolidation",
+    "design_source": "4689cee79facffbfa5773df534d932f7f5510972",
+    "approved_screens": 59,
+    "mapped_screens": 59,
+    "coverage": "docs/design/consolidation.md",
+    "implemented": ["Single current shared shell", "Native sign-in, workspace onboarding, access and password change", "My Work and filtered overview", "Project journey and granted native workflow links", "Assistant intake and draft handoff links for all eight roles"],
+    "current": "Verify on isolated Railway PostgreSQL, native browser and synthetic model calls",
+    "next": ["Complete decision and work item interaction states", "Build source-backed project tabs, registers, reporting and release workspaces", "Complete Finance month-end and restricted Finance screens", "Finish account enrollment, alerts and operator acceptance"],
+    "owner_policy": "Deferred",
+    "full_product_complete": false
+  },
   "local_continuation_20261109": {
     "reviewed_main": "501b76f8304d971c3786223dcc91a863eec58cef",
     "branch": "build/local-milestone-20261109",

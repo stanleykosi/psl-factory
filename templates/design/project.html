@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}{{ case|workspace_name }} · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'workspace_overview' %}?kind=project">← Projects</a><h1>{{ case|workspace_name }}</h1><p class="lede">Project journey</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Open project record</a></header>
+<section class="card" aria-labelledby="recent-heading">
+  <h2 id="recent-heading">Recent work</h2>
+  {% for line in lines %}
+  <a class="floor-line" href="{% url 'factory_detail' line.work_id %}"><strong>{{ line.name }}</strong><time datetime="{{ line.updated|date:'c' }}">{{ line.updated|date:'d M, H:i' }}</time></a>
+  {% empty %}<p>There is no factory work you can see for this project.</p>{% endfor %}
+</section>
+{% workspace_sections case actions as sections %}
+<div class="area-grid">
+  {% for group in sections %}
+  <section class="area-card"><h2>{{ group.title }}</h2>
+    {% for link in group.links %}<a class="floor-line" href="{{ link.url }}"><span>{{ link.label }}</span><span aria-hidden="true">→</span></a>{% endfor %}
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

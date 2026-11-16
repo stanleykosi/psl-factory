@@ -1,7 +1,15 @@
-{% extends 'base.html' %}{% block content %}
-<h1>Technical tenant delegation</h1>
-<p>This configures technical case access for existing accounts. Business owners, role mappings and approvals require their separate source authority.</p>
-<p>Version 2 can delegate exact <code>approval.source.read:system-key</code> actions. Granting requires that system in the target project's current P02 routes. Wildcards and dynamic initial workspace actions are unavailable. Revocation remains available when a route is missing or the subject account is inactive.</p>
-<form method="post">{% csrf_token %}{{ form.as_p }}<button>Record a configuration version</button></form>
-<details><summary>Version 1 and 2 schema</summary><pre>{{ schema }}</pre></details>
-<section class="workflow-panel"><h2>Record history</h2><table><tr><th>Tenant</th><th>Account</th><th>Version</th><th>Enabled</th><th>Expires</th><th>Reason</th></tr>{% for r in history %}<tr><td>{{ r.tenant }}</td><td>{{ r.user_id }}</td><td>{{ r.version }}</td><td>{{ r.enabled }}</td><td>{{ r.expires_at }}</td><td>{{ r.reason }}</td></tr>{% endfor %}</table></section>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Organization access · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Organization access</h1><p class="lede">Set who can create workspaces or manage access on behalf of an organization.</p></div></header>
+<section class="card onboarding-card">
+  <h2>Account delegation</h2>
+  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary" type="submit">Save delegation</button></form>
+  <details><summary>Configuration format</summary><p>For source-specific approval access, select a current system from the project’s approval routes.</p><pre>{{ schema }}</pre></details>
+</section>
+<section class="card table-wrap"><h2>Delegation history</h2>
+  <table><thead><tr><th>Organization</th><th>Account</th><th>Version</th><th>Access</th><th>Expires</th><th>Reason</th></tr></thead>
+    <tbody>{% for record in history %}<tr><td>{{ record.tenant }}</td><td>{{ record.user_id }}</td><td>{{ record.version }}</td><td>{{ record.enabled|yesno:'Enabled,Disabled' }}</td><td>{{ record.expires_at }}</td><td>{{ record.reason }}</td></tr>{% empty %}<tr><td colspan="6">No delegations recorded.</td></tr>{% endfor %}</tbody>
+  </table>
+</section>
+{% endblock %}
