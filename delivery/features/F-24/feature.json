@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-24",
   "outcome": "The Assistant: pick an agent, ask, watch it work, read the answer with its steps and sources, and start the normal work item from its draft (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-ASSISTANT"
   ],
@@ -126,11 +126,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -1121,6 +1123,29 @@
           "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
         }
       ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Second start (stale tab), `frontend/src/features/start-work/LineForm.tsx:60` \"stale\" notice | After `409 draft_already_started`, the drawer says \"This project changed since you opened the form. We've loaded the latest version; check your entries and press start again.\" and turns the start button back on. Pressing it again just gets another 409 (seen live: replies `[409,409]`). The thread behind the drawer has already re-read, and Close shows the started line. The spec allows \"the drawer's existing message\", so this is not a spec break. But the drawer invites a start that can never succeed, and the backend's own \"This draft was already started.\" is never shown. Fix (later, with G-SCR05-1): when the 409 code is `draft_already_started`, show the returned message and offer only Close (or close the drawer and let the thread's started line speak).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-16T15:41:08Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1446,6 +1471,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-16T14:37:07Z",
+      "round": 3,
+      "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-16T15:41:08Z",
       "round": 3,
       "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
       "reason": null

@@ -135,3 +135,15 @@ Screens: SCR-25 returned and received (W-2209 to W-2214 on the mock). All additi
 - **Uncertain item without reconcile**: the page now locks every step whenever an item is `effect_uncertain`, with or without `reconcile`, and says "We are checking what happened. Nothing was sent again." Please always send `reconcile` with an uncertain item, and define the reconcile reply (still 501 on the mock, F-21 note; W-2212).
 - **Unknown work id is 404** (F-21 note): still served a default item by the mock (F-22 QA-2-2).
 - **Limits**: D-RETURN (what Return creates and how v2 is numbered) and D-ALERT-PROVIDERS (real delivery confirmations) are open; the frontend shows only what the data says and claims no real delivery.
+
+## Added during F-24: the assistant (16 Nov)
+
+Screens: SCR-05 default, working, thread, draft-started (`/assistant`, `/assistant/[conversationId]`). Everything runs on the contract mock (`frontend/mock/assistant.mjs`, CV-2401..2406, CV-2411, CV-2499); no real agent, provider or backend answers. Full gap list: [gaps-a-project-setup.md](backend-handoff/gaps-a-project-setup.md) G-SCR05-1..8.
+
+- **Link a draft to its work item** (G-SCR05-1, blocking for real use): optional `source:{conversation_id, message_id}` on E-WORK-START and a stable `message_id` on messages, so one draft starts at most one work item.
+- **Second start of the same draft**: the mock answers 409 `{code: "draft_already_started", message: "This draft was already started.", work_id, reference}`. Please confirm the shape. Today the Start work drawer shows its generic "changed, press start again" text and re-enables start (F-24 QA-3-1); with the confirmed shape the page will show the backend's message and offer only Close.
+- **Idempotency on assistant writes** (G-SCR05-3, blocking): `idempotency_key` on E-CONVERSATION-NEW and E-MESSAGE. Until then the page uses a click lock, never retries on its own, and re-reads the conversation before offering "Try again".
+- **Started state**: `draft.started {work_id, reference}` exists; please add `draft.started.note` (the board's "now at its first review station" sentence) and a `started` status word for the conversation list, or confirm the list should derive it from `draft.started`.
+- **Restricted sources** (INV-RESTRICTED): the mock sends a restricted source's label and the frontend drops it, showing only "Restricted". The real API should not send the label at all.
+- **Edit draft** (G-SCR05-2), **mentions echo and milestone/meeting kinds** (G-SCR05-4), **an alert when a working conversation ends** (G-SCR05-7: the page says "You can leave; you'll be alerted"), backend-owned agent copy and status words: see the gap file.
+- **Speech input** stays held by D-SPEECH-INPUT: the microphone is drawn but does nothing.

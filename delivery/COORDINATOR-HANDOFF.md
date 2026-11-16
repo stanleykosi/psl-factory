@@ -65,3 +65,7 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 - UX-1-1: next line for failed/unknown delivery (backend handoff). UX-1-3 / QA-2-2: unknown work id gets the mock's default item (mock should 404).
 - UX-1-4, UX-3-1 (multi-cite pickers truncate), UX-4-1, TECH-1-2 (frame change already listed): polish.
 - Fidelity tool: labels that are entirely data bindings ({{…}}) can't be matched (F-24 "Start this invoice"); frame names like "Back to Home" vs board "← Home". Match by role and position, or allow per-board exceptions.
+
+### F-24 follow-ups (non-blocking)
+- QA-3-1: a second start of the same draft shows Start work's generic 409 text and re-enables start; show the backend's message and offer only Close once the 409 shape is confirmed (backend handoff, Added during F-24).
+- TECH-3-1: tighten the e2e dock assertion to the real viewport height. TECH-1-3: prefill option search stops after 5 pages.
