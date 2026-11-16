@@ -1,4 +1,4 @@
-// F-21: the contract mock's weekly fixtures W-2201 to W-2208 through E-WORK-STEP and E-LINE-OPTIONS. Mock evidence
+// F-21 and F-22: the contract mock's weekly fixtures W-2201 to W-2214 through E-WORK-STEP and E-LINE-OPTIONS. Mock evidence
 // only: the idempotency map proves one send per key on the mock, not the backend's promise (unbuilt).
 import { readFileSync } from 'node:fs';
 import type { Server } from 'node:http';
@@ -19,7 +19,22 @@ const itemSchema = ajv.compile(openapi.paths['/api/v1/work/{work_id}'].get.respo
 const stepReply = (status: number) => ajv.compile(openapi.paths['/api/v1/work/{work_id}/steps'].post.responses[String(status)].content['application/json'].schema);
 const dir = join(__dirname, '../mock/fixtures/work');
 const fixture = (name: string) => JSON.parse(readFileSync(join(dir, `${name}.json`), 'utf8'));
+// PROPOSAL (BACKEND-HANDOFF 2): a records field carries its saved records as a list of {value, label} in `value`; the
+// generated type says string, so the list is checked here on its own and stripped before the schema check.
+function savedRecords(item: object) {
+  const copy = structuredClone(item) as { workspace: { steps?: { fields?: { type: string; value?: unknown }[] }[] } };
+  for (const step of copy.workspace.steps ?? []) {
+    for (const f of step.fields ?? []) {
+      if (f.type !== 'records' || f.value === undefined) continue;
+      const list = f.value as { value?: unknown; label?: unknown }[];
+      expect(Array.isArray(list) && list.length > 0 && list.every((o) => typeof o.value === 'string' && typeof o.label === 'string' && Object.keys(o).length === 2)).toBe(true);
+      delete f.value;
+    }
+  }
+  return copy;
+}
 const IDS = ['W-2201', 'W-2202', 'W-2203', 'W-2204', 'W-2205', 'W-2206', 'W-2207', 'W-2208'];
+const F22 = ['W-2209', 'W-2210', 'W-2211', 'W-2212', 'W-2213', 'W-2214'];
 
 let server: Server;
 let base: string;
@@ -55,6 +70,17 @@ describe('weekly fixtures', () => {
     }
   });
 
+  it('W-2209 to W-2214 are served as their own fixtures, schema-valid, sample, on the weekly_report line, returned or received', async () => {
+    for (const id of F22) {
+      const served = await get(id);
+      expect(served, id).toEqual(fixture(id));
+      expect(itemSchema(savedRecords(served)), id).toBe(true);
+      expect(served.sample, id).toBe(true);
+      expect(served.workspace.line_key, id).toBe('weekly_report');
+      expect(served.workspace.view, id).toBe(id <= 'W-2210' ? 'returned' : 'received');
+    }
+  });
+
   it('every script names only steps its item offers; every sidecar item is schema-valid', () => {
     for (const id of IDS) {
       let script: Record<string, { status: number; body?: unknown }> = {};
@@ -69,7 +95,17 @@ describe('weekly fixtures', () => {
         if (entry.status === 422) expect(stepReply(422)(entry.body)).toBe(true);
       }
     }
-    for (const id of ['W-2201', 'W-2205', 'W-2206']) expect(itemSchema(fixture(`${id}.next`)), id).toBe(true);
+    for (const id of ['W-2201', 'W-2205', 'W-2206', 'W-2209']) expect(itemSchema(savedRecords(fixture(`${id}.next`))), id).toBe(true);
+    for (const id of F22) {
+      const keys = (fixture(id).workspace.steps ?? []).map((s: { key: string }) => s.key);
+      let script: Record<string, unknown> = {};
+      try {
+        script = fixture(`${id}.steps`);
+      } catch {
+        continue;
+      }
+      for (const name of Object.keys(script)) expect(keys, `${id} ${name}`).toContain(name);
+    }
   });
 
   it('the four cite fields have the same eight descriptors on both steps of the default items', () => {
@@ -114,6 +150,22 @@ describe('E-WORK-STEP on the weekly fixtures', () => {
     expect(first.body).toMatchObject({ outcome: 'done', revision: 4 });
     expect(await step('W-2204', { expected_revision: 3, step: 'approve_send', idempotency_key: k })).toEqual(first);
     expect((await log()).sends[k]).toBe(1);
+  });
+
+  it('W-2209 send_to_tola is done and serves the assembling item; a repeated key replays with no second send', async () => {
+    const k = key();
+    const send = await step('W-2209', { expected_revision: 6, step: 'send_to_tola', inputs: { status: 'x' }, idempotency_key: k });
+    expect(send.status).toBe(200);
+    expect(send.body).toMatchObject({ outcome: 'done' });
+    expect(stepReply(200)(send.body)).toBe(true);
+    const next = await get('W-2209');
+    expect(itemSchema(savedRecords(next))).toBe(true);
+    expect(next.workspace.view).toBe('assembling');
+    expect(next.workspace.revision).toBe(7);
+    expect(await step('W-2209', { expected_revision: 6, step: 'send_to_tola', inputs: { status: 'x' }, idempotency_key: k })).toEqual(send);
+    expect((await log()).sends[k]).toBe(1);
+    // an item with no step offers none
+    expect((await step('W-2210', { expected_revision: 6, step: 'send_to_tola', idempotency_key: key() })).status).toBe(404);
   });
 
   it('W-2205 approve_send answers effect_uncertain and the re-read carries reconcile with allowed_actions', async () => {

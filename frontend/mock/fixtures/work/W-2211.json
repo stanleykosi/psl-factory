@@ -1,0 +1,156 @@
+{
+  "id": "W-2211",
+  "title": "Weekly client report · 5–11 Nov",
+  "line": "Weekly client report",
+  "reference": "WCR-0216",
+  "revision": 7,
+  "tasks": [],
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "state": "verified",
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "done"
+    },
+    {
+      "name": "Send",
+      "status": "done"
+    },
+    {
+      "name": "Verify",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-12T13:40:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-12T13:58:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-12T14:10:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-11-12T14:11:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-11-12T14:11:00Z"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Assembled this from the week's records",
+        "status": "done"
+      }
+    ]
+  },
+  "workspace": {
+    "line_key": "weekly_report",
+    "screen": "SCR-25",
+    "view": "received",
+    "subtitle": "Lagoon Health · week ending 11 Nov",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "WCR-0216",
+          "label": "Weekly client report · WCR-0216"
+        }
+      ]
+    },
+    "revision": 7,
+    "title": "Weekly client report · 5–11 Nov",
+    "status": {
+      "label": "Received by client",
+      "tone": "verified"
+    },
+    "sections": [
+      {
+        "key": "delivery",
+        "kind": "text",
+        "items": [
+          {
+            "id": "D-1",
+            "text": "Lagoon Health received v2: emailed 12 Nov 15:10 to 2 contacts, both deliveries confirmed. Verified.",
+            "tag": {
+              "label": "Verified",
+              "tone": "verified"
+            }
+          }
+        ]
+      },
+      {
+        "key": "happened",
+        "kind": "recipients",
+        "title": "What happened",
+        "items": [
+          {
+            "id": "H-1",
+            "text": "Approved by Kemi Adebayo",
+            "at": "2026-11-12T13:58:00Z"
+          },
+          {
+            "id": "R-1",
+            "text": "Emailed to Dr Amaka Obi",
+            "receipt": "received",
+            "at": "2026-11-12T14:10:00Z",
+            "tag": {
+              "label": "Delivered",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "R-2",
+            "text": "Emailed to Lagoon Health projects inbox",
+            "receipt": "received",
+            "at": "2026-11-12T14:11:00Z",
+            "tag": {
+              "label": "Delivered",
+              "tone": "verified"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "Next week's report opens on 19 Nov, after the week ends."
+    ]
+  }
+}

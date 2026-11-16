@@ -169,9 +169,19 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
   const heading = useRef<HTMLHeadingElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   // A text or long text field opens with the words the descriptor carries (a saved draft); the person edits from there.
-  const [values, setValues] = useState<Record<string, unknown>>(() =>
-    Object.fromEntries(fields.filter((f) => (f.type === 'text' || f.type === 'long_text') && !f.restricted && f.value !== undefined).map((f) => [f.name, f.value])),
-  );
+  // A records field opens with its saved records, when the descriptor carries them as a list of {value, label} (PROPOSAL, BACKEND-HANDOFF 2).
+  const [values, setValues] = useState<Record<string, unknown>>(() => {
+    const opened: Record<string, unknown> = {};
+    for (const f of fields) {
+      if (f.restricted || f.value === undefined) continue;
+      if (f.type === 'text' || f.type === 'long_text') opened[f.name] = f.value;
+      else if (f.type === 'records') {
+        const saved = (Array.isArray(f.value) ? (f.value as unknown[]) : []).filter((o): o is LineOption => typeof o === 'object' && o !== null && typeof (o as LineOption).value === 'string' && typeof (o as LineOption).label === 'string');
+        if (saved.length > 0) opened[f.name] = saved;
+      }
+    }
+    return opened;
+  });
   const [evidence, setEvidence] = useState<Record<string, string[]>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [messages, setMessages] = useState<string[]>([]);
