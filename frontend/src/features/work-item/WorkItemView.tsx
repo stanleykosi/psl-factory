@@ -5,18 +5,17 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { Breadcrumb, Callout, formatDayTime, Tabs, Tag, useIsPhone } from '@/components';
 import { PROJECT_TABS } from '@/features/projects/model';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
-import { WarningIcon } from '@/shell/icons';
 import { SampleLabel } from '@/shell/SampleLabel';
 import { useWorkspacePage } from '@/features/workspace/usePageReload';
 
-import { tagClass } from '@/features/workspace/labels';
+import { tagTone } from '@/features/workspace/labels';
 
-import { formatWat, startedLine, STATE_TAGS, type WorkItem } from './labels';
+import { startedLine, STATE_TAGS, type WorkItem } from './labels';
 import { presentationOf, viewFor } from './presentation';
-import { useIsPhone } from './usePhone';
 import { useWorkItem } from './useWorkItem';
 import { WorkItemHistory } from './WorkItemHistory';
 import { boardLayout, WorkItemOverview } from './WorkItemOverview';
@@ -44,7 +43,7 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
   const started = item.started_by !== undefined;
   const boardTitle = phone ? view?.phone?.title : undefined;
   const sub = (
-    <div className={`work-sub${base && (!started || phone) ? ' work-sr' : ''}`}>
+    <div className={`work-sub${base && (!started || phone) ? ' cmp-sr' : ''}`}>
       {/* phones: the reference and the started line (the bar draws the reference on the boards) */}
       {phone ? (
         <span>
@@ -57,16 +56,23 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
       <SampleLabel show={item.sample} />
     </div>
   );
-  const tagEl = <span className={`psl-tag psl-tag--${tag.tone} work-state`}>{tag.text}</span>;
+  const tagEl = (
+    <Tag tone={tag.tone} className="work-state">
+      {tag.text}
+    </Tag>
+  );
   const crumb = base?.eyebrow ? (
     <p className="psl-crumb work-eyebrowline">{base.eyebrow}</p>
   ) : (
-    <nav aria-label="Breadcrumb">
-      <p className="psl-crumb">
-        <Link href="/my-work">My work</Link> / {history && base?.back_label ? `${base.back_label} ·` : `${item.line} /`}{' '}
-        <span className="psl-mono">{item.reference}</span>
-      </p>
-    </nav>
+    <Breadcrumb
+      items={history && base?.back_label ? [{ label: 'My work', href: '/my-work' }] : [{ label: 'My work', href: '/my-work' }, { label: item.line }]}
+      current={
+        <>
+          {history && base?.back_label && `${base.back_label} · `}
+          <span className="psl-mono">{item.reference}</span>
+        </>
+      }
+    />
   );
   return (
     <>
@@ -90,7 +96,7 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
               // the phone board's shorter title is what is drawn; the contract title stays as the heading's name
               <>
                 <span aria-hidden="true">{boardTitle}</span>
-                <span className="work-sr">{item.title}</span>
+                <span className="cmp-sr">{item.title}</span>
               </>
             ) : (
               item.title
@@ -152,9 +158,13 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
     </nav>
   );
   const tag = status ? (
-    <span className={`${tagClass(status.tone)} work-state`}>{status.label}</span>
+    <Tag tone={tagTone(status.tone)} className="work-state">
+      {status.label}
+    </Tag>
   ) : (
-    <span className={`psl-tag psl-tag--${state.tone} work-state`}>{state.text}</span>
+    <Tag tone={state.tone} className="work-state">
+      {state.text}
+    </Tag>
   );
   return (
     <header className="work-header work-header--end work-header--line">
@@ -172,11 +182,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
               </ol>
             </nav>
           ) : (
-            <nav aria-label="Breadcrumb">
-              <p className="psl-crumb">
-                <Link href="/my-work">My work</Link> / {item.line} / <span className="psl-mono">{item.reference}</span>
-              </p>
-            </nav>
+            <Breadcrumb items={[{ label: 'My work', href: '/my-work' }, { label: item.line }]} current={<span className="psl-mono">{item.reference}</span>} />
           )}
           {history}
         </div>
@@ -204,7 +210,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
           )}
         </div>
       )}
-      <div className="work-sr">
+      <div className="cmp-sr">
         <span>{startedLine(item)}</span>
       </div>
     </header>
@@ -212,24 +218,16 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
 }
 
 function WorkItemTabs({ base, tab, count }: { base: string; tab: WorkItemTab; count?: number }) {
-  const tabs = [
-    { key: 'overview', label: 'Overview', href: base },
-    { key: 'history', label: 'History', href: `${base}/history` },
-  ] as const;
   return (
-    <nav aria-label="Work item" className="psl-tabs work-tabs">
-      {tabs.map((t) => (
-        <Link key={t.key} className="psl-tab" href={t.href} aria-current={t.key === tab ? 'page' : undefined}>
-          {t.label}
-          {t.key === 'history' && count !== undefined && (
-            <>
-              {' '}
-              <span className="psl-badge">{count}</span>
-            </>
-          )}
-        </Link>
-      ))}
-    </nav>
+    <Tabs
+      label="Work item"
+      className="work-tabs"
+      selected={tab}
+      tabs={[
+        { key: 'overview', label: 'Overview', href: base },
+        { key: 'history', label: 'History', href: `${base}/history`, count },
+      ]}
+    />
   );
 }
 
@@ -275,12 +273,7 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
         <WorkItemHeader item={shown} tab={tab} phone={phone} tabs={tabs} />
       )}
       {refreshFailed && (
-        <div className="psl-callout psl-callout--warning">
-          <WarningIcon />
-          <span>
-            We couldn&rsquo;t refresh this item. Showing what we had at {formatWat(loadedAt)}.
-          </span>
-        </div>
+        <Callout kind="warning">We couldn&rsquo;t refresh this item. Showing what we had at {formatDayTime(loadedAt)}.</Callout>
       )}
       {tab === 'overview' ? (
         <WorkItemOverview id={id} item={shown} workspace={workspace.page} />

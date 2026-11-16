@@ -1,31 +1,27 @@
 // SCR-03 states other than the default board: not open here, cannot act (read-only), stale and done.
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 
 import type { DecideResult, TaskDecision, WorkItem, WorkTask } from '@/api/types';
-import { InfoIcon } from '@/features/work-item/InfoIcon';
+import { Button, buttonClass, Callout, EmptyState, formatClock, Panel, Tag, TextArea, Unknown, useIsPhone } from '@/components';
 import { FactsStrip } from '@/features/work-item/WorkItemOverview';
-import { agentImage, FACTS } from '@/features/work-item/labels';
-import { useIsPhone } from '@/features/work-item/usePhone';
+import { FACTS } from '@/features/work-item/labels';
 import { presentationOf } from '@/features/work-item/presentation';
-import { WarningIcon } from '@/shell/icons';
 
 import { AmountValue, ApprovalChain, DecideHeader, When } from './DecisionContent';
-import { AGENT_NAMES, channelWords, formatAmount, formatClock, VERDICT_WORDS, type Asked, type CannotActReason, type Verdict } from './format';
+import { AGENT_NAMES, channelWords, formatAmount, VERDICT_WORDS, type Asked, type CannotActReason, type Verdict } from './format';
 import { nextDecision, type DecidePresentation } from './presentation';
 
 const workHref = (id: string) => `/work/${encodeURIComponent(id)}`;
 
 export function NotOpenState({ id }: { id: string }) {
   return (
-    <div className="psl-empty">
-      <h2 className="decide-h2">This decision isn&rsquo;t open here</h2>
-      <p>It may have been decided, withdrawn or moved. The work item shows where things stand.</p>
-      <p>
-        <Link href={workHref(id)}>Open the work item</Link>
-      </p>
-    </div>
+    <EmptyState title="This decision isn&rsquo;t open here">
+      It may have been decided, withdrawn or moved. The work item shows where things stand.
+      <br />
+      <Link href={workHref(id)}>Open the work item</Link>
+    </EmptyState>
   );
 }
 
@@ -71,8 +67,9 @@ function AskedLine({ person }: { person: Asked }) {
   const channels = person.channels?.length ? ` by ${channelWords(person.channels)}` : '';
   return (
     <li>
-      {who} was alerted at <When at={person.alerted_at} />
-      {channels}
+      {/* the SCR-03 boards write the time alone and end the sentence: "alerted at 10:42 by WhatsApp and email." */}
+      {who} was alerted at <time dateTime={person.alerted_at}>{formatClock(person.alerted_at)}</time>
+      {channels}.
     </li>
   );
 }
@@ -80,7 +77,7 @@ function AskedLine({ person }: { person: Asked }) {
 function AskedList({ asked }: { asked: Asked[] }) {
   return (
     <div className="decide-asked">
-      <h3 className="decide-sr">Asked</h3>
+      <h3 className="cmp-sr">Asked</h3>
       {asked.length === 0 ? (
         <p className="decide-plain">Nobody has been asked yet.</p>
       ) : (
@@ -99,20 +96,13 @@ function AskedList({ asked }: { asked: Asked[] }) {
  * and its button are disabled and say so; nothing here is ever sent.
  */
 function CommentBox({ comment }: { comment: NonNullable<DecidePresentation['comment']> }) {
-  const ids = { box: useId(), note: useId() };
   return (
-    <div className="psl-field decide-comment">
-      <label className="psl-label" htmlFor={ids.box}>
-        {comment.label}
-      </label>
-      <textarea id={ids.box} className="psl-input psl-input--area" rows={3} disabled aria-describedby={ids.note} />
-      <p className="psl-hint" id={ids.note}>
-        Comments aren&rsquo;t available yet.
-      </p>
+    <div className="decide-comment">
+      <TextArea id="decide-comment" label={comment.label} hint="Comments aren’t available yet." value="" disabled onChange={() => {}} />
       <p className="decide-comment__action">
-        <button type="button" className="psl-btn psl-btn--secondary psl-btn--lg psl-btn--block" disabled aria-describedby={ids.note}>
+        <Button kind="secondary" size="lg" block disabled aria-describedby="decide-comment-message">
           {comment.action}
-        </button>
+        </Button>
       </p>
     </div>
   );
@@ -130,7 +120,7 @@ function PreparedBy({ by }: { by: NonNullable<TaskDecision['prepared_by']> }) {
 /** An amount as the box's own text (the boards' value cells); unknown or absent reads Unknown (INV-UNKNOWN). */
 function AmountText({ amount }: { amount: NonNullable<TaskDecision['amount']> }) {
   const text = formatAmount(amount);
-  return text === null ? <span className="psl-unknown">Unknown</span> : <>{text}</>;
+  return text === null ? <Unknown /> : <>{text}</>;
 }
 
 type CannotActProps = { id: string; task: WorkTask & { decision: TaskDecision }; facts: WorkItem['facts']; view?: DecidePresentation };
@@ -145,11 +135,11 @@ function PhoneFacts({ facts }: { facts: WorkItem['facts'] }) {
       <div key={name} className="decide-strip__box decide-strip__box--phone">
         <dt>
           {label}
-          {more && <span className="decide-sr">{more}</span>}
+          {more && <span className="cmp-sr">{more}</span>}
         </dt>{' '}
         <dd>
           {FACT_WORD[status]}
-          {status === 'not_yet' && <span className="decide-sr"> Not yet</span>}
+          {status === 'not_yet' && <span className="cmp-sr"> Not yet</span>}
         </dd>
       </div>
     );
@@ -173,17 +163,21 @@ export function CannotActView({ id, task, facts, view }: CannotActProps) {
   if (task.cannot_act_reason === 'prepared_by_you') {
     return (
       <div className="decide-own">
-        <section className="psl-panel decide-own__version" aria-label={version.label}>
-          <p className="psl-panel__head decide-own__head">
-            {version.label}
-            {amount && (
-              <>
-                {' · '}
-                <AmountText amount={amount} />
-              </>
-            )}
-          </p>
-          <dl className="decide-own__rows psl-panel__body">
+        <Panel
+          className="decide-own__version"
+          head={
+            <>
+              {version.label}
+              {amount && (
+                <>
+                  {' · '}
+                  <AmountText amount={amount} />
+                </>
+              )}
+            </>
+          }
+        >
+          <dl className="decide-own__rows">
             {/* the board's first row: "Contract amount · <basis>" with the amount at the end */}
             {amount ? (
               <div>
@@ -209,16 +203,16 @@ export function CannotActView({ id, task, facts, view }: CannotActProps) {
               </div>
             )}
           </dl>
-        </section>
+        </Panel>
+        {/* the boards draw this card as the page's side panel, so it stays an aside (Panel is a section) */}
         <aside className="psl-panel decide-own__review" aria-labelledby="decide-readonly-title">
           <p className="psl-panel__head">Waiting · {task.required_role}</p>
           <div className="psl-panel__body">
-            <div className="psl-callout psl-callout--info">
-              <InfoIcon />
+            <Callout kind="info" announce={false}>
               <h2 id="decide-readonly-title" className="decide-callout-text">
                 {copy.heading}
               </h2>
-            </div>
+            </Callout>
             <AskedList asked={asked} />
             {open}
           </div>
@@ -253,7 +247,9 @@ export function CannotActView({ id, task, facts, view }: CannotActProps) {
         <PhoneFacts facts={facts} />
       </dl>
       <section className="decide-card" aria-labelledby="decide-readonly-title">
-        <span className="psl-tag psl-tag--neutral decide-tag">{copy.eyebrow}</span>
+        <Tag tone="neutral" className="decide-tag">
+          {copy.eyebrow}
+        </Tag>
         <div className="decide-lead">
           <h2 id="decide-readonly-title" className="decide-lead__head">
             {copy.heading}
@@ -318,18 +314,22 @@ export function StaleView({ replaced, current, agent, onReview }: StaleProps) {
   useEffect(() => head.current?.focus(), []);
   return (
     <section className="decide-stale" aria-labelledby="decide-stale-title">
-      <div className="psl-callout psl-callout--warning decide-stale__notice" role="alert">
-        <h2 id="decide-stale-title" ref={head} tabIndex={-1} className="decide-stale__head">
-          A newer version arrived while you were reading.
-        </h2>{' '}
-        <p className="decide-plain">
-          {current.version.drafted_at && (
-            <>
-              Version {newN} was drafted at <When at={current.version.drafted_at} />.{' '}
-            </>
-          )}
-          Version {oldN} can no longer be approved.
-        </p>
+      {/* the shared Callout as the boards set it: running text with no icon (block flow, see decide.css); the wrapper
+          announces it, as the page changed under the reader */}
+      <div role="alert">
+        <Callout kind="warning" icon={false} plain className="decide-stale__notice">
+          <h2 id="decide-stale-title" ref={head} tabIndex={-1} className="decide-stale__head">
+            A newer version arrived while you were reading.
+          </h2>{' '}
+          <p className="decide-plain">
+            {current.version.drafted_at && (
+              <>
+                Version {newN} was drafted at <When at={current.version.drafted_at} />.{' '}
+              </>
+            )}
+            Version {oldN} can no longer be approved.
+          </p>
+        </Callout>
       </div>
       <div className="decide-compare">
         <section className="decide-compare__old" aria-labelledby="decide-old-title">
@@ -375,9 +375,9 @@ export function StaleView({ replaced, current, agent, onReview }: StaleProps) {
       {!phone && agent}
       <div className="decide-stale__foot">
         <p className="decide-stale__action">
-          <button type="button" className="psl-btn psl-btn--lg psl-btn--block" onClick={onReview}>
+          <Button size="lg" block onClick={onReview}>
             Review version {newN}
-          </button>
+          </Button>
         </p>
         <p className="psl-doesnt">Decisions always apply to one exact version, so an approval can never land on the wrong one.</p>
       </div>
@@ -398,6 +398,7 @@ type DoneProps = {
 /** An echo other than the three verdicts gets neutral words: the page never claims a decision it wasn't told. */
 const RECORDED = { eyebrow: 'DECISION RECORDED', heading: (label: string) => `Decision recorded on ${label}` };
 
+// The next-step card is the callout's markup written out: the boards draw Chidi's pose where the callout has its icon.
 export function DoneView({ id, item, result, label, reloaded, refreshFailed, view }: DoneProps) {
   const known = Object.hasOwn(VERDICT_WORDS, result.verdict);
   const words = known ? VERDICT_WORDS[result.verdict as Verdict] : RECORDED;
@@ -406,7 +407,7 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
   const facts = presentationOf(reloaded ?? item);
   // the done boards draw Chidi's thumbs-up pose (public/agents/chidi-done.png); other agents keep their avatar
   const agentName = (reloaded ?? item).agent.name;
-  const image = agentName?.toLowerCase() === 'chidi' ? '/agents/chidi-done.png' : agentImage(agentName);
+  const image = agentName?.toLowerCase() === 'chidi' ? '/agents/chidi-done.png' : undefined;
   // desktop draws Paid once, inside the next-step card; the phone board draws it as its own line
   const phone = useIsPhone();
   const showPaid = approved && (phone || !reloaded?.next_step.includes('Paid is tracked separately'));
@@ -425,14 +426,13 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
         title={words.heading(view?.client ? `${label} for ${view.client}` : label)}
         focusHeading
       />
-      <p className="decide-sr" role="status">
+      <p className="cmp-sr" role="status">
         Your decision was recorded.
       </p>
       <div className="decide-done">
         {refreshFailed && (
-          <div className="psl-callout psl-callout--warning" role="alert">
-            <WarningIcon />
-            <span>We couldn&rsquo;t refresh this item. Open the work item to see the latest.</span>
+          <div role="alert">
+            <Callout kind="warning">We couldn&rsquo;t refresh this item. Open the work item to see the latest.</Callout>
           </div>
         )}
         {reloaded && <FactsStrip facts={reloaded.facts} details={facts?.facts} tones={facts?.fact_tones} paidNote={false} />}
@@ -447,11 +447,11 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
           )}
           <p className="decide-links">
             {next && (
-              <Link className="psl-btn psl-btn--dark psl-btn--lg" href={next.href}>
+              <Link className={buttonClass('dark', 'lg')} href={next.href}>
                 {next.label}
               </Link>
             )}
-            <Link className="psl-btn psl-btn--secondary psl-btn--lg" href={workHref(id)}>
+            <Link className={buttonClass('secondary', 'lg')} href={workHref(id)}>
               Open the work item
             </Link>
           </p>

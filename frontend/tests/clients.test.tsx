@@ -74,7 +74,7 @@ function renderList() {
 async function openList() {
   renderList();
   await screen.findByRole('heading', { level: 1, name: 'Clients' });
-  await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+  await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 }
 async function openDetail(id: string) {
   render(
@@ -229,7 +229,7 @@ describe('Client detail (SCR-35 detail)', () => {
     expect(emailBox().value).toBe('');
     expect(screen.getByText('Needed before any invoice can start')).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Patient app' }).getAttribute('href')).toBe('/projects/P-0101');
-    const money = screen.getByRole('heading', { name: 'Money' }).closest('section')!;
+    const money = screen.getByRole('region', { name: 'Money' });
     expect(within(money).getAllByRole('term').map((t) => t.textContent)).toEqual(['Invoiced', 'Received', 'Owed']);
     expect(within(money).getAllByRole('definition').map((d) => d.textContent)).toEqual(['₦6,000,000.00', '₦3,000,000.00', 'Unknown amount not known']);
     expect(screen.getByRole('link', { name: 'Clients' }).getAttribute('href')).toBe('/clients');
@@ -240,7 +240,7 @@ describe('Client detail (SCR-35 detail)', () => {
   it('CL-3509 (only required fields): no banner, no money, "No projects yet.", no placeholders', async () => {
     await openDetail('CL-3509');
     expect(screen.getByText('No projects yet.')).toBeTruthy();
-    expect(screen.queryByRole('heading', { name: 'Money' })).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Money' })).toBeNull();
     expect(document.querySelector('.psl-callout')).toBeNull();
     expect(screen.queryByText('Unknown')).toBeNull();
   });
@@ -257,7 +257,7 @@ describe('Client detail (SCR-35 detail)', () => {
 
   it('CL-3507: the sample client reads Unknown for every amount, never 0', async () => {
     await openDetail('CL-3507');
-    const money = screen.getByRole('heading', { name: 'Money' }).closest('section')!;
+    const money = screen.getByRole('region', { name: 'Money' });
     expect(within(money).getAllByRole('definition').map((d) => d.textContent)).toEqual(['Unknown amount not known', 'Unknown amount not known', 'Unknown amount not known']);
   });
 
@@ -291,7 +291,7 @@ describe('Client detail (SCR-35 detail)', () => {
     expect(reads()).toHaveLength(2);
     expect(nameBox().value).toBe('Ada Okoye');
     expect(emailBox().value).toBe('ada@lagoon.example');
-    expect(document.querySelector('.psl-callout')).toBeNull();
+    expect(document.querySelector('.psl-callout--problem, .psl-callout--warning')).toBeNull();
     expect(screen.getByRole('status').textContent).toBe('Billing contact saved.');
     expect(saveButton()!.textContent).toBe('Save billing contact');
   });

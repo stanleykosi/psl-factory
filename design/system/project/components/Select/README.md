@@ -3,7 +3,7 @@
 Pick one value from a list of up to about 15. For longer lists add a search box at the top of the list; for 2 to 5 short options use the segmented choice instead.
 
 ## Control
-Same box as a text field with a chevron on the right. States: placeholder, hover, focus, open (focus ring stays, chevron turns), chosen, error, disabled.
+Same box as a text field with the boards' small ▾ on the right (drawn by CSS, so it is not part of the control's text). States: placeholder, hover, focus, open (focus ring stays, chevron turns), chosen, error, disabled.
 
 ## List
 - Opens below the control (above it if there is no room), at least as wide as the control, with the `shadow-pop` hard shadow.

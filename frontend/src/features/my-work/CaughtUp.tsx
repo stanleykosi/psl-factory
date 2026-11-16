@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { api, call } from "@/api/client";
+import { Button, buttonClass } from "@/components";
 
 import {
   AGENT_AVATAR,
@@ -96,13 +97,9 @@ export function CaughtUp({
             </p>
             {Boolean(started) && (
               <div className="my-work__nothingactions">
-                <button
-                  type="button"
-                  className="psl-btn psl-btn--secondary"
-                  onClick={onSeeStarted}
-                >
+                <Button kind="secondary" onClick={onSeeStarted}>
                   See what you started
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -201,13 +198,13 @@ function WhileYoureFree({ suggestions }: { suggestions: Suggestion[] }) {
           <span className="my-work__freeactions">
             <Link
               href={s.href}
-              className="psl-btn psl-btn--secondary psl-btn--sm my-work__freeaction"
+              className={`${buttonClass("secondary", "sm")} cmp-btn-sm my-work__freeaction`}
             >
               {s.action}
             </Link>
             <button
               type="button"
-              className="psl-link my-work__linkbutton my-work__notnow"
+              className="psl-link cmp-linkbutton my-work__notnow"
               onClick={() => setHidden([...hidden, s.id])}
             >
               Not now

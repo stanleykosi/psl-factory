@@ -29,6 +29,12 @@
       "name": "← Projects",
       "reason": "Frame phone bar back link (usePhoneBack) draws the arrow as an icon, so its accessible name is 'Back to Projects'; same place and wording as the board",
       "approved_by": "builder proposal, extra round D-47 (design engineer to confirm)"
+    },
+    {
+      "role": "text",
+      "name": "—",
+      "reason": "A closed project's next milestone: the board draws '—' (D-94: a closed project has no next milestone to come). Applies to the closed-project row only. The page draws '—' when the API says the project is closed (the Closed tab); E-PROJECTS rows carry no open/closed state of their own, so on 'All I can see' the closed row reads Unknown until the contract adds it.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-94"
     }
   ],
   "visual_waivers": [

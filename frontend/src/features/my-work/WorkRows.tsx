@@ -1,30 +1,40 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
+import { AgentAvatar as Avatar, MiniStationBar, Table, Tag, type Column, type StationStatus } from '@/components';
 import { SampleLabel } from '@/shell/SampleLabel';
 
-import { AGENT_AVATAR, formatAge, KINDS, miniSegments, stateTag, stationText, type WorkItem } from './model';
+import { formatAge, KINDS, miniSegments, stateTag, stationText, type WorkItem } from './model';
 
 function KindTag({ kind }: { kind: WorkItem['kind'] }) {
   const tag = KINDS[kind];
-  return <span className={`psl-tag psl-tag--${tag.family} my-work__kind`}>{tag.words}</span>;
+  return (
+    <Tag tone={tag.family} className="my-work__kind">
+      {tag.words}
+    </Tag>
+  );
 }
 
 function StateTag({ state, words }: { state: string; words?: string }) {
   const tag = stateTag(state);
-  return <span className={`psl-tag psl-tag--${tag.family}`}>{words ?? tag.words}</span>;
+  return <Tag tone={tag.family}>{words ?? tag.words}</Tag>;
 }
 
-/** CMP-18: the agent's mascot on its own tint, beside the work it drafted or is doing. */
+/** CMP-18: the agent's mascot on its own tint, beside the work it drafted or is doing. The name is beside it in words. */
 export function AgentAvatar({ agent }: { agent?: WorkItem['agent'] }) {
-  if (!agent) return null;
-  const avatar = AGENT_AVATAR[agent];
-  return <Image src={avatar.src} alt={avatar.alt} width={20} height={20} className={`psl-avatar psl-avatar--20 psl-avatar--${agent} my-work__avatar`} />;
+  return agent ? <Avatar agent={agent} size={20} /> : null;
 }
 
-function Segments({ item, className }: { item: WorkItem; className: string }) {
+const STATUS: Record<string, StationStatus> = { d: 'done', p: 'person', a: 'agent', w: 'waiting', s: 'stopped', v: 'verified', '': 'todo' };
+
+/** CMP-03: one segment per station, with the station's words beside it. */
+function Stations({ item, className }: { item: WorkItem; className: string }) {
+  return <MiniStationBar className={className} stations={miniSegments(item.station, item.state).map((cls) => STATUS[cls])} text={stationText(item.station, item.state)} />;
+}
+
+/** The phone card draws the bar alone (the state tag beside it carries the words), so it is not the MiniStationBar, which always writes its words. */
+function CardBar({ item }: { item: WorkItem }) {
   return (
-    <span className={`psl-mini__bar ${className}`} aria-hidden="true">
+    <span className="psl-mini__bar my-work__cardbar" aria-hidden="true">
       {miniSegments(item.station, item.state).map((cls, i) => (
         <i key={i} className={cls || undefined} />
       ))}
@@ -32,49 +42,42 @@ function Segments({ item, className }: { item: WorkItem; className: string }) {
   );
 }
 
+const COLUMNS: Column<WorkItem>[] = [
+  {
+    key: 'work',
+    header: 'WORK',
+    cell: (item) => (
+      <>
+        <KindTag kind={item.kind} />
+        <Link href={`/work/${item.id}`} className="my-work__title" data-work-link="">
+          {item.title}
+        </Link>
+        <span className="my-work__meta">
+          {item.line} · <span className="psl-mono">{item.reference}</span> <SampleLabel show={item.sample} />
+        </span>
+      </>
+    ),
+  },
+  { key: 'where', header: 'WHERE ON ITS LINE', cell: (item) => <Stations item={item} className="my-work__station" /> },
+  {
+    key: 'state',
+    header: 'STATE',
+    cell: (item) => (
+      <>
+        <StateTag state={item.state} />
+        <span className="my-work__waiting">
+          <AgentAvatar agent={item.agent} />
+          {item.waiting_on}
+        </span>
+      </>
+    ),
+  },
+  { key: 'age', header: 'AGE', cell: (item) => formatAge(item.age_seconds), mono: true },
+];
+
 /** Desktop (SCR-01-desktop): Work, Where on its line, State, Age. */
 export function WorkTable({ items }: { items: WorkItem[] }) {
-  return (
-    <div className="psl-tablewrap my-work__tablewrap">
-      <table className="psl-table my-work__table">
-        <thead>
-          <tr>
-            <th scope="col">WORK</th>
-            <th scope="col">WHERE ON ITS LINE</th>
-            <th scope="col">STATE</th>
-            <th scope="col">AGE</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item) => (
-            <tr key={item.id}>
-              <td>
-                <KindTag kind={item.kind} />
-                <Link href={`/work/${item.id}`} className="my-work__title" data-work-link="">
-                  {item.title}
-                </Link>
-                <span className="my-work__meta">
-                  {item.line} · <span className="psl-mono">{item.reference}</span> <SampleLabel show={item.sample} />
-                </span>
-              </td>
-              <td className="psl-mini__text my-work__station">
-                <Segments item={item} className="my-work__bar" />
-                {stationText(item.station, item.state)}
-              </td>
-              <td>
-                <StateTag state={item.state} />
-                <span className="my-work__waiting">
-                  <AgentAvatar agent={item.agent} />
-                  {item.waiting_on}
-                </span>
-              </td>
-              <td className="my-work__age">{formatAge(item.age_seconds)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  return <Table caption="Your work" columns={COLUMNS} rows={items} rowKey={(item) => item.id} empty="Nothing to show." className="my-work__tablewrap" />;
 }
 
 /** Phone (SCR-01-mobile): each card is one link to the work item. */
@@ -91,7 +94,7 @@ export function WorkCards({ items }: { items: WorkItem[] }) {
               </span>
               <span className="my-work__age">{formatAge(item.age_seconds)}</span>
             </span>
-            <Segments item={item} className="my-work__cardbar" />
+            <CardBar item={item} />
             <span className="my-work__cardstate">
               <StateTag state={item.state} />
               <span className="my-work__cardnote">{item.waiting_on}</span>

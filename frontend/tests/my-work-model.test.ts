@@ -45,7 +45,7 @@ describe('state words and families (CMP-05)', () => {
     ['owner_needed', 'Owner needed', 'person'],
     ['setup_needed', 'Setup needed', 'person'],
     ['action_needed', 'Action needed', 'person'],
-    ['effect_uncertain', 'Effect uncertain', 'person'],
+    ['effect_uncertain', 'Effect uncertain', 'waiting'],
     ['awaiting_reconciliation', 'Awaiting reconciliation', 'waiting'],
     ['verified', 'Verified', 'done'],
     ['cancelled', 'Cancelled', 'neutral'],

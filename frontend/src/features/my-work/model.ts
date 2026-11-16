@@ -1,5 +1,6 @@
 // My work (SCR-01): view state, the E-WORK-LIST query and display mappings. Pure functions only.
 import type { operations } from '@/api/schema';
+import { formatClock, STATE_TAGS } from '@/components';
 
 type Operation = operations['E-WORK-LIST'];
 export type WorkQuery = Operation['parameters']['query'];
@@ -30,20 +31,24 @@ const DEFAULT_LIMIT: Limit = 20;
 
 export type Family = 'person' | 'agent' | 'waiting' | 'done' | 'neutral';
 
-/** CMP-05 words and colour family for each contract state, in contract order. */
-export const STATES: Record<WorkState, { words: string; family: Family }> = {
-  ready: { words: 'Ready to continue', family: 'person' },
-  processing: { words: 'Processing', family: 'agent' },
-  waiting: { words: 'Waiting', family: 'waiting' },
-  owner_needed: { words: 'Owner needed', family: 'person' },
-  setup_needed: { words: 'Setup needed', family: 'person' },
-  action_needed: { words: 'Action needed', family: 'person' },
-  effect_uncertain: { words: 'Effect uncertain', family: 'person' },
-  awaiting_reconciliation: { words: 'Awaiting reconciliation', family: 'waiting' },
-  verified: { words: 'Verified', family: 'done' },
-  cancelled: { words: 'Cancelled', family: 'neutral' },
-  followup_needed: { words: 'Stopped: invoice follow-up needed', family: 'person' },
-};
+/** CMP-05 words and colour family for each contract state: the shared StateTag table (README), in contract order. */
+const CONTRACT_STATES: WorkState[] = [
+  'ready',
+  'processing',
+  'waiting',
+  'owner_needed',
+  'setup_needed',
+  'action_needed',
+  'effect_uncertain',
+  'awaiting_reconciliation',
+  'verified',
+  'cancelled',
+  'followup_needed',
+];
+export const STATES = Object.fromEntries(CONTRACT_STATES.map((key) => [key, { words: STATE_TAGS[key].text, family: STATE_TAGS[key].tone }])) as Record<
+  WorkState,
+  { words: string; family: Family }
+>;
 export const STATE_KEYS = Object.keys(STATES) as WorkState[];
 
 /** A state outside the table (only if the contract changes) shows its raw value as neutral. */
@@ -137,17 +142,16 @@ export function formatAge(seconds: number): string {
   return `${Math.floor(seconds / 86400)}d`;
 }
 
-/** 24-hour HH:MM in the browser's time zone. */
-export function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
-}
+/** "10:42" in WAT, as the SCR-01 boards write it ("updated 10:42"). */
+export const formatTime = formatClock;
 
 const SEGMENT_BY_FAMILY: Record<Family, string> = { person: 'p', agent: 'a', waiting: 'w', done: '', neutral: '' };
 
 /** CMP-03 segment classes: done before the current station, the state's class on it, empty after. */
 export function miniSegments(station: WorkItem['station'], state: string): string[] {
   if (state === 'verified') return Array.from({ length: station.count }, (_, i) => (i === station.count - 1 ? 'v' : 'd'));
-  const current = state === 'followup_needed' ? 's' : state === 'cancelled' ? '' : SEGMENT_BY_FAMILY[stateTag(state).family];
+  // The segment says who holds the station, not the tag's colour: a Ready item is held by a person.
+  const current = state === 'followup_needed' ? 's' : state === 'cancelled' ? '' : state === 'ready' ? 'p' : SEGMENT_BY_FAMILY[stateTag(state).family];
   return Array.from({ length: station.count }, (_, i) => {
     const n = i + 1;
     if (n < station.index) return 'd';

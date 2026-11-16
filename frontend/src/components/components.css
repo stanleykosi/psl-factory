@@ -1,0 +1,155 @@
+/* Shared components (src/components): only what psl-bundle.css does not already draw. Tokens only, except the
+   phone breakpoint (custom properties cannot be used in @media). Every class here is cmp-*, or a
+   psl-* class narrowed by a cmp-* one, so feature markup that still uses the bundle by hand is not changed. */
+
+/* screen-reader-only text */
+.cmp-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* page title (text style page-title, 1.08 line height as the boards draw it); smaller sizes where a board draws them */
+.cmp-pagehead { display: flex; flex-direction: column; gap: var(--space-1); }
+.cmp-page-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-size: var(--text-page-title-size); line-height: 1.08; font-weight: var(--text-page-title-weight); }
+.cmp-page-title--36 { font-size: var(--text-page-title-36-size); }
+.cmp-page-title--34 { font-size: var(--text-display-l-size); }
+.cmp-page-title--32 { font-size: var(--text-page-title-32-size); }
+.cmp-page-title--30 { font-size: var(--text-page-title-30-size); }
+.cmp-page-title--28 { font-size: var(--text-page-title-28-size); }
+
+/* popovers: menus, select lists, date pickers, filter panels, tooltips */
+.cmp-anchor { position: relative; }
+.cmp-anchor--inline { display: inline-flex; }
+.psl-pop.cmp-pop { position: absolute; top: calc(100% + var(--space-1)); left: 0; z-index: var(--z-pop); }
+.psl-pop.cmp-pop--fill { min-width: 100%; }
+.psl-pop.cmp-pop--up { top: auto; bottom: calc(100% + var(--space-1)); }
+.psl-pop.cmp-pop--end { left: auto; right: 0; }
+
+/* menu: button items, the head, an inset focus ring with the keyboard-active edge */
+.cmp-menuhead { padding: var(--space-3) var(--space-14px); border-bottom: var(--rule-strong) solid var(--ink); }
+.cmp-menuhead strong { display: block; }
+.psl-menuitem.cmp-menubutton { width: 100%; border: none; background: none; font: inherit; text-align: left; }
+.cmp-menu .psl-menuitem:focus-visible { outline-offset: calc(var(--rule-strong) * -1); }
+
+/* inputs that wrap an <input> (money, date): the ring sits on the box */
+.psl-input.cmp-wrapped:focus-within { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); background: var(--surface); }
+.cmp-wrapped input:focus-visible { outline: none; }
+.psl-input.cmp-wrapped.is-readonly { background: var(--surface-subtle); border-color: var(--rule-soft); }
+/* the button inside a wrapped field (calendar) is a full 44px target: it overlaps the box's 2px border top and bottom */
+.cmp-inputbtn.psl-iconbtn { width: calc(var(--control-md) - var(--space-2)); height: var(--control-md); margin: calc(var(--rule-strong) * -1) calc(var(--space-2) * -1) calc(var(--rule-strong) * -1) 0; }
+.cmp-search { appearance: none; }
+.cmp-search::-webkit-search-cancel-button, .cmp-search::-webkit-search-decoration { appearance: none; -webkit-appearance: none; }
+.cmp-cal__row { display: contents; }
+
+/* the select's arrow: the boards' small ▾ (D-93), drawn by CSS so it is not part of the control's text */
+.cmp-selectarrow::before { content: "▾"; }
+
+/* an empty state's heading looks the same at either level (sheet-title, as the bundle draws the h3) */
+.psl-empty h2 { margin: 0; font-family: var(--font-display); font-weight: var(--text-sheet-title-weight); font-size: var(--text-sheet-title-size); font-stretch: 112%; }
+
+/* the filters-on count, ink as the boards draw it (D-93) */
+.psl-badge.cmp-badge--ink { background: var(--ink); color: var(--on-strong); }
+
+/* text area drawn as one line (D-93); it grows with its text */
+.psl-input--area.cmp-area--line { min-height: var(--control-md); }
+
+/* radio groups */
+.cmp-fieldset { border: none; margin: 0; padding: 0; min-width: 0; }
+.cmp-fieldset > legend { padding: 0; margin-bottom: var(--space-1); }
+.cmp-choices { display: flex; flex-direction: column; }
+.cmp-choices--cards { gap: var(--space-2); }
+
+/* tabs drawn as buttons */
+.psl-tab.cmp-tabbutton { font: inherit; font-weight: 500; border: none; border-right: var(--rule-strong) solid var(--ink); }
+
+/* restricted link: lock and words */
+.psl-link.cmp-restricted { display: inline-flex; gap: var(--space-6px); align-items: center; white-space: nowrap; }
+
+/* a button drawn as a link (Clear all, Clear selection) */
+.psl-link.cmp-linkbutton { background: none; border: none; padding: 0; font: inherit; }
+.psl-link.cmp-linkbutton--small { font-size: var(--text-hint-size); }
+
+/* a panel head drawn as a heading keeps the head's look */
+.cmp-panelbox > .psl-panel__head:is(h2, h3, h4) { margin: 0; }
+
+/* panel tints the Panel page draws */
+.cmp-panelbox.psl-panel--agent > .psl-panel__head, .cmp-panelbox.psl-panel--agent > .psl-panel__body { color: var(--action-ink); }
+.cmp-panelbox.psl-panel--readonly > .psl-panel__head { border-bottom-color: var(--rule-soft); }
+.cmp-panelbox.psl-panel--readonly > .psl-panel__body { color: var(--ink-muted); }
+
+/* disclosure drawn as a link (D-93): no box and no triangle; the inline trigger keeps the sentence's line height */
+.cmp-disclosure--link > summary { list-style: none; display: inline; }
+.cmp-disclosure--link > summary::-webkit-details-marker { display: none; }
+.cmp-disclosure--link > div { margin-top: var(--space-2); }
+.psl-link.cmp-disclosurelink { background: none; border: none; padding: 0; font: inherit; }
+
+/* list toolbar and filter panel */
+.cmp-toolsearch { flex: 1 1 calc(var(--space-7) * 7); max-width: calc(var(--space-7) * 10 + var(--space-5)); }
+.cmp-chips { display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; margin-top: var(--space-10px); }
+/* the SCR-01 filter board's panel width */
+.psl-pop.cmp-filter { width: var(--filter-panel); }
+.cmp-filter__head, .cmp-filter__title { font-family: var(--font-display); font-weight: var(--text-panel-head-weight); font-size: var(--text-panel-head-size); line-height: 1.25; text-transform: uppercase; }
+.cmp-filter__head { padding: var(--space-3) var(--space-4); border-bottom: var(--rule-strong) solid var(--ink); }
+.cmp-filter__body { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-14px); }
+.cmp-filter__foot { padding: var(--space-3) var(--space-4); border-top: var(--rule-strong) solid var(--ink); display: flex; gap: var(--space-10px); }
+.cmp-filtersheet .psl-sheet__body { gap: var(--space-3); }
+
+/* overlays: drawer, sheet, dialog over the scrim */
+.cmp-layer { position: fixed; inset: 0; z-index: var(--z-overlay); display: flex; justify-content: flex-end; }
+.cmp-layer > .psl-scrim { position: absolute; inset: 0; }
+.cmp-layer--sheet { align-items: flex-end; }
+.cmp-layer--center { align-items: center; justify-content: center; padding: var(--space-5); }
+.cmp-panel { position: relative; outline: none; }
+/* the drawer head's words stack: eyebrow, title, one line of context (the boards) */
+.cmp-headtext { display: flex; flex-direction: column; min-width: 0; }
+.cmp-headtext .psl-drawer__title { overflow-wrap: anywhere; }
+/* the close button keeps the head as tall as the boards draw it */
+.cmp-panel > .psl-drawer__head > .psl-iconbtn { margin: calc(var(--space-2) * -1) calc(var(--space-2) * -1) 0 0; }
+.cmp-layer--drawer > .psl-drawer { height: 100%; }
+.cmp-layer--sheet > .psl-sheet { width: 100%; max-height: 100%; }
+/* the drawer as a phone sheet: full height, or (keepTop) its top 70px under the phone bar so the page's top stays in
+   view, as SCR-04-mobile draws it (D-93) */
+.cmp-layer--sheet > .cmp-panel--full { height: 100%; }
+.cmp-layer--sheet > .cmp-panel--keeptop { height: calc(100% - var(--control-md) - var(--space-3) - var(--sheet-top-gap)); }
+.cmp-panel--full .psl-drawer__title { font-size: var(--text-sheet-title-size); }
+.cmp-scroll { overflow: auto; flex: 1 1 auto; min-height: 0; }
+.cmp-swipe { touch-action: pan-x; }
+/* the sheet title (BottomSheet page, SCR-04-mobile): text style sheet-title */
+.cmp-sheet-title { font-family: var(--font-display); font-weight: var(--text-drawer-title-weight); font-size: var(--text-sheet-title-size); }
+
+/* toast */
+.cmp-toasts { position: fixed; left: 50%; bottom: var(--space-5); transform: translateX(-50%); z-index: var(--z-toast); }
+.cmp-toast__action { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--on-strong); text-decoration: underline; cursor: pointer; }
+
+/* tooltip above its trigger */
+.psl-tip.cmp-tip { position: absolute; left: 0; bottom: calc(100% + var(--space-2)); z-index: var(--z-pop); width: max-content; }
+.psl-tip.cmp-tip[hidden] { display: none; }
+
+/* file upload */
+.psl-drop.cmp-drop:has(input:focus-visible) { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.cmp-drop__error { color: var(--signal-ink); }
+.psl-file.cmp-file--restricted { border-color: var(--rule-soft); }
+.psl-progress.cmp-progress { display: block; }
+
+/* table, loading, facts, agent steps */
+.cmp-bulk { display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; margin-bottom: var(--space-10px); }
+.psl-panel.cmp-skeleton { padding: var(--space-3); display: grid; gap: var(--space-10px); }
+.cmp-stack { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; }
+.cmp-progresstext { font-size: var(--text-small-size); color: var(--ink-muted); }
+.psl-doesnt.cmp-paidnote { margin: var(--space-2) 0 0; }
+.psl-step--done .psl-step__box .cmp-steptick { color: var(--on-strong); }
+
+/* phones: every target at least 44px (D-92 c) */
+@media (max-width: 719.98px) {
+  /* a link standing on its own (crumb, empty-state action, an inline disclosure, cmp-target) is a 44px target; the
+     extra height overlaps the line around it, so the text sits where the board draws it */
+  /* a filter chip's remove button is a 44px target; the drawn chip keeps its size (the button reaches past its edge into
+     the gaps, which are 12px between rows so neighbouring targets never overlap) */
+  .cmp-chips { row-gap: var(--space-3); }
+  .cmp-chips .psl-chip > button { width: var(--control-md); height: var(--control-md); margin: calc((var(--control-md) - var(--chip-height)) / -2) calc(var(--space-2) * -1) calc((var(--control-md) - var(--chip-height)) / -2) 0; }
+  .psl-crumb a, .psl-empty > a, .psl-link.cmp-disclosurelink, .cmp-target { display: inline-block; padding-block: calc((var(--control-md) - 1lh) / 2); margin-block: calc((var(--control-md) - 1lh) / -2); }
+  .cmp-page-title { font-size: var(--text-page-title-phone-size); }
+  .cmp-page-title.cmp-page-title--p24 { font-size: var(--text-title-size); }
+  .cmp-page-title.cmp-page-title--p22 { font-size: var(--text-page-title-phone-22-size); }
+  .cmp-page-title.cmp-page-title--p20 { font-size: var(--text-drawer-title-size); }
+  .psl-btn.cmp-btn-sm { min-height: var(--control-md); }
+  .psl-check.cmp-check, .psl-radio.cmp-check { min-height: var(--control-md); }
+  .psl-link.cmp-linkbutton { display: inline-flex; align-items: center; min-height: var(--control-md); }
+}

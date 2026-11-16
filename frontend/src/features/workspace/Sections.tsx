@@ -6,9 +6,8 @@
 import Link from 'next/link';
 import { Fragment, useId, type ReactNode } from 'react';
 
+import { Button, Callout, formatDayTime, Tag, Unknown as UnknownValue } from '@/components';
 import { isAppPath } from '@/features/work-item/presentation';
-import { formatWat } from '@/features/work-item/labels';
-import { WarningIcon } from '@/shell/icons';
 
 import {
   agentName,
@@ -20,7 +19,7 @@ import {
   refText,
   SEVERITY_WORDS,
   STATUS_WORDS,
-  tagClass,
+  tagTone,
   word,
   WS_TEXT,
   type Cell,
@@ -47,9 +46,7 @@ export type ItemControls = {
 /** A blank or missing value is Unknown, never an empty box. */
 const hasValue = (value: string | null | undefined): value is string => typeof value === 'string' && value.trim() !== '';
 
-export function Unknown() {
-  return <span className="psl-unknown">{WS_TEXT.unknown}</span>;
-}
+const Unknown = UnknownValue;
 
 function MoneyValue({ money }: { money: Money }) {
   const text = moneyText(money);
@@ -83,7 +80,7 @@ function Cites({ item }: { item: Item }) {
     return (
       <span className="ws-cites">
         <span className="ws-cite">{item.cite_label}</span>
-        {cites.length > 0 && <span className="work-sr"> ({cites.map(refText).join(', ')})</span>}
+        {cites.length > 0 && <span className="cmp-sr"> ({cites.map(refText).join(', ')})</span>}
       </span>
     );
   }
@@ -175,7 +172,7 @@ function CellValue({ cell, column }: { cell: Cell | undefined; column: Column })
   let value: ReactNode = cell.text;
   if (kind === 'money') value = cell.money ? <MoneyValue money={cell.money} /> : <Unknown />;
   else if (kind === 'date') value = cell.date ? <DateText value={cell.date} /> : <Unknown />;
-  else if (kind === 'tag' && cell.tag) value = <span className={tagClass(cell.tag.tone)}>{cell.tag.label}</span>;
+  else if (kind === 'tag' && cell.tag) value = <Tag tone={tagTone(cell.tag.tone)}>{cell.tag.label}</Tag>;
   else if (kind === 'reference' && cell.link && !cell.text) return <RefView value={cell.link} />;
   return (
     <>
@@ -206,7 +203,7 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
           <tr>
             {selectable && (
               <th className="psl-check-cell">
-                <span className="work-sr">Select</span>
+                <span className="cmp-sr">Select</span>
               </th>
             )}
             {columns.map((c) => (
@@ -216,7 +213,7 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
             ))}
             {stepCol && (
               <th>
-                <span className="work-sr">Steps</span>
+                <span className="cmp-sr">Steps</span>
               </th>
             )}
           </tr>
@@ -283,7 +280,12 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                   <span>
                     <Lead item={item} />
                     {item.detail && <> · {item.detail}</>}
-                    {item.tag && <> <span className={tagClass(item.tag.tone)}>{item.tag.label}</span></>}
+                    {item.tag && (
+                      <>
+                        {' '}
+                        <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>
+                      </>
+                    )}
                   </span>
                   <Owner item={item} />
                 </span>
@@ -294,7 +296,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                   {item.status && due && ' · '}
                   {due && (
                     <span className="ws-due">
-                      <span className="work-sr">Due </span>
+                      <span className="cmp-sr">Due </span>
                       <DateText value={due} />
                     </span>
                   )}
@@ -326,7 +328,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {item.agent && !item.tag && <span className="ws-detail">Suggested by {agentName(item.agent)}</span>}
               </span>,
               <>
-                {item.tag && <span className={tagClass(item.tag.tone)}>{item.tag.label}</span>}
+                {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}
                 {!citedInLabel(item) && <Cites item={item} />}
               </>,
             );
@@ -339,7 +341,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
               </span>,
               <>
                 {item.receipt && <StatusWord value={item.receipt} kind="receipt" />}
-                {item.at && <time dateTime={item.at}> {formatWat(item.at)}</time>}
+                {item.at && <time dateTime={item.at}> {formatDayTime(item.at)}</time>}
               </>,
             );
           case 'figures':
@@ -361,7 +363,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {(item.agent || item.owner) && <span className="ws-detail">{item.agent ? agentName(item.agent) : item.owner?.name}</span>}
                 <Detail text={item.detail} />
               </span>,
-              item.at ? <time dateTime={item.at}>{formatWat(item.at)}</time> : undefined,
+              item.at ? <time dateTime={item.at}>{formatDayTime(item.at)}</time> : undefined,
             );
           default:
             // `text` and any kind the frame does not know: the words and their cites
@@ -392,9 +394,9 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
       <div className="ws-filters" role="group" aria-label={`${section.title ?? 'Section'} filters`} aria-describedby={noteId}>
         {filters.length > 0 && (
           <>
-            <button type="button" className="psl-btn psl-btn--secondary" disabled>
+            <Button kind="secondary" disabled aria-describedby={noteId}>
               {WS_TEXT.filter}
-            </button>
+            </Button>
             {filters.map((f) => (
               <button key={f.value} type="button" className="psl-chip ws-chip" disabled>
                 {f.label}
@@ -416,9 +418,9 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
   if (!section.next_cursor) return null;
   return (
     <div className="ws-more">
-      <button type="button" className="psl-btn psl-btn--secondary" disabled aria-describedby={noteId}>
+      <Button kind="secondary" disabled aria-describedby={noteId}>
         {WS_TEXT.showMore}
-      </button>
+      </Button>
       {!hasTop && (
         <span id={noteId} className="ws-detail">
           {WS_TEXT.noMore}
@@ -466,10 +468,9 @@ export function SectionView({ section, level, controls }: { section: Section; le
             <Paging section={section} position="bottom" noteId={noteId} />
             {!empty && controls?.foot?.(section)}
             {section.note && (
-              <p className="psl-callout psl-callout--warning ws-note">
-                <WarningIcon />
-                <span>{section.note}</span>
-              </p>
+              <Callout kind="warning" announce={false} className="ws-note">
+                {section.note}
+              </Callout>
             )}
           </>
         )}

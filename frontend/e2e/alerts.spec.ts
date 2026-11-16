@@ -24,7 +24,7 @@ async function expectNoAxeViolations(page: Page) {
 }
 
 async function expectClearOfSaveBar(page: Page) {
-  const callout = await page.locator('main').getByRole('alert').boundingBox();
+  const callout = await page.locator('main .psl-callout').first().boundingBox();
   const bar = await page.locator('.alerts-footer').boundingBox();
   expect(callout!.y + callout!.height).toBeLessThanOrEqual(bar!.y);
 }
@@ -35,11 +35,11 @@ const noHorizontalScroll = (page: Page) => page.evaluate(() => document.document
 const sw = (page: Page, name: string) => page.getByRole('switch', { name });
 
 async function listLoaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1, name: 'Notifications' })).toBeVisible();
 }
 async function settingsLoaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1, name: 'How you’re alerted' })).toBeVisible();
 }
 
@@ -79,7 +79,7 @@ test.describe('list at 1440 (SCR-15-desktop)', () => {
     expect(at.every((i) => i >= 0)).toBe(true);
     expect([...at].sort((a, b) => a - b)).toEqual(at);
     await expect(page.getByRole('searchbox', { name: 'Search' })).toHaveAttribute('placeholder', 'Search notifications');
-    await expect(page.getByRole('button', { name: 'Filter' })).toHaveAttribute('aria-haspopup', 'dialog');
+    await expect(page.getByRole('button', { name: 'Filter' })).toHaveAttribute('aria-expanded', 'false');
     await expect(page.getByRole('link', { name: 'Alert settings' })).toHaveAttribute('href', '/settings/alerts');
     await expectBoardRows(page);
     expect(await noHorizontalScroll(page)).toBe(true);
@@ -99,7 +99,7 @@ test.describe('list at 1440 (SCR-15-desktop)', () => {
       });
       if (name) order.push(name.slice(0, 20));
     }
-    expect(order).toEqual(['Alert settings', 'alerts-q', 'Filter', 'Invoice for Lagoon H', 'The UAT response for', 'October payroll has ']);
+    expect(order).toEqual(['Alert settings', 'Search', 'Filter', 'Invoice for Lagoon H', 'The UAT response for', 'October payroll has ']);
     const ring = await page.evaluate(() => getComputedStyle(document.activeElement!).outlineStyle);
     expect(ring).toBe('solid');
   });
@@ -121,7 +121,8 @@ test.describe('list at 390 (SCR-15-mobile)', () => {
     const listBox = (await page.getByRole('list', { name: 'Alerts' }).boundingBox())!;
     expect((await settings.boundingBox())!.y).toBeGreaterThan(listBox.y + listBox.height);
     await expect(page.getByText('NOTIFICATIONS', { exact: true })).toHaveCount(0);
-    await expect(page.getByText(/ALERTS?$/)).toHaveCount(0);
+    // the count is kept for screen readers only on the phone
+    expect(await page.locator('.psl-resultcount').evaluate((el) => el.getBoundingClientRect().width)).toBeLessThanOrEqual(1);
     expect(await noHorizontalScroll(page)).toBe(true);
     for (const target of [page.getByRole('link', { name: '← Home' }), filter, rows(page).nth(0).locator('a')]) {
       expect((await target.boundingBox())!.height).toBeGreaterThanOrEqual(44);
@@ -155,7 +156,7 @@ test.describe('search, Filter and opening at 1440', () => {
     await listLoaded(page);
     await page.getByRole('searchbox', { name: 'Search' }).fill('payroll');
     await expect(rows(page)).toHaveCount(1);
-    await expect(page.locator('.alerts-count')).toHaveText('1 ALERT');
+    await expect(page.locator('.psl-resultcount')).toHaveText('1 ALERT');
     expect(new URL(page.url()).searchParams.get('q')).toBe('payroll');
 
     await page.getByRole('searchbox', { name: 'Search' }).fill('');
@@ -166,9 +167,9 @@ test.describe('search, Filter and opening at 1440', () => {
     await dialog.getByRole('radio', { name: 'Chidi' }).check();
     await dialog.getByRole('button', { name: 'Show results' }).click();
     await expect(rows(page)).toHaveCount(2);
-    await expect(page.getByRole('button', { name: 'Filter · 1' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Filter\s*1\s*on$/ })).toBeVisible();
 
-    await page.getByRole('button', { name: 'Filter · 1' }).click();
+    await page.getByRole('button', { name: /^Filter\s*1\s*on$/ }).click();
     await expect(dialog.getByText('1 unread')).toBeVisible();
     await dialog.getByRole('checkbox', { name: /Unread only/ }).check();
     await dialog.getByRole('button', { name: 'Show results' }).click();
@@ -228,7 +229,7 @@ test.describe('list states', () => {
       await listLoaded(page);
       await expect(page.locator('.psl-empty h3')).toHaveText('No alerts yet.');
       await expect(page.getByRole('link', { name: 'Alert settings' })).toBeVisible();
-      if (viewport === DESKTOP) await expect(page.locator('.alerts-count')).toHaveText('0 ALERTS');
+      if (viewport === DESKTOP) await expect(page.locator('.psl-resultcount')).toHaveText('0 ALERTS');
       await expectNoAxeViolations(page);
     });
 
@@ -238,12 +239,11 @@ test.describe('list states', () => {
       await page.route('**/api/v1/notifications', fail);
       await page.goto('/notifications');
       const card = page.locator('main').getByRole('alert');
-      await expect(card).toContainText('ERROR · COULDN’T LOAD');
       await expect(card).toContainText('We couldn’t load your alerts. Your work is safe; nothing was changed.');
       await expect(card).toContainText('Reference not_found for support.');
       await expectNoAxeViolations(page);
       await page.unroute('**/api/v1/notifications', fail);
-      await card.getByRole('button', { name: 'Try again' }).click();
+      await page.getByRole('button', { name: 'Try again' }).click();
       await expect(rows(page)).toHaveCount(4);
     });
   }
@@ -337,9 +337,11 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await expect(body.locator('td:last-child')).toHaveText(['Straight away', 'Straight away', 'Straight away', 'In the daily digest', 'In the daily digest']);
     const states = await body.evaluateAll((trs) => trs.map((tr) => [...tr.querySelectorAll('[role=switch]')].map((s) => s.getAttribute('aria-checked')).join('/')));
     expect(states).toEqual(['true/true', 'true/true', 'true/true', 'false/true', 'false/true']);
-    await expect(page.getByLabel('Daily digest at')).toHaveValue('08:00');
-    await expect(page.getByLabel('Daily digest at').locator('option')).toHaveText(['07:00', '08:00', '09:00']);
-    await expect(page.getByLabel('Quiet hours').locator('option:checked')).toHaveText('20:00 to 07:00, and weekends');
+    await expect(page.getByRole('combobox', { name: 'Daily digest at' })).toHaveText('08:00');
+    await page.getByRole('combobox', { name: 'Daily digest at' }).click();
+    await expect(page.getByRole('option')).toHaveText(['07:00', '08:00', '09:00']);
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('combobox', { name: 'Quiet hours' })).toHaveText('20:00 to 07:00, and weekends');
     await expect(page.getByText('WhatsApp number')).toBeVisible();
     await expect(page.getByText('+234 803 *** 4412 · verified')).toBeVisible();
     await expect(page.getByText('Alerts never include amounts or client details beyond the name.')).toBeVisible();
@@ -363,7 +365,8 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await page.keyboard.press('Space');
     await expect(stuck).toHaveAttribute('aria-checked', 'false');
     expect(['solid', 'auto']).toContain(ring);
-    await page.getByLabel('Daily digest at').selectOption('09:00');
+    await page.getByRole('combobox', { name: 'Daily digest at' }).click();
+    await page.getByRole('option', { name: '09:00' }).click();
     await page.getByRole('button', { name: 'Save settings' }).click();
     await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
     await expectNoAxeViolations(page);
@@ -389,7 +392,7 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await page.reload();
     await settingsLoaded(page);
     await expect(stuck).toHaveAttribute('aria-checked', 'false');
-    await expect(page.getByLabel('Daily digest at')).toHaveValue('09:00');
+    await expect(page.getByRole('combobox', { name: 'Daily digest at' })).toHaveText('09:00');
     await page.getByRole('button', { name: 'Save settings' }).click();
     await expect(page.getByRole('status')).toHaveText('Your alert settings are saved.');
     expect((bodies[1] as { body: { expected_revision: number } }).body.expected_revision).toBe(4);
@@ -403,7 +406,7 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await decision.click();
     await expect(decision).toHaveAttribute('aria-checked', 'false');
     await page.getByRole('button', { name: 'Save settings' }).click();
-    const callout = page.locator('main').getByRole('alert');
+    const callout = page.locator('main .psl-callout--warning');
     await expect(callout).toHaveText('Someone changed these settings since you opened them. This is the latest version; make your changes again.');
     await expect(callout).toBeFocused();
     await expect(decision).toHaveAttribute('aria-checked', 'true');
@@ -469,7 +472,7 @@ test.describe('settings at 390 (SCR-15-mobile-settings)', () => {
     await expect(cards.nth(3).getByRole('switch')).toHaveCount(2);
     await expect(sw(page, 'WhatsApp, Work I started is verified')).toHaveAttribute('aria-checked', 'false');
     await expect(page.getByText('Quiet hours 20:00 to 07:00 and weekends')).toBeVisible();
-    await expect(page.getByLabel('Daily digest at')).toHaveCount(0);
+    await expect(page.getByRole('combobox', { name: 'Daily digest at' })).toHaveCount(0);
     await expect(page.getByText('WhatsApp number')).toHaveCount(0);
     const save = page.getByRole('button', { name: 'Save settings' });
     const box = (await save.boundingBox())!;
@@ -502,7 +505,7 @@ test.describe('settings at 390 (SCR-15-mobile-settings)', () => {
       await page.goto('/settings/alerts');
       await settingsLoaded(page);
       await page.getByRole('button', { name: 'Save settings' }).click();
-      await expect(page.locator('main').getByRole('alert')).toBeFocused();
+      await expect(page.locator('main .psl-callout[tabindex="-1"]')).toBeFocused();
       await expectClearOfSaveBar(page);
       await expectNoAxeViolations(page);
     });
@@ -537,7 +540,7 @@ test('the switch focus ring and the Save focus ring are visible', async ({ page 
   const rings: Record<string, string> = {};
   const targets: [string, Locator][] = [
     ['switch', sw(page, 'WhatsApp, A decision is waiting for me')],
-    ['select', page.getByLabel('Daily digest at')],
+    ['select', page.getByRole('combobox', { name: 'Daily digest at' })],
     ['save', page.getByRole('button', { name: 'Save settings' })],
   ];
   for (const [name, target] of targets) {

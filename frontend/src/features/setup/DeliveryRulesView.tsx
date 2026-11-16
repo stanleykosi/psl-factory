@@ -2,7 +2,8 @@
 
 // /setup/rules/delivery (SCR-13-desktop-delivery-rules, SCR-13-mobile-delivery-rules): E-SETUP-RULES with
 // area=delivery, read-only as drawn.
-import { InfoIcon } from './icons';
+import { Callout, PageTitle, Panel, Table, Tag } from '@/components';
+
 import { AreaCrumb, RuleList } from './FinanceRulesView';
 import { valueText } from './format';
 import { RulesEmpty, RulesReadState, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
@@ -29,64 +30,40 @@ function DeliveryRulesView() {
     <>
       <div className="setup-page setup-desktop">
         <AreaCrumb area="DELIVERY" />
-        <h1 className="setup-title setup-title--area">Delivery rules</h1>
+        <PageTitle size={32}>Delivery rules</PageTitle>
         {empty ? (
           <RulesEmpty />
         ) : (
           <div className="setup-columns">
             <div className="setup-main">
-              <section className="psl-panel" aria-labelledby="setup-delivery-head">
-                <h2 className="psl-panel__head" id="setup-delivery-head">
-                  {head}
-                </h2>
-                <div className="psl-panel__body">
-                  <div className="psl-tablewrap">
-                    <table className="psl-table setup-table setup-table--delivery">
-                      <thead>
-                        <tr>
-                          <th scope="col">RULE</th>
-                          <th scope="col">VALUE</th>
-                          <th scope="col">USED BY</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {items.map((row) => {
-                          const text = valueText(row);
-                          return (
-                            <tr key={row.component}>
-                              <td>{row.name}</td>
-                              <td>{text === null ? <span className="psl-tag psl-tag--person setup-tag">NOT SET</span> : text}</td>
-                              <td>{row.used_by?.join(', ')}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                  <ShowMore state={state} onMore={() => void loadMore()} />
-                </div>
-              </section>
-              <div className="psl-callout psl-callout--info">
-                <InfoIcon />
-                <span>These are PSL’s decisions. Until a rule is set, the line that needs it stops as “Setup needed” instead of guessing.</span>
-              </div>
+              <Panel head={<h2>{head}</h2>}>
+                <Table
+                  className="setup-deliverytable"
+                  caption="Delivery rules and where they are used"
+                  columns={[
+                    { key: 'rule', header: 'RULE', cell: (row) => row.name },
+                    { key: 'value', header: 'VALUE', cell: (row) => valueText(row) ?? <Tag tone="person">NOT SET</Tag> },
+                    { key: 'used', header: 'USED BY', cell: (row) => row.used_by?.join(', ') },
+                  ]}
+                  rows={items}
+                  rowKey={(row) => row.component}
+                  empty="No rules to show."
+                />
+                <ShowMore state={state} onMore={() => void loadMore()} />
+              </Panel>
+              <Callout kind="info">These are PSL’s decisions. Until a rule is set, the line that needs it stops as “Setup needed” instead of guessing.</Callout>
             </div>
-            <aside className="setup-aside setup-aside--next" aria-labelledby="setup-next-head">
-              <section className="psl-panel">
-                <h2 className="psl-panel__head" id="setup-next-head">
-                  Next
-                </h2>
-                <div className="psl-panel__body">
-                  <p className="setup-plain">Each rule is versioned. Changing one doesn’t change work already finished.</p>
-                </div>
-              </section>
+            <aside className="setup-aside setup-aside--next" aria-label="Next">
+              <Panel head={<h2>Next</h2>}>
+                <p className="setup-plain">Each rule is versioned. Changing one doesn’t change work already finished.</p>
+              </Panel>
             </aside>
           </div>
         )}
       </div>
 
       <div className="setup-page setup-phone">
-        <h1 className="setup-phone-title setup-phone-title--area">Delivery rules</h1>
+        <PageTitle phoneSize={20}>Delivery rules</PageTitle>
         {empty ? (
           <RulesEmpty />
         ) : (

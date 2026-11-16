@@ -27,13 +27,13 @@ const clientLinks = (page: Page) => page.locator('[data-client-link]');
 const h1Size = (page: Page) => page.getByRole('heading', { level: 1 }).evaluate((el) => getComputedStyle(el).fontSize);
 
 async function listLoaded(page: Page) {
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.getByRole('heading', { level: 1, name: 'Clients' })).toBeVisible();
 }
 
 async function detailLoaded(page: Page, name: string) {
   await expect(page.getByRole('heading', { level: 1, name })).toBeVisible();
-  await expect(page.getByRole('status').filter({ hasText: 'Loading' })).toHaveCount(0);
+  await expect(page.getByText('Loading…')).toHaveCount(0);
 }
 
 /** Tabs until the target has focus, then reads its outline. */
@@ -83,7 +83,8 @@ for (const [label, viewport] of [
       await expect(clientLinks(page)).toHaveCount(6);
       await expect(clientLinks(page).first()).toHaveAttribute('href', '/clients/CL-3501');
       await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-      expect(await h1Size(page)).toBe(phone ? '26px' : '40px');
+      // the SCR-35 boards' title sizes (D-93): 34px, 24px on the phone list
+      expect(await h1Size(page)).toBe(phone ? '24px' : '34px');
       await expect(page.getByText('6 clients as of 14 Nov, 10:00 · 2 missing billing contact')).toBeVisible();
       await expect(page.getByText('Billing contact missing')).toHaveCount(2);
       await expect(page.getByRole('main').getByRole('link', { name: /^Back to/ })).toHaveCount(0);
@@ -152,7 +153,8 @@ for (const [label, viewport] of [
       await page.goto('/clients/CL-3501');
       await detailLoaded(page, 'Lagoon Health Ltd');
       await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-      expect(await h1Size(page)).toBe(phone ? '26px' : '40px');
+      // the SCR-35 detail boards' title sizes (D-93): 34px, 22px on the phone
+      expect(await h1Size(page)).toBe(phone ? '22px' : '34px');
       await expect(page.getByText("No billing contact, so invoices for this client can't start. Add one here.")).toBeVisible();
       await expect(page.getByRole('link', { name: 'Patient app' })).toHaveAttribute('href', '/projects/P-0101');
       await expect(page.getByRole('main').getByRole('link', { name: /^Back to/ })).toHaveCount(0);
@@ -180,7 +182,7 @@ for (const [label, viewport] of [
         expect(ring.style).not.toBe('none');
       }
       await save.click();
-      await expect(page.getByRole('status')).toHaveText('Billing contact saved.');
+      await expect(page.locator('.psl-callout--success')).toHaveText('Billing contact saved.');
       await expect(page.getByText("No billing contact, so invoices for this client can't start.")).toHaveCount(0);
       await expectNoAxeViolations(page);
     });

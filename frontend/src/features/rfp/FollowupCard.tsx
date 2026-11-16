@@ -9,7 +9,8 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import type { ApiError } from '@/api/errors';
 import { WarningIcon } from '@/shell/icons';
 import type { ResponseWorkItem } from '@/features/response';
-import { AGENT_LABELS, formatClock, formatDay } from '@/features/response/labels';
+import { formatDayTime } from '@/components';
+import { AGENT_LABELS } from '@/features/response/labels';
 
 import type { Followup } from './contract';
 import { useFollowup } from './useFollowup';
@@ -141,7 +142,7 @@ export function FollowupCard({ item, followup, reload }: { item: ResponseWorkIte
         {/* one element for both, so focus stays on it when Sending… becomes Sent */}
         {(status === 'sending' || status === 'sent') && (
           <p ref={statusLine} tabIndex={-1} className="rfp-followup__status" role="status">
-            {status === 'sending' ? 'Sending…' : followup.sent_at ? `Sent ${formatDay(followup.sent_at)} ${formatClock(followup.sent_at)}` : 'Sent'}
+            {status === 'sending' ? 'Sending…' : followup.sent_at ? `Sent ${formatDayTime(followup.sent_at)}` : 'Sent'}
           </p>
         )}
         {status === 'effect_uncertain' && (

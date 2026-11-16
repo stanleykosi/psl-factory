@@ -116,3 +116,8 @@ an answer changes v7, the frontend repoints its mock and types to the new versio
 - **Unknown work id must be 404.** The mock serves a default item for any unknown id; the real API must answer 404 for an unknown or other-tenant id, and the frontend shows no client, title or id then (F-21 QA-3-2).
 - **Cited records:** see priority 1 and 2 above (list-valued `value` for `records` fields; whether an omitted cites field keeps the saved cites; scope every cite to person, case and week).
 - **Which record the weekly timeline cites:** the board shows MIN-0141 (minutes); the sample data cites MTG-0140 (weekly sync). PSL/backend to decide.
+
+## Added during design-system conformance (16 Nov)
+
+- **Projects list rows need an open/closed state** (E-PROJECTS, D-PROJECTS-VIEW). D-94: a closed project's missing next milestone shows "—", an open one's shows "Unknown". Rows carry no open/closed field today (`additionalProperties: false`), so on "All I can see" a closed project still shows Unknown. Additive: a `closed` boolean or lifecycle state per row.
+- **Overview chips need `status.tone`** for waiting, uncertain and stopped work. The page never infers colour from text (F-08); without the tone, "Effect uncertain" can't show amber.

@@ -205,7 +205,7 @@
 .psl-badge--signal { background: var(--signal); color: var(--on-strong); }
 
 /* ---------- state tag (one colour per meaning) ---------- */
-.psl-tag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; font-size: 12px; font-weight: 600; line-height: 1.4; white-space: nowrap; border-radius: var(--radius-sm); vertical-align: middle; }
+.psl-tag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; font-size: 12px; font-weight: 600; line-height: 1.4; white-space: nowrap; text-transform: uppercase; border-radius: var(--radius-sm); vertical-align: middle; }
 .psl-tag--person { background: var(--signal-tint); color: var(--signal-ink); }
 .psl-tag--waiting { background: var(--waiting-tint); color: var(--waiting-ink); }
 .psl-tag--agent { background: var(--action-tint); color: var(--action-ink); }

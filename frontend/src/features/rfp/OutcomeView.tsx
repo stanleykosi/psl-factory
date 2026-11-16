@@ -3,13 +3,13 @@
 // SCR-16 RFP outcome (/work/[id]/outcome). What is offered comes only from rfp_outcome on E-WORK-ITEM (results,
 // reasons, record_as, recorded); nothing from /me decides it (INV-ACCESS). Desktop pages sit inside the RFP
 // frame drawn from `rfp`; phones show "← RFP" and the bar note instead. Times are WAT.
+import { useIsPhone } from '@/components';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { WarningIcon } from '@/shell/icons';
-import { useIsPhone } from '@/features/response/usePhone';
 import type { ResponseWorkItem } from '@/features/response';
 import { NoAccessState, WorkErrorCard } from '@/features/work-item/WorkItemStates';
 

@@ -6,8 +6,10 @@
 import Link from 'next/link';
 import { useId, type ReactNode, type Ref } from 'react';
 
+import { Button, buttonClass } from '@/components';
+
 import type { Step } from './labels';
-import { stepClass } from './StepForm';
+import { stepKind } from './StepForm';
 import { STEP_TEXT } from './useWorkspaceStep';
 
 /** "Approving sends this exact version to Lagoon Health." plus "This sends to the client." when the sentence doesn't already say it sends. */
@@ -42,9 +44,9 @@ export function StepControl({ workId, step, off, pending, none, onPress, control
   if (step.disabled_reason) {
     return (
       <span className="ws-control">
-        <button type="button" className={stepClass(step)} aria-disabled="true" aria-describedby={reasonId} ref={controlRef}>
+        <Button kind={stepKind(step)} aria-disabled="true" aria-describedby={reasonId} ref={controlRef}>
           {step.label}
-        </button>
+        </Button>
         <span id={reasonId} className="psl-reason">
           {step.disabled_reason}
         </span>
@@ -56,7 +58,7 @@ export function StepControl({ workId, step, off, pending, none, onPress, control
     const href = `/work/${encodeURIComponent(workId)}/decide?task=${encodeURIComponent(step.task_id)}`;
     return (
       <span className="ws-control">
-        <Link className={stepClass(step)} href={href} aria-describedby={[describedBy, step.claim_required && reasonId].filter(Boolean).join(' ') || undefined}>
+        <Link className={buttonClass(stepKind(step))} href={href} aria-describedby={[describedBy, step.claim_required && reasonId].filter(Boolean).join(' ') || undefined}>
           {step.label}
         </Link>
         {step.claim_required && (
@@ -69,10 +71,11 @@ export function StepControl({ workId, step, off, pending, none, onPress, control
   }
   const inert = off || pending || none === true;
   return (
-    <button
-      type="button"
+    <Button
       ref={controlRef}
-      className={stepClass(step)}
+      kind={stepKind(step)}
+      busy={pending}
+      busyLabel={text}
       aria-disabled={inert || undefined}
       aria-describedby={describedBy}
       onClick={() => {
@@ -80,7 +83,7 @@ export function StepControl({ workId, step, off, pending, none, onPress, control
       }}
     >
       {text}
-    </button>
+    </Button>
   );
 }
 

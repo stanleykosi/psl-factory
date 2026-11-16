@@ -53,9 +53,9 @@ test.describe('desktop', () => {
     const h1 = page.getByRole('heading', { level: 1 });
     await expect(h1).toHaveText(['Roles, rules and delegation']);
     expect(await h1.evaluate((el) => getComputedStyle(el).fontSize)).toBe('34px');
-    const tabs = page.getByRole('navigation', { name: 'Setup' }).getByRole('link');
+    const tabs = page.getByRole('tablist', { name: 'Setup' }).getByRole('tab');
     await expect(tabs).toHaveText(['Roles', 'Rules', 'Costing rule', 'Delegation', 'Payroll visibility', 'Staff accounts', 'Templates']);
-    await expect(tabs.nth(6)).toHaveAttribute('aria-current', 'page');
+    await expect(tabs.nth(6)).toHaveAttribute('aria-selected', 'true');
     await expect(page.locator('.setup-tabs .psl-badge')).toHaveCount(0);
     await expect(page.getByText(/^Every document currently uses a test template\./)).toBeVisible();
     await expect(page.getByText('8 TEMPLATES · 8 TEST')).toBeVisible();
@@ -83,7 +83,7 @@ test.describe('desktop', () => {
     await button.click();
     const panel = page.getByRole('region', { name: 'Upload a version of Invoice' });
     await panel.getByLabel('File').setInputFiles(FILE);
-    await expect(panel.getByText('invoice-v2.pdf · 1 KB')).toBeVisible();
+    await expect(panel.getByText('invoice-v2.pdf · 17 B')).toBeVisible();
     await panel.getByLabel('Note (optional)').fill('Real template from PSL legal');
     await expectNoAxeViolations(page);
 
@@ -129,7 +129,7 @@ test.describe('desktop', () => {
     await expect(panel.getByLabel('File')).toHaveAttribute('aria-invalid', 'true');
     await expect(panel.getByLabel('Note (optional)')).toHaveAttribute('aria-invalid', 'true');
     await expect(panel.getByLabel('Note (optional)')).toHaveValue('keep me');
-    await expect(panel.getByLabel('File')).toHaveAccessibleDescription('That file type isn’t accepted.');
+    await expect(panel.getByLabel('File')).toHaveAccessibleDescription(/That file type isn’t accepted\./);
     await expectNoAxeViolations(page);
   });
 
@@ -171,7 +171,7 @@ test.describe('desktop', () => {
 
   test('Tab order is the tabs, the search, then each row’s Upload button', async ({ page, context }) => {
     await openAs(page, context);
-    await page.getByRole('navigation', { name: 'Setup' }).getByRole('link', { name: 'Templates' }).focus();
+    await page.getByRole('tablist', { name: 'Setup' }).getByRole('tab', { name: 'Templates' }).focus();
     await page.keyboard.press('Tab');
     await expect(page.getByRole('searchbox', { name: 'Search' })).toBeFocused();
     await page.keyboard.press('Tab');

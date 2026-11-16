@@ -18,11 +18,11 @@
 /* (c) phone menu panel under the bar; items keep the 44px phone touch target (tokens.json size note) */
 #phone-menu { position: absolute; top: 100%; left: var(--space-4); right: var(--space-4); z-index: 10; }
 #phone-menu .psl-menuitem { min-height: var(--control-md); }
-.shell-menuwho { margin: 0; padding: var(--space-2) 14px; display: flex; flex-direction: column; }
+.shell-menuwho { margin: 0; padding: var(--space-2) var(--space-14px); display: flex; flex-direction: column; }
 .shell-menuwho strong { font-weight: 600; }
-.shell-menuwho small { font-size: 12px; color: var(--ink-muted); }
+.shell-menuwho small { font-size: var(--text-small-size); color: var(--ink-muted); }
 /* a sub-page's mono note at the right of the phone bar ("RULES" on SCR-13-mobile-finance-rules); auto margin keeps it at the right edge when the SAMPLE DATA tag follows */
-.shell-phonenote { margin-left: auto; font-family: var(--font-mono); font-size: 12px; }
+.shell-phonenote { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-small-size); }
 
 /* (d) skip link, visually hidden until focused */
 .shell-skip { position: absolute; left: var(--space-4); top: var(--space-2); z-index: 20; transform: translateY(-200%); }
@@ -32,17 +32,16 @@
 body { margin: 0; background: var(--steel); }
 .shell-topbar .psl-nav__in { max-width: 1320px; margin: 0 auto; }
 .shell-main { max-width: 1320px; margin: 0 auto; padding: var(--space-6) var(--space-6) calc(var(--space-6) * 2); display: flex; flex-direction: column; gap: var(--space-5); }
-.shell-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: 40px; line-height: 1.08; }
-.shell-reference { margin: 0; font-size: 13px; color: var(--ink-muted); }
+.shell-title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: var(--text-page-title-weight); font-size: var(--text-page-title-size); line-height: 1.08; }
+.shell-reference { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 /* STATES error card: white surface, 2px signal border, mono eyebrow, message, reference, Try again */
-.shell-errorcard { background: var(--surface); border: 2px solid var(--signal); padding: 14px; display: flex; flex-direction: column; gap: var(--space-2); }
-.shell-eyebrow { font-family: var(--font-mono); font-size: 11px; color: var(--signal-ink); }
+.shell-errorcard { background: var(--surface); border: var(--rule-strong) solid var(--signal); padding: var(--space-14px); display: flex; flex-direction: column; gap: var(--space-2); }
+.shell-eyebrow { font-family: var(--font-mono); font-size: var(--text-label-size); color: var(--signal-ink); }
 .shell-errorcard__action { max-width: 200px; }
-.shell-loading { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.shell-skel { display: grid; gap: 10px; }
+.shell-loading { display: flex; flex-direction: column; gap: var(--space-10px); }
 @media (max-width: 719.98px) {
   .shell-main { padding: var(--space-4); gap: var(--space-3); }
-  .shell-title { font-size: 26px; }
+  .shell-title { font-size: var(--text-page-title-phone-size); }
   .shell-errorcard__action { max-width: none; }
 }
 
@@ -67,17 +66,17 @@ body { margin: 0; background: var(--steel); }
 .shell-bellwrap { display: inline-flex; align-items: center; flex: none; }
 .shell-bell {
   position: relative; flex: none; display: inline-grid; place-items: center; width: 36px; height: 36px; padding: 0;
-  color: var(--on-strong); background: transparent; border: 2px solid transparent; font: inherit; cursor: pointer;
+  color: var(--on-strong); background: transparent; border: var(--rule-strong) solid transparent; font: inherit; cursor: pointer;
 }
 .shell-bell:hover { background: var(--ink-strong); }
 .shell-bell.is-open { border-color: var(--on-strong); background: var(--ink-strong); }
 .shell-bellbadge {
-  position: absolute; top: -2px; right: -3px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px;
-  background: var(--signal); color: var(--on-strong); font-family: var(--font-sans); font-weight: 600; font-size: 11px; line-height: 17px; text-align: center;
+  position: absolute; top: -2px; right: -3px; min-width: 17px; height: 17px; padding: 0 var(--space-1); border-radius: 9px;
+  background: var(--signal); color: var(--on-strong); font-family: var(--font-sans); font-weight: 600; font-size: var(--text-label-size); line-height: 17px; text-align: center;
 }
 .shell-bellchip {
-  display: none; align-items: center; height: 24px; padding: 0 8px; white-space: nowrap;
-  background: var(--signal); color: var(--on-strong); font-weight: 600; font-size: 12px; line-height: 1;
+  display: none; align-items: center; height: 24px; padding: 0 var(--space-2); white-space: nowrap;
+  background: var(--signal); color: var(--on-strong); font-weight: 600; font-size: var(--text-small-size); line-height: 1;
 }
 @media (min-width: 1080px) {
   .shell-bellchip { display: inline-flex; }
@@ -88,7 +87,7 @@ body { margin: 0; background: var(--steel); }
 .shell-topbar .shell-navend > .sw-split:last-child { margin-right: 0; }
 /* 1080px to 1279px, where the chip and the role both show: 10px link padding instead of 14px keeps the bar's 28px gutter */
 @media (min-width: 1080px) and (max-width: 1279.98px) {
-  .shell-topbar:has(.shell-bellwrap) .psl-navlink { padding-left: 10px; padding-right: 10px; }
+  .shell-topbar:has(.shell-bellwrap) .psl-navlink { padding-left: var(--space-10px); padding-right: var(--space-10px); }
 }
 /* 720px up to bp-desktop: the flex gap (8px) is the clear space between the bell and the name */
 @media (min-width: 720px) and (max-width: 1079.98px) {
@@ -115,7 +114,7 @@ body { margin: 0; background: var(--steel); }
 @media (max-width: 379.98px) {
   .psl-phonebar.shell-phonebar--bell { padding-left: var(--space-2); padding-right: calc(var(--space-2) + var(--control-md) + var(--space-1)); }
   .psl-phonebar.sw-phonebar.shell-phonebar--bell { padding-right: calc(var(--space-7) * 2 + var(--space-5) + var(--control-md) + var(--space-1)); }
-  .shell-phonebar--bell .psl-brand { font-size: 13px; }
+  .shell-phonebar--bell .psl-brand { font-size: var(--text-hint-size); }
   .shell-phone .sw-phoneslot { right: var(--space-2); }
   .shell-phone .sw-phoneslot .shell-bellwrap:not(:last-child) { margin-right: var(--space-1); }
 }

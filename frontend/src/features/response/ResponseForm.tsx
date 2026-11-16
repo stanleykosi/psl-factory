@@ -5,7 +5,7 @@
 // never is. Record stays off until everything the API asks for is there, and while a write is in flight.
 import { useId, type ReactNode } from 'react';
 
-import { formatWat } from '@/features/work-item/labels';
+import { formatDayTime } from '@/components';
 
 import type { ResponseTask, TaskResponse } from './contract';
 import { AGENT_LABELS, NOTE_MAX, RESPONSE_LABELS, responderText } from './labels';
@@ -278,7 +278,7 @@ export function SowSignatureForm(props: FormProps) {
   const { ready, line } = readiness(props);
   const versions = response.versions ?? [];
   const responders = response.responders;
-  const sent = (v: (typeof versions)[number]) => (v.sent_at ? `${v.label} · sent ${formatWat(v.sent_at)}` : v.label);
+  const sent = (v: (typeof versions)[number]) => (v.sent_at ? `${v.label} · sent ${formatDayTime(v.sent_at)}` : v.label);
 
   const fields = (
     <>

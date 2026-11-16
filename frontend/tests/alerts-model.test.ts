@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 
 import type { Alert, AlertPrefs } from '@/features/alerts/types';
 import {
-  agentImage,
   agentName,
   buildAlertQuery,
   buildPrefsBody,
@@ -51,15 +50,13 @@ describe('meta line (SCR-15 presentation rules)', () => {
     expect(metaLine({ ...base, delivered_at: '2026-11-12T08:00:00Z' }, NOW)).toBe('Chidi · In app · 12 Nov');
     // 23:30 WAT on 13 Nov is still yesterday in Lagos, though it is 22:30Z.
     expect(metaLine({ ...base, delivered_at: '2026-11-13T22:30:00Z' }, NOW)).toBe('Chidi · In app · yesterday');
-    // 00:30 WAT on 14 Nov is today in Lagos, though it is still 13 Nov in UTC.
+    // 00:30 on 14 Nov is today in Lagos, though it is still 13 Nov in UTC.
     expect(metaLine({ ...base, delivered_at: '2026-11-13T23:30:00Z' }, NOW)).toBe('Chidi · In app · 00:30');
   });
 
-  it('an unknown agent keeps its key as the name and gets no image', () => {
+  it('an unknown agent keeps its key as the name', () => {
     expect(agentName('kemi')).toBe('kemi');
-    expect(agentImage('kemi')).toBeUndefined();
     expect(metaLine({ ...board.items[0], agent: 'kemi' }, NOW)).toBe('kemi · WhatsApp and email · 10:42');
-    expect(['tola', 'chidi', 'zainab'].map(agentImage)).toEqual(['/agents/tola.png', '/agents/chidi.png', '/agents/zainab.png']);
   });
 });
 

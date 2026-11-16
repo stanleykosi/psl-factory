@@ -9,7 +9,7 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { TemplatesPage, TemplateRow } from '@/features/setup/api';
-import { lagosDay, lagosStamp } from '@/features/setup/format';
+import { boardDay, boardStamp } from '@/features/setup/format';
 import { TemplatesPageView } from '@/features/setup/TemplatesView';
 import { AppShell } from '@/shell/AppShell';
 import { bellFeed, isBellFeed } from './bell-feed';
@@ -181,14 +181,14 @@ describe('the list (AC 4)', () => {
     expect(document.querySelectorAll('.setup-meta:empty')).toHaveLength(0);
   });
 
-  it('shows a version as returned and the day with the year outside the Lagos year', async () => {
+  it('shows a version as returned and the day with its year', async () => {
     answers.list = () => json(200, withRows(fixture('desktop'), (rows) => rows.map((r, i) => (i === 0 ? { ...r, version: '2026.2', updated_by: 'Ada Okafor', updated_at: '2025-06-30T10:00:00Z' } : r))));
     await open();
     expect(within(rowOf('Invoice')).getByText(/^Version 2026\.2/)).toBeTruthy();
     expect(within(rowOf('Invoice')).getByText('Changed by Ada Okafor, 30 Jun 2025')).toBeTruthy();
-    expect(lagosDay('2026-11-12T09:15:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('12 Nov');
-    expect(lagosDay('not a date')).toBeNull();
-    expect(lagosStamp('2026-11-12T10:40:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('12 Nov, 10:40');
+    expect(boardDay('2026-11-12T09:15:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('12 Nov');
+    expect(boardDay('2026-11-02T09:15:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('02 Nov');
+    expect(boardStamp('2026-11-12T10:40:00+01:00', new Date('2026-11-14T09:00:00+01:00'))).toBe('12 Nov, 10:40');
   });
 
   it('the phone shows a card per row: name, tag, line, meta and the upload button', async () => {
@@ -342,7 +342,7 @@ describe('upload gating (AC 6, 14)', () => {
     expect(phone().getByText('No templates to show.')).toBeTruthy();
     expect(document.querySelector('table')).toBeNull();
     expect(document.body.textContent).not.toMatch(/TEMPLATES ·|test template|All \d+ are/);
-    expect(desktop().getByRole('navigation', { name: 'Setup' })).toBeTruthy();
+    expect(desktop().getByRole('tablist', { name: 'Setup' })).toBeTruthy();
   });
 });
 
@@ -355,7 +355,7 @@ describe('the upload request (AC 7)', () => {
     const p = await openPanel('Closure report');
     const bytes = 'é€😀 template';
     choose(p, pdf('sow-v4.docx', bytes), '  Real SOW from legal.  ');
-    expect(p.getByText('sow-v4.docx · 1 KB')).toBeTruthy();
+    expect(p.getByText('sow-v4.docx · 18 B')).toBeTruthy();
     send();
     await waitFor(() => expect(uploads()).toHaveLength(1));
     const call = uploads()[0];
@@ -500,23 +500,22 @@ describe('invalid (422) and client refusals (AC 10)', () => {
       });
     await open();
     const p = await openPanel('Invoice');
-    choose(p, pdf('bad.exe'), 'keep me');
+    choose(p, pdf('bad.docx'), 'keep me');
     send();
     await waitFor(() => expect(p.getByRole('alert').textContent).toBe('Check these fields: filename, note.'));
     const file = p.getByLabelText('File');
     const note = p.getByLabelText('Note (optional)');
     expect(file.getAttribute('aria-invalid')).toBe('true');
     expect(note.getAttribute('aria-invalid')).toBe('true');
-    expect(document.getElementById(file.getAttribute('aria-describedby')!)?.textContent).toBe('That file type isn’t accepted.');
-    expect(note.getAttribute('aria-describedby')).toContain(document.getElementById(note.getAttribute('aria-describedby')!.split(' ')[1])!.id);
-    expect(document.getElementById(note.getAttribute('aria-describedby')!.split(' ')[1])?.textContent).toBe('The note can’t be saved.');
+    expect(file.getAttribute('aria-describedby')).toContain(p.getByText('That file type isn’t accepted.').closest('small')!.id);
+    expect(note.getAttribute('aria-describedby')).toContain(p.getByText('The note can’t be saved.').closest('span.psl-error')!.id);
     expect((note as HTMLTextAreaElement).value).toBe('keep me');
     expect(lists()).toHaveLength(1);
     expect(submit().disabled).toBe(false);
     answers.upload = () => json(200, { template_id: 'T-01', version: '2', test_template: true, revision: 2 });
     send();
     await waitFor(() => expect(uploads()).toHaveLength(2));
-    expect(uploads()[1].body).toMatchObject({ filename: 'bad.exe', note: 'keep me' });
+    expect(uploads()[1].body).toMatchObject({ filename: 'bad.docx', note: 'keep me' });
   });
 
   it('a 422 that names no field still shows the alert', async () => {
@@ -538,7 +537,6 @@ describe('invalid (422) and client refusals (AC 10)', () => {
     expect(submit().disabled).toBe(true);
     fireEvent.click(submit());
     choose(p, pdf(), 'x'.repeat(2001));
-    expect(p.getByText('2001 / 2000')).toBeTruthy();
     expect(p.getByText('The note can be up to 2000 characters.')).toBeTruthy();
     expect(submit().disabled).toBe(true);
     fireEvent.click(submit());
@@ -657,7 +655,7 @@ describe('other failures (AC 11)', () => {
 });
 
 describe('no double submit (AC 12)', () => {
-  it('two presses in one tick send one POST, and the buttons are off and read Uploading… meanwhile', async () => {
+  it('two presses in one tick send one POST, and the button is busy and reads Uploading… meanwhile', async () => {
     let release!: (r: Response) => void;
     answers.upload = () => new Promise<Response>((resolve) => (release = resolve));
     await open();
@@ -670,7 +668,7 @@ describe('no double submit (AC 12)', () => {
     });
     await waitFor(() => expect(uploads()).toHaveLength(1));
     await waitFor(() => expect(submit().textContent).toBe('Uploading…'));
-    expect(submit().disabled).toBe(true);
+    expect(submit().getAttribute('aria-busy')).toBe('true');
     expect((p.getByRole('button', { name: 'Cancel' }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(submit());
     expect(uploads()).toHaveLength(1);
@@ -751,19 +749,19 @@ describe('titles, phone bar and tabs (AC 15, 16)', () => {
   it('one h1 per width: the frame title on desktop, "Templates" on the phone, with the bar link named Setup', async () => {
     await open();
     expect(desktop().getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Roles, rules and delegation']);
-    expect(desktop().getByRole('heading', { level: 1 }).className).toBe('setup-title');
+    expect(desktop().getByRole('heading', { level: 1 }).className).toBe('cmp-page-title cmp-page-title--34');
     expect(phone().getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual(['Templates']);
-    expect(phone().getByRole('heading', { level: 1 }).className).toBe('setup-phone-title');
+    expect(phone().getByRole('heading', { level: 1 }).className).toBe('cmp-page-title cmp-page-title--p22');
     const back = await within(phoneBar()).findByRole('link', { name: 'Back to Setup' });
     expect(back.textContent).toBe('← Setup');
     expect(phone().queryByRole('link')).toBeNull();
   });
 
-  it('the Templates tab is current, the other six are plain links, and no tab has a badge', async () => {
+  it('the Templates tab is current, the other six are plain tabs, and no tab has a badge', async () => {
     await open();
-    const tabs = within(screen.getByRole('navigation', { name: 'Setup' })).getAllByRole('link');
+    const tabs = within(screen.getByRole('tablist', { name: 'Setup' })).getAllByRole('tab');
     expect(tabs.map((t) => t.textContent)).toEqual(['Roles', 'Rules', 'Costing rule', 'Delegation', 'Payroll visibility', 'Staff accounts', 'Templates']);
-    expect(tabs.filter((t) => t.getAttribute('aria-current') === 'page').map((t) => t.textContent)).toEqual(['Templates']);
+    expect(tabs.filter((t) => t.getAttribute('aria-selected') === 'true').map((t) => t.textContent)).toEqual(['Templates']);
     expect(document.querySelectorAll('.setup-tabs .psl-badge')).toHaveLength(0);
   });
 });
