@@ -1,10 +1,12 @@
-# PSL operations factory build state — 6 November 2026
+# PSL operations factory build state
 
 ## Design consolidation · 16 November 2026
 
 Finance close now has company and project views of reviewed figures, verified cash by receipt date, dated receivables, unallocated cash and captured exceptions. Exact workspace coverage stays visible and missing figures remain unknown. The close view links to native accounting, corrections, forecasts, schedules, assets, recognition, transaction, payroll and business-unit workspaces under their own grants. The browser recorded a current receivables capture and reopened the reviewed October figure. Company-wide totals and final sign-off require an agreed Finance close policy.
 
 Release and closure use dedicated decision and recovery routes. The server queues long native continuation in the standard worker. On Railway the release route verified successor readiness from three source approvals on the replacement deployment request and retained the original record. The restarted closure required a new Head of PMO decision and reached verified closure. Go-live, escalation, leadership and accounting recovered the original synthetic deliveries after simulated lost responses. See BUILD-TESTS.md for exact browser outcomes, PostgreSQL results and the earlier closure timeout.
+
+Railway PostgreSQL `3dd017a0` passed all 27 tests, including process interruption and original receipt recovery. The browser verified the final closure read after the test bundle was built.
 
 ### Earlier reminder, payroll and screen walkthroughs
 
