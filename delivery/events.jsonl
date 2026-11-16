@@ -1750,3 +1750,5 @@
 {"at":"2026-11-16T15:58:59Z","feature":"F-24","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"c68782a3b09e7cd3d56b25b7eb133d2cc425f154"}}
 {"at":"2026-11-16T15:58:59Z","feature":"F-24","round":3,"kind":"transition","head":"f264d1b41795","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-16T15:58:59Z","feature":"F-24","round":3,"kind":"transition","head":"f264d1b41795","from":"MERGED","to":"DONE"}
+{"at":"2026-11-16T16:17:25Z","feature":"F-23","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":225.5,"commit":"d5046515521b"}
+{"at":"2026-11-16T16:17:26Z","feature":"F-23","round":1,"kind":"transition","head":"d5046515521b","from":"IMPLEMENTING","to":"IN_REVIEW"}
