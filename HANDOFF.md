@@ -12,6 +12,8 @@ Resume on `build/design-consolidation`, based on the checked GitHub `main` at `4
 
 Use Railway environment `design-acceptance`, web `psl-design-web`, worker `psl-design-worker`, private `Postgres-5ywW` and bucket `psl-design-uploads`. Preview `https://psl-design-web-design-acceptance.up.railway.app/`. The scoped test account is `psl-agent-trial`. Run PostgreSQL acceptance in the private `psl-design-checks` service. See BUILD-TESTS.md for actual evidence. The older hosted service is still on its prior release. HOD decisions remain deferred.
 
+The active runtime source checkpoint is `94c3b8a8`, Railway web `5ceb7dcd` and worker `00827a79`. The worker uses the normal queues with the one-time seed startup removed. PostgreSQL runs `188e4ac9`, `9cb2f05c` and `d55d08f6` passed 21, 37 and 9 cases respectively. The last run tested the deployed runtime source.
+
 The earlier Railway checkpoint `client-drafts-05` used source `0735372b`, web `380f9b34` and worker `bbd124ee`. It applied agents `0009`, core `0004` and documents `0032`. The private file round trip and all eight live model drafts through saved human edits were verified over HTTPS. The focused PostgreSQL run `eb4c662a` passed all 19 tests. The full bid chain passed in `31299e3e`. See BUILD-TESTS.md for both the latest and historical test results.
 
 Open the preview using the Codex in-app browser only. The user declined desktop automation. Server-side synthetic verification can run on Railway. Keep test passwords and provider configuration out of Git. The optional `PSL_AGENT_TRIAL_CASE` setting selects an exact named synthetic trial case when preparing native handoffs.

@@ -6,14 +6,16 @@ The first increment uses one server-rendered shell for native screens, including
 
 ## Railway browser walkthrough
 
-The named trial account reached the corresponding route or shared workspace for each of the 59 screen IDs. Some visits ended at an expected access hold or an empty state. Visiting a screen does not verify every board variant or every write. The interactive runs used separate synthetic workspaces. See [the test ledger](../../BUILD-TESTS.md) for run IDs and provider boundaries.
+The named trial account reached the corresponding route or shared workspace for each of the 59 screen IDs. Some visits ended at an expected access hold or an empty state. The interactive runs used separate synthetic workspaces. The remaining board variants and writes are tracked below. See [the test ledger](../../BUILD-TESTS.md) for run IDs and provider boundaries.
 
 | What was exercised | Observed result |
 | --- | --- |
 | Start Work and alerts | Opened the Planning form from the chooser. Marked an in-app alert as read and observed the updated inbox. |
 | Bid, costing and customer outcome | Recorded both reviews and all three ordered approvals. Approved the final draft, queued its controlled synthetic submission, saw the receipt, recorded the customer win and saw the verified Route A intake. |
 | Project actions | Completed the action and saw its earlier owner and deadline preserved in history. |
+| Report review | Approved one standalone version after checking its audience and citations. Loaded the monthly leadership preparation form and confirmed an unknown report type returns a not-found page. |
 | Client billing and company Month-end | Read the synthetic invoice, applied amount and remaining balance in the client view. Opened the scoped company Month-end and read the reviewed monthly figure. |
+| Restricted payroll | Opened dedicated input, matching and corrections pages and inspected the upload and matching controls. |
 | Other PMO and Finance destinations | Opened native destinations, including separate delivery intake forms, post-release work, ledger, schedules, assets and payroll. Many write, return, recovery and permission states still need interactive acceptance. |
 
 ## Functions added by the design
