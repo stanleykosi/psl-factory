@@ -1,0 +1,74 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Start work",
+      "category": "frame",
+      "reason": "Conflicts 9: Start work belongs to the shell (F-05); the admin persona has no startable lines, so the shell draws none. src/shell is not touched. As F-20 (D-71).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "category": "frame",
+      "reason": "Conflicts 9: as Start work.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Admin · sample",
+      "category": "frame",
+      "reason": "Conflicts 9: the shell prints /me as name · roles (\"Ada Okafor · Admin\"). As F-20 (D-71).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Kemi Adebayo · PMO Lead ▾",
+      "category": "component",
+      "reason": "Conflicts 2: the board draws From as a static box. The page draws the shared Select (D-91), offered only because the read sends two from_options; its accessible name is its label \"From\" and the chosen option shows inside it (the fidelity driver chooses Kemi Adebayo · PMO Lead with the real control). The value is on the page; the tool reads the control by its label.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Femi Ade · PMO Lead ▾",
+      "category": "component",
+      "reason": "Conflicts 3: as From. To is the shared Select listing delegate_options for the chosen From; the driver chooses Femi Ade · PMO Lead, shown inside the control, named \"To\".",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "18 Nov – 25 Nov 2026",
+      "category": "component",
+      "reason": "Conflicts 5: the library has no range picker and E-DELEGATION sends starts and ends apart, so Dates is a fieldset (legend \"Dates\") of two DateFields, Starts 18 Nov 2026 and Ends 25 Nov 2026 as driven. The single range text is not drawn.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Reason",
+      "category": "component",
+      "reason": "Conflicts 5 (the library's fields): Reason is the shared TextField, whose label is a <label> element; the tool skips label elements. The word is on the page as the field's visible label.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Annual leave",
+      "category": "component",
+      "reason": "Conflicts 5 (the library's fields): in the panel the board draws the reason as a static box; the page holds it as the typed value of the Reason TextField (the driver types it). The table row's \"Annual leave\" is matched separately.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "← Setup",
+      "category": "frame",
+      "reason": "Conflicts 9: the phone bar link comes from useSetupPhoneBack and the frame names it \"Back to Setup\" (it reads \"← Setup\"); as F-20 (D-71).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Start",
+      "category": "frame",
+      "reason": "Conflicts 9: the phone bar's Start belongs to the shell; the admin persona has no startable lines. As F-20 (D-71).",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ]
+}
