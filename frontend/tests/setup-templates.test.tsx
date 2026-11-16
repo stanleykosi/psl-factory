@@ -502,7 +502,7 @@ describe('invalid (422) and client refusals (AC 10)', () => {
     const p = await openPanel('Invoice');
     choose(p, pdf('bad.docx'), 'keep me');
     send();
-    await waitFor(() => expect(p.getByText('Check these fields: filename, note.')).toBeTruthy());
+    await waitFor(() => expect(p.getByRole('alert').textContent).toBe('Check these fields: filename, note.'));
     const file = p.getByLabelText('File');
     const note = p.getByLabelText('Note (optional)');
     expect(file.getAttribute('aria-invalid')).toBe('true');

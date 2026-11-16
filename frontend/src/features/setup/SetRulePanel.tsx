@@ -49,11 +49,13 @@ export const NOT_SAVED = 'Nothing you entered was saved.';
 
 /** A save outcome callout; it takes focus when shown. The views also use it above the list once the panel has closed. */
 export function OutcomeNotice({ notice }: { notice: Notice }) {
-  return (
+  const box = (
     <Callout kind={notice.tone} focusOnShow className="setup-notice">
       {notice.text}
     </Callout>
   );
+  // a warning Callout has no live role of its own: the outcome answers the save, so it is an alert, as on base
+  return notice.tone === 'warning' ? <div role="alert">{box}</div> : box;
 }
 
 export function SetRulePanel({ rows, refresh, signOut, staysOpen, onEditorGone }: Props) {

@@ -423,6 +423,10 @@ test.describe('phone 390', () => {
       expect(ob.height).toBeGreaterThanOrEqual(44);
       expect(ob.width).toBeGreaterThanOrEqual(60);
     }
+    // the footer links are 44px targets on the phone, side by side (QA-2, D-92c)
+    const foot = [await box(d.getByRole('link', { name: 'See all alerts' })), await box(d.getByRole('link', { name: 'Alert settings' }))];
+    for (const f of foot) expect(f.height).toBeGreaterThanOrEqual(44);
+    expect(Math.abs(foot[0].y - foot[1].y)).toBeLessThanOrEqual(1);
     expect(await noHorizontalScroll(page)).toBe(true);
     await shot(page, 'bell-390-open');
     await expectNoAxeViolations(page);

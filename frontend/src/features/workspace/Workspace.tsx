@@ -239,7 +239,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   return (
     <>
       <div ref={notices} className="ws-notices">
-        {/* One live region: a finished step, a queued one and an uncertain send are announced where they appear. */}
+        {/* A finished or queued step is told politely; an uncertain send and a changed record answer the press, so each
+            is an alert, as on base (a warning Callout has no live role of its own). */}
         <div role="status" aria-live="polite" className="ws-live">
           {(notice?.kind === 'done' || notice?.kind === 'queued') && (
             <Callout kind="success" announce={false}>
@@ -247,7 +248,9 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
               <span>{notice.text}</span>
             </Callout>
           )}
-          {notice?.kind === 'uncertain' && (
+        </div>
+        {notice?.kind === 'uncertain' && (
+          <div role="alert">
             <Callout kind="warning" className="ws-notice">
               <span className="ws-stack">
                 {notice.message && <span>{notice.message}</span>}
@@ -259,13 +262,15 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                 </Button>
               )}
             </Callout>
-          )}
-          {notice?.kind === 'stale' && (
+          </div>
+        )}
+        {notice?.kind === 'stale' && (
+          <div role="alert">
             <Callout kind="warning" className="ws-notice">
               {STEP_TEXT.stale(notice.revision)}
             </Callout>
-          )}
-        </div>
+          </div>
+        )}
         {(notice?.kind === 'forbidden' || notice?.kind === 'problem' || notice?.kind === 'failed') && (
           <Callout kind="problem" className="ws-notice">
             <span className="ws-stack">

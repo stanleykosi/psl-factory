@@ -482,7 +482,9 @@ describe('errors', () => {
   it('claim network error offers Try again, which claims again', async () => {
     answers.claim = (n, c) => (n === 0 ? Promise.reject(new TypeError('offline')) : json(200, { task_id: 'T-1201', revision: (c.body as { expected_revision: number }).expected_revision, claimed_by: 'Ada Okafor' }));
     await open();
-    await screen.findByText('We couldn’t get this decision ready. Try again.');
+    const claimNotice = await screen.findByText('We couldn’t get this decision ready. Try again.');
+    // it answers the press: announced as an alert (QA-1)
+    expect(claimNotice.closest('[role="alert"]')).not.toBeNull();
     expect((button('Approve v2') as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(button('Try again'));
     await ready();
@@ -494,7 +496,9 @@ describe('errors', () => {
     await open();
     await ready();
     fireEvent.click(button('Approve v2'));
-    await screen.findByText(/We couldn’t confirm your decision\./);
+    const uncertain = await screen.findByText(/We couldn’t confirm your decision\./);
+    // the uncertain decision is announced as an alert, as on base (QA-1)
+    expect(uncertain.closest('[role="alert"]')).not.toBeNull();
     expect(text()).toContain('We’ve reloaded this item so you can see whether it was recorded.');
     await ready();
     expect(counts().gets).toBe(2);
@@ -510,7 +514,9 @@ describe('errors', () => {
     await ready();
     fireEvent.change(screen.getByLabelText(/^Note/), { target: { value: 'Checked the PO' } });
     fireEvent.click(button('Approve v2'));
-    await screen.findByText('We couldn’t confirm whether your decision was recorded.');
+    const unconfirmed = await screen.findByText('We couldn’t confirm whether your decision was recorded.');
+    // announced as an alert, as on base (QA-1)
+    expect(unconfirmed.closest('[role="alert"]')).not.toBeNull();
     const off = () => {
       for (const name of [/^Approve v2/, 'Return', 'Reject']) expect((button(name) as HTMLButtonElement).disabled, String(name)).toBe(true);
     };

@@ -21,20 +21,27 @@ import { useDecision } from './useDecision';
 import '@/features/work-item/work-item.css';
 import './decide.css';
 
+/* A warning Callout has no live role (D-92), so these notices sit in an alert: they answer the person's press. */
 function UncertainNotice() {
-  return <Callout kind="warning">We couldn&rsquo;t confirm your decision. We&rsquo;ve reloaded this item so you can see whether it was recorded.</Callout>;
+  return (
+    <div role="alert">
+      <Callout kind="warning">We couldn&rsquo;t confirm your decision. We&rsquo;ve reloaded this item so you can see whether it was recorded.</Callout>
+    </div>
+  );
 }
 
 /** The decide had an uncertain effect and the reload failed: say so plainly; Try again only reads the item. */
 function UnconfirmedNotice({ checking, onRecheck }: { checking: boolean; onRecheck: () => void }) {
   return (
-    <Callout kind="warning" className="decide-retry">
-      <strong>We couldn&rsquo;t confirm whether your decision was recorded.</strong> We also couldn&rsquo;t reload this item to check, so the
-      decision buttons stay off. Try again reloads the item; it doesn&rsquo;t send your decision again.{' '}
-      <Button kind="secondary" size="sm" busy={checking} busyLabel="Checking…" onClick={onRecheck}>
-        Try again
-      </Button>
-    </Callout>
+    <div role="alert">
+      <Callout kind="warning" className="decide-retry">
+        <strong>We couldn&rsquo;t confirm whether your decision was recorded.</strong> We also couldn&rsquo;t reload this item to check, so the
+        decision buttons stay off. Try again reloads the item; it doesn&rsquo;t send your decision again.{' '}
+        <Button kind="secondary" size="sm" busy={checking} busyLabel="Checking…" onClick={onRecheck}>
+          Try again
+        </Button>
+      </Callout>
+    </div>
   );
 }
 

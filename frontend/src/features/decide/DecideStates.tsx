@@ -431,7 +431,9 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
       </p>
       <div className="decide-done">
         {refreshFailed && (
-          <Callout kind="warning">We couldn&rsquo;t refresh this item. Open the work item to see the latest.</Callout>
+          <div role="alert">
+            <Callout kind="warning">We couldn&rsquo;t refresh this item. Open the work item to see the latest.</Callout>
+          </div>
         )}
         {reloaded && <FactsStrip facts={reloaded.facts} details={facts?.facts} tones={facts?.fact_tones} paidNote={false} />}
         <div className="decide-done__row">

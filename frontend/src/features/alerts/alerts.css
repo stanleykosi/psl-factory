@@ -90,4 +90,7 @@
 /* 44px close target on the phone sheet */
 @media (max-width: 719.98px) {
   .alerts-drawer .psl-sheet__head .psl-iconbtn { min-width: var(--control-md); min-height: var(--control-md); }
+  /* the sheet's footer links side by side as on base, each a 44px target (D-92c) */
+  .alerts-drawer .psl-sheet__foot { flex-direction: row; justify-content: space-between; align-items: center; min-height: var(--control-phone); padding-block: 0; }
+  .alerts-drawer .psl-sheet__foot a { min-height: var(--control-md); display: inline-flex; align-items: center; }
 }

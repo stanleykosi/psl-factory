@@ -84,12 +84,15 @@ export function DecidePanel({ item, task, claim, submit, locked, onDecide, onRet
       />
       {claim.status === 'invalid' && <Callout kind="problem">{claim.message}</Callout>}
       {claim.status === 'failed' && (
-        <Callout kind="warning" className="decide-retry">
-          We couldn&rsquo;t get this decision ready. Try again.{' '}
-          <Button kind="secondary" size="sm" onClick={onRetryClaim}>
-            Try again
-          </Button>
-        </Callout>
+        // announced: it answers the person's press (a warning Callout has no live role of its own)
+        <div role="alert">
+          <Callout kind="warning" className="decide-retry">
+            We couldn&rsquo;t get this decision ready. Try again.{' '}
+            <Button kind="secondary" size="sm" onClick={onRetryClaim}>
+              Try again
+            </Button>
+          </Callout>
+        </div>
       )}
       {submit.status === 'invalid' && <Callout kind="problem">{submit.message}</Callout>}
       <div className="psl-actionbar decide-actions">

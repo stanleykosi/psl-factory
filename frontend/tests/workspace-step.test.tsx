@@ -471,8 +471,7 @@ describe('effect_uncertain (AC 19, INV-RESEND)', () => {
     await open(item('W-2008'), item('W-2008.next'));
     await press('Approve and send');
     const callout = await screen.findByText('Delivery to Lagoon Health couldn’t be confirmed.');
-    // an uncertain send is told in the page's live region, so it is announced where it appears (lane 1)
-    expect(callout.closest('[role="status"]')).not.toBeNull();
+    expect(callout.closest('[role="alert"]')).not.toBeNull();
     await screen.findByRole('radiogroup', { name: 'Confirm what happened' });
     expect(itemReads()).toHaveLength(2);
     for (const b of within(document.querySelector('.ws-steps') as HTMLElement).getAllByRole('button')) expect(b.getAttribute('aria-disabled')).toBe('true');
@@ -494,7 +493,7 @@ describe('effect_uncertain (AC 19, INV-RESEND)', () => {
     await open(body, bump(body, 4));
     await press('Approve and send');
     await screen.findByText('We are checking what happened. Nothing was sent again.');
-    const callout = screen.getByText('We are checking what happened. Nothing was sent again.').closest('.ws-notice') as HTMLElement;
+    const callout = screen.getByText('We are checking what happened. Nothing was sent again.').closest('[role="alert"]') as HTMLElement;
     expect(within(callout).getAllByRole('button').map((b) => b.textContent)).toEqual(['Reload']);
     await act(async () => {
       fireEvent.click(within(callout).getByRole('button', { name: 'Reload' }));
@@ -623,7 +622,7 @@ describe('notices name the step (UX-1-2, UX-1-4, UX-1-5)', () => {
     stepAnswers = [json(500, { code: 'server', message: 'Boom.' })];
     await open(item('W-2007'));
     await press('Send to the client');
-    const alert = (await ws().findByText('We couldn’t confirm this step. Check the page before trying again.')).closest('.ws-notice') as HTMLElement;
+    const alert = (await ws().findByText('We couldn’t confirm this step. Check the page before trying again.')).closest('[role="alert"]') as HTMLElement;
     expect(within(alert).getByText('Send to the client')).toBeTruthy();
   });
 

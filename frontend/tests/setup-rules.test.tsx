@@ -464,7 +464,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     await fillFirstSave({ why: 'Mine', file: false });
     fireEvent.click(saveButton());
     await waitFor(() => expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeNull());
-    const alert = desktop().getByText(new RegExp(EDITOR_GONE)).closest('.psl-callout')!;
+    const alert = desktop().getByRole('alert');
     expect(alert.textContent).toContain(EDITOR_GONE);
     expect(alert.textContent).not.toContain(NOT_SAVED);
     expect(saves()).toHaveLength(1);
@@ -513,7 +513,9 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     await open();
     await fillFirstSave({ why: 'Mine', file: false });
     fireEvent.click(saveButton());
-    await waitFor(() => expect(panel().getByText('We couldn’t confirm the save. Nothing new is shown for this rule, so you can save again.')).toBeTruthy());
+    await waitFor(() =>
+      expect(panel().getByRole('alert').textContent).toBe('We couldn’t confirm the save. Nothing new is shown for this rule, so you can save again.'),
+    );
     expect(saves()).toHaveLength(1);
     expect(reads()).toHaveLength(2);
     expect((panel().getByLabelText('Why') as HTMLInputElement).value).toBe('Mine');
@@ -530,7 +532,7 @@ describe('save outcomes (AC 10, 11, 13, 14)', () => {
     await open();
     await fillFirstSave({ why: 'Mine', file: false });
     fireEvent.click(saveButton());
-    await waitFor(() => expect(panel().getByText('This rule changed. Check the version shown before saving again.')).toBeTruthy());
+    await waitFor(() => expect(panel().getByRole('alert').textContent).toBe('This rule changed. Check the version shown before saving again.'));
     expect((panel().getByLabelText('Why') as HTMLInputElement).value).toBe('');
     expect(saveButton().textContent).toBe('Save as version 2');
     expect(saves()).toHaveLength(1);
