@@ -17,6 +17,8 @@
 .ws-section--suggestions > .psl-panel__head, .ws-form > .psl-panel__head { background: var(--action); color: var(--on-strong); border-bottom-color: var(--action); }
 .ws-form { border-color: var(--action); }
 .ws-decide__head { margin: 0; }
+/* the Next panel is plain: nothing in it needs a decision unless a step is there, and the step is a blue button (D-92b) */
+.ws-section--untitled .ws-row:first-child { border-top: none; }
 .ws-decide__body { gap: var(--space-3); }
 .ws-rows--checklist .ws-word, .ws-rows--findings .ws-word { font-family: var(--font-sans); font-weight: 600; }
 .ws-rows--checklist .ws-word { padding: 3px var(--space-2); font-size: var(--text-small-size); background: var(--neutral-tint); color: var(--neutral-ink); }
@@ -30,8 +32,8 @@
 .ws-decide .ws-steps__buttons { flex-direction: column; align-items: stretch; gap: var(--space-2); }
 .ws-decide .ws-steps__buttons > span, .ws-decide .ws-control { display: flex; flex-direction: column; align-items: stretch; }
 .ws-decide .psl-btn { width: 100%; min-height: var(--control-lg); white-space: nowrap; }
-.ws-decide .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject) { background: var(--verified); }
-.ws-decide .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):hover { background: var(--verified-strong); }
+.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject) { background: var(--verified); }
+.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):hover { background: var(--verified-strong); }
 .ws-hint { margin: 0; }
 /* a suggestion is the board's card: a mono reference, the answer in a tinted box, the source beneath */
 .ws-sugg { gap: var(--space-6px); }

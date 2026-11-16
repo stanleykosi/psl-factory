@@ -244,15 +244,72 @@ describe('received (W-2211 to W-2214)', () => {
 });
 
 describe('access', () => {
-  it('a 404 on the read shows no title, client or id; a 401 shows the signed-out callout', async () => {
-    itemAnswers = [() => json(404, { code: 'not_found', message: 'Not here.' })];
+  const gone = (status: number, code: string) => {
+    itemAnswers = [() => json(status, { code, message: 'No.' })];
     render(
       <AppShell>
         <WorkItemView id="W-2299" tab="overview" />
       </AppShell>,
     );
-    await waitFor(() => expect(document.body.textContent).not.toContain('Lagoon Health'));
-    expect(document.body.textContent).not.toContain('W-2299');
+  };
+
+  it('a 404 on the read draws the no-access state with no title, client or id', async () => {
+    gone(404, 'not_found');
+    await screen.findByText(/Nothing about it is shown here, not even its name or amount\./);
+    expect(document.body.textContent).not.toMatch(/Lagoon Health|Weekly client report|W-2299|WCR-0216/);
+  });
+
+  it('a 403 on the read draws the same no-access state', async () => {
+    gone(403, 'forbidden');
+    await screen.findByText(/Nothing about it is shown here, not even its name or amount\./);
+    expect(document.body.textContent).not.toMatch(/Lagoon Health|W-2299/);
+  });
+
+  it('a 401 draws the signed-out callout with next set to this page', async () => {
+    gone(401, 'not_signed_in');
+    await screen.findByText('You’re signed out.');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fwork%2FW-2299');
+    expect(document.body.textContent).not.toMatch(/Lagoon Health|W-2299/);
+  });
+
+  it('a 403 on the Edit step shows the forbidden line and keeps the page', async () => {
+    stepAnswers = [json(403, { code: 'forbidden', message: 'No.' })];
+    await open(item('W-2209'));
+    await press('Edit your update');
+    await act(async () => {
+      fireEvent.click(within(screen.getByRole('form', { name: 'Edit your update' })).getByRole('button', { name: 'Edit your update' }));
+    });
+    await screen.findByText('You can’t take that step.');
+  });
+});
+
+describe('the Next panel (UI-1-1 to UI-1-3, TECH-1-1)', () => {
+  it('is plain: no Decide modifiers, named Next; the aside takes its name from it when nothing else is in it', async () => {
+    await open(item('W-2211'));
+    const panel = wsEl().querySelector('.ws-decide') as HTMLElement;
+    expect(panel.className).toContain('ws-decide--next');
+    expect(panel.className).not.toContain('psl-panel--decide');
+    expect(panel.querySelector('.psl-panel__head--decide')).toBeNull();
+    const aside = wsEl().querySelector('aside') as HTMLElement;
+    expect(aside.hasAttribute('aria-label')).toBe(false);
+    expect(within(wsEl()).getByRole('complementary', { name: 'Next' })).toBe(aside);
+  });
+
+  it('with a step the panel is still plain; its line stays visible while the form is open', async () => {
+    await open(item('W-2209'));
+    const panel = wsEl().querySelector('.ws-decide') as HTMLElement;
+    expect(panel.className).toContain('ws-decide--next');
+    await press('Edit your update');
+    expect(text().split('Edit your part, then Tola reassembles v2 and it goes back for review.').length).toBeGreaterThanOrEqual(2);
+    expect(wsEl().querySelector('.ws-decide--next .psl-btn')).not.toBeNull();
+  });
+
+  it('without next the panel is Decide with its modifiers, as before', async () => {
+    await open(item('W-2204'));
+    const panel = wsEl().querySelector('.ws-decide') as HTMLElement;
+    expect(panel.className).toContain('psl-panel--decide');
+    expect(panel.className).not.toContain('ws-decide--next');
+    expect(wsEl().querySelector('aside')!.getAttribute('aria-label')).toBe('Review and decide');
   });
 });
 

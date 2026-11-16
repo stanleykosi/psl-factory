@@ -11,11 +11,20 @@ const IDS = ['W-2209', 'W-2210', 'W-2211', 'W-2212', 'W-2213', 'W-2214'];
 test.use({ timezoneId: 'Africa/Lagos' });
 
 const requests: { method: string; url: string }[] = [];
+const everything: string[] = [];
 test.beforeEach(async ({ request, context, baseURL, page }) => {
   expect((await request.post(`${MOCK}/__mock/reset`)).status()).toBe(204);
   await context.addCookies([{ name: 'psl_mock_persona', value: 'pm', url: baseURL! }]);
   requests.length = 0;
-  page.on('request', (r) => requests.push({ method: r.method(), url: r.url() }));
+  page.on('request', (r) => {
+    requests.push({ method: r.method(), url: r.url() });
+    everything.push(r.url());
+  });
+});
+
+// the whole run, not one page: every request in every test above went to the local app or the mock
+test.afterEach(() => {
+  for (const url of everything) expect(new URL(url).hostname, url).toMatch(/^(localhost|127\.0\.0\.1)$/);
 });
 
 async function openItem(page: Page, id: string) {
@@ -81,7 +90,22 @@ test('W-2212: reconcile is the only action; no step is posted and a reload keeps
   expect(requests.filter((r) => r.method === 'POST' && new URL(r.url).pathname.endsWith('/steps'))).toEqual([]);
 });
 
-test('every request in this run went to the local mock', async ({ page }) => {
-  await openItem(page, 'W-2211');
-  for (const r of requests) expect(new URL(r.url).hostname, r.url).toMatch(/^(localhost|127\.0\.0\.1)$/);
+test('the returned primary button is blue (action), not green, and the Next head is plain', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openItem(page, 'W-2209');
+  const button = page.getByRole('button', { name: 'Edit your update' });
+  const token = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--action').trim());
+  const bg = await button.evaluate((el) => getComputedStyle(el).backgroundColor);
+  const probe = await page.evaluate((t) => {
+    const d = document.createElement('div');
+    d.style.backgroundColor = t;
+    document.body.append(d);
+    const c = getComputedStyle(d).backgroundColor;
+    d.remove();
+    return c;
+  }, token);
+  expect(bg).toBe(probe);
+  const head = page.locator('.ws-decide--next .psl-panel__head');
+  await expect(head).toHaveText('Next');
+  expect(await head.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
 });

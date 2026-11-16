@@ -449,7 +449,7 @@ export function SectionView({ section, level, controls }: { section: Section; le
     );
   }
   return (
-    <section className={`psl-panel ws-section ws-section--${section.kind}`} aria-labelledby={section.title ? headId : undefined}>
+    <section className={`psl-panel ws-section ws-section--${section.kind}${section.title ? '' : ' ws-section--untitled'}`} aria-labelledby={section.title ? headId : undefined}>
       {section.title && (
         <Heading id={headId} className="psl-panel__head ws-section__head">
           {section.title}

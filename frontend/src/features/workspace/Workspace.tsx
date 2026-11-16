@@ -312,13 +312,13 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           ))}
         </div>
         {(side.length > 0 || showPanel) && (
-          <aside className="ws-side" aria-label="Review and decide">
+          <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
             {side.map((section) => (
               <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
             ))}
             {showPanel && (
-              <section ref={decideRef} className={`psl-panel psl-panel--decide ws-decide${workspaceSteps.length === 0 ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
-                <h2 id={`${decideId}-head`} className="psl-panel__head psl-panel__head--decide ws-decide__head">
+              <section ref={decideRef} className={`psl-panel ${hasNext ? 'ws-decide--next' : 'psl-panel--decide'} ws-decide${workspaceSteps.length === 0 ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
+                <h2 id={`${decideId}-head`} className={`psl-panel__head ${hasNext ? '' : 'psl-panel__head--decide '}ws-decide__head`}>
                   {hasNext ? STEP_TEXT.next : STEP_TEXT.decide}
                 </h2>
                 <div className="psl-panel__body ws-decide__body">
