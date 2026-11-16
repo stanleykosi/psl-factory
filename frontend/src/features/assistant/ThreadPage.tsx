@@ -3,8 +3,9 @@
 // /assistant/[conversationId]: one conversation. Reads E-CONVERSATION, polls while it is working, and holds the
 // composer for the agent that answered. A conversation that is not the person's, or unknown, shows nothing of it.
 import { usePathname, useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
-import { AGENTS, EmptyState, ErrorState, Loading, Skeleton, VisuallyHidden } from '@/components';
+import { AGENTS, EmptyState, ErrorState, Loading, Skeleton, useIsPhone, VisuallyHidden } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { SignedOutState } from '@/shell/FrameStates';
 
@@ -26,9 +27,15 @@ function PhoneHeader({ title }: { title: string }) {
 function Open({ id, conversation, refreshFailed, reload }: { id: string; conversation: Conversation; refreshFailed: boolean; reload: () => Promise<Conversation | undefined> }) {
   const { agents, list } = useAssistant();
   const router = useRouter();
+  const phone = useIsPhone();
   const pathname = usePathname() ?? '/assistant';
   const agent = conversation.agent;
   const send = useSend({ agent: agent ?? 'tola', conversationId: id, reload, listChanged: list.refresh });
+  // After a start the thread and the list both change ("Started · INV-0415").
+  const afterStart = useCallback(async () => {
+    await reload();
+    void list.refresh();
+  }, [reload, list]);
   const name = agent ? AGENTS[agent].name : '';
   return (
     <>
@@ -38,7 +45,7 @@ function Open({ id, conversation, refreshFailed, reload }: { id: string; convers
         <VisuallyHidden>
           <h1>{conversation.title ?? 'Conversation'}</h1>
         </VisuallyHidden>
-        <Thread conversation={conversation} reread={reload} />
+        <Thread conversation={conversation} reread={afterStart} />
         {refreshFailed && (
           <p className="psl-hint as__refresh" role="status">
             {REFRESH_FAILED}
@@ -46,7 +53,7 @@ function Open({ id, conversation, refreshFailed, reload }: { id: string; convers
         )}
         {agent && <ComposerBar agent={agent} send={send} pathname={pathname} />}
       </div>
-      {agent && (
+      {agent && !phone && (
         <SidePanel
           agent={agent}
           pose={poseFor(conversation)}
@@ -85,7 +92,9 @@ export function ThreadPage({ id }: { id: string }) {
   return (
     <div className="as__center">
       <TalkTo agents={agents} onPick={(next) => router.push(`/assistant?agent=${next}`)} />
-      {state.status !== 'missing' && state.status !== 'error' && <VisuallyHidden><h1>Conversation</h1></VisuallyHidden>}
+      <VisuallyHidden>
+        <h1>Conversation</h1>
+      </VisuallyHidden>
       <div className="as__state">{body}</div>
     </div>
   );

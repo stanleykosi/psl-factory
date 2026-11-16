@@ -16,7 +16,7 @@ export function TalkTo({ agents, selected, onPick }: { agents: AgentName[]; sele
         <button key={agent} type="button" className={`as-chip as-chip--${agent}`} aria-pressed={selected === agent} onClick={() => onPick(agent)}>
           <AgentAvatar agent={agent} />
           {AGENTS[agent].name}
-          <span className="as-chip__team"> · {AGENTS[agent].team}</span>
+          <span className="as-chip__team">· {AGENTS[agent].team}</span>
         </button>
       ))}
     </div>

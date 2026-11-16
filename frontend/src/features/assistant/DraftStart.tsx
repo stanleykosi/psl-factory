@@ -44,9 +44,16 @@ export function DraftStart({ draft, reread }: {
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
   const startedLine = useRef<HTMLParagraphElement>(null);
-  // Set when this person starts it from here: focus then goes to the started line once it is read.
+  // Set when the drawer has just ended: focus goes to the started line if the next read shows one.
   const justStarted = useRef(false);
   const { start, started } = draft;
+
+  // The drawer closed: focus goes back to the button that opened it (a press does not always focus it, as on touch).
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (wasOpen.current && !open) button.current?.focus();
+    wasOpen.current = open;
+  }, [open]);
 
   useEffect(() => {
     if (started && justStarted.current) {
@@ -54,6 +61,14 @@ export function DraftStart({ draft, reread }: {
       startedLine.current?.focus();
     }
   }, [started]);
+
+  // Either way the drawer ends, the thread is read again: it shows the started line (this start, or one made in another
+  // tab) and the button goes. Focus follows to the started line if it appears.
+  const closed = () => {
+    justStarted.current = true;
+    setOpen(false);
+    void reread();
+  };
 
   const rows: DraftRow[] = draft.rows.map((row) => ({ label: row.label, value: rowValue(row) }));
   return (
@@ -83,12 +98,8 @@ export function DraftStart({ draft, reread }: {
         <StartWorkDrawer
           entry="default"
           prefill={{ line_key: start.line_key, intake: start.intake ?? {} }}
-          onClose={() => setOpen(false)}
-          onStarted={() => {
-            justStarted.current = true;
-            setOpen(false);
-            void reread();
-          }}
+          onClose={closed}
+          onStarted={closed}
         />
       )}
     </>

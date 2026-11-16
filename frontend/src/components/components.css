@@ -156,8 +156,8 @@
 .cmp-draft__head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); padding: var(--space-10px) var(--space-14px); background: var(--action-tint); border-bottom: var(--rule-strong) solid var(--action); }
 .cmp-draft__title { font-family: var(--font-display); font-weight: 700; }
 .cmp-draft__status { font-family: var(--font-mono); font-size: var(--text-label-size); padding: 3px var(--space-6px); background: var(--surface); border: 1.5px solid var(--ink); }
-.cmp-draft__rows { margin: 0; padding: var(--space-14px); display: grid; gap: var(--space-2); }
-.cmp-draft__row { display: grid; grid-template-columns: minmax(var(--space-7), auto) minmax(0, 1fr); gap: var(--space-2) var(--space-4); }
+.cmp-draft__rows { margin: 0; padding: var(--space-14px); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-2) var(--space-4); }
+.cmp-draft__row { display: contents; }
 .cmp-draft__row dt { color: var(--ink-muted); }
 .cmp-draft__row dd { margin: 0; overflow-wrap: anywhere; }
 .cmp-draft__foot { padding: 0 var(--space-14px) var(--space-14px); display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; }
@@ -217,7 +217,7 @@
   .cmp-chat--agent { grid-template-columns: var(--chip-height) minmax(0, 1fr); grid-template-areas: "av who" "body body"; align-items: center; }
   .cmp-chat--person { max-width: calc(var(--space-7) * 6 + var(--space-4) * 2 + var(--space-2)); padding: var(--space-10px) var(--space-3); font-size: var(--text-body-size); }
   .cmp-draft__head { padding: var(--space-2) var(--space-3); }
-  .cmp-draft__rows { padding: var(--space-10px) var(--space-3); gap: var(--space-1); }
+  .cmp-draft__rows { padding: var(--space-10px) var(--space-3); gap: var(--space-1) var(--space-2); }
   .cmp-draft__foot { padding: 0 var(--space-3) var(--space-3); }
   .cmp-draft__foot > .psl-btn { flex: 1 1 100%; }
   .psl-agent.cmp-agent--inline { padding: var(--space-1) var(--space-10px); }
