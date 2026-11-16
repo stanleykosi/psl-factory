@@ -106,13 +106,15 @@ def intake(request):
     response=render(request,'factory/intake.html',{'options':options,'groups':groups,'change_intakes':pending_intakes(request.user),'queue':queue,'q':q})
     response['Cache-Control']='no-store';return response
 
-def visible(actor):
+def visible(actor, *, work_id=None):
     active(actor)
     scope=Q(pk__in=[])
     for name,spec in DEFINITIONS.items():
         actions=[spec['read'],'factory.read']+(['finance.read','ledger.private.read'] if name=='finance-ledger/v1' else [])+(['finance.read'] if name in ['finance-schedules/v1','finance-ppe/v1'] else [])
         scope|=Q(definition=name,case_id__in=granted(actor,actions).values('pk'))
     query=FactoryWork.objects.filter(scope).select_related('case','actor','invoice','source_head')
+    if work_id is not None:
+        query=query.filter(pk=work_id)
     from apps.finance.fixed_charge import preparation_access
     inaccessible=[]
     for work in query.filter(preparation__kind='fixed_contract').select_related('preparation'):
@@ -124,11 +126,11 @@ def permitted(actor,work,action):
     try:d.access(actor,work.case,action,work.definition);return True
     except PermissionDenied:return False
 
-def presentation(actor,work):
+def presentation(actor,work,*,focus=None):
     from apps.agents.factory_coordinator import decorate
-    return decorate(actor,work,_presentation(actor,work))
+    return decorate(actor,work,_presentation(actor,work,focus=focus))
 
-def _presentation(actor,work):
+def _presentation(actor,work,*,focus=None):
     if work.definition=='pmo-issues/v1':
         from .factory_issue_views import presentation as issue_presentation
         return issue_presentation(actor,work)
@@ -381,7 +383,7 @@ def _presentation(actor,work):
                 can_reassess=row['handover']['can_correct'] or own_ack,needs_me=row['handover']['can_correct'] or own_ack)
     if work.definition=='delivery-closure/v1':
         from .factory_closure import projection
-        row['closure']=projection(actor,work);panel=row['closure'];row['can_advance']&=bool(panel['next_options']) and panel['intake_current']
+        row['closure']=projection(actor,work,include_execution=focus!='decision');panel=row['closure'];row['can_advance']&=bool(panel['next_options']) and panel['intake_current']
         row['next_action']=panel['next_action'];row['readiness_changed']=panel['readiness_changed']
         row['blocker']=panel['finding'] or (panel['next_action'] if not panel['next_options'] and work.status not in ['verified','cancelled','followup_needed'] else '')
         if panel['pending_review']:
@@ -758,7 +760,7 @@ def create(request):
 def detail(request,work_id,focus=None):
     from .screen_focus import SCREENS, require_action
 
-    work=get_object_or_404(visible(request.user),pk=work_id)
+    work=get_object_or_404(visible(request.user,work_id=work_id))
     if focus and focus not in SCREENS.get(work.definition, {}):
         raise Http404
     if work.definition=='engagement/v1':
@@ -814,7 +816,7 @@ def detail(request,work_id,focus=None):
         return go_live_detail(request,work,focus)
     if work.definition=='delivery-closure/v1':
         from .factory_closure_views import detail as closure_detail
-        return closure_detail(request,work)
+        return closure_detail(request,work,focus)
     if work.definition=='delivery-handover/v1':
         from .factory_handover_views import detail as handover_detail
         return handover_detail(request,work)
@@ -833,7 +835,13 @@ def detail(request,work_id,focus=None):
                 from datetime import date
                 due=date.fromisoformat(request.POST['due_date']) if request.POST.get('due_date') else None
                 replace(request.user,work.pk,int(request.POST.get('preparation','0')),request.POST.get('reference',''),due,revision,request.POST.get('reason',''))
-            elif operation=='advance':d.advance(request.user,work.pk,revision)
+            elif operation=='advance':
+                if work.definition=='delivery-release/v1':
+                    from .factory_progress import set_progress
+                    set_progress(request.user,work.pk,revision,True)
+                    messages.success(request,'Release work will continue in the background.')
+                    return redirect(request.get_full_path())
+                d.advance(request.user,work.pk,revision)
             elif operation=='reassess':
                 if work.definition=='delivery-hypercare/v1':
                     from .factory_hypercare import reassess

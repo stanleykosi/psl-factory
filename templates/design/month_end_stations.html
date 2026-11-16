@@ -1,0 +1,5 @@
+<section class="card">
+  <h3>Close work by area</h3>
+  <p>Open the current records, decisions and corrections for this workspace.</p>
+  <ul>{% for url, label in entry.stations %}<li><a href="{{ url }}">{{ label }}</a></li>{% endfor %}</ul>
+</section>

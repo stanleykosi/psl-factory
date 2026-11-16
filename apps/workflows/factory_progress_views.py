@@ -41,7 +41,7 @@ class ProgressForm(forms.Form):
 def change(request, work_id):
     from .factory_views import visible
 
-    get_object_or_404(visible(request.user), pk=work_id)
+    get_object_or_404(visible(request.user, work_id=work_id))
     form = ProgressForm(request.POST)
     if form.is_valid():
         values = form.cleaned_data

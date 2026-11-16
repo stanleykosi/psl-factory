@@ -11,6 +11,10 @@
     {% for row in period.values %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.value|default_if_none:'Unknown' }}</td><td>{{ row.unit }}</td></tr>{% endfor %}
   </tbody></table>{% endif %}</section>
   {% empty %}<section class="card"><p>No reviewed figures are available for this workspace and month.</p></section>{% endfor %}
-  <p>Shows up to 12 current reporting records for this workspace. Billing, cash and forecasts have separate evidence.</p>
+  <section class="card"><h2>Cash and receivables</h2><h3>Verified cash received</h3><p>Current receipt records with a received date in this month.</p>
+  {% for currency,basis,amount in close.cash %}<p>{{ currency }} {{ amount }} · {{ basis|readable }}</p>
+  {% empty %}<p>{% if close.cash_unavailable %}Cash coverage is unavailable in this view.{% else %}Unknown for this month.{% endif %}</p>{% endfor %}
+  {% include 'design/month_end_receivables.html' with entry=close return_to='workspace' %}</section>
+  {% include 'design/month_end_stations.html' with entry=close %}
 {% endif %}
 {% endblock %}

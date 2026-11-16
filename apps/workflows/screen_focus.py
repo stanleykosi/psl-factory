@@ -38,6 +38,14 @@ SCREENS = {
         'response': ('accept',),
         'recovery': ('reconcile', 'operate_delivery', 'settle_stop'),
     },
+    'delivery-release/v1': {
+        'decision': ('delivery_decision',),
+        'recovery': ('advance', 'reassess', 'resume', 'cancel', 'adopt_profile'),
+    },
+    'delivery-closure/v1': {
+        'decision': ('review', 'decide'),
+        'recovery': ('advance', 'correct', 'restart', 'cancel', 'settle_stop', 'resume', 'adopt_profile'),
+    },
 }
 
 

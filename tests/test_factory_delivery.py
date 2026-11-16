@@ -85,7 +85,12 @@ class FactoryDeliveryTests(TestCase):
         self.client.force_login(f.actor);self.assertContains(self.client.get(reverse('home')+'?queue=exceptions'),'Prior release evidence needs review')
         self.assertNotContains(self.client.get(reverse('home')+'?queue=verified'),'Delivery factory example')
         self.assertNotContains(self.client.get(reverse('factory_detail',args=[f.work.pk])),'The current source approvals and release readiness record match.')
-        factory_delivery.reassess(f.actor,f.work.pk,f.work.revision,'Review the actual successor source gate')
+        decision = reverse('factory_invoice_decision', args=[f.work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[f.work.pk])
+        self.assertNotContains(self.client.get(decision),'Reassess changed delivery evidence')
+        self.assertContains(self.client.get(recovery),'Reassess changed delivery evidence')
+        self.assertRedirects(self.client.post(recovery, {'action':'reassess','revision':f.work.revision,
+                              'reason':'Review the actual successor source gate'}), recovery)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'waiting',f.work.finding)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').count(),1)
         delivery.record_release_request(f.actor,f.case.pk,f.d.pk,'SYNTHETIC-GLPI-2',f.e['requirements'].pk,'Actual fixture successor request after upstream change',rev(f.case))
@@ -130,8 +135,9 @@ class FactoryDeliveryTests(TestCase):
         for kind in delivery.PLANNING:f.source(kind,{'requires_ui':False,'client_signoff_required':False} if kind=='ui_applicability' else {})
         Grant.objects.filter(case=f.case,user=f.actor,action='finance.read').update(active=False)
         factory.run_until_wait(w.pk);w.refresh_from_db();self.assertTrue(factory_delivery.projection(f.actor,w)['can_decide'])
-        self.client.force_login(f.actor);url=reverse('factory_detail',args=[w.pk])+'?queue=decisions&q=Delivery'
+        self.client.force_login(f.actor);url=reverse('factory_invoice_decision',args=[w.pk])+'?queue=decisions&q=Delivery'
         self.assertContains(self.client.get(url),'Planning exit decision')
+        self.assertNotContains(self.client.get(reverse('factory_invoice_recovery',args=[w.pk])),'Approve exact Planning exit')
         data={'action':'delivery_decision','revision':w.revision,'case_revision':rev(f.case),'packet':factory_delivery.projection(f.actor,w)['decision_packet'],'verdict':'approve','evidence':f.e['plan'].pk,'note':'Synthetic PMO Lead exact Planning exit'}
         self.assertRedirects(self.client.post(url,data),url)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='planning_decision').count(),1)

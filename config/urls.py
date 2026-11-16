@@ -158,6 +158,7 @@ urlpatterns += [path('projects/<uuid:case_id>/templates/upload/', template_catal
 urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
                 path('clients/<uuid:case_id>/', client_contacts.project, name='design_client_project')]
 urlpatterns += [path('finance/month-end/', month_end.company, name='design_company_month_end')]
+urlpatterns += [path('finance/month-end/<uuid:case_id>/receivables/capture/', month_end.capture, name='design_capture_month_end_receivables')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/', reminder_views.work, name='design_payment_reminder')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/drafts/<int:draft_id>/<str:file_kind>/',
                      reminder_views.download, name='design_reminder_download')]

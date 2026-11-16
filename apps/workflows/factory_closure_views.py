@@ -10,6 +10,7 @@ from apps.documents.models import Template
 from apps.pmo.closure_views import SelectionForm
 from .factory_handover_views import StartForm as DossierStartForm
 from . import factory,factory_closure as closure
+from .factory_progress import set_progress
 from .factory_progress_views import start_work
 
 
@@ -54,8 +55,9 @@ def create(request):
     return render(request,'factory/closure_start.html',{'case':form.selected,'form':form,'inputs_form':inputs})
 
 
-def detail(request,work):
+def detail(request,work,focus=None):
     from .factory_views import presentation,QUEUES,permitted
+    from .screen_focus import require_action
     queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
     if queue not in QUEUES:queue='needs_me'
     _,data,_=closure.source(work,request.user,current=False)
@@ -63,7 +65,11 @@ def detail(request,work):
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
-            if action=='advance':factory.advance(request.user,work.pk,revision)
+            require_action(work,focus,action)
+            if action=='advance':
+                set_progress(request.user,work.pk,revision,True)
+                messages.success(request,'Closure work will continue in the background.')
+                return redirect(request.get_full_path())
             elif action=='correct':
                 if not form.is_valid():raise ValidationError('Review the selected closure source records')
                 closure.correct(request.user,work.pk,revision,case_revision,form.inputs(),p.get('reason',''))
@@ -78,10 +84,10 @@ def detail(request,work):
         except ValidationError as exc:messages.error(request,closure.finding(exc))
         except ValueError:messages.error(request,'Refresh the work and choose the current recorded references.')
         work.refresh_from_db()
-    row=presentation(request.user,work);activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
+    row=presentation(request.user,work,focus=focus);activities=[] if focus else list(work.activities.prefetch_related('attempts').order_by('pk'))
     for activity in activities:
         activity.title={'ACT03':'Plan permitted work','ACT04':'Investigate closure evidence','ACT09':'Prepare the PM report','ACT10':'Resolve current authority','ACT11':'Record prescribed closure','ACT13':'Verify native closure'}.get(activity.kind,'Review permitted work')
         for attempt in activity.attempts.all():attempt.display_result=closure.attempt_projection(attempt)
-    response=render(request,'factory/closure_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'inputs_form':form,'activities':activities,
+    response=render(request,'factory/closure_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'focus':focus,'inputs_form':form,'activities':activities,
         'evidence_choices':public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')[:100],'can_configure':permitted(request.user,work,'policy.configure')})
     response['Cache-Control']='no-store';return response

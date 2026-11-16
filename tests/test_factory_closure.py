@@ -18,6 +18,32 @@ from tests.test_delivery import DeliveryFixture
 
 
 class FactoryClosureDistinctAuthorityTests(TestCase):
+    def test_restarted_closure_queues_from_the_recovery_page(self):
+        from apps.workflows.factory_progress import run_once
+        from apps.workflows.models import FactoryProgress
+
+        f = setup()
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        initial_decision = approve(f)
+        f.work.refresh_from_db()
+        closure.cancel(f.actor, f.work.pk, f.work.revision)
+        f.work.refresh_from_db()
+        self.client.force_login(f.actor)
+        url = reverse('factory_invoice_recovery', args=[f.work.pk])
+        self.assertRedirects(self.client.post(url, {'action': 'restart', 'revision': f.work.revision,
+                              'case_revision': rev(f.case), 'reason': 'Synthetic fresh closure instruction'}), url)
+        f.work.refresh_from_db()
+        self.assertRedirects(self.client.post(url, {'action': 'advance', 'revision': f.work.revision}), url)
+        self.assertEqual(FactoryProgress.objects.get(work=f.work).status, 'queued')
+        self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d, kind='closure').exists())
+        for _ in range(20):
+            run_once()
+            f.work.refresh_from_db()
+            if closure.document(f.work) and closure.document(f.work).pk != initial_decision.data['version_id']:
+                break
+        self.assertContains(self.client.get(reverse('factory_invoice_decision', args=[f.work.pk])), 'Approve exact closure report')
+
     def test_actual_head_principal_decides_without_worker_privileges_and_pm_cannot_impersonate_head(self):
         from django.contrib.auth import get_user_model
         from apps.policy.services import register_reference
@@ -36,12 +62,13 @@ class FactoryClosureDistinctAuthorityTests(TestCase):
         reaffirm_for(f.actor,f.case)  # Explicit same-document current-authority fixture evidence.
         f.closure_selected=f.closing();f=setup(base=f)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();version=closure.document(f.work)
-        self.assertIsNotNone(version);url=reverse('factory_detail',args=[f.work.pk])
+        self.assertIsNotNone(version);url=reverse('factory_invoice_decision',args=[f.work.pk])
         self.client.force_login(f.actor);self.assertNotContains(self.client.get(url),'Approve exact closure report')
         with self.assertRaises(PermissionDenied):approve(f)
         self.client.force_login(head);page=self.client.get(url)
         self.assertContains(page,'Approve exact closure report');self.assertNotContains(page,'Continue eligible work')
         self.assertNotContains(page,'Record reviewed source changes')
+        self.assertNotContains(self.client.get(reverse('factory_invoice_recovery',args=[f.work.pk])), 'Approve exact closure report')
         response=self.client.post(url,{'action':'decide','revision':f.work.revision,'case_revision':rev(f.case),
             'version':version.pk,'verdict':'approve','evidence':f.e['requirements'].pk,'note':'Distinct synthetic Head reviews exact native report'})
         self.assertRedirects(response,url)

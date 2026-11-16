@@ -326,7 +326,8 @@ def restart(actor,work_id,expected,case_expected,reason):
     event(actor,case,'factory.closure_restarted',work=w.pk,previous=previous,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
 
-def projection(actor,work):
+@read_observation
+def projection(actor,work,*,include_execution=True):
     from .factory import access,profile
     access(actor,work.case,envelope=DEFINITION);d,data,rows=source(work,actor,current=False);v=document(work)
     report=LocalDeliveryAdapter().read_closure(d,selected(data));closed=delivery.latest(d,'closure',False);changed=False;issue=''
@@ -365,9 +366,10 @@ def projection(actor,work):
             can_settle=work.cancel_requested and work.status not in ['cancelled','verified','followup_needed']
         except (ValidationError,PermissionDenied):pass
     next_options=[];next_action='Review current closure evidence and prescribed decisions'
-    try:
-        _,value=profile(work);state,*args=snapshot(work,value);next_options,next_action=eligible(work,value,state,*args)
-    except (ValidationError,PermissionDenied):pass
+    if include_execution:
+        try:
+            _,value=profile(work);state,*args=snapshot(work,value);next_options,next_action=eligible(work,value,state,*args)
+        except (ValidationError,PermissionDenied):pass
     last_decision=delivery.latest(d,'closure_decision',False)
     if last_decision and (not v or last_decision.data['version_id']!=v.pk):last_decision=None
     return {'dossier':d,'data':data,'report':report,'document':v,'decision':last_decision,'closure':closed,'finding':issue,
