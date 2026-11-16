@@ -1,0 +1,39 @@
+/* SCR-12 Money tab (MoneyTab.tsx only). Token variables only; the phone layout is chosen in the component (useIsPhone),
+   the 720px switch. No bundle or shell class is restyled: the money__ classes sit beside them. */
+
+.money__title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: var(--text-sheet-title-size); line-height: 1.2; overflow-wrap: anywhere; }
+.money__lead, .money__plain { margin: 0; }
+.money__lead { color: var(--ink-muted); }
+.money__empty { max-width: 720px; }
+
+/* the table and the drill-down side by side, 22px apart, as the desktop board draws them */
+.money__body { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
+.money__main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.money__table .psl-table { min-width: 700px; }
+.money__amount, .money__note { display: block; }
+.money__note { font-size: var(--text-hint-size); color: var(--ink-muted); }
+.money__amountlink[aria-current="true"] { font-weight: 600; }
+.money__asof { margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
+
+.money__aside { flex: 1 1 320px; max-width: 420px; }
+/* the board's head: sentence case on the action tint, 12px by 16px */
+.money__aside > .money__asidehead { display: block; padding: var(--space-3) var(--space-4); background: var(--action-tint); font-family: var(--font-sans); font-size: var(--text-body-size); font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink); }
+.money__aside > .money__asidebody { padding: 0; gap: 0; color: var(--ink); }
+.money__aside .money__explain { padding: var(--space-14px) var(--space-4); }
+.money__explain { display: flex; flex-direction: column; gap: var(--space-3); }
+.money__sources { margin: 0; padding: 0 0 0 var(--space-18px); display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-body-size); }
+.money__ref { font-family: var(--font-mono); font-size: var(--text-reference-size); color: var(--ink-muted); }
+
+/* Chidi's card, under the sources */
+.money__agent { display: flex; gap: var(--space-10px); align-items: flex-start; padding: var(--space-10px) var(--space-3); background: var(--action-tint); border: var(--rule-strong) solid var(--action); font-size: var(--text-body-size); line-height: 1.45; color: var(--action-ink); }
+.money__aside .money__agent { margin: 0 var(--space-4) var(--space-4); }
+.money__agent .psl-avatar { width: 36px; height: 36px; flex: none; }
+
+/* phones: one card per stage, the amount a 44px link (D-92c) */
+.money__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.money__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.money__stage { font-weight: 600; }
+.money__card .money__amount, .money__card .money__amountlink { font-family: var(--font-mono); font-size: var(--text-amount-size); }
+.money__card .money__amountlink { display: inline-flex; align-items: center; min-height: var(--control-md); }
+.money__line { font-size: var(--text-hint-size); color: var(--ink-muted); }
+.money__hint { margin: 0; font-size: var(--text-body-size); }
