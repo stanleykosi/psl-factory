@@ -1,0 +1,685 @@
+{
+  "items": [
+    {
+      "register": "issues",
+      "reference": "ISS-1001",
+      "title": "Android login loop (1)",
+      "severity": "high",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 18000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1002",
+      "title": "Slow statement download (2)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 36000,
+      "sample": true
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1003",
+      "title": "Wrong balance after transfer (3)",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 54000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1004",
+      "title": "Push notifications arrive late (4)",
+      "severity": "high",
+      "state": "Open",
+      "age_seconds": 72000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1005",
+      "title": "Biometric prompt repeats (5)",
+      "severity": "medium",
+      "owner": {
+        "name": "Support"
+      },
+      "age_seconds": 90000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1006",
+      "title": "Android login loop (6)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1007",
+      "title": "Slow statement download (7)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 126000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1008",
+      "title": "Wrong balance after transfer (8)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 144000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1009",
+      "title": "Push notifications arrive late (9)",
+      "severity": "low",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 162000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1010",
+      "title": "Biometric prompt repeats (10)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 180000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1011",
+      "title": "Android login loop (11)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 198000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1012",
+      "title": "Slow statement download (12)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 216000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1013",
+      "title": "Wrong balance after transfer (13)",
+      "severity": "high",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 234000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1014",
+      "title": "Push notifications arrive late (14)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 252000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1015",
+      "title": "Biometric prompt repeats (15)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 270000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1016",
+      "title": "Android login loop (16)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 288000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1017",
+      "title": "Slow statement download (17)",
+      "severity": "medium",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 306000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1018",
+      "title": "Wrong balance after transfer (18)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 324000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1019",
+      "title": "Push notifications arrive late (19)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 342000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1020",
+      "title": "Biometric prompt repeats (20)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 360000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1021",
+      "title": "Android login loop (21)",
+      "severity": "low",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 378000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1022",
+      "title": "Slow statement download (22)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 396000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1023",
+      "title": "Wrong balance after transfer (23)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 414000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1024",
+      "title": "Push notifications arrive late (24)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 432000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1025",
+      "title": "Biometric prompt repeats (25)",
+      "severity": "high",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 450000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "changes",
+      "reference": "CR-0090",
+      "title": "Biometric login",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Amendment awaiting signature",
+      "age_seconds": 7200,
+      "work_id": "W-1005"
+    },
+    {
+      "register": "emergencies",
+      "reference": "EM-0007",
+      "title": "Card controls outage",
+      "severity": "high",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Being handled",
+      "age_seconds": 1800
+    },
+    {
+      "register": "rfps",
+      "reference": "RFP-0102",
+      "title": "Savings product extension",
+      "owner": {
+        "name": "Harmattan Bank",
+        "role": "Client",
+        "outside_party": true
+      },
+      "state": "Waiting for the client"
+    }
+  ],
+  "as_of": "2026-11-12T15:40:00Z",
+  "registers": [
+    {
+      "register": "issues",
+      "reference": "ISS-1001",
+      "title": "Android login loop (1)",
+      "severity": "high",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 18000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1002",
+      "title": "Slow statement download (2)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 36000,
+      "sample": true
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1003",
+      "title": "Wrong balance after transfer (3)",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 54000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1004",
+      "title": "Push notifications arrive late (4)",
+      "severity": "high",
+      "state": "Open",
+      "age_seconds": 72000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1005",
+      "title": "Biometric prompt repeats (5)",
+      "severity": "medium",
+      "owner": {
+        "name": "Support"
+      },
+      "age_seconds": 90000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1006",
+      "title": "Android login loop (6)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1007",
+      "title": "Slow statement download (7)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 126000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1008",
+      "title": "Wrong balance after transfer (8)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 144000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1009",
+      "title": "Push notifications arrive late (9)",
+      "severity": "low",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 162000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1010",
+      "title": "Biometric prompt repeats (10)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 180000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1011",
+      "title": "Android login loop (11)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 198000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1012",
+      "title": "Slow statement download (12)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 216000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1013",
+      "title": "Wrong balance after transfer (13)",
+      "severity": "high",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 234000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1014",
+      "title": "Push notifications arrive late (14)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 252000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1015",
+      "title": "Biometric prompt repeats (15)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 270000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1016",
+      "title": "Android login loop (16)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 288000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1017",
+      "title": "Slow statement download (17)",
+      "severity": "medium",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 306000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1018",
+      "title": "Wrong balance after transfer (18)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 324000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1019",
+      "title": "Push notifications arrive late (19)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 342000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1020",
+      "title": "Biometric prompt repeats (20)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 360000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1021",
+      "title": "Android login loop (21)",
+      "severity": "low",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 378000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1022",
+      "title": "Slow statement download (22)",
+      "severity": "high",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 396000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1023",
+      "title": "Wrong balance after transfer (23)",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 414000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1024",
+      "title": "Push notifications arrive late (24)",
+      "severity": "low",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Open",
+      "age_seconds": 432000
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-1025",
+      "title": "Biometric prompt repeats (25)",
+      "severity": "high",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Open",
+      "age_seconds": 450000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "changes",
+      "reference": "CR-0090",
+      "title": "Biometric login",
+      "severity": "medium",
+      "owner": {
+        "name": "Amina Yusuf",
+        "role": "PM"
+      },
+      "state": "Amendment awaiting signature",
+      "age_seconds": 7200,
+      "work_id": "W-1005"
+    },
+    {
+      "register": "emergencies",
+      "reference": "EM-0007",
+      "title": "Card controls outage",
+      "severity": "high",
+      "owner": {
+        "name": "Support"
+      },
+      "state": "Being handled",
+      "age_seconds": 1800
+    },
+    {
+      "register": "rfps",
+      "reference": "RFP-0102",
+      "title": "Savings product extension",
+      "owner": {
+        "name": "Harmattan Bank",
+        "role": "Client",
+        "outside_party": true
+      },
+      "state": "Waiting for the client"
+    }
+  ],
+  "summary": {
+    "registers": {
+      "issues": 25,
+      "changes": 1,
+      "emergencies": 1,
+      "rfps": 1
+    }
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "items": [
+    {
+      "register": "issues",
+      "reference": "ISS-0233",
+      "title": "Login fails on older Android phones",
+      "severity": "high",
+      "owner": {
+        "name": "Tunde Bello",
+        "role": "PM"
+      },
+      "state": "Fix in testing",
+      "age_seconds": 180000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-0229",
+      "title": "Report totals round differently",
+      "severity": "medium",
+      "owner": {
+        "name": "Engineering",
+        "recorded_by_pm": true
+      },
+      "state": "Waiting on Engineering",
+      "age_seconds": 349200
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-0221",
+      "title": "Slow search on patient list",
+      "severity": "low",
+      "owner": {
+        "name": "Tunde Bello",
+        "role": "PM"
+      },
+      "state": "Closed by QA and PM"
+    },
+    {
+      "register": "changes",
+      "reference": "CR-0031",
+      "title": "SMS reminders",
+      "severity": "medium",
+      "owner": {
+        "name": "Tunde Bello",
+        "role": "PM"
+      },
+      "state": "Assessing the effect on milestone 3",
+      "age_seconds": 432000,
+      "work_id": "W-1005"
+    },
+    {
+      "register": "changes",
+      "reference": "CR-0027",
+      "title": "Export visit list to CSV",
+      "severity": "low",
+      "owner": {
+        "name": "Engineering",
+        "recorded_by_pm": true
+      },
+      "state": "Approved and built",
+      "age_seconds": 1641600
+    },
+    {
+      "register": "rfps",
+      "reference": "RFP-0044",
+      "title": "Pilot for the Ikeja clinic group",
+      "owner": {
+        "name": "Lagoon Health",
+        "role": "Client",
+        "outside_party": true
+      },
+      "state": "Draft being prepared",
+      "age_seconds": 259200
+    }
+  ],
+  "as_of": "2026-11-12T15:40:00Z",
+  "registers": [
+    {
+      "register": "issues",
+      "reference": "ISS-0233",
+      "title": "Login fails on older Android phones",
+      "severity": "high",
+      "owner": {
+        "name": "Tunde Bello",
+        "role": "PM"
+      },
+      "state": "Fix in testing",
+      "age_seconds": 180000,
+      "work_id": "W-1002"
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-0229",
+      "title": "Report totals round differently",
+      "severity": "medium",
+      "owner": {
+        "name": "Engineering",
+        "recorded_by_pm": true
+      },
+      "state": "Waiting on Engineering",
+      "age_seconds": 349200
+    },
+    {
+      "register": "issues",
+      "reference": "ISS-0221",
+      "title": "Slow search on patient list",
+      "severity": "low",
+      "owner": {
+        "name": "Tunde Bello",
+        "role": "PM"
+      },
+      "state": "Closed by QA and PM"
+    },
+    {
+      "register": "changes",
+      "reference": "CR-0031",
+      "title": "SMS reminders",
+      "severity": "medium",
+      "owner": {
+        "name": "Tunde Bello",
+        "role": "PM"
+      },
+      "state": "Assessing the effect on milestone 3",
+      "age_seconds": 432000,
+      "work_id": "W-1005"
+    },
+    {
+      "register": "changes",
+      "reference": "CR-0027",
+      "title": "Export visit list to CSV",
+      "severity": "low",
+      "owner": {
+        "name": "Engineering",
+        "recorded_by_pm": true
+      },
+      "state": "Approved and built",
+      "age_seconds": 1641600
+    },
+    {
+      "register": "rfps",
+      "reference": "RFP-0044",
+      "title": "Pilot for the Ikeja clinic group",
+      "owner": {
+        "name": "Lagoon Health",
+        "role": "Client",
+        "outside_party": true
+      },
+      "state": "Draft being prepared",
+      "age_seconds": 259200
+    }
+  ],
+  "summary": {
+    "registers": {
+      "issues": 3,
+      "changes": 2,
+      "emergencies": 0,
+      "rfps": 1
+    }
+  }
+}

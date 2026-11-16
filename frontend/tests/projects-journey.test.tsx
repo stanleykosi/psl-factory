@@ -70,13 +70,13 @@ async function until(check: () => void, tries = 100) {
   }
 }
 
-const page = (caseId: string, tab?: 'milestones' | 'money') => (
+const page = (caseId: string, tab?: 'milestones' | 'documents' | 'money') => (
   <AppShell>
     <ProjectJourneyPage caseId={caseId} tab={tab} />
   </AppShell>
 );
 
-async function open(caseId = 'P-0101', tab?: 'milestones' | 'money') {
+async function open(caseId = 'P-0101', tab?: 'milestones' | 'documents' | 'money') {
   const result = render(page(caseId, tab));
   await until(() => expect(calls.length).toBeGreaterThan(0));
   await until(() => expect(screen.queryByText('Loading…')).toBeNull());
@@ -239,7 +239,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
 
 describe('tabs other than Journey (contents come with FE-M3-PROJECT-TABS)', () => {
   it.each([
-    ['milestones', 'Milestones come next', 1],
+    ['documents', 'Documents come next', 2],
     ['money', 'Money comes next', 3],
   ] as const)('%s: same header, the tab selected and a coming-next panel instead of the journey', async (tab, heading, index) => {
     await open('P-0101', tab);

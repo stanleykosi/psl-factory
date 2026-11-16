@@ -30,7 +30,9 @@ import {
   type ProjectTab,
 } from './model';
 import { ProjectNoAccess } from './ProjectStates';
+import { ProjectTabContent } from './ProjectTabContent';
 import { PANEL_ID, ProjectTabs } from './ProjectTabs';
+import { hasTabContent } from './tabsModel';
 import { useProject } from './useProject';
 
 import './projects.css';
@@ -182,7 +184,7 @@ function ComingNext({ tab, base }: { tab: ProjectTab; base: string }) {
   );
 }
 
-function ProjectView({ journey, base, tab }: { journey: JourneyView; base: string; tab: ProjectTab }) {
+function ProjectView({ caseId, journey, base, tab }: { caseId: string; journey: JourneyView; base: string; tab: ProjectTab }) {
   return (
     <div className="projects__page">
       <header className="projects__header">
@@ -195,7 +197,13 @@ function ProjectView({ journey, base, tab }: { journey: JourneyView; base: strin
       </header>
       <ProjectTabs base={base} current={tab} counts={journey.tab_counts} />
       <div role="tabpanel" id={PANEL_ID} aria-label={PROJECT_TABS.find((t) => t.key === tab)?.label} className="projects__panel">
-        {tab === 'journey' ? <JourneyTab journey={journey} /> : <ComingNext tab={tab} base={base} />}
+        {tab === 'journey' ? (
+          <JourneyTab journey={journey} />
+        ) : hasTabContent(tab) ? (
+          <ProjectTabContent caseId={caseId} journey={journey} base={base} tab={tab} />
+        ) : (
+          <ComingNext tab={tab} base={base} />
+        )}
       </div>
     </div>
   );
@@ -218,7 +226,7 @@ function ProjectPage({ caseId, tab }: { caseId: string; tab: ProjectTab }) {
       />
     );
   }
-  return <ProjectView journey={state.journey} base={base} tab={tab} />;
+  return <ProjectView caseId={caseId} journey={state.journey} base={base} tab={tab} />;
 }
 
 /** /projects/<case_id>[/<tab>]: one project, for anyone whose /me lists Projects. Without it no request is made. */
