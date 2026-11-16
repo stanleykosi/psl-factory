@@ -63,7 +63,8 @@ afterEach(() => {
 
 async function open(id: string, tab: 'overview' | 'history' = 'overview') {
   const view = render(inFrame(id, tab));
-  await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
+  // the first load can take longer than waitFor's 1s default under the full parallel run
+  await waitFor(() => expect(screen.queryByRole('status')).toBeNull(), { timeout: 5000 });
   return view;
 }
 
