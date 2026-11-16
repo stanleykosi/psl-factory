@@ -105,6 +105,30 @@
       "at": "2026-11-16T17:57:53Z",
       "seconds": 222.0,
       "evidence_ref": "delivery/features/F-23/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T18:15:03Z",
+      "seconds": 399.3,
+      "evidence_ref": "delivery/features/F-23/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 2,
+      "commit": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T18:21:27Z",
+      "seconds": 326.0,
+      "evidence_ref": "delivery/features/F-23/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -266,7 +290,7 @@
         "delivery/features/F-23/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -283,11 +307,25 @@
           ],
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "Live at 1440 and 390 on the mock: Edit on action A-1 shows \"Send test accounts for UAT\", owner Lagoon Health, due \"13 Nov 2026\"; untouched save sent `{text, owner:\"O-LAGOON\", due:\"2026-11-13\"}` with item_ids [\"A-1\"]. Decision D-1 edit shows its text and sends the same text."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Live at 1440 and 390 on the mock: Edit on action A-1 shows \"Send test accounts for UAT\", owner Lagoon Health, due \"13 Nov 2026\"; untouched save sent `{text, owner:\"O-LAGOON\", due:\"2026-11-13\"}` with item_ids [\"A-1\"]. Decision D-1 edit shows its text and sends the same text."
       ]
     },
     {
@@ -464,7 +502,7 @@
         "delivery/features/F-23/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -481,11 +519,25 @@
           ],
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "round-2 SCR-28-desktop side-by-side: no project tab bar; the subtitle sits under the h1 at y 202, as on the board; the panels start at y 340 (the agent band is the remaining offset, a frame item). W-2301/W-2306..W-2308 have no `context.project`; W-2302..W-2305 keep it."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "round-2 SCR-28-desktop side-by-side: no project tab bar; the subtitle sits under the h1 at y 202, as on the board; the panels start at y 340 (the agent band is the remaining offset, a frame item). W-2301/W-2306..W-2308 have no `context.project`; W-2302..W-2305 keep it."
       ]
     },
     {
@@ -501,7 +553,7 @@
         "delivery/features/F-23/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -518,11 +570,25 @@
           ],
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "`workspace.css` grid rule for `.ws-side .ws-row:has(> .ws-checkwrap)`: the tick is level with the words at 1440 (decisions panel) and at 390 (SCR-28-mobile side-by-side)."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`workspace.css` grid rule for `.ws-side .ws-row:has(> .ws-checkwrap)`: the tick is level with the words at 1440 (decisions panel) and at 390 (SCR-28-mobile side-by-side)."
       ]
     },
     {
@@ -538,7 +604,7 @@
         "delivery/features/F-23/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -555,11 +621,25 @@
           ],
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "SCR-28-desktop-review: the Minutes panel starts at y 258, level with Decide, and the empty band is gone. SCR-28-mobile-review: no task card; the minutes panel is first. `WorkItemOverview.tsx:719-733` filters out only the tasks a step's `task_id` names."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "SCR-28-desktop-review: the Minutes panel starts at y 258, level with Decide, and the empty band is gone. SCR-28-mobile-review: no task card; the minutes panel is first. `WorkItemOverview.tsx:719-733` filters out only the tasks a step's `task_id` names."
       ]
     },
     {
@@ -575,7 +655,7 @@
         "delivery/features/F-23/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -592,11 +672,25 @@
           ],
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "drafted: one \"MINUTES\" panel whose first row is \"Minutes v1 \u00b7 client version \u00b7 DRAFTED\"; review: \"MINUTES V1 \u00b7 FOR LAGOON HEALTH\" panel with the same first row; no extra h2 or version line; IN tags neutral."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "drafted: one \"MINUTES\" panel whose first row is \"Minutes v1 \u00b7 client version \u00b7 DRAFTED\"; review: \"MINUTES V1 \u00b7 FOR LAGOON HEALTH\" panel with the same first row; no extra h2 or version line; IN tags neutral."
       ]
     },
     {
@@ -658,7 +752,7 @@
         "delivery/features/F-23/round-1/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -675,11 +769,228 @@
           ],
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-security",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "`Workspace.tsx:99` `cross` now skips `sec.restricted`, and `Workspace.tsx:196` `ticked` returns false for any item in a restricted section. `tickedFor` and `liveIds` depend on `ticked`, so neither the section footer, the workspace-row control nor the submit set can include those ids. The test \"a section that is not drawn adds nothing to the confirm set (SEC-1-1)\" (`frontend/tests/minutes.test.tsx`) makes `decisions` restricted on W-2301. It checks that D-1 is not drawn, that the confirm moves back to the table's own control, and that `item_ids` is exactly `['A-1','A-2','A-3']`."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-security",
+      "verification_refs": [
+        "`Workspace.tsx:99` `cross` now skips `sec.restricted`, and `Workspace.tsx:196` `ticked` returns false for any item in a restricted section. `tickedFor` and `liveIds` depend on `ticked`, so neither the section footer, the workspace-row control nor the submit set can include those ids. The test \"a section that is not drawn adds nothing to the confirm set (SEC-1-1)\" (`frontend/tests/minutes.test.tsx`) makes `decisions` restricted on W-2301. It checks that D-1 is not drawn, that the confirm moves back to the table's own control, and that `item_ids` is exactly `['A-1','A-2','A-3']`."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "`minutesProposalsStripped` strips `values` from every E-WORK-ITEM fixture, but the \"proposal keys exist on their own\" guard still covers only `links` and `items_default`. A stray `items[].values` in a pre-F-23 fixture would be stripped silently.",
+      "severity": "frontend/tests/mock-contract.test.ts:~76-110",
+      "blocking": false,
+      "summary": "Add `values` to that guard so it appears only in W-23xx fixtures.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T18:15:03Z",
+          "refs": [
+            "7abfbcb94384c4380adf6bb289961f547c735e98"
+          ],
+          "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "7abfbcb94384c4380adf6bb289961f547c735e98"
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "The task card is hidden for every line whose workspace step links the task, not only minutes. The builder reports that no F-17/F-21/F-22 board has such a pair, and the suites pass. It would hide the card's status text for any future line that has both.",
+      "severity": "frontend/src/features/work-item/workitemoverview.tsx:719",
+      "blocking": false,
+      "summary": "Leave as is. Note it in the frame backlog.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "With `context.project` dropped (UI-1-1) the project tab bar (Journey, Milestones...) no longer shows on the default page, while it still shows on the review pages' board. Matches the board for the default state, so only noting it.",
+      "severity": "w-2301 default",
+      "blocking": false,
+      "summary": "None needed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-28-desktop, SCR-28-mobile (and W-2306..W-2308) | Several things went wrong in fixing UI-1-5:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T18:15:03Z",
+          "refs": [
+            "7abfbcb94384c4380adf6bb289961f547c735e98"
+          ],
+          "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "7abfbcb94384c4380adf6bb289961f547c735e98"
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-desktop-drafted, -review (both widths) | The board draws the DRAFTED row tag and the drafted status tag in blue. The page draws them in neutral grey (`status.tone: neutral`, row tag neutral). Taste-level; leave as is unless the design engineer wants the board's tone.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T18:15:03Z",
+          "refs": [
+            "7abfbcb94384c4380adf6bb289961f547c735e98"
+          ],
+          "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "7abfbcb94384c4380adf6bb289961f547c735e98"
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-mobile | The stacked phone rows (UX-1-4) are readable and keep Edit and Remove on screen. Each cell sits on its own line about 40px apart, though, where the board's phone rows are compact (\"owner \u00b7 due\" on one line). This is frame, covered by Conflicts 10.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        }
+      ]
+    },
+    {
+      "id": "SEC-2-1",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Possible loss of the decision path. `frontend/src/features/work-item/WorkItemOverview.tsx:719-721` hides the task card for any task named by `item.workspace.steps[].task_id`. It does this even when `Workspace` draws no steps, which is the read-only branch at `frontend/src/features/workspace/Workspace.tsx:378-381` (no `page`, or no numeric `workspace.revision`). In that case the PM loses the link to the decision page. This is availability, not exposure, and no fixture triggers it. Expected: the card is hidden only when the workspace's own link is drawn. Fix: build `linked` only when the workspace is writable (`typeof item.workspace.revision === 'number'`), or move the rule into `Workspace`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        }
       ]
     }
   ],
@@ -747,6 +1058,70 @@
           ]
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "evidence_refs": [
+            "delivery/features/F-23/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-23/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "evidence_refs": [
+            "delivery/features/F-23/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "evidence_refs": [
+            "delivery/features/F-23/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "evidence_refs": [
+            "delivery/features/F-23/round-2/review-security.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -771,7 +1146,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "06e64168c3a74edd358fb74b1998203f4b709c95",
     "task_branch": "fe-line-minutes-the-minutes-line-the-pm-confirms-tola-s",
-    "head_sha": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+    "head_sha": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-23",
     "pr_url": null,
     "pr_number": null,
@@ -789,6 +1164,8 @@
       "delivery/events.jsonl",
       "delivery/features/F-23/feature.json",
       "delivery/features/F-23/fidelity-exceptions.json",
+      "delivery/features/F-23/round-1/build.md",
+      "delivery/features/F-23/round-1/checks.md",
       "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/board-marked.png",
       "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/board.png",
       "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/board.rendered.html",
@@ -866,6 +1243,93 @@
       "delivery/features/F-23/round-1/fidelity/run.sh",
       "delivery/features/F-23/round-1/fidelity/scores.txt",
       "delivery/features/F-23/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-23/round-1/review-security.md",
+      "delivery/features/F-23/round-1/review-technical.md",
+      "delivery/features/F-23/round-1/review-ui.md",
+      "delivery/features/F-23/round-1/review-ux.md",
+      "delivery/features/F-23/round-2/build.md",
+      "delivery/features/F-23/round-2/checks.md",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/drive-states.mjs",
+      "delivery/features/F-23/round-2/fidelity/frozen/default-1440.html",
+      "delivery/features/F-23/round-2/fidelity/run.sh",
+      "delivery/features/F-23/round-2/fidelity/scores.txt",
+      "delivery/features/F-23/round-2/fidelity/serve-frozen.mjs",
+      "delivery/features/F-23/round-2/review-security.md",
+      "delivery/features/F-23/round-2/review-technical.md",
+      "delivery/features/F-23/round-2/review-ui.md",
+      "delivery/features/F-23/round-2/review-ux.md",
       "delivery/features/F-24/feature.json",
       "delivery/features/F-24/fidelity-exceptions.json",
       "delivery/features/F-24/round-3/acceptance-pmo.md",
@@ -874,6 +1338,15 @@
       "delivery/features/F-24/round-3/review-technical.md",
       "delivery/features/F-24/round-3/review-ui.md",
       "delivery/features/F-24/round-3/review-ux.md",
+      "delivery/features/F-25/feature.json",
+      "delivery/features/F-25/readiness.md",
+      "delivery/features/F-25/spec.md",
+      "delivery/features/F-26/feature.json",
+      "delivery/features/F-26/readiness.md",
+      "delivery/features/F-26/spec.md",
+      "delivery/features/F-27/feature.json",
+      "delivery/features/F-27/readiness.md",
+      "delivery/features/F-27/spec.md",
       "frontend/e2e/assistant.spec.ts",
       "frontend/e2e/minutes.spec.ts",
       "frontend/mock/assistant.mjs",
@@ -953,6 +1426,7 @@
       "frontend/src/features/start-work/useStartWork.ts",
       "frontend/src/features/work-item/WorkItemOverview.tsx",
       "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
       "frontend/src/features/workspace/StepForm.tsx",
       "frontend/src/features/workspace/Steps.tsx",
       "frontend/src/features/workspace/Workspace.tsx",
@@ -1004,7 +1478,7 @@
     }
   },
   "created_at": "2026-11-16T03:30:17Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -1054,6 +1528,30 @@
       "round": 2,
       "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-16T18:00:01Z",
+      "round": 2,
+      "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T18:00:01Z",
+      "round": 3,
+      "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-16T18:21:28Z",
+      "round": 3,
+      "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "reason": null
     }
   ],
   "routing": {
@@ -1070,10 +1568,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
+    "round": 3,
+    "attempts": 2,
     "verdict": "PASS",
-    "commit": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+    "commit": "a3f43067bf20e8474e3a6bb54d273597154d6f28"
   },
   "blocked": null
 }
