@@ -183,8 +183,36 @@ def respond(actor,case_id,request_id,successor_id,operation_key,evidence_id,expe
  if old:
   if old.kind!='response' or old.snapshot_id!=successor.pk or old.payload['request_id']!=q.pk or old.actor_id!=actor.pk or old.evidence_id!=e.pk:raise ValidationError('Response intent changed')
   return old
+ if correction_disposition(q).exists():raise ValidationError('This correction has a recorded decision')
  r=HRHandoffRecord.objects.create(contract=q.contract,snapshot=successor,kind='response',operation_key=operation_key,payload={'request_id':q.pk,'source_write':False,'new_finance_receipt_required':True},authority=auth,evidence=e,actor=actor)
  event(actor,c,'hrfinance.correction_response',record=r.pk);bump(c);return r
+
+def correction_disposition(request):
+ return request.contract.records.filter(kind__in=['response','correction_return','correction_reject'],payload__request_id=request.pk)
+
+
+@transaction.atomic
+def decide_correction(actor,case_id,request_id,verdict,successor_id,operation_key,evidence_id,expected):
+ if verdict=='approve':
+  return respond(actor,case_id,request_id,successor_id,operation_key,evidence_id,expected)
+ if verdict not in {'return','reject'} or successor_id is not None:
+  raise ValidationError('Select a correction decision and provide a successor only for approval')
+ c=locked(actor,case_id,'hrfinance.respond',expected)
+ q=exact(c,HRHandoffRecord,request_id)
+ if q.kind!='correction':raise ValidationError('Choose an actual Finance correction request')
+ validate(KEY,operation_key);authorized(q.contract);auth=authority(actor,c,'respond')
+ e=subject(c,evidence_id,'hr_correction_response')
+ kind='correction_'+verdict
+ old=q.contract.records.filter(operation_key=operation_key).first()
+ if old:
+  if (old.kind,old.actor_id,old.evidence_id,old.payload.get('request_id'))!=(kind,actor.pk,e.pk,q.pk):
+   raise ValidationError('Response intent changed')
+  return old
+ if correction_disposition(q).exists():raise ValidationError('This correction has a recorded decision')
+ r=HRHandoffRecord.objects.create(contract=q.contract,snapshot=q.snapshot,kind=kind,operation_key=operation_key,
+  payload={'request_id':q.pk,'source_write':False},authority=auth,evidence=e,actor=actor)
+ event(actor,c,'hrfinance.correction_decided',request=q.pk,record=r.pk,verdict=verdict);bump(c);return r
+
 
 def basis_snapshot(case,value):
  s=exact(case,HRReadSnapshot,value['snapshot_id'])

@@ -66,6 +66,7 @@ def access(request,case_id):
         row['record_actions']=access_by_account[row['user_id']]
     response=render(request,'identity/access.html',{
         'case':c,'form':form,'search':search,'people':page,
+        'staff_access':cfg.value.get('staff_lifecycle',{}),
         'history':AccessChange.objects.filter(case=c,action__in=cfg.value['allowed_actions']).order_by('-pk')[:100],
     })
     response['Cache-Control']='no-store'

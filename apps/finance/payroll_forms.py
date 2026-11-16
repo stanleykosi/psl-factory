@@ -1,4 +1,5 @@
 from django import forms
+from pathlib import PurePath
 from apps.identity.models import Grant
 from apps.policy.payroll_validators import SCHEMAS
 from .forms import CommandForm
@@ -6,7 +7,9 @@ from .payroll_models import PayrollRequest,PayrollInput,PayrollRun,PayrollPublic
 from .hrfinance_models import HRReadSnapshot
 
 class PayrollCaptureForm(CommandForm):
- file = forms.FileField(required=False, label='Payroll export file', widget=forms.ClearableFileInput(attrs={'accept':'.json,application/json'}))
+ file = forms.FileField(required=False, label='Payroll export file', widget=forms.ClearableFileInput(attrs={'accept':'.json,.csv,.xlsx'}))
+ extraction = forms.JSONField(required=False, label='Spreadsheet extraction details', widget=forms.Textarea(attrs={'rows':4}),
+  help_text='For a configured spreadsheet, enter source_version, extracted_at, completeness and control_total. Leave blank for JSON.')
 
  def clean(self):
   values=super().clean()
@@ -14,8 +17,15 @@ class PayrollCaptureForm(CommandForm):
   if bool(file)==bool(body):raise forms.ValidationError('Choose one export file or paste its contents.')
   if file:
    if file.size>256000:raise forms.ValidationError('Choose an export up to 256,000 bytes.')
-   try:values['body']=file.read(256001).decode('utf-8-sig')
+   suffix=PurePath(file.name).suffix.lower()
+   content=file.read(256001)
+   if suffix in {'.csv','.xlsx'} and isinstance(values.get('extraction'),dict):
+    values['spreadsheet']=(suffix[1:],content,values['extraction'])
+    return values
+   if suffix!='.json':raise forms.ValidationError('Choose JSON or a mapped CSV or Excel export.')
+   try:values['body']=content.decode('utf-8-sig')
    except UnicodeDecodeError as exc:raise forms.ValidationError('Choose a UTF-8 JSON export.') from exc
+  if values.get('extraction') is not None:raise forms.ValidationError('Extraction details are for spreadsheets.')
   return values
 
 

@@ -6,6 +6,7 @@ from django.db import transaction
 from apps.core.views import accessible_case
 from apps.core.services import lock_case
 from apps.identity.services import require
+from apps.identity.models import Grant
 from apps.agents.models import AgentRun
 from apps.agents.receivables import investigate
 from apps.policy.finance_drafts import draft_finance_policy
@@ -56,7 +57,8 @@ def workbench(request,case_id):
         from .obligations import projection
         i.identity_status=projection(i)
         i.current_findings=[]
-        if InvoiceIssue.objects.filter(invoice=i).exists():i.display_status='Issued obligation'
+        i.issue_id=InvoiceIssue.objects.filter(invoice=i).values_list('pk',flat=True).first()
+        if i.issue_id:i.display_status='Issued obligation'
         else:
             i.display_status='Draft; not issued'
             try:invoices.reviewed(i)
@@ -66,7 +68,8 @@ def workbench(request,case_id):
     for s in snapshots:
         manifest,result=receivables.calculate(case,s.as_of)
         s.current=s.as_of==timezone.localdate() and receivables.digest({'manifest':manifest,'result':result})==s.sha256
-    return render(request,'finance/settlement.html',{'case':case,'commands':forms,'invoices':docs,
+    reminder_access=Grant.objects.filter(case=case,user=request.user,action='finance.reminder.read',active=True).exists()
+    return render(request,'finance/settlement.html',{'case':case,'commands':forms,'invoices':docs,'reminder_access':reminder_access,
         'jobs':InvoiceJob.objects.filter(invoice__case=case).order_by('-pk')[:50],'reviews':InvoiceReview.objects.filter(invoice__case=case).order_by('-pk')[:30],
         'receipts':CashReceipt.objects.filter(case=case).order_by('-pk')[:50],'lots':CashVerification.objects.filter(receipt__case=case).order_by('-pk')[:50],
         'assignments':CashAssignment.objects.filter(receipt__case=case).order_by('-pk')[:50],'allocations':CashAllocation.objects.filter(lot__receipt__case=case).order_by('-pk')[:50],

@@ -4,11 +4,16 @@
 <header class="page-heading"><div><h1>People and access</h1><p class="lede">{{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Back to workspace</a></header>
 <section class="card table-wrap">
   <h2>Staff accounts in this workspace</h2>
+  {% if staff_access.allow_invite %}<p><a class="button secondary" href="{% url 'staff_invites' case.pk %}">Invite staff</a></p>{% endif %}
   <form method="get"><label for="staff-search">Name or email</label> <input id="staff-search" name="person" value="{{ search }}" maxlength="100"> <button class="button secondary" type="submit">Search</button></form>
   <table><thead><tr><th>Person</th><th>Account</th><th>Workspace access</th></tr></thead>
     <tbody>{% for person in people %}<tr>
       <td>{% firstof person.user__first_name person.user__username %}{% if person.user__first_name and person.user__last_name %} {{ person.user__last_name }}{% endif %}{% if person.user__email %}<br>{{ person.user__email }}{% endif %}</td>
-      <td>{{ person.user__is_active|yesno:'Active,Inactive' }}<br>Account {{ person.user_id }}</td>
+      <td>{{ person.user__is_active|yesno:'Active,Inactive' }}<br>Account {{ person.user_id }}
+        {% if staff_access.allow_deactivation and person.active_actions and person.user_id != user.pk %}
+          <br><a href="{% url 'staff_departure' case.pk person.user_id %}">Remove workspace access</a>
+        {% endif %}
+      </td>
       <td>{% if person.record_actions %}<details><summary>{{ person.active_actions }} permitted action{{ person.active_actions|pluralize }}</summary><ul>{% for action in person.record_actions %}<li>{{ action|readable }}</li>{% endfor %}</ul></details>{% else %}No current access in this list{% endif %}</td>
     </tr>{% empty %}<tr><td colspan="3">No matching accounts in the access you manage.</td></tr>{% endfor %}</tbody>
   </table>

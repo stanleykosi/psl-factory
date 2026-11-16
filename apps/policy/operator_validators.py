@@ -114,6 +114,8 @@ SCHEMAS[FACTORY_LEDGER]=(LEDGER_SCHEMA,LEDGER_VALUE)
 
 from .factory_validators import ENGAGEMENT_COMPONENT as FACTORY_ENGAGEMENT,ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE
 SCHEMAS[FACTORY_ENGAGEMENT]=(ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE)
+from .reminder_validators import COMPONENT as REMINDER, SCHEMA as REMINDER_SCHEMA, VALUE as REMINDER_VALUE, validate_delivery
+SCHEMAS[REMINDER]=(REMINDER_SCHEMA,REMINDER_VALUE)
 
 def validate_reference(component,target,case,runtime=False):
     if component==FACTORY_FORECAST:return validate_forecast_factory(component,target,case,runtime)
@@ -147,6 +149,8 @@ def validate_reference(component,target,case,runtime=False):
     if component==APPLICATION:return validate_application(component,target,case,runtime)
     private=component==PROTECTION and target.schema_ref==PRIVATE_SCHEMA
     v=typed(target,PRIVATE_SCHEMA,PRIVATE_VALUE) if private else typed(target,*SCHEMAS[component])
+    if component==REMINDER:
+        return validate_delivery(case,v,runtime)
     if component=='OPS.leadership_audience':
         for purpose, members in v.items():
             if members is None: continue

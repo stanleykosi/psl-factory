@@ -16,6 +16,11 @@ SCHEMA=obj({'format':{'enum':['psl.tenant-access/v1','psl.tenant-access/v2']},'c
     'allowed_actions':{'type':'array','uniqueItems':True,'maxItems':1000,'items':{'type':'string','minLength':1,'maxLength':100}},
     'initial_actions':{'type':'array','uniqueItems':True,'maxItems':1000,'items':{'type':'string','minLength':1,'maxLength':100}},
     'classification':{'enum':['synthetic','operational']}})
+SCHEMA['properties']['staff_lifecycle']=obj({
+    'invite_minutes':{'type':'integer','minimum':1,'maximum':10080},
+    'allow_invite':{'type':'boolean'},
+    'allow_deactivation':{'type':'boolean'},
+})
 
 def source_system(action):
     prefix='approval.source.read:'
@@ -33,6 +38,8 @@ def checked(v):
     if not initial<=allowed or not initial<=fixed:raise ValidationError('Initial actions must be fixed registered actions explicitly delegated')
     if any(action not in fixed and not(v['format']=='psl.tenant-access/v2' and source_system(action)) for action in allowed):raise ValidationError('Only fixed actions or exact v2 approval source-read literals may be delegated; no wildcard')
     if v['create_cases'] and ('case.read' not in v['initial_actions'] or not v['kinds']):raise ValidationError('Case creation requires an explicit kind and initial case.read')
+    if v.get('staff_lifecycle') and (not v['manage_access'] or 'case.read' not in allowed or not v['kinds']):
+        raise ValidationError('Staff lifecycle requires explicit workspace access delegation')
 
 def text(v,maximum):
     if not isinstance(v,str) or not v.strip() or v!=v.strip() or len(v)>maximum:raise ValidationError('Provide bounded nonempty text without surrounding whitespace')

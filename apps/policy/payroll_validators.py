@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from adapters.forecast import obj,KEY
+from adapters.payroll_spreadsheet import FIELDS
 from apps.documents.contracts import validate
 from apps.finance.rules import decimal
 from .document_validators import typed,ROLES
@@ -15,8 +16,16 @@ REPORT='F18.reporting_rules'
 AUTH='F18.review_authority'
 DEC={'anyOf':[{'type':'string','pattern':r'^-?(0|[1-9][0-9]{0,23})(\.[0-9]{1,8})?$'},{'type':'null'}]}
 KEYS={'type':'array','minItems':1,'maxItems':50,'uniqueItems':True,'items':KEY}
+HEADER={'type':'string','minLength':1,'maxLength':100}
+COLUMNS=obj({field:HEADER for field in FIELDS})
+LAYOUT={'oneOf':[
+ obj({'format':{'const':'csv'},'delimiter':{'enum':[',',';','\t']},'columns':COLUMNS}),
+ obj({'format':{'const':'xlsx'},'sheet':{'type':'string','minLength':1,'maxLength':31},'columns':COLUMNS}),
+]}
+PROVIDER=obj({'provider':KEY,'owner_id':ID,'owner_role':{'enum':ROLES}})
+PROVIDER['properties']['spreadsheet_layouts']={'type':'array','minItems':1,'maxItems':2,'items':LAYOUT}
 SCHEMAS={
- ACCESS:('schema:psl/payroll-access/v1',obj({'human_only':{'const':True},'entity':KEY,'from_period':MONTH,'to_period':MONTH,'currency':KEY,'unit':{'const':'major_currency'},'providers':{'type':'array','minItems':2,'maxItems':2,'items':obj({'provider':KEY,'owner_id':ID,'owner_role':{'enum':ROLES}})},'reader_ids':IDS,'allowed_components':KEYS,'source_decimal_places':{'type':'integer','minimum':0,'maximum':8},'max_age_seconds':{'type':'integer','minimum':1},'retention_seconds':{'type':'integer','minimum':1},'retention_mode':{'const':'restrict_after_expiry'},'source_contract_evidence_id':ID})),
+ ACCESS:('schema:psl/payroll-access/v1',obj({'human_only':{'const':True},'entity':KEY,'from_period':MONTH,'to_period':MONTH,'currency':KEY,'unit':{'const':'major_currency'},'providers':{'type':'array','minItems':2,'maxItems':2,'items':PROVIDER},'reader_ids':IDS,'allowed_components':KEYS,'source_decimal_places':{'type':'integer','minimum':0,'maximum':8},'max_age_seconds':{'type':'integer','minimum':1},'retention_seconds':{'type':'integer','minimum':1},'retention_mode':{'const':'restrict_after_expiry'},'source_contract_evidence_id':ID})),
  MERGE:('schema:psl/payroll-merge/v1',obj({'duplicate_within_source':{'const':'reject'},'adjustment_treatment':{'const':'source_revision_only'},'method':{'enum':['disjoint_union','prefer_provider','sum_explicit']},'provider_order':{'type':'array','minItems':2,'maxItems':2,'uniqueItems':True,'items':KEY},'unknown_amount':{'const':'hold'},'oracles':{'type':'array','minItems':2,'maxItems':20,'items':obj({'left':DEC,'right':DEC,'expected':DEC,'overlap':{'type':'boolean'}})}})),
  MATCH:('schema:psl/payroll-match/v1',obj({'employee_key':{'const':'opaque_exact_case_sensitive'},'hr_purpose':{'const':'payroll_matching'},'membership':{'enum':['whole_period_only','as_of_snapshot']},'multiple_memberships':{'const':'hold'},'missing_membership':{'const':'hold'},'unknown_bu':{'const':'hold'},'hr_write':{'const':False}})),
  REPORT:('schema:psl/payroll-report/v1',obj({'components':{'type':'array','minItems':1,'maxItems':50,'items':obj({'component':KEY,'coefficient':{'type':'string'}})},'decimal_places':{'type':'integer','minimum':0,'maximum':8},'rounding':{'enum':['half_even','half_up','down']},'minimum_employees':{'type':'integer','minimum':1},'small_groups':{'const':'hold_all_publication'},'recipient_ids':IDS,'destination':KEY,'disclosure':{'const':'aggregate_only'},'oracles':{'type':'array','minItems':2,'maxItems':20,'items':obj({'amounts':{'type':'array','minItems':1,'maxItems':50,'items':obj({'component':KEY,'amount':DEC})},'expected':DEC})}})),
@@ -43,6 +52,11 @@ def validate_reference(component,target,case,runtime=False):
  v=typed(target,*SCHEMAS[component])
  if component==ACCESS:
   if v['from_period']>v['to_period'] or len({r['provider'] for r in v['providers']})!=2:raise ValidationError('Two distinct providers and ordered periods required')
+  for provider in v['providers']:
+   layouts=provider.get('spreadsheet_layouts',[])
+   if len({layout['format'] for layout in layouts})!=len(layouts) or any(
+    len(set(layout['columns'].values()))!=len(FIELDS) for layout in layouts
+   ):raise ValidationError('Each export format needs a distinct, exact payroll header mapping')
   ids=v['reader_ids']+[r['owner_id'] for r in v['providers']]
   if get_user_model().objects.filter(pk__in=set(ids),is_active=True).count()!=len(set(ids)):raise ValidationError('Active actual principals required')
   from apps.pmo.services import subject

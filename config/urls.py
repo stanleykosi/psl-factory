@@ -25,7 +25,8 @@ from .health import health
 from apps.agents import upload_views
 finance_intake_patterns=[path('finance/followup-inbox/<uuid:case_id>/<str:operation_key>/',finance_followup_inbox,name='finance_followup_inbox')]
 from apps.documents import validation_views
-from apps.finance import payroll_views
+from apps.finance import payroll_views, payroll_correction_views, reminder_views
+from apps.identity import staff_views
 from apps.finance import hrfinance_views
 from apps.finance import recognition_views
 from apps.finance import payment_views
@@ -157,9 +158,17 @@ urlpatterns += [path('projects/<uuid:case_id>/templates/upload/', template_catal
 urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
                 path('clients/<uuid:case_id>/', client_contacts.project, name='design_client_project')]
 urlpatterns += [path('finance/month-end/', month_end.company, name='design_company_month_end')]
+urlpatterns += [path('cases/<uuid:case_id>/finance/reminders/<int:issue_id>/', reminder_views.work, name='design_payment_reminder')]
 urlpatterns += [path('projects/<uuid:case_id>/actions/<int:item_id>/', project_action_views.show, name='design_project_action')]
 urlpatterns += [path(f'cases/<uuid:case_id>/finance/payroll/{key}/', payroll_views.workbench, {'focus': key},
                      name=f'design_payroll_{key}') for key in payroll_views.SECTIONS]
+urlpatterns += [path('cases/<uuid:case_id>/hr/payroll-corrections/', payroll_correction_views.desk, name='design_hr_payroll_corrections'),
+                path('cases/<uuid:case_id>/hr/payroll-corrections/<int:followup_id>/', payroll_correction_views.desk,
+                     name='design_hr_payroll_correction')]
+urlpatterns += [path('cases/<uuid:case_id>/staff/invitations/', staff_views.invites, name='staff_invites'),
+                path('cases/<uuid:case_id>/staff/invitations/<int:invitation_id>/renew/', staff_views.invites, name='staff_renew_invite'),
+                path('cases/<uuid:case_id>/staff/<int:person_id>/remove-access/', staff_views.departure, name='staff_departure'),
+                path('staff/join/', staff_views.accept, name='staff_accept_invite')]
 urlpatterns += [path('cases/<uuid:case_id>/documents/review/<int:version_id>/', design_review.show, name='design_document_review')]
 urlpatterns += [path('notifications/', alerts_views.index, name='design_alerts'),
                 path('notifications/preview/', alerts_views.preview, name='design_alert_preview'),

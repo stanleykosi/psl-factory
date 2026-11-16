@@ -12,3 +12,4 @@ class Grant(models.Model):
         constraints = [models.UniqueConstraint(fields=['case', 'user', 'action'], name='record_action_grant')]
 
 from .intake_models import TenantAuthority,CaseIntake,AccessChange
+from .staff_models import StaffInvitation, StaffAdmission, StaffDeparture

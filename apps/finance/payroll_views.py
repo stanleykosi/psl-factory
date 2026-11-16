@@ -44,8 +44,10 @@ def workbench(request,case_id,focus=None):
      raise ValidationError('Select a review for this payroll screen.')
    if k=='request':domain.request(a,c,d['reference'],d['metadata'],e,v)
    elif k=='capture':
-    r=domain.capture(a,c,d['request_record'].pk,d['provider'],d['operation_key'],d['body'],v)
-    if not r.metadata['accepted']:messages.error(request,'Payroll export rejected: '+', '.join(r.metadata['codes'])+'; no source values retained')
+    r=domain.capture(a,c,d['request_record'].pk,d['provider'],d['operation_key'],d['body'],v,spreadsheet=d.get('spreadsheet'))
+    if not r.metadata['accepted']:
+     messages.error(request,'Payroll export rejected: '+', '.join(r.metadata['codes'])+'; no source values retained')
+     return redirect(request.path)
    elif k=='combine':domain.combine(a,c,d['request_record'].pk,[i.pk for i in d['inputs']],d['operation_key'],v)
    elif k=='match':domain.match(a,c,d['parent'].pk,d['hr_snapshot'].pk,d['operation_key'],v)
    elif k=='aggregate':domain.aggregate(a,c,d['parent'].pk,d['operation_key'],v)
@@ -58,7 +60,7 @@ def workbench(request,case_id,focus=None):
     with transaction.atomic():domain.locked(a,c,'policy.configure',v);draft_payroll_policy(a,c,d['component'],d['content'],e,d['effective_from'])
    messages.success(request,'Payroll history updated.');return redirect(request.path)
   except (ValidationError,ValueError,TypeError) as exc:
-   messages.error(request,'The upload could not be accepted. Check that you selected one UTF-8 JSON export for this provider and period.' if request.POST.get('action')=='capture' else str(exc));return redirect(request.path)
+   messages.error(request,'The upload could not be accepted. Check the export format, source layout and extraction details for this provider and period.' if request.POST.get('action')=='capture' else str(exc));return redirect(request.path)
  inputs=list(PayrollInput.objects.defer('payload').filter(request__case=case).order_by('-pk')[:50]) if focus in {None,'inputs'} else []
  run_query=PayrollRun.objects.defer('result').filter(request__case=case)
  if focus:run_query=run_query.filter(kind__in=kinds)

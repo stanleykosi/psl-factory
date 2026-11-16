@@ -1,5 +1,5 @@
 """Restricted F16/F17/F18 working sheets, source-bound reviews and aggregate-only handoff."""
-import hashlib
+import hashlib,json
 from datetime import timedelta
 from django.db import transaction
 from django.core.exceptions import ValidationError,PermissionDenied
@@ -16,6 +16,7 @@ from apps.policy.hrfinance_validators import REQUIRED
 from adapters.forecast import obj,KEY
 from adapters.hrfinance import timestamp
 from adapters.payroll import SuppliedPayrollAdapter,PayrollExportError,sum_values
+from adapters.payroll_spreadsheet import rows as spreadsheet_rows
 from .rules import decimal
 from . import hrfinance as hr,payroll_math as maths
 from .payroll_models import PayrollRequest,PayrollInput,PayrollRun,PayrollReview,PayrollPublication,PayrollReportReceipt,PayrollHRFollowup
@@ -103,24 +104,41 @@ def request(actor,case_id,reference,metadata,evidence_id,expected):
  event(actor,c,'payroll.request',request=r.pk,version=v);bump(c);return r
 
 @transaction.atomic
-def capture(actor,case_id,request_id,provider,operation_key,body,expected):
+def capture(actor,case_id,request_id,provider,operation_key,body,expected,*,spreadsheet=None):
  c=locked(actor,case_id,'payroll.capture',expected);q=exact(c,PayrollRequest,request_id);validate(KEY,operation_key)
  config,v=access(q);owner=next((r for r in v['providers'] if r['provider']==provider),None)
  if not owner or owner['owner_id']!=actor.pk:raise PermissionDenied('This provider requires its actual nominated owner')
  authority=decision_authority(actor,c,owner['owner_role'])
- if not isinstance(body,str) or len(body.encode('utf-8'))>256000:raise ValidationError('Bounded supplied payroll export required')
- source_hash=hashlib.sha256(body.encode('utf-8')).hexdigest();old=q.inputs.defer('payload').filter(operation_key=operation_key).first()
+ import_pin={}
+ if spreadsheet is None:
+  if not isinstance(body,str) or len(body.encode('utf-8'))>256000:raise ValidationError('Bounded supplied payroll export required')
+  source_hash=hashlib.sha256(body.encode('utf-8')).hexdigest()
+ else:
+  format_,content,declared=spreadsheet
+  layout=next((row for row in owner.get('spreadsheet_layouts',[]) if row['format']==format_),None)
+  if layout is None:raise ValidationError('A current source layout is required for this spreadsheet format')
+  required={'source_version','extracted_at','completeness','control_total'}
+  if (body or not isinstance(content,bytes) or len(content)>256000 or not isinstance(declared,dict) or
+      set(declared)!=required or any(item is not None and (not isinstance(item,str) or len(item)>100) for item in declared.values())):
+   raise ValidationError('Bounded payroll spreadsheet and exact extraction details required')
+  source_hash=hashlib.sha256(content).hexdigest()
+  import_pin={'spreadsheet_format':format_,'import_sha256':digest({'layout':layout,'extraction':declared,'source':source_hash})}
+ old=q.inputs.defer('payload').filter(operation_key=operation_key).first()
  if old:
-  if old.actor_id!=actor.pk or old.provider!=provider or old.source_sha256!=source_hash:raise ValidationError('Input retry key used for changed intent')
+  if (old.actor_id!=actor.pk or old.provider!=provider or old.source_sha256!=source_hash or
+      old.metadata.get('import_sha256')!=import_pin.get('import_sha256')):raise ValidationError('Input retry key used for changed intent')
   return old
  try:
+  if spreadsheet is not None:
+   body=json.dumps({**declared,'provider':provider,'unit':'major_currency',
+    **{name:q.metadata[name] for name in ['entity','period','currency']},'rows':spreadsheet_rows(content,layout)})
   p=SuppliedPayrollAdapter().read(body,q,provider,v);accepted=True;codes=[]
   calculated=sum_values(r['amount'] for r in p['rows'])
   if p['control_total'] is None or calculated is None or decimal(p['control_total'])!=decimal(calculated):codes.append('source_control_unresolved')
   if p['completeness']!='complete':codes.append('source_inventory_incomplete')
  except PayrollExportError as exc:p={};accepted=False;codes=[exc.code]
  version=(q.inputs.filter(provider=provider).order_by('-version').values_list('version',flat=True).first() or 0)+1
- meta={'accepted':accepted,'status':'complete' if accepted and not codes else 'held','codes':codes,'access_policy_id':config.pk,'owner_authority':authority,'extracted_at':p.get('extracted_at'),'source_version':p.get('source_version'),'native_authenticity_verified':False}
+ meta={'accepted':accepted,'status':'complete' if accepted and not codes else 'held','codes':codes,'access_policy_id':config.pk,'owner_authority':authority,'extracted_at':p.get('extracted_at'),'source_version':p.get('source_version'),'native_authenticity_verified':False,**import_pin}
  i=PayrollInput.objects.create(request=q,provider=provider,version=version,operation_key=operation_key,source_sha256=source_hash,sha256=digest({'payload':p,'metadata':meta,'source_sha256':source_hash}),metadata=meta,payload=p,retain_until=timezone.now()+timedelta(seconds=v['retention_seconds']),actor=actor)
  event(actor,c,'payroll.input',input=i.pk,accepted=accepted,codes=codes);bump(c);return i
 
@@ -268,6 +286,7 @@ def hr_correction(actor,case_id,run_id,operation_key,evidence_id,expected):
  check_run_access(actor,r);validate(KEY,operation_key)
  key='payroll:'+digest({'run':r.pk,'key':operation_key})
  q=hr.correction(actor,c.pk,r.hr_snapshot_id,key,evidence_id,None)
- link,_=PayrollHRFollowup.objects.get_or_create(record=q,defaults={'run':r,'actor':actor})
+ link,created=PayrollHRFollowup.objects.get_or_create(record=q,defaults={'run':r,'actor':actor})
  if link.run_id!=r.pk or link.actor_id!=actor.pk:raise ValidationError('Correction link intent changed')
- event(actor,c,'payroll.hr_correction_linked',run=r.pk,record=q.pk);bump(c);return link
+ if created:event(actor,c,'payroll.hr_correction_linked',run=r.pk,record=q.pk);bump(c)
+ return link

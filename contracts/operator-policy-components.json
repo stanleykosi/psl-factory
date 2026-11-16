@@ -2,6 +2,25 @@
   "classification": "Supplemental engineering operator/protection interfaces; no new process or consolidated D group, no default RPO/RTO or real appointments",
   "components": [
     {
+      "id": "OPS.payment_reminder_delivery",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.payment_reminder_delivery/v1",
+      "subject_scope": "Exact case billing contact versions, delivery and receipt authority, channel and timing",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/payment-reminder-delivery/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "OPS.factory_forecast_execution",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.factory_forecast_execution/v1",

@@ -27,3 +27,5 @@ ACTIONS += ['coverage.read','coverage.access','coverage.capture','coverage.confi
 ACTIONS += ['delivery.progress.read','delivery.progress.configure','delivery.progress.observe']
 
 ACTIONS += ['finance.draft_generation.dispatch', 'finance.draft_generation.lookup', 'finance.draft_generation.cancel']
+# Exact human release and confirmation of customer reminders.
+ACTIONS += ['finance.reminder.read','finance.reminder.prepare','finance.reminder.send','finance.reminder.confirm']

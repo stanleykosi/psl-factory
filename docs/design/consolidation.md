@@ -42,7 +42,7 @@ The implementation uses required proofs and stoppable exceptions along each work
 | SCR-06 Overview | `design_overview`; current native factory summaries | Factory floor fidelity and station-level review |
 | SCR-07 Project journey | `design_project`, `design_project_tab`, `workspace_overview`, `case`, `project_audience`; current project records by permission | Complete inline proof and decision interactions and board acceptance |
 | SCR-08 Document review | `documents`, `case_uploads` and focused standalone status-report audience preview, source citations, return and rework, exact publication and delivery recovery | Coverage for other document types and interactive acceptance |
-| SCR-09 Payroll import | `design_payroll_inputs`, bounded UTF-8 JSON upload goes through the existing restricted source validator and import | Source-native spreadsheet mappings and reconciliation table variants |
+| SCR-09 Payroll import | `design_payroll_inputs`, bounded JSON and owner-mapped CSV or Excel uploads through the restricted source validator, with original file fingerprint | Confirm operational layout samples and exercise further reconciliation variants |
 | SCR-10 Exceptions | `home?queue=exceptions`, native reconciliation views | Match filters and exception links |
 | SCR-11 Registers | Project register tab links native `issues`, `changes`, `rfp` | Design filters, dates, dispositions and exact record links |
 | SCR-12 Report drill-down | `project_audience`, `leadership_report` | Safe drill-down using each source’s reporting grants |
@@ -54,7 +54,7 @@ The implementation uses required proofs and stoppable exceptions along each work
 | SCR-18 Restricted payroll matching | `design_payroll_matching`, `payroll_inspect` and exact HR-authorised receipts | Match the board's restricted HR and Finance table presentations |
 | SCR-19 Milestone completion | `case`, `delivery_progress`; native PMO completion and Finance handoff | Proof and exact version presentation |
 | SCR-20 Payments and follow-up | `finance_settlement`, `finance_receipt_followup` | Combine permitted views without conflating invoice, receipt and allocation |
-| SCR-21 Staff accounts | `tenant_access`, `case_access`; a searchable paginated workspace roster and native grant controls use current technical delegation | Organization-wide invitation, resend, deactivation and safe reassignment through a reviewed authority contract |
+| SCR-21 Staff accounts | Workspace roster, expiring one-use invitation link and renewal, recipient account setup, scoped deactivation and same-role project action reassignment under technical delegation | Approved external invitation delivery and any organization-wide staff policy. Native factory work and claims require their existing handoff before access can be removed |
 | SCR-22 Projects | `workspace_overview`, `project_views` | Match list filters and derive open/closed from source |
 | SCR-23 Log a bid request | `rfp`, `factory_create` for `rfp-response/v1` | Match request and proof form |
 | SCR-24 Assign project manager | `rfp`, `engagement` | Source-backed eligible choices |
@@ -65,12 +65,12 @@ The implementation uses required proofs and stoppable exceptions along each work
 | SCR-29 Project actions | Project Actions tab and exact action page support native ownership, deadlines, completion and history | Interactive acceptance of reassignment, stale updates, reopening and cancellation for separate operators |
 | SCR-30 Issue detail | `issues`, `factory_detail` for `pmo-issues/v1` | Match owner, due date and verified follow-up states |
 | SCR-31 Change request | `changes`, `factory_detail` for `pmo-change/v1` | Align impact through signed closure, with configured approvers |
-| SCR-32 Payment reminder | `finance_receipt_followup`, `finance_settlement` provide the invoice and collection source | Build the editable reminder, exact approved destination, human-controlled send, receipt and uncertain-effect lookup |
+| SCR-32 Payment reminder | Issued invoice facts suggest wording. Finance edits and releases an exact version to an approved billing contact. Synthetic worker commits one receipt. Approved manual channel uses matched delivery evidence and holds repeat releases while the earlier outcome is unresolved | Operational mail adapter, actual destination and cadence approval, and the board's invoice attachment and follow-up automation |
 | SCR-33 Retrospective | `closure_preparation`, `delivery` | Retrospective view tied to exact closure evidence |
 | SCR-34 Templates | Protected catalogue, private Word/Excel/PDF first project template and revision uploads, and native owner current-use review | Revision notes, interactive file walkthrough and protected Finance definitions through their own domain |
 | SCR-35 Clients | Searchable project/client register with versioned contacts and currency-separated native invoiced, applied and owed amounts per approved customer scope | Approved destination use and cross-project customer identity when agreed |
 | SCR-36 Month-end | Project and company Month-end display exact reviewed figures, cash receipts and coverage by authorized workspace | A complete cross-workspace close with receivables coverage and reconciliation |
-| SCR-37 Payroll corrections | `design_payroll_corrections` routes exact match-version concerns to the native HR handoff | HR-side correction decision, configured masking and supersession presentation |
+| SCR-37 Payroll corrections | Finance raises an exact match-version concern. The HR-only desk records approval with a corrected export, return or rejection. Finance needs its own receipt before use | Approved masking presentation and new source variants from HR owner examples |
 | SCR-38 Project milestones | `commercial`, `delivery_progress`, `case` | Milestone table with controlled changes and completion state |
 | SCR-39 Costing rule | `costing`, `policy`, `policy_scopes` | Exact version, examples and reviewed configuration |
 | SCR-40 Bid submission | `rfp`, `factory_detail` for `rfp-response/v1` | Controlled presentation of reviewed submission and actual receipts |

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Staff invitations · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Staff invitations</h1><p>{{ case.title }}</p></div><a class="button secondary" href="{% url 'case_access' case.pk %}">People and access</a></header>
+{% if invitation_link %}<section class="card onboarding-card">
+  <h2>Invitation is ready</h2><p>Share this one-use link with the named recipient through an approved channel.</p>
+  <label for="staff-invitation-link">Invitation link</label><input id="staff-invitation-link" readonly value="{{ invitation_link }}">
+</section>{% endif %}
+<section class="card onboarding-card"><h2>{% if renewing %}Renew invitation{% else %}Invite a person{% endif %}</h2>
+  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary">Create invitation link</button></form>
+</section>
+<section class="card"><h2>Invitation history</h2><ul>{% for row in rows %}<li>
+  {{ row.name }} · {{ row.email }} · Version {{ row.number }} · {% if row.admission %}Accepted
+  {% elif row.superseded %}Replaced{% elif row.expires_at <= as_of %}Expired{% else %}Expires {{ row.expires_at }}{% endif %}
+  {% if not row.admission and not row.superseded %}<a href="{% url 'staff_renew_invite' case.pk row.pk %}">Renew link</a>{% endif %}
+</li>{% empty %}<li>No staff invitation recorded.</li>{% endfor %}</ul></section>
+{% endblock %}

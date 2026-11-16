@@ -81,7 +81,7 @@ def create_action(actor,case_id,reference,description,owner_id,due_at,evidence_i
 
 @transaction.atomic
 def change_action(actor,case_id,item_id,operation,evidence_id,reason,expected,expected_action,owner_id=None,due_at=None):
-    management=operation in ['assign','reopen','cancel']
+    management=operation in ['assign','reassign','reopen','cancel']
     case=lock_case(actor,case_id,'action.manage' if management else 'action.work',expected)
     item=ActionItem.objects.select_related('current').filter(case=case,pk=item_id).first()
     if not item or item.current.number!=expected_action:raise ValidationError('Unknown action or stale action revision')
@@ -94,6 +94,8 @@ def change_action(actor,case_id,item_id,operation,evidence_id,reason,expected,ex
     if operation=='assign' and old.status not in ['completed','cancelled']:
         data.update(owner=scoped_person(case,owner_id,'action.own'),due_at=aware(due_at,'Action deadline') if due_at is not None else None,
             due_basis='explicit',status='open',paused_at=None,policies={},clock_meta={})
+    elif operation=='reassign' and old.status not in ['completed','cancelled']:
+        data.update(owner=scoped_person(case,owner_id,'action.own'))
     elif operation=='start' and old.status=='open':data['status']='in_progress'
     elif operation=='complete' and old.status in ['open','in_progress']:
         data.update(status='completed',paused_at=None)

@@ -3,7 +3,7 @@ from django.db.models import Exists, OuterRef, Q
 from django.db.models.expressions import RawSQL
 PLANNING_PRIVATE=['planning_packet','planning_prd_alignment','planning_scope_alignment','planning_contract_comparison','planning_readiness']
 PRIVATE=['qbo_native_intent','qbo_native_observation','template_current_source','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review','approval_source','approval_observation','migration_proof','d03_source']+PLANNING_PRIVATE
-PRIVATE_PREFIXES=('d03_control_','p14_','ops_','integration_','agent_private_','coverage_','usage_intake_')
+PRIVATE_PREFIXES=('d03_control_','p14_','ops_','integration_','agent_private_','coverage_','usage_intake_','payment_reminder_')
 CONFIRMED_CHANGE_SOURCE='psl:p56-confirmed-request/v1'
 def forecast_private(e):
  if e.kind.startswith('forecast_') or e.kind=='finance_group_snapshot' or e.kind=='finance_report_snapshot' and getattr(e,'source','').startswith('derived:forecast:'):return True

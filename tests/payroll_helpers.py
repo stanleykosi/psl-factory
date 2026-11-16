@@ -17,10 +17,10 @@ from .hrfinance_helpers import policy as hr_policy
 def policy(f,key,value):
  r=draft_payroll_policy(f['owner'],f['case'].pk,key,value,f['e']['policy_decision'].pk,timezone.now()-timedelta(seconds=1));transition(f['owner'],r.pk,'validated');transition(f['owner'],r.pk,'active');return r
 
-def fixture(employee_ids=None):
+def fixture(employee_ids=None, *, principal=None, payroll_layouts=None):
  owner,c=setup_case(username='payroll-owner');people={}
  for name in ['preparer','reviewer','manager']:
-  u=get_user_model().objects.create_user(username='payroll-'+name,password='test-only')
+  u=principal(name) if principal else get_user_model().objects.create_user(username='payroll-'+name,password='test-only')
   actions=ACTIONS if name!='manager' else ['case.read','payroll.read','payroll.report.read','payroll.report.receive']
   for action in actions:Grant.objects.create(user=u,case=c,action=action)
   people[name]=u
@@ -31,6 +31,9 @@ def fixture(employee_ids=None):
  for u,role in [(owner,'HR'),(people['preparer'],'Finance'),(people['reviewer'],'Finance')]:refs.append(register_reference(owner,c.pk,'payroll-role:'+str(u.pk),'schema:psl/role-assignment/v1',{'user_id':u.pk,'role':role},e['policy_decision'].pk).ref)
  activate(owner,c,'D05.role_principal_assignments',refs,e['policy_decision'])
  cfg=json.loads((Path(__file__).resolve().parent.parent/'fixtures/payroll.json').read_text(encoding='utf-8'))
+ if payroll_layouts:
+  for provider in cfg['access']['providers']:
+   provider['spreadsheet_layouts']=payroll_layouts
  if employee_ids:
   for export,emp in zip(cfg['exports'],employee_ids):export['rows'][0]['employee_id']=emp
  cfg['access']['providers'][0]['owner_id']=owner.pk;cfg['access']['providers'][1]['owner_id']=owner.pk;cfg['access']['reader_ids']=[people['preparer'].pk,people['reviewer'].pk];cfg['access']['source_contract_evidence_id']=e['payroll_source_contract'].pk
