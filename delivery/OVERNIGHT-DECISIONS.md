@@ -167,3 +167,9 @@ F-25 project tabs: all 16 recommendations (Mark complete and Filter left out unt
 
 ## D-105 · F-23 minutes differences and waivers signed; Tola's "needs you" sentence amber (16 Nov 2026, design engineer)
 Signed all F-23 differences and the 8 visual waivers: desktop default 69.1 (D-104), suggesting 81.3, drafted 85.4, review 78.7; phone 74.2 / 82 / 82.5 / 78.7. Tola's minutes note: the third sentence (the part asking the PM to act) shows amber as the board draws it — amber means waiting on someone (D-92b).
+
+## D-106 · F-23 amber line kept at 65.3 (16 Nov 2026, design engineer)
+Tola's "needs you" sentence stays amber (D-105) even though it drops SCR-28-desktop default from 69.1 to 65.3 (the frame draws it as a full-width warning band; the board draws it in the right column). The coordinator had said there'd be no score loss; that was wrong and was corrected before this call. The desktop default waiver is signed at 65.3; the phone default waiver at its measured score.
+
+## D-107 · F-26 Money tab waivers; F-27 delegation sign-off (16 Nov 2026, design engineer)
+F-26: visual waivers signed — SCR-12-desktop 85.7 and SCR-12-mobile 77.8 — covering the D-104 choices (project title as heading, report title below, two decimals, Stage 4 note under the amount, phone paid line, "As of" line, underlined links, plain "Tap an amount" text) and the shared F-07 frame/phone bar. F-27: SCR-13-desktop-delegation visual waiver at 84.0 (two date fields, 44px fields vs the board's 48px, the shared Setup frame); the Setup panel heading stays ink (blue means agent work, D-92b; other Setup panels are ink); the phone add form uses the full-height Drawer (D-103's "bottom sheet" meant this); the 10 frame/form differences plus the panel-head entry are signed.

@@ -1,0 +1,3 @@
+FAIL  coverage 75% (3/4; 100% with exceptions)  visual 83.1  missing 1  moved 1  extra 16
+note: Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).
+report: /Users/Hunchoo/psl-factory/delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.html
