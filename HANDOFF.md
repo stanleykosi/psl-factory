@@ -16,7 +16,9 @@ Resume on `build/design-consolidation`, based on the checked GitHub `main` at `4
 
 Use Railway environment `design-acceptance`, web `psl-design-web`, worker `psl-design-worker`, private `Postgres-5ywW` and bucket `psl-design-uploads`. Preview `https://psl-design-web-design-acceptance.up.railway.app/`. The scoped test account is `psl-agent-trial`. Run PostgreSQL acceptance in the private `psl-design-checks` service. See BUILD-TESTS.md for actual evidence. The older hosted service is still on its prior release. HOD decisions remain deferred.
 
-The active runtime source checkpoint is `94c3b8a8`, Railway web `5ceb7dcd` and worker `00827a79`. The worker uses the normal queues with the one-time seed startup removed. PostgreSQL runs `188e4ac9`, `9cb2f05c` and `d55d08f6` passed 21, 37 and 9 cases respectively. The last run tested the deployed runtime source.
+The active runtime source checkpoint is `608470e4`, Railway web `1f411925` and worker `aa49472d`. The normal worker replaced the seed image. Browser proof covers the synthetic reminder receipt, CSV intake, HR approval waiting for Finance receipt, staff invitation and renewal, and removal with a selected same-role successor. Final Railway PostgreSQL `597731b5` passed all 12 tests, including recipient password setup and the exact historic and replacement staff action versions. Read BUILD-TESTS.md for actual execution evidence and the remaining browser proof.
+
+The preceding runtime checkpoint at `94c3b8a8`, web `5ceb7dcd` and worker `00827a79`, passed PostgreSQL runs `188e4ac9`, `9cb2f05c` and `d55d08f6` with 21, 37 and 9 cases respectively.
 
 The earlier Railway checkpoint `client-drafts-05` used source `0735372b`, web `380f9b34` and worker `bbd124ee`. It applied agents `0009`, core `0004` and documents `0032`. The private file round trip and all eight live model drafts through saved human edits were verified over HTTPS. The focused PostgreSQL run `eb4c662a` passed all 19 tests. The full bid chain passed in `31299e3e`. See BUILD-TESTS.md for both the latest and historical test results.
 

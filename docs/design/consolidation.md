@@ -16,6 +16,9 @@ The named trial account reached the corresponding route or shared workspace for 
 | Report review | Approved one standalone version after checking its audience and citations. Loaded the monthly leadership preparation form and confirmed an unknown report type returns a not-found page. |
 | Client billing and company Month-end | Read the synthetic invoice, applied amount and remaining balance in the client view. Opened the scoped company Month-end and read the reviewed monthly figure. |
 | Restricted payroll | Opened dedicated input, matching and corrections pages and inspected the upload and matching controls. |
+| Payroll import and HR correction | Uploaded a mapped CSV, saw the new source become current and approved the exact corrected HR export. The HR page showed the recipient receipt required for Finance use. |
+| Payment reminder | Edited the wording, saved the draft, released it to the isolated inbox, then reopened the original confirmed receipt. |
+| Staff lifecycle | Created and renewed a one-use synthetic invitation, opened the recipient setup page, removed a seeded account's access with a selected successor and saw the inactive roster entry after reload. Account activation and historical reassignment were also verified by PostgreSQL HTTP tests. |
 | Other PMO and Finance destinations | Opened native destinations, including separate delivery intake forms, post-release work, ledger, schedules, assets and payroll. Many write, return, recovery and permission states still need interactive acceptance. |
 
 ## Functions added by the design
