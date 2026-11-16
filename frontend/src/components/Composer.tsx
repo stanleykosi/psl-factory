@@ -99,8 +99,12 @@ export function Composer({ agentName, value, onChange, onSend, canSend, busy = f
                   <i />
                   <i />
                 </span>
-              ) : (
+              ) : phone ? (
                 <Icon name="send" />
+              ) : (
+                <svg className="psl-icon" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="square">
+                  <path d="M10 16V4M4 10l6-6 6 6" />
+                </svg>
               )}
             </button>
           </span>

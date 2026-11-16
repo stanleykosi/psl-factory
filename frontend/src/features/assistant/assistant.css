@@ -8,13 +8,13 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as-list__group { display: flex; flex-direction: column; gap: var(--space-10px); }
 .as-list__day { margin: var(--space-2) 0 0; font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; color: var(--ink-muted); }
 .as-list__empty { margin: 0; color: var(--ink-muted); }
-.as .as-row { display: grid; grid-template-columns: var(--space-6) minmax(0, 1fr); gap: var(--space-10px); align-items: center; padding: 9px var(--space-10px); color: var(--ink); text-decoration: none; background: var(--surface); }
+.as .as-row { display: grid; grid-template-columns: var(--space-6) minmax(0, 1fr); gap: var(--space-10px); align-items: center; padding: var(--space-2) var(--space-10px); color: var(--ink); text-decoration: none; background: var(--surface); }
 .as-row .psl-avatar { width: var(--space-6); height: var(--space-6); }
 .as-row:hover { background: var(--steel); }
 .as-row:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: calc(var(--rule-strong) * -1); }
 .as-row[aria-current="page"] { background: var(--ink); color: var(--on-strong); }
 .as-row[aria-current="page"] .as-row__sub { color: var(--nav-muted); }
-.as-row__text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.as-row__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; line-height: 1.3; }
 .as-row__title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .as-row__sub { font-size: var(--text-small-size); color: var(--ink-muted); }
 

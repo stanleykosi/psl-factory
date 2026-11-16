@@ -70,7 +70,10 @@
         {
           "kind": "SIGNED SOW",
           "label": "SIGNED SOW v2 · stage 2",
-          "restricted": false
+          "restricted": false,
+          "link": {
+            "case_id": "C-0102"
+          }
         },
         {
           "kind": "CLIENT",

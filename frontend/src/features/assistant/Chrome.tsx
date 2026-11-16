@@ -9,9 +9,7 @@ import type { AgentName } from './types';
 export function TalkTo({ agents, selected, onPick }: { agents: AgentName[]; selected?: AgentName; onPick: (agent: AgentName) => void }) {
   return (
     <div role="group" aria-label="Talk to" className="as__talk">
-      <span className="as__eyebrow" aria-hidden="true">
-        TALK TO
-      </span>
+      <span className="as__eyebrow">TALK TO</span>
       {agents.map((agent) => (
         <button key={agent} type="button" className={`as-chip as-chip--${agent}`} aria-pressed={selected === agent} onClick={() => onPick(agent)}>
           <AgentAvatar agent={agent} />

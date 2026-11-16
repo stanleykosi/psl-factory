@@ -353,7 +353,7 @@ describe('thread (SCR-05-desktop-thread)', () => {
     expect(agent.getByText(/^I drafted the invoice from stage 2/)).toBeTruthy();
     const sources = body.querySelector('.cmp-chat__sources')!;
     expect([...sources.children].map((s) => s.textContent)).toEqual(['MILESTONE · HB-M2', 'SIGNED SOW v2 · stage 2', 'CLIENT · Harmattan Bank']);
-    expect(within(sources as HTMLElement).getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual(['/projects/C-0102', '/projects/C-0102']);
+    expect(within(sources as HTMLElement).getAllByRole('link').map((a) => a.getAttribute('href'))).toEqual(['/projects/C-0102', '/projects/C-0102', '/projects/C-0102']);
     const draft = agent.getByRole('region', { name: 'Draft' });
     expect(within(draft).getByText('Invoice draft · Harmattan Bank · Milestone 2')).toBeTruthy();
     expect(within(draft).getByText('DRAFTED · NOT REVIEWED')).toBeTruthy();

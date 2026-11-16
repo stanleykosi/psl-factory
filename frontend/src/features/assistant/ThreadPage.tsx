@@ -41,7 +41,7 @@ function Open({ id, conversation, refreshFailed, reload }: { id: string; convers
     <>
       <div className="as__center">
         {conversation.title && <PhoneHeader title={conversation.title} />}
-        <TalkTo agents={agents} onPick={(next) => router.push(`/assistant?agent=${next}`)} />
+        {!phone && <TalkTo agents={agents} onPick={(next) => router.push(`/assistant?agent=${next}`)} />}
         <VisuallyHidden>
           <h1>{conversation.title ?? 'Conversation'}</h1>
         </VisuallyHidden>

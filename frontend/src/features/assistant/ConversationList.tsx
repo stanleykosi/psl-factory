@@ -44,10 +44,8 @@ export function ConversationList({ state, currentId, onMore, onRetry, pathname, 
   return (
     <>
       {groupByDay(state.items, state.asOf).map((group) => (
-        <section key={group.label} className="as-list__group" aria-label={group.label}>
-          <p className="as-list__day" aria-hidden="true">
-            {group.label}
-          </p>
+        <section key={group.label} className="as-list__group" aria-label={`Conversations, ${group.label.toLowerCase()}`}>
+          <p className="as-list__day">{group.label}</p>
           {group.rows.map((row) => (
             <Row key={row.conversation_id} row={row} current={row.conversation_id === currentId} onOpen={onOpen} />
           ))}

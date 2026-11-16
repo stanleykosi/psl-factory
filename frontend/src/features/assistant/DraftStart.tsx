@@ -80,7 +80,7 @@ export function DraftStart({ draft, reread }: {
         next={draft.next}
         action={
           start && !started ? (
-            <Button ref={button} kind="start" size={phone ? 'lg' : 'md'} block={phone} aria-haspopup="dialog" onClick={() => setOpen(true)}>
+            <Button ref={button} kind="start" size={phone ? 'lg' : 'md'} block={phone} onClick={() => setOpen(true)}>
               {start.label}
             </Button>
           ) : undefined
