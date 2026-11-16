@@ -32,7 +32,6 @@ from apps.documents.models import Publication,PublicationJob,PublicationReceipt
 from apps.documents import controlled
 from .models import FactoryWork,FactoryActivity,HumanTask
 from . import factory as runtime
-from .factory_progress_views import start_work
 
 
 class RFPProfileForm(ProfileForm):
@@ -112,6 +111,9 @@ def response(request,template,context):
 
 def create(request):
     from . import factory_rfp as service
+    from .factory_views import submit_start
+    from apps.agents.assistant import work_intent
+    from apps.agents.assistant_drafts import latest
     cases=[]
     for case in visible_cases(request.user).filter(kind='project').order_by('title'):
         try:runtime.access(request.user,case,'factory.start',service.DEFINITION);require(request.user,case,'evidence.add')
@@ -131,12 +133,33 @@ def create(request):
     form.fields['reference']=forms.CharField(max_length=100,label='Work reference',initial=root.reference if root else '')
     form.fields['key']=forms.CharField(widget=forms.HiddenInput,max_length=100,initial=uuid4().hex)
     form.fields['background']=forms.BooleanField(required=False, initial=True, label='Continue in background after starting')
-    mappings=Mappings(request.POST if request.method=='POST' else None,prefix='requirements',form_kwargs={'case':case})
+    form.fields['assistant_turn']=forms.UUIDField(required=False, widget=forms.HiddenInput)
+    form.fields['draft_version']=forms.IntegerField(required=False, min_value=1, widget=forms.HiddenInput)
+    saved_rows = None
+    if request.method == 'GET' and request.GET.get('assistant_turn'):
+        try:
+            turn = work_intent(request.user, request.GET['assistant_turn'], service.DEFINITION, case.pk)
+        except ValidationError as exc:
+            messages.error(request, exc.messages[0])
+            return redirect('design_agents')
+        if turn.started_work_id:
+            return redirect('factory_detail', turn.started_work_id)
+        form.initial.update(assistant_turn=turn.pk, key=str(turn.pk))
+        draft = latest(turn)
+        if draft:
+            selected_inputs = draft.payload['native_inputs']
+            form.initial.update(reference=draft.payload['reference'], draft_version=draft.number,
+                                response_evidence=selected_inputs['response_evidence'], public_terms=selected_inputs['public_terms'],
+                                lessons=selected_inputs['lessons'], **selected_inputs['sources'])
+            saved_rows = selected_inputs['matrix']
+    mappings=Mappings(request.POST if request.method=='POST' else None,prefix='requirements',form_kwargs={'case':case},initial=saved_rows)
     if request.method=='POST' and form.is_valid() and mappings.is_valid():
         try:
-            return start_work(request, lambda: service.start(request.user, case.pk, form.cleaned_data['key'],
-                              payload(form, mappings), form.cleaned_data['reference'], form.cleaned_data['revision']),
-                              form.cleaned_data['background'])
+            values = form.cleaned_data
+            values.update(case=case, rfp_intake=root.current_intake_id if root else None, native_inputs=payload(form, mappings))
+            return submit_start(request, values, service.DEFINITION,
+                                lambda: service.start(request.user, case.pk, values['key'], values['native_inputs'],
+                                                      values['reference'], values['revision']))
         except ValidationError as exc:form.add_error(None,exc)
     return response(request,'factory/rfp_start.html',{'case':case,'rfp':root,'form':form,'mappings':mappings,'definition':service.DEFINITION})
 

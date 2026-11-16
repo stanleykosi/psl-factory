@@ -11,7 +11,7 @@ from django.http import Http404
 from django.shortcuts import render,redirect,get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
-from django.views.decorators.http import require_safe
+from django.views.decorators.http import require_http_methods, require_safe
 from django.urls import reverse
 from django.utils.dateparse import parse_datetime
 from apps.identity.models import Grant
@@ -574,7 +574,7 @@ def assistant_origin(request, form, envelope):
     if request.method != 'GET' or not turn_id:
         return None
     from apps.agents.assistant import cited_record, work_intent
-    from apps.agents.assistant_drafts import latest
+    from apps.agents.assistant_drafts import FIELDS, latest
 
     try:
         turn = work_intent(request.user, turn_id, envelope, request.GET.get('case'))
@@ -588,7 +588,7 @@ def assistant_origin(request, form, envelope):
     if draft:
         form.initial.update(draft.payload)
         form.initial['draft_version'] = draft.number
-    field = {'planning/v1': 'packet', 'pmo-finance/v1': 'handoff'}[envelope]
+    field = FIELDS[envelope][0]
     pk = cited_record(turn, field)
     if pk is not None and form.fields[field].queryset.filter(pk=pk).exists():
         form.initial[field] = pk
@@ -754,8 +754,11 @@ def create(request):
     return render(request,'factory/start.html',{'form':form,'available_cases':granted(request.user,['finance.read','factory.start']).filter(kind='project')})
 
 @login_required
-def detail(request,work_id):
+@require_http_methods(['GET','HEAD','POST'])
+def detail(request,work_id,focus=None):
     work=get_object_or_404(visible(request.user),pk=work_id)
+    if focus and work.definition != 'pmo-finance/v1':
+        raise Http404
     if work.definition=='engagement/v1':
         from .factory_engagement_views import detail as engagement_detail
         return engagement_detail(request,work)
@@ -821,6 +824,9 @@ def detail(request,work_id):
     if request.method=='POST':
         try:
             operation=request.POST.get('action');revision=int(request.POST.get('revision','0'))
+            if (focus == 'decision' and operation not in {'claim','release_claim','decide','information','responsibility_recheck'}
+                    or focus == 'recovery' and operation not in {'reconcile','replace_preparation','resume','cancel','adopt_profile'}):
+                raise ValidationError('Choose an available action on this page.')
             if operation=='observe_department' and work.definition!='planning/v1' or operation=='reassess' and work.definition not in ['planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1']:raise ValidationError('Choose an action available for this work')
             if operation=='replace_preparation':
                 from .factory_invoice_intake import replace
@@ -887,7 +893,7 @@ def detail(request,work_id):
         work=get_object_or_404(visible(request.user),pk=work_id)
     row=presentation(request.user,work)
     from apps.agents.factory_catalogue import CATALOGUE
-    activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
+    activities=[] if focus else list(work.activities.prefetch_related('attempts').order_by('pk'))
     for activity in activities:
         activity.title=CATALOGUE[activity.kind].title
         for attempt in activity.attempts.all():
@@ -912,7 +918,7 @@ def detail(request,work_id):
             elif attempt.result.get('dispatch_job'):attempt.summary='Processing was requested from the native invoice worker. Inspect receipts for the observed result.'
             elif attempt.result.get('waiting')=='approval':attempt.summary='The exact publication packet is waiting for an eligible Finance decision.'
             elif attempt.result.get('waiting')=='input':attempt.summary='A native information task records the missing source and configured resolver.'
-    proofs=Evidence.objects.filter(case=work.case,kind='invoice_review')
+    proofs=public_evidence(Evidence.objects.filter(case=work.case,kind='invoice_review'))
     job_ids=[j.pk for j in row['jobs']]
     history=Audit.objects.filter(case=work.case,action__startswith='invoice.effect_',data__job__in=job_ids).order_by('pk')
     if work.definition=='planning/v1':
@@ -927,7 +933,7 @@ def detail(request,work_id):
         from apps.pmo.models import DeliverySource
         row['handoff']=DeliverySource.objects.filter(dossier__case=work.case,kind='scope_baseline',evidence_id=row['planning'].get('readiness_id')).first() if row['planning'].get('readiness_id') else None
     template='factory/hypercare_detail.html' if work.definition=='delivery-hypercare/v1' else 'factory/delivery_detail.html' if work.definition=='delivery-release/v1' else 'factory/commercial_detail.html' if work.definition=='commercial/v1' else 'factory/planning_detail.html' if work.definition=='planning/v1' else 'factory/detail.html'
-    response=render(request,template,{'case':work.case,'row':row,'activities':activities,'review_evidence':proofs,'effect_history':history,'can_configure':permitted(request.user,work,'policy.configure'),'queue':return_queue,'q':q,'as_of':timezone.now()})
+    response=render(request,template,{'case':work.case,'row':row,'activities':activities,'review_evidence':proofs,'effect_history':history,'can_configure':permitted(request.user,work,'policy.configure'),'queue':return_queue,'q':q,'as_of':timezone.now(),'focus':focus})
     response['Cache-Control']='no-store';return response
 
 def responsibility_names(case,value,cache=None):
@@ -1238,6 +1244,8 @@ def create_planning(request):
 class CommercialStartForm(StartWithBackground):
     definition=forms.CharField(initial='commercial/v1',widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
+    assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
+    draft_version=forms.IntegerField(required=False,min_value=1,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
     reference=forms.CharField(max_length=100,label='Commercial work reference')
     predecessor=forms.IntegerField(required=False,widget=forms.HiddenInput)
@@ -1256,6 +1264,8 @@ class CommercialStartForm(StartWithBackground):
             'sow':('SOW content',['sow']),'inputs':('Declared costing inputs',['p14_inputs']),'context_id':('Request or client feedback context',['requirements','client_feedback','change_request'])}
         for key,(label,kinds) in specs.items():
             query=Evidence.objects.filter(case=selected,kind__in=kinds) if selected else Evidence.objects.none()
+            if key != 'inputs':
+                query=public_evidence(query)
             self.fields[key]=forms.ModelChoiceField(queryset=query,required=False,label=label)
             self.fields[key].label_from_instance=lambda e:e.source+' · version '+str(e.version)
         for key,label,query in [('rule_id','Calculator rule',CostingRule.objects.filter(case=selected)),('oracle_id','Independent example set',CostingOracle.objects.filter(rule__case=selected)),
@@ -1285,11 +1295,18 @@ def create_commercial(request):
         from adapters.commercial_intake import FIELDS
         values={key:v[key].pk if v[key] else None for key in FIELDS}
         try:
-            with transaction.atomic():
+            def start_native():
                 head=commercial_intake.capture(request.user,v['case'].pk,values,v['predecessor'],v['revision'])
                 work=start(request.user,v['case'].pk,v['key'],head.pk,v['reference'])
-                return started(request, work, v['background'])
+                if v['assistant_turn'] and work.request != {'intake': head.pk, 'reference': v['reference']}:
+                    raise ValidationError('Commercial work already exists with different inputs. Open it to record a correction.')
+                return work
+
+            return submit_start(request, v, 'commercial/v1', start_native)
         except ValidationError as exc:form.add_error(None,'; '.join(exc.messages))
+    response = assistant_origin(request, form, 'commercial/v1')
+    if response is not None:
+        return response
     return render(request,'factory/commercial_start.html',{'form':form,'available_cases':granted(request.user,['factory.start','commercial.prepare','costing.read','costing.source.read']).filter(kind='project')})
 
 

@@ -103,6 +103,73 @@ class DepartmentAssistantTests(TestCase):
         self.assertEqual(AssistantTurn.objects.get(pk=key).status, 'held')
         self.assertEqual(self.client.get(reverse('assistant_thread', args=[finance.pk])).status_code, 404)
 
+    def test_commercial_draft_pins_requirements_and_replays_the_native_start(self):
+        from apps.pmo import commercial_intake
+        from tests.helpers import rev
+
+        self.client.force_login(self.actor)
+        conversation = self.start('tola')
+        source = next(item for item in assistant.tool_context(conversation)[0] if item['label'] == 'Commercial requirements')
+        key = uuid4()
+        assistant.reserve(self.actor, conversation.pk, key, 'Prepare commercial work', digest(source))
+        with patch('adapters.openrouter.answer', return_value={
+            'answer': 'The requirements are available.', 'citations': ['S1'], 'next_work': 'commercial/v1',
+        }):
+            self.assertTrue(assistant.worker_once())
+        thread = self.client.get(reverse('assistant_thread', args=[conversation.pk]))
+        intake = thread.context['turns'][0].next_url
+        form = self.client.get(intake)
+        self.assertEqual(form.context['form'].initial['requirements'], source['record']['pk'])
+        data = {'definition': 'commercial/v1', 'assistant_turn': key, 'key': key, 'case': self.case.pk,
+                'revision': rev(self.case), 'requirements': source['record']['pk'], 'reference': 'New proposal'}
+        self.assertRedirects(self.client.post(intake, dict(data, action='save_draft')), intake,
+                             fetch_redirect_response=False)
+        self.assertContains(self.client.post(intake, dict(data, draft_version=1, reference='Unsaved edit')),
+                            'Save your current draft')
+        confirmed = dict(data, draft_version=1, background='on')
+        start = self.client.post(intake, confirmed)
+        self.assertEqual(start.status_code, 302)
+        self.assertEqual(self.client.post(intake, confirmed).url, start.url)
+        turn = AssistantTurn.objects.get(pk=key)
+        self.assertEqual(turn.started_draft.number, 1)
+        native = commercial_intake.latest(self.case)
+        self.assertEqual(turn.started_work.request['intake'], native.pk)
+        self.assertIsNone(commercial_intake.read(self.actor, self.case, native)['sow'])
+
+    def test_bid_draft_preserves_edited_requirement_rows_until_confirmation(self):
+        from apps.workflows.factory_rfp import inputs
+        from tests.factory_rfp_helpers import configured
+        from tests.helpers import rev
+
+        fixture = configured()
+        actor, case = fixture['actor'], fixture['case']
+        self.client.force_login(actor)
+        conversation = AssistantConversation.objects.create(actor=actor, case=case, persona='tola')
+        source = next(item for item in assistant.tool_context(conversation)[0] if item['label'] == 'Received bid request')
+        key = uuid4()
+        assistant.reserve(actor, conversation.pk, key, 'Draft a bid response', digest(source))
+        with patch('adapters.openrouter.answer', return_value={
+            'answer': 'The received bid request is available.', 'citations': ['S1'], 'next_work': 'rfp-response/v1',
+        }):
+            self.assertTrue(assistant.worker_once())
+        intake = self.client.get(reverse('assistant_thread', args=[conversation.pk])).context['turns'][0].next_url
+        proposed = fixture['payload']
+        fields = {'definition': 'rfp-response/v1', 'case': case.pk, 'assistant_turn': key, 'key': key,
+                  'reference': 'Bid draft', 'revision': rev(case), **proposed['sources'],
+                  'response_evidence': proposed['response_evidence'], 'public_terms': proposed['public_terms'],
+                  'lessons': proposed['lessons'], 'requirements-TOTAL_FORMS': 1, 'requirements-INITIAL_FORMS': 0,
+                  **{'requirements-0-' + field: value for field, value in proposed['matrix'][0].items()}}
+        self.assertRedirects(self.client.post(intake, dict(fields, action='save_draft')), intake, fetch_redirect_response=False)
+        self.assertContains(self.client.get(intake), 'Cited coverage')
+        edited = dict(fields, draft_version=1, **{'requirements-0-response': 'Reviewed requirement response'})
+        self.assertContains(self.client.post(intake, edited), 'Save your current draft')
+        self.assertRedirects(self.client.post(intake, dict(edited, action='save_draft')), intake, fetch_redirect_response=False)
+        start = self.client.post(intake, dict(edited, draft_version=2))
+        self.assertEqual(start.status_code, 302)
+        turn = AssistantTurn.objects.get(pk=key)
+        self.assertEqual(turn.started_draft.number, 2)
+        self.assertEqual(inputs(turn.started_work)['matrix'][0]['response'], 'Reviewed requirement response')
+
     def test_department_transfer_is_confirmed_and_uses_its_own_sources(self):
         self.client.force_login(self.actor)
         conversation = self.start('tola')

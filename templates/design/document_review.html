@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% load document_labels %}
+{% block title %}{{ version.document.title }} · Review · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'documents' case.pk %}">← Documents</a><h1>{{ version.document.title }}</h1><p>Version {{ version.number }} · {{ version.audience|capfirst }}{% if not current %} · Earlier version{% endif %}</p></div></header>
+<div class="factory-case-layout"><div>
+<section class="card"><h2>Audience preview</h2>{% for section in version.payload.sections %}<h3>{{ section.heading|section_label }}</h3><p>{{ section.text|linebreaksbr }}</p>{% empty %}<p>No sections are ready.</p>{% endfor %}</section>
+<section class="card"><h2>Source records</h2><ul>{% for source in sources %}<li>{{ source.kind|capfirst }} · Version {{ source.version }} · {{ source.source }}</li>{% empty %}<li>No sources are cited.</li>{% endfor %}</ul></section>
+{% if rework %}<section class="card"><h2>Revise this draft</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="revise">{{ rework.as_p }}<button>Save new version</button></form></section>{% endif %}
+</div><aside class="factory-action-panel"><section class="card"><h2>Review</h2>
+{% if findings %}<ul>{% for finding in findings %}<li>{{ finding }}</li>{% endfor %}</ul>{% endif %}
+{% if latest_review %}<p>{{ latest_review.verdict|capfirst }} · {{ latest_review.created_at|date:'d M Y, H:i T' }}</p><p>{{ latest_review.note }}</p>{% elif task %}<p>Review {{ task.status }}</p>{% else %}<p>Review has not been requested.</p>{% endif %}
+{% if can_request %}<form method="post">{% csrf_token %}<input type="hidden" name="revision" value="{{ case.revision }}"><button name="action" value="request">Request review</button></form>{% endif %}
+{% if review_form %}<form method="post">{% csrf_token %}{{ review_form.as_p }}<button name="action" value="review">Record decision</button></form>{% endif %}
+</section><section class="card"><h2>Publication</h2>{% if job %}<p>{{ job.status|capfirst }}</p><ul>{% for receipt in receipts %}<li>Receipt recorded {{ receipt.created_at|date:'d M Y, H:i T' }}</li>{% empty %}<li>Waiting for delivery evidence.</li>{% endfor %}</ul>{% else %}<p>No delivery is recorded.</p>{% endif %}
+{% if publication %}<h3>Recipients for version {{ version.number }}</h3><ul>{% for recipient in publication.recipients %}<li>{{ recipient }}</li>{% endfor %}</ul><form method="post">{% csrf_token %}<input type="hidden" name="revision" value="{{ case.revision }}"><input type="hidden" name="packet" value="{{ publication.token }}"><button name="action" value="publish">Publish this reviewed version</button></form>{% endif %}
+{% if job.status == 'unknown' %}<p>The delivery outcome is unknown. The worker will check for the original receipt.</p>{% endif %}
+{% if recovery_form %}<form method="post">{% csrf_token %}{{ recovery_form.as_p }}{% for action, label in recovery_actions %}<button name="action" value="{{ action }}">{{ label }}</button>{% endfor %}</form>{% endif %}
+<a href="{% url 'documents' case.pk %}">Open publication controls</a></section></aside></div>
+{% endblock %}

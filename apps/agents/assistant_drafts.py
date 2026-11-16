@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from adapters.commercial_intake import FIELDS as COMMERCIAL_SOURCES
 
 from .assistant import cited_record, work_intent
 
@@ -7,13 +8,18 @@ from .assistant import cited_record, work_intent
 FIELDS = {
     'planning/v1': ('packet',),
     'pmo-finance/v1': ('handoff', 'coverage', 'preparation', 'invoice'),
+    'commercial/v1': tuple(COMMERCIAL_SOURCES),
 }
 
 
 def payload_from_form(definition, values):
     payload = {'reference': values['reference']}
+    if definition == 'rfp-response/v1':
+        return {**payload, 'rfp_intake': values['rfp_intake'], 'native_inputs': values['native_inputs']}
     for name in FIELDS[definition]:
         payload[name] = values[name].pk if values[name] else None
+    if definition == 'commercial/v1':
+        payload['predecessor'] = values['predecessor']
     if definition == 'pmo-finance/v1':
         payload['mode'] = values['mode']
         payload['due_date'] = values['due_date'].isoformat() if values['due_date'] else None
@@ -31,10 +37,18 @@ def latest(turn):
 def intent(actor, definition, values):
     turn = work_intent(actor, values['assistant_turn'], definition, values['case'].pk, lock=True)
     payload = payload_from_form(definition, values)
-    source = FIELDS[definition][0]
+    source = 'rfp_intake' if definition == 'rfp-response/v1' else FIELDS[definition][0]
     cited = cited_record(turn, source)
     if cited is not None and payload[source] != cited:
         raise ValidationError('To use a different source, start that work from the line chooser.')
+    if definition == 'commercial/v1' and not turn.started_work_id:
+        from apps.pmo.commercial_intake import validate_sources
+
+        validate_sources(actor, turn.conversation.case, {key: payload[key] for key in COMMERCIAL_SOURCES})
+    if definition == 'rfp-response/v1' and not turn.started_work_id:
+        from apps.workflows.factory_rfp import validate_payload
+
+        validate_payload(turn.conversation.case, payload['native_inputs'])
     return turn, payload, latest(turn)
 
 

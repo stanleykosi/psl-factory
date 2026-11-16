@@ -143,8 +143,17 @@ urlpatterns += [path('overview/', design_views.overview, name='design_overview')
 
 from apps.workflows import factory_progress_views
 from apps.core import alerts_views
+from apps.core import client_contacts
+from apps.documents import design_review, template_catalog
 
 urlpatterns += [path('work/<int:work_id>/background/', factory_progress_views.change, name='factory_background')]
+urlpatterns += [path('work/<int:work_id>/decision/', factory_views.detail, {'focus': 'decision'}, name='factory_invoice_decision'),
+                path('work/<int:work_id>/recovery/', factory_views.detail, {'focus': 'recovery'}, name='factory_invoice_recovery')]
+urlpatterns += [path('projects/<uuid:case_id>/templates/upload/', template_catalog.upload, name='design_template_upload'),
+                path('projects/<uuid:case_id>/templates/<int:template_id>/file/', template_catalog.download, name='design_template_download')]
+urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
+                path('clients/<uuid:case_id>/', client_contacts.project, name='design_client_project')]
+urlpatterns += [path('cases/<uuid:case_id>/documents/review/<int:version_id>/', design_review.show, name='design_document_review')]
 urlpatterns += [path('notifications/', alerts_views.index, name='design_alerts'),
                 path('notifications/preview/', alerts_views.preview, name='design_alert_preview'),
                 path('notifications/read/', alerts_views.mark_read, name='design_alert_read'),

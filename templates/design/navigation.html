@@ -33,6 +33,7 @@
       <a href="{% url 'workspace_overview' %}?area=finance">Finance workspaces</a>
       <a href="{% url 'document_inbox' %}">Documents</a>
       <a href="{% url 'project_views' %}">Project reports</a>
+      <a href="{% url 'design_clients' %}">Clients</a>
       <a href="{% url 'case_create' %}">New workspace</a>
       <a href="{% url 'password_change' %}">Change password</a>
       {% if user.is_superuser %}<a href="{% url 'tenant_access' %}">Organization settings</a>{% endif %}

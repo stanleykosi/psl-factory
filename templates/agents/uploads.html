@@ -27,15 +27,20 @@
 <article class="card" id="agent-job-{{ job.pk }}">
   <h3>{{ job.role_label }} · {{ job.upload.name }}</h3>
   <p>{{ job.status }}</p>
-  {% if job.result %}<p>{{ job.result.summary }}</p>
-  <ul>{% for quote in job.result.quotes %}<li>{{ quote }}</li>{% endfor %}</ul>
+  {% if job.file_review %}<h4>Reviewed summary</h4><p>{{ job.file_review.summary|linebreaksbr }}</p>
+  <ul>{% for gap in job.file_review.gaps %}<li>{{ gap }}</li>{% endfor %}</ul>
+  <details><summary>Original draft</summary><p>{{ job.result.summary|linebreaksbr }}</p>
+  <ul>{% for gap in job.result.gaps %}<li>{{ gap }}</li>{% endfor %}</ul></details>
+  {% elif job.result %}<p>{{ job.result.summary }}</p>
   <ul>{% for gap in job.result.gaps %}<li>{{ gap }}</li>{% endfor %}</ul>{% endif %}
-  {% if job.status == 'draft' %}
+  {% if job.result.quotes %}<h4>Source excerpts</h4>
+  <ul>{% for quote in job.result.quotes %}<li>{{ quote }}</li>{% endfor %}</ul>{% endif %}
+  {% if job.review_form %}
   <form method="post">
     {% csrf_token %}
     <input type="hidden" name="action" value="review">
     <input type="hidden" name="job" value="{{ job.pk }}">
-    <label>Review note <input name="note" required maxlength="1000"></label>
+    {{ job.review_form.as_p }}
     <button>Save as reviewed case evidence</button>
   </form>
   {% endif %}

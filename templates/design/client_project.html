@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Client contacts · PSL Factory{% endblock %}
+{% block content %}<header class="page-heading"><div><a class="back-link" href="{% url 'design_clients' %}">← Clients</a><h1>Client contacts</h1><p>{{ case|workspace_name }}</p></div><a href="{% url 'design_project' case.pk %}">Open project</a></header>
+{% for section in sections %}<section class="card"><h2>{{ section.label }}</h2>
+{% for entry in section.entries %}<article class="floor-line"><div><strong>{{ entry.client_name }}</strong>{% if entry.customer %}<p>{{ entry.customer }}</p>{% endif %}<p>{{ entry.name }}{% if entry.role %} · {{ entry.role }}{% endif %}</p></div><div><p>{{ entry.email|default:'Email not recorded' }}</p><p>Version {{ entry.number }} · {{ entry.created_at|date:'d M Y' }}</p></div></article>{% empty %}<p>No contact is recorded.</p>{% endfor %}
+{% if section.form %}<details{% if section.form.errors %} open{% endif %}><summary>Record a contact</summary><form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="purpose" value="{{ section.purpose }}">{{ section.form.as_p }}<button>Save contact</button></form></details>{% endif %}
+</section>{% endfor %}{% endblock %}

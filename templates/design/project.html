@@ -3,6 +3,7 @@
 {% block content %}
 <header class="page-heading"><div><a class="back-link" href="{% url 'workspace_overview' %}?kind=project">← Projects</a><h1>{{ case|workspace_name }}</h1><p class="lede">Project journey</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Open project record</a></header>
 {% include 'design/project_tabs.html' %}
+{% if 'engagement.read' in actions or 'finance.read' in actions %}<p><a href="{% url 'design_client_project' case.pk %}">Client contacts</a></p>{% endif %}
 <section class="card" aria-labelledby="recent-heading">
   <h2 id="recent-heading">Recent work</h2>
   {% for line in lines %}

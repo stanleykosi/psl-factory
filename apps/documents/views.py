@@ -95,8 +95,11 @@ def workbench(request,case_id):
         form.fields[field].queryset=queryset
     actions=set(Grant.objects.filter(user=request.user,case=case,active=True).values_list('action',flat=True))
     items=list(versions)
+    from .design_review import visible_reports
+    focused_reports = set(visible_reports(case).values_list('pk', flat=True))
     from apps.finance.presentation import present
     for version in items:
+        version.has_focused_review = version.pk in focused_reports
         version.findings=preflight(version);version.finance_presentation=present(version.payload)
     candidate_rows=list(candidates)
     from apps.pmo.models import ApprovalGateBinding

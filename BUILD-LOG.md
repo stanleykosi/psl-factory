@@ -1,5 +1,7 @@
 # Build progress log
 
+16 November 2026. Added source-pinned commercial and bid response drafts, human-edited drafts for all eight file specialists, dedicated invoice decision and receipt recovery views, project and billing contact revisions, private template intake and exact status-report review with returned text rework. Updated the screen map and tracked browser access and owner decisions separately.
+
 16 November 2026. Added exact-record department questions, editable versioned Planning and invoice drafts, and authorised background work with native waits and original-effect recovery. Connected personal alerts, project record tabs and current reviewed Finance figures. Recorded remaining screen functions in the design consolidation map.
 
 16 November 2026. Added in-drawer Start Work validation, protected uncertain invoice, department routes and publications from a second send during automatic recovery, and added background choice to engagement, bid response and issue intake. The alert bell now fetches the signed-in person's current unread preview on demand.

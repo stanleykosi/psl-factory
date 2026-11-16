@@ -88,6 +88,7 @@ def tool_context(conversation):
     if persona == 'tola':
         from apps.workflows.factory_definitions import DEFINITIONS
         from apps.workflows.factory_views import visible
+        from apps.core.evidence_access import public_evidence
         from apps.pmo import planning
 
         work = visible(actor).filter(case=case).exclude(definition__startswith='finance-').exclude(
@@ -106,6 +107,27 @@ def tool_context(conversation):
                 source('Current planning packet', f'Planning packet version {packet.version} is available for intake.',
                        'planning', case.pk, record={'field': 'packet', 'pk': packet.pk})
                 next_work.append('planning/v1')
+        if granted(actor, ['factory.start', 'commercial.prepare', 'commercial.read', 'costing.read',
+                           'costing.source.read', 'evidence.add']).filter(pk=case.pk).exists():
+            requirements = public_evidence(case.evidence.filter(kind='requirements')).only('version').order_by('-version').first()
+            if requirements:
+                source('Commercial requirements', f'Requirements version {requirements.version} is available for commercial preparation.',
+                       'commercial', case.pk, record={'field': 'requirements', 'pk': requirements.pk})
+                next_work.append('commercial/v1')
+        if granted(actor, ['factory.start', 'rfp.read', 'evidence.add']).filter(pk=case.pk).exists():
+            from apps.pmo import rfp
+
+            try:
+                bid = rfp.root(case)
+                rfp.ensure_open(bid)
+            except (PermissionDenied, ValidationError):
+                pass
+            else:
+                version = bid.current_intake
+                if version is not None:
+                    source('Received bid request', f'Bid request {bid.reference}, intake version {version.number}.',
+                           'rfp', case.pk, record={'field': 'rfp_intake', 'pk': version.pk})
+                    next_work.append('rfp-response/v1')
     elif persona == 'chidi':
         from apps.finance.fixed_charge import preparation_access
         from apps.finance.models import Handoff, Invoice

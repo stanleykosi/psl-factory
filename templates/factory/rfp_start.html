@@ -4,6 +4,6 @@
 {% if workspace_field %}<section class="card"><h2>Choose the workspace</h2><form method="get"><input type="hidden" name="definition" value="{{ definition }}"><label>Workspace{{ workspace_field }}</label><button>Continue</button></form></section>{% endif %}
 {% if case %}<section class="card"><h2>{{ case|workspace_name }}</h2>{% if rfp.current_intake_id %}<p>Received RFP: {{ rfp.reference }} · {{ rfp.current_intake.received_at|date:'d M Y H:i T' }}. Team inputs and assignment remain in the <a href="{% url 'rfp' case.pk %}">source records</a>.</p><p>Missing source selections may be recorded now. Only preparation that depends on them waits.</p>
 <form method="post">{% csrf_token %}<input type="hidden" name="definition" value="{{ definition }}"><input type="hidden" name="case" value="{{ case.pk }}">
-  {% include 'factory/rfp_sources.html' with source_form=form %}{{ form.background.as_field_group }}<button>Start response work</button>
+  {% include 'factory/rfp_sources.html' with source_form=form %}{% include 'factory/start_actions.html' with start_label='Start response work' %}
 </form>{% else %}<p>Record the received RFP before starting its response work.</p><a class="button" href="{% url 'rfp' case.pk %}">Record received RFP</a>{% endif %}</section>{% endif %}
 {% endblock %}

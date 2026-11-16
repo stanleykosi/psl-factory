@@ -1,5 +1,11 @@
 # Build decisions
 
+16 November 2026. Store project and billing contact revisions under their owning project and the exact native billing customer where applicable. Existing project intake and billing registration grants control updates, and current domain access controls reads. Directory contacts carry contact information. Publication continues to use the native reviewed recipient and channel rules.
+
+16 November 2026. A template file binds a private, hash-verified upload and owner evidence to a new or revised native definition. First-file intake requires sections and audience choices that pass the same validators as existing definitions. Current use follows the owner claim workflow. A returned standalone status report preserves citations and sections outside its audience while creating a new native version. The publication request is bound to the previewed recipients, exact reviewed projection and current policy. Focused invoice review and recovery use the original task and operation identity.
+
+16 November 2026. A file specialist retains the provider's cited draft and consumes an immutable human review for its summary and open questions. Source excerpts are fixed by the original verified upload. The handoff checks those pins and calls its existing native service. Previously reviewed drafts retain their saved native evidence.
+
 16 November 2026. A department question can select one authorized record. The worker and reply view recheck it. Planning and invoice suggestions save the native form as append-only revisions. The person's confirmed revision is linked to the native work item. A different Planning intake must go through native source recovery when work for that engagement already exists.
 
 16 November 2026. Background progression is an explicit request under current native execution authority. The worker uses the existing coordinator for one bounded step at a time and waits for input changes. Recovery uses the original operation. Notification preferences store personal intent. Delivery requires approved destinations and authorities. Month-end reads native Finance seals and current reviewer authority.

@@ -72,7 +72,12 @@ class FactoryProgressTests(TransactionTestCase):
             issue.refresh_from_db()
             self.assertEqual(issue.status, 'unknown')
             self.assertFalse(InvoiceIssue.objects.exists())
-            self.assertTrue(invoice_delivery.run_once(MockFactoryInvoiceAdapter(path), job_id=issue.pk))
+            self.client.force_login(actor)
+            url = reverse('factory_invoice_recovery', args=[work.pk])
+            self.assertContains(self.client.get(url), 'Recover the original operation')
+            work.refresh_from_db()
+            self.assertRedirects(self.client.post(url, {'action': 'reconcile', 'revision': work.revision}), url,
+                                 fetch_redirect_response=False)
             self.assertEqual(InvoiceIssue.objects.count(), 1)
         self.assertIsNone(factory_progress.run_once())
         self.assertEqual(InvoiceJob.objects.count(), 1)

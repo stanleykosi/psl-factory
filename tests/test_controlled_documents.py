@@ -33,6 +33,60 @@ class ControlledDocumentTests(TestCase):
     def action_matrix(self,actions):
         return artifact(self.actor,self.case,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':actions},{'role':'PM','actions':['withdraw']}]},self.owner)
 
+    def test_focused_status_report_returns_revises_and_shows_original_receipt(self):
+        from django.urls import reverse
+
+        self.action_matrix(['return'])
+        version = create_version(self.actor, self.case.pk, self.template.pk, 'Client status update',
+                                 'client', fields(self.source), rev(self.case))
+        self.client.force_login(self.actor)
+        url = reverse('design_document_review', args=[self.case.pk, version.pk])
+        self.assertContains(self.client.get(url), 'Audience preview')
+        self.assertNotContains(self.client.get(url), 'PRIVATE TRACE')
+
+        def submit(target, **values):
+            response = self.client.post(target, {**values, 'revision': rev(self.case)})
+            self.assertEqual(response.status_code, 302)
+            return response.url
+
+        submit(url, action='request')
+        self.assertContains(self.client.get(url), 'Return for changes')
+        submit(url, action='review', verdict='return:0', note='Update the wording')
+        self.assertContains(self.client.get(url), 'Update the wording')
+        corrected = {key: section['text'] for key, section in version.fields.items()}
+        corrected['status'] = 'Clarified status for the client'
+        corrected['internal_notes'] = 'Attempted change outside the audience'
+        successor_url = submit(url, action='revise', **corrected)
+        successor = version.document.versions.get(number=2)
+        self.assertEqual(successor.source_manifest, version.source_manifest)
+        self.assertEqual(successor.fields['internal_notes'], version.fields['internal_notes'])
+        self.assertNotContains(self.client.get(successor_url), 'PRIVATE TRACE')
+        self.assertNotContains(self.client.get(url), 'Clarified status for the client')
+        submit(successor_url, action='request')
+        submit(successor_url, action='review', verdict='approve:0', note='Reviewed changed status')
+        page = self.client.get(successor_url)
+        self.assertContains(page, 'Recipients for version 2')
+        token = page.context['publication']['token']
+        self.assertContains(self.client.post(successor_url, {'action': 'publish', 'packet': 'stale',
+                            'revision': rev(self.case)}), 'Publication details changed')
+        self.assertFalse(Publication.objects.exists())
+        submit(successor_url, action='publish', packet=token)
+        class Held(InternalPublicationAdapter):
+            def deliver(self, *args):
+                raise ValueError('Synthetic delivery refusal')
+
+        self.assertTrue(run_publication_once(Held()))
+        self.assertContains(self.client.get(successor_url), 'Retry this delivery')
+        submit(successor_url, action='retry', reason='Original channel recovered')
+        self.assertTrue(run_publication_once(PublicationTimeoutAfterAccept()))
+        uncertain = self.client.get(successor_url)
+        self.assertContains(uncertain, 'check for the original receipt')
+        self.assertNotContains(uncertain, 'Retry this delivery')
+        self.assertTrue(run_publication_once())
+        self.assertContains(self.client.get(successor_url), 'Receipt recorded')
+        self.assertEqual(PublicationReceipt.objects.filter(publication__version=successor).count(), 1)
+        self.assertFalse(PublicationReceipt.objects.filter(publication__version=version).exists())
+
     def test_staff_draft_review_publication_and_recipient_projection(self):
         import json
         self.client.force_login(self.actor);url=f'/cases/{self.case.pk}/documents/'

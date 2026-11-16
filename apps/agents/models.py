@@ -33,3 +33,12 @@ class AgentJob(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['upload', 'actor', 'role'], name='unique_upload_agent_job')]
+
+
+class FileDraftReview(AppendOnly):
+    job = models.OneToOneField(AgentJob, on_delete=models.PROTECT, related_name='file_review')
+    evidence = models.OneToOneField('core.Evidence', on_delete=models.PROTECT)
+    draft_sha256 = models.CharField(max_length=64)
+    summary = models.TextField()
+    gaps = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)

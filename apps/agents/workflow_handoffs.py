@@ -9,6 +9,7 @@ from apps.documents import validation
 from apps.finance import recognition
 from apps.pmo import engagement, gates, issues, meetings, planning
 from apps.pmo.services import subject
+from .file_draft_reviews import reviewed_output
 from .models import AgentJob
 from .upload_jobs import authorize
 
@@ -61,7 +62,7 @@ def discovery(actor, case, evidence, key, result):
 
 def create_record(actor, case, job, evidence, fields):
     key = f'agent-draft-{job.pk}'
-    role, result = job.role, job.result
+    role, result = job.role, reviewed_output(job, evidence)
     if role == 'A01':
         if engagement.latest(case, 'capture'):
             raise ValidationError('This case already has an intake. Review its existing intake record.')

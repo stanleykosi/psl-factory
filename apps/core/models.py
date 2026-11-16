@@ -46,6 +46,23 @@ class Evidence(AppendOnly):
         constraints = [models.UniqueConstraint(fields=['case', 'kind', 'version'], name='evidence_version')]
 
 
+class ClientContactRevision(AppendOnly):
+    case = models.ForeignKey(Case, on_delete=models.PROTECT)
+    purpose = models.CharField(max_length=12, choices=[('project', 'Project'), ('billing', 'Billing')])
+    customer = models.CharField(max_length=100, blank=True)
+    client_name = models.CharField(max_length=160)
+    name = models.CharField(max_length=160)
+    email = models.EmailField(blank=True)
+    role = models.CharField(max_length=100, blank=True)
+    number = models.PositiveIntegerField()
+    evidence = models.ForeignKey(Evidence, on_delete=models.PROTECT)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['case', 'purpose', 'customer', 'number'], name='client_contact_version')]
+
+
 class Audit(AppendOnly):
     case = models.ForeignKey(Case, on_delete=models.PROTECT, related_name='audit')
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)

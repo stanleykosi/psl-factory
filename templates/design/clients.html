@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Clients · PSL Factory{% endblock %}
+{% block content %}<header class="page-heading"><h1>Clients</h1></header>
+<section class="card"><form method="get"><label for="client-project-search">Find by client or project</label><input id="client-project-search" type="search" name="q" maxlength="100" value="{{ query }}"><button>Find</button></form>
+{% for project in projects %}<a class="floor-line" href="{% url 'design_client_project' project.pk %}"><span>{% if project.client_name %}<strong>{{ project.client_name }}</strong> · {% endif %}{{ project|workspace_name }}</span><span>View client contacts →</span></a>{% empty %}<p>No clients or projects match this search.</p>{% endfor %}</section>{% endblock %}

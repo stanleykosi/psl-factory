@@ -49,9 +49,9 @@ class FactoryConsoleTests(TestCase):
         response=client.get(queue);self.assertContains(response,'My work');self.assertContains(response,'FACTORY-INVOICE')
         self.assertContains(client.get(url),'queue=active&amp;q=FACTORY')
         self.assertEqual(client.post(url,{'action':'advance','revision':w.revision}).status_code,403)
-        def post(**values):
+        def post(destination=url, **values):
             values['csrfmiddlewaretoken']=client.cookies['csrftoken'].value
-            response=client.post(url,values);self.assertEqual(response.status_code,302,response.content[:1000]);return client.get(url)
+            response=client.post(destination,values);self.assertEqual(response.status_code,302,response.content[:1000]);return client.get(destination)
         response=post(action='advance',revision=w.revision);self.assertContains(response,'Waiting for information')
         t=HumanTask.objects.get(kind='factory_information');post(action='claim',task=t.pk,task_revision=t.revision)
         t.refresh_from_db();f['case'].refresh_from_db()
@@ -60,9 +60,11 @@ class FactoryConsoleTests(TestCase):
         from tests.obligation_helpers import identified
         w.refresh_from_db();identified(a,f['case'],w.invoice)
         w.refresh_from_db();post(action='advance',revision=w.revision)
-        t=HumanTask.objects.get(kind='factory_review',status='open');response=client.get(url);self.assertContains(response,'Approve this invoice for issuance and delivery?')
-        post(action='claim',task=t.pk,task_revision=t.revision);t.refresh_from_db()
-        post(action='decide',task=t.pk,task_revision=t.revision,evidence=f['proof'].pk,verdict='approve',reason='Synthetic exact packet and destination inspected')
+        decision_url=reverse('factory_invoice_decision', args=[w.pk])+'?queue=active&q=FACTORY'
+        t=HumanTask.objects.get(kind='factory_review',status='open');response=client.get(decision_url);self.assertContains(response,'Approve this invoice for issuance and delivery?')
+        self.assertNotContains(response, 'Continue eligible work')
+        post(decision_url, action='claim',task=t.pk,task_revision=t.revision);t.refresh_from_db()
+        post(decision_url, action='decide',task=t.pk,task_revision=t.revision,evidence=f['proof'].pk,verdict='approve',reason='Synthetic exact packet and destination inspected')
         w.refresh_from_db();response=post(action='advance',revision=w.revision)
         self.assertContains(response,'receipts');w.refresh_from_db();self.assertEqual(w.status,'verified',w.finding)
         self.assertEqual(InvoiceIssue.objects.count(),1);self.assertEqual(InvoiceDelivery.objects.count(),1)
