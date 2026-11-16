@@ -6,8 +6,10 @@
 import Link from 'next/link';
 import { Fragment, useId, type ReactNode } from 'react';
 
-import { Button, Callout, formatDayTime, Tag, Unknown as UnknownValue } from '@/components';
+import { Button, Callout, formatDayMonth, formatDayTime, Tag, Unknown as UnknownValue } from '@/components';
 import { isAppPath } from '@/features/work-item/presentation';
+
+import { columnDayMonth } from './proposals';
 
 import {
   agentName,
@@ -53,8 +55,8 @@ function MoneyValue({ money }: { money: Money }) {
   return text === null ? <Unknown /> : <span>{text}</span>;
 }
 
-function DateText({ value }: { value: DateValue }) {
-  const text = dateText(value);
+function DateText({ value, short }: { value: DateValue; short?: boolean }) {
+  const text = short && value.date && dateText(value) !== null ? formatDayMonth(value.date) : dateText(value);
   return text === null ? <Unknown /> : <span>{text}</span>;
 }
 
@@ -171,7 +173,7 @@ function CellValue({ cell, column }: { cell: Cell | undefined; column: Column })
   const kind = column.kind ?? 'text';
   let value: ReactNode = cell.text;
   if (kind === 'money') value = cell.money ? <MoneyValue money={cell.money} /> : <Unknown />;
-  else if (kind === 'date') value = cell.date ? <DateText value={cell.date} /> : <Unknown />;
+  else if (kind === 'date') value = cell.date ? <DateText value={cell.date} short={columnDayMonth(column)} /> : <Unknown />;
   else if (kind === 'tag' && cell.tag) value = <Tag tone={tagTone(cell.tag.tone)}>{cell.tag.label}</Tag>;
   else if (kind === 'reference' && cell.link && !cell.text) return <RefView value={cell.link} />;
   return (

@@ -130,7 +130,7 @@ describe('default from data (AC 6)', () => {
     expect(text).toContain('One action has no owner and its due date is Unknown.');
     const third = rowOf(A3);
     expect(third.getByText('Choose an owner')).toBeTruthy();
-    expect(third.getByText('Unknown')).toBeTruthy();
+    expect(third.getByText('Unknown').className).toContain('psl-unknown');
     expect(rowOf(A1).getByText('Client · Lagoon Health')).toBeTruthy();
     expect(rowOf(A1).getByText('13 Nov')).toBeTruthy();
     for (const name of ['Confirm and create actions', 'Save for later', '+ Add an action']) expect(button(name)).toBeTruthy();
@@ -698,5 +698,20 @@ describe('round 2: wording and board rows', () => {
     expect(wsEl().querySelectorAll('.psl-tag--done')).toHaveLength(0);
     expect(item('W-2301').workspace!.context).not.toHaveProperty('project');
     expect(item('W-2302').workspace!.context).toHaveProperty('project');
+  });
+});
+
+describe('round 3: dates stay dates (UI-2-1)', () => {
+  it('the Due column is a date column: "13 Nov" when the column says day_month, the full date without it, and an unknown due is the Unknown value', async () => {
+    const body = item('W-2301');
+    const table = body.workspace!.sections.find((sec) => sec.kind === 'table')!;
+    expect(table.columns!.find((c) => c.key === 'due')).toMatchObject({ kind: 'date' });
+    expect(table.items[2].cells!.find((c) => c.column === 'due')).toMatchObject({ date: { unknown: true } });
+    const view = await open(body);
+    expect(rowOf(A3).getByText('Unknown').className).toContain('psl-unknown');
+    view.unmount();
+    delete (table.columns!.find((c) => c.key === 'due') as Record<string, unknown>).date_format;
+    await open(body);
+    expect(rowOf(A1).getByText('13 Nov 2026')).toBeTruthy();
   });
 });

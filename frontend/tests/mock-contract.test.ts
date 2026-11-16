@@ -91,7 +91,7 @@ const linkSchema = {
 };
 const validLinks = ajv.compile(linkSchema);
 function minutesProposalsStripped(body: unknown): unknown {
-  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; items_default?: unknown }[] } };
+  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { columns?: { date_format?: unknown }[]; items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; items_default?: unknown }[] } };
   const w = copy.workspace;
   if (w?.links !== undefined) {
     expect(validLinks(w.links), ajv.errorsText(validLinks.errors)).toBe(true);
@@ -99,6 +99,11 @@ function minutesProposalsStripped(body: unknown): unknown {
   }
   // PROPOSAL (item `values`): each value is a string, or a record {value, label}
   for (const section of w?.sections ?? []) {
+    for (const column of section.columns ?? []) {
+      if (column.date_format === undefined) continue;
+      expect(column.date_format).toBe('day_month');
+      delete column.date_format;
+    }
     for (const row of section.items) {
       if (row.values === undefined) continue;
       for (const [name, v] of Object.entries(row.values)) {
@@ -615,6 +620,18 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
     expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
     expect(withKey('links').every((name) => /^W-23/.test(name))).toBe(true);
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
+  });
+
+  it('items[].values and columns[].date_format appear only in W-23xx fixtures (TECH-2-1)', () => {
+    type Section = { items?: { values?: unknown }[]; columns?: { date_format?: unknown }[] };
+    const files = readdirSync(dir).filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name));
+    const carrying = (pick: (section: Section) => boolean) =>
+      files.filter((name) => ((JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace?.sections ?? []) as Section[]).some(pick));
+    const values = carrying((sec) => (sec.items ?? []).some((i) => i.values !== undefined));
+    const formats = carrying((sec) => (sec.columns ?? []).some((c) => c.date_format !== undefined));
+    expect(values.length).toBeGreaterThan(0);
+    expect(formats.length).toBeGreaterThan(0);
+    expect([...values, ...formats].every((name) => /^W-23/.test(name))).toBe(true);
   });
 
   it('the E-DOCUMENT fixture is a test template for D-2304 version 1', () => {

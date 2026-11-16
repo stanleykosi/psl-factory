@@ -92,7 +92,7 @@
     "revision": 5,
     "status": {
       "label": "Drafted",
-      "tone": "neutral"
+      "tone": "agent"
     },
     "sections": [
       {
@@ -105,7 +105,7 @@
             "text": "Minutes v1 · client version",
             "tag": {
               "label": "DRAFTED",
-              "tone": "neutral"
+              "tone": "agent"
             }
           },
           {

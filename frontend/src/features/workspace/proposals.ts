@@ -33,3 +33,6 @@ export function itemValues(item: object): Record<string, unknown> {
   const values = (item as { values?: unknown }).values;
   return typeof values === 'object' && values !== null && !Array.isArray(values) ? (values as Record<string, unknown>) : {};
 }
+
+/** PROPOSAL (column `date_format: "day_month"`, F-23 UI-2-1): a date column the board writes without the year ("13 Nov"). The cells stay dates. */
+export const columnDayMonth = (column: object): boolean => (column as { date_format?: unknown }).date_format === 'day_month';

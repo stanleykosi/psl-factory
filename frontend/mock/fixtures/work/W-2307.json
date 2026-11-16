@@ -178,7 +178,8 @@
           {
             "key": "due",
             "label": "Due",
-            "kind": "text"
+            "kind": "date",
+            "date_format": "day_month"
           }
         ],
         "items": [
@@ -203,7 +204,10 @@
               },
               {
                 "column": "due",
-                "text": "13 Nov"
+                "date": {
+                  "date": "2026-11-13",
+                  "unknown": false
+                }
               }
             ],
             "steps": [
@@ -228,7 +232,9 @@
               },
               {
                 "column": "due",
-                "text": "Unknown"
+                "date": {
+                  "unknown": true
+                }
               }
             ],
             "steps": [
