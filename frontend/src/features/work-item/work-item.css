@@ -209,9 +209,10 @@
 .work-phonebar__note { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 .work-barref { position: absolute; top: 0; right: var(--space-4); height: 56px; display: flex; align-items: center; font-size: var(--text-small-size); color: var(--on-strong); z-index: 1; }
 .work-eyebrowline { line-height: 15px; }
-/* the bar's bell and "+ Start" slot (134px, set in from the edge) takes the right end: the word sits just before it, not under it */
-body:has(.sw-phoneslot) .work-barref--line { right: calc(var(--space-4) + 134px + var(--space-2)); }
-@media (max-width: 379.98px) { body:has(.sw-phoneslot) .work-barref--line { right: calc(var(--space-2) + 134px + var(--space-2)); } }
+/* the bar's bell and "+ Start" slot (134px, set in from the edge) takes the right end: the reference sits just before it,
+   not under it, as the boards draw it left of Start */
+body:has(.sw-phoneslot) .work-barref { right: calc(var(--space-4) + 134px + var(--space-2)); }
+@media (max-width: 379.98px) { body:has(.sw-phoneslot) .work-barref { right: calc(var(--space-2) + 134px + var(--space-2)); } }
 
 /* history */
 .work-historybar { display: flex; flex-direction: column; }

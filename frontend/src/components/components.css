@@ -140,6 +140,10 @@
 @media (max-width: 719.98px) {
   /* a link standing on its own (crumb, empty-state action, an inline disclosure, cmp-target) is a 44px target; the
      extra height overlaps the line around it, so the text sits where the board draws it */
+  /* a filter chip's remove button is a 44px target; the drawn chip keeps its size (the button reaches past its edge into
+     the gaps, which are 12px between rows so neighbouring targets never overlap) */
+  .cmp-chips { row-gap: var(--space-3); }
+  .cmp-chips .psl-chip > button { width: var(--control-md); height: var(--control-md); margin: calc((var(--control-md) - var(--chip-height)) / -2) calc(var(--space-2) * -1) calc((var(--control-md) - var(--chip-height)) / -2) 0; }
   .psl-crumb a, .psl-empty > a, .psl-link.cmp-disclosurelink, .cmp-target { display: inline-block; padding-block: calc((var(--control-md) - 1lh) / 2); margin-block: calc((var(--control-md) - 1lh) / -2); }
   .cmp-page-title { font-size: var(--text-page-title-phone-size); }
   .cmp-page-title.cmp-page-title--p24 { font-size: var(--text-title-size); }

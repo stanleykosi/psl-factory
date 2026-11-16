@@ -6,7 +6,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { MouseEvent } from 'react';
 
-import { AgentAvatar, buttonClass, EmptyState, Link, PageTitle, RestrictedLink, Table, Tag, Unknown } from '@/components';
+import { AgentAvatar, buttonClass, EmptyState, Link, PageTitle, Table, Tag, Unknown } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
@@ -76,7 +76,8 @@ function Strip({ body }: { body: MonthEnd }) {
 
 function TaskEnd({ task, titleId }: { task: MonthEndTask; titleId: string }) {
   const end = taskEnd(task);
-  if (end.kind === 'restricted') return <RestrictedLink>{end.text}</RestrictedLink>;
+  // the SCR-36 board writes a restricted row's end as plain muted text, with no lock (D-93); it never links
+  if (end.kind === 'restricted') return <span className="monthend-restricted">{end.text}</span>;
   // the name stays "Open" as drawn; the row's task title is its description, so each link is told apart
   if (end.kind === 'link')
     return (

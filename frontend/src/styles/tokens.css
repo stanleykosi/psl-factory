@@ -66,6 +66,7 @@
   --filter-panel: 380px;
   --sheet-top-gap: 70px;
   --switch-track: 26px;
+  --chip-height: 32px;
   --shadow-pop: 6px 6px 0 #1F2427;
   --shadow-float: 0 6px 20px rgba(0,0,0,0.18);
   --bp-phone: 720px;

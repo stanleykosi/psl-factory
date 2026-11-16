@@ -5,6 +5,8 @@
 .monthend-eyebrow { margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 .monthend-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-3); }
 .monthend-asof { font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
+/* a restricted row's end: plain muted text on one line, as the board draws "HR only" */
+.monthend-restricted { font-size: var(--text-hint-size); color: var(--ink-muted); white-space: nowrap; }
 /* the SCR-36 boards draw square tags at the page's line height */
 .monthend .psl-tag { border-radius: 0; line-height: normal; }
 
