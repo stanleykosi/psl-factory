@@ -38,14 +38,14 @@ export function RowLink({ workId, className, children }: { workId: unknown; clas
       {children}
     </Link>
   ) : (
-    <span className={className}>{children}</span>
+    <>{children}</>
   );
 }
 
-/** A money value: the amount in mono, or the amber Unknown tag (never 0 or blank). */
+/** A money value: the amount as the boards write it (plain text), or the amber Unknown tag (never 0 or blank). */
 export function AmountValue({ value }: { value: Amount | undefined }) {
   const text = amountText(value);
-  return text === undefined ? <Unknown /> : <span className="psl-mono">{text}</span>;
+  return text === undefined ? <Unknown /> : <>{text}</>;
 }
 
 /** The owner as the boards write it; "No owner" in signal ink when the row has none. */
@@ -54,7 +54,7 @@ export function OwnerValue({ owner }: { owner: Owner | undefined }) {
   return text === undefined ? <span className="ptabs__noowner">No owner</span> : <>{text}</>;
 }
 
-export const NONE = <span className="ptabs__none">—</span>;
+export const NONE = <>—</>;
 
 /** "As of 12 Nov 16:40" under the rows. */
 export function AsOf({ value }: { value: string }) {

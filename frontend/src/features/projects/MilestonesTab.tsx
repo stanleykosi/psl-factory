@@ -99,9 +99,9 @@ function columns(withChanges: boolean): Column<MilestoneRow>[] {
 /** SCR-38 phone: one card per milestone in the order returned. */
 function MilestoneCards({ rows }: { rows: MilestoneRow[] }) {
   return (
-    <ul className="ptabs__cards">
+    <div role="list" className="ptabs__cards">
       {rows.map((row) => (
-        <li key={rowKey(row)} className="ptabs__card">
+        <div key={rowKey(row)} role="listitem" className="ptabs__card">
           <strong>
             {row.position} · {row.name}
           </strong>
@@ -129,9 +129,9 @@ function MilestoneCards({ rows }: { rows: MilestoneRow[] }) {
               <span key={`${change.reference}-${i}`}>{tag}</span>
             );
           })}
-        </li>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 }
 

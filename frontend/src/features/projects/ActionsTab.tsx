@@ -45,9 +45,9 @@ const columns: Column<ActionRow>[] = [
 /** SCR-29 phone: the title with its state tag, then "owner · due date". */
 function ActionCards({ rows }: { rows: ActionRow[] }) {
   return (
-    <ul className="ptabs__cards">
+    <div role="list" className="ptabs__cards">
       {rows.map((row) => (
-        <li key={row.action_id} className="ptabs__card">
+        <div key={row.action_id} role="listitem" className="ptabs__card">
           <span className="ptabs__cardhead">
             <strong>
               <RowLink workId={row.work_id}>{row.title}</RowLink>
@@ -57,9 +57,9 @@ function ActionCards({ rows }: { rows: ActionRow[] }) {
           <span className="ptabs__cardhint">
             <OwnerValue owner={row.owner} /> · due <Due due={row.due} />
           </span>
-        </li>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 }
 

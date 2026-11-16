@@ -34,10 +34,9 @@ const columns: Column<RegisterRow>[] = [
     key: 'what',
     header: 'WHAT',
     cell: (row) => (
-      <span className="ptabs__what">
-        <RowLink workId={row.work_id}>{row.title}</RowLink>
-        <SampleLabel show={row.sample} />
-      </span>
+      <>
+        <RowLink workId={row.work_id}>{row.title}</RowLink><SampleLabel show={row.sample} />
+      </>
     ),
   },
   { key: 'severity', header: 'SEVERITY', cell: (row) => <Severity value={row.severity} /> },
@@ -49,24 +48,23 @@ const columns: Column<RegisterRow>[] = [
 /** SCR-11 phone: reference and severity, the title, then "state · owner". */
 function RegisterCards({ rows }: { rows: RegisterRow[] }) {
   return (
-    <ul className="ptabs__cards">
+    <div role="list" className="ptabs__cards">
       {rows.map((row, i) => (
-        <li key={`${row.reference}-${i}`} className="ptabs__card">
+        <div key={`${row.reference}-${i}`} role="listitem" className="ptabs__card">
           <span className="ptabs__cardhead">
             <span className="psl-mono ptabs__ref">{row.reference}</span>
             <Severity value={row.severity} />
           </span>
           <span className="ptabs__cardtitle">
-            <RowLink workId={row.work_id}>{row.title}</RowLink>
-            <SampleLabel show={row.sample} />
+            <RowLink workId={row.work_id}>{row.title}</RowLink><SampleLabel show={row.sample} />
           </span>
           <span className="ptabs__cardhint">
             {row.state && `${row.state} · `}
             <OwnerValue owner={row.owner} />
           </span>
-        </li>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 }
 
