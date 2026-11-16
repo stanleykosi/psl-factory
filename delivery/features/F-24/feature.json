@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-24",
   "outcome": "The Assistant: pick an agent, ask, watch it work, read the answer with its steps and sources, and start the normal work item from its draft (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-ASSISTANT"
   ],
@@ -117,11 +117,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -147,18 +149,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -606,7 +612,7 @@
         "delivery/features/F-24/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -631,11 +637,35 @@
           "refs": [],
           "head": "0f94b4b21e40889bb0300b3cf6891bab76829677",
           "reason": "The \"Open {reference}\" footer is built from `draft.started` (matched \"Open INV-0415\", 358\u00d750, 100% similarity) and its exception is removed. It is not docked as the board draws it: see UI-2-1."
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T14:37:06Z",
+          "refs": [
+            "delivery/features/F-24/round-3/build.md"
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:37:06Z",
+          "refs": [
+            "delivery/features/F-24/round-3/review-ui.md"
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
-        "0f94b4b21e40889bb0300b3cf6891bab76829677"
+        "delivery/features/F-24/round-3/build.md"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-24/round-3/review-ui.md"
       ]
     },
     {
@@ -906,7 +936,7 @@
         "delivery/features/F-24/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -923,11 +953,25 @@
           ],
           "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T14:36:36Z",
+          "refs": [
+            "mobile home screenshot: \"5 earlier\" underlined next to the bell."
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "mobile home screenshot: \"5 earlier\" underlined next to the bell."
       ]
     },
     {
@@ -943,7 +987,7 @@
         "delivery/features/F-24/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -960,11 +1004,25 @@
           ],
           "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:36:36Z",
+          "refs": [
+            "assistant.css: below 720px `.as__open { margin-top:auto; background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom:0; z-index: var(--z-bar) }`, all tokens, matching `.as__composer`. round-3 SCR-05-mobile-draft-started report: \"Open INV-0415\" matched at 100% similarity, pageBox 16,776 358\u00d750, the same as boardBox. The side-by-side shows the white docked footer with the top rule at the fold, as the board draws it. The builder's e2e asserts it is within 4px of the viewport bottom."
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "assistant.css: below 720px `.as__open { margin-top:auto; background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom:0; z-index: var(--z-bar) }`, all tokens, matching `.as__composer`. round-3 SCR-05-mobile-draft-started report: \"Open INV-0415\" matched at 100% similarity, pageBox 16,776 358\u00d750, the same as boardBox. The side-by-side shows the white docked footer with the top rule at the fold, as the board draws it. The builder's e2e asserts it is within 4px of the viewport bottom."
       ]
     },
     {
@@ -980,7 +1038,7 @@
         "delivery/features/F-24/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -997,11 +1055,71 @@
           ],
           "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:36:36Z",
+          "refs": [
+            "(a) \"\u2190 Home\" kept with a new reason. It is accurate: the round-3 SCR-05-mobile report lists board \"\u2190 Home\" as missing and page \"Back to Home\" as extra, i.e. the frame's `aria-label` replaces the visible \"\u2190 Home\" as the accessible name. The visible words are the board's, and the side-by-side shows \"\u2190 Home\" in the bar's place, so this is a tool-vocabulary exception, not a missing element. Accepted. (b) The mobile-thread waiver now reads 78.1, matching scores.txt. (c) The \"Start this invoice\" reason now names the desktop-thread tool false-miss. One follow-up is UI-3-2."
+          ],
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "(a) \"\u2190 Home\" kept with a new reason. It is accurate: the round-3 SCR-05-mobile report lists board \"\u2190 Home\" as missing and page \"Back to Home\" as extra, i.e. the frame's `aria-label` replaces the visible \"\u2190 Home\" as the accessible name. The visible words are the board's, and the side-by-side shows \"\u2190 Home\" in the bar's place, so this is a tool-vocabulary exception, not a missing element. Accepted. (b) The mobile-thread waiver now reads 78.1, matching scores.txt. (c) The \"Start this invoice\" reason now names the desktop-thread tool false-miss. One follow-up is UI-3-2."
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "UX-2-1 underline vs board. The board draws \"3 earlier\" as plain white mono text in the phone bar. The page now underlines it (`.shell-phonenote--action`, `text-decoration: underline; text-underline-offset: 3px`). The tool reports \"underlined on the page, not on the board\", and the board still passes at 90.6. The underline is the only cue that the note can be tapped, and it uses the bar's own colour, with no colour-meaning change. It is not recorded anywhere for the design engineer.",
+      "severity": "scr-05-mobile (390)",
+      "blocking": false,
+      "summary": "Add a line to `notes` in fidelity-exceptions.json: \"'N earlier' is underlined in the phone bar so it reads as tappable (UX-2-1); the board draws plain text.\"",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:36:36Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-2",
+      "round": 3,
+      "snapshot_ref": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "owner": "Stale reason on \"\u2190 Assistant\". It still says '\"\u2190 Home\" on the phone default is a frame item and is not drawn', which is no longer true. The real cause on the thread boards is the same as for \"\u2190 Home\": the frame names the link \"Back to Assistant\", so the tool cannot match \"\u2190 Assistant\".",
+      "severity": "fidelity-exceptions.json",
+      "blocking": false,
+      "summary": "Reword the \"\u2190 Assistant\" reason to match the \"\u2190 Home\" entry (\"frame vocabulary\": same visible words, accessible name \"Back to Assistant\").",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-24/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T14:36:36Z",
+          "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3"
+        }
       ]
     }
   ],
@@ -1320,6 +1438,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-16T14:31:02Z",
+      "round": 3,
+      "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-16T14:37:07Z",
       "round": 3,
       "head": "2075d4aa29aa4d09b9adc118b4955ad7e5c29af3",
       "reason": null

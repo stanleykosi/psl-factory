@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: a0be1442b1c6f35fc0fb73dd93303f9062d816cf
+COMMIT: 57d38e53b8c184ef7d1aec452a1649d714c4b2de
 REVIEWER: qa
 AUTHORITY: delivery integrated QA
 
 ## Summary
+- Head moved a0be1442 -> 57d38e53 (the dlv-00 merge for PR #46). Checked in the f-22 worktree: `git diff --stat a0be1442 57d38e53 -- frontend apps architecture` is empty (matches round-4/head-merge-diff.log), and `git diff --name-only a0be1442 57d38e53` lists 221 files, all under `delivery/`. No code, mock or fixture changed, so the round-4 runs below (at a0be1442) stand for 57d38e53 and nothing was re-run.
 - QA-2-1 is fixed on the running app. "Edit your update" on W-2209 opens with the saved words and all six saved cites, at 1440 and 390. An unchanged send posts all eight inputs, with the cites exactly as saved.
 - QA-2-3 is fixed. When W-2212 is reloaded without `reconcile` it shows "We are checking what happened. Nothing was sent again." with Reload as the only button, and nothing is posted. The round-4 state-based lock (SEC-3-1) also holds live: an uncertain item that still offers steps but has no reconcile shows the sentence, its steps are `aria-disabled`, and forced presses post nothing.
 - Totals: `bash delivery/checks.sh` exit 0 (Django check clean; 79 files, 1677/1677 tests). e2e weekly, weekly-returned-received and workspace: 79/79 passed. Nothing needed a rerun.

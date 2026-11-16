@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: a0be1442b1c6f35fc0fb73dd93303f9062d816cf
+COMMIT: 57d38e53b8c184ef7d1aec452a1649d714c4b2de
 REVIEWER: reviewer-ui
 AUTHORITY: delivery UI review
 
@@ -10,6 +10,9 @@ AUTHORITY: delivery UI review
 - Neither change affects a scored board. W-2209 is `action_needed` and W-2211 is `verified`, so the four SCR-25 pages are unchanged. The builder's no-re-run argument holds, and the round-2 scores (78, 78.3, 83.3, 86.3) and the waivers signed under D-99 stand.
 - No CSS, token, class or shared-component file changed, and no new string was added.
 - This was a read-only review of `git diff de541608..a0be1442`. I started no server and ran no fidelity check.
+
+## Head update
+- Re-checked at 57d38e53b8c184ef7d1aec452a1649d714c4b2de (dlv-00 merge, PR #46): in the worktree, `git diff --stat a0be1442 57d38e53 -- frontend apps architecture` is empty, matching head-merge-diff.log. `design` (the boards) and `delivery/features/F-22/fidelity-exceptions.json` are also unchanged, so the boards, the code and the signed waivers are the same as at a0be1442. Verdict unchanged.
 
 ## Findings
 None.
