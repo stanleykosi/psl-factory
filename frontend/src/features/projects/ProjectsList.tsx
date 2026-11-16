@@ -42,7 +42,16 @@ function Count({ value: sent }: { value: unknown }) {
   return <span className={value > 0 ? 'projects__count' : 'projects__zero'}>{value}</span>;
 }
 
-const COLUMNS: Column<ProjectRowView>[] = [
+/**
+ * D-94: a closed project has no next milestone to come, so the cell is "—" as SCR-22 draws it; an open project whose
+ * next milestone the response did not send is Unknown. Open or closed comes from the API, never from text: the rows
+ * carry no state of their own, so a row is known to be closed only when the list was asked for closed projects.
+ */
+function nextMilestoneCell(item: ProjectRowView, closed: boolean) {
+  return nextMilestoneText(item.next_milestone) ?? (closed ? '—' : <Unknown />);
+}
+
+const columns = (closed: boolean): Column<ProjectRowView>[] => [
   {
     key: 'project',
     header: 'PROJECT',
@@ -57,14 +66,14 @@ const COLUMNS: Column<ProjectRowView>[] = [
   },
   { key: 'pm', header: 'PM', cell: (item) => item.pm },
   { key: 'stage', header: 'WHERE IT IS', cell: (item) => item.stage },
-  { key: 'next', header: 'NEXT MILESTONE', cell: (item) => nextMilestoneText(item.next_milestone) ?? <Unknown /> },
+  { key: 'next', header: 'NEXT MILESTONE', cell: (item) => nextMilestoneCell(item, closed) },
   { key: 'needs', header: 'NEEDS A PERSON', cell: (item) => <Count value={item.needs_person} /> },
   { key: 'stopped', header: 'STOPPED', cell: (item) => <Count value={item.stopped} /> },
 ];
 
 /** SCR-22 desktop: Project, PM, Where it is, Next milestone, Needs a person, Stopped. */
-function ProjectTable({ items }: { items: ProjectRowView[] }) {
-  return <Table className="projects__table" caption="Projects" columns={COLUMNS} rows={items} rowKey={(item) => item.case_id} empty="No projects you can see yet." />;
+function ProjectTable({ items, closed }: { items: ProjectRowView[]; closed: boolean }) {
+  return <Table className="projects__table" caption="Projects" columns={columns(closed)} rows={items} rowKey={(item) => item.case_id} empty="No projects you can see yet." />;
 }
 
 /** The phone card's red line: "2 need a person · 1 stopped"; nothing when both are 0 or not carried. */
@@ -245,7 +254,7 @@ export function ProjectsList() {
   } else {
     body = (
       <>
-        <div ref={rowsRef}>{phone ? <ProjectCards items={list.items} /> : <ProjectTable items={list.items} />}</div>
+        <div ref={rowsRef}>{phone ? <ProjectCards items={list.items} /> : <ProjectTable items={list.items} closed={view.tab === 'closed'} />}</div>
         <div className="projects__foot">
           <ShowMore className="projects__showmore" shown={list.items.length} total={list.nextCursor ? undefined : list.items.length} hasMore={Boolean(list.nextCursor)} busy={more === 'loading'} onMore={() => void showMore()} />
           <span className="projects__rows">

@@ -170,7 +170,9 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     await until(() => expect(titles()).toEqual(['Sabi Market · web store']));
     expect(query(lastCall())).toEqual({ limit: '20', status: 'closed' });
     expect(window.location.search).toBe('?status=closed');
-    expect([...rows()[0].querySelectorAll('td')].map((td) => td.textContent)).toEqual(['Sabi Market · web store', 'Kemi Adebayo', 'Closed 09 Nov', 'Unknown', '0', '0']);
+    // D-94: on the Closed tab the API says the project is closed, so there is no next milestone to come: "—"
+    expect([...rows()[0].querySelectorAll('td')].map((td) => td.textContent)).toEqual(['Sabi Market · web store', 'Kemi Adebayo', 'Closed 09 Nov', '—', '0', '0']);
+    expect(rows()[0].querySelector('.psl-unknown')).toBeNull();
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
     tabs()[1].focus();
     fireEvent.keyDown(tabs()[1], { key: 'ArrowRight' });
@@ -179,6 +181,9 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
     fireEvent.click(tabs()[2]);
     await until(() => expect(rows()).toHaveLength(5));
     expect(query(lastCall())).toEqual({ limit: '20', status: 'all' });
+    // D-94: on All I can see the rows do not say which are closed, so an unsent next milestone is Unknown
+    const sabi = [...rows()].find((r) => r.textContent?.startsWith('Sabi Market'))!;
+    expect(sabi.querySelectorAll('td')[3].textContent).toBe('Unknown');
     expect(window.location.search).toBe('?status=all');
     expect(document.activeElement).toBe(tabs()[2]);
     expect(tabs().map((t) => t.tabIndex)).toEqual([-1, -1, 0]);

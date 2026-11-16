@@ -33,8 +33,8 @@
     {
       "role": "text",
       "name": "—",
-      "reason": "Next milestone the response does not carry: the design system writes Unknown (amber Unknown tag), never a dash (D-92 content rule, README 'Unknown is written Unknown, never 0, never blank')",
-      "approved_by": "pending design engineer (D-92 Unknown vs board '—')"
+      "reason": "A closed project's next milestone: the board draws '—' (D-94: a closed project has no next milestone to come). Applies to the closed-project row only. The page draws '—' when the API says the project is closed (the Closed tab); E-PROJECTS rows carry no open/closed state of their own, so on 'All I can see' the closed row reads Unknown until the contract adds it.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-94"
     }
   ],
   "visual_waivers": [

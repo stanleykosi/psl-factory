@@ -80,7 +80,7 @@ export function MyWorkFilter({ lines, applied, preview, onApply, onClose }: Prop
           </label>
         ))}
         {shownLines.length < lines.length && (
-          <button type="button" className="psl-link my-work__linkbutton" onClick={() => setAllLines(true)}>
+          <button type="button" className="psl-link my-work__linkbutton cmp-target" onClick={() => setAllLines(true)}>
             {phone ? `All ${lines.length} lines` : `Show all ${lines.length} lines`}
           </button>
         )}
