@@ -1,0 +1,298 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "PROJECTS / LAGOON HEALTH / MINUTES",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "PROJECTS",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "LAGOON HEALTH",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "checkbox",
+      "name": "Keep this decision",
+      "category": "extra element / no field",
+      "reason": "Conflicts 1: The frame draws its own accessible name \"Select <text>\" on each ticked box; the board's \"Keep this decision\" has no field.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-98"
+    },
+    {
+      "role": "text",
+      "name": "Go-live stays planned for 4 Dec, subject to the login fix.",
+      "category": "frame layout",
+      "reason": "Conflicts 6: The frame draws suggestions in its side column with the checkbox and Edit; words and source sit in one card, so the board's separate text items are not found by name.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "From Notes · 14:12",
+      "category": "frame layout",
+      "reason": "Conflicts 6: The frame draws suggestions in its side column with the checkbox and Edit; words and source sit in one card, so the board's separate text items are not found by name.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "SMS reminders go through change control, not into the current scope.",
+      "category": "frame layout",
+      "reason": "Conflicts 6: The frame draws suggestions in its side column with the checkbox and Edit; words and source sit in one card, so the board's separate text items are not found by name.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "From Notes · 14:30",
+      "category": "frame layout",
+      "reason": "Conflicts 6: The frame draws suggestions in its side column with the checkbox and Edit; words and source sit in one card, so the board's separate text items are not found by name.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Tola · PMO agent I read the notes and suggested 2 decisions and 3 actions. Nothing becomes a decision or an action until you confirm it.",
+      "category": "no field",
+      "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "PROJECTS / LAGOON HEALTH / MINUTES · MIN-0141",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tablist",
+      "name": "Project",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Milestones 4",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Documents 6",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Money",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Registers 6",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Actions 9",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Tola · PMO agent · done",
+      "category": "no field",
+      "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "DONE",
+      "category": "no field",
+      "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Drafted 10 Nov 15:20 Ask Tola",
+      "category": "no field",
+      "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Overview",
+      "category": "frame item",
+      "reason": "Conflicts 11: The signed-in person, role and nav come from the frame and the persona (no PMO Lead persona in the mock).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Setup",
+      "category": "frame item",
+      "reason": "Conflicts 11: The signed-in person, role and nav come from the frame and the persona (no PMO Lead persona in the mock).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Kemi Adebayo · PMO Lead",
+      "category": "frame item",
+      "reason": "Conflicts 11: The signed-in person, role and nav come from the frame and the persona (no PMO Lead persona in the mock).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "DECIDE · PMO LEAD",
+      "category": "frame item",
+      "reason": "Conflicts 11: The decision panel is the frame's \"Decide\" head; the board's role suffix has no field.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Note (needed to return or refuse)",
+      "category": "frame decision",
+      "reason": "Conflicts 3: Approve and Return are links to the F-16 decision page; the in-page Note box is not drawn there (note is entered on that page).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-98"
+    },
+    {
+      "role": "text",
+      "name": "(needed to return or refuse)",
+      "category": "frame decision",
+      "reason": "Conflicts 3: Approve and Return are links to the F-16 decision page; the in-page Note box is not drawn there (note is entered on that page).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-98"
+    },
+    {
+      "role": "text",
+      "name": "Tola · PMO agent · step 3 of 4",
+      "category": "no field",
+      "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "WORKING",
+      "category": "no field",
+      "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Started 10 Nov 15:02 Ask Tola",
+      "category": "no field",
+      "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "← Lagoon Health",
+      "category": "frame item",
+      "reason": "Conflicts 10: The phone back link is a frame item with its own wording.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Weekly sync · 10 Nov · Tola suggested 2 decisions, 3 actions",
+      "category": "frame item",
+      "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "DECISION",
+      "category": "phone rendering",
+      "reason": "Conflicts 10: The phone board draws DECISION/ACTION rows; the frame has one rendering at both widths.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "ACTION",
+      "category": "phone rendering",
+      "reason": "Conflicts 10: The phone board draws DECISION/ACTION rows; the frame has one rendering at both widths.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "No owner yet · due Unknown",
+      "category": "phone rendering",
+      "reason": "Conflicts 10: The phone board draws DECISION/ACTION rows; the frame has one rendering at both widths.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "← Project",
+      "category": "frame item",
+      "reason": "Conflicts 10: The phone back link is a frame item with its own wording.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "← My work",
+      "category": "frame item",
+      "reason": "Conflicts 10: The phone back link is a frame item with its own wording.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Started 10 Nov 15:02",
+      "category": "no field",
+      "reason": "Conflicts 8/9: Agent status tag and \"Started/Drafted\" line: the status words are frame words and the times are in the checklist note.",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-28-desktop",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 69.7. The remainder is the frame's own title, tabs and facts strip (D-81), side-column layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for. NOTE: 69.7 is 0.3 under the D-83 floor of 70; an open design-engineer decision."
+    },
+    {
+      "board": "SCR-28-desktop-suggesting",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 81.3. The remainder is the frame's own title, tabs and facts strip (D-81), side-column layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
+    },
+    {
+      "board": "SCR-28-desktop-drafted",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 84.5. The remainder is the frame's own title, tabs and facts strip (D-81), side-column layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
+    },
+    {
+      "board": "SCR-28-desktop-review",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 79.2. The remainder is the frame's own title, tabs and facts strip (D-81), side-column layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
+    },
+    {
+      "board": "SCR-28-mobile",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 73.7. The remainder is the frame's own title, tabs and facts strip (D-81), side-column layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
+    },
+    {
+      "board": "SCR-28-mobile-suggesting",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 82. The remainder is the frame's own title, tabs and facts strip (D-81), side-column layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
+    },
+    {
+      "board": "SCR-28-mobile-drafted",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 82.5. The remainder is the frame's own title, tabs and facts strip (D-81), side-column layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
+    },
+    {
+      "board": "SCR-28-mobile-review",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 71.6. The remainder is the frame's own title, tabs and facts strip (D-81), side-column layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
+    }
+  ]
+}

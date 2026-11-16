@@ -1,0 +1,106 @@
+'use client';
+
+// "@ Mention a project or record": a search popover over E-MENTION-OPTIONS. No request until the person has typed at
+// least one character and paused; only returned items can be chosen. A mention is a pointer the backend re-checks.
+import { useEffect, useId, useRef, useState } from 'react';
+
+import { Loading, SampleLabel, SearchField, SEARCH_PAUSE_MS, useIsPhone } from '@/components';
+
+import { fetchMentions } from './api';
+import { MENTION_FAILED, NOTHING_TO_MENTION } from './labels';
+import type { MentionOption } from './types';
+
+type Found = { status: 'idle' } | { status: 'loading' } | { status: 'ready'; items: MentionOption[] } | { status: 'error' };
+
+export function MentionPicker({ onPick }: { onPick: (option: MentionOption) => void }) {
+  const phone = useIsPhone();
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState('');
+  const [found, setFound] = useState<Found>({ status: 'idle' });
+  const button = useRef<HTMLButtonElement>(null);
+  const pop = useRef<HTMLDivElement>(null);
+  const popId = useId();
+  const query = q.trim();
+
+  useEffect(() => {
+    if (!open || query === '') return undefined;
+    const abort = new AbortController();
+    const timer = setTimeout(() => {
+      setFound({ status: 'loading' });
+      fetchMentions(query, abort.signal)
+        .then((page) => setFound({ status: 'ready', items: page.items }))
+        .catch(() => {
+          if (!abort.signal.aborted) setFound({ status: 'error' });
+        });
+    }, SEARCH_PAUSE_MS);
+    return () => {
+      clearTimeout(timer);
+      abort.abort();
+    };
+  }, [open, query]);
+
+  // Focus goes to the search box on opening; Esc closes and returns focus to the button.
+  useEffect(() => {
+    if (!open) return undefined;
+    pop.current?.querySelector('input')?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.stopPropagation();
+      setOpen(false);
+      setQ('');
+      setFound({ status: 'idle' });
+      button.current?.focus();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  const close = () => {
+    setOpen(false);
+    setQ('');
+    setFound({ status: 'idle' });
+    button.current?.focus();
+  };
+  const shown = query === '' ? { status: 'idle' as const } : found;
+
+  return (
+    <span className="cmp-anchor as-mention">
+      <button ref={button} type="button" className="as-tool" aria-expanded={open} aria-controls={open ? popId : undefined} onClick={() => (open ? close() : setOpen(true))}>
+        {phone ? '@ Mention' : '@ Mention a project or record'}
+      </button>
+      {open && (
+        <div ref={pop} id={popId} className="psl-pop cmp-pop cmp-pop--up as-mention__pop">
+          <SearchField label="Search projects and records" placeholder="Search projects and records" value={q} onChange={setQ} />
+          <div aria-live="polite">
+            {shown.status === 'loading' && <Loading>Loading…</Loading>}
+            {shown.status === 'error' && <p className="psl-hint as-mention__note">{MENTION_FAILED}</p>}
+            {shown.status === 'ready' && shown.items.length === 0 && <p className="psl-hint as-mention__note">{NOTHING_TO_MENTION}</p>}
+            {shown.status === 'ready' && shown.items.length > 0 && (
+              <ul className="as-mention__list">
+                {shown.items.map((item) => (
+                  <li key={`${item.kind}:${item.id}`}>
+                    <button
+                      type="button"
+                      className="psl-menuitem as-mention__item"
+                      onClick={() => {
+                        onPick(item);
+                        close();
+                      }}
+                    >
+                      <strong>{item.label}</strong>
+                      {(item.hint || item.sample) && (
+                        <small>
+                          {item.hint} {item.sample && <SampleLabel />}
+                        </small>
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+    </span>
+  );
+}

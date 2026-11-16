@@ -1,0 +1,127 @@
+{
+  "conversation_id": "CV-2401",
+  "agent": "chidi",
+  "title": "Invoice · Harmattan Bank M2",
+  "status": "drafted",
+  "context": {
+    "project": {
+      "case_id": "C-0102",
+      "title": "Harmattan Bank · mobile onboarding"
+    },
+    "access": [
+      "PMO on this project"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Create the invoice for Harmattan Bank milestone 2. UAT was signed off on Friday.",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-16T09:12:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "I drafted the invoice from stage 2 of the signed SOW. The amount comes from the contract terms, not from me. Starting it sends the draft to Finance review; nothing goes to the client until a Finance Lead approves it and it is issued.",
+      "steps": [
+        "Found the milestone 2 completion you recorded on Friday, with the UAT sign-off proof",
+        "Read stage 2 terms in the signed SOW (v2)",
+        "Matched the billing contact from the client register"
+      ],
+      "sources": [],
+      "at": "2026-11-16T09:13:00Z",
+      "handoff": {
+        "from_agent": "tola",
+        "to": "chidi",
+        "note": "Invoices are prepared by Chidi, the Finance agent, so Tola passed this to him."
+      },
+      "step_details": [
+        {
+          "text": "Found the milestone 2 completion you recorded on Friday, with the UAT sign-off proof",
+          "state": "done",
+          "reference": {
+            "label": "MILESTONE · HB-M2"
+          }
+        },
+        {
+          "text": "Read stage 2 terms in the signed SOW (v2)",
+          "state": "done",
+          "reference": {
+            "label": "SIGNED SOW v2 · stage 2"
+          }
+        },
+        {
+          "text": "Matched the billing contact from the client register",
+          "state": "done",
+          "reference": {
+            "label": "CLIENT · Harmattan Bank"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "MILESTONE",
+          "label": "MILESTONE · HB-M2",
+          "restricted": false,
+          "link": {
+            "case_id": "C-0102"
+          }
+        },
+        {
+          "kind": "SIGNED SOW",
+          "label": "SIGNED SOW v2 · stage 2",
+          "restricted": false,
+          "link": {
+            "case_id": "C-0102"
+          }
+        },
+        {
+          "kind": "CLIENT",
+          "label": "CLIENT · Harmattan Bank",
+          "restricted": false,
+          "link": {
+            "case_id": "C-0102"
+          }
+        }
+      ],
+      "draft": {
+        "title": "Invoice draft · Harmattan Bank · Milestone 2",
+        "status_label": "DRAFTED · NOT REVIEWED",
+        "rows": [
+          {
+            "label": "Amount",
+            "money": {
+              "amount": "6800000.00",
+              "currency": "NGN",
+              "unknown": false
+            },
+            "value": "(contract stage 2 of 3)"
+          },
+          {
+            "label": "To",
+            "value": "finance@harmattanbank.example"
+          },
+          {
+            "label": "Due terms",
+            "value": "From the signed SOW"
+          },
+          {
+            "label": "Template",
+            "value": "Invoice · TEST TEMPLATE"
+          }
+        ],
+        "next": "Finance review by a Finance Lead",
+        "start": {
+          "line_key": "invoice",
+          "case_id": "C-0102",
+          "case_revision": 3,
+          "intake": {
+            "project": "P-0102",
+            "milestone": "M-0202"
+          },
+          "label": "Start this invoice"
+        }
+      }
+    }
+  ]
+}

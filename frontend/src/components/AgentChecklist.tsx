@@ -13,7 +13,7 @@ import { Icon } from './Icon';
 import { Tag, type TagTone } from './Tag';
 
 export type StepStatus = 'done' | 'now' | 'next' | 'wait' | 'stopped';
-export type AgentStep = { text: string; status: StepStatus; /** The record it read ("MIN-0091"). */ source?: string };
+export type AgentStep = { text: string; status: StepStatus; /** The record it read ("MIN-0091"), or a link to it. */ source?: ReactNode };
 export type AgentRunStatus = 'working' | 'done' | 'waiting' | 'stopped';
 
 const STEP_WORDS: Record<StepStatus, string> = { done: 'Done', now: 'In progress', next: 'To do', wait: 'Waiting', stopped: 'Stopped' };
@@ -25,7 +25,7 @@ const TAGS: Record<AgentRunStatus, { text: string; tone: TagTone }> = {
   stopped: { text: 'Action needed', tone: 'person' },
 };
 
-export function AgentChecklist({ agent, task, status, steps, foot, ask, label = 'Agent at work' }: {
+export function AgentChecklist({ agent, task, status, steps, foot, ask, label = 'Agent at work', inline = false }: {
   /** Missing where the record names no agent. */
   agent?: AgentKey;
   /** What it is doing ("Assembling the weekly client report"). */
@@ -37,6 +37,9 @@ export function AgentChecklist({ agent, task, status, steps, foot, ask, label = 
   /** Where "Ask Tola" goes (the assistant). */
   ask?: string;
   label?: string;
+  /** The assistant thread's box (SCR-05 boards): a mono header line ("3 STEPS · DONE", "WORKING · STEP 3 OF 5") over
+   *  the steps, with no avatar head and no foot; the agent is named by the message it sits in. */
+  inline?: boolean;
 }) {
   if (!agent && steps.length === 0) return null;
   const who = agent ? AGENTS[agent] : undefined;
@@ -44,18 +47,22 @@ export function AgentChecklist({ agent, task, status, steps, foot, ask, label = 
   const progress =
     status === 'done' ? 'done' : status === 'stopped' && at >= 0 ? `stopped at step ${at + 1}` : at >= 0 ? `step ${at + 1} of ${steps.length}` : `step ${steps.length} of ${steps.length}`;
   const tag = TAGS[status];
+  const line = status === 'working' ? `WORKING · STEP ${Math.min(at + 1, steps.length)} OF ${steps.length}` : status === 'done' ? `${steps.length} ${steps.length === 1 ? 'STEP' : 'STEPS'} · DONE` : progress.toUpperCase();
+  const head = (
+    <div className="psl-agent__head">
+      {agent && <AgentAvatar agent={agent} working={status === 'working'} />}
+      <span>
+        <strong>{task}</strong>
+        <small>{who ? `${who.name} · ${who.role} · ${progress}` : progress}</small>
+      </span>
+      <Tag tone={tag.tone} pulse={status === 'working'}>
+        {tag.text}
+      </Tag>
+    </div>
+  );
   return (
-    <section className="psl-agent" aria-label={label}>
-      <div className="psl-agent__head">
-        {agent && <AgentAvatar agent={agent} working={status === 'working'} />}
-        <span>
-          <strong>{task}</strong>
-          <small>{who ? `${who.name} · ${who.role} · ${progress}` : progress}</small>
-        </span>
-        <Tag tone={tag.tone} pulse={status === 'working'}>
-          {tag.text}
-        </Tag>
-      </div>
+    <section className={inline ? 'psl-agent cmp-agent--inline' : 'psl-agent'} aria-label={label}>
+      {inline ? <span className="cmp-agent__line">{line}</span> : head}
       {steps.length > 0 && (
         <ol className="psl-steps">
           {steps.map((step, i) => (
@@ -81,7 +88,7 @@ export function AgentChecklist({ agent, task, status, steps, foot, ask, label = 
           ))}
         </ol>
       )}
-      {(foot || ask) && (
+      {!inline && (foot || ask) && (
         <div className="psl-agent__foot">
           <span>{foot}</span>
           {ask && who && (

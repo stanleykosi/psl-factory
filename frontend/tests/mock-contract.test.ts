@@ -13,6 +13,8 @@ import { M1_OPERATIONS, OPENAPI_PATH, PERSONAS, startMockServer } from '../mock/
 // @ts-expect-error plain ESM module without type declarations
 import { START_OPERATIONS } from '../mock/start-work.mjs';
 // @ts-expect-error plain ESM module without type declarations
+import { ASSISTANT_OPERATIONS } from '../mock/assistant.mjs';
+// @ts-expect-error plain ESM module without type declarations
 import { contractEvidence } from '../mock/evidence.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
@@ -120,8 +122,10 @@ function expectValid(id: string, status: number, body: unknown) {
 
 describe('mock server matches openapi.json', () => {
   for (const id of M1_OPERATIONS as string[]) {
-    // Start work answers per persona and per body; tests/start-work-mock.test.ts covers it.
-    for (const persona of (START_OPERATIONS as string[]).includes(id) ? [] : (PERSONAS as string[])) {
+    // Start work and the assistant answer per persona, per body and per conversation; tests/start-work-mock.test.ts and
+    // tests/assistant-mock.test.ts cover them.
+    const ownTests = [...(START_OPERATIONS as string[]), ...(ASSISTANT_OPERATIONS as string[])];
+    for (const persona of ownTests.includes(id) ? [] : (PERSONAS as string[])) {
       const expected = PERSONA_STATUS[id]?.[persona] ?? 200;
       it(`${id} answers ${expected} for persona ${persona} with a schema-valid body`, async () => {
         const { status, body } = await request(id, { persona });
@@ -185,9 +189,9 @@ describe('mock server matches openapi.json', () => {
   });
 
   it('a non-M-1 operation gets 501 not_mocked', async () => {
-    const result = await request('E-CONVERSATIONS');
+    const result = await request('E-REPORT');
     expect(result).toEqual({ status: 501, body: { code: 'not_mocked', message: 'Not available in the mock yet.' } });
-    expectValid('E-CONVERSATIONS', 501, result.body);
+    expectValid('E-REPORT', 501, result.body);
   });
 
   it('refuses to start with NODE_ENV=production', () => {

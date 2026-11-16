@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 2075d4aa29aa4d09b9adc118b4955ad7e5c29af3
+COMMIT: f264d1b41795465f5547fdfe30b9c9818c96b0a6
 REVIEWER: reviewer-ui
 AUTHORITY: delivery UI review
 
 ## Summary
+- Head moved to f264d1b4, the merge of dlv-00 (with F-22) into this branch. I checked `git diff 2075d4aa..f264d1b4 -- frontend` (matching head-merge-diff.log): it touches only F-22 files (features/workspace/*, the workspace.css `.ws-*` selectors, W-2209..2214 fixtures, weekly tests and e2e). Nothing changed under src/components, src/styles, src/shell, features/assistant, features/start-work, app/assistant or public/agents. The assistant boards' CSS and shared components are therefore identical to 2075d4aa, and the round-3 fidelity readings still hold.
 - Judged from the round-3 fidelity run (SCR-05-mobile and SCR-05-mobile-draft-started rescored) and the round-3 diff (0f94b4b2..2075d4aa: assistant.css, shell.css, e2e). I did not re-run fidelity or start a server. The other six boards keep their round-2 scores and readings; nothing in this diff touches them except the underline on the phone-bar note button, which only the assistant home uses.
 - UI-2-1 is fixed. On phones the "Open INV-0415" footer is now docked like the composer: sticky at the bottom, `surface` background, 2px ink top rule. The fidelity tool places it exactly on the board: boardBox and pageBox both 16,776, 358×50. Visual went from 77.3 to 82.8.
 - The phone home now passes outright (coverage 100 with exceptions, visual 90.6), so its waiver is rightly removed.
@@ -15,6 +16,8 @@ AUTHORITY: delivery UI review
 - UI-3-2 | non-blocking | fidelity-exceptions.json | Stale reason on "← Assistant". It still says '"← Home" on the phone default is a frame item and is not drawn', which is no longer true. The real cause on the thread boards is the same as for "← Home": the frame names the link "Back to Assistant", so the tool cannot match "← Assistant". | Reword the "← Assistant" reason to match the "← Home" entry ("frame vocabulary": same visible words, accessible name "Back to Assistant").
 
 ## Verified
+- UI-3-1 | verified | fidelity-exceptions.json notes now record the "N earlier" underline as a listed difference, signed under D-100.
+- UI-3-2 | verified | The "← Assistant" reason is reworded: the frame names the link for screen readers, so the tool cannot match the board text; the page draws the link.
 - UI-2-1 | verified | assistant.css: below 720px `.as__open { margin-top:auto; background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom:0; z-index: var(--z-bar) }`, all tokens, matching `.as__composer`. round-3 SCR-05-mobile-draft-started report: "Open INV-0415" matched at 100% similarity, pageBox 16,776 358×50, the same as boardBox. The side-by-side shows the white docked footer with the top rule at the fold, as the board draws it. The builder's e2e asserts it is within 4px of the viewport bottom.
 - UI-1-4 | verified | Closed by UI-2-1: the footer is built from `draft.started` and docked.
 - UI-2-2 | verified | (a) "← Home" kept with a new reason. It is accurate: the round-3 SCR-05-mobile report lists board "← Home" as missing and page "Back to Home" as extra, i.e. the frame's `aria-label` replaces the visible "← Home" as the accessible name. The visible words are the board's, and the side-by-side shows "← Home" in the bar's place, so this is a tool-vocabulary exception, not a missing element. Accepted. (b) The mobile-thread waiver now reads 78.1, matching scores.txt. (c) The "Start this invoice" reason now names the desktop-thread tool false-miss. One follow-up is UI-3-2.

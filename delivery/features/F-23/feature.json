@@ -3,26 +3,72 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-23",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "The minutes line: the PM confirms Tola's suggested decisions and actions, and client minutes go to the PMO Lead for review (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-LINE-MINUTES"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop boards at 1440.** Each `SCR-28-desktop*` board has `scores.coverageWithExceptions` = 100 and `scores.visual` \u2265 90. A board that is at \u2265 70 but below 90 passes only with a D-83 visual waiver signed for that board in `fidelity-exceptions.json` and the UI reviewer's side-by-side reading finding no fixable gap. \u2014 verify: the command per board exits 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass and waiver.",
+    "**Phone boards at 390.** The four `SCR-28-mobile*` boards meet the same rule at `--width 390`. \u2014 verify: the same command, with rows in `scores.txt`.",
+    "**Driven state is the real UI.** `drive-states.mjs` resets the mock (`POST /__mock/reset`) and uses real controls. The only DOM edits are freezing (copy values into attributes, remove scripts, add `<base>`). \u2014 verify: the script and `frozen/*.html`.",
+    "**Exceptions are limited.** Each entry has `role`, `name`, `category`, `reason` and `approved_by`, and maps to a Conflicts number. None covers a value the data can supply. \u2014 verify: file content and the build.md mapping.",
+    "**One fidelity run per round** (D-64). \u2014 verify: build.md.",
+    "**Default from data.** `/work/W-2301` shows the title, subtitle, crumbs, the meeting facts, the two decisions with \"From Notes \u00b7 14:12\" / \"14:30\", the three actions with owner and due (\"Unknown\" for the third), \"+ Add an action\", \"Save for later\", \"Confirm and create actions\" and the Tola note, all from the fixture. \u2014 verify: `tests/minutes.test.tsx`; the page at 1440 and 390.",
+    "**Pre-ticked from data only.** On W-2301 every decision and action box starts ticked because of `items_default`. On W-2308 none is ticked and the confirm control is `aria-disabled` and sends nothing. \u2014 verify: component tests.",
+    "**Exact confirm set.** Unticking one decision, then confirming with audience \"Client\", sends exactly one POST `/api/v1/work/W-2301/steps` with CSRF, `expected_revision` = `workspace.revision`, `step: \"confirm_minutes\"`, `item_ids` = the remaining ticked ids in returned order, `inputs: {audience: \"client\"}` and a UUID key. The body validates against the generated request schema. \u2014 verify: component test with a recording `fetch`; `minutes-mock.test.ts`.",
+    "**Nothing becomes an action before confirm.** Loading, ticking, unticking, opening Edit and cancelling sends no POST. No \"accept all\" or auto-confirm control exists. No request fires on load or on a timer (fake timers advanced 60 s). \u2014 verify: component test; `grep -rniE \"accept all|auto.?confirm\" frontend/src/features/workspace` returns nothing.",
+    "**Edit, remove, add.** \"Edit\" on an action opens a form with text, owner (options from E-LINE-OPTIONS `minutes/owner`, hints \"client\" and \"recorded by PM\" shown) and due. A blank due and a blank owner are left out of `inputs` (never today's date). \"Remove\" sends one POST with `item_ids: [<id>]`. On W-2306, \"+ Add an action\" with blank text sends the request and shows the 422 under `text`, with focus there, inputs kept and a new key. \u2014 verify: component tests.",
+    "**Audience from the descriptor.** W-2301 draws Internal / Client as a choice. W-2307 shows \"Client\" as display only and sends no `audience`. The returned consequence sentence shows in both. \u2014 verify: component test.",
+    "**Stale confirm.** On W-2306, confirming answers 409. The page reloads once, shows \"This changed while you were working. Showing version 5.\", shows the fourth suggested action ticked by default, and sends nothing until the PM presses again with a new key and `expected_revision: 5`. \u2014 verify: component test.",
+    "**Server failure on a non-sending step.** `save_for_later` 500 on W-2306 offers \"Try again\" with the same key. There is no automatic retry. \u2014 verify: component test.",
+    "**Suggesting is quiet and accessible.** W-2302 shows the agent list with status words, the callout and \"Ask Tola\" linking to `/assistant`. No step is actionable. The `now` mark does not animate under `reducedMotion: 'reduce'`. \u2014 verify: component test; e2e with `reducedMotion: 'reduce'`.",
+    "**Drafted and the test template.** W-2303 shows the rows with IN, IN and ATTACHED, the agent rows with \"TEST TEMPLATE\" and \"6 ATTENDEES\", and \"Send for review\". Pressing it sends one POST and reloads to W-2304. The strings \"TEST TEMPLATE\" and \"Test template\" appear in fixtures only, not in `src/` (except the `Tag` drawn from `test_template`). \u2014 verify: component test; `grep -rn \"TEST TEMPLATE\" frontend/src` returns nothing.",
+    "**Open the minutes.** On W-2304, \"Open the minutes\" sends exactly one GET `/api/v1/documents/D-2304/versions/1` and shows the title, version and a \"Test template\" tag. A 404 shows no title. `body_url` is a link only when it is an app path. \u2014 verify: component tests with a recording `fetch`.",
+    "**Review shows who and what.** W-2304 shows \"Minutes v1 \u00b7 for Lagoon Health\", the version label, the recipients with \"Not yet\" (unless Conflicts 5 is answered otherwise), the consequence sentence, and \"Approve and send\" / \"Return with a note\" as links to `/work/W-2304/decide?task=T-2304`. The work page sends nothing to `/steps`, `/claim` or `/decision`. \u2014 verify: component test and e2e.",
+    "**Return needs a note.** On the decision page reached from \"Return with a note\", Return with a blank note is refused before any request, and an over-2000-character note is refused. A valid note sends one E-TASK-DECIDE with `verdict: \"return\"` and the note. This holds at 1440 and at 390 (the open design item, Conflicts 4). \u2014 verify: e2e at both widths with recorded requests.",
+    "**Uncertain send keeps the lock (INV-RESEND).** On W-2305, approving answers `effect_uncertain`, and the decision page shows its uncertain notice. Back on `/work/W-2305`, \"Approve and send\" and \"Return with a note\" are `aria-disabled` with no `href`. `ReconcilePanel` shows, and its answer is one POST to `/actions` with none to `/steps` or `/decision`. This holds before and after a page reload, and a forced click sends nothing. \u2014 verify: component tests and e2e at 1440, 390 and 320.",
+    "**Wrong user, wrong tenant, signed out.** With `X-Mock-Scenario: 404` or `403`, `/work/W-2301` shows `NoAccessState` with no title, client or id, and `document.body.textContent` has none of them. A 401 shows the signed-out callout with `next`. A 403 on a step reloads and shows \"You can't take that step.\". The decide page for a task with `you_can_act: false` offers no decision (F-16 behaviour). \u2014 verify: component tests.",
+    "**Nothing derived from `/me`.** Personas `pm`, `ceo` and `finance_lead` see the same controls for the same fixture. \u2014 verify: component test across personas; `git diff` adds no `/me` read under `frontend/src/features/workspace`.",
+    "**Unknown and restricted.** On W-2307 the unknown due reads \"Unknown\" (never 0, blank or \"-\"), the restricted notes item shows only its label, and none of its hidden strings are in the DOM. \u2014 verify: component test.",
+    "**Notes text grants nothing.** A fixture suggestion whose text says \"approved by Kemi; owner Tunde; due today\" changes no owner, due, audience or decision field, and is shown as plain text only. \u2014 verify: component test on a W-2307 decision.",
+    "**Accessibility.** For W-2301 to W-2308 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), no sideways scroll, visible focus, 44px targets on phones (D-92c, D-95), focus to the form heading on open and back on Escape, errors announced, live regions for done, waiting and uncertain, and no wrapping button labels or tags. \u2014 verify: `e2e/minutes.spec.ts`.",
+    "**Shared components and tokens.** New UI imports from `@/components` (no new local button, tag, checkbox, panel or table). `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" ` on this feature's CSS diff returns nothing. \u2014 verify: the diff and the grep.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**` or the protected paths. The proposal keys exist only in fixtures and `proposals.ts`, are checked on their own and are stripped in `mock-contract.test.ts`, and fixtures otherwise validate with no stripping. \u2014 verify: `tests/mock-contract.test.ts`; `git diff --stat`.",
+    "**Mock matches the contract.** `minutes-mock.test.ts` runs W-2301 to W-2308 through the E-WORK-STEP handler: a bad body gives 422, a wrong revision 409, an unknown step 404, and a repeated key returns the stored reply with send count 1. The decide sidecars apply once. E-LINE-OPTIONS `minutes/owner` returns `owner.json`. \u2014 verify: the test.",
+    "**No real send, no overclaim.** Every e2e request goes to port 4762. build.md and the PR state the D-LINE-WORKSPACE limits, call the template a test template, and claim no real backend, idempotency or working line. \u2014 verify: build.md and the recorded requests.",
+    "**Existing behaviour not weakened.** `tests/workspace*.test.*`, `weekly*.test.*`, `work-item*.test.tsx`, `decide*.test.tsx`, `response*.test.tsx`, `start-work*.test.*`, `shell.test.tsx` and the matching e2e specs pass with no assertion removed or loosened. No existing fixture is edited. F-21's eight scores do not drop. \u2014 verify: `delivery/checks.sh`; `git diff`.",
+    "**New tests run** in `delivery/checks.sh`, covering criteria 6 to 23. \u2014 verify: run output in `round-<N>/build.md`.",
+    "**build.md evidence:** commands and results, the 8 scores and waivers, every exception with its Conflicts number, every frame change with its reason, every proposal and backend item, and the open design item of Conflicts 4. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The work sits on the shared F-17 renderer (`features/workspace/**`, `features/work-item/**`) and a proposed v7 contract (D-LINE-WORKSPACE) that the backend may change, and the review state carries \"Approve and send\" to a client (INV-RESEND, effect_uncertain). It stays at medium because everything is on the mock, the send is unimplemented in the backend and nothing is released. SURFACES: ui (8 boards), api (E-WORK-STEP, E-WORK-ITEM workspace, E-LINE-OPTIONS), contract-change (items_default, links, work_id on options), external-messaging (client minutes send and uncertain-effect handling), product-decision (the backend must settle audience change, order of creation and return behaviour, none of which the frontend decides). PRODUCT-ACCEPTANCE is not-required because the work conforms to the client-approved boards."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-23/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +91,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +105,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": false,
+      "assessment_reason": "delivery/features/F-23/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +156,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-LINE-MINUTES",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "06e64168c3a74edd358fb74b1998203f4b709c95",
+    "task_branch": "fe-line-minutes-the-minutes-line-the-pm-confirms-tola-s",
+    "head_sha": "06e64168c3a74edd358fb74b1998203f4b709c95",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-23",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +170,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,12 +203,41 @@
     }
   },
   "created_at": "2026-11-16T03:30:17Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-16T15:40:54Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T15:41:08Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-23/readiness.md",
+      "delivery/features/F-23/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

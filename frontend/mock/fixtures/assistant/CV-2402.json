@@ -1,0 +1,98 @@
+{
+  "conversation_id": "CV-2402",
+  "agent": "tola",
+  "title": "SOW · Kora Logistics phase 2",
+  "status": "drafted",
+  "context": {
+    "project": {
+      "case_id": "C-0103",
+      "title": "Kora Logistics · fleet tracker"
+    },
+    "access": [
+      "PMO on this project"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Draft a SOW for Kora Logistics phase 2 using the requirements from last week’s meeting.",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-16T08:40:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "I drafted the SOW structure and scope from the minutes. Costing is left empty: it needs Engineering and Security estimates, then approval from PMO, PMO Lead and the CEO in that order. I marked three open questions from the minutes in the draft.",
+      "steps": [
+        "Read the minutes from Thursday’s requirements meeting",
+        "Read the phase 1 SOW for structure",
+        "Listed the open questions the minutes left unresolved"
+      ],
+      "sources": [],
+      "at": "2026-11-16T08:42:00Z",
+      "step_details": [
+        {
+          "text": "Read the minutes from Thursday’s requirements meeting",
+          "state": "done",
+          "reference": {
+            "label": "MINUTES · 06 NOV"
+          }
+        },
+        {
+          "text": "Read the phase 1 SOW for structure",
+          "state": "done",
+          "reference": {
+            "label": "SOW v3 · phase 1"
+          }
+        },
+        {
+          "text": "Listed the open questions the minutes left unresolved",
+          "state": "done",
+          "reference": {
+            "label": "ENGAGEMENT · Kora Logistics"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "MINUTES",
+          "label": "MINUTES · 06 NOV",
+          "restricted": false
+        },
+        {
+          "kind": "SOW",
+          "label": "SOW v3 · phase 1",
+          "restricted": false
+        },
+        {
+          "kind": "ENGAGEMENT",
+          "label": "ENGAGEMENT · Kora Logistics",
+          "restricted": false
+        }
+      ],
+      "draft": {
+        "title": "SOW draft · Kora Logistics · Phase 2",
+        "status_label": "DRAFTED · NOT REVIEWED",
+        "rows": [
+          {
+            "label": "Sections",
+            "value": "Scope, deliverables, milestones, assumptions, out of scope"
+          },
+          {
+            "label": "Costing",
+            "value": "Empty until estimates and approvals"
+          },
+          {
+            "label": "Open questions",
+            "value": "3, marked in the draft"
+          },
+          {
+            "label": "Template",
+            "value": "SOW · TEST TEMPLATE"
+          }
+        ],
+        "next": "estimates, then PMO → PMO Lead → CEO"
+      }
+    }
+  ]
+}
