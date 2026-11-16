@@ -6,6 +6,8 @@ All 59 approved screens from GitHub `4689cee` have a native mapping and a remain
 
 The named synthetic Railway account verified all eight OpenRouter roles through cited drafts, human review and native handoff. Word, Excel and PDF were exercised. The isolated test site is available for review with the previous hosted release still serving its existing URL.
 
+The next increment connects the design's Start Work control to the permission-filtered native line chooser and project intake forms. The assistant now saves department conversations, queues scoped questions, returns cited answers or a hold, supports human-confirmed transfer to another eligible department, and links Planning and Invoice work back to the exact answer. The department read tools currently cover project-work status, invoice and milestone handoff facts, and current HR handoff availability. Operational data access and additional screen functions remain open.
+
 ## Local development checkpoint · 9 November 2026
 
 GitHub main and local main matched `501b76f8304d971c3786223dcc91a863eec58cef` after a clean fast-forward. Development continues on `build/local-milestone-20261109`. All five nonapplied snapshots were reconstructed and hash verified in isolation. The build branch integrates selected D11 isolation, scalar policy loading and the exact template source reader.

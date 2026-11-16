@@ -67,13 +67,41 @@ def intake_options(actor):
     return [{'definition':name,'title':title,'description':description} for name,title,description,actions in INTAKES if available[actions]]
 
 
+def intake_available(actor):
+    # Every entry requires factory.start. The remaining grants must all hold on one project.
+    eligible = Q(pk__in=[])
+    action_groups = {frozenset(actions) - {'factory.start'} for _, _, _, actions in INTAKES}
+    for actions in action_groups:
+        match = Q()
+        for action in sorted(actions):
+            match &= Q(pk__in=Grant.objects.filter(user=actor, active=True, action=action).values('case_id'))
+        eligible |= match
+    return granted(actor, ['factory.start']).filter(kind='project').filter(eligible).exists()
+
+
 @login_required
 @require_safe
 def intake(request):
     queue=request.GET.get('queue','needs_me')
     if queue not in QUEUES:queue='needs_me'
     from .factory_change_intake import pending_intakes
-    response=render(request,'factory/intake.html',{'options':intake_options(request.user),'change_intakes':pending_intakes(request.user),'queue':queue,'q':request.GET.get('q','').strip()[:120]})
+    options = intake_options(request.user)
+    q = request.GET.get('q','').strip()[:120]
+    selected = request.GET.get('entry') == 'default' and len(options) == 1
+    if selected:
+        response = redirect(reverse('factory_create') + '?' + urlencode({'definition': options[0]['definition'], 'queue': queue, 'q': q}))
+        response['Cache-Control'] = 'no-store'
+        return response
+    groups = {'Project work': [], 'Finance': [], 'Delivery and closure': []}
+    for option in options:
+        key = option['definition']
+        title = 'Project work'
+        if key.startswith(('finance-', 'pmo-finance/')):
+            title = 'Finance'
+        elif key.startswith('delivery-'):
+            title = 'Delivery and closure'
+        groups[title].append(option)
+    response=render(request,'factory/intake.html',{'options':options,'groups':groups,'change_intakes':pending_intakes(request.user),'queue':queue,'q':q})
     response['Cache-Control']='no-store';return response
 
 def visible(actor):
@@ -534,13 +562,46 @@ def index(request):
         items.append(row)
     evaluated=query.count()
     response=render(request,'factory/queue.html',{'rows':items[:50],
-        'intake_available':bool(intake_options(request.user)),'queue':queue,'queues':QUEUES,'q':q,'line':line,
+        'queue':queue,'queues':QUEUES,'q':q,'line':line,
         'line_title':DEFINITIONS[line]['title'] if line else '', 'as_of':timezone.now(),
         'evaluated':min(evaluated,101),'limited':len(items)>50 or evaluated>101,'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)})
     response['Cache-Control']='no-store';return response
 
+def assistant_origin(request, form, envelope):
+    turn_id = request.GET.get('assistant_turn')
+    if request.method != 'GET' or not turn_id:
+        return None
+    from apps.agents.assistant import cited_record, work_intent
+
+    try:
+        turn = work_intent(request.user, turn_id, envelope, request.GET.get('case'))
+    except ValidationError as exc:
+        messages.error(request, exc.messages[0])
+        return redirect('design_agents')
+    if turn.started_work_id:
+        return redirect('factory_detail', work_id=turn.started_work_id)
+    form.initial.update({'assistant_turn': turn.pk, 'key': str(turn.pk)})
+    field = {'planning/v1': 'packet', 'pmo-finance/v1': 'handoff'}[envelope]
+    pk = cited_record(turn, field)
+    if pk is not None and form.fields[field].queryset.filter(pk=pk).exists():
+        form.initial[field] = pk
+    return None
+
+
+def start_with_origin(actor, form_values, envelope, start_native):
+    if not form_values['assistant_turn']:
+        return start_native()
+    from apps.agents.assistant import start_from_answer
+
+    field = {'planning/v1': 'packet', 'pmo-finance/v1': 'handoff'}[envelope]
+    record = form_values[field]
+    return start_from_answer(actor, form_values['assistant_turn'], form_values['case'].pk, envelope,
+                             field, record.pk if record else None, start_native)
+
+
 class StartForm(forms.Form):
     key=forms.CharField(widget=forms.HiddenInput,max_length=100)
+    assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
     mode=forms.ChoiceField(required=False,initial='completion',choices=[('completion','PMO completion'),('existing-preparation/v1','Existing Finance preparation')])
     from apps.finance.models import BillingPreparation, Invoice
@@ -662,13 +723,18 @@ def create(request):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            if v['mode']=='existing-preparation/v1':
-                from .factory_invoice_intake import start as start_preparation
-                work=start_preparation(request.user,v['case'].pk,v['key'],v['preparation'].pk,v['reference'],v['due_date'],v['revision'],v['invoice'].pk if v['invoice'] else None)
-            else:
-                work=d.start(request.user,v['case'].pk,v['key'],v['coverage'].pk,v['handoff'].pk,v['reference'],v['revision'])
+            def start_native():
+                if v['mode']=='existing-preparation/v1':
+                    from .factory_invoice_intake import start as start_preparation
+                    return start_preparation(request.user,v['case'].pk,v['key'],v['preparation'].pk,v['reference'],v['due_date'],v['revision'],v['invoice'].pk if v['invoice'] else None)
+                return d.start(request.user,v['case'].pk,v['key'],v['coverage'].pk,v['handoff'].pk,v['reference'],v['revision'])
+
+            work = start_with_origin(request.user, v, envelope, start_native)
             return redirect('factory_detail',work_id=work.pk)
         except ValidationError as exc:form.add_error(None,str(exc))
+    response = assistant_origin(request, form, envelope)
+    if response is not None:
+        return response
     return render(request,'factory/start.html',{'form':form,'available_cases':granted(request.user,['finance.read','factory.start']).filter(kind='project')})
 
 @login_required
@@ -1120,6 +1186,7 @@ def configuration(request,case_id):
 class PlanningStartForm(forms.Form):
     definition=forms.CharField(initial='planning/v1',widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
+    assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
     packet=forms.ModelChoiceField(queryset=Evidence.objects.none(),label='Current planning packet')
     reference=forms.CharField(max_length=100,label='Work reference')
@@ -1144,8 +1211,12 @@ def create_planning(request):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            work=start(request.user,v['case'].pk,v['key'],v['packet'].pk,v['reference'],v['revision']);return redirect('factory_detail',work_id=work.pk)
+            work = start_with_origin(request.user, v, 'planning/v1', lambda: start(request.user,v['case'].pk,v['key'],v['packet'].pk,v['reference'],v['revision']))
+            return redirect('factory_detail',work_id=work.pk)
         except ValidationError as exc:form.add_error(None,str(exc))
+    response = assistant_origin(request, form, 'planning/v1')
+    if response is not None:
+        return response
     return render(request,'factory/planning_start.html',{'form':form,'available_cases':granted(request.user,['planning.read','factory.start']).filter(kind='project')})
 
 class CommercialStartForm(forms.Form):

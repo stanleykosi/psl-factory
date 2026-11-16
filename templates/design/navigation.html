@@ -10,6 +10,12 @@
     <a href="{% url 'design_overview' %}" {% if request.resolver_match.url_name == 'design_overview' %}aria-current="page"{% endif %}>Overview</a>
     <a href="{% url 'design_agents' %}" {% if request.resolver_match.url_name == 'design_agents' %}aria-current="page"{% endif %}>Assistant</a>
   </nav>
+  {% if choose_work_url %}
+  <div class="start-work-split">
+    <a href="{{ start_work_url }}" data-start-work="default" aria-label="Start work">{% include 'ui/icon.html' with icon='plus' %}<span>Start<span class="start-work-desktop-word"> work</span></span></a>
+    <a href="{{ choose_work_url }}" data-start-work="choose" aria-label="More ways to start">▾</a>
+  </div>
+  {% endif %}
   <details class="factory-menu">
     <summary>Menu</summary>
     <div>

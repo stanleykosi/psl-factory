@@ -7,6 +7,7 @@
   <title>{% block title %}PSL Factory{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'studio.css' %}?v=4">
   <link rel="stylesheet" href="{% static 'factory-design.css' %}">
+  {% if choose_work_url %}<script defer src="{% static 'start-work.js' %}"></script>{% endif %}
 </head>
 <body class="design-shell{% if not user.is_authenticated %} signed-out{% endif %}">
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -22,12 +23,21 @@
       {% if not control_plane %}<a class="topbar-search" href="{% url 'workspace_overview' %}#workspace-search">{% include 'ui/icon.html' with icon='search' %}<span>Find a workspace</span></a>{% endif %}
     </header>
     {% endif %}
-    <main id="main-content" class="page-content">
+    <main id="main-content" class="page-content"{% if request.resolver_match.url_name == 'factory_intake' or request.resolver_match.url_name == 'factory_create' %} data-start-work-page{% endif %}>
       {% if messages %}<div class="messages" role="status">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}
       {% block content %}{% endblock %}
       {% if row.work %}{% factory_coordination_status row.work %}{% factory_execution_status row.work %}{% endif %}
     </main>
     <footer class="app-footer"><span>PSL Factory</span>{% if case.synthetic or sample_mode %}<span>Sample data</span>{% endif %}</footer>
   </div>
+  {% if choose_work_url %}
+  <dialog id="start-work-dialog" class="start-work-dialog" aria-label="Start work" data-create-url="{% url 'factory_create' %}">
+    <div class="start-work-dialog-header">
+      <a class="start-work-back" href="{{ choose_work_url }}" hidden>← Choose a line</a>
+      <button type="button" data-close-start-work aria-label="Close">×</button>
+    </div>
+    <div class="start-work-dialog-body" data-start-work-body></div>
+  </dialog>
+  {% endif %}
 </body>
 </html>

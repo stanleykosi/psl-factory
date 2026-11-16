@@ -84,6 +84,9 @@ class DraftForm(forms.Form):
 @require_http_methods(['GET', 'HEAD', 'POST'])
 @never_cache
 def agents(request):
+    from apps.agents import assistant
+    from apps.agents.assistant_views import owned_conversations
+
     eligible = granted(request.user, ['agent.extract']).filter(synthetic=True)
     cases = eligible.order_by('title', 'pk')[:25]
     can_start = os.getenv('OPENROUTER_MODEL')
@@ -109,8 +112,12 @@ def agents(request):
     ).select_related('upload__case').defer('result').order_by('-pk')[:25])
     for job in jobs:
         job.role_label = ROLES.get(job.role, ('Agent', ''))[0]
+    departments = [(key, name, department) for key, (name, department, _) in assistant.PERSONAS.items()
+                   if assistant.cases_for(request.user, key).exists()]
     return render(request, 'design/agents.html', {'roles': ROLES.values(), 'cases': cases, 'jobs': jobs,
-                                                  'draft_form': draft_form if can_start and first_cases else None})
+                                                  'draft_form': draft_form if can_start and first_cases else None,
+                                                  'departments': departments,
+                                                  'conversations': owned_conversations(request.user).order_by('-updated_at')[:25]})
 
 
 @login_required

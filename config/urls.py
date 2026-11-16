@@ -31,6 +31,7 @@ from apps.finance import recognition_views
 from apps.finance import payment_views
 from apps.core import views
 from apps.core import design_views
+from apps.agents import assistant_views
 from apps.baas import views as baas_views, partner_views
 from apps.documents import views as document_views
 from apps.pmo import views as pmo_views
@@ -133,5 +134,8 @@ urlpatterns += [path('cases/<uuid:case_id>/delivery/<int:dossier_id>/progress/',
 
 urlpatterns += [path('overview/', design_views.overview, name='design_overview'),
                 path('assistant/', design_views.agents, name='design_agents'),
+                path('assistant/new/<slug:persona>/', assistant_views.start, name='assistant_start'),
+                path('assistant/handoff/<uuid:turn_id>/<slug:persona>/', assistant_views.transfer, name='assistant_transfer'),
+                path('assistant/<uuid:conversation_id>/', assistant_views.thread, name='assistant_thread'),
                 path('getting-started/', design_views.getting_started, name='getting_started'),
                 path('projects/<uuid:case_id>/', design_views.project, name='design_project')]

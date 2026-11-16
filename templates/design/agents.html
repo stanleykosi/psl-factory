@@ -1,7 +1,17 @@
 {% extends 'base.html' %}{% load studio_ui %}
 {% block title %}Assistant · PSL Factory{% endblock %}
 {% block content %}
-<header class="page-heading"><div><h1>Assistant</h1><p class="lede">Choose a workspace and give an agent a file to review. You decide how to use its draft.</p></div></header>
+<header class="page-heading"><div><h1>Assistant</h1><p class="lede">Ask about a project you can access or give an agent a file to review.</p></div></header>
+<div class="assistant-layout">
+  <aside class="card"><h2>Conversations</h2>
+    {% for conversation in conversations %}<a class="floor-line" href="{% url 'assistant_thread' conversation.pk %}">{{ conversation.case|workspace_name }}<span>{{ conversation.persona|title }}</span></a>
+    {% empty %}<p>No conversations yet.</p>{% endfor %}
+  </aside>
+  <section class="card" aria-labelledby="ask-a-department"><h2 id="ask-a-department">Talk to an agent</h2>
+    {% for key, name, department in departments %}<a class="floor-line" href="{% url 'assistant_start' key %}"><strong>{{ name }}</strong><span>{{ department }} →</span></a>
+    {% empty %}<p>Department conversations are available in test projects where you have access.</p>{% endfor %}
+  </section>
+</div>
 {% if draft_form %}
 <section class="card" aria-labelledby="new-draft-heading">
   <h2 id="new-draft-heading">Start an agent draft</h2>

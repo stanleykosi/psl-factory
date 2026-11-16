@@ -8,6 +8,8 @@ Use Railway environment `design-acceptance`, web `psl-design-web`, worker `psl-d
 
 Open the preview using the Codex in-app browser only. The user declined desktop automation. Server-side synthetic verification can run on Railway. Keep test passwords and provider configuration out of Git. The optional `PSL_AGENT_TRIAL_CASE` setting selects an exact named synthetic trial case when preparing native handoffs.
 
+The Start Work and department Assistant increment adds `agents.0005` and `0006`. Deploy the same source to the isolated web and worker. The web applies migrations and the worker polls both private file drafts and pending department turns. Verify with `tests.test_department_assistant`, `tests.test_factory_intake`, `tests.test_design_consolidation` and the native invoice console acceptance. The department assistant uses synthetic test data. Extend scoped source selection, exact draft prefill and proof, inline recovery, the remaining working screens and then the owner-governed provider data scope.
+
 ## Railway checkpoint · 13 November 2026
 
 The post-handoff synthetic trial verified project registration and export, evidence currentness, issue acknowledgement, planning request creation, completed meeting follow-up and synthetic gate verification. Finance attestation and quality owner review held on missing scoped policy. See [owner decisions beyond the meeting sheet](docs/acceptance/RAILWAY-OWNER-DECISIONS.md). Railway now uses DeepSeek V4.1 Flash 1017 through OpenRouter for fresh drafts. The temporary post-handoff startup switch was removed after the checks.

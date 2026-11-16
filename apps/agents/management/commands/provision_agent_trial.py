@@ -45,6 +45,7 @@ def prepare_workflows():
         'planning.read', 'planning.coordinate', 'recognition.prepare', 'recognition.read',
         'meeting.record', 'meeting.read', 'pmo.candidate', 'pmo.gate_record',
         'validation.source.capture', 'validation.package.prepare', 'validation.read',
+        'factory.start', 'finance.read', 'hrfinance.read',
     ):
         Grant.objects.get_or_create(case=case, user=actor, action=action)
     reference = 'agent-trial-release-candidate'

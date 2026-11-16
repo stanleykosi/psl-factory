@@ -2,6 +2,8 @@
 
 16 November 2026. Mapped the 59 approved screens, integrated the shared design and the first native views, and set up a separate Railway acceptance environment. Integrated sign-in and onboarding with normal Django sessions and current workspace grants. The first Railway build migrated a clean database and served health and sign-in. See BUILD-TESTS.md for checks and remaining acceptance evidence.
 
+16 November 2026. Connected the Start Work chooser to exact native line forms and added saved department conversations, handoff and work-origin tracking. A synthetic Railway operator started Planning through the native intake and repeated the submission against the same work record. Existing file-agent review remains available from the Assistant.
+
 9 November 2026. Added a committed PostgreSQL acceptance case from PMO milestone to Finance receivables, with separate operator grants and lookup of the original handoff and invoice after lost responses. Verified worker exit recovery and operator metadata restore. Corrected invoice and payment fixtures to use the existing identity and signature controls, and passed all 25 payment tests. Added a concise HOD answer sheet for flows, owners, policies and approved examples. Owner policy values remain deferred.
 
 9 November 2026. Profiled selected incident authorization and batched exact revision, observation, source and grant reads. Reconstructed each legacy report version at its own cutoff. The 12-incident, six-legacy-version fixture moved from HTTP 503 at 255 SQL statements to HTTP 200 at 72. All 17 composed PostgreSQL tests passed. Recorded HOD walkthrough preparation and the separate live-pilot acceptance work in HANDOFF.md.
