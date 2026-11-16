@@ -11,6 +11,8 @@ import { Button, Callout } from '@/components';
 import type { WorkItem } from '@/features/work-item/labels';
 
 import { agentName, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
+import { WorkspaceLinks } from './Links';
+import { itemsDefaultChecked, workspaceLinks } from './proposals';
 import { SectionView, type ItemControls } from './Sections';
 import { StepForm } from './StepForm';
 import { Consequence, StepControl, StepRow } from './Steps';
@@ -66,7 +68,8 @@ function WorkspaceHeader({ workspace, itemTitle, beside }: { workspace: Workspac
 const inSide = (item: WorkItem) => (section: Section) =>
   section.kind === 'suggestions' || (section.kind === 'checklist' && item.agent.status === 'working');
 
-type Open = { token: string; step: Step; itemIds?: string[] };
+/** `items` is set for an `items` step: its ids are the ones ticked when the form is submitted (all sections, or that one), so the set sent is the set on screen. */
+type Open = { token: string; step: Step; itemIds?: string[]; items?: { section?: string } };
 
 const scope = (step: Step) => step.applies_to ?? 'workspace';
 const needsForm = (step: Step) => (step.fields?.length ?? 0) > 0 || step.confirm !== undefined;
@@ -77,7 +80,9 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const byKey = new Map(steps.map((s) => [s.key, s]));
   const flow = useWorkspaceStep({ id, revision: workspace.revision, page, awaitingReconcile: Boolean(item.reconcile) || item.state === 'effect_uncertain' });
   const [open, setOpen] = useState<Open | null>(null);
-  const [selected, setSelected] = useState<Record<string, string[]>>({});
+  // The PM's own tick or untick of an `items` target, by section and item id. An item the PM has not touched follows the
+  // step's `items_default` (PROPOSAL G-SCR28-1), so an item that arrives with a reload starts as the data says.
+  const [choices, setChoices] = useState<Record<string, boolean>>({});
   const controls = useRef(new Map<string, HTMLButtonElement | null>());
   // The attempt a manual Try again repeats (same key), after a network or server failure on a step that doesn't send.
   const last = useRef<Attempt | null>(null);
@@ -89,7 +94,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
 
   // On a phone the Decide panel is pinned to the bottom: the page keeps its height clear below it (see workspace.css).
   const decideRef = useRef<HTMLElement>(null);
-  const hasDecide = steps.some((s) => scope(s) === 'workspace');
+  const itemsSteps = steps.filter((s) => scope(s) === 'items');
+  // an `items` step whose targets sit in more than one section is one control in the workspace row, over the ticks in all of them
+  const cross = new Set(itemsSteps.filter((s) => workspace.sections.filter((sec) => sec.items.some((it) => it.steps?.includes(s.key))).length > 1).map((s) => s.key));
+  const workspaceSteps = steps.filter((s) => scope(s) === 'workspace' || cross.has(s.key));
+  const hasDecide = workspaceSteps.length > 0;
   useEffect(() => {
     const bar = decideRef.current;
     if (!bar) return;
@@ -127,17 +136,17 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     return result;
   };
 
-  const press = (step: Step, token: string, itemIds?: string[]) => {
+  const press = (step: Step, token: string, itemIds?: string[], items?: Open['items']) => {
     if (off(step)) return;
     if (needsForm(step)) {
       flow.renew(token);
-      setOpen({ token, step, itemIds });
+      setOpen({ token, step, itemIds, items });
       return;
     }
     void run({ token, step, itemIds });
   };
 
-  const control = (step: Step, token: string, itemIds?: string[], extra?: { none?: boolean; describedBy?: string }) => (
+  const control = (step: Step, token: string, itemIds?: string[], extra?: { none?: boolean; describedBy?: string; items?: Open['items'] }) => (
     <StepControl
       key={token}
       workId={id}
@@ -149,7 +158,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       controlRef={(el) => {
         controls.current.set(token, el);
       }}
-      onPress={() => press(step, token, itemIds)}
+      onPress={() => press(step, token, itemIds, extra?.items)}
     />
   );
 
@@ -168,21 +177,30 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         off={off(open.step)}
         submitLabel={failed ? 'Try again' : undefined}
         consequence={<Consequence step={open.step} />}
-        onSubmit={(request) => run({ token, step: open.step, itemIds: open.itemIds }, request)}
+        onSubmit={(request) => {
+          const itemIds = open.items ? liveIds(open.step, open.items.section) : open.itemIds;
+          // everything was unticked while the form was open: nothing to send
+          if (open.items && itemIds?.length === 0) return Promise.resolve<SubmitResult>({ kind: 'kept' });
+          return run({ token, step: open.step, itemIds }, request);
+        }}
         onClose={() => close(token)}
         onAccessError={page.onAccessLost}
       />
     );
   };
 
-  const workspaceSteps = steps.filter((s) => scope(s) === 'workspace');
-  const itemsSteps = steps.filter((s) => scope(s) === 'items');
   const isItemsTarget = (item: Item) => itemsSteps.some((s) => item.steps?.includes(s.key));
+  const choiceKey = (section: Section, it: Item) => `${section.key}:${it.id}`;
+  const ticked = (section: Section, it: Item) => isItemsTarget(it) && !it.restricted && (choices[choiceKey(section, it)] ?? itemsSteps.some((s) => it.steps?.includes(s.key) && itemsDefaultChecked(s)));
+  const tickedFor = (section: Section, step: Step) => section.items.filter((it) => it.steps?.includes(step.key) && ticked(section, it)).map((it) => it.id);
+
+  const liveIds = (step: Step, section?: string) => workspace.sections.filter((sec) => section === undefined || sec.key === section).flatMap((sec) => tickedFor(sec, step));
 
   const sectionControls: ItemControls = {
     item: (section, it) => {
       const own = (it.steps ?? []).map((k) => byKey.get(k)).filter((s): s is Step => s !== undefined && scope(s) === 'item');
-      return own.length > 0 ? own.map((s) => control(s, `item:${section.key}:${it.id}:${s.key}`)) : null;
+      // an item step names its item: the backend can't know which row "Remove" or "Edit" was pressed on otherwise
+      return own.length > 0 ? own.map((s) => control(s, `item:${section.key}:${it.id}:${s.key}`, [it.id])) : null;
     },
     after: (section, it) => {
       const own = (it.steps ?? []).map((k) => byKey.get(k)).filter((s): s is Step => s !== undefined && scope(s) === 'item');
@@ -193,7 +211,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     sectionControls.select = (section, it) => {
       if (!section.items.some(isItemsTarget)) return undefined;
       if (!isItemsTarget(it)) return <span />;
-      const checked = selected[section.key]?.includes(it.id) ?? false;
+      const checked = ticked(section, it);
       return (
         // the label is the 44px target around the box
         <label className="ws-checkwrap">
@@ -202,22 +220,15 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             className="ws-check"
             aria-label={`Select ${itemName(section, it)}`}
             checked={checked}
-            onChange={(event) =>
-              setSelected((current) => {
-                const now = new Set(current[section.key] ?? []);
-                if (event.target.checked) now.add(it.id);
-                else now.delete(it.id);
-                return { ...current, [section.key]: section.items.filter((i) => now.has(i.id)).map((i) => i.id) };
-              })
-            }
+            onChange={(event) => setChoices((current) => ({ ...current, [choiceKey(section, it)]: event.target.checked }))}
           />
         </label>
       );
     };
     sectionControls.foot = (section) => {
-      const usable = itemsSteps.filter((s) => section.items.some((it) => it.steps?.includes(s.key)));
+      const usable = itemsSteps.filter((s) => !cross.has(s.key) && section.items.some((it) => it.steps?.includes(s.key)));
       if (usable.length === 0) return null;
-      const chosen = selected[section.key] ?? [];
+      const chosen = section.items.filter((it) => ticked(section, it)).map((it) => it.id);
       return (
         <div className="ws-bulk">
           <span className="ws-count psl-mono" aria-live="polite">
@@ -225,8 +236,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           </span>
           <StepRow steps={usable}>
             {(s, describedBy) => {
-              const ids = section.items.filter((it) => chosen.includes(it.id) && it.steps?.includes(s.key)).map((it) => it.id);
-              return control(s, `items:${section.key}:${s.key}`, ids, { none: ids.length === 0, describedBy });
+              const ids = tickedFor(section, s);
+              return control(s, `items:${section.key}:${s.key}`, ids, { none: ids.length === 0, describedBy, items: { section: section.key } });
             }}
           </StepRow>
           {usable.map((s) => form(`items:${section.key}:${s.key}`))}
@@ -323,6 +334,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           {main.map((section) => (
             <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
           ))}
+          <WorkspaceLinks links={workspaceLinks(workspace)} page={page} />
         </div>
         {(side.length > 0 || showPanel) && (
           <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
@@ -341,7 +353,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                     </p>
                   ))}
                   <StepRow steps={workspaceSteps} hint={flow.allLocked && !noReconcile ? (item.reconcile && !hasReconcile ? STEP_TEXT.confirmFirstByOther : STEP_TEXT.confirmFirst) : undefined}>
-                    {(s, describedBy) => control(s, `ws:${s.key}`, undefined, { describedBy })}
+                    {(s, describedBy) => {
+                      if (!cross.has(s.key)) return control(s, `ws:${s.key}`, undefined, { describedBy });
+                      const ids = workspace.sections.flatMap((section) => tickedFor(section, s));
+                      return control(s, `ws:${s.key}`, ids, { none: ids.length === 0, describedBy, items: {} });
+                    }}
                   </StepRow>
                 </div>
               </section>
@@ -374,6 +390,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
               .map((section) => (
                 <SectionView key={section.key} section={section} level={titled ? 3 : 2} />
               ))}
+            <WorkspaceLinks links={workspaceLinks(workspace)} />
           </div>
           {workspace.sections.some(inSide(item)) && (
             <aside className="ws-side" aria-label="Review and decide">

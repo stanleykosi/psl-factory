@@ -1,0 +1,336 @@
+{
+  "id": "W-2308",
+  "title": "Confirm the minutes",
+  "line": "Formal minutes and action handoff",
+  "reference": "MIN-0141",
+  "state": "action_needed",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Confirm",
+      "status": "current_person"
+    },
+    {
+      "name": "Draft",
+      "status": "not_started"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Suggested 2 decisions and 3 actions",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "minutes",
+    "screen": "SCR-28",
+    "view": "default",
+    "title": "Confirm the minutes",
+    "subtitle": "Formal minutes and action handoff · MIN-0141",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "MIN-0141",
+          "label": "Minutes"
+        }
+      ]
+    },
+    "revision": 4,
+    "agent_note": {
+      "agent": "tola",
+      "lines": [
+        "I read the notes and suggested 2 decisions and 3 actions.",
+        "Nothing becomes a decision or an action until you confirm it.",
+        "One action has no owner and its due date is Unknown. You can confirm without them, but it will show as \"No owner\" on the action list."
+      ]
+    },
+    "sections": [
+      {
+        "key": "meeting",
+        "kind": "facts",
+        "title": "Meeting",
+        "items": [
+          {
+            "id": "M-1",
+            "label": "Weekly sync · Lagoon Health",
+            "value": "10 Nov 2026 · 14:00–14:45 · 6 attendees"
+          },
+          {
+            "id": "M-2",
+            "label": "weekly-sync-notes-10nov.docx",
+            "value": "Uploaded · 42 KB"
+          }
+        ]
+      },
+      {
+        "key": "decisions",
+        "kind": "suggestions",
+        "title": "Decisions · Tola suggested 0",
+        "items": []
+      },
+      {
+        "key": "actions",
+        "kind": "table",
+        "title": "Actions · Tola suggested 3",
+        "columns": [
+          {
+            "key": "action",
+            "label": "Action",
+            "kind": "text"
+          },
+          {
+            "key": "owner",
+            "label": "Owner",
+            "kind": "text"
+          },
+          {
+            "key": "due",
+            "label": "Due",
+            "kind": "date"
+          }
+        ],
+        "items": [
+          {
+            "id": "A-1",
+            "cells": [
+              {
+                "column": "action",
+                "text": "Send test accounts for UAT"
+              },
+              {
+                "column": "owner",
+                "text": "Client · Lagoon Health"
+              },
+              {
+                "column": "due",
+                "date": {
+                  "date": "2026-11-13",
+                  "unknown": false
+                }
+              }
+            ],
+            "steps": [
+              "edit_item",
+              "remove_item",
+              "confirm_minutes"
+            ]
+          },
+          {
+            "id": "A-2",
+            "cells": [
+              {
+                "column": "action",
+                "text": "Finish the Android login fix"
+              },
+              {
+                "column": "owner",
+                "text": "Engineering (recorded by PM)"
+              },
+              {
+                "column": "due",
+                "date": {
+                  "date": "2026-11-15",
+                  "unknown": false
+                }
+              }
+            ],
+            "steps": [
+              "edit_item",
+              "remove_item",
+              "confirm_minutes"
+            ]
+          },
+          {
+            "id": "A-3",
+            "cells": [
+              {
+                "column": "action",
+                "text": "Assess the SMS reminders change"
+              },
+              {
+                "column": "owner",
+                "text": "Choose an owner"
+              },
+              {
+                "column": "due",
+                "date": {
+                  "unknown": true
+                }
+              }
+            ],
+            "steps": [
+              "edit_item",
+              "remove_item",
+              "confirm_minutes"
+            ]
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "confirm_minutes",
+        "label": "Confirm and create actions",
+        "emphasis": "primary",
+        "applies_to": "items",
+        "consequence": "Client minutes are reviewed by the PMO Lead before they're sent.",
+        "fields": [
+          {
+            "name": "audience",
+            "label": "Who gets the minutes",
+            "type": "choice",
+            "required": true,
+            "options": [
+              {
+                "value": "internal",
+                "label": "Internal"
+              },
+              {
+                "value": "client",
+                "label": "Client"
+              }
+            ],
+            "value": "client"
+          }
+        ]
+      },
+      {
+        "key": "save_for_later",
+        "label": "Save for later",
+        "emphasis": "secondary",
+        "applies_to": "workspace"
+      },
+      {
+        "key": "add_action",
+        "label": "+ Add an action",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "fields": [
+          {
+            "name": "text",
+            "label": "Action",
+            "type": "text",
+            "required": true
+          },
+          {
+            "name": "owner",
+            "label": "Owner",
+            "type": "record",
+            "required": false,
+            "options_source": "line_options",
+            "placeholder": "Choose an owner"
+          },
+          {
+            "name": "due",
+            "label": "Due",
+            "type": "date",
+            "required": false
+          }
+        ]
+      },
+      {
+        "key": "edit_item",
+        "label": "Edit",
+        "emphasis": "secondary",
+        "applies_to": "item",
+        "fields": [
+          {
+            "name": "text",
+            "label": "Action",
+            "type": "text",
+            "required": true
+          },
+          {
+            "name": "owner",
+            "label": "Owner",
+            "type": "record",
+            "required": false,
+            "options_source": "line_options",
+            "placeholder": "Choose an owner"
+          },
+          {
+            "name": "due",
+            "label": "Due",
+            "type": "date",
+            "required": false
+          }
+        ]
+      },
+      {
+        "key": "edit_decision",
+        "label": "Edit",
+        "emphasis": "secondary",
+        "applies_to": "item",
+        "fields": [
+          {
+            "name": "text",
+            "label": "Decision",
+            "type": "text",
+            "required": true
+          }
+        ]
+      },
+      {
+        "key": "remove_item",
+        "label": "Remove",
+        "emphasis": "secondary",
+        "applies_to": "item"
+      }
+    ]
+  }
+}

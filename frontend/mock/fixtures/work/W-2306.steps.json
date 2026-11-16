@@ -1,0 +1,22 @@
+{
+  "confirm_minutes": {
+    "status": 409,
+    "next": true
+  },
+  "add_action": {
+    "status": 422,
+    "body": {
+      "code": "invalid",
+      "message": "Add the action in words.",
+      "fields": [
+        {
+          "name": "text",
+          "message": "Write the action in words."
+        }
+      ]
+    }
+  },
+  "save_for_later": {
+    "status": 500
+  }
+}

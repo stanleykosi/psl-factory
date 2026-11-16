@@ -97,7 +97,8 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws-fact dd { margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); text-align: right; }
 
 /* tables scroll inside their own frame on phones */
-.ws-tablewrap { max-width: 100%; }
+/* positioned, so the table headers' visually hidden text stays inside the scroll frame and never widens the page */
+.ws-tablewrap { max-width: 100%; position: relative; }
 .ws-tablewrap:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: 2px; }
 .ws-table th { text-transform: uppercase; }
 /* a narrow screen scrolls the table; a reference never breaks; the source sits on its own line under the words */
@@ -178,3 +179,8 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 @media (prefers-reduced-motion: reduce) {
   .ws * { transition: none; animation: none; }
 }
+
+/* links a workspace supplies (PROPOSAL X-LINKS): a quiet row, and the document panel under it */
+.ws-links { display: flex; flex-direction: column; gap: var(--space-3); }
+.ws-links__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+.ws-links__row .psl-link { display: inline-flex; align-items: center; min-height: var(--control-md); }

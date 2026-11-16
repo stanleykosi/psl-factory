@@ -168,13 +168,14 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
   const headId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  // A text or long text field opens with the words the descriptor carries (a saved draft); the person edits from there.
+  // A text or long text field opens with the words the descriptor carries (a saved draft); the person edits from there. A choice opens on the option the descriptor names.
   // A records field opens with its saved records, when the descriptor carries them as a list of {value, label} (PROPOSAL, BACKEND-HANDOFF 2).
   const [values, setValues] = useState<Record<string, unknown>>(() => {
     const opened: Record<string, unknown> = {};
     for (const f of fields) {
       if (f.restricted || f.value === undefined) continue;
       if (f.type === 'text' || f.type === 'long_text') opened[f.name] = f.value;
+      else if (f.type === 'choice' && f.options?.some((o) => o.value === f.value)) opened[f.name] = f.value;
       else if (f.type === 'records') {
         const saved = (Array.isArray(f.value) ? (f.value as unknown[]) : []).filter((o): o is LineOption => typeof o === 'object' && o !== null && typeof (o as LineOption).value === 'string' && typeof (o as LineOption).label === 'string');
         if (saved.length > 0) opened[f.name] = saved;

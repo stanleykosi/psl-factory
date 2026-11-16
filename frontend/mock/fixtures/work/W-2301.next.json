@@ -1,0 +1,186 @@
+{
+  "id": "W-2301",
+  "title": "Weekly sync · 10 Nov",
+  "line": "Formal minutes and action handoff",
+  "reference": "MIN-0141",
+  "state": "action_needed",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Confirm",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-10T15:20:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted the client minutes",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "minutes",
+    "screen": "SCR-28",
+    "view": "drafted",
+    "title": "Minutes",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "MIN-0141",
+          "label": "Minutes · MIN-0141"
+        }
+      ]
+    },
+    "revision": 5,
+    "status": {
+      "label": "Drafted",
+      "tone": "neutral"
+    },
+    "sections": [
+      {
+        "key": "summary",
+        "kind": "checklist",
+        "title": "Minutes v1 · client version",
+        "items": [
+          {
+            "id": "S-1",
+            "text": "2 decisions · confirmed by you",
+            "tag": {
+              "label": "IN",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "S-2",
+            "text": "3 actions · 1 has no owner yet",
+            "tag": {
+              "label": "IN",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "S-3",
+            "text": "Attendees and notes",
+            "tag": {
+              "label": "ATTACHED",
+              "tone": "neutral"
+            }
+          }
+        ]
+      },
+      {
+        "key": "agent",
+        "kind": "checklist",
+        "title": "Minutes v1",
+        "agent": "tola",
+        "note": "PMO agent · done · Drafted 10 Nov 15:20",
+        "items": [
+          {
+            "id": "G-1",
+            "text": "Used the decisions and actions you confirmed",
+            "tag": {
+              "label": "2 DECISIONS · 3 ACTIONS",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "G-2",
+            "text": "Filled the client minutes template",
+            "tag": {
+              "label": "TEST TEMPLATE",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "G-3",
+            "text": "Listed attendees from the invite",
+            "tag": {
+              "label": "6 ATTENDEES",
+              "tone": "neutral"
+            }
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "send_for_review",
+        "label": "Send for review",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "consequence": "Client minutes go to the PMO Lead before they're sent."
+      }
+    ],
+    "next": [
+      "Client minutes go to the PMO Lead before they're sent."
+    ],
+    "links": [
+      {
+        "key": "ask_tola",
+        "label": "Ask Tola",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ]
+  }
+}

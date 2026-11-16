@@ -1,0 +1,43 @@
+{
+  "confirm_minutes": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    }
+  },
+  "save_for_later": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    },
+    "next": false
+  },
+  "remove_item": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    },
+    "next": false
+  },
+  "edit_item": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    },
+    "next": false
+  },
+  "edit_decision": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    },
+    "next": false
+  },
+  "add_action": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    },
+    "next": false
+  }
+}
