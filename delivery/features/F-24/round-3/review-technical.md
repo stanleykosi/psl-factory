@@ -1,13 +1,16 @@
 VERDICT: PASS
-COMMIT: 2075d4aa29aa4d09b9adc118b4955ad7e5c29af3
+COMMIT: f264d1b41795465f5547fdfe30b9c9818c96b0a6
 REVIEWER: reviewer-technical
 AUTHORITY: delivery technical review
 
 ## Summary
-- The diff 0f94b4b2..2075d4aa is three small frontend changes: a phone-only dock for `.as__open`, an underline on the phone-bar note button, and one e2e assertion.
-- `.as__open` docking sits inside the existing `max-width: 720px` block, so desktop is unchanged. It mirrors the `.as__composer` rule. The later base `.as__open` padding rule does not conflict, since the dock sets no padding.
-- The underline applies only to `.shell-phonenote--action`, which only the assistant home uses, so other pages' notes are unaffected.
-- `fidelity-exceptions.json` parses as valid JSON. I did not re-judge its waiver content, which belongs to the design review. No application code or contract changed, and no tests or servers were run.
+- The merge brings in F-22's workspace frame, the weekly fixtures W-2209 to W-2214 and their tests. None of the F-22 files touch `frontend/src/features/assistant`, `frontend/src/components`, `frontend/src/shell`, `frontend/src/features/start-work` or `frontend/mock/server.mjs` and `assistant.mjs`, so there is no code overlap with F-24.
+- `mock-contract.test.ts` auto-merged correctly. F-24's `ASSISTANT_OPERATIONS` import and skip list, and the `E-REPORT` not-mocked case, are intact. F-22 adds `savedRecordsStripped` for `E-WORK-ITEM` only. The F-21 weekly file filter is narrowed to W-2201 to W-2208, and a separate F-22 block covers W-2209 to W-2214. The two ranges do not overlap or leave a gap.
+- The new fixtures are `E-WORK-ITEM` files in `mock/fixtures/work/`. F-24's mock serves only the assistant operations and the draft's E-WORK-START, so it does not touch them. The mock's `W-1401` started id is not among them.
+- The merged-head checks (exit 0, 1806 tests) and e2e (assistant, start-work, weekly, workspace: 113 passed) were taken from the logs. I ran nothing myself.
 
 ## Findings
-- TECH-3-1 | non-blocking | frontend/e2e/assistant.spec.ts:238 | The dock check hardcodes the viewport height 844 and only asserts the bottom is at least 840, so a footer pushed below the viewport would also pass. Fix: assert `Math.abs(bottom - page.viewportSize()!.height) <= 4`.
+None.
+
+## Notes
+- The earlier non-blocking TECH-3-1 (e2e dock assertion hardcodes the 844 viewport) still applies and is unchanged by the merge.

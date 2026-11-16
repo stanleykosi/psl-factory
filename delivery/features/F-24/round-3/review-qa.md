@@ -1,9 +1,19 @@
 VERDICT: PASS
-COMMIT: 2075d4aa29aa4d09b9adc118b4955ad7e5c29af3
+COMMIT: f264d1b41795465f5547fdfe30b9c9818c96b0a6
 REVIEWER: qa
 AUTHORITY: delivery integrated QA
 
 ## Summary
+- Judged head is f264d1b4, which merges dlv-00 (with F-22) into the F-24 branch at 2075d4aa. In `frontend/`, the merge changes only F-22 files: `src/features/workspace/**`, the W-2209 to W-2214 work fixtures, the weekly tests and e2e, and `tests/mock-contract.test.ts` (`head-merge-diff.log`; `git diff --name-only 2075d4aa f264d1b4`). Nothing changes in `features/assistant`, `features/start-work`, `src/components`, `src/shell`, `mock/server.mjs`, `mock/assistant.mjs` or the API types. The one place the two features meet is `/work/W-1401`, the workspace page that "Open the work item" links to.
+- The coordinator's evidence on f264d1b4 is sufficient for the static and suite level, and I accept it: `merge-checks.log` (checks.sh exit 0, 83 files, 1806 tests) and `merge-e2e.log` (113 passed, including all 24 assistant e2e and the workspace and weekly suites). Because the merge touches the workspace page that the assistant hands off to, I did not rely on that alone. I rebuilt f264d1b4 (`API_ORIGIN=http://127.0.0.1:4776 npm run build`, exit 0), started the mock on 4776 and `next start` on 4777, and re-ran both of my live drivers in full. Every result matches the run on 2075d4aa below. The same script-error lines recur (listed under Notes), and there are no new failures. On the merged head:
+  - "Open the work item" opens `/work/W-1401` and the workspace renders.
+  - Polling runs at 5.0 s and stops on answer.
+  - The start sends one POST with the prefilled body.
+  - A second start gets the 409 and the thread re-reads.
+  - TECH-1-1 and TECH-3-1 hold live.
+  - The held mic calls no speech API.
+  - Only `localhost:4777` is requested.
+- The rest of this file is the full run on 2075d4aa. The merged-head re-run repeated every journey with the same outcome.
 - I tested the real frontend (`next build` with `API_ORIGIN=http://127.0.0.1:4776`, then `next start -p 4777`) against the contract mock (`MOCK_PORT=4776 node mock/server.mjs`). The browser session was F-24-qa, run with Playwright Chromium in the Africa/Lagos timezone at 1440 and 390, as `pm`, `finance_lead`, `admin` and `none`. I also called the endpoints directly. 59 live checks were run: all pass after I fixed 7 errors in my own script (listed under Notes). None of those was a product defect.
 - Every journey in the brief passed at this head:
   - pick an agent and ask
@@ -80,4 +90,5 @@ Unless a row says otherwise, the commands are the two scratch drivers (`qa.mjs` 
   - the chip name has an "@" prefix
   - the mention items are buttons, not options
   - a cookie scenario also broke E-ME, so I re-ran it as a header on the conversation request only
-- Servers I started (mock PID 99263; `npx next start` PID 99265 and its child 99299) were stopped by PID. Ports 4776 and 4777 are free. `frontend/test-results` was deleted. The worktree is clean at 2075d4aa. Disk: 4.5 GB free before and after.
+- Servers I started were stopped by PID: on 2075d4aa, mock 99263 and next 99265/99299; on f264d1b4, mock 15459 and next 15461/15490. Ports 4776 and 4777 are free. `frontend/test-results` was deleted. The worktree is clean at f264d1b4. Disk: 4.5 GB free at the end.
+- Merged-head driver outputs are in the session scratchpad: `f24-qa-merge.txt` (48 PASS; the 6 FAIL lines are the known script errors) and `f24-qa-merge-b.txt` (all journey checks pass). Its 3 FAIL lines on the conversation-read 401/403/404 come from my leak check matching the person's own list titles in the side list. The main column shows the signed-out callout or "We could not find that conversation." with no thread content.
