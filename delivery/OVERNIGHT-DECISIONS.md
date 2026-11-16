@@ -140,3 +140,6 @@ allows, and keep the board's line height. Settles QA-5 of the design-system inte
 
 ## D-96 · Feature pause lifted (16 Nov 2026, design engineer: "go")
 D-76 pause ends. Next features, each ≤8 boards (D-64): F-22 weekly update returned and received (SCR-25, 4 boards, FE-LINE-WEEKLY part 2); F-23 minutes part 1 (SCR-28 default, suggesting, drafted, review; 8 boards); F-24 assistant part 1 (SCR-05 default, working, thread, draft-started; 8 boards; "Speak your request" stays held by D-SPEECH-INPUT). Later: minutes part 2 (internal, published), assistant "can't" state, Setup delegation, project tabs, other line screens. Builders use the shared component library (D-91) from the start.
+
+## D-97 · F-22 spec conflicts 1-3 approved as recommended (16 Nov 2026, design engineer)
+(1) Banner: returned shows the return note as an amber callout; received shows a sentence plus a green "Verified" tag only when every delivery is confirmed (no green box); backend asked for `workspace.banner {tone,text}`. (2) Recipient rows show the backend's own tag (e.g. DELIVERED), falling back to the receipt word; times "12 Nov 15:10". (3) "What happened" is one recipients section; the Approved row is an item with no receipt; backend asked for a per-recipient receipt record. The matching F-22 fidelity exceptions are approved on this basis.
