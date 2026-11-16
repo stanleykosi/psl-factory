@@ -1,0 +1,9 @@
+board	width	coverage	visual	pass
+SCR-11-desktop	1440	coverage 94 (with exceptions 100)	visual 84.6	pass False
+SCR-11-mobile	390	coverage 81.5 (with exceptions 100)	visual 77.7	pass False
+SCR-29-desktop	1440	coverage 93.3 (with exceptions 100)	visual 90.2	pass True
+SCR-29-mobile	390	coverage 92.6 (with exceptions 100)	visual 76.8	pass False
+SCR-38-desktop	1440	coverage 95.3 (with exceptions 100)	visual 73.1	pass False
+SCR-38-desktop-changed	1440	coverage 90.5 (with exceptions 100)	visual 73	pass False
+SCR-38-mobile	390	coverage 86.4 (with exceptions 100)	visual 80.8	pass False
+SCR-38-mobile-changed	390	coverage 75 (with exceptions 100)	visual 83.1	pass False
