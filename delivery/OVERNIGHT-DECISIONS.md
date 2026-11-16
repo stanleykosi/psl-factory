@@ -137,3 +137,6 @@ phone target under D-92c (44px everywhere on phones); the resulting SCR-01-mobil
 D-92c (44px tap targets on phones) applies to every button, tab, switch, chip, row and standalone link.
 Links inside running text (e.g. "Finance" and "Delivery" in Setup rule cards) are exempt, as WCAG 2.5.8
 allows, and keep the board's line height. Settles QA-5 of the design-system integration.
+
+## D-96 · Feature pause lifted (16 Nov 2026, design engineer: "go")
+D-76 pause ends. Next features, each ≤8 boards (D-64): F-22 weekly update returned and received (SCR-25, 4 boards, FE-LINE-WEEKLY part 2); F-23 minutes part 1 (SCR-28 default, suggesting, drafted, review; 8 boards); F-24 assistant part 1 (SCR-05 default, working, thread, draft-started; 8 boards; "Speak your request" stays held by D-SPEECH-INPUT). Later: minutes part 2 (internal, published), assistant "can't" state, Setup delegation, project tabs, other line screens. Builders use the shared component library (D-91) from the start.
