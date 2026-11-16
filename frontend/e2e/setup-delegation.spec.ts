@@ -105,7 +105,7 @@ test.describe('desktop', () => {
     await expect(page.locator('[aria-live="polite"]')).toHaveText('Delegation added: Kemi Adebayo to Femi Ade, 01–03 Dec 2026.');
     await expect(desktopRows(page)).toHaveCount(3);
     await expect(desktopRows(page).nth(2).locator('td')).toHaveText(['Kemi Adebayo · PMO Lead', 'Femi Ade · PMO Lead', '01–03 Dec 2026', 'Training', 'Upcoming']);
-    await expect(desktopRows(page).nth(2).locator('[data-row-for]')).toBeFocused();
+    await expect(desktopRows(page).nth(2)).toBeFocused();
     expect(seen.filter((r) => r.method === 'PUT')).toHaveLength(1);
     expect(seen.filter((r) => r.method === 'GET')).toHaveLength(2);
     expect(csrf).toBe('mock-csrf-admin');
@@ -192,7 +192,7 @@ test.describe('phone', () => {
   test('cards as drawn, one h1 "Delegation", the bottom Add delegation, 44px targets, no side scroll, axe clean (AC 3, 19)', async ({ page, context }) => {
     await openAs(page, context);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(['Delegation']);
-    const cards = page.locator('.setup-phone li');
+    const cards = page.locator('.setup-phone [role="listitem"]');
     await expect(cards).toHaveCount(2);
     await expect(cards.nth(0)).toContainText('Kemi Adebayo → Femi Ade');
     await expect(cards.nth(0)).toContainText('PMO Lead · 18–25 Nov 2026 · Annual leave');
@@ -237,8 +237,8 @@ test.describe('phone', () => {
     await fill(sheet, page);
     await sheet.getByRole('button', { name: 'Add delegation' }).click();
     await expect(sheet).toHaveCount(0);
-    await expect(page.locator('.setup-phone li')).toHaveCount(3);
-    await expect(page.locator('.setup-phone li').nth(2).locator('[data-row-for]')).toBeFocused();
+    await expect(page.locator('.setup-phone [role="listitem"]')).toHaveCount(3);
+    await expect(page.locator('.setup-phone [role="listitem"]').nth(2)).toBeFocused();
     await expect(page.locator('[aria-live="polite"]')).toHaveText('Delegation added: Kemi Adebayo to Femi Ade, 01–03 Dec 2026.');
   });
 

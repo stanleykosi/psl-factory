@@ -405,7 +405,8 @@ describe('outcomes (AC 11 to 15)', () => {
     expect(lists()).toHaveLength(2);
     expect(rows()[2]).toEqual(['Kemi Adebayo · PMO Lead', 'Femi Ade · PMO Lead', '01–03 Dec 2026', 'Training', 'Upcoming']);
     expect(announced()).toBe('Delegation added: Kemi Adebayo to Femi Ade, 01–03 Dec 2026.');
-    await waitFor(() => expect(document.activeElement?.getAttribute('data-row-for')).toBe('DL-9001'));
+    await waitFor(() => expect(document.activeElement?.querySelector('[data-row-for]')?.getAttribute('data-row-for')).toBe('DL-9001'));
+    expect(document.activeElement?.tagName).toBe('TR');
     expect(combo(panel(), 'From').textContent).toContain('Choose who is delegating');
     expect((panel().getByLabelText('Reason') as HTMLInputElement).value).toBe('');
     const text = document.body.textContent!.replace(NOTE, '').replace(TO_HINT, '');

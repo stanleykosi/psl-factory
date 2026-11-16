@@ -73,8 +73,15 @@ function DelegationView() {
     if (!target) return;
     focus.current = null;
     const selector = target.kind === 'row' ? '[data-row-for]' : '[data-list-head]';
-    const found = Array.from(document.querySelectorAll<HTMLElement>(selector)).filter((el) => target.kind === 'head' || el.dataset.rowFor === target.id);
-    (found.find((el) => el.getClientRects().length > 0) ?? found[0])?.focus();
+    const found = Array.from(document.querySelectorAll<HTMLElement>(selector))
+      .filter((el) => target.kind === 'head' || el.dataset.rowFor === target.id)
+      // The table marks a row with an empty marker in its first cell; the row itself takes focus.
+      .map((el) => (el.hidden ? el.closest('tr') : el))
+      .filter((el): el is HTMLElement => el !== null);
+    const into = found.find((el) => el.getClientRects().length > 0) ?? found[0];
+    // A row is not focusable by default (its tabIndex reads -1 without the attribute), so the attribute is set.
+    into?.setAttribute('tabindex', '-1');
+    into?.focus();
   });
 
   if (state.status !== 'ready') {
@@ -172,9 +179,10 @@ function DelegationView() {
   const emptyState = <EmptyState title="No delegations to show.">Delegations you may see will appear here.</EmptyState>;
   const status = (row: DelegationRow) => <Tag tone="neutral">{STATUS[row.status]}</Tag>;
   const from = (row: DelegationRow) => (
-    <span className="setup-name" tabIndex={-1} data-row-for={row.delegation_id}>
+    <>
       {person(row.from)}
-    </span>
+      <span hidden data-row-for={row.delegation_id} />
+    </>
   );
   const head = (
     <h2 className="cmp-sr" tabIndex={-1} data-list-head="">
@@ -235,10 +243,11 @@ function DelegationView() {
           emptyState
         ) : (
           <>
-            <ul className="setup-cards">
+            {/* ARIA list roles on divs: the same list semantics as ul/li, laid out as the board's cards */}
+            <div role="list" className="setup-cards">
               {items.map((row) => (
-                <li key={row.delegation_id} className="setup-card">
-                  <strong className="setup-name" tabIndex={-1} data-row-for={row.delegation_id}>
+                <div role="listitem" key={row.delegation_id} className="setup-card setup-name" tabIndex={-1} data-row-for={row.delegation_id}>
+                  <strong>
                     {row.from.name} → {row.delegate.name}
                   </strong>
                   <span className="setup-card__line">
@@ -248,9 +257,9 @@ function DelegationView() {
                     {row.authority !== undefined && <> · {authorityText(row, page)}</>}
                   </span>
                   {status(row)}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
             <ShowMore state={state} onMore={() => void loadMore()} noun="delegations" />
           </>
         )}
