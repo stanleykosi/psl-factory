@@ -1,0 +1,678 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-16T14:10:19.064Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-05-mobile-thread.dc.html",
+  "boardName": "SCR-05-mobile-thread.dc.html",
+  "pageUrl": "http://localhost:4770/assistant/CV-2401",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-24/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 78.1 is below 90.",
+    "5 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 71.4,
+    "coverageWithExceptions": 100,
+    "visual": 78.1
+  },
+  "visual": {
+    "score": 78.1,
+    "allCellsScore": 79,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1140,
+    "cell": 12,
+    "contentCells": 2245,
+    "mismatchedCells": 492
+  },
+  "coverage": {
+    "total": 21,
+    "found": 15,
+    "coverage": 71.4,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Harmattan Bank",
+        "pageName": "Invoice · Harmattan Bank M2",
+        "pageRole": "text",
+        "similarity": 81,
+        "looks": [],
+        "boardBox": {
+          "x": 181,
+          "y": 21,
+          "w": 101,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 19,
+          "w": 136,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Create the invoice for Harmattan Bank milestone 2. UAT was signed off on Friday.",
+        "pageName": "Create the invoice for Harmattan Bank milestone 2. UAT was signed off on Friday.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "background #1F2427 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 50,
+          "y": 70,
+          "w": 324,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 82,
+          "y": 80,
+          "w": 280,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent",
+        "pageName": "Chidi · Finance agent",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 56,
+          "y": 145,
+          "w": 142,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 150,
+          "w": 314,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3 STEPS · DONE",
+        "pageName": "3 STEPS · DONE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 28,
+          "y": 221,
+          "w": 99,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 28,
+          "y": 245,
+          "w": 99,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "MILESTONE · HB-M2",
+        "pageName": "MILESTONE · HB-M2",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Mono on the board, IBM Plex Sans on the page",
+          "text size 11px on the board, 14px on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 493,
+          "w": 126,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 582,
+          "w": 140,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "SOW v2 · stage 2",
+        "pageName": "SIGNED SOW v2 · stage 2",
+        "pageRole": "link",
+        "similarity": 89,
+        "looks": [
+          "font IBM Plex Mono on the board, IBM Plex Sans on the page",
+          "text size 11px on the board, 14px on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 148,
+          "y": 493,
+          "w": 120,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 162,
+          "y": 582,
+          "w": 184,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoice draft · Milestone 2",
+        "pageName": "Invoice draft · Harmattan Bank · Milestone 2",
+        "pageRole": "text",
+        "similarity": 80,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 539,
+          "w": 169,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 696,
+          "w": 287,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED · NOT REVIEWED",
+        "pageName": "DRAFTED · NOT REVIEWED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 216,
+          "y": 539,
+          "w": 144,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 725,
+          "w": 159,
+          "h": 25
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Amount",
+        "pageName": "Amount",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 578,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 769,
+          "w": 65,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next Finance review by a Finance Lead",
+        "pageName": "Finance review by a Finance Lead",
+        "pageRole": "text",
+        "similarity": 95,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 600,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 103,
+          "y": 869,
+          "w": 257,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next",
+        "pageName": "Next",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 600,
+          "w": 29,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 869,
+          "w": 65,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start this invoice",
+        "pageName": "Start this invoice",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 628,
+          "w": 330,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 900,
+          "w": 330,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Message",
+        "pageName": "Message Chidi",
+        "pageRole": "textbox",
+        "similarity": 82,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page",
+          "background #FFFFFF on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 18,
+          "y": 703,
+          "w": 354,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 698,
+          "w": 354,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "@ Mention",
+        "pageName": "@ Mention",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "background none on the board, #FFFFFF on the page"
+        ],
+        "boardBox": {
+          "x": 80,
+          "y": 772,
+          "w": 89,
+          "h": 46
+        },
+        "pageBox": {
+          "x": 28,
+          "y": 772,
+          "w": 89,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Assistant",
+        "key": "link: ← Assistant",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 79,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: the back link is the app frame's phone bar (usePhoneBack \"← Assistant\" with the conversation title); \"← Home\" on the phone default is a frame item and is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "· Finance agent",
+        "key": "text: · Finance agent",
+        "container": "page",
+        "boardBox": {
+          "x": 95,
+          "y": 145,
+          "w": 103,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 11 and 14: one wording per width-independent field. The page shows the hand-off note and answer the data carries (the desktop board's copy), not the phone board's shorter copy.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola passed this to Chidi, who prepares invoices.",
+        "key": "text: Tola passed this to Chidi, who prepares invoices.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 182,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 11 and 14: one wording per width-independent field. The page shows the hand-off note and answer the data carries (the desktop board's copy), not the phone board's shorter copy.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The amount comes from the contract terms, not from me. Nothing goes to the client until a Finance Lead approves it.",
+        "key": "text: The amount comes from the contract terms, not from me. Nothing goes to the client until a Finance Lead approves it.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 418,
+          "w": 358,
+          "h": 63
+        },
+        "exception": {
+          "reason": "Conflicts 11 and 14: one wording per width-independent field. The page shows the hand-off note and answer the data carries (the desktop board's copy), not the phone board's shorter copy.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Amount ₦6,800,000.00",
+        "key": "text: Amount ₦6,800,000.00",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 578,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 14: the draft card shows the same label and value rows at both widths, from data (Amount, To, Due terms, Template, Next), not the phone board's two-row summary.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "+",
+        "key": "text: +",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 772,
+          "w": 46,
+          "h": 46
+        },
+        "exception": {
+          "reason": "Conflicts 3: the composer sends text and mentions only (readiness rule 2); E-MESSAGE has no file field, so the attach button is left out.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Harmattan Bank\"",
+        "kind": "Text",
+        "name": "Harmattan Bank",
+        "boardBox": {
+          "x": 181,
+          "y": 21,
+          "w": 101,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 19,
+          "w": 136,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: middle on the board (59% across), middle on the page (41% across)",
+          "inside the main area on the board, inside the top bar on the page"
+        ]
+      },
+      {
+        "label": "Text \"DRAFTED · NOT REVIEWED\"",
+        "kind": "Text",
+        "name": "DRAFTED · NOT REVIEWED",
+        "boardBox": {
+          "x": 216,
+          "y": 539,
+          "w": 144,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 725,
+          "w": 159,
+          "h": 25
+        },
+        "reasons": [
+          "across the page: right on the board (74% across), left on the page (28% across)"
+        ]
+      },
+      {
+        "label": "Pagination \"Next Finance review by a Finance Lead\"",
+        "kind": "Pagination",
+        "name": "Next Finance review by a Finance Lead",
+        "boardBox": {
+          "x": 30,
+          "y": 600,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 103,
+          "y": 869,
+          "w": 257,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Amount\"; on the page it comes after Pagination \"Next\""
+        ]
+      },
+      {
+        "label": "Text field \"Message\"",
+        "kind": "Text field",
+        "name": "Message",
+        "boardBox": {
+          "x": 18,
+          "y": 703,
+          "w": 354,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 698,
+          "w": 354,
+          "h": 65
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Start this invoice\"; on the page it comes after Text \"Invoice draft · Milestone 2\"",
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"@ Mention\"",
+        "kind": "Text",
+        "name": "@ Mention",
+        "boardBox": {
+          "x": 80,
+          "y": 772,
+          "w": 89,
+          "h": 46
+        },
+        "pageBox": {
+          "x": 28,
+          "y": 772,
+          "w": 89,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Text field \"Message\"; on the page it comes after Text \"Amount\"",
+          "across the page: left on the board (32% across), left on the page (19% across)",
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Assistant",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 74,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoices are prepared by Chidi, the Finance agent, so Tola passed this to him.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 186,
+          "w": 358,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I drafted the invoice from stage 2 of the signed SOW. The amount comes from the contract terms, not from me. Starting it sends the draft to Finance review; nothing goes to the client until a Finance L",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 460,
+          "w": 358,
+          "h": 112
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "CLIENT · Harmattan Bank",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 632,
+          "w": 184,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Send",
+        "container": "form",
+        "pageBox": {
+          "x": 318,
+          "y": 772,
+          "w": 44,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

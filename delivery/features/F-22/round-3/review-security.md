@@ -1,0 +1,25 @@
+VERDICT: CHANGES
+COMMIT: de541608e755eb9de9b2625187c08abc297a3fb1
+REVIEWER: reviewer-security
+AUTHORITY: delivery security review
+
+## Summary
+- Saved cites come only from the item's own step field `value` (StepForm.tsx:172-184). Restricted fields are skipped, only `{value: string, label: string}` entries are kept, and nothing comes from `/me`, another item or another case. The W-2209 cites are the C-0211 records that E-LINE-OPTIONS already serves.
+- The new "checking" callout (Workspace.tsx:272-282) holds only a Reload button and sends nothing. The test proves it: one button, "Reload", no radiogroup, no POST.
+- The mock-contract stripping is narrow. It touches only `workspace.steps[].fields[]` of type `records` with a `value`, and checks that shape before removing it; the rest of the body is still checked against the generated schema. It does not hide any other contract break.
+- One blocking gap (SEC-3-1). On a fresh load the buttons lock only when the item carries `reconcile`, not when its state is `effect_uncertain`. So the new "Nothing was sent again." sentence can sit next to a live send button, which breaks AC11's "offers a reload only" and the no-resend rule (INV-RESEND).
+
+## Findings
+- SEC-3-1 | blocking | medium | frontend | Expected (spec AC11, INV-RESEND): when an uncertain item reloads with no `reconcile`, the page says "We are checking what happened. Nothing was sent again." and offers a reload only. Actual: the sentence keys on `item.state === 'effect_uncertain' && !item.reconcile` (Workspace.tsx:273), but the step lock is still `awaitingReconcile: Boolean(item.reconcile)` (Workspace.tsx:78; useWorkspaceStep.ts:83). An `effect_uncertain` item with `workspace.steps` (for example `approve_send`) and no `reconcile` would show the reassurance next to a live send button, and pressing it would make a second client send with a new key. No current fixture has this combination: W-2212 has no steps, and W-2205.next and W-2008.next carry `reconcile`. It still blocks: the contract does not forbid steps on an `effect_uncertain` item without `reconcile`; AC11 requires "a reload only" whenever the reload carries no `reconcile`; and this round adds a "Nothing was sent again" promise that the frame does not enforce. The frame is shared, so F-17 and F-21 items are exposed too. The cost of the mistake is a duplicate client send, and the fix is one line. Fix: lock on the item's state as well, `awaitingReconcile: Boolean(item.reconcile) || item.state === 'effect_uncertain'`, and add a test on a copy of W-2205.next with `reconcile` removed: the sentence, the steps disabled, no POST.
+
+## Verified
+- QA-2-1 (security lens) | verified | The pre-fill reads only `fields[].value` from the item's own step. `f.restricted` is skipped (StepForm.tsx:176). Non-list values and list entries without a string `value` and `label` are dropped (:179), and labels render as React text. The send posts the saved ids (`status_cites: ['MS-0002','MTG-0141']`, and so on) in the same E-WORK-STEP body as F-21, with the same CSRF, UUID key and `expected_revision`. Whether a cited record may be cited stays the backend's per-record check.
+- QA-2-3 (security lens) | verified | The callout has a single `Button` that calls `page.reload()`; there is no write path. weekly-returned-received.test.tsx:301-311 asserts the buttons are exactly `['Reload']`, there is no reconcile radiogroup and `sent` has no POST. With `reconcile` present the sentence is absent (:313-316), so the ReconcilePanel stays the only action on W-2212.
+- Stripping | verified | `savedRecordsStripped` (mock-contract.test.ts:65-76) runs only on 200 bodies of E-WORK-ITEM (:117) and deletes `value` only on `records` fields, after asserting a non-empty list of `{value, label}` strings with exactly those two keys. Every other field, including a `records` field's other keys and every other step and section, is still validated against the generated schema. weekly-mock.test.ts:24-37 does the same; it lacks the non-empty check (low). build.md records the list as a contract proposal (BACKEND-HANDOFF 2). No file under `src/api/**` changed.
+- SEC-1-1, SEC-1-2 | verified (carried) | Test files changed only by additions this round; the round-2 access tests and the `afterEach` request check are unchanged.
+- SEC-1-3 | accepted (carried) | Recorded follow-up; ReconcilePanel.tsx is unchanged.
+
+## Notes
+- The W-2209 fixture adds only sample record labels (no emails, phones or secrets). No new dependency. No change under `src/api/**`, `apps/**` or the mock handlers.
+- The checking callout uses `role="alert"` on page load. That is a UX matter, not a security one; flagged for the UX lens only if it re-announces.
+- Severity decision (after the round-3 file was first written). I raised SEC-3-1 to blocking on my own reading, not because the coordinator asked. AC11 says "offers a reload only" for any reload without `reconcile`. The contract allows steps on such an item. This round adds the "Nothing was sent again" promise, and the frame does not enforce it.

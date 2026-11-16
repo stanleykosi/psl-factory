@@ -1,0 +1,477 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-16T14:10:10.947Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-05-mobile.dc.html",
+  "boardName": "SCR-05-mobile.dc.html",
+  "pageUrl": "http://localhost:4770/assistant",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-24/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 89.9 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 66.7,
+    "coverageWithExceptions": 100,
+    "visual": 89.9
+  },
+  "visual": {
+    "score": 89.9,
+    "allCellsScore": 90.9,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2106,
+    "mismatchedCells": 213
+  },
+  "coverage": {
+    "total": 15,
+    "found": 10,
+    "coverage": 66.7,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3 earlier",
+        "pageName": "5 earlier",
+        "pageRole": "button",
+        "similarity": 89,
+        "note": "a button on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 217,
+          "y": 21,
+          "w": 65,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 149,
+          "y": 6,
+          "w": 77,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "pageName": "Tola",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "coloured bar under it on the board (#1F2427), none on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 83,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 83,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi",
+        "pageName": "Chidi",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "coloured bar under it on the board (#C9CDC7), none on the page"
+        ],
+        "boardBox": {
+          "x": 105,
+          "y": 70,
+          "w": 89,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 105,
+          "y": 70,
+          "w": 89,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Zainab",
+        "pageName": "Zainab",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "coloured bar under it on the board (#C9CDC7), none on the page"
+        ],
+        "boardBox": {
+          "x": 200,
+          "y": 70,
+          "w": 101,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 200,
+          "y": 70,
+          "w": 101,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Hi Tunde, I’m Tola. What should we get moving?",
+        "pageName": "Hi Tunde, I’m Tola. What should we get moving?",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 356,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 360,
+          "w": 358,
+          "h": 66
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I draft plans, SOWs, status reports and minutes, and explain where any project stands.",
+        "pageName": "I draft plans, SOWs, status reports and minutes, chase sign-offs, and explain where any project stands.",
+        "pageRole": "text",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 408,
+          "w": 358,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 430,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Agents use only records you can see. They draft, read and explain; they cannot approve, send, pay or change a record.",
+        "pageName": "Agents use only records you can see. They draft, read and explain; they cannot approve, send, pay or change a record.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 554,
+          "w": 358,
+          "h": 30
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 488,
+          "w": 358,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Message",
+        "pageName": "Message Tola",
+        "pageRole": "textbox",
+        "similarity": 83,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page",
+          "background #FFFFFF on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 18,
+          "y": 703,
+          "w": 354,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 698,
+          "w": 354,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "@ Mention",
+        "pageName": "@ Mention",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "background none on the board, #FFFFFF on the page"
+        ],
+        "boardBox": {
+          "x": 80,
+          "y": 772,
+          "w": 89,
+          "h": 46
+        },
+        "pageBox": {
+          "x": 28,
+          "y": 772,
+          "w": 89,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Home",
+        "key": "link: ← Home",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: the back link is the app frame's phone bar (usePhoneBack \"← Assistant\" with the conversation title); \"← Home\" on the phone default is a frame item and is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Create an invoice",
+        "key": "link: Create an invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 456,
+          "w": 132,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Draft a SOW",
+        "key": "link: Draft a SOW",
+        "container": "page",
+        "boardBox": {
+          "x": 154,
+          "y": 456,
+          "w": 100,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask about a project",
+        "key": "link: Ask about a project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 502,
+          "w": 145,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "+",
+        "key": "text: +",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 772,
+          "w": 46,
+          "h": 46
+        },
+        "exception": {
+          "reason": "Conflicts 3: the composer sends text and mentions only (readiness rule 2); E-MESSAGE has no file field, so the attach button is left out.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"3 earlier\"",
+        "kind": "Text",
+        "name": "3 earlier",
+        "boardBox": {
+          "x": 217,
+          "y": 21,
+          "w": 65,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 149,
+          "y": 6,
+          "w": 77,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: middle on the board (64% across), middle on the page (48% across)",
+          "inside the main area on the board, inside the top bar on the page"
+        ]
+      },
+      {
+        "label": "Text field \"Message\"",
+        "kind": "Text field",
+        "name": "Message",
+        "boardBox": {
+          "x": 18,
+          "y": 703,
+          "w": 354,
+          "h": 58
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 698,
+          "w": 354,
+          "h": 65
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"@ Mention\"",
+        "kind": "Text",
+        "name": "@ Mention",
+        "boardBox": {
+          "x": 80,
+          "y": 772,
+          "w": 89,
+          "h": 46
+        },
+        "pageBox": {
+          "x": 28,
+          "y": 772,
+          "w": 89,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: left on the board (32% across), left on the page (19% across)",
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Home",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Send",
+        "container": "form",
+        "pageBox": {
+          "x": 318,
+          "y": 772,
+          "w": 44,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
