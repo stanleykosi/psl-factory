@@ -12,7 +12,7 @@ import type { WorkItem } from '@/features/work-item/labels';
 
 import { agentName, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { WorkspaceLinks } from './Links';
-import { itemsDefaultChecked, itemValues, workspaceLinks } from './proposals';
+import { itemsDefaultChecked, itemValues, warnLines, workspaceLinks } from './proposals';
 import { SectionView, type ItemControls } from './Sections';
 import { StepForm } from './StepForm';
 import { Consequence, StepControl, StepRow } from './Steps';
@@ -26,15 +26,32 @@ import './workspace.css';
  * the one h1, so the workspace title is an h2 only when it differs.
  */
 function AgentNote({ note }: { note: NonNullable<WorkspaceData['agent_note']> }) {
+  const warn = warnLines(note);
+  const lines = note.lines.map((line, i) => ({ line, i }));
+  const plain = lines.filter(({ i }) => !warn.has(i));
+  const amber = lines.filter(({ i }) => warn.has(i));
   return (
-    <Callout kind="info" announce={false} icon={false} className="ws-agentnote">
-      <span className="ws-stack">
-        <strong>{agentName(note.agent)}</strong>
-        {note.lines.map((line, i) => (
-          <span key={i}>{line}</span>
-        ))}
-      </span>
-    </Callout>
+    <>
+      {plain.length > 0 && (
+        <Callout kind="info" announce={false} icon={false} className="ws-agentnote">
+          <span className="ws-stack">
+            <strong>{agentName(note.agent)}</strong>
+            {plain.map(({ line, i }) => (
+              <span key={i}>{line}</span>
+            ))}
+          </span>
+        </Callout>
+      )}
+      {amber.length > 0 && (
+        <Callout kind="warning" announce={false} className="ws-agentnote">
+          <span className="ws-stack">
+            {amber.map(({ line, i }) => (
+              <span key={i}>{line}</span>
+            ))}
+          </span>
+        </Callout>
+      )}
+    </>
   );
 }
 

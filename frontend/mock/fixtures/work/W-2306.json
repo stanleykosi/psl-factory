@@ -93,6 +93,9 @@
         "I read the notes and suggested 2 decisions and 3 actions.",
         "Nothing becomes a decision or an action until you confirm it.",
         "One action has no owner and its due date is Unknown. You can confirm without them, but it will show as \"No owner\" on the action list."
+      ],
+      "warn_lines": [
+        2
       ]
     },
     "sections": [

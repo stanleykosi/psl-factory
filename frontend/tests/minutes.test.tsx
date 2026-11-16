@@ -715,3 +715,18 @@ describe('round 3: dates stay dates (UI-2-1)', () => {
     expect(rowOf(A1).getByText('13 Nov 2026')).toBeTruthy();
   });
 });
+
+describe('sign-off round: the sentence that asks the PM to act is an amber warning, chosen by the data', () => {
+  it('W-2301 draws the flagged line as a warning callout and the others in the info note; unflagged data draws all in the info note', async () => {
+    const body = item('W-2301');
+    expect(body.workspace!.agent_note).toMatchObject({ warn_lines: [2] });
+    const view = await open(body);
+    const warning = wsEl().querySelector('.psl-callout--warning.ws-agentnote') as HTMLElement;
+    expect(warning.textContent).toContain('One action has no owner and its due date is Unknown.');
+    expect(wsEl().querySelector('.psl-callout--info.ws-agentnote')!.textContent).not.toContain('One action has no owner');
+    view.unmount();
+    delete (body.workspace!.agent_note as Record<string, unknown>).warn_lines;
+    await open(body);
+    expect(wsEl().querySelector('.psl-callout--warning.ws-agentnote')).toBeNull();
+  });
+});

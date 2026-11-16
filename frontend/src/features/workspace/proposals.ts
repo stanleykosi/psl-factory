@@ -36,3 +36,9 @@ export function itemValues(item: object): Record<string, unknown> {
 
 /** PROPOSAL (column `date_format: "day_month"`, F-23 UI-2-1): a date column the board writes without the year ("13 Nov"). The cells stay dates. */
 export const columnDayMonth = (column: object): boolean => (column as { date_format?: unknown }).date_format === 'day_month';
+
+/** PROPOSAL (`agent_note.warn_lines`, F-23 sign-off): the indexes of note lines the board draws as an amber warning (a line that asks the person to act). Tone comes from data, never from the words. */
+export function warnLines(note: object): Set<number> {
+  const list = (note as { warn_lines?: unknown }).warn_lines;
+  return new Set(Array.isArray(list) ? list.filter((n): n is number => Number.isInteger(n)) : []);
+}

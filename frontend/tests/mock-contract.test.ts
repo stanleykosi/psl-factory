@@ -97,6 +97,11 @@ function minutesProposalsStripped(body: unknown): unknown {
     expect(validLinks(w.links), ajv.errorsText(validLinks.errors)).toBe(true);
     delete w.links;
   }
+  const note = (copy.workspace as { agent_note?: { lines: string[]; warn_lines?: unknown } } | undefined)?.agent_note;
+  if (note?.warn_lines !== undefined) {
+    expect(Array.isArray(note.warn_lines) && note.warn_lines.every((n) => Number.isInteger(n) && n >= 0 && n < note.lines.length)).toBe(true);
+    delete note.warn_lines;
+  }
   // PROPOSAL (item `values`): each value is a string, or a record {value, label}
   for (const section of w?.sections ?? []) {
     for (const column of section.columns ?? []) {
@@ -622,7 +627,7 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
   });
 
-  it('items[].values and columns[].date_format appear only in W-23xx fixtures (TECH-2-1)', () => {
+  it('items[].values, columns[].date_format and agent_note.warn_lines appear only in W-23xx fixtures (TECH-2-1)', () => {
     type Section = { items?: { values?: unknown }[]; columns?: { date_format?: unknown }[] };
     const files = readdirSync(dir).filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name));
     const carrying = (pick: (section: Section) => boolean) =>
@@ -631,7 +636,8 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
     const formats = carrying((sec) => (sec.columns ?? []).some((c) => c.date_format !== undefined));
     expect(values.length).toBeGreaterThan(0);
     expect(formats.length).toBeGreaterThan(0);
-    expect([...values, ...formats].every((name) => /^W-23/.test(name))).toBe(true);
+    const warns = files.filter((name) => JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace?.agent_note?.warn_lines !== undefined);
+    expect([...values, ...formats, ...warns].every((name) => /^W-23/.test(name))).toBe(true);
   });
 
   it('the E-DOCUMENT fixture is a test template for D-2304 version 1', () => {
