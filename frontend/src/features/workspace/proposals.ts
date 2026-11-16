@@ -26,3 +26,10 @@ export function workspaceLinks(workspace: Workspace): WorkspaceLink[] {
   }
   return links;
 }
+
+/** PROPOSAL (item-level `values`, F-23 UX-1-1): the current value of each field an item-scope step edits, keyed by field name
+ *  (text a string, a record field {value, label}, a date "YYYY-MM-DD"). The edit form opens with them; the frame never derives them. */
+export function itemValues(item: object): Record<string, unknown> {
+  const values = (item as { values?: unknown }).values;
+  return typeof values === 'object' && values !== null && !Array.isArray(values) ? (values as Record<string, unknown>) : {};
+}

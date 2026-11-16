@@ -12,7 +12,7 @@ import type { WorkItem } from '@/features/work-item/labels';
 
 import { agentName, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { WorkspaceLinks } from './Links';
-import { itemsDefaultChecked, workspaceLinks } from './proposals';
+import { itemsDefaultChecked, itemValues, workspaceLinks } from './proposals';
 import { SectionView, type ItemControls } from './Sections';
 import { StepForm } from './StepForm';
 import { Consequence, StepControl, StepRow } from './Steps';
@@ -96,7 +96,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const decideRef = useRef<HTMLElement>(null);
   const itemsSteps = steps.filter((s) => scope(s) === 'items');
   // an `items` step whose targets sit in more than one section is one control in the workspace row, over the ticks in all of them
-  const cross = new Set(itemsSteps.filter((s) => workspace.sections.filter((sec) => sec.items.some((it) => it.steps?.includes(s.key))).length > 1).map((s) => s.key));
+  const cross = new Set(itemsSteps.filter((s) => workspace.sections.filter((sec) => !sec.restricted && sec.items.some((it) => it.steps?.includes(s.key))).length > 1).map((s) => s.key));
   const workspaceSteps = steps.filter((s) => scope(s) === 'workspace' || cross.has(s.key));
   const hasDecide = workspaceSteps.length > 0;
   useEffect(() => {
@@ -162,7 +162,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     />
   );
 
-  const form = (token: string): ReactNode => {
+  const form = (token: string, row?: Item): ReactNode => {
     if (open?.token !== token) return null;
     const failed = flow.notice?.kind === 'failed' && flow.notice.attempt === token && !flow.notice.sends;
     return (
@@ -176,6 +176,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         pending={flow.pending === token}
         off={off(open.step)}
         submitLabel={failed ? 'Try again' : undefined}
+        initial={row ? itemValues(row) : undefined}
         consequence={<Consequence step={open.step} />}
         onSubmit={(request) => {
           const itemIds = open.items ? liveIds(open.step, open.items.section) : open.itemIds;
@@ -191,7 +192,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
 
   const isItemsTarget = (item: Item) => itemsSteps.some((s) => item.steps?.includes(s.key));
   const choiceKey = (section: Section, it: Item) => `${section.key}:${it.id}`;
-  const ticked = (section: Section, it: Item) => isItemsTarget(it) && !it.restricted && (choices[choiceKey(section, it)] ?? itemsSteps.some((s) => it.steps?.includes(s.key) && itemsDefaultChecked(s)));
+  // a section that is not drawn (restricted) adds nothing to the confirm set
+  const ticked = (section: Section, it: Item) => !section.restricted && isItemsTarget(it) && !it.restricted && (choices[choiceKey(section, it)] ?? itemsSteps.some((s) => it.steps?.includes(s.key) && itemsDefaultChecked(s)));
   const tickedFor = (section: Section, step: Step) => section.items.filter((it) => it.steps?.includes(step.key) && ticked(section, it)).map((it) => it.id);
 
   const liveIds = (step: Step, section?: string) => workspace.sections.filter((sec) => section === undefined || sec.key === section).flatMap((sec) => tickedFor(sec, step));
@@ -204,7 +206,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     },
     after: (section, it) => {
       const own = (it.steps ?? []).map((k) => byKey.get(k)).filter((s): s is Step => s !== undefined && scope(s) === 'item');
-      return own.map((s) => form(`item:${section.key}:${it.id}:${s.key}`));
+      return own.map((s) => form(`item:${section.key}:${it.id}:${s.key}`, it));
     },
   };
   if (itemsSteps.length > 0) {

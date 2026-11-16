@@ -71,10 +71,6 @@
     "title": "Confirm the minutes",
     "subtitle": "Formal minutes and action handoff · MIN-0141",
     "context": {
-      "project": {
-        "case_id": "C-0211",
-        "title": "Lagoon Health"
-      },
       "crumbs": [
         {
           "value": "projects",
@@ -141,12 +137,20 @@
           {
             "key": "due",
             "label": "Due",
-            "kind": "date"
+            "kind": "text"
           }
         ],
         "items": [
           {
             "id": "A-1",
+            "values": {
+              "text": "Send test accounts for UAT",
+              "owner": {
+                "value": "O-LAGOON",
+                "label": "Lagoon Health"
+              },
+              "due": "2026-11-13"
+            },
             "cells": [
               {
                 "column": "action",
@@ -158,10 +162,7 @@
               },
               {
                 "column": "due",
-                "date": {
-                  "date": "2026-11-13",
-                  "unknown": false
-                }
+                "text": "13 Nov"
               }
             ],
             "steps": [
@@ -172,6 +173,14 @@
           },
           {
             "id": "A-2",
+            "values": {
+              "text": "Finish the Android login fix",
+              "owner": {
+                "value": "O-ENG",
+                "label": "Engineering"
+              },
+              "due": "2026-11-15"
+            },
             "cells": [
               {
                 "column": "action",
@@ -183,10 +192,7 @@
               },
               {
                 "column": "due",
-                "date": {
-                  "date": "2026-11-15",
-                  "unknown": false
-                }
+                "text": "15 Nov"
               }
             ],
             "steps": [
@@ -197,6 +203,9 @@
           },
           {
             "id": "A-3",
+            "values": {
+              "text": "Assess the SMS reminders change"
+            },
             "cells": [
               {
                 "column": "action",
@@ -208,9 +217,7 @@
               },
               {
                 "column": "due",
-                "date": {
-                  "unknown": true
-                }
+                "text": "Unknown"
               }
             ],
             "steps": [

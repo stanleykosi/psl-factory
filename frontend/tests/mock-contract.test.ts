@@ -91,11 +91,22 @@ const linkSchema = {
 };
 const validLinks = ajv.compile(linkSchema);
 function minutesProposalsStripped(body: unknown): unknown {
-  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; steps?: { key?: string; items_default?: unknown }[] } };
+  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; items_default?: unknown }[] } };
   const w = copy.workspace;
   if (w?.links !== undefined) {
     expect(validLinks(w.links), ajv.errorsText(validLinks.errors)).toBe(true);
     delete w.links;
+  }
+  // PROPOSAL (item `values`): each value is a string, or a record {value, label}
+  for (const section of w?.sections ?? []) {
+    for (const row of section.items) {
+      if (row.values === undefined) continue;
+      for (const [name, v] of Object.entries(row.values)) {
+        const ok = typeof v === 'string' ? v.trim() !== '' : typeof v === 'object' && v !== null && typeof (v as { value?: unknown }).value === 'string' && typeof (v as { label?: unknown }).label === 'string';
+        expect(ok, `${row.id}.${name}`).toBe(true);
+      }
+      delete row.values;
+    }
   }
   for (const step of w?.steps ?? []) {
     if (step.items_default === undefined) continue;

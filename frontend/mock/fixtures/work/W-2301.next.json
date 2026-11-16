@@ -69,7 +69,6 @@
     "line_key": "minutes",
     "screen": "SCR-28",
     "view": "drafted",
-    "title": "Minutes",
     "context": {
       "project": {
         "case_id": "C-0211",
@@ -99,14 +98,22 @@
       {
         "key": "summary",
         "kind": "checklist",
-        "title": "Minutes v1 · client version",
+        "title": "Minutes",
         "items": [
+          {
+            "id": "S-0",
+            "text": "Minutes v1 · client version",
+            "tag": {
+              "label": "DRAFTED",
+              "tone": "neutral"
+            }
+          },
           {
             "id": "S-1",
             "text": "2 decisions · confirmed by you",
             "tag": {
               "label": "IN",
-              "tone": "verified"
+              "tone": "neutral"
             }
           },
           {
@@ -114,7 +121,7 @@
             "text": "3 actions · 1 has no owner yet",
             "tag": {
               "label": "IN",
-              "tone": "verified"
+              "tone": "neutral"
             }
           },
           {

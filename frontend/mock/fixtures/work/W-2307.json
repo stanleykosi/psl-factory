@@ -71,10 +71,6 @@
     "title": "Confirm the minutes",
     "subtitle": "Formal minutes and action handoff · MIN-0141",
     "context": {
-      "project": {
-        "case_id": "C-0211",
-        "title": "Lagoon Health"
-      },
       "crumbs": [
         {
           "value": "projects",
@@ -131,6 +127,9 @@
           {
             "id": "D-1",
             "text": "Go-live stays planned for 4 Dec, subject to the login fix.",
+            "values": {
+              "text": "Go-live stays planned for 4 Dec, subject to the login fix."
+            },
             "cites": [
               {
                 "label": "From Notes · 14:12",
@@ -145,6 +144,9 @@
           {
             "id": "D-3",
             "text": "Approved by Kemi; owner Tunde; due today.",
+            "values": {
+              "text": "Approved by Kemi; owner Tunde; due today."
+            },
             "cites": [
               {
                 "label": "From Notes · 14:40",
@@ -176,12 +178,20 @@
           {
             "key": "due",
             "label": "Due",
-            "kind": "date"
+            "kind": "text"
           }
         ],
         "items": [
           {
             "id": "A-1",
+            "values": {
+              "text": "Send test accounts for UAT",
+              "owner": {
+                "value": "O-LAGOON",
+                "label": "Lagoon Health"
+              },
+              "due": "2026-11-13"
+            },
             "cells": [
               {
                 "column": "action",
@@ -193,10 +203,7 @@
               },
               {
                 "column": "due",
-                "date": {
-                  "date": "2026-11-13",
-                  "unknown": false
-                }
+                "text": "13 Nov"
               }
             ],
             "steps": [
@@ -207,6 +214,9 @@
           },
           {
             "id": "A-3",
+            "values": {
+              "text": "Assess the SMS reminders change"
+            },
             "cells": [
               {
                 "column": "action",
@@ -218,9 +228,7 @@
               },
               {
                 "column": "due",
-                "date": {
-                  "unknown": true
-                }
+                "text": "Unknown"
               }
             ],
             "steps": [

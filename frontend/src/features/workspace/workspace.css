@@ -143,7 +143,20 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws-notice { margin: 0; flex-wrap: wrap; }
 .ws-reload { margin: 0; }
 
+/* a row with a tick box in the side column: the box sits level with the words, as the boards draw it */
+.ws-side .ws-row:has(> .ws-checkwrap) { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--space-10px); align-items: start; }
+.ws-side .ws-row:has(> .ws-checkwrap) > :not(.ws-checkwrap) { grid-column: 2; }
+.ws-side .ws-row:has(> .ws-checkwrap) > .ws-checkwrap { grid-row: 1; justify-self: start; }
+
 @media (max-width: 719.98px) {
+  /* a table with step buttons stacks its rows, so Edit and Remove are on screen without sideways scrolling */
+  .ws-table:has(.ws-table__steps) { min-width: 0; }
+  .ws-table:has(.ws-table__steps) thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .ws-table:has(.ws-table__steps) tr { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--space-10px); }
+  .ws-table:has(.ws-table__steps) td { grid-column: 2; white-space: normal; border: none; }
+  .ws-table:has(.ws-table__steps) td.psl-check-cell { grid-column: 1; grid-row: 1 / span 4; }
+  .ws-table:has(.ws-table__steps) td.ws-table__steps { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .ws-table:has(.ws-table__steps) tr:has(> td[colspan]) { display: block; }
   /* the columns collapse into one flow; each section stays a white box with the ink border (D-63) */
   .ws-cols, .ws-main, .ws-side { display: contents; }
   .ws-section, .ws-section--suggestions, .ws-form { border: var(--rule-strong) solid var(--ink); background: var(--surface); }

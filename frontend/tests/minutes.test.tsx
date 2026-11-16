@@ -132,7 +132,7 @@ describe('default from data (AC 6)', () => {
     expect(third.getByText('Choose an owner')).toBeTruthy();
     expect(third.getByText('Unknown')).toBeTruthy();
     expect(rowOf(A1).getByText('Client · Lagoon Health')).toBeTruthy();
-    expect(rowOf(A1).getByText('13 Nov 2026')).toBeTruthy();
+    expect(rowOf(A1).getByText('13 Nov')).toBeTruthy();
     for (const name of ['Confirm and create actions', 'Save for later', '+ Add an action']) expect(button(name)).toBeTruthy();
     expect(ws().getAllByRole('button', { name: 'Edit' })).toHaveLength(5);
     expect(ws().getAllByRole('button', { name: 'Remove' })).toHaveLength(3);
@@ -618,5 +618,85 @@ describe('notes text grants nothing (AC 23)', () => {
     expect(rowOf(A3).getByText('Choose an owner')).toBeTruthy();
     expect(wsEl().querySelectorAll('input[type="text"], select')).toHaveLength(0);
     expect(posts()).toHaveLength(0);
+  });
+});
+
+describe('round 2: Edit opens with the row’s current values (UX-1-1)', () => {
+  it('an action’s form opens with its text, owner and due; saving untouched sends them as they were', async () => {
+    await open(item('W-2301'));
+    await act(async () => {
+      fireEvent.click(rowOf(A1).getByRole('button', { name: 'Edit' }));
+    });
+    const f = form('Edit');
+    expect((f.getByLabelText('Action') as HTMLInputElement).value).toBe(A1);
+    expect(f.getByText('Lagoon Health')).toBeTruthy();
+    await act(async () => {
+      fireEvent.click(f.getByRole('button', { name: 'Edit' }));
+    });
+    await waitFor(() => expect(posts()).toHaveLength(1));
+    expect(posts()[0].body!.inputs).toEqual({ text: A1, owner: 'O-LAGOON', due: '2026-11-13' });
+  });
+
+  it('a decision’s form opens with its text; an action with no owner or due opens with those blank and sends neither', async () => {
+    await open(item('W-2301'));
+    await act(async () => {
+      fireEvent.click(rowOf(D1).getByRole('button', { name: 'Edit' }));
+    });
+    expect((form('Edit').getByLabelText('Decision') as HTMLInputElement).value).toBe(D1);
+    fireEvent.click(form('Edit').getByRole('button', { name: 'Cancel' }));
+    await act(async () => {
+      fireEvent.click(rowOf(A3).getByRole('button', { name: 'Edit' }));
+    });
+    await act(async () => {
+      fireEvent.click(form('Edit').getByRole('button', { name: 'Edit' }));
+    });
+    await waitFor(() => expect(posts()).toHaveLength(1));
+    expect(posts()[0].body!.inputs).toEqual({ text: A3 });
+  });
+});
+
+describe('round 2: a section that is not drawn adds nothing to the confirm set (SEC-1-1)', () => {
+  it('rows inside a restricted section are neither ticked, nor counted as a second section, nor sent', async () => {
+    const body = item('W-2301');
+    body.workspace!.sections.find((sec) => sec.key === 'decisions')!.restricted = true;
+    await open(body);
+    expect(ws().queryByText(D1)).toBeNull();
+    // only the actions remain a target section, so the confirm is the table’s own control, not the workspace row's
+    fireEvent.click(ws().getAllByRole('button', { name: 'Confirm and create actions' })[0]);
+    const f = await screen.findByRole('form', { name: 'Confirm and create actions' });
+    await act(async () => {
+      fireEvent.click(within(f).getByRole('button', { name: 'Confirm and create actions' }));
+    });
+    await waitFor(() => expect(posts()).toHaveLength(1));
+    expect(posts()[0].body!.item_ids).toEqual(['A-1', 'A-2', 'A-3']);
+  });
+});
+
+describe('round 2: no second card for a task the workspace links to (UI-1-3)', () => {
+  it('W-2304 draws no task card and no Open the decision button; the workspace links stay', async () => {
+    await open(item('W-2304'));
+    expect(screen.queryByRole('link', { name: /Open the decision/ })).toBeNull();
+    expect(screen.queryByText('Review client minutes v1')).toBeNull();
+    expect(ws().getAllByRole('link', { name: /Approve and send|Return with a note/ })).toHaveLength(2);
+  });
+});
+
+describe('round 2: wording and board rows', () => {
+  it('a step that answers “Done: …” is not prefixed with the step label', async () => {
+    stepAnswers = [ok({ message: 'Done: action added.' })];
+    await open(item('W-2301'));
+    await press('Save for later');
+    await screen.findByText('Done: action added.');
+    expect(wsEl().textContent).not.toContain('Save for later Done');
+  });
+
+  it('W-2303 and W-2304 draw the boards’ rows: Minutes v1 · client version with DRAFTED, IN tags neutral, no extra heading or version line', async () => {
+    await open(item('W-2304'));
+    expect(ws().getByRole('heading', { name: 'Minutes v1 · for Lagoon Health' })).toBeTruthy();
+    expect(rowOf('Minutes v1 · client version').getByText('DRAFTED')).toBeTruthy();
+    expect(wsEl().querySelector('.ws-byline')).toBeNull();
+    expect(wsEl().querySelectorAll('.psl-tag--done')).toHaveLength(0);
+    expect(item('W-2301').workspace!.context).not.toHaveProperty('project');
+    expect(item('W-2302').workspace!.context).toHaveProperty('project');
   });
 });

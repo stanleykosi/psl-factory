@@ -55,8 +55,20 @@
     "status": "working",
     "steps": [
       {
-        "text": "Reading the meeting notes",
+        "text": "Read the meeting notes",
+        "status": "done"
+      },
+      {
+        "text": "Found 2 decisions",
+        "status": "done"
+      },
+      {
+        "text": "Finding actions and owners",
         "status": "working"
+      },
+      {
+        "text": "Hand them to you to confirm",
+        "status": "next"
       }
     ]
   },

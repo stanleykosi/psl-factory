@@ -157,13 +157,15 @@ type FormProps = {
   off: boolean;
   /** Text after the submit button's label while the step can't be pressed again (Try again on a network failure). */
   submitLabel?: string;
+  /** The row's current values (item-scope steps), by field name; they win over the descriptor's `value`. */
+  initial?: Record<string, unknown>;
   onSubmit: (request: Pick<StepBody, 'inputs' | 'evidence_ids' | 'note' | 'case_revision'>) => Promise<SubmitResult>;
   onClose: () => void;
   onAccessError: (error: ApiError) => void;
   consequence?: React.ReactNode;
 };
 
-export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending, off, submitLabel, onSubmit, onClose, onAccessError, consequence }: FormProps) {
+export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending, off, submitLabel, initial, onSubmit, onClose, onAccessError, consequence }: FormProps) {
   const fields = step.fields ?? [];
   const headId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
@@ -180,6 +182,13 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
         const saved = (Array.isArray(f.value) ? (f.value as unknown[]) : []).filter((o): o is LineOption => typeof o === 'object' && o !== null && typeof (o as LineOption).value === 'string' && typeof (o as LineOption).label === 'string');
         if (saved.length > 0) opened[f.name] = saved;
       }
+    }
+    // the row being edited: its current text, record (owner) and date
+    for (const f of fields) {
+      const v = initial?.[f.name];
+      if (f.restricted || v === undefined) continue;
+      if ((f.type === 'text' || f.type === 'long_text' || f.type === 'date') && typeof v === 'string') opened[f.name] = v;
+      else if (f.type === 'record' && typeof v === 'object' && v !== null && typeof (v as LineOption).value === 'string' && typeof (v as LineOption).label === 'string') opened[f.name] = v;
     }
     return opened;
   });

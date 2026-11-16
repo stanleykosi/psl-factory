@@ -716,6 +716,10 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
     ) : null;
   }
 
+  // A task the workspace's own steps already link to is decided from that link: no second card for it (F-23).
+  const linked = new Set((item.workspace?.steps ?? []).map((step) => step.task_id).filter(Boolean));
+  const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id));
+
   return (
     <div className={layout ? `work-overview work-board work-state--${item.state}${layout === LAYOUTS.issue ? ' work-board--issue' : ''} work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : `work-overview${item.workspace ? ' work-overview--line' : ''}`}>
       {before}
@@ -724,9 +728,9 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
         <div className="work-column work-aside">
           <ReconcilePanel id={id} item={asResponseItem(item)} />
           {aside}
-          {item.tasks.length > 0 && <TaskPanels id={id} tasks={asResponseItem(item).tasks} />}
+          {shownTasks.length > 0 && <TaskPanels id={id} tasks={shownTasks} />}
           <RfpOutcomeLink id={id} item={item} />
-          {view?.task_note && item.tasks.length > 0 && <p className="work-note">{view.task_note}</p>}
+          {view?.task_note && shownTasks.length > 0 && <p className="work-note">{view.task_note}</p>}
         </div>
       </div>
       {after}
