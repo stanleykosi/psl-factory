@@ -146,3 +146,6 @@ D-76 pause ends. Next features, each ≤8 boards (D-64): F-22 weekly update retu
 
 ## D-98 · F-23 minutes spec conflicts 1-5 approved as recommended (16 Nov 2026, design engineer)
 (1) One confirm control across decisions and actions, every suggestion pre-ticked; the set sent is the set shown (actions gain a tick the board doesn't draw). (2) Audience, Edit and Add open a form on press; the always-open audience picker and in-table owner dropdown are listed differences. (3)+(4) Approve and Return go to the F-16 decision page (claim; Return needs a note there), which also covers the phone review board's missing note box; the in-page note box is a listed difference. (5) The review shows a "Goes to" recipients section before a client send. The matching F-23 fidelity exceptions are approved on this basis.
+
+## D-99 · F-22 differences and waivers signed (16 Nov 2026, design engineer)
+Signed all: the frame items (the work item keeps its own title, tabs and back link instead of the board's project tabs: Projects, Lagoon Health, Milestones 4, Documents 6, Money, Registers 6, Actions 9, ← Project), the phone boards using the same backend sentence and status label as desktop (the quote, "Delivered to 2 client contacts. Verified.", "DONE"), and the D-83 visual waivers: SCR-25 desktop returned 78, desktop received 78.3, phone returned 83.3, phone received 86.3.
