@@ -224,8 +224,9 @@
   .decide-panel .psl-panel__body { padding: 0; }
   /* the station line above already says who can decide */
   .decide-panel .decide-who { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  /* the note and its message stay above the pinned bar (Approve, then Return and Reject) when they take focus */
-  .decide-panel textarea { scroll-margin-bottom: calc(var(--control-xl) + var(--control-md) + var(--space-5) * 3); }
+  /* the note field, its message included, scrolls above the pinned bar (Approve, then Return and Reject) when it takes
+     focus */
+  .decide-panel .psl-field { scroll-margin-bottom: calc(var(--control-xl) + var(--control-md) + var(--space-5) * 3 + var(--space-2)); }
   .decide-panel .psl-actionbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); padding: var(--space-10px) var(--space-18px) var(--space-18px); gap: var(--space-10px); background: var(--steel); border-top: none; }
   .decide-panel .psl-actionbar__pair { gap: var(--space-10px); }
   .decide-panel .decide-approve { min-height: var(--control-xl); font-size: 17px; } /* phone footer, as on SCR-03-mobile */

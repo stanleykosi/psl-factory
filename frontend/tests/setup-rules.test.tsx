@@ -655,8 +655,9 @@ describe('read states and paging (AC 14, 19, 21)', () => {
     fireEvent.click(desktop().getByRole('button', { name: 'Show more' }));
     await waitFor(() => expect(desktop().getAllByRole('row')).toHaveLength(56));
     expect(desktop().queryByRole('button', { name: 'Show more' })).toBeNull();
-    // the button that was pressed is gone: focus goes to the end of the list instead of the page top (QA-3-1)
-    expect(document.activeElement).toBe(desktop().getByText('All 55 rules are shown.'));
+    // the button that was pressed is gone: focus goes to the end of the list instead of the page top (QA-3-1); the
+    // focus moves after the rows render, so wait for it (it can land a tick later under a loaded parallel run)
+    await waitFor(() => expect(document.activeElement).toBe(desktop().getByText('All 55 rules are shown.')));
     expect(desktop().getAllByRole('row')[55].textContent).toContain('Sample rule 55');
     expect(within(screen.getByRole('tablist', { name: 'Setup' })).getByRole('tab', { name: /^Rules/ }).textContent).toBe('Rules 55');
   });

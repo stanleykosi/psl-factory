@@ -140,6 +140,8 @@
    fail target-size), so the sheet is taller than the board draws it */
 @media (max-width: 719.98px) {
   .my-work__fieldset .my-work__linkbutton.cmp-target { display: inline-flex; align-items: center; min-height: var(--control-md); padding-block: 0; margin-block: 0; }
+  /* the line rows are 44px targets too (D-92c); the board draws 36px rows */
+  .my-work__check { min-height: var(--control-md); }
 }
 .my-work__field { display: flex; flex-direction: column; gap: var(--space-6px); }
 .my-work__field .my-work__select, .my-work__field .my-work__select:hover, .my-work__field .my-work__select:focus { min-height: var(--control-md); appearance: none; padding-right: 36px; background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 14px) 55%; background-size: 4px 4px; background-repeat: no-repeat; }
