@@ -3,20 +3,20 @@
 {% block content %}
 <a class="back-link" href="{% url 'design_agents' %}">← Assistant</a>
 <header class="page-heading"><div><h1>{{ persona.0 }}</h1><p class="lede">{{ persona.1 }} · {{ case|workspace_name }}</p></div></header>
-<section class="card assistant-thread" aria-label="Conversation">
+<div class="factory-case-layout"><section class="card assistant-thread" aria-label="Conversation">
   {% for turn in turns %}
   <article class="assistant-turn">
     <div class="assistant-question"><strong>You</strong><p>{{ turn.question|linebreaksbr }}</p></div>
     <div class="assistant-reply">
       <strong>{{ persona.0 }}</strong>
-      {% if turn.status == 'queued' %}<p role="status">Question queued.</p>
+      {% if turn.status == 'queued' %}<p role="status">Question queued. You can leave and check Alerts when the answer is ready.</p>
       {% elif turn.status == 'running' %}<p role="status">Checking your project records.</p>
       {% elif turn.status == 'held' %}<p role="status">An answer could not be completed. Check your access or ask again.</p>
       {% elif turn.stale %}<p role="status">This answer needs a fresh check because a source changed or is no longer available.</p>
       {% else %}<p>{{ turn.answer|linebreaksbr }}</p>
         {% if turn.sources %}<details><summary>Records checked</summary><ul>{% for source in turn.sources %}<li><a href="{{ source.url }}">{{ source.label }}</a> · {{ source.fact }}</li>{% endfor %}</ul></details>{% endif %}
       {% endif %}
-      {% if turn.started_url %}<p><a href="{{ turn.started_url }}">Open the work item →</a></p>
+      {% if turn.started_url %}<p>Work started. <a href="{{ turn.started_url }}">Open the work item →</a></p>
       {% elif turn.next_url %}<p><a href="{{ turn.next_url }}" class="button secondary">Edit draft →</a></p>{% endif %}
       {% if turn.transfer_url %}<p><a href="{{ turn.transfer_url }}">Open the conversation with {{ turn.transfer_name }} →</a></p>
       {% elif turn.transfer_action %}<form action="{{ turn.transfer_action }}" method="post">{% csrf_token %}<button type="submit" class="button secondary">Ask {{ turn.transfer_name }} instead</button></form>{% endif %}
@@ -25,6 +25,10 @@
   {% empty %}<p>Ask about this project. {{ persona.0 }} will check the records you can access.</p>{% endfor %}
   {% if waiting %}{{ form.errors }}<p><a href="{% url 'assistant_thread' conversation.pk %}" data-assistant-wait>Check for an answer</a></p>
     <script defer src="{% static 'assistant-progress.js' %}"></script>
-  {% else %}<form method="post" class="assistant-compose">{% csrf_token %}{{ form.as_p }}<button class="button primary" type="submit">Send</button></form>{% endif %}
+  {% else %}<form method="post" class="assistant-compose">{% csrf_token %}{{ form.key }}{{ form.non_field_errors }}{{ form.question.as_field_group }}
+  {% if form.focus.field.choices %}<details{% if form.focus.errors or form.is_bound %} open{% endif %}><summary>Select project records</summary>{{ form.focus.as_field_group }}</details>{% endif %}
+  <button class="button primary" type="submit">Send</button></form>{% endif %}
 </section>
+{% if earlier %}<aside class="card" aria-label="Earlier conversations"><h2>Earlier conversations</h2><ul>{% for item in earlier %}
+<li><a href="{% url 'assistant_thread' item.pk %}">{{ item.case|workspace_name }} · {{ item.persona|title }}</a></li>{% endfor %}</ul></aside>{% endif %}</div>
 {% endblock %}

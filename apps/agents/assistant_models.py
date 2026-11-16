@@ -21,6 +21,7 @@ class AssistantTurn(models.Model):
     conversation = models.ForeignKey(AssistantConversation, related_name='turns', on_delete=models.PROTECT)
     question = models.TextField(max_length=4000)
     focus = models.CharField(max_length=64, blank=True)
+    selected_sources = models.JSONField(default=list, blank=True)
     status = models.CharField(max_length=12, default='queued', db_index=True)
     answer = models.TextField(blank=True)
     sources = models.JSONField(default=list)

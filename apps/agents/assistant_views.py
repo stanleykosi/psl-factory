@@ -36,12 +36,13 @@ class ConversationForm(forms.Form):
 
 class QuestionForm(forms.Form):
     question = forms.CharField(label='Your message', max_length=4000, widget=forms.Textarea(attrs={'rows': 3}))
-    focus = forms.ChoiceField(label='Focus on a record', required=False)
+    focus = forms.MultipleChoiceField(label='Project records', required=False, widget=forms.CheckboxSelectMultiple,
+                                       help_text='Choose up to five records or leave blank to check recent department records.')
     key = forms.UUIDField(widget=forms.HiddenInput)
 
     def __init__(self, sources, data=None):
         super().__init__(data, initial={'key': uuid4()})
-        self.fields['focus'].choices = [('', 'Recent records in this department'), *[(digest(s), s['label']) for s in sources]]
+        self.fields['focus'].choices = [(digest(s), s['label']) for s in sources]
 
 
 @login_required
@@ -85,7 +86,6 @@ def thread(request, conversation_id):
         except ValidationError as exc:
             form.add_error(None, exc)
     turns = list(reversed(conversation.turns.order_by('-created_at', '-pk')[:30]))
-    fingerprints = {'': digest(sources), **{digest(source): digest([source]) for source in sources}}
     started_ids = [turn.started_work_id for turn in turns if turn.started_work_id]
     visible_work = set()
     if started_ids:
@@ -93,7 +93,13 @@ def thread(request, conversation_id):
 
         visible_work = set(visible(request.user).filter(pk__in=started_ids).values_list('pk', flat=True))
     for turn in turns:
-        turn.stale = bool(turn.context_hash and turn.context_hash != fingerprints.get(turn.focus))
+        turn.stale = False
+        if turn.context_hash:
+            try:
+                current = assistant.source_focus(sources, turn.selected_sources or turn.focus)
+                turn.stale = turn.context_hash != digest(current)
+            except ValidationError:
+                turn.stale = True
         if turn.started_work_id in visible_work:
             turn.started_url = reverse('factory_detail', args=[turn.started_work_id])
         if turn.next_work.startswith('assistant:'):
@@ -111,6 +117,7 @@ def thread(request, conversation_id):
     return render(request, 'design/assistant_thread.html', {
         'case': conversation.case, 'conversation': conversation, 'persona': assistant.PERSONAS[conversation.persona],
         'turns': turns, 'form': form,
+        'earlier': owned_conversations(request.user).exclude(pk=conversation.pk).order_by('-updated_at', '-pk')[:12],
         'waiting': any(turn.status in {'queued', 'running'} for turn in turns),
     })
 

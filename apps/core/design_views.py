@@ -136,10 +136,18 @@ def project(request, case_id, tab='journey'):
         from apps.finance.month_end import show
 
         return show(request, case, navigation)
+    if tab == 'money':
+        from apps.finance.project_money import projection
+
+        money = projection(request.user, case, request.GET.get('figure', '')[:80])
+        return render(request, 'design/project_money.html', {'case': case, 'tab': tab, 'tabs': navigation, 'money': money})
     if tab != 'journey':
-        sections = project_journey.sections(request.user, case, tab, actions)
+        query = request.GET.get('q', '').strip()[:120]
+        sections = project_journey.sections(request.user, case, tab, actions, query, request.GET)
         return render(request, 'design/project_tab.html', {
-            'case': case, 'tab': tab, 'tabs': navigation, 'panels': sections,
+            'case': case, 'tab': tab, 'tabs': navigation, 'panels': sections, 'q': query,
+            'change_timeline': project_journey.change_timeline(case, query, request.GET.get('plan-page'))
+                if tab == 'milestones' and 'change.read' in actions else None,
         })
     recent = discoverable_work(request.user).filter(case=case).order_by('-updated_at', '-pk')[:20]
     lines = [{'work_id': work.pk, 'name': DEFINITIONS[work.definition]['title'], 'updated': work.updated_at}

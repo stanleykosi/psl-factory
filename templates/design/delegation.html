@@ -1,0 +1,23 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Delegation · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'policy' case.pk %}">← Workspace settings</a><h1>Delegation</h1><p>{{ case|workspace_name }}</p></div></header>
+<div class="factory-case-layout"><section class="card">
+  <h2>Recorded delegations</h2>
+  {% if problem %}<p role="status">{{ problem }}</p>{% endif %}
+  <div class="table-wrap"><table><thead><tr><th>From</th><th>To</th><th>Role and scope</th><th>Dates</th><th>Period</th></tr></thead>
+    <tbody>{% for row in rows %}<tr><td>{{ row.principal }}</td><td>{{ row.delegate }}</td><td>{{ row.role }} · {{ row.scope }}</td>
+      <td>{{ row.starts|date:'d M Y, H:i T' }} – {{ row.ends|date:'d M Y, H:i T' }}</td>
+      <td>{% if as_of < row.starts %}Starts later{% elif as_of >= row.ends %}Ended{% else %}In effect by date{% endif %}</td></tr>
+      {% empty %}<tr><td colspan="5">No delegations are available from the current rules.</td></tr>{% endfor %}</tbody></table></div>
+  <p><a href="{% url 'policy' case.pk %}">Review drafts and rule history</a></p>
+  {% if drafts %}<h3>Your drafts awaiting activation</h3><ul>{% for draft in drafts %}<li>Version {{ draft.revision }} · {{ draft.lifecycle|readable }} · {{ draft.created_at|date:'d M Y, H:i T' }}</li>{% endfor %}</ul>{% endif %}
+  {% if form %}<p><a href="{% url 'factory_configuration' case.pk %}?definition=pmo-finance%2Fv1">Set invoice decision limits</a></p>{% endif %}
+</section>
+{% if can_edit %}<aside class="card"><h2>Add a delegation draft</h2>
+  {% if roles %}<form method="get"><label for="delegation-role">Decision role</label><select name="role" id="delegation-role">{% for available in roles %}<option{% if available == role %} selected{% endif %}>{{ available }}</option>{% endfor %}</select><button>Show eligible people</button></form>
+  <p>Choose two people already assigned to this role. Supply the recorded decision for separate review.</p>
+  {% if form %}<form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Save for review</button></form>{% endif %}
+  {% else %}<p>Record the workspace’s role assignments before creating a delegation draft.</p>{% endif %}
+</aside>{% endif %}</div>
+{% endblock %}

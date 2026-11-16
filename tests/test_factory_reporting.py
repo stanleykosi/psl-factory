@@ -314,6 +314,11 @@ class FactoryReportingTests(TestCase):
         old = self.review('return')
         self.advance()
         self.assertFalse(Publication.objects.exists())
+        self.client.force_login(self.actor)
+        page = self.client.get(reverse('factory_detail', args=[self.work.pk]), {'edit': '1'})
+        self.assertContains(page, 'Returned for changes')
+        self.assertTrue(page.context['inputs_form'].initial['status'])
+        self.assertTrue(page.context['inputs_form'].initial['citation_ids'])
         spent = self.work.budget_used
         self.correct()
         self.assertEqual(self.work.budget_used, spent)

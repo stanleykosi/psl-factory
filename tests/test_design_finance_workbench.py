@@ -20,6 +20,29 @@ class DesignFinanceWorkbenchTests(TestCase):
     def setUpTestData(cls):
         cls.actor, cls.case, cls.coverage, cls.preparation, cls.evidence = finance.fixture()
 
+    def test_project_money_separates_invoice_and_payment_and_resolves_exact_figure(self):
+        self.client.force_login(self.actor)
+        url = reverse('design_project_tab', args=[self.case.pk, 'money'])
+        invoice = finance.draft(self.actor, self.case, self.preparation)
+        figure = {'figure': f'invoice-{invoice.pk}'}
+        page = self.client.get(url, figure)
+        self.assertContains(page, 'Where NGN')
+        self.assertContains(page, 'Recorded billing preparation')
+        self.assertContains(page, 'Unknown')
+        self.assertNotContains(page, 'Applied NGN')
+        issue = issue_identified(self.actor, self.case, invoice, self.evidence)
+        receipt, lot = finance.receipt(self.actor, self.case)
+        finance.assign(self.actor, self.case, receipt, self.coverage, self.evidence)
+        finance.allocate(self.actor, self.case, lot, issue, '25.00', self.evidence)
+        page = self.client.get(url, figure)
+        [line] = page.context['money']['selected']['invoices']
+        self.assertEqual(line['paid'], Decimal('25.00'))
+        self.assertEqual(line['owed'], invoice.amount - Decimal('25.00'))
+        self.assertContains(page, 'Applied receipt tx-cash-1')
+        self.assertEqual(self.client.get(url, {'figure': 'invoice-900000000'}).status_code, 404)
+        Grant.objects.filter(case=self.case, user=self.actor, action='finance.read').update(active=False)
+        self.assertEqual(self.client.get(url, figure).status_code, 403)
+
     def test_client_details_show_captured_coverage_and_only_verified_invoice_amounts(self):
         self.client.force_login(self.actor)
         url = reverse('design_client_project', args=[self.case.pk])

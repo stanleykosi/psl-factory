@@ -20,6 +20,7 @@ from apps.pmo.models import Meeting,MeetingVersion,ActionItem,MinutesReportBindi
 from apps.pmo.services import subject
 from apps.agents.models import AgentRun
 from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt
+from .models import HumanTask
 from .factory_delivery import investigation_key
 from .factory_handover import pending_job
 
@@ -289,8 +290,9 @@ def projection(actor,work):
         _,v=profile(work,recovery=True);s,latest,missing,stale,tasks,jobs=snapshot(work,v,reader=actor);options,message=eligible(work,v,s,latest,missing,stale,tasks,jobs)
         if work.status=='verified':verify(work,actor)
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified';options=[]
-    can_review=False;reviewers=[]
-    if n['stage']=='publication' and not work.cancel_requested:
+    can_review=False;reviewers=[];binding=document(work)
+    if (n['stage']=='publication' and not work.cancel_requested and binding
+            and HumanTask.objects.filter(case=work.case,version=binding.version,status='open').exists()):
         from django.contrib.auth import get_user_model
         from apps.policy.services import decision_authority
         for u in get_user_model().objects.filter(is_active=True,grant__case=work.case,grant__active=True,grant__action='document.review_controlled').distinct():
@@ -298,7 +300,7 @@ def projection(actor,work):
             except (ValidationError,PermissionDenied):continue
             reviewers.append(u.get_full_name() or u.username);can_review=can_review or actor.pk==u.pk
     m=Meeting.objects.filter(case=work.case,reference=work.request['reference']).first()
-    return {'can_review':can_review,'reviewer_names':reviewers,'jobs':list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk')),'document':document(work),'extraction':extraction(work),'confirmation':confirmation(work),'actions':list(meetings.meeting_actions(m)) if m else [],'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed}
+    return {'can_review':can_review,'reviewer_names':reviewers,'jobs':list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk')),'document':binding,'extraction':extraction(work),'confirmation':confirmation(work),'actions':list(meetings.meeting_actions(m)) if m else [],'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed}
 
 
 def reconcile(actor,work_id,expected,adapter=None):

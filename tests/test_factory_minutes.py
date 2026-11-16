@@ -86,7 +86,12 @@ class FactoryMinutesTests(TestCase):
         activate(self.actor,self.case,'D11.recipient_grant_refs',refs,self.owner)
         self.start(True);self.advance();self.confirm();self.advance();b=flow.document(self.work)
         self.assertIsNotNone(b,self.work.finding);self.assertNotEqual(self.work.status,'verified');self.assertFalse(Publication.objects.exists());self.assertTrue(HumanTask.objects.filter(version=b.version,status='open').exists())
-        review_version(self.actor,self.case.pk,b.version_id,'approve','Checked exact outward minutes and recipients',rev(self.case));self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.client.force_login(self.actor)
+        decision_url=f'/work/{self.work.pk}/decision/'
+        self.assertContains(self.client.get(decision_url),'Approve exact outward minutes')
+        review_version(self.actor,self.case.pk,b.version_id,'approve','Checked exact outward minutes and recipients',rev(self.case))
+        self.assertNotContains(self.client.get(decision_url),'Approve exact outward minutes')
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         proof=flow.verify(self.work,self.actor);self.assertEqual(len(proof['receipt_ids']),2);self.assertEqual(Publication.objects.get().factory_source_id,self.work.source_head_id);self.assertEqual(ActionItem.objects.get().current.status,'open')
     def test_source_correction_preserves_old_minutes_budget_and_action_history(self):
         self.start();self.confirm();self.advance();before=self.work.budget_used;old=flow.document(self.work);item=ActionItem.objects.get()

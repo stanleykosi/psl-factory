@@ -4,7 +4,7 @@ from uuid import uuid4
 from datetime import datetime
 from django import forms
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.shortcuts import render,redirect
 from django.views.decorators.http import require_http_methods
@@ -57,16 +57,21 @@ class ReportLocalDateTimeField(forms.DateTimeField):
         return super().prepare_value(value)
 
 
+NARRATIVE_FIELDS = [('status','Client-safe delivery progress'),('risks','Client-safe risks and issue impact'),
+                    ('timeline','Client-safe milestone status'),('next_steps','Client-safe next steps')]
+
+
 class InputsForm(forms.Form):
     start_at=ReportLocalDateTimeField(label='Selected period start')
     end_at=ReportLocalDateTimeField(label='Selected period end (already elapsed)')
-    def __init__(self,case,*args,actor,**kwargs):
+    def __init__(self,case,*args,actor,saved_sections=None,**kwargs):
         super().__init__(*args,**kwargs)
+        self.saved_sections = saved_sections or {}
         for name in ['start_at','end_at']:
             self.fields[name].help_text='Shown in '+timezone.get_current_timezone_name()+'. Unchanged stored boundaries retain their exact original precision.'
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type='status_report'),required=False,label='Controlled weekly client template')
         self.fields['content_id']=forms.ModelChoiceField(queryset=Evidence.objects.filter(case=case,kind='agent_private_report_content').exclude(forecast_private_query()).order_by('-pk'),required=False,label='Existing cited client narrative',empty_label='Not supplied, or enter all four themes below')
-        for key,label in [('status','Client-safe delivery progress'),('risks','Client-safe risks and issue impact'),('timeline','Client-safe milestone status'),('next_steps','Client-safe next steps')]:
+        for key,label in NARRATIVE_FIELDS:
             self.fields[key]=forms.CharField(required=False,max_length=10000,label=label,widget=forms.Textarea(attrs={'rows':3}),help_text='Use supported facts or explicitly explain missing information. PMO Lead review remains required.')
         from apps.pmo.models import Meeting,ActionItem,Milestone,Issue,ChangeRequest
         ids=set();confirmed_changes=set()
@@ -82,6 +87,12 @@ class InputsForm(forms.Form):
                 ids.update(ChangeRequest.objects.filter(case=case).values_list('current__evidence_id',flat=True))
         citations=public_evidence(Evidence.objects.filter(case=case,pk__in=ids))|Evidence.objects.filter(case=case,pk__in=confirmed_changes).exclude(forecast_private_query())
         self.fields['citation_ids']=forms.ModelMultipleChoiceField(queryset=citations.order_by('-pk'),required=False,label='Native source evidence supporting the four themes',help_text='Must belong to the selected meeting, action, milestone, issue or change inventory. References remain private.')
+        if self.saved_sections:
+            self.saved_content_id = self.initial.get('content_id')
+            self.initial['content_id'] = None
+            saved_ids = {pk for section in self.saved_sections.values() for pk in section['evidence_ids']}
+            self.initial['citation_ids'] = list(citations.filter(pk__in=saved_ids).values_list('pk', flat=True))
+            self.initial.update({key: section['text'] for key, section in self.saved_sections.items()})
     def clean(self):
         cleaned=super().clean()
         for name in ['start_at','end_at']:
@@ -95,11 +106,16 @@ class InputsForm(forms.Form):
 
     def inputs(self,actor,case):
         d=self.cleaned_data;pk=d['content_id'].pk if d['content_id'] else None
-        fields={k:d[k].strip() for k in ['status','risks','timeline','next_steps']}
+        fields={k:d[k].strip() for k,_ in NARRATIVE_FIELDS}
         if any(fields.values()):
             if pk or not all(fields.values()) or not d['citation_ids']:raise ValidationError('Select existing content or provide all four cited client-safe themes, not both')
-            payload={'protocol':'pmo-weekly-client-content/v1','sections':{k:{'text':v,'evidence_ids':[e.pk for e in d['citation_ids']]} for k,v in fields.items()}}
-            pk=add_evidence(actor,case.pk,'agent_private_report_content',json.dumps(payload,sort_keys=True),'Human-supplied weekly client narrative').pk
+            ids = [e.pk for e in d['citation_ids']]
+            keep = self.saved_sections and set(ids) == {pk for section in self.saved_sections.values() for pk in section['evidence_ids']}
+            if keep and all(text == self.saved_sections[k]['text'].strip() for k, text in fields.items()):
+                pk = self.saved_content_id
+            else:
+                payload={'protocol':'pmo-weekly-client-content/v1','sections':{k:{'text':v,'evidence_ids':self.saved_sections[k]['evidence_ids'] if keep else ids} for k,v in fields.items()}}
+                pk=add_evidence(actor,case.pk,'agent_private_report_content',json.dumps(payload,sort_keys=True),'Human-supplied weekly client narrative').pk
         return {'start_at':d['start_at'].isoformat(),'end_at':d['end_at'].isoformat(),'template_id':d['template_id'].pk if d['template_id'] else None,'content_id':pk}
 
 class StartForm(StartWithBackground):
@@ -139,12 +155,22 @@ def detail(request,work,focus=None):
     from .screen_focus import require_action
     from .factory_views import presentation,permitted
     data=reporting.source(work,request.user,False)
-    form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,initial=data['inputs'],actor=request.user)
+    editing=request.GET.get('edit')=='1' and not focus and permitted(request.user,work,'factory.manage') and permitted(request.user,work,'evidence.add')
+    saved = None
+    if editing and data['inputs']['content_id']:
+        try:
+            snapshot=reporting.inventory(request.user,work.case,data['inputs'])
+            _,saved=reporting.client_content(work.case,snapshot,data['inputs']['content_id'])
+        except (PermissionDenied,ValidationError):
+            pass
+    form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,initial=dict(data['inputs']),actor=request.user,saved_sections=saved)
     if request.method=='POST':
         try:
             d=request.POST;action=d.get('action');revision=int(d.get('revision','0'));case_revision=int(d.get('case_revision','0'))
             require_action(work, focus, action)
-            if action=='advance':factory.advance(request.user,work.pk,revision)
+            if action=='advance':
+                from .factory_progress import set_progress
+                set_progress(request.user,work.pk,revision,True)
             elif action=='correct':
                 if not form.is_valid():raise ValidationError('Select exact report period, template and cited client narrative')
                 with transaction.atomic():
@@ -162,4 +188,4 @@ def detail(request,work,focus=None):
             messages.success(request,'Weekly report action recorded. Native review and recipient receipts remain separate.');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
-    return render(request,'factory/reporting_detail.html',{'row':row,'case':work.case,'focus':focus,'inputs_form':form,'time_zone':timezone.get_current_timezone_name(),'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})
+    return render(request,'factory/reporting_detail.html',{'row':row,'case':work.case,'focus':focus,'inputs_form':form,'editing':editing,'time_zone':timezone.get_current_timezone_name(),'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})

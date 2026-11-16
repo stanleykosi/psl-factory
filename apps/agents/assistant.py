@@ -1,5 +1,6 @@
 """Department assistant backed by saved requests and scoped native readers."""
 import os
+import re
 from datetime import timedelta
 from uuid import uuid4
 
@@ -44,7 +45,7 @@ def work_intent(actor, turn_id, definition, case_id=None, *, lock=False):
     if case_id is not None and str(turn.conversation.case_id) != str(case_id):
         raise ValidationError('This suggestion belongs to a different project.')
     if not turn.started_work_id and not turn.transferred_to_id:
-        sources, permitted = message_context(turn.conversation, turn.focus)
+        sources, permitted = message_context(turn.conversation, turn.selected_sources or turn.focus)
         if digest(sources) != turn.context_hash or definition not in permitted:
             raise ValidationError('The suggestion needs a fresh answer before you start work.')
     return turn
@@ -128,6 +129,19 @@ def tool_context(conversation):
                     source('Received bid request', f'Bid request {bid.reference}, intake version {version.number}.',
                            'rfp', case.pk, record={'field': 'rfp_intake', 'pk': version.pk})
                     next_work.append('rfp-response/v1')
+        if granted(actor, ['meeting.read']).filter(pk=case.pk).exists():
+            from apps.pmo.models import Meeting, Milestone
+
+            evidence_ids = public_evidence(case.evidence.all()).values('pk')
+            meetings = Meeting.objects.filter(case=case, current__evidence_id__in=evidence_ids).select_related('current').order_by('-current__occurred_at', '-pk')[:5]
+            for meeting in meetings:
+                source(f'Meeting · {meeting.reference}',
+                       f'{meeting.current.purpose}. Recorded meeting on {meeting.current.occurred_at.date().isoformat()}, version {meeting.current.number}.',
+                       'meetings', case.pk, record={'field': 'meeting', 'pk': meeting.current_id})
+            milestones = Milestone.objects.filter(case=case, evidence_id__in=evidence_ids).order_by('-completed_at', '-pk')[:5]
+            for milestone in milestones:
+                source(f'Milestone · {milestone.name}', f'Completion was recorded on {milestone.completed_at.date().isoformat()}.',
+                       'design_project_tab', case.pk, 'milestones', record={'field': 'milestone', 'pk': milestone.pk})
     elif persona == 'chidi':
         from apps.finance.fixed_charge import preparation_access
         from apps.finance.models import Handoff, Invoice
@@ -177,10 +191,11 @@ def tool_context(conversation):
 def source_focus(sources, focus):
     if not focus:
         return sources
-    selected = next((source for source in sources if digest(source) == focus), None)
-    if selected is None:
+    requested = {focus} if isinstance(focus, str) else set(focus)
+    selected = [source for source in sources if digest(source) in requested]
+    if {digest(source) for source in selected} != requested:
         raise ValidationError('The selected record changed or is no longer available.')
-    return [selected]
+    return selected
 
 
 def message_context(conversation, focus):
@@ -190,23 +205,30 @@ def message_context(conversation, focus):
 
 @transaction.atomic
 def reserve(actor, conversation_id, operation_key, question, focus=''):
+    keys = [focus] if isinstance(focus, str) and focus else [] if focus == '' else focus
+    if not isinstance(keys, list) or len(keys) > 5 or any(
+            not isinstance(key, str) or not re.fullmatch('[0-9a-f]{64}', key) for key in keys):
+        raise ValidationError('Choose up to five current records.')
+    keys = sorted(set(keys))
     conversation = AssistantConversation.objects.select_for_update(of=('self',)).select_related('case').get(pk=conversation_id)
     check(actor, conversation)
     previous = AssistantTurn.objects.filter(pk=operation_key).first()
     if previous is not None:
-        if previous.conversation_id != conversation.pk or previous.question != question or previous.focus != focus:
+        if (previous.conversation_id != conversation.pk or previous.question != question
+                or (previous.selected_sources or ([previous.focus] if previous.focus else [])) != keys):
             raise ValidationError('This request key has already been used. Reload and try again.')
         return previous
     if conversation.turns.filter(status__in=['queued', 'running']).exists():
         raise ValidationError('Wait for the current answer before sending another question.')
     if not os.getenv('OPENROUTER_MODEL'):
         raise ValidationError('The department assistant needs a configured model.')
-    if focus:
-        message_context(conversation, focus)
+    if keys:
+        message_context(conversation, keys)
     turn, _ = AssistantTurn.objects.get_or_create(pk=operation_key, defaults={
-        'conversation': conversation, 'question': question, 'focus': focus,
+        'conversation': conversation, 'question': question, 'selected_sources': keys,
     })
-    if turn.conversation_id != conversation.pk or turn.question != question or turn.focus != focus:
+    if (turn.conversation_id != conversation.pk or turn.question != question
+            or (turn.selected_sources or ([turn.focus] if turn.focus else [])) != keys):
         raise ValidationError('This request key has already been used. Reload and try again.')
     conversation.save(update_fields=['updated_at'])
     return turn
@@ -226,7 +248,8 @@ def worker_once():
         turn.save(update_fields=['status', 'started_at'])
     conversation = turn.conversation
     try:
-        sources, next_work = message_context(conversation, turn.focus)
+        focus = turn.selected_sources or turn.focus
+        sources, next_work = message_context(conversation, focus)
         context_hash = digest(sources)
         handles = {f'S{index}': source for index, source in enumerate(sources, start=1)}
         context = [{'handle': handle, 'label': source['label'], 'fact': source['fact']} for handle, source in handles.items()]
@@ -242,7 +265,7 @@ def worker_once():
                 or raw['next_work'] not in ['', *next_work]):
             raise ValidationError('The assistant reply could not be verified.')
         cited = [handles[handle] for handle in dict.fromkeys(raw['citations'])]
-        current, current_next = message_context(conversation, turn.focus)
+        current, current_next = message_context(conversation, focus)
         if current != sources or (raw['next_work'] and raw['next_work'] not in current_next):
             raise ValidationError('Source access or records changed while the assistant was working.')
         # Without a source, show only a fixed insufficient-evidence message.

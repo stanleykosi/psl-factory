@@ -777,7 +777,7 @@ def detail(request,work_id,focus=None):
         return detail(request,work)
     if work.definition=='pmo-minutes/v1':
         from .factory_minutes_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='finance-ledger/v1':
         from .factory_ledger_views import detail
         return detail(request,work)

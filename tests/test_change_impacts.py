@@ -227,8 +227,17 @@ class ChangeImpactTests(TestCase):
 
     def test_weekly_timeline_marks_superseded_revision_and_invalidates_old_report(self):
         auth,report=self.approved_report()
+        self.client.force_login(self.actor)
+        url = reverse('design_project_tab', args=[self.case.pk, 'milestones'])
+        current = self.client.get(url, {'q': 'CR-001'})
+        self.assertContains(current, 'Current approved')
+        self.assertContains(current, 'CR-001 · version 1')
         log_change(self.actor,self.case.pk,'CR-001','Normal','Delivery','Revised scope','Owner revision',self.source.pk,rev(self.case))
         self.assert_timeline_status(report,'superseded')
+        self.assertContains(self.client.get(url), 'Superseded')
+        from apps.identity.models import Grant
+        Grant.objects.filter(case=self.case, user=self.actor, action='change.read').update(active=False)
+        self.assertNotContains(self.client.get(url), 'Recorded plan changes')
 
     def test_weekly_timeline_marks_later_returned_decision_and_invalidates_old_report(self):
         auth,report=self.approved_report()

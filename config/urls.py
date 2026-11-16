@@ -23,6 +23,7 @@ from apps.finance import bu_views
 from django.urls import path, include
 from .health import health
 from apps.agents import upload_views
+from apps.policy import delegation_views
 finance_intake_patterns=[path('finance/followup-inbox/<uuid:case_id>/<str:operation_key>/',finance_followup_inbox,name='finance_followup_inbox')]
 from apps.documents import validation_views
 from apps.finance import payroll_views, payroll_correction_views, reminder_views
@@ -70,7 +71,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', views.home, name='home'), path('coverage/', views.coverage, name='coverage'),
     path('cases/<uuid:case_id>/', views.case_detail, name='case'),
-    path('cases/<uuid:case_id>/policy/', views.policy_workbench, name='policy')]
+    path('cases/<uuid:case_id>/policy/', views.policy_workbench, name='policy'),
+    path('cases/<uuid:case_id>/policy/delegation/', delegation_views.workspace, name='design_delegation')]
 urlpatterns += finance_intake_patterns
 from apps.policy import scope_views
 from apps.policy import impact_views

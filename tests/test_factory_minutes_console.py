@@ -46,6 +46,21 @@ class FactoryMinutesConsoleTests(TestCase):
     def post(self,data):return self.client.post('/work/'+str(self.work.pk)+'/',data)
     def business_rows(self):return {k:v for k,v in self.rows().items() if k!='django_session'}
 
+    def test_suggestion_copies_exact_text_into_a_draft_and_never_records_it(self):
+        from django.urls import reverse
+
+        self.start();self.advance();self.page()
+        url=reverse('factory_work_response',args=[self.work.pk])
+        response=self.client.get(url)
+        self.assertContains(response,'Use decision 1 in draft')
+        draft=self.browser_payload(response);draft['action']='use-decision-0';before=self.business_rows()
+        response=self.client.post(url,draft)
+        self.assertEqual(response.context['decision_forms'].total_form_count(),2)
+        self.assertEqual(response.context['decision_forms'][-1]['text'].value(),flow.extraction(self.work).result['proposals']['decisions'][0]['quote'])
+        self.assertEqual(self.business_rows(),before)
+        self.assertNotContains(self.client.get(reverse('factory_invoice_decision',args=[self.work.pk])),
+                               'Record my confirmed decisions and commitments')
+
     def test_normal_typed_confirmation_and_readable_minutes_no_write_gets(self):
         self.start();self.advance();response=self.page();before=self.rows()
         response=self.client.get('/work/'+str(self.work.pk)+'/');self.assertEqual(before,self.rows())

@@ -148,13 +148,16 @@ def notice_has_timeline(auth,version):
 
 def timeline_snapshot(case):
     from .models import ChangeExecutionEvent
-    from .change_execution import validate_authorization
     rows=ChangeExecutionEvent.objects.filter(authorization__version__change__case=case,kind='plan_updated').select_related('authorization__version__change').order_by('pk')
     latest={}
     for e in rows:
         if e.impact_details.get('approved_timeline'):latest[e.authorization_id]=e
+    return {'baseline':baseline_manifest(case),'rows':timeline_rows(case, latest.values())}
+
+def timeline_rows(case, events):
+    from .change_execution import validate_authorization
     result=[]
-    for e in latest.values():
+    for e in events:
         auth=e.authorization;version=auth.version;status='current approved';reason='Current source decisions; not deployment authority'
         if version.change.current_id!=version.pk:
             status='superseded';reason='A newer CR revision requires its own assessment and authority'
@@ -166,7 +169,7 @@ def timeline_snapshot(case):
         result.append({'authorization_id':auth.pk,'change_version_id':version.pk,'reference':version.change.reference,
             'revision':version.number,'plan_event_id':e.pk,'plan_evidence_id':e.evidence_id,
             'timeline':e.impact_details['approved_timeline'],'status':status,'reason':reason})
-    return {'baseline':baseline_manifest(case),'rows':result}
+    return result
 
 def report_timeline(snapshot):
     return '\n'.join(f"{r['reference']} / revision {r['revision']} / {r['status']} / plan evidence #{r['plan_evidence_id']}:\n{r['timeline']}\n{r['reason']}" for r in snapshot['rows'])

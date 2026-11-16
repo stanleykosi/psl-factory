@@ -1,0 +1,11 @@
+{% load studio_ui %}
+<form method="get" class="actions">
+  <input type="hidden" name="definition" value="{{ form.definition.value }}">
+  <label for="choose-intake-project">Project</label>
+  <select id="choose-intake-project" name="case" required>
+    <option value="">Choose a project</option>
+    {% for project in form.fields.case.queryset %}<option value="{{ project.pk }}"{% if project.pk == case.pk %} selected{% endif %}>{{ project|workspace_name }}</option>{% endfor %}
+  </select>
+  <button>Select project</button>
+</form>
+{{ form.case.errors }}

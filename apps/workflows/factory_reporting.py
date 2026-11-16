@@ -338,7 +338,23 @@ def projection(actor,work):
     issue='';options=[];next_action='Review selected weekly report sources';current=True
     try:source(work,actor)
     except (ValidationError,PermissionDenied) as exc:issue=finding(exc);current=False
-    jobs=list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'));receipts=list(PublicationReceipt.objects.filter(publication__version=v,publication__factory_work=work).order_by('pk')) if v else []
+    jobs=list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk'))
+    receipts=list(PublicationReceipt.objects.filter(publication__version=v,publication__factory_work=work).order_by('pk')) if v else []
+    review=v.reviews.select_related('actor').order_by('-pk').first() if v else None
+    selected_job=next((job for job in jobs if v and job.publication.version_id==v.pk),None)
+    delivery=[]
+    if selected_job:
+        recipient_ids=selected_job.publication.recipient_ids
+        people=get_user_model().objects.in_bulk(recipient_ids)
+        originals={receipt.recipient_id:receipt for receipt in receipts if receipt.payload_sha256==v.payload_sha256 and receipt.payload==v.payload}
+        for pk in recipient_ids:
+            person=people.get(pk);receipt=originals.get(pk)
+            status=('Delivered' if selected_job.status=='confirmed' else 'Original receipt found') if receipt else {
+                'pending':'Waiting to send','unknown':'Delivery uncertain','held':'Delivery needs review',
+                'leased':'Checking delivery','cancelled':'Cancelled',
+            }.get(selected_job.status,'Receipt unavailable')
+            delivery.append({'recipient':(person.get_full_name() or person.get_username()) if person else 'Recorded recipient',
+                             'status':status,'at':receipt.created_at if receipt else None,'receipt':receipt})
     idle=not (work.lease_until and work.lease_until>timezone.now());live=idle and not work.cancel_requested;verdicts=[]
     if live and current and v and HumanTask.objects.filter(version=v,status='open').exists():
         try:
@@ -368,4 +384,5 @@ def projection(actor,work):
             j.can_operate=idle and (j.status in ['pending','unknown','held'] or j.status=='leased' and j.lease_until and j.lease_until<=timezone.now()) and not PublicationReceipt.objects.filter(publication=j.publication).exists()
             j.can_retry=j.can_operate and not work.cancel_requested and j.status=='held'
         except PermissionDenied:pass
-    return {'data':data,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts}
+    return {'data':data,'document':v,'receipts':receipts,'jobs':jobs,'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'can_restart':can_restart,'review_verdicts':verdicts,
+            'return_review':review if review and review.verdict in ['return','reject'] else None,'delivery':delivery}

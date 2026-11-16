@@ -1,1 +1,10 @@
-{% extends 'base.html' %}{% block content %}<h1>Record formal minutes and action handoff</h1><p>Use authorized notes. People confirm actual decisions, attribution, action owners and deadlines. Recording minutes does not complete actions or change the scope baseline.</p><form method="get"><label>Project<select name="case">{% for c in form.fields.case.queryset %}<option value="{{ c.pk }}">{{ c.title }}</option>{% endfor %}</select></label><input type="hidden" name="definition" value="pmo-minutes/v1"><button>Choose project</button></form>{% if inputs_form %}<form method="post">{% csrf_token %}{{ form.as_p }}{{ inputs_form.as_p }}<button>Start formal minutes work</button></form>{% endif %}{% endblock %}
+{% extends 'base.html' %}{% block content %}
+<h1>Record formal minutes and action handoff</h1>
+<p>Confirm the actual decisions, action owners and deadlines using the meeting notes.</p>
+{% include 'factory/project_intake_picker.html' %}
+{{ form.non_field_errors }}
+{% if inputs_form %}<form method="post">{% csrf_token %}{{ form.case.as_hidden }}{{ form.definition }}{{ form.revision }}{{ form.key }}
+  {{ form.reference.as_field_group }}{{ inputs_form.as_p }}{{ form.background.as_field_group }}
+  <button>Start formal minutes work</button>
+</form>{% endif %}
+{% endblock %}

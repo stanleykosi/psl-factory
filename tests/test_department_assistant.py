@@ -29,6 +29,27 @@ class DepartmentAssistantTests(TestCase):
         self.assertRedirects(response, reverse('assistant_thread', args=[key]), fetch_redirect_response=False)
         return AssistantConversation.objects.get(pk=key)
 
+    def test_conversation_replays_the_same_two_selected_records_and_hides_revoked_sources(self):
+        self.client.force_login(self.actor)
+        conversation = self.start('tola')
+        url = reverse('assistant_thread', args=[conversation.pk])
+        sources, _ = assistant.tool_context(conversation)
+        selected = [item for item in sources if item['label'] in ['Workspace', 'Commercial requirements']]
+        self.assertEqual(len(selected), 2)
+        focus = [digest(item) for item in selected]
+        message = {'key': uuid4(), 'question': 'Use both selected sources', 'focus': focus}
+        self.assertRedirects(self.client.post(url, message), url)
+        self.assertRedirects(self.client.post(url, dict(message, focus=focus[::-1])), url)
+        self.assertEqual(conversation.turns.count(), 1)
+        with patch('adapters.openrouter.answer', return_value={
+            'answer': 'A synthetic answer using both sources.', 'citations': ['S1', 'S2'], 'next_work': '',
+        }) as model:
+            self.assertTrue(assistant.worker_once())
+            self.assertEqual([item['label'] for item in model.call_args.args[3]], [item['label'] for item in selected])
+        self.assertContains(self.client.get(url), 'A synthetic answer using both sources.')
+        Grant.objects.filter(case=self.case, user=self.actor, action='commercial.read').update(active=False)
+        self.assertNotContains(self.client.get(url), 'A synthetic answer using both sources.')
+
     def test_authorized_finance_answer_links_to_native_intake_and_replays(self):
         self.client.force_login(self.actor)
         conversation = self.start('chidi')

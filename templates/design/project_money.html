@@ -1,0 +1,25 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Money · {{ case|workspace_name }}{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'design_project' case.pk %}">← Project journey</a><h1>Money</h1><p>{{ case|workspace_name }}</p></div></header>
+{% include 'design/project_tabs.html' %}
+<div class="factory-case-layout"><section class="card" aria-label="Contract and invoice amounts">
+  <h2>Contract stages and invoices</h2>
+  {% if money.limited %}<p role="status">Open the Finance workspace to review a smaller set of records.</p>{% endif %}
+  <div class="table-wrap project-money-table"><table>
+    <thead><tr><th scope="col">Stage or billing item</th><th scope="col">Recorded amount</th><th scope="col">Invoice</th><th scope="col">Payment</th></tr></thead>
+    <tbody>{% for item in money.rows %}
+      <tr><th scope="row">{{ item.label }}{% if item.completion %}<p>{{ item.completion.name }} · Completed {{ item.completion.completed_at|date:'d M Y' }}</p>{% endif %}</th>
+      <td data-label="Recorded amount">{% if item.url %}<a href="{{ item.url }}#figure-sources">{{ item.currency }} {{ item.amount|floatformat:'-8' }}</a>{% else %}Unknown{% endif %}</td>
+      <td data-label="Invoice">{% for line in item.invoices %}<p><a href="{{ money.finance_url }}">{{ line.reference }}</a> · {{ line.status }}</p>{% empty %}No invoice recorded{% endfor %}</td>
+      <td data-label="Payment">{% for line in item.invoices %}<p>{% if line.paid is None %}Unknown{% else %}Applied {{ line.currency }} {{ line.paid|floatformat:'-8' }} · Outstanding {% if line.owed is None %}Unknown{% else %}{{ line.currency }} {{ line.owed|floatformat:'-8' }}{% endif %}{% endif %}</p>{% empty %}Unknown{% endfor %}</td></tr>
+    {% empty %}<tr><td colspan="4">No supported contract amounts or invoice records are available.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% if money.selected %}<aside id="figure-sources" class="card" aria-label="Figure sources" tabindex="-1">
+  <h2>Where {{ money.selected.currency }} {{ money.selected.amount|floatformat:'-8' }} comes from</h2>
+  <p>{{ money.selected.label }}</p>
+  <ul>{% for source in money.selected.sources %}<li><a href="{{ source.url }}">{{ source.label }}</a></li>{% endfor %}</ul>
+  <a href="{% url 'design_project_tab' case.pk 'money' %}">Close sources</a>
+</aside>{% endif %}</div>
+{% endblock %}
