@@ -132,3 +132,8 @@ Answer: split by reason. A closed project (no next milestone to come) shows "—
 An open project whose next milestone the response didn't send shows "Unknown" in amber. The F-07
 exceptions entry is approved on this basis. Also: the filter sheet's "All 6 lines" link gets the 44px
 phone target under D-92c (44px everywhere on phones); the resulting SCR-01-mobile-filter drop is a D-92c drop.
+
+## D-95 · Links inside a sentence keep the text's line height on phones (16 Nov 2026, design engineer)
+D-92c (44px tap targets on phones) applies to every button, tab, switch, chip, row and standalone link.
+Links inside running text (e.g. "Finance" and "Delivery" in Setup rule cards) are exempt, as WCAG 2.5.8
+allows, and keep the board's line height. Settles QA-5 of the design-system integration.
