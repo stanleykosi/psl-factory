@@ -1,0 +1,2 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-28-desktop-1440	1440	77.8	100	69.2	False

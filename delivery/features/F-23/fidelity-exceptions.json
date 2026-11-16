@@ -32,28 +32,28 @@
       "role": "text",
       "name": "Go-live stays planned for 4 Dec, subject to the login fix.",
       "category": "frame layout",
-      "reason": "Conflicts 6: The frame draws suggestions in its side column with the checkbox and Edit; words and source sit in one card, so the board's separate text items are not found by name.",
+      "reason": "Conflicts 6: the words are on the page. The fidelity tool does not read text inside a list row, so it reports them missing; what differs is placement (the frame draws suggestions in its side column, not the board's main column) and style.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "role": "text",
       "name": "From Notes · 14:12",
       "category": "frame layout",
-      "reason": "Conflicts 6: The frame draws suggestions in its side column with the checkbox and Edit; words and source sit in one card, so the board's separate text items are not found by name.",
+      "reason": "Conflicts 6: the words are on the page. The fidelity tool does not read text inside a list row, so it reports them missing; what differs is placement (the frame draws suggestions in its side column, not the board's main column) and style.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "role": "text",
       "name": "SMS reminders go through change control, not into the current scope.",
       "category": "frame layout",
-      "reason": "Conflicts 6: The frame draws suggestions in its side column with the checkbox and Edit; words and source sit in one card, so the board's separate text items are not found by name.",
+      "reason": "Conflicts 6: the words are on the page. The fidelity tool does not read text inside a list row, so it reports them missing; what differs is placement (the frame draws suggestions in its side column, not the board's main column) and style.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "role": "text",
       "name": "From Notes · 14:30",
       "category": "frame layout",
-      "reason": "Conflicts 6: The frame draws suggestions in its side column with the checkbox and Edit; words and source sit in one card, so the board's separate text items are not found by name.",
+      "reason": "Conflicts 6: the words are on the page. The fidelity tool does not read text inside a list row, so it reports them missing; what differs is placement (the frame draws suggestions in its side column, not the board's main column) and style.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {

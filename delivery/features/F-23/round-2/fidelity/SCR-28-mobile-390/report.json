@@ -1,0 +1,713 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-16T17:41:21.683Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-28-mobile.dc.html",
+  "boardName": "SCR-28-mobile.dc.html",
+  "pageUrl": "http://localhost:4761/work/W-2301",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-23/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 74.2 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 47.4,
+    "coverageWithExceptions": 100,
+    "visual": 74.2
+  },
+  "visual": {
+    "score": 74.2,
+    "allCellsScore": 74.9,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1693,
+    "cell": 12,
+    "contentCells": 2216,
+    "mismatchedCells": 571
+  },
+  "coverage": {
+    "total": 19,
+    "found": 9,
+    "coverage": 47.4,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MIN-0141",
+        "pageName": "MIN-0141",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Confirm the minutes",
+        "pageName": "Confirm the minutes",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 248,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Send test accounts for UAT",
+        "pageName": "Send test accounts for UAT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 700 on the board, 400 on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 361,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 561,
+          "w": 268,
+          "h": 41
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client · Lagoon Health · due 13 Nov",
+        "pageName": "Client · Lagoon Health",
+        "pageRole": "text",
+        "similarity": 85,
+        "looks": [
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 385,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 602,
+          "w": 268,
+          "h": 41
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finish the Android login fix",
+        "pageName": "Finish the Android login fix",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 700 on the board, 400 on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 462,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 748,
+          "w": 268,
+          "h": 41
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engineering (recorded by PM) · due 15 Nov",
+        "pageName": "Engineering (recorded by PM)",
+        "pageRole": "text",
+        "similarity": 87,
+        "looks": [
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 486,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 789,
+          "w": 268,
+          "h": 41
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Assess the SMS reminders change",
+        "pageName": "Assess the SMS reminders change",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 700 on the board, 400 on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 563,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 935,
+          "w": 268,
+          "h": 41
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Confirm and create actions",
+        "pageName": "Confirm and create actions",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #2459D6 on the board, #22764A on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 734,
+          "w": 175,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Lagoon Health",
+        "key": "link: ← Lagoon Health",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 114,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 10: The phone back link is a frame item with its own wording.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Weekly sync · 10 Nov · Tola suggested 2 decisions, 3 actions",
+        "key": "text: Weekly sync · 10 Nov · Tola suggested 2 decisions, 3 actions",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 106,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECISION",
+        "key": "text: DECISION",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 149,
+          "w": 330,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Conflicts 10: The phone board draws DECISION/ACTION rows; the frame has one rendering at both widths.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Go-live stays planned for 4 Dec, subject to the login fix.",
+        "key": "text: Go-live stays planned for 4 Dec, subject to the login fix.",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 169,
+          "w": 330,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 6: the words are on the page. The fidelity tool does not read text inside a list row, so it reports them missing; what differs is placement (the frame draws suggestions in its side column, not the board's main column) and style.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECISION",
+        "key": "text: DECISION",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 245,
+          "w": 330,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Conflicts 10: The phone board draws DECISION/ACTION rows; the frame has one rendering at both widths.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SMS reminders go through change control, not into the current scope.",
+        "key": "text: SMS reminders go through change control, not into the current scope.",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 265,
+          "w": 330,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 6: the words are on the page. The fidelity tool does not read text inside a list row, so it reports them missing; what differs is placement (the frame draws suggestions in its side column, not the board's main column) and style.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION",
+        "key": "text: ACTION",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 341,
+          "w": 330,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Conflicts 10: The phone board draws DECISION/ACTION rows; the frame has one rendering at both widths.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION",
+        "key": "text: ACTION",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 442,
+          "w": 330,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Conflicts 10: The phone board draws DECISION/ACTION rows; the frame has one rendering at both widths.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION",
+        "key": "text: ACTION",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 543,
+          "w": 330,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Conflicts 10: The phone board draws DECISION/ACTION rows; the frame has one rendering at both widths.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "No owner yet · due Unknown",
+        "key": "text: No owner yet · due Unknown",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 587,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 10: The phone board draws DECISION/ACTION rows; the frame has one rendering at both widths.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"MIN-0141\"",
+        "kind": "Text",
+        "name": "MIN-0141",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Text \"Send test accounts for UAT\"",
+        "kind": "Text",
+        "name": "Send test accounts for UAT",
+        "boardBox": {
+          "x": 30,
+          "y": 361,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 561,
+          "w": 268,
+          "h": 41
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Text \"Client · Lagoon Health · due 13 Nov\"",
+        "kind": "Text",
+        "name": "Client · Lagoon Health · due 13 Nov",
+        "boardBox": {
+          "x": 30,
+          "y": 385,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 602,
+          "w": 268,
+          "h": 41
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Text \"Finish the Android login fix\"",
+        "kind": "Text",
+        "name": "Finish the Android login fix",
+        "boardBox": {
+          "x": 30,
+          "y": 462,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 748,
+          "w": 268,
+          "h": 41
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Text \"Engineering (recorded by PM) · due 15 Nov\"",
+        "kind": "Text",
+        "name": "Engineering (recorded by PM) · due 15 Nov",
+        "boardBox": {
+          "x": 30,
+          "y": 486,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 789,
+          "w": 268,
+          "h": 41
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Text \"Assess the SMS reminders change\"",
+        "kind": "Text",
+        "name": "Assess the SMS reminders change",
+        "boardBox": {
+          "x": 30,
+          "y": 563,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 935,
+          "w": 268,
+          "h": 41
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Link \"Confirm and create actions\"",
+        "kind": "Link",
+        "name": "Confirm and create actions",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 734,
+          "w": 175,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Assess the SMS reminders change\"; on the page it comes after Text \"Client · Lagoon Health · due 13 Nov\"",
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Formal minutes and action handoff · MIN-0141",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 103,
+          "w": 254,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION NEEDED",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 129,
+          "w": 113,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 129,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 129,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 175,
+          "w": 334,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I read the notes and suggested 2 decisions and 3 actions.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 198,
+          "w": 334,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Nothing becomes a decision or an action until you confirm it.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 242,
+          "w": 334,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "One action has no owner and its due date is Unknown. You can confirm without them, but it will show as \"No owner\" on the action list.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 286,
+          "w": 334,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

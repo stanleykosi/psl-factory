@@ -1,0 +1,998 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-16T17:41:17.927Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-28-desktop-review.dc.html",
+  "boardName": "SCR-28-desktop-review.dc.html",
+  "pageUrl": "http://localhost:4761/work/W-2304",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-23/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 78.7 is below 90.",
+    "6 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 53.1,
+    "coverageWithExceptions": 100,
+    "visual": 78.7
+  },
+  "visual": {
+    "score": 78.7,
+    "allCellsScore": 89.8,
+    "width": 1440,
+    "height": 900,
+    "boardHeight": 900,
+    "pageHeight": 900,
+    "cell": 12,
+    "contentCells": 4312,
+    "mismatchedCells": 919
+  },
+  "coverage": {
+    "total": 32,
+    "found": 17,
+    "coverage": 53.1,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 595
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 696
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Weekly sync · 10 Nov",
+        "pageName": "Weekly sync · 10 Nov",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 35px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 415,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 407,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "YOUR REVIEW",
+        "pageName": "YOUR REVIEW",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1255,
+          "y": 133,
+          "w": 97,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1252,
+          "y": 120,
+          "w": 100,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MINUTES V1 · FOR LAGOON HEALTH",
+        "pageName": "MINUTES V1 · FOR LAGOON HEALTH",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 244,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 249,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the minutes",
+        "pageName": "Open the minutes",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "text colour #2459D6 on the board, #1F2427 on the page",
+          "underlined on the board, not on the page",
+          "background none on the board, #FFFFFF on the page",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 104,
+          "y": 471,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 641,
+          "w": 151,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Review and decide",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 242,
+          "w": 340,
+          "h": 353
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 247,
+          "w": 340,
+          "h": 256
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approving sends this exact version to the client. Actions are created whether or not the client reads it.",
+        "pageName": "Approving sends this exact version to the client. Actions are created whether or not the client reads it.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 293,
+          "w": 308,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 306,
+          "w": 308,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Approve and send",
+        "pageName": "Approve and send",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 471,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 379,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Return with a note",
+        "pageName": "Return with a note",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 529,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 437,
+          "w": 308,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "key": "link: Overview",
+        "container": "navigation",
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 11: The signed-in person, role and nav come from the frame and the persona (no PMO Lead persona in the mock).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "key": "link: Setup",
+        "container": "navigation",
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 11: The signed-in person, role and nav come from the frame and the persona (no PMO Lead persona in the mock).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kemi Adebayo · PMO Lead",
+        "key": "text: Kemi Adebayo · PMO Lead",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1199,
+          "y": 20,
+          "w": 153,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 11: The signed-in person, role and nav come from the frame and the persona (no PMO Lead persona in the mock).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / LAGOON HEALTH / MINUTES · MIN-0141",
+        "key": "text: PROJECTS / LAGOON HEALTH / MINUTES · MIN-0141",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PROJECTS",
+        "key": "link: PROJECTS",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "LAGOON HEALTH",
+        "key": "link: LAGOON HEALTH",
+        "container": "main",
+        "boardBox": {
+          "x": 167,
+          "y": 84,
+          "w": 94,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "key": "tablist: Project",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 654,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones 4",
+        "key": "tab: Milestones 4",
+        "container": "tablist",
+        "boardBox": {
+          "x": 176,
+          "y": 176,
+          "w": 129,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 6",
+        "key": "tab: Documents 6",
+        "container": "tablist",
+        "boardBox": {
+          "x": 305,
+          "y": 176,
+          "w": 133,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "key": "tab: Money",
+        "container": "tablist",
+        "boardBox": {
+          "x": 438,
+          "y": 176,
+          "w": 76,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers 6",
+        "key": "tab: Registers 6",
+        "container": "tablist",
+        "boardBox": {
+          "x": 514,
+          "y": 176,
+          "w": 120,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 9",
+        "key": "tab: Actions 9",
+        "container": "tablist",
+        "boardBox": {
+          "x": 634,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11: The project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECIDE · PMO LEAD",
+        "key": "text: DECIDE · PMO LEAD",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1014,
+          "y": 244,
+          "w": 336,
+          "h": 35
+        },
+        "exception": {
+          "reason": "Conflicts 11: The decision panel is the frame's \"Decide\" head; the board's role suffix has no field.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Note (needed to return or refuse)",
+        "key": "text: Note (needed to return or refuse)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 359,
+          "w": 308,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 3: Approve and Return are links to the F-16 decision page; the in-page Note box is not drawn there (note is entered on that page).",
+          "approved_by": "design engineer, 16 Nov 2026 — D-98"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(needed to return or refuse)",
+        "key": "text: (needed to return or refuse)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1062,
+          "y": 359,
+          "w": 174,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 3: Approve and Return are links to the F-16 decision page; the in-page Note box is not drawn there (note is entered on that page).",
+          "approved_by": "design engineer, 16 Nov 2026 — D-98"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Start work\"",
+        "kind": "Link",
+        "name": "Start work",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (75% across), right on the page (87% across)"
+        ]
+      },
+      {
+        "label": "Link \"More ways to start\"",
+        "kind": "Link",
+        "name": "More ways to start",
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (80% across), right on the page (93% across)"
+        ]
+      },
+      {
+        "label": "Heading \"Weekly sync · 10 Nov\"",
+        "kind": "Heading",
+        "name": "Weekly sync · 10 Nov",
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 415,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 407,
+          "h": 35
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Text \"YOUR REVIEW\""
+        ]
+      },
+      {
+        "label": "Tab \"Journey\"",
+        "kind": "Tab",
+        "name": "Journey",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 595
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 696
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Approving sends this exact version to the client. Actions are created whether or not the client reads it.\"; on the page it comes after Side panel \"\""
+        ]
+      },
+      {
+        "label": "Link \"Open the minutes\"",
+        "kind": "Link",
+        "name": "Open the minutes",
+        "boardBox": {
+          "x": 104,
+          "y": 471,
+          "w": 870,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 641,
+          "w": 151,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Side panel \"\"; on the page it comes after Link \"Return with a note\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1034,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PM",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 339,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LAGOON HEALTH",
+        "container": "navigation",
+        "pageBox": {
+          "x": 149,
+          "y": 85,
+          "w": 120,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MINUTES · MIN-0141",
+        "container": "navigation",
+        "pageBox": {
+          "x": 269,
+          "y": 85,
+          "w": 158,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Project",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 550,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestones",
+        "container": "navigation",
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Documents",
+        "container": "navigation",
+        "pageBox": {
+          "x": 279,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Money",
+        "container": "navigation",
+        "pageBox": {
+          "x": 386,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Registers",
+        "container": "navigation",
+        "pageBox": {
+          "x": 462,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Actions",
+        "container": "navigation",
+        "pageBox": {
+          "x": 556,
+          "y": 177,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "DECIDE",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1014,
+          "y": 249,
+          "w": 336,
+          "h": 43
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
