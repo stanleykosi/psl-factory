@@ -22,6 +22,21 @@ def factory_coordination_status(context,work):
     return {'planning':state,'csrf_token':context.get('csrf_token')}
 
 
+@register.inclusion_tag('factory/background_status.html', takes_context=True)
+def factory_background_status(context, work):
+    from apps.workflows.factory import TERMINAL
+    from apps.workflows.factory_execution import can_control
+    from apps.workflows.factory_progress import ACTIVE
+    from apps.workflows.models import FactoryProgress, FactoryWork
+
+    if not isinstance(work, FactoryWork):
+        return {}
+    job = FactoryProgress.objects.filter(work=work).first()
+    return {'work': work, 'job': job, 'active': bool(job and job.status in ACTIVE),
+            'can_control': can_control(context['user'], work), 'csrf_token': context.get('csrf_token'),
+            'can_continue': not work.cancel_requested and work.status not in TERMINAL | {'waiting_effect'}}
+
+
 from apps.core.presentation import workspace_name
 register.filter('workspace_name',workspace_name)
 

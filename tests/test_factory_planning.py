@@ -154,13 +154,31 @@ class FactoryPlanningTests(TestCase):
     def test_lost_internal_route_response_reconciles_same_receipt_without_approval(self):
         f=setup();w=f['work']
         from adapters.approvals import InternalApprovalRoutingAdapter
+        from apps.pmo import approval_routing
+        from apps.workflows import factory_progress
+
         class Lost(InternalApprovalRoutingAdapter):
             def deliver(self,pk,fence):
                 super().deliver(pk,fence);raise TimeoutError('Synthetic response lost after internal receipt')
+
+        class DelayedLookup(InternalApprovalRoutingAdapter):
+            def lookup(self, job):
+                return None
+
+            def deliver(self, pk, fence):
+                raise AssertionError('An uncertain original may only be looked up')
+
+        background = factory_progress.set_progress(f['a'], w.pk, w.revision, True)
         # Investigation, reservation, selected delivery loses its response.
         factory.run_once(w.pk);factory.run_once(w.pk);factory.run_once(w.pk,adapter=Lost())
         job=ApprovalRouteJob.objects.filter(request__case=f['c'],status='unknown').get()
         self.assertEqual(ApprovalRouteReceipt.objects.filter(job=job).count(),1)
+        self.assertEqual(factory_progress.run_once(), background.pk)
+        background.refresh_from_db()
+        self.assertEqual(background.status, 'held')
+        self.assertTrue(approval_routing.run_once(DelayedLookup(), job_id=job.pk))
+        job.refresh_from_db()
+        self.assertEqual(job.status, 'unknown')
         factory.run_until_wait(w.pk);job.refresh_from_db();w.refresh_from_db()
         self.assertEqual(job.status,'confirmed');self.assertEqual(w.status,'waiting',w.finding)
         self.assertEqual(ApprovalRouteReceipt.objects.filter(job=job).count(),1)

@@ -7,6 +7,7 @@ from django.urls import reverse
 
 from apps.agents import assistant
 from apps.agents.assistant_models import AssistantConversation, AssistantTurn
+from apps.documents.contracts import digest
 from apps.identity.models import Grant
 from tests.factory_helpers import fixture
 from tests.helpers import setup_case
@@ -49,7 +50,7 @@ class DepartmentAssistantTests(TestCase):
         self.assertEqual(turn.status, 'answered')
         response = self.client.get(url)
         self.assertContains(response, 'Records checked')
-        self.assertContains(response, 'Continue in Start work')
+        self.assertContains(response, 'Edit draft')
         next_url = response.context['turns'][0].next_url
         intake = self.client.get(next_url)
         self.assertContains(intake, 'Invoice reference')
@@ -58,11 +59,25 @@ class DepartmentAssistantTests(TestCase):
         fields = {'key': key, 'assistant_turn': key, 'case': self.case.pk, 'revision': self.case.revision,
                   'reference': self.work.request['reference'], 'mode': 'completion',
                   'coverage': self.work.request['coverage'], 'handoff': self.work.request['handoff']}
+        first = dict(fields, reference='DRAFT-ONE', action='save_draft')
+        self.assertRedirects(self.client.post(next_url, first), next_url, fetch_redirect_response=False)
+        self.assertContains(self.client.get(next_url), 'DRAFT-ONE')
+        second = dict(fields, draft_version=1, action='save_draft')
+        for _ in range(2):
+            self.assertRedirects(self.client.post(next_url, second), next_url, fetch_redirect_response=False)
+        self.assertEqual(list(turn.draft_versions.order_by('number').values_list('number', flat=True)), [1, 2])
+        self.assertContains(self.client.post(next_url, dict(first, reference='STALE-DRAFT')),
+                            'A newer draft is available')
+        self.assertContains(self.client.post(next_url, dict(fields, draft_version=2, reference='UNSAVED')),
+                            'Save your current draft')
+        fields.update(draft_version=2, background='on')
         for _ in range(2):
             self.assertRedirects(self.client.post(next_url, fields), reverse('factory_detail', args=[self.work.pk]),
                                  fetch_redirect_response=False)
         turn.refresh_from_db()
         self.assertEqual(turn.started_work_id, self.work.pk)
+        self.assertEqual(turn.started_draft.number, 2)
+        self.assertEqual(self.work.background_progress.status, 'queued')
         self.assertContains(self.client.get(url), 'Open the work item')
         self.client.force_login(self.other)
         self.assertEqual(self.client.get(url).status_code, 404)
@@ -112,3 +127,47 @@ class DepartmentAssistantTests(TestCase):
             self.assertEqual(model.call_args.args[1], 'Finance')
             self.assertEqual(model.call_args.args[5], [])
         self.assertEqual(target.turns.get().status, 'answered')
+
+    def test_focused_question_transmits_only_selected_current_record(self):
+        self.client.force_login(self.actor)
+        conversation = self.start('chidi')
+        sources, _ = assistant.tool_context(conversation)
+        handoff = next(source for source in sources if source.get('record', {}).get('field') == 'handoff')
+        url = reverse('assistant_thread', args=[conversation.pk])
+        key = uuid4()
+        data = {'question': 'What does this source prove?', 'key': key, 'focus': digest(handoff)}
+        self.assertContains(self.client.post(url, dict(data, focus='f' * 64)), 'Select a valid choice')
+        self.assertRedirects(self.client.post(url, data), url, fetch_redirect_response=False)
+        with patch('adapters.openrouter.answer', return_value={
+            'answer': 'The selected completion was received.', 'citations': ['S1'], 'next_work': '',
+        }) as model:
+            self.assertTrue(assistant.worker_once())
+            self.assertEqual(len(model.call_args.args[3]), 1)
+            self.assertEqual(model.call_args.args[3][0]['label'], 'Milestone handoff')
+        self.assertEqual(AssistantTurn.objects.get(pk=key).sources, [handoff])
+
+    def test_confirmation_cannot_link_a_different_existing_planning_request(self):
+        from tests.test_factory_planning import setup
+
+        planning = setup(configured=False, department_configured=False)
+        actor, case, packet, work = (planning[key] for key in ('a', 'c', 'packet', 'work'))
+        self.client.force_login(actor)
+        conversation = AssistantConversation.objects.create(actor=actor, case=case, persona='tola')
+        source = next(item for item in assistant.tool_context(conversation)[0] if item.get('record'))
+        key = uuid4()
+        assistant.reserve(actor, conversation.pk, key, 'Prepare Planning', digest(source))
+        with patch('adapters.openrouter.answer', return_value={
+            'answer': 'The selected packet is available.', 'citations': ['S1'], 'next_work': 'planning/v1',
+        }):
+            self.assertTrue(assistant.worker_once())
+        thread = self.client.get(reverse('assistant_thread', args=[conversation.pk]))
+        intake = thread.context['turns'][0].next_url
+        case.refresh_from_db()
+        data = {'definition': 'planning/v1', 'key': key, 'assistant_turn': key, 'case': case.pk, 'packet': packet.pk,
+                'reference': 'DIFFERENT-PLAN', 'revision': case.revision}
+        self.assertContains(self.client.post(intake, data), 'Planning work already exists with different intake details')
+        turn = AssistantTurn.objects.get(pk=key)
+        self.assertIsNone(turn.started_work_id)
+        self.assertFalse(turn.draft_versions.exists())
+        self.assertRedirects(self.client.post(intake, dict(data, reference=work.request['reference'])),
+                             reverse('factory_detail', args=[work.pk]), fetch_redirect_response=False)

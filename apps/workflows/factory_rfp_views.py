@@ -32,6 +32,7 @@ from apps.documents.models import Publication,PublicationJob,PublicationReceipt
 from apps.documents import controlled
 from .models import FactoryWork,FactoryActivity,HumanTask
 from . import factory as runtime
+from .factory_progress_views import start_work
 
 
 class RFPProfileForm(ProfileForm):
@@ -129,11 +130,13 @@ def create(request):
     form=SourceForm(case,request.POST if request.method=='POST' else None,initial=initial)
     form.fields['reference']=forms.CharField(max_length=100,label='Work reference',initial=root.reference if root else '')
     form.fields['key']=forms.CharField(widget=forms.HiddenInput,max_length=100,initial=uuid4().hex)
+    form.fields['background']=forms.BooleanField(required=False, initial=True, label='Continue in background after starting')
     mappings=Mappings(request.POST if request.method=='POST' else None,prefix='requirements',form_kwargs={'case':case})
     if request.method=='POST' and form.is_valid() and mappings.is_valid():
         try:
-            work=service.start(request.user,case.pk,form.cleaned_data['key'],payload(form,mappings),form.cleaned_data['reference'],form.cleaned_data['revision'])
-            return redirect('factory_detail',work_id=work.pk)
+            return start_work(request, lambda: service.start(request.user, case.pk, form.cleaned_data['key'],
+                              payload(form, mappings), form.cleaned_data['reference'], form.cleaned_data['revision']),
+                              form.cleaned_data['background'])
         except ValidationError as exc:form.add_error(None,exc)
     return response(request,'factory/rfp_start.html',{'case':case,'rfp':root,'form':form,'mappings':mappings,'definition':service.DEFINITION})
 

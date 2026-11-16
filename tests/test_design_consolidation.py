@@ -9,8 +9,11 @@ from django.urls import reverse
 from apps.agents.models import AgentJob, CaseUpload
 from apps.agents.upload_jobs import ROLES, run_once
 from apps.core.models import Case
+from apps.documents.controlled import register_template
 from apps.identity.models import Grant
+from tests.document_helpers import DEFINITION
 from tests.factory_helpers import fixture
+from tests.helpers import rev
 
 
 class DesignConsolidationTests(TestCase):
@@ -19,6 +22,7 @@ class DesignConsolidationTests(TestCase):
         sample = fixture(username='screen-operator')
         private = fixture(username='private-screen-operator')
         cls.actor, cls.case, cls.work = sample['actor'], sample['case'], sample['work']
+        cls.template_owner = sample['evidence']['policy_decision']
         cls.other = private['case']
         cls.upload = CaseUpload.objects.create(
             case=cls.case, actor=cls.actor, name='permitted.txt', key='permitted', sha256='test', size=5,
@@ -62,6 +66,16 @@ class DesignConsolidationTests(TestCase):
         self.assertRedirects(self.client.get(reverse('getting_started')), reverse('home'),
                              fetch_redirect_response=False)
 
+    def test_project_tabs_use_current_grants_and_native_milestone(self):
+        self.client.force_login(self.actor)
+        Grant.objects.get_or_create(case=self.case, user=self.actor, action='milestone.complete')
+        milestones = reverse('design_project_tab', args=[self.case.pk, 'milestones'])
+        self.assertContains(self.client.get(milestones), 'Contract completion criterion')
+        self.assertContains(self.client.get(reverse('design_project_tab', args=[self.case.pk, 'money'])), 'Open invoices and receipts')
+        self.assertEqual(self.client.get(reverse('design_project_tab', args=[self.other.pk, 'milestones'])).status_code, 404)
+        Grant.objects.filter(case=self.case, user=self.actor, action='finance.read').update(active=False)
+        self.assertEqual(self.client.get(reverse('design_project_tab', args=[self.case.pk, 'money'])).status_code, 404)
+
     def test_agent_entry_lists_eight_roles_and_checks_current_grants(self):
         self.client.force_login(self.actor)
         assistant = reverse('design_agents')
@@ -75,6 +89,22 @@ class DesignConsolidationTests(TestCase):
         Grant.objects.filter(case=self.case, user=self.actor, action='agent.extract').update(active=False)
         self.assertNotContains(self.client.get(assistant), 'permitted.txt')
         self.assertNotContains(self.client.get(files), 'Private draft body')
+
+    def test_template_catalog_reads_controlled_versions_and_revokes_access(self):
+        self.client.force_login(self.actor)
+        Grant.objects.get_or_create(case=self.case, user=self.actor, action='document.template')
+        Grant.objects.get_or_create(case=self.case, user=self.actor, action='document.read')
+        for _ in range(2):
+            register_template(self.actor, self.case.pk, 'Controlled weekly layout', DEFINITION,
+                              self.template_owner.pk, rev(self.case))
+        url = reverse('design_project_tab', args=[self.case.pk, 'templates'])
+        response = self.client.get(url)
+        self.assertContains(response, 'Controlled weekly layout · Version 2')
+        self.assertContains(response, 'Controlled weekly layout · Version 1')
+        self.assertContains(response, reverse('template_current', args=[self.case.pk]))
+        self.assertEqual(self.client.get(url, {'templates': 'invalid'}).status_code, 400)
+        Grant.objects.filter(case=self.case, user=self.actor, action='document.read').update(active=False)
+        self.assertEqual(self.client.get(url).status_code, 403)
 
     @patch.dict(os.environ, {'OPENROUTER_MODEL': 'synthetic', 'OPENROUTER_API_KEY': 'synthetic'})
     def test_assistant_queues_each_role_through_the_real_worker(self):

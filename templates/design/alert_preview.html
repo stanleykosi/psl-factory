@@ -1,0 +1,3 @@
+{% for item in rows %}
+<a class="alert-preview-row" href="{{ item.url }}"><strong>{{ item.label }}</strong><span>{{ item.subject }}{% if item.detail %} · {{ item.detail }}{% endif %}</span></a>
+{% empty %}<p>You have no unread alerts here.</p>{% endfor %}

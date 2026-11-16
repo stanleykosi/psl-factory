@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}{{ case|workspace_name }} · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'workspace_overview' %}?kind=project">← Projects</a><h1>{{ case|workspace_name }}</h1></div></header>
+{% include 'design/project_tabs.html' %}
+{% for panel in panels %}<section class="card">
+  <div class="panel-heading"><h2>{{ panel.title }}</h2><a class="button secondary" href="{{ panel.url }}">{{ panel.action }} →</a></div>
+  {% for item in panel.items %}<div class="floor-line"><div><strong>{{ item.title }}</strong>{% if item.detail %}<p>{{ item.detail }}</p>{% endif %}</div>
+  <div><strong>{{ item.state }}</strong>{% if item.show_due %}{% if item.due %}<p>Due {{ item.due|date:'d M Y, H:i T' }}</p>{% else %}<p>Due date unavailable</p>{% endif %}{% elif item.at %}<time datetime="{{ item.at|date:'c' }}">{{ item.at|date:'d M Y, H:i T' }}</time>{% endif %}</div></div>
+  {% empty %}<p>No current records to show.</p>{% endfor %}
+</section>{% endfor %}
+{% endblock %}

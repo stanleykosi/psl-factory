@@ -16,6 +16,16 @@
     <a href="{{ choose_work_url }}" data-start-work="choose" aria-label="More ways to start">▾</a>
   </div>
   {% endif %}
+  <details class="factory-alert-menu" data-alert-preview="{% url 'design_alert_preview' %}">
+    <summary aria-label="Alerts">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 9h18c0-1-3-2-3-9M10 21h4"/></svg>
+    </summary>
+    <div class="factory-alert-panel">
+      <h2>Unread alerts</h2>
+      <div data-alert-rows aria-live="polite"></div>
+      <a href="{% url 'design_alerts' %}">View all alerts</a>
+    </div>
+  </details>
   <details class="factory-menu">
     <summary>Menu</summary>
     <div>

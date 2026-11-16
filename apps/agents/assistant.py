@@ -44,7 +44,7 @@ def work_intent(actor, turn_id, definition, case_id=None, *, lock=False):
     if case_id is not None and str(turn.conversation.case_id) != str(case_id):
         raise ValidationError('This suggestion belongs to a different project.')
     if not turn.started_work_id and not turn.transferred_to_id:
-        sources, permitted = tool_context(turn.conversation)
+        sources, permitted = message_context(turn.conversation, turn.focus)
         if digest(sources) != turn.context_hash or definition not in permitted:
             raise ValidationError('The suggestion needs a fresh answer before you start work.')
     return turn
@@ -53,20 +53,6 @@ def work_intent(actor, turn_id, definition, case_id=None, *, lock=False):
 def cited_record(turn, field):
     ids = {item['record']['pk'] for item in turn.sources if item.get('record', {}).get('field') == field}
     return ids.pop() if len(ids) == 1 else None
-
-
-@transaction.atomic
-def start_from_answer(actor, turn_id, case_id, definition, field, record_id, start_native):
-    turn = work_intent(actor, turn_id, definition, case_id, lock=True)
-    cited = cited_record(turn, field)
-    if cited is not None and record_id != cited:
-        raise ValidationError('To use a different source, start the work from the line chooser.')
-    if turn.started_work_id:
-        return turn.started_work
-    work = start_native()
-    turn.started_work = work
-    turn.save(update_fields=['started_work'])
-    return work
 
 
 @transaction.atomic
@@ -166,21 +152,39 @@ def tool_context(conversation):
     return sources, next_work
 
 
+def source_focus(sources, focus):
+    if not focus:
+        return sources
+    selected = next((source for source in sources if digest(source) == focus), None)
+    if selected is None:
+        raise ValidationError('The selected record changed or is no longer available.')
+    return [selected]
+
+
+def message_context(conversation, focus):
+    sources, next_work = tool_context(conversation)
+    return source_focus(sources, focus), next_work
+
+
 @transaction.atomic
-def reserve(actor, conversation_id, operation_key, question):
+def reserve(actor, conversation_id, operation_key, question, focus=''):
     conversation = AssistantConversation.objects.select_for_update(of=('self',)).select_related('case').get(pk=conversation_id)
     check(actor, conversation)
     previous = AssistantTurn.objects.filter(pk=operation_key).first()
     if previous is not None:
-        if previous.conversation_id != conversation.pk or previous.question != question:
+        if previous.conversation_id != conversation.pk or previous.question != question or previous.focus != focus:
             raise ValidationError('This request key has already been used. Reload and try again.')
         return previous
     if conversation.turns.filter(status__in=['queued', 'running']).exists():
         raise ValidationError('Wait for the current answer before sending another question.')
     if not os.getenv('OPENROUTER_MODEL'):
         raise ValidationError('The department assistant needs a configured model.')
-    turn, _ = AssistantTurn.objects.get_or_create(pk=operation_key, defaults={'conversation': conversation, 'question': question})
-    if turn.conversation_id != conversation.pk or turn.question != question:
+    if focus:
+        message_context(conversation, focus)
+    turn, _ = AssistantTurn.objects.get_or_create(pk=operation_key, defaults={
+        'conversation': conversation, 'question': question, 'focus': focus,
+    })
+    if turn.conversation_id != conversation.pk or turn.question != question or turn.focus != focus:
         raise ValidationError('This request key has already been used. Reload and try again.')
     conversation.save(update_fields=['updated_at'])
     return turn
@@ -200,7 +204,7 @@ def worker_once():
         turn.save(update_fields=['status', 'started_at'])
     conversation = turn.conversation
     try:
-        sources, next_work = tool_context(conversation)
+        sources, next_work = message_context(conversation, turn.focus)
         context_hash = digest(sources)
         handles = {f'S{index}': source for index, source in enumerate(sources, start=1)}
         context = [{'handle': handle, 'label': source['label'], 'fact': source['fact']} for handle, source in handles.items()]
@@ -216,7 +220,7 @@ def worker_once():
                 or raw['next_work'] not in ['', *next_work]):
             raise ValidationError('The assistant reply could not be verified.')
         cited = [handles[handle] for handle in dict.fromkeys(raw['citations'])]
-        current, current_next = tool_context(conversation)
+        current, current_next = message_context(conversation, turn.focus)
         if current != sources or (raw['next_work'] and raw['next_work'] not in current_next):
             raise ValidationError('Source access or records changed while the assistant was working.')
         # Without a source, show only a fixed insufficient-evidence message.

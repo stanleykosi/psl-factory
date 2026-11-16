@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError,PermissionDenied
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import render,redirect,get_object_or_404
 from django.utils import timezone
@@ -572,6 +573,7 @@ def assistant_origin(request, form, envelope):
     if request.method != 'GET' or not turn_id:
         return None
     from apps.agents.assistant import cited_record, work_intent
+    from apps.agents.assistant_drafts import latest
 
     try:
         turn = work_intent(request.user, turn_id, envelope, request.GET.get('case'))
@@ -581,6 +583,10 @@ def assistant_origin(request, form, envelope):
     if turn.started_work_id:
         return redirect('factory_detail', work_id=turn.started_work_id)
     form.initial.update({'assistant_turn': turn.pk, 'key': str(turn.pk)})
+    draft = latest(turn)
+    if draft:
+        form.initial.update(draft.payload)
+        form.initial['draft_version'] = draft.number
     field = {'planning/v1': 'packet', 'pmo-finance/v1': 'handoff'}[envelope]
     pk = cited_record(turn, field)
     if pk is not None and form.fields[field].queryset.filter(pk=pk).exists():
@@ -588,20 +594,27 @@ def assistant_origin(request, form, envelope):
     return None
 
 
-def start_with_origin(actor, form_values, envelope, start_native):
-    if not form_values['assistant_turn']:
-        return start_native()
-    from apps.agents.assistant import start_from_answer
+@transaction.atomic
+def submit_start(request, form_values, envelope, start_native):
+    from apps.agents import assistant_drafts
+    from .factory_progress_views import started
 
-    field = {'planning/v1': 'packet', 'pmo-finance/v1': 'handoff'}[envelope]
-    record = form_values[field]
-    return start_from_answer(actor, form_values['assistant_turn'], form_values['case'].pk, envelope,
-                             field, record.pk if record else None, start_native)
+    if request.POST.get('action') == 'save_draft':
+        assistant_drafts.save(request.user, envelope, form_values)
+        return redirect(reverse('factory_create') + '?' + urlencode({
+            'definition': envelope, 'case': form_values['case'].pk, 'assistant_turn': form_values['assistant_turn'],
+        }))
+    if form_values['assistant_turn']:
+        work = assistant_drafts.start(request.user, envelope, form_values, start_native)
+    else:
+        work = start_native()
+    return started(request, work, form_values['background'])
 
 
 class StartForm(forms.Form):
     key=forms.CharField(widget=forms.HiddenInput,max_length=100)
     assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
+    draft_version=forms.IntegerField(required=False,min_value=1,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
     mode=forms.ChoiceField(required=False,initial='completion',choices=[('completion','PMO completion'),('existing-preparation/v1','Existing Finance preparation')])
     from apps.finance.models import BillingPreparation, Invoice
@@ -611,6 +624,7 @@ class StartForm(forms.Form):
     coverage=forms.ModelChoiceField(queryset=BillingCoverage.objects.none(),required=False,label='Contract and service (PMO completion only)')
     handoff=forms.ModelChoiceField(queryset=Handoff.objects.none(),required=False,label='PMO completion received by Finance')
     reference=forms.CharField(max_length=100,label='Invoice reference')
+    background=forms.BooleanField(required=False,initial=True,label='Continue in background after starting')
     revision=forms.IntegerField(min_value=1,widget=forms.HiddenInput)
     def __init__(self,actor,data=None,case_id=None):
         super().__init__(data=data,initial={'key':uuid4().hex})
@@ -636,6 +650,10 @@ class StartForm(forms.Form):
 
     def clean(self):
         values=super().clean()
+        from adapters.billing_usage import KEY
+
+        if values.get('reference') and not KEY.fullmatch(values['reference']):
+            self.add_error('reference', 'Use a valid invoice reference.')
         values['mode']=values.get('mode') or 'completion'
         fields=['preparation'] if values.get('mode')=='existing-preparation/v1' else ['coverage','handoff']
         for field in fields:
@@ -729,8 +747,7 @@ def create(request):
                     return start_preparation(request.user,v['case'].pk,v['key'],v['preparation'].pk,v['reference'],v['due_date'],v['revision'],v['invoice'].pk if v['invoice'] else None)
                 return d.start(request.user,v['case'].pk,v['key'],v['coverage'].pk,v['handoff'].pk,v['reference'],v['revision'])
 
-            work = start_with_origin(request.user, v, envelope, start_native)
-            return redirect('factory_detail',work_id=work.pk)
+            return submit_start(request, v, envelope, start_native)
         except ValidationError as exc:form.add_error(None,str(exc))
     response = assistant_origin(request, form, envelope)
     if response is not None:
@@ -1187,9 +1204,11 @@ class PlanningStartForm(forms.Form):
     definition=forms.CharField(initial='planning/v1',widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
+    draft_version=forms.IntegerField(required=False,min_value=1,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
     packet=forms.ModelChoiceField(queryset=Evidence.objects.none(),label='Current planning packet')
     reference=forms.CharField(max_length=100,label='Work reference')
+    background=forms.BooleanField(required=False,initial=True,label='Continue in background after starting')
     revision=forms.IntegerField(min_value=1,widget=forms.HiddenInput)
     def __init__(self,actor,data=None,case_id=None):
         super().__init__(data=data,initial={'key':uuid4().hex})
@@ -1211,8 +1230,7 @@ def create_planning(request):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            work = start_with_origin(request.user, v, 'planning/v1', lambda: start(request.user,v['case'].pk,v['key'],v['packet'].pk,v['reference'],v['revision']))
-            return redirect('factory_detail',work_id=work.pk)
+            return submit_start(request, v, 'planning/v1', lambda: start(request.user,v['case'].pk,v['key'],v['packet'].pk,v['reference'],v['revision']))
         except ValidationError as exc:form.add_error(None,str(exc))
     response = assistant_origin(request, form, 'planning/v1')
     if response is not None:

@@ -2,4 +2,4 @@
 <a class="back-link" href="{% url 'home' %}">← Work queue</a><h1>Start planning work</h1>
 <p>Use a recorded planning packet. Agents investigate dependencies, open department requests and prepare a delivery handoff after the required source decisions.</p>
 <section class="card"><h2>Select project</h2>{% for case in available_cases %}<p><a href="?definition=planning/v1&amp;case={{ case.pk }}">{{ case|workspace_name }}</a></p>{% empty %}<p>No permitted project is available.</p>{% endfor %}</section>
-<section class="card"><form method="post">{% csrf_token %}{{ form.as_p }}<button>Start planning work</button></form></section>{% endblock %}
+<section class="card">{% if form.assistant_turn.value %}<h2>Edit planning draft</h2>{% endif %}<form method="post">{% csrf_token %}{{ form.as_p }}{% include 'factory/start_actions.html' with start_label='Start planning work' %}</form></section>{% endblock %}

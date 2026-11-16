@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Templates · {{ case|workspace_name }}{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'design_project' case.pk %}">← Project journey</a><h1>Templates</h1><p class="lede">{{ case|workspace_name }}</p></div>
+  <a class="button secondary" href="{% url 'template_current' case.pk %}">Review current versions</a></header>
+{% include 'design/project_tabs.html' %}
+<section class="card"><h2>Recorded versions</h2>
+{% if error %}<p role="alert">{{ error }}</p><a href="{% url 'design_project_tab' case.pk 'templates' %}">First page</a>
+{% else %}<ul>{% for version in versions %}<li>{{ version.name }} · Version {{ version.version }}</li>{% empty %}<li>No versions are available on this page.</li>{% endfor %}</ul>
+{% if next_url %}<a href="{{ next_url }}">Earlier versions</a>{% endif %}{% endif %}
+<a href="{% url 'documents' case.pk %}">Open controlled documents</a>
+</section>
+{% endblock %}

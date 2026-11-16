@@ -1,0 +1,5 @@
+{% if form.assistant_turn.value %}
+  {% if form.draft_version.value %}<p role="status">Draft version {{ form.draft_version.value }}. Save any changes before starting.</p>{% endif %}
+  <button type="submit" name="action" value="save_draft" class="button secondary">Save draft</button>
+{% endif %}
+<button type="submit" name="action" value="start" class="button primary">{{ start_label }}</button>

@@ -118,6 +118,9 @@ def receipt_only_recovery(publication):
     if publication.factory_work_id and publication.factory_work.definition in {
         'pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','pmo-minutes/v1'}:
         return True
+    if publication.factory_work_id:
+        from apps.workflows.models import FactoryProgress
+        if FactoryProgress.objects.filter(work_id=publication.factory_work_id).exists():return True
     # Only the selected-facts weekly client mode opts unbound native reports in.
     # Mutable period-root fields must not erase an uncertain original's protection.
     from apps.pmo.models import MinutesReportBinding

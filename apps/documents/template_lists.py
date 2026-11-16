@@ -77,6 +77,13 @@ def read_workbench(request, case):
         return _read_workbench(request, case, focus, full_review=False)
 
 
+def template_page(request, case, *, budget=None):
+    templates = Template.objects.filter(case=case)
+    ids, next_url = _window(templates, request, case, 'templates', LIST_PAGE)
+    visible = visible_templates(request.user, case, candidate_ids=ids, budget=budget if budget is not None else ReadBudget())
+    return list(visible.only('name', 'version').order_by('-pk')), next_url
+
+
 def _read_workbench(request, case, focus, *, full_review):
     actor = request.user
     budget = ReadBudget()
@@ -117,11 +124,7 @@ def _read_workbench(request, case, focus, *, full_review):
         'case_id', 'kind', 'version', 'source',
     ).order_by('-pk'))
 
-    templates = Template.objects.filter(case=case)
-    template_ids, more_templates = _window(templates, request, case, 'templates', LIST_PAGE)
-    shown_templates = list(visible_templates(actor, case, candidate_ids=template_ids, budget=budget).only(
-        'name', 'version',
-    ).order_by('-pk'))
+    shown_templates, more_templates = template_page(request, case, budget=budget)
 
     rows = []
     for scope in shown_scopes:

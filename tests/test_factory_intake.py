@@ -1,10 +1,11 @@
 from django.test import TestCase
 from django.urls import reverse
 from apps.core.models import Case
+from apps.core.services import add_evidence
 from apps.identity.models import Grant
 from apps.workflows.models import FactoryWork
 from apps.workflows.factory_views import intake_options
-from tests.helpers import setup_case
+from tests.helpers import rev, setup_case
 
 
 # Independently enumerated accepted intake paths, not derived from INTAKES.
@@ -20,6 +21,25 @@ EXPECTED_DEFINITIONS={
 
 
 class FactoryIntakeTests(TestCase):
+    def test_engagement_start_preserves_capture_while_background_requires_execution(self):
+        actor, case = setup_case(username='engagement-background')
+        self.client.force_login(actor)
+        source = add_evidence(actor, case.pk, 'engagement_source', 'Synthetic client request', 'synthetic:email')
+        url = reverse('factory_create') + f'?definition=engagement/v1&case={case.pk}'
+        self.assertContains(self.client.get(url), 'Continue in background after starting')
+        data = {'definition': 'engagement/v1', 'case': case.pk, 'route': 'B', 'key': 'DIRECT-ENGAGEMENT',
+                'reference': 'SYNTHETIC-ENGAGEMENT', 'evidence': source.pk, 'background': 'on'}
+        Grant.objects.filter(user=actor, case=case, action='factory.execute').update(active=False)
+        result = self.client.post(url, dict(data, revision=rev(case)))
+        self.assertEqual(result.status_code, 302)
+        work = FactoryWork.objects.get(case=case)
+        self.assertFalse(hasattr(work, 'background_progress'))
+        Grant.objects.filter(user=actor, case=case, action='factory.execute').update(active=True)
+        self.assertRedirects(self.client.post(url, dict(data, revision=rev(case))), result.url, fetch_redirect_response=False)
+        work.refresh_from_db()
+        self.assertEqual(work.background_progress.status, 'queued')
+        self.assertEqual(FactoryWork.objects.filter(case=case).count(), 1)
+
     def test_current_same_project_grants_drive_discovery_and_no_cross_project_union(self):
         actor,case=setup_case(username='synthetic-intake');self.client.force_login(actor)
         self.assertEqual({row['definition'] for row in intake_options(actor)},EXPECTED_DEFINITIONS-{'pmo-weekly-report/v1','pmo-leadership-report/v1'})

@@ -60,22 +60,29 @@
     });
   }
 
-  async function load(url) {
+  async function load(url, submission) {
     request?.abort();
     const control = new AbortController();
     request = control;
-    back.hidden = true;
     body.setAttribute('aria-busy', 'true');
-    status('Loading…');
+    if (!submission) {
+      back.hidden = true;
+      status('Loading…');
+    }
     try {
-      const response = await fetch(url, { cache: 'no-store', signal: control.signal });
+      const response = await fetch(url, {
+        cache: 'no-store', signal: control.signal,
+        ...(submission && { method: 'POST', body: submission }),
+      });
       const current = new URL(response.url);
       if (!dialog.open || control.signal.aborted) return;
       if (response.redirected && !intakePage(current)) {
         if (current.origin === location.origin) location.assign(current);
         return;
       }
-      if (!response.ok || !intakePage(current)) throw new Error('Intake unavailable');
+      if ((!response.ok && response.status !== 422 && response.status !== 409) || !intakePage(current)) {
+        throw new Error('Intake unavailable');
+      }
       const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
       if (!dialog.open || control.signal.aborted) return;
       const panel = doc.querySelector('main[data-start-work-page]');
@@ -105,7 +112,17 @@
         heading.focus();
       }
     } catch (error) {
-      if (!control.signal.aborted) status('The form could not be loaded.', url);
+      if (control.signal.aborted) return;
+      if (!submission) {
+        status('The form could not be loaded.', url);
+        return;
+      }
+      body.querySelector('[data-start-uncertain]')?.remove();
+      const warning = document.createElement('p');
+      warning.dataset.startUncertain = '';
+      warning.setAttribute('role', 'alert');
+      warning.textContent = 'The request outcome could not be confirmed. Check My work, or submit this same form again to check the original request.';
+      body.prepend(warning);
     } finally {
       if (request === control) body.removeAttribute('aria-busy');
     }
@@ -130,8 +147,12 @@
   dialog.addEventListener('submit', (event) => {
     const form = event.target;
     const action = new URL(form.action);
-    if (form.method !== 'get' || !intakePage(action)) return;
+    if (!intakePage(action)) return;
     event.preventDefault();
+    if (form.method === 'post') {
+      if (!body.hasAttribute('aria-busy')) void load(action, new FormData(form, event.submitter));
+      return;
+    }
     const url = new URL(action.pathname, action.origin);
     url.search = new URLSearchParams(new FormData(form, event.submitter));
     void load(carryContext(url, action));

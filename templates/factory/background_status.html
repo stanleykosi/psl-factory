@@ -1,0 +1,18 @@
+{% if job or can_control and can_continue %}
+<section class="card">
+  <h2>Background work</h2>
+  {% if job.status == 'running' %}<p>A worker is checking the next step.</p>
+  {% elif job.status == 'queued' %}<p>The next step is queued.</p>
+  {% elif job.status == 'waiting' %}<p>Waiting for a decision, evidence or a receipt. The factory checks for changes.</p>
+  {% elif job.status == 'held' %}<p>Background work needs attention. Check the work item’s current status and recovery options.</p>
+  {% elif job.status == 'paused' %}<p>Background work is paused.</p>
+  {% elif job.status == 'finished' %}<p>The background request ended. The work item shows its recorded outcome.</p>{% endif %}
+  {% if can_control %}
+  <form action="{% url 'factory_background' work.pk %}" method="post">{% csrf_token %}
+    <input type="hidden" name="revision" value="{{ work.revision }}">
+    {% if active %}<button type="submit" name="action" value="pause">Pause after the current step</button>
+    {% elif can_continue %}<button type="submit" name="action" value="continue">Continue in background</button>{% endif %}
+  </form>
+  {% endif %}
+</section>
+{% endif %}

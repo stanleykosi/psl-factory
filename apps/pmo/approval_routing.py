@@ -67,13 +67,15 @@ def reserve(a,case_id,request_id,purpose='request',expected=None,factory_work_id
  event(a,c,'approval.route_reserved',job=j.pk,approval_granted=False);bump(c);return j
 
 @transaction.atomic
-def claim(case_id=None,job_id=None):
+def claim(case_id=None,job_id=None,*,include_previous=False):
  now=timezone.now();query=ApprovalRouteJob.objects.select_for_update(skip_locked=True).filter(Q(status__in=['pending','unknown'])|Q(status='leased',lease_until__lte=now))
  if case_id is not None:query=query.filter(request__case_id=case_id)
  if job_id is not None:query=query.filter(pk=job_id)
  j=query.order_by('pk').first()
  if not j:return None
- j.status='leased';j.fence+=1;j.attempts+=1;j.lease_until=now+timedelta(seconds=j.intent['lease_seconds']);j.save(update_fields=['status','fence','attempts','lease_until']);return j.pk,j.fence
+ previous=j.status
+ j.status='leased';j.fence+=1;j.attempts+=1;j.lease_until=now+timedelta(seconds=j.intent['lease_seconds']);j.save(update_fields=['status','fence','attempts','lease_until'])
+ return (j.pk,j.fence,previous) if include_previous else (j.pk,j.fence)
 
 def check(j,fence):
  if j.status!='leased' or j.fence!=fence or j.lease_until<=timezone.now():raise ValidationError('Expired prerequisite routing worker fence')
@@ -95,9 +97,13 @@ def deliver_local(pk,fence):
 
 def run_once(adapter=None,case_id=None,job_id=None,lookup_only=False):
  if type(lookup_only) is not bool:raise ValidationError('Choose an explicit receipt-only routing mode')
- adapter=adapter or InternalApprovalRoutingAdapter();lease=claim(case_id,job_id)
+ adapter=adapter or InternalApprovalRoutingAdapter();lease=claim(case_id,job_id,include_previous=True)
  if not lease:return False
- pk,fence=lease;j=ApprovalRouteJob.objects.select_related('request__case').get(pk=pk)
+ pk,fence,previous=lease;j=ApprovalRouteJob.objects.select_related('request__case').get(pk=pk)
+ if previous in ['unknown','leased'] and not lookup_only:
+  from apps.workflows.models import FactoryProgress
+  work_id=j.intent.get('factory_execution',{}).get('work')
+  lookup_only=bool(work_id and FactoryProgress.objects.filter(work_id=work_id,work__case_id=j.request.case_id).exists())
  if type(adapter) is not InternalApprovalRoutingAdapter and not j.request.case.synthetic:finish(pk,fence,'held','Fault adapters restricted to synthetic cases');return True
  try:
   if adapter.lookup(j):finish(pk,fence,'confirmed');return True

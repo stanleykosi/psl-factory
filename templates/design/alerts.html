@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Alerts · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Alerts</h1><p class="lede">Current assignments and recent updates you can access.</p></div><a class="button secondary" href="{% url 'design_alert_preferences' %}">How you’re alerted</a></header>
+<form method="get" class="alerts-toolbar" aria-label="Filter alerts">
+  <input name="q" type="search" value="{{ query }}" placeholder="Find an alert" maxlength="100" aria-label="Find an alert">
+  <select name="group" aria-label="Alert type"><option value="">All alerts</option><option value="action"{% if group == 'action' %} selected{% endif %}>Needs you</option><option value="update"{% if group == 'update' %} selected{% endif %}>For your information</option></select>
+  <label><input type="checkbox" name="unread" value="1"{% if unread %} checked{% endif %}> Unread only</label>
+  <button class="button secondary" type="submit">Apply filters</button>
+</form>
+<section class="card" aria-label="Alert results">
+  {% for item in rows %}<article class="alert-row">
+    <a href="{{ item.url }}"><strong>{{ item.label }}</strong><span>{{ item.subject }}{% if item.detail %} · {{ item.detail }}{% endif %}</span></a>
+    {% if item.unread %}<form method="post" action="{% url 'design_alert_read' %}">{% csrf_token %}<input type="hidden" name="key" value="{{ item.key }}"><button type="submit" class="button secondary">Mark read</button></form>{% endif %}
+  </article>{% empty %}<p>No alerts match these filters.</p>{% endfor %}
+</section>
+{% endblock %}

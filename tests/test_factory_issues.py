@@ -58,6 +58,14 @@ class FactoryIssueTests(TestCase):
         self.assertEqual(self.work.budget_used,spent);self.advance();self.respond();self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
     def test_staff_intake_detail_get_preservation_and_native_owner_post(self):
         self.client.force_login(self.a)
+        start_url = '/factory/new/?definition=pmo-issues/v1&case=' + str(self.c.pk)
+        self.assertContains(self.client.get(start_url), 'Continue in background after starting')
+        started = self.client.post(start_url, {
+            'definition': 'pmo-issues/v1', 'key': self.work.key, 'case': self.c.pk,
+            'issue': self.state.issue_id, 'revision': rev(self.c), 'background': 'on',
+        })
+        self.assertRedirects(started, f'/work/{self.work.pk}/', fetch_redirect_response=False)
+        self.assertEqual(self.work.background_progress.status, 'queued')
         before=(rev(self.c),self.work.revision,FactoryAttempt.objects.count())
         r=self.client.get(f'/work/{self.work.pk}/');self.assertEqual(r.status_code,200);self.assertContains(r,'Native issue lifecycle')
         self.assertEqual(before,(rev(self.c),FactoryWork.objects.get(pk=self.work.pk).revision,FactoryAttempt.objects.count()))

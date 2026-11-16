@@ -10,8 +10,9 @@ from apps.core.models import Case
 from apps.core.workbench import granted
 from apps.pmo.models import Issue
 from . import factory,factory_issues as domain
+from .factory_progress_views import StartWithBackground, start_work
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=domain.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
@@ -40,7 +41,8 @@ def create(request):
         try:
             p=form.cleaned_data
             if p['definition']!=domain.DEFINITION:raise ValidationError('Select the issue investigation definition')
-            work=domain.start(request.user,p['case'].pk,p['key'],p['issue'].pk,p['revision']);return redirect('factory_detail',work.pk)
+            return start_work(request, lambda: domain.start(request.user, p['case'].pk, p['key'], p['issue'].pk, p['revision']),
+                              p['background'])
         except ValidationError as exc:form.add_error(None,domain.finding(exc))
     return render(request,'factory/issue_start.html',{'form':form,'case':form.selected})
 

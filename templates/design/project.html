@@ -2,6 +2,7 @@
 {% block title %}{{ case|workspace_name }} · PSL Factory{% endblock %}
 {% block content %}
 <header class="page-heading"><div><a class="back-link" href="{% url 'workspace_overview' %}?kind=project">← Projects</a><h1>{{ case|workspace_name }}</h1><p class="lede">Project journey</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Open project record</a></header>
+{% include 'design/project_tabs.html' %}
 <section class="card" aria-labelledby="recent-heading">
   <h2 id="recent-heading">Recent work</h2>
   {% for line in lines %}

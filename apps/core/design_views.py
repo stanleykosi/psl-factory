@@ -22,6 +22,7 @@ from apps.workflows.factory_definitions import DEFINITIONS
 from apps.workflows.factory_views import visible
 
 from .presentation import workspace_name
+from . import project_journey
 from .workbench import granted
 
 
@@ -123,10 +124,24 @@ def agents(request):
 @login_required
 @require_safe
 @never_cache
-def project(request, case_id):
+def project(request, case_id, tab='journey'):
     case = get_object_or_404(visible_cases(request.user), kind='project', pk=case_id)
     actions = {action for _, action in active_case_grants(request.user, [case.pk])}
+    navigation = project_journey.tabs(case, actions)
+    if tab == 'templates':
+        from apps.documents.template_catalog import show
+
+        return show(request, case, navigation)
+    if tab == 'month-end':
+        from apps.finance.month_end import show
+
+        return show(request, case, navigation)
+    if tab != 'journey':
+        sections = project_journey.sections(request.user, case, tab, actions)
+        return render(request, 'design/project_tab.html', {
+            'case': case, 'tab': tab, 'tabs': navigation, 'panels': sections,
+        })
     recent = discoverable_work(request.user).filter(case=case).order_by('-updated_at', '-pk')[:20]
     lines = [{'work_id': work.pk, 'name': DEFINITIONS[work.definition]['title'], 'updated': work.updated_at}
              for work in recent]
-    return render(request, 'design/project.html', {'case': case, 'actions': actions, 'lines': lines})
+    return render(request, 'design/project.html', {'case': case, 'actions': actions, 'lines': lines, 'tab': tab, 'tabs': navigation})

@@ -17,13 +17,13 @@
         {% if turn.sources %}<details><summary>Records checked</summary><ul>{% for source in turn.sources %}<li><a href="{{ source.url }}">{{ source.label }}</a> · {{ source.fact }}</li>{% endfor %}</ul></details>{% endif %}
       {% endif %}
       {% if turn.started_url %}<p><a href="{{ turn.started_url }}">Open the work item →</a></p>
-      {% elif turn.next_url %}<p><a href="{{ turn.next_url }}" class="button secondary">Continue in Start work →</a></p>{% endif %}
+      {% elif turn.next_url %}<p><a href="{{ turn.next_url }}" class="button secondary">Edit draft →</a></p>{% endif %}
       {% if turn.transfer_url %}<p><a href="{{ turn.transfer_url }}">Open the conversation with {{ turn.transfer_name }} →</a></p>
       {% elif turn.transfer_action %}<form action="{{ turn.transfer_action }}" method="post">{% csrf_token %}<button type="submit" class="button secondary">Ask {{ turn.transfer_name }} instead</button></form>{% endif %}
     </div>
   </article>
   {% empty %}<p>Ask about this project. {{ persona.0 }} will check the records you can access.</p>{% endfor %}
-  {% if waiting %}<p><a href="{% url 'assistant_thread' conversation.pk %}" data-assistant-wait>Check for an answer</a></p>
+  {% if waiting %}{{ form.errors }}<p><a href="{% url 'assistant_thread' conversation.pk %}" data-assistant-wait>Check for an answer</a></p>
     <script defer src="{% static 'assistant-progress.js' %}"></script>
   {% else %}<form method="post" class="assistant-compose">{% csrf_token %}{{ form.as_p }}<button class="button primary" type="submit">Send</button></form>{% endif %}
 </section>

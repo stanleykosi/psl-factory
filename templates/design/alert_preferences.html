@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Alert preferences · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'design_alerts' %}">← Alerts</a>
+<header class="page-heading"><div><h1>How you’re alerted</h1><p class="lede">Alerts are available in PSL Factory. Email and WhatsApp preferences can be saved while delivery setup is pending.</p></div></header>
+<section class="card onboarding-card"><form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary" type="submit">Save preferences</button></form></section>
+{% endblock %}

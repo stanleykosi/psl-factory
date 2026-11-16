@@ -36,10 +36,12 @@ class ConversationForm(forms.Form):
 
 class QuestionForm(forms.Form):
     question = forms.CharField(label='Your message', max_length=4000, widget=forms.Textarea(attrs={'rows': 3}))
+    focus = forms.ChoiceField(label='Focus on a record', required=False)
     key = forms.UUIDField(widget=forms.HiddenInput)
 
-    def __init__(self, data=None):
+    def __init__(self, sources, data=None):
         super().__init__(data, initial={'key': uuid4()})
+        self.fields['focus'].choices = [('', 'Recent records in this department'), *[(digest(s), s['label']) for s in sources]]
 
 
 @login_required
@@ -73,16 +75,17 @@ def start(request, persona):
 @never_cache
 def thread(request, conversation_id):
     conversation = get_object_or_404(owned_conversations(request.user), pk=conversation_id)
-    form = QuestionForm(request.POST if request.method == 'POST' else None)
+    sources, next_work = assistant.tool_context(conversation)
+    form = QuestionForm(sources, request.POST if request.method == 'POST' else None)
     if request.method == 'POST' and form.is_valid():
         try:
-            assistant.reserve(request.user, conversation.pk, form.cleaned_data['key'], form.cleaned_data['question'])
+            values = form.cleaned_data
+            assistant.reserve(request.user, conversation.pk, values['key'], values['question'], values['focus'])
             return redirect('assistant_thread', conversation_id=conversation.pk)
         except ValidationError as exc:
             form.add_error(None, exc)
     turns = list(reversed(conversation.turns.order_by('-created_at', '-pk')[:30]))
-    sources, next_work = assistant.tool_context(conversation) if turns else ([], [])
-    current_hash = digest(sources)
+    fingerprints = {'': digest(sources), **{digest(source): digest([source]) for source in sources}}
     started_ids = [turn.started_work_id for turn in turns if turn.started_work_id]
     visible_work = set()
     if started_ids:
@@ -90,7 +93,7 @@ def thread(request, conversation_id):
 
         visible_work = set(visible(request.user).filter(pk__in=started_ids).values_list('pk', flat=True))
     for turn in turns:
-        turn.stale = bool(turn.context_hash and turn.context_hash != current_hash)
+        turn.stale = bool(turn.context_hash and turn.context_hash != fingerprints.get(turn.focus))
         if turn.started_work_id in visible_work:
             turn.started_url = reverse('factory_detail', args=[turn.started_work_id])
         if turn.next_work.startswith('assistant:'):

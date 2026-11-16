@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Month-end · {{ case|workspace_name }}{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'design_project' case.pk %}">← Project journey</a><h1>Month-end</h1><p class="lede">{{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'finance_performance' case.pk %}">Review monthly records</a></header>
+{% include 'design/project_tabs.html' %}
+<form class="card" method="get">{{ form.as_p }}<button type="submit">Show month</button></form>
+{% if month %}
+  {% for period in periods %}
+  <section class="card"><h2>{{ period.entity }}</h2><p>{{ period.status }} · {{ period.currency }} · Recorded {{ period.at|date:'d M Y' }}</p>
+  {% if period.values %}<table><thead><tr><th scope="col">Measure</th><th scope="col">Recorded value</th><th scope="col">Unit</th></tr></thead><tbody>
+    {% for row in period.values %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.value|default_if_none:'Unknown' }}</td><td>{{ row.unit }}</td></tr>{% endfor %}
+  </tbody></table>{% endif %}</section>
+  {% empty %}<section class="card"><p>No reviewed figures are available for this workspace and month.</p></section>{% endfor %}
+  <p>Shows up to 12 current reporting records for this workspace. Billing, cash and forecasts have separate evidence.</p>
+{% endif %}
+{% endblock %}

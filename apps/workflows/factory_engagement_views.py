@@ -16,10 +16,11 @@ from apps.pmo import engagement
 from apps.policy.engagement_validators import ASSIGN,REGISTER
 from apps.policy.services import active_component,reference_values
 from . import factory_engagement as d
+from .factory_progress_views import StartWithBackground, start_work
 
 ACTIONS=['factory.start','engagement.read','engagement.capture']
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=d.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Existing project workspace')
@@ -53,8 +54,9 @@ def create(request):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            work=d.receive(request.user,v['case'].pk,v['key'],v['route'],v['evidence'].pk,v['reference'],v['revision'],v['rfp_disposition'].pk if v['rfp_disposition'] else None)
-            return redirect('factory_detail',work_id=work.pk)
+            return start_work(request, lambda: d.receive(request.user, v['case'].pk, v['key'], v['route'],
+                              v['evidence'].pk, v['reference'], v['revision'],
+                              v['rfp_disposition'].pk if v['rfp_disposition'] else None), v['background'])
         except ValidationError as exc:form.add_error(None,str(exc))
     response=render(request,'factory/engagement_start.html',{'form':form,'available_cases':granted(request.user,ACTIONS).filter(kind='project')})
     response['Cache-Control']='no-store';return response

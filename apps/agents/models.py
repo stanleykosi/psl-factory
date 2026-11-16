@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from apps.core.models import AppendOnly
 from .boundary_models import EvidenceProjection,EvidenceProjectionReview,EvidenceExtraction,EvidenceExtractionReceipt,EvidenceExtractionReview
-from .assistant_models import AssistantConversation, AssistantTurn
+from .assistant_models import AssistantConversation, AssistantDraftVersion, AssistantTurn
 
 class AgentRun(AppendOnly):
     case = models.ForeignKey('core.Case', on_delete=models.PROTECT)

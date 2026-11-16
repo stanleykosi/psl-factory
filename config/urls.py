@@ -138,4 +138,14 @@ urlpatterns += [path('overview/', design_views.overview, name='design_overview')
                 path('assistant/handoff/<uuid:turn_id>/<slug:persona>/', assistant_views.transfer, name='assistant_transfer'),
                 path('assistant/<uuid:conversation_id>/', assistant_views.thread, name='assistant_thread'),
                 path('getting-started/', design_views.getting_started, name='getting_started'),
-                path('projects/<uuid:case_id>/', design_views.project, name='design_project')]
+                path('projects/<uuid:case_id>/', design_views.project, name='design_project'),
+                path('projects/<uuid:case_id>/<slug:tab>/', design_views.project, name='design_project_tab')]
+
+from apps.workflows import factory_progress_views
+from apps.core import alerts_views
+
+urlpatterns += [path('work/<int:work_id>/background/', factory_progress_views.change, name='factory_background')]
+urlpatterns += [path('notifications/', alerts_views.index, name='design_alerts'),
+                path('notifications/preview/', alerts_views.preview, name='design_alert_preview'),
+                path('notifications/read/', alerts_views.mark_read, name='design_alert_read'),
+                path('settings/alerts/', alerts_views.preferences, name='design_alert_preferences')]

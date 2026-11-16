@@ -14,7 +14,7 @@ _LOCAL_DELIVER = _LOCAL_ADAPTER.deliver
 from . import invoices
 
 @transaction.atomic
-def claim(case_id=None,job_id=None,*,lookup_only=False):
+def claim(case_id=None,job_id=None,*,lookup_only=False,include_previous=False):
     if type(lookup_only) is not bool:raise ValidationError('Explicit receipt-only lookup flag required')
     now=timezone.now()
     query=InvoiceJob.objects.select_for_update(skip_locked=True).filter(Q(status__in=['pending','unknown'])|Q(status='leased',lease_until__lte=now))
@@ -23,8 +23,10 @@ def claim(case_id=None,job_id=None,*,lookup_only=False):
     if job_id is not None:query=query.filter(pk=job_id)
     job=query.order_by('pk').first()
     if not job:return None
+    previous=job.status
     job.status='leased';job.fence+=1;job.attempts+=1;job.lease_until=now+timedelta(seconds=job.intent['identity']['lease_seconds'])
-    job.save(update_fields=['status','fence','attempts','lease_until']);return job.pk,job.fence
+    job.save(update_fields=['status','fence','attempts','lease_until'])
+    return (job.pk,job.fence,previous) if include_previous else (job.pk,job.fence)
 
 def check(job,fence):
     if job.status!='leased' or job.fence!=fence or job.lease_until<=timezone.now():raise ValidationError('Expired invoice worker fence')
@@ -111,9 +113,13 @@ def run_once(adapter=None,case_id=None,job_id=None,*,lookup_only=False):
     # Pin canonical native callables; instance mutation during lookup cannot replace delivery.
     lookup=_LOCAL_LOOKUP.__get__(adapter) if local_adapter else adapter.lookup
     deliver=_LOCAL_DELIVER.__get__(adapter) if local_adapter else adapter.deliver
-    lease=claim(case_id,job_id,lookup_only=lookup_only)
+    lease=claim(case_id,job_id,lookup_only=lookup_only,include_previous=True)
     if not lease:return False
-    pk,fence=lease;job=InvoiceJob.objects.select_related('invoice__case').get(pk=pk)
+    pk,fence,previous=lease;job=InvoiceJob.objects.select_related('invoice__case').get(pk=pk)
+    if previous in ['unknown','leased'] and not lookup_only:
+        from apps.workflows.models import FactoryProgress
+        work_id=job.intent.get('factory_execution',{}).get('work') or invoices.legacy_factory_work_id(job)
+        lookup_only=bool(work_id and FactoryProgress.objects.filter(work_id=work_id,work__case_id=job.invoice.case_id).exists())
     if not local_adapter and not job.invoice.case.synthetic:
         finish(pk,fence,'held','Fault adapters are restricted to synthetic cases');return True
     try:

@@ -27,10 +27,12 @@ class FactoryRFPConsoleFlowTests(TestCase):
             'lessons':declared['lessons'],**declared['sources'],
             'requirements-TOTAL_FORMS':'1','requirements-INITIAL_FORMS':'0','requirements-MIN_NUM_FORMS':'0','requirements-MAX_NUM_FORMS':'100',
             **{'requirements-0-'+key:value for key,value in declared['matrix'][0].items()}}
-        started=self.client.post(create_url,intake)
+        self.assertContains(self.client.get(create_url), 'Continue in background after starting')
+        started=self.client.post(create_url,dict(intake, background='on'))
         self.assertEqual(started.status_code,302,getattr(started,'context',None))
         work=FactoryWork.objects.get(case=case,key='RFP-CONSOLE-1')
         self.assertEqual(started.url,reverse('factory_detail',args=[work.pk]))
+        self.assertEqual(work.background_progress.status, 'queued')
         self.assertEqual(factory_rfp.inputs(work)['matrix'],declared['matrix'])
         self.assertEqual(FactoryWork.objects.filter(case=case).count(),1)
         starter=work.actor_id;head=work.source_head_id
