@@ -24,7 +24,7 @@
 /* a sub-page's mono note at the right of the phone bar ("RULES" on SCR-13-mobile-finance-rules); auto margin keeps it at the right edge when the SAMPLE DATA tag follows */
 .shell-phonenote { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-small-size); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-left: var(--space-3); }
 /* the note as a button ("3 earlier"): a 44px target, drawn as the plain mono note */
-.shell-phonenote--action { background: none; border: none; color: inherit; min-height: var(--control-md); padding: 0 0 0 var(--space-3); cursor: pointer; }
+.shell-phonenote--action { background: none; border: none; color: inherit; min-height: var(--control-md); padding: 0 0 0 var(--space-3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 /* the back link stays on one line beside a note */
 .psl-phonebar a[aria-label^="Back to"] { white-space: nowrap; flex: none; }
 

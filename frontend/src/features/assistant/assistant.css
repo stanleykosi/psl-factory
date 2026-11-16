@@ -88,6 +88,8 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
   .as__composer { margin: 0; max-width: none; padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom: 0; z-index: var(--z-bar); }
   .as-tool { height: var(--control-md); padding: 0 var(--space-10px); font-size: var(--text-body-size); }
   .as-row { min-height: var(--control-md); }
+  /* the Open footer docks like the composer it replaces */
+  .as__open { margin-top: auto; background: var(--surface); border-top: var(--rule-strong) solid var(--ink); position: sticky; bottom: 0; z-index: var(--z-bar); }
 }
 
 .as__open { padding: var(--space-3) var(--space-4) var(--space-18px); }

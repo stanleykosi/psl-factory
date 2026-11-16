@@ -233,5 +233,8 @@ test('phone: the draft button is never hidden under the docked composer when it 
   const footer = page.getByRole('link', { name: 'Open INV-0415' });
   await expect(footer).toHaveAttribute('href', '/work/W-1401');
   expect((await footer.boundingBox())!.height).toBeGreaterThanOrEqual(50);
+  // docked like the composer it replaces: its footer sits at the bottom of the viewport
+  const dock = (await page.locator('.as__open').boundingBox())!;
+  expect(dock.y + dock.height).toBeGreaterThan(844 - 4);
   await expect(page.getByRole('textbox')).toHaveCount(0);
 });
