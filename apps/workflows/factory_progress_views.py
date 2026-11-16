@@ -13,12 +13,16 @@ class StartWithBackground(forms.Form):
     background = forms.BooleanField(required=False, initial=True, label='Continue in background after starting')
 
 
-def started(request, work, background):
+def enroll(request, work, background):
     if background:
         try:
             set_progress(request.user, work.pk, work.revision, True, initial=True)
         except (ValidationError, PermissionDenied):
             messages.info(request, 'Work was recorded. Check its current owner or recovery step before continuing in background.')
+
+
+def started(request, work, background):
+    enroll(request, work, background)
     return redirect('factory_detail', work_id=work.pk)
 
 

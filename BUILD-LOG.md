@@ -4,6 +4,8 @@
 
 16 November 2026. Added in-drawer Start Work validation, protected uncertain invoice, department routes and publications from a second send during automatic recovery, and added background choice to engagement, bid response and issue intake. The alert bell now fetches the signed-in person's current unread preview on demand.
 
+16 November 2026. Extended background enrollment from the initial five forms to the 26 primary Start Work lines. Each handler passes the original native work result through the same authorised enrollment service. It preserves typed validation and the original start transaction.
+
 16 November 2026. Mapped the 59 approved screens, integrated the shared design and the first native views, and set up a separate Railway acceptance environment. Integrated sign-in and onboarding with normal Django sessions and current workspace grants. The first Railway build migrated a clean database and served health and sign-in. See BUILD-TESTS.md for checks and remaining acceptance evidence.
 
 16 November 2026. Connected the Start Work chooser to exact native line forms and added saved department conversations, handoff and work-origin tracking. A synthetic Railway operator started Planning through the native intake and repeated the submission against the same work record. Existing file-agent review remains available from the Assistant.

@@ -11,6 +11,7 @@ from apps.documents.models import Template
 from apps.finance.models import ForecastScenario
 from apps.finance.forecast_forms import commands
 from . import factory, factory_forecast as service
+from .factory_progress_views import StartWithBackground, start_work
 from apps.finance.forecast_workbook import source_ids as workbook_source_ids
 from .factory_forecast_sources import PROTOCOL
 
@@ -33,7 +34,7 @@ class InputsForm(forms.Form):
         return {'protocol':PROTOCOL,'scenario_id':d['scenario_id'].pk,'as_of':d['as_of'].isoformat(),'months':d['months'],'source_ids':sorted(e.pk for e in d['source_ids']),'template_id':d['template_id'].pk if d['template_id'] else None,'audience':d['audience']}
 
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=service.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Engagement')
@@ -59,8 +60,8 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=service.DEFINITION:raise ValidationError('Choose the registered forecast definition')
-            w=service.start(request.user,d['case'].pk,d['key'],inputs.selection(),d['reference'],d['revision'])
-            return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: service.start(request.user, d['case'].pk, d['key'],
+                              inputs.selection(), d['reference'], d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,service.finding(exc))
     return render(request,'factory/forecast_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 

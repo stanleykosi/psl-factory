@@ -10,6 +10,7 @@ from apps.documents.models import Template
 from apps.pmo.closure_views import SelectionForm
 from .factory_handover_views import StartForm as DossierStartForm
 from . import factory,factory_closure as closure
+from .factory_progress_views import start_work
 
 
 class InputsForm(SelectionForm):
@@ -47,8 +48,8 @@ def create(request):
             try:
                 v=form.cleaned_data
                 if v['definition']!=closure.DEFINITION:raise ValidationError('Choose registered closure work')
-                w=closure.start(request.user,v['case'].pk,v['key'],v['dossier'].pk,inputs.inputs(),v['reference'],v['revision'])
-                return redirect('factory_detail',w.pk)
+                return start_work(request, lambda: closure.start(request.user, v['case'].pk, v['key'], v['dossier'].pk,
+                                  inputs.inputs(), v['reference'], v['revision']), v['background'])
             except ValidationError as exc:form.add_error(None,closure.finding(exc))
     return render(request,'factory/closure_start.html',{'case':form.selected,'form':form,'inputs_form':inputs})
 

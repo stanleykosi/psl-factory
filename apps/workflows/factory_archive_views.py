@@ -10,6 +10,7 @@ from apps.core.presentation import workspace_name
 from apps.core.workbench import granted
 from apps.pmo.models import DeliveryDossier
 from . import factory,factory_archive as archive
+from .factory_progress_views import StartWithBackground, start_work
 
 
 def evidence_label(e):return f'{e.body[:70]} · version {e.version} · evidence {e.pk}'
@@ -28,7 +29,7 @@ class InventoryForm(forms.Form):
     def inventory(self):return {kind:self.cleaned_data['inventory_'+kind].pk if self.cleaned_data['inventory_'+kind] else None for kind in self.kinds}
 
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=archive.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(widget=forms.HiddenInput,max_length=100)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
@@ -59,8 +60,8 @@ def create(request):
             try:
                 v=form.cleaned_data
                 if v['definition']!=archive.DEFINITION:raise ValidationError('Choose registered archive work')
-                work=archive.start(request.user,v['case'].pk,v['key'],v['dossier'].pk,inventory.inventory(),v['reference'],v['revision'])
-                return redirect('factory_detail',work.pk)
+                return start_work(request, lambda: archive.start(request.user, v['case'].pk, v['key'], v['dossier'].pk,
+                                  inventory.inventory(), v['reference'], v['revision']), v['background'])
             except ValidationError as exc:form.add_error(None,str(exc))
     return render(request,'factory/archive_start.html',{'form':form,'inventory_form':inventory,'case':form.selected})
 

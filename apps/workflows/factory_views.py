@@ -28,6 +28,7 @@ from apps.policy.services import active_component,reference_values,transition,re
 from apps.policy.models import Configuration
 from .models import FactoryWork,HumanTask
 from . import factory as d
+from .factory_progress_views import StartWithBackground, start_work, started
 from .factory_definitions import DEFINITIONS,definition
 
 QUEUES={'needs_me':'Needs my attention','active':'Active work','decisions':'Decisions','exceptions':'Exceptions','unassigned':'Unassigned','verified':'Verified outcomes'}
@@ -597,7 +598,6 @@ def assistant_origin(request, form, envelope):
 @transaction.atomic
 def submit_start(request, form_values, envelope, start_native):
     from apps.agents import assistant_drafts
-    from .factory_progress_views import started
 
     if request.POST.get('action') == 'save_draft':
         assistant_drafts.save(request.user, envelope, form_values)
@@ -611,7 +611,7 @@ def submit_start(request, form_values, envelope, start_native):
     return started(request, work, form_values['background'])
 
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     key=forms.CharField(widget=forms.HiddenInput,max_length=100)
     assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
     draft_version=forms.IntegerField(required=False,min_value=1,widget=forms.HiddenInput)
@@ -624,7 +624,6 @@ class StartForm(forms.Form):
     coverage=forms.ModelChoiceField(queryset=BillingCoverage.objects.none(),required=False,label='Contract and service (PMO completion only)')
     handoff=forms.ModelChoiceField(queryset=Handoff.objects.none(),required=False,label='PMO completion received by Finance')
     reference=forms.CharField(max_length=100,label='Invoice reference')
-    background=forms.BooleanField(required=False,initial=True,label='Continue in background after starting')
     revision=forms.IntegerField(min_value=1,widget=forms.HiddenInput)
     def __init__(self,actor,data=None,case_id=None):
         super().__init__(data=data,initial={'key':uuid4().hex})
@@ -1200,7 +1199,7 @@ def configuration(request,case_id):
         except (ValidationError,KeyError):config.settings_value=None
     response=render(request,'factory/configuration.html',{'case':case,'form':form,'configurations':readable_configs,'definition':envelope,'definition_title':spec['title']});response['Cache-Control']='no-store';return response
 
-class PlanningStartForm(forms.Form):
+class PlanningStartForm(StartWithBackground):
     definition=forms.CharField(initial='planning/v1',widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     assistant_turn=forms.UUIDField(required=False,widget=forms.HiddenInput)
@@ -1208,7 +1207,6 @@ class PlanningStartForm(forms.Form):
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
     packet=forms.ModelChoiceField(queryset=Evidence.objects.none(),label='Current planning packet')
     reference=forms.CharField(max_length=100,label='Work reference')
-    background=forms.BooleanField(required=False,initial=True,label='Continue in background after starting')
     revision=forms.IntegerField(min_value=1,widget=forms.HiddenInput)
     def __init__(self,actor,data=None,case_id=None):
         super().__init__(data=data,initial={'key':uuid4().hex})
@@ -1237,7 +1235,7 @@ def create_planning(request):
         return response
     return render(request,'factory/planning_start.html',{'form':form,'available_cases':granted(request.user,['planning.read','factory.start']).filter(kind='project')})
 
-class CommercialStartForm(forms.Form):
+class CommercialStartForm(StartWithBackground):
     definition=forms.CharField(initial='commercial/v1',widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
@@ -1290,12 +1288,12 @@ def create_commercial(request):
             with transaction.atomic():
                 head=commercial_intake.capture(request.user,v['case'].pk,values,v['predecessor'],v['revision'])
                 work=start(request.user,v['case'].pk,v['key'],head.pk,v['reference'])
-            return redirect('factory_detail',work_id=work.pk)
+                return started(request, work, v['background'])
         except ValidationError as exc:form.add_error(None,'; '.join(exc.messages))
     return render(request,'factory/commercial_start.html',{'form':form,'available_cases':granted(request.user,['factory.start','commercial.prepare','costing.read','costing.source.read']).filter(kind='project')})
 
 
-class DeliveryStartForm(forms.Form):
+class DeliveryStartForm(StartWithBackground):
     definition=forms.CharField(initial='delivery-release/v1',widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
@@ -1329,7 +1327,8 @@ def create_delivery(request,envelope='delivery-release/v1'):
     if request.method=='POST' and form.is_valid():
         v=form.cleaned_data
         try:
-            work=start(request.user,v['case'].pk,v['key'],v['dossier'].pk,v['reference'],v['revision']);return redirect('factory_detail',work_id=work.pk)
+            return start_work(request, lambda: start(request.user, v['case'].pk, v['key'], v['dossier'].pk,
+                              v['reference'], v['revision']), v['background'])
         except ValidationError as exc:form.add_error(None,str(exc))
     return render(request,'factory/delivery_start.html',{'form':form,'definition':envelope,
         'intake_title':'Start release follow-up' if envelope=='delivery-hypercare/v1' else 'Start delivery work',

@@ -18,6 +18,7 @@ from apps.documents.models import Template,PublicationReceipt
 from . import factory as runtime,factory_accounting as service
 from .models import FactoryActivity,HumanTask
 from .factory_views import ProfileForm
+from .factory_progress_views import StartWithBackground, start_work
 
 class AccountingProfileForm(ProfileForm):
     allocation_mode=forms.ChoiceField(required=False,label='Preparation scope',choices=[('','Not decided'),('company_only','Company totals'),('company_and_bu','Company and business units')])
@@ -31,7 +32,7 @@ class AccountingProfileForm(ProfileForm):
         for action in ['finance.read','finance.publish','document.publish']:
             self.fields['executor_id'].queryset=self.fields['executor_id'].queryset.filter(grant__case=case,grant__active=True,grant__action=action).distinct()
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     source=forms.ModelChoiceField(queryset=FinanceSource.objects.none(),label='Current controlled trial-balance source')
     adjustment_ids=forms.ModelMultipleChoiceField(queryset=FinanceAdjustment.objects.none(),required=False,label='Supplemental reporting adjustments')
     inventory_confirmed=forms.BooleanField(label='I have checked this adjustment selection; none selected means no supplemental adjustments')
@@ -91,8 +92,9 @@ def create(request):
         try:
             if action=='existing' and form.is_valid():
                 v=form.cleaned_data
-                work=service.start(request.user,case.pk,'accounting:'+str(uuid4()),v['source'].pk,[a.pk for a in v['adjustment_ids']],v['reference'],v['revision'])
-                return redirect(reverse('factory_detail',args=[work.pk]))
+                return start_work(request, lambda: service.start(request.user, case.pk, 'accounting:'+str(uuid4()),
+                                  v['source'].pk, [a.pk for a in v['adjustment_ids']], v['reference'], v['revision']),
+                                  v['background'])
             if action=='supplied' and supplied.is_valid():
                 v=supplied.cleaned_data
                 context={k:v[k] for k in ['entity','period','currency','accounting_basis','extracted_at','completeness']}

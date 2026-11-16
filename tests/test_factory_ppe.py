@@ -91,14 +91,29 @@ class FactoryPPETests(TestCase):
         self.assertFalse(s.reviews.exists())
     def test_typed_http_intake_and_human_decisions_keep_exact_source(self):
         from django.urls import reverse
+        from apps.workflows import factory_progress
+
         f=self.f;review(f,f['register'],'register','revoke');self.client.force_login(f['actor'])
-        payload={'definition':flow.DEFINITION,'key':'PPE-HTTP','case':f['case'].pk,'reference':'http-assets','revision':rev(f['case']),'register_id':f['register'].pk,'prior_id':'','ledger_id':f['parent'].pk}
+        payload={'definition':flow.DEFINITION,'key':'PPE-HTTP','case':f['case'].pk,'reference':'http-assets','revision':rev(f['case']),'register_id':f['register'].pk,'prior_id':'','ledger_id':f['parent'].pk,'background':'on'}
         response=self.client.post(reverse('factory_create'),payload);self.assertEqual(response.status_code,302)
-        self.work=FactoryWork.objects.get(key='PPE-HTTP');self.advance();self.assertIsNone(flow.schedule(self.work))
+        self.work=FactoryWork.objects.get(key='PPE-HTTP');job=self.work.background_progress
+
+        def progress_to_stop():
+            job.available_at=timezone.now()-timedelta(seconds=1)
+            job.save(update_fields=['available_at'])
+            for _ in range(20):
+                self.assertEqual(factory_progress.run_once(),job.pk)
+                job.refresh_from_db()
+                if job.status!='queued':
+                    self.work.refresh_from_db()
+                    return job.status
+            self.fail('The background request did not reach a step requiring a decision')
+
+        self.assertEqual(progress_to_stop(),'waiting');self.assertIsNone(flow.schedule(self.work))
         self.client.force_login(f['reviewer']);url=reverse('factory_detail',args=[self.work.pk]);response=self.client.post(url,{'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),'target':f['register'].pk,'purpose':'register','verdict':'approve','evidence':f['e']['finance_review'].pk,'note':'Human reviewed exact selected register'})
-        self.assertEqual(response.status_code,302);self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding)
+        self.assertEqual(response.status_code,302);self.assertEqual(progress_to_stop(),'waiting');s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding)
         response=self.client.post(url,{'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),'target':s.pk,'purpose':'schedule','verdict':'approve','evidence':f['e']['finance_review'].pk,'note':'Human reviewed exact calculated output'})
-        self.assertEqual(response.status_code,302);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.assertEqual(response.status_code,302);self.assertEqual(progress_to_stop(),'finished');self.assertEqual(self.work.status,'verified',self.work.finding)
     def test_reader_without_report_permission_sees_current_verified_metadata(self):
         f=self.f;self.start();self.advance();review(f,flow.schedule(self.work));self.advance();self.assertEqual(self.work.status,'verified')
         Grant.objects.filter(user=f['reviewer'],case=f['case'],action='ppe.report').update(active=False)

@@ -10,6 +10,7 @@ from apps.core.workbench import granted
 from apps.finance.payroll_models import PayrollRequest,PayrollInput
 from apps.finance.hrfinance_models import HRReadSnapshot
 from . import factory,factory_payroll as payroll
+from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,**kwargs):
@@ -19,7 +20,7 @@ class InputsForm(forms.Form):
         self.fields['hr_snapshot_id']=forms.ModelChoiceField(queryset=HRReadSnapshot.objects.defer('payload').filter(contract__need__case=case),required=False,label='Exact minimal HR snapshot')
     def inputs(self):return {'input_ids':sorted(i.pk for i in self.cleaned_data['input_ids']),'hr_snapshot_id':self.cleaned_data['hr_snapshot_id'].pk if self.cleaned_data['hr_snapshot_id'] else None}
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=payroll.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Workspace')
@@ -40,7 +41,8 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=payroll.DEFINITION:raise ValidationError('Choose the payroll definition')
-            w=payroll.start(request.user,d['case'].pk,d['key'],inputs.cleaned_data['request_id'].pk,inputs.inputs(),d['reference'],d['revision']);return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: payroll.start(request.user, d['case'].pk, d['key'],
+                              inputs.cleaned_data['request_id'].pk, inputs.inputs(), d['reference'], d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,payroll.finding(exc))
     response=render(request,'factory/payroll_start.html',{'form':form,'inputs_form':inputs,'case':form.selected});response['Cache-Control']='no-store';return response
 

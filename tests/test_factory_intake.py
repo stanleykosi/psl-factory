@@ -78,6 +78,13 @@ class FactoryIntakeTests(TestCase):
             form=self.client.get(reverse('factory_create'),{'definition':option['definition']})
             self.assertEqual(form.status_code,200)
             self.assertContains(form,'data-start-work-page')
+            # Bid response requires received requirements before its form is available.
+            if option['definition'] != 'rfp-response/v1':
+                with self.subTest(definition=option['definition']):
+                    selected = self.client.get(reverse('factory_create'), {
+                        'definition': option['definition'], 'case': case.pk,
+                    })
+                    self.assertContains(selected, 'name="background"')
         self.assertEqual(FactoryWork.objects.count(),0)
 
     def test_authentication_method_revocation_and_legacy_invoice_entry_are_preserved(self):

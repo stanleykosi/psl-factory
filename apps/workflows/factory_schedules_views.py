@@ -11,6 +11,7 @@ from apps.core.workbench import granted
 from apps.finance import schedules
 from apps.finance.models import ScheduleWork,FinanceRun
 from . import factory,factory_schedules as domain
+from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
     kind=forms.ChoiceField(choices=[('income','Income detail'),('inventory','Selected schedule inventory')])
@@ -23,7 +24,7 @@ class InputsForm(forms.Form):
         d=self.cleaned_data
         return [d['kind'],d['parent_id'].pk if d['parent_id'] else None,d['evidence_id'].pk,d['payload']]
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=domain.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
@@ -46,7 +47,8 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=domain.DEFINITION or set(request.POST)-set(form.fields)-set(inputs.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Exact typed schedule command required')
-            w=domain.start(request.user,d['case'].pk,d['key'],*inputs.ids(),d['reference'],d['revision']);return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: domain.start(request.user, d['case'].pk, d['key'],
+                              *inputs.ids(), d['reference'], d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,domain.finding(exc))
     return render(request,'factory/schedules_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 

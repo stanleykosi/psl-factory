@@ -142,9 +142,10 @@ class FactoryMinutesTests(TestCase):
     def test_http_intake_confirmation_and_closed_commands(self):
         self.client.force_login(self.actor)
         response=self.client.get('/factory/new/',{'definition':flow.DEFINITION,'case':str(self.case.pk)});self.assertContains(response,'Record formal minutes')
-        payload={'definition':flow.DEFINITION,'key':'HTTP-1','reference':'HTTP-MEETING','revision':rev(self.case),'case':str(self.case.pk),'audience':'internal','evidence_id':self.notes.pk,'template_id':self.template.pk}
+        payload={'definition':flow.DEFINITION,'key':'HTTP-1','reference':'HTTP-MEETING','revision':rev(self.case),'case':str(self.case.pk),'audience':'internal','evidence_id':self.notes.pk,'template_id':self.template.pk,'background':'on'}
         response=self.client.post('/factory/new/?definition='+flow.DEFINITION,payload);self.assertEqual(response.status_code,302)
         self.work=FactoryWork.objects.get(request__reference='HTTP-MEETING');url='/work/'+str(self.work.pk)+'/'
+        self.assertEqual(self.work.background_progress.status,'queued')
         from .test_factory_minutes_console import FactoryMinutesConsoleTests
         page=self.client.get(url);data=FactoryMinutesConsoleTests.browser_payload(self,page);data.update(kind='status',occurred_at='2026-11-06T09:30:00',purpose='Human-confirmed plan',summary='Actual meeting summary',note='Human checked actual attribution',**{'decisions-0-text':'Confirm the plan','commitments-0-reference':'ACTION-1','commitments-0-description':'Investigate dependency','commitments-0-reason':'Actual human commitment'})
         response=self.client.post(url,data);self.assertEqual(response.status_code,302)

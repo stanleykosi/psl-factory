@@ -14,6 +14,7 @@ from apps.pmo.models import Meeting,MeetingVersion
 from apps.pmo.meetings import meeting_actions
 from apps.documents.controlled import review_version
 from . import factory,factory_minutes as domain
+from .factory_progress_views import StartWithBackground, start_work
 from .factory_minutes_forms import capture_forms,command_keys,payload
 
 class InputsForm(forms.Form):
@@ -29,7 +30,7 @@ class InputsForm(forms.Form):
         d=self.cleaned_data
         return {'protocol':domain.PROTOCOL,'meeting_version_id':d['meeting_version_id'].pk if d['meeting_version_id'] else None,'evidence_id':d['evidence_id'].pk,'template_id':d['template_id'].pk,'audience':d['audience'],'publish':d['publish']}
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=domain.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
@@ -52,7 +53,8 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=domain.DEFINITION or set(request.POST)-set(form.fields)-set(inputs.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Exact typed minutes intake required')
-            w=domain.start(request.user,d['case'].pk,d['key'],d['reference'],inputs.selection(),d['revision']);return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: domain.start(request.user, d['case'].pk, d['key'], d['reference'],
+                              inputs.selection(), d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,domain.finding(exc))
     return render(request,'factory/minutes_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 

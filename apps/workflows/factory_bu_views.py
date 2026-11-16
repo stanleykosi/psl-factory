@@ -12,6 +12,7 @@ from apps.finance.bu_models import BUWork,BUReceipt
 from apps.finance.payroll_models import PayrollRun
 from apps.finance.analysis_models import FinanceRun
 from . import factory,factory_bu as bu
+from .factory_progress_views import StartWithBackground, start_work
 
 class RefField(forms.ModelChoiceField):
     def label_from_instance(self,obj):return f'{getattr(obj,"kind","Native reference")} #{obj.pk}'
@@ -48,7 +49,7 @@ class InputsForm(forms.Form):
         d=self.cleaned_data
         return {'mode':d['mode'],'payroll_id':d['payroll_id'].pk if d['payroll_id'] else None,'source_id':d['source_id'].pk if d['source_id'] else None,'rule_ids':sorted(x.pk for x in d['rule_ids']),'comparison':{'run_id':d['comparison_id'].pk,'metric':d['metric']} if d['comparison_id'] else None}
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=bu.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Workspace')
@@ -71,7 +72,8 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=bu.DEFINITION or set(request.POST)-set(form.fields)-set(inputs.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Choose an exact typed BU command')
-            w=bu.start(request.user,d['case'].pk,d['key'],inputs.inputs(),d['reference'],d['revision']);return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: bu.start(request.user, d['case'].pk, d['key'],
+                              inputs.inputs(), d['reference'], d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,bu.finding(exc))
     return render(request,'factory/bu_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 

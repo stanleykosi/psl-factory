@@ -5,6 +5,7 @@ from urllib.parse import urlencode
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -13,6 +14,7 @@ from apps.core.evidence_access import public_evidence
 from apps.documents.models import Template
 from .factory_handover_views import StartForm as DossierStartForm
 from . import factory,factory_go_live as go_live
+from .factory_progress_views import enroll
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,inputs=None,**kwargs):
@@ -52,7 +54,9 @@ def create(request):
             try:
                 v=form.cleaned_data
                 if v['definition']!=go_live.DEFINITION:raise ValidationError('Choose registered go-live acceptance work')
-                w=go_live.start(request.user,v['case'].pk,v['key'],v['dossier'].pk,inputs.inputs(),v['reference'],v['revision'])
+                with transaction.atomic():
+                    w=go_live.start(request.user,v['case'].pk,v['key'],v['dossier'].pk,inputs.inputs(),v['reference'],v['revision'])
+                    enroll(request, w, v['background'])
                 target=reverse('factory_detail',args=[w.pk])
                 return redirect(target+'?'+urlencode({'queue':queue,'q':q}) if 'queue' in request.GET or 'q' in request.GET else target)
             except ValidationError as exc:form.add_error(None,go_live.finding(exc))

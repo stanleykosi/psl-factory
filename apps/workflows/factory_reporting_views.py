@@ -17,6 +17,7 @@ from apps.core.evidence_access import public_evidence,forecast_private_query
 from apps.core.services import add_evidence
 from apps.documents.models import Template
 from . import factory,factory_reporting as reporting
+from .factory_progress_views import StartWithBackground, started
 from .factory_views import ProfileForm
 
 class ReportingProfileForm(ProfileForm):
@@ -101,7 +102,7 @@ class InputsForm(forms.Form):
             pk=add_evidence(actor,case.pk,'agent_private_report_content',json.dumps(payload,sort_keys=True),'Human-supplied weekly client narrative').pk
         return {'start_at':d['start_at'].isoformat(),'end_at':d['end_at'].isoformat(),'template_id':d['template_id'].pk if d['template_id'] else None,'content_id':pk}
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=reporting.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
@@ -129,7 +130,7 @@ def create(request):
                 from apps.core.services import lock_case
                 case=lock_case(request.user,d['case'].pk,'factory.start',d['revision']);values=inputs.inputs(request.user,case);case.refresh_from_db()
                 w=reporting.start(request.user,case.pk,d['key'],values,d['reference'],case.revision)
-            return redirect('factory_detail',w.pk)
+                return started(request, w, d['background'])
         except ValidationError as exc:form.add_error(None,reporting.finding(exc))
     return render(request,'factory/reporting_start.html',{'form':form,'inputs_form':inputs,'case':form.selected,'time_zone':timezone.get_current_timezone_name()})
 

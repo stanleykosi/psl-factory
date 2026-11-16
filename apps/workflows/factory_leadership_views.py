@@ -15,6 +15,7 @@ from apps.pmo.forms import OffsetTimestamp
 from apps.pmo import leadership_reporting as native
 from apps.pmo.leadership_report_views import LeadershipReportForm
 from . import factory,factory_leadership as reporting
+from .factory_progress_views import started
 from .factory_reporting_views import ReportingProfileForm as WeeklyProfile,StartForm as WeeklyStart
 
 class ReportingProfileForm(WeeklyProfile):
@@ -90,7 +91,7 @@ def create(request):
                 if d['definition']!=reporting.DEFINITION:raise ValidationError('Choose leadership reporting')
                 case=lock_case(request.user,d['case'].pk,'factory.start',d['revision']);values=inputs.inputs(request.user,case);case.refresh_from_db()
                 work=reporting.start(request.user,case.pk,d['key'],values,d['reference'],case.revision)
-            return redirect('factory_detail',work.pk)
+                return started(request, work, d['background'])
         except ValidationError as exc:form.add_error(None,reporting.finding(exc))
     return render(request,'factory/leadership_start.html',{'form':form,'inputs_form':inputs,'case':form.selected,'kind':kind})
 

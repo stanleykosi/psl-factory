@@ -23,7 +23,13 @@ LEASE = timedelta(minutes=6)
 
 @transaction.atomic
 def set_progress(actor, work_id, expected, enabled, *, initial=False):
-    work = FactoryWork.objects.select_for_update(of=('self',)).select_related('case', 'actor').get(pk=work_id)
+    # Native intake can hold the case lock while an existing worker owns work.
+    # Skip a busy row at intake so those transactions cannot wait on each other.
+    work = FactoryWork.objects.select_for_update(of=('self',), skip_locked=initial).select_related(
+        'case', 'actor',
+    ).filter(pk=work_id).first()
+    if work is None:
+        raise ValidationError('The work item is busy or unavailable. Open it to request background work.')
     require_control(actor, work)
     if work.revision != expected:
         raise ValidationError('The work item changed. Open the current item and try again.')

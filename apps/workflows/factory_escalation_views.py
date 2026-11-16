@@ -11,6 +11,7 @@ from apps.core.workbench import granted
 from apps.documents.models import Template
 from apps.pmo.models import EscalationRequest
 from . import factory,factory_escalation as domain
+from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,issue_id=None,**kwargs):
@@ -22,7 +23,7 @@ class InputsForm(forms.Form):
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type__in=['status_report','project_artifact']),required=False,label='Controlled communication template')
     def ids(self):return [self.cleaned_data['request_id'].pk,self.cleaned_data['template_id'].pk if self.cleaned_data['template_id'] else None]
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=domain.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
@@ -45,7 +46,8 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=domain.DEFINITION:raise ValidationError('Choose the registered escalation definition')
-            w=domain.start(request.user,d['case'].pk,d['key'],*inputs.ids(),d['reference'],d['revision']);return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: domain.start(request.user, d['case'].pk, d['key'], *inputs.ids(),
+                              d['reference'], d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,domain.finding(exc))
     return render(request,'factory/escalation_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 

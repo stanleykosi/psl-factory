@@ -13,6 +13,7 @@ from apps.core.evidence_access import public_evidence
 from apps.documents.models import Template
 from apps.pmo.models import ChangeVersion,ChangeAuthorization
 from . import factory,factory_change as change
+from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,change_id=None,**kwargs):
@@ -26,7 +27,7 @@ class InputsForm(forms.Form):
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type__in=['project_artifact','status_report']),required=False,label='Controlled change template')
     def inputs(self):return {k:self.cleaned_data[k].pk if self.cleaned_data[k] else None for k in ['template_id','authorization_id']}
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=change.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
@@ -49,8 +50,9 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=change.DEFINITION:raise ValidationError('Choose the registered controlled change definition')
-            w=change.start(request.user,d['case'].pk,d['key'],inputs.cleaned_data['version_id'].pk,inputs.inputs(),d['reference'],d['revision'])
-            return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: change.start(request.user, d['case'].pk, d['key'],
+                              inputs.cleaned_data['version_id'].pk, inputs.inputs(), d['reference'], d['revision']),
+                              d['background'])
         except ValidationError as exc:form.add_error(None,change.finding(exc))
     return render(request,'factory/change_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 

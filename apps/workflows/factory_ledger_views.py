@@ -11,6 +11,7 @@ from apps.core.workbench import granted
 from apps.finance import ledger
 from apps.finance.models import LedgerLineage
 from . import factory,factory_ledger as domain
+from .factory_progress_views import StartWithBackground, start_work
 from .quickbooks_mcp import factory_read_status
 
 class InputsForm(forms.Form):
@@ -21,7 +22,7 @@ class InputsForm(forms.Form):
     def ids(self):
         d=self.cleaned_data;return [d['evidence_id'].pk,d['predecessor_id'].pk if d['predecessor_id'] else None]
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=domain.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
@@ -43,7 +44,8 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=domain.DEFINITION or set(request.POST)-set(form.fields)-set(inputs.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Exact typed incumbent command required')
-            w=domain.start(request.user,d['case'].pk,d['key'],*inputs.ids(),d['revision']);return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: domain.start(request.user, d['case'].pk, d['key'],
+                              *inputs.ids(), d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,domain.finding(exc))
     return render(request,'factory/ledger_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 

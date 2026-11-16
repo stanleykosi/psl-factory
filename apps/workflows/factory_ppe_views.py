@@ -11,6 +11,7 @@ from apps.core.workbench import granted
 from apps.finance import ppe
 from apps.finance.models import ScheduleWork,FinanceRun
 from . import factory,factory_ppe as domain
+from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,**kwargs):
@@ -20,7 +21,7 @@ class InputsForm(forms.Form):
         self.fields['ledger_id']=forms.ModelChoiceField(queryset=FinanceRun.objects.filter(case=case,kind='mapping').order_by('-pk'),required=False,label='Exact read-only accounting note')
     def ids(self):return [self.cleaned_data[k].pk if self.cleaned_data[k] else None for k in ['register_id','prior_id','ledger_id']]
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=domain.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none())
@@ -43,7 +44,8 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=domain.DEFINITION or set(request.POST)-set(form.fields)-set(inputs.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Exact typed PPE command required')
-            w=domain.start(request.user,d['case'].pk,d['key'],*inputs.ids(),d['reference'],d['revision']);return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: domain.start(request.user, d['case'].pk, d['key'],
+                              *inputs.ids(), d['reference'], d['revision']), d['background'])
         except ValidationError as exc:form.add_error(None,domain.finding(exc))
     return render(request,'factory/ppe_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 
