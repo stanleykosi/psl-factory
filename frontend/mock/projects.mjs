@@ -76,6 +76,13 @@ function journey(url, persona) {
   return { status: 200, body: journeys[caseId] ?? fallback };
 }
 
+/** Whether the persona may see the case in the mock: not the no-access id, nor a listed case outside their rows (F-26). */
+export function caseVisible(caseId, persona) {
+  if (caseId === NO_ACCESS_CASE_ID) return false;
+  const row = list.rows.find((r) => r.item.case_id === caseId);
+  return !row || row.personas.includes(persona);
+}
+
 export function projects({ operationId, url, persona }) {
   return operationId === 'E-PROJECTS' ? projectList(url, persona) : journey(url, persona);
 }
