@@ -1738,3 +1738,5 @@
 {"at":"2026-11-16T15:50:00Z","feature":"F-24","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"f264d1b41795","written_at":"2026-11-16T15:49:38Z"}
 {"at":"2026-11-16T15:50:00Z","feature":"F-24","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"f264d1b41795","findings":{"UI-3-1":"scr-05-mobile (390)","UI-3-2":"fidelity-exceptions.json"},"written_at":"2026-11-16T15:49:48Z"}
 {"at":"2026-11-16T15:53:59Z","feature":"F-24","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"f264d1b41795","findings":{"QA-3-1":"low"},"written_at":"2026-11-16T15:53:50Z"}
+{"at":"2026-11-16T15:54:18Z","feature":"F-24","round":3,"kind":"finding","action":"fix","finding":"PMO-3-1","by":"coordinator"}
+{"at":"2026-11-16T15:54:18Z","feature":"F-24","round":3,"kind":"finding","action":"verify","finding":"PMO-3-1","by":"pmo-acceptance"}
