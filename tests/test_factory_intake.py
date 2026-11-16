@@ -42,8 +42,9 @@ class FactoryIntakeTests(TestCase):
 
     def test_current_same_project_grants_drive_discovery_and_no_cross_project_union(self):
         actor,case=setup_case(username='synthetic-intake');self.client.force_login(actor)
+        Grant.objects.filter(user=actor,case=case,action='report.read').update(active=False)
         self.assertEqual({row['definition'] for row in intake_options(actor)},EXPECTED_DEFINITIONS-{'pmo-weekly-report/v1','pmo-leadership-report/v1'})
-        Grant.objects.create(user=actor,case=case,action='report.read')
+        Grant.objects.filter(user=actor,case=case,action='report.read').update(active=True)
         self.assertEqual({row['definition'] for row in intake_options(actor)},EXPECTED_DEFINITIONS)
         Grant.objects.filter(user=actor).update(active=False)
         other=Case.objects.create(tenant='other-tenant',title='Private other project',kind='project',synthetic=True)
@@ -65,7 +66,6 @@ class FactoryIntakeTests(TestCase):
 
     def test_queue_has_one_context_preserving_start_action_and_chooser_reuses_native_forms(self):
         actor,case=setup_case(username='synthetic-intake-layout');self.client.force_login(actor)
-        Grant.objects.create(user=actor,case=case,action='report.read')
         page=self.client.get(reverse('home'),{'queue':'active','q':'<script>& project'})
         self.assertContains(page,'data-start-work="default"',count=1);self.assertNotContains(page,'Start planning work')
         self.assertContains(page,reverse('factory_intake')+'?queue=active&amp;q=%3Cscript%3E%26+project')

@@ -77,6 +77,27 @@ class ProductIntakeTests(TransactionTestCase):
         get_user_model().objects.filter(pk=a.pk).update(is_active=False)
         self.assertEqual(d.options(a),[])
 
+    def test_staff_list_checks_workspace_classification_and_delegated_actions(self):
+        root,operator,reader,scope,expiry=self.fixture()
+        d.provision(root,operator,'tenant-a',scope,expiry,True,'Synthetic access manager')
+        case=d.create_case(operator,'tenant-a','first','Staff access fixture','project')
+        other=Case.objects.create(tenant='tenant-a',title='Operational case',kind='project',synthetic=False)
+        hidden=get_user_model().objects.create_user('restricted-staff-sentinel')
+        Grant.objects.create(case=case,user=hidden,action='finance.read')
+        Grant.objects.create(case=other,user=operator,action='case.read')
+        d.change_access(operator,case.pk,reader.pk,'case.read',True,'Synthetic reader')
+        client=Client()
+        client.force_login(operator)
+        path=reverse('case_access',args=[case.pk])
+        page=client.get(path,{'person':'reader'})
+        self.assertEqual(page['Cache-Control'],'no-store')
+        self.assertContains(page,'Staff accounts in this workspace')
+        self.assertContains(page,f'Account {reader.pk}')
+        self.assertNotContains(client.get(path),'restricted-staff-sentinel')
+        self.assertEqual(client.get(reverse('case_access',args=[other.pk])).status_code,403)
+        d.provision(root,operator,'tenant-a',scope,expiry,False,'Synthetic revocation')
+        self.assertEqual(client.get(path).status_code,403)
+
     def test_two_connections_converge_without_duplicate_initial_grants(self):
         root,a,b,v,expiry=self.fixture();d.provision(root,a,'tenant-a',v,expiry,True,'Synthetic concurrency');barrier=Barrier(2)
         def create(_):

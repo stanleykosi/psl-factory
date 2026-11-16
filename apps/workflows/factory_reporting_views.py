@@ -135,13 +135,15 @@ def create(request):
     return render(request,'factory/reporting_start.html',{'form':form,'inputs_form':inputs,'case':form.selected,'time_zone':timezone.get_current_timezone_name()})
 
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
+def detail(request,work,focus=None):
+    from .screen_focus import require_action
     from .factory_views import presentation,permitted
     data=reporting.source(work,request.user,False)
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,initial=data['inputs'],actor=request.user)
     if request.method=='POST':
         try:
             d=request.POST;action=d.get('action');revision=int(d.get('revision','0'));case_revision=int(d.get('case_revision','0'))
+            require_action(work, focus, action)
             if action=='advance':factory.advance(request.user,work.pk,revision)
             elif action=='correct':
                 if not form.is_valid():raise ValidationError('Select exact report period, template and cited client narrative')
@@ -160,4 +162,4 @@ def detail(request,work):
             messages.success(request,'Weekly report action recorded. Native review and recipient receipts remain separate.');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
-    return render(request,'factory/reporting_detail.html',{'row':row,'case':work.case,'inputs_form':form,'time_zone':timezone.get_current_timezone_name(),'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})
+    return render(request,'factory/reporting_detail.html',{'row':row,'case':work.case,'focus':focus,'inputs_form':form,'time_zone':timezone.get_current_timezone_name(),'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})

@@ -36,6 +36,8 @@ def queue_draft(actor, upload, role):
         raise ValidationError('Choose an available agent. A model must be configured to start a draft.')
     job, _ = AgentJob.objects.get_or_create(upload=upload, actor=actor, role=role)
     AgentJob.objects.filter(pk=job.pk, status='held').update(status='queued')
+    if job.status == 'draft' and not file_draft_reviews.reviewable(job):
+        AgentJob.objects.filter(pk=job.pk, status='draft', result=job.result).update(status='queued')
     return job
 
 
@@ -74,7 +76,10 @@ def workbench(request, case_id):
         job.role_label = ROLES[job.role][0]
         job.follow_up = FOLLOW_UP.get(job.role)
         if job.status == 'draft' and can_review:
-            job.review_form = file_draft_reviews.review_form(job, request.POST if str(job.pk) == attempted_review else None)
+            if file_draft_reviews.reviewable(job):
+                job.review_form = file_draft_reviews.review_form(job, request.POST if str(job.pk) == attempted_review else None)
+            else:
+                job.needs_fresh_draft = True
         if job.status == 'reviewed' and not job.result.get('workflow_record'):
             job.handoff_form = workflow_handoffs.form_for(job)
             job.handoff_label = workflow_handoffs.LABELS[job.role]

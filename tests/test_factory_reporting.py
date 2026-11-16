@@ -172,7 +172,14 @@ class FactoryReportingTests(TestCase):
         self.assertEqual(set(binding.manifest), {'source_mode', 'meetings', 'actions', 'milestones', 'issues', 'changes', 'client_content'})
         self.assertEqual(binding.report.kind, 'weekly_client')
         self.assertEqual(binding.report.start_at.isoformat(), self.inputs['start_at'])
-        self.review()
+        self.client.force_login(self.actor)
+        approval = reverse('factory_invoice_decision', args=[self.work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[self.work.pk])
+        self.assertContains(self.client.get(approval), 'Approve exact report')
+        self.assertNotContains(self.client.get(recovery), 'Approve exact report')
+        self.assertRedirects(self.client.post(approval, {'action': 'review', 'version': version.pk, 'verdict': 'approve',
+                             'note': 'Exact synthetic weekly report verified', 'revision': self.work.revision,
+                             'case_revision': rev(self.case)}), approval, fetch_redirect_response=False)
         self.advance()
         self.assertEqual(self.work.status, 'verified', self.work.finding)
         proof = reporting.verify(self.work)
@@ -181,6 +188,7 @@ class FactoryReportingTests(TestCase):
         self.assertEqual(receipt.payload, version.payload)
         self.assertEqual(receipt.payload_sha256, version.payload_sha256)
         self.assertEqual(receipt.publication.factory_source_id, self.work.source_head_id)
+        self.assertContains(self.client.get(recovery), 'Recorded delivery')
         self.assertEqual(connection.vendor, 'postgresql')
 
     def test_client_payload_is_four_topic_aggregate_without_internal_source_text(self):

@@ -96,7 +96,8 @@ def create(request):
     return render(request,'factory/leadership_start.html',{'form':form,'inputs_form':inputs,'case':form.selected,'kind':kind})
 
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
+def detail(request,work,focus=None):
+    from .screen_focus import require_action
     from .factory_views import presentation,permitted
     data=reporting.source(work,request.user,False)
     audience_form=AudienceForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='draft_audience' else None)
@@ -105,6 +106,7 @@ def detail(request,work):
     if request.method=='POST':
         try:
             d=request.POST;action=d.get('action');revision=int(d.get('revision','0'));case_revision=int(d.get('case_revision','0'))
+            require_action(work, focus, action)
             if action=='draft_audience':
                 if not audience_form.is_valid():raise ValidationError(audience_form.errors.as_text())
                 from apps.policy.operator_drafts import draft_operator_policy
@@ -138,4 +140,4 @@ def detail(request,work):
             messages.success(request,'Leadership report action recorded.');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
-    return render(request,'factory/leadership_detail.html',{'row':row,'case':work.case,'inputs_form':form,'role_form':role_form,'audience_form':audience_form,'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})
+    return render(request,'factory/leadership_detail.html',{'row':row,'case':work.case,'focus':focus,'inputs_form':form,'role_form':role_form,'audience_form':audience_form,'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})

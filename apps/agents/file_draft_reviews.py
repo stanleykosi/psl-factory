@@ -34,6 +34,14 @@ def evidence_body(summary, quotes, gaps):
     return '\n'.join([summary, '', 'Source excerpts:', *quotes, '', 'Open questions:', *gaps])
 
 
+def reviewable(job):
+    result = job.result
+    return (isinstance(result, dict) and result.get('source_sha256') == job.upload.sha256
+            and isinstance(result.get('summary'), str) and bool(result['summary'].strip())
+            and all(isinstance(result.get(key), list) and all(isinstance(line, str) for line in result[key])
+                    for key in ('quotes', 'gaps')) and bool(result['quotes']))
+
+
 def review_form(job, data=None):
     # Always refresh the server pin when rendering a form after an error.
     values = data or {}
@@ -47,9 +55,9 @@ def retain(actor, case, job_id, data):
     job = get_object_or_404(AgentJob.objects.select_for_update(), upload__case=case,
                             actor=actor, pk=job_id, status='draft')
     authorize(actor, job.upload)
+    if not reviewable(job):
+        raise ValidationError('Queue a fresh draft with source excerpts before reviewing this file.')
     token = draft_digest(job)
-    if job.result.get('source_sha256') != job.upload.sha256:
-        raise ValidationError('The draft does not match the uploaded source.')
     # Older clients may still accept the original model text by submitting only a note.
     if 'summary' not in data and 'gaps' not in data and 'draft' not in data:
         note = ReviewForm.base_fields['note'].clean(data.get('note', ''))

@@ -1,6 +1,16 @@
 {% extends 'base.html' %}{% load studio_ui %}
 {% block title %}Client contacts · PSL Factory{% endblock %}
 {% block content %}<header class="page-heading"><div><a class="back-link" href="{% url 'design_clients' %}">← Clients</a><h1>Client contacts</h1><p>{{ case|workspace_name }}</p></div><a href="{% url 'design_project' case.pk %}">Open project</a></header>
+{% if billing or billing_limited %}<section class="card"><h2>Billing coverage</h2>
+{% if billing_limited %}<p>Open the Finance records to review this workspace’s full billing history.</p>{% else %}
+{% if billing.coverage %}<table><thead><tr><th scope="col">Customer</th><th scope="col">Contract</th><th scope="col">Covered period</th><th scope="col">Source coverage</th><th scope="col">Billing contact</th></tr></thead><tbody>
+{% for cover in billing.coverage %}<tr><th scope="row">{{ cover.customer }}</th><td>{{ cover.contract }}</td><td>{{ cover.from_period }} to {{ cover.to_period }}</td><td>{{ cover.completeness|capfirst }}</td><td>{% if cover.contact_recorded %}Recorded{% else %}Missing{% endif %}</td></tr>{% endfor %}
+</tbody></table>{% else %}<p>No billing coverage has been recorded.</p>{% endif %}
+{% if billing.uncertain %}<p>Some invoice outcomes are still unverified. The totals below cover confirmed issues only.</p>{% endif %}
+<h3>Issued invoices and applied receipts</h3>{% if billing.amounts %}<table><thead><tr><th scope="col">Customer</th><th scope="col">Currency and basis</th><th scope="col">Invoiced</th><th scope="col">Applied receipts</th><th scope="col">Owed</th></tr></thead><tbody>
+{% for row in billing.amounts %}<tr><th scope="row">{{ row.customer }}</th><td>{{ row.currency }} · {{ row.basis|readable }}</td><td>{{ row.invoiced }}</td><td>{{ row.applied }}</td><td>{{ row.owed|default_if_none:'Unknown' }}</td></tr>{% endfor %}</tbody></table>
+{% else %}<p>Amounts are unknown until there is a verified invoice.</p>{% endif %}
+{% endif %}<p><a href="{% url 'finance_settlement' case.pk %}">Review invoices and receipts</a></p></section>{% endif %}
 {% for section in sections %}<section class="card"><h2>{{ section.label }}</h2>
 {% for entry in section.entries %}<article class="floor-line"><div><strong>{{ entry.client_name }}</strong>{% if entry.customer %}<p>{{ entry.customer }}</p>{% endif %}<p>{{ entry.name }}{% if entry.role %} · {{ entry.role }}{% endif %}</p></div><div><p>{{ entry.email|default:'Email not recorded' }}</p><p>Version {{ entry.number }} · {{ entry.created_at|date:'d M Y' }}</p></div></article>{% empty %}<p>No contact is recorded.</p>{% endfor %}
 {% if section.form %}<details{% if section.form.errors %} open{% endif %}><summary>Record a contact</summary><form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="purpose" value="{{ section.purpose }}">{{ section.form.as_p }}<button>Save contact</button></form></details>{% endif %}

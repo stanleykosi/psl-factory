@@ -40,9 +40,12 @@ class FactoryRFPConsoleFlowTests(TestCase):
 
         def post(action,**fields):
             work.refresh_from_db()
-            result=self.client.post(url,{'action':action,'revision':work.revision,'case_revision':rev(case),**fields})
+            page={'response':'factory_invoice_decision','commercial':'factory_invoice_decision',
+                  'document':'factory_invoice_decision','outcome':'factory_work_response'}.get(action)
+            target=reverse(page,args=[work.pk])+'?queue=decisions&q=Cited+customer' if page else url
+            result=self.client.post(target,{'action':action,'revision':work.revision,'case_revision':rev(case),**fields})
             self.assertEqual(result.status_code,302,getattr(result,'context',None))
-            self.assertEqual(result.url,url)
+            self.assertEqual(result.url,target)
             work.refresh_from_db()
             return result
 

@@ -3,6 +3,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import OuterRef, Q, Subquery
 from django.shortcuts import get_object_or_404, redirect, render
@@ -10,11 +11,13 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods, require_safe
 
 from apps.finance.fixed_charge import case_access
+from apps.finance import client_billing
 from apps.finance.models import BillingCoverage
 from apps.identity.services import active_case_grants, require, visible_cases
 
 from .evidence_access import public_evidence
 from .models import ClientContactRevision, Evidence
+from .read_budget import ReadLimit
 from .services import bump, event, lock_case
 from .workbench import granted
 
@@ -86,12 +89,14 @@ def save(actor, case, purpose, fields):
 @never_cache
 def index(request):
     project_grants = granted(request.user, ['engagement.read'])
+    billing_grants = granted(request.user, ['finance.read'])
     recorded = ClientContactRevision.objects.filter(case_id=OuterRef('pk'), purpose='project', case__in=project_grants).order_by('-number')
-    query = (project_grants | granted(request.user, ['finance.read'])).annotate(client_name=Subquery(recorded.values('client_name')[:1]))
+    query = (project_grants | billing_grants).annotate(client_name=Subquery(recorded.values('client_name')[:1]))
     term = request.GET.get('q', '').strip()[:100]
     if term:
         query = query.filter(Q(title__icontains=term) | Q(client_name__icontains=term))
-    return render(request, 'design/clients.html', {'projects': query.filter(kind='project').order_by('title', 'pk')[:50], 'query': term})
+    page = Paginator(query.filter(kind='project').order_by('title', 'pk'), 25).get_page(request.GET.get('page'))
+    return render(request, 'design/clients.html', {'projects': page, 'query': term})
 
 
 @login_required
@@ -130,4 +135,19 @@ def project(request, case_id):
                          'entries': entries, 'form': form})
     if not sections:
         raise PermissionDenied
-    return render(request, 'design/client_project.html', {'case': case, 'sections': sections})
+    billing = None
+    billing_limited = False
+    billing_contacts = next((section['entries'] for section in sections if section['purpose'] == 'billing'), None)
+    if billing_contacts is not None:
+        try:
+            billing = client_billing.overview(request.user, case)
+        except ReadLimit:
+            billing_limited = True
+        except (PermissionDenied, ValidationError):
+            billing = None
+        if billing:
+            contacts = {contact.customer for contact in billing_contacts if contact.email}
+            for cover in billing['coverage']:
+                cover.contact_recorded = cover.customer in contacts
+    return render(request, 'design/client_project.html', {'case': case, 'sections': sections, 'billing': billing,
+                                                         'billing_limited': billing_limited})

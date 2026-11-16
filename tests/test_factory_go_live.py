@@ -64,9 +64,10 @@ class FactoryGoLiveDistinctAuthorityTests(TestCase):
         version=go_live.document(f.work);receipt=PublicationReceipt.objects.get(publication__version=version)
         signature_pm=f.evidence('signature','Synthetic supplied PM signature for distinct human attestation')
         signature_client=f.evidence('signature','Synthetic supplied Client signature for distinct human attestation')
-        self.client.force_login(pm);url=reverse('factory_detail',args=[f.work.pk]);page=self.client.get(url)
+        self.client.force_login(pm);url=reverse('factory_work_response',args=[f.work.pk]);page=self.client.get(url)
         self.assertContains(page,'Record actual sign-off for this report');self.assertNotContains(page,'Continue eligible work')
         self.assertNotContains(page,'Record reviewed source changes')
+        self.assertNotContains(self.client.get(reverse('factory_invoice_recovery',args=[f.work.pk])), 'Record actual sign-off for this report')
         response=self.client.post(url,{'action':'accept','revision':f.work.revision,'case_revision':rev(f.case),
             'version':version.pk,'receipt':receipt.pk,'pm_signature':signature_pm.pk,'client_signature':signature_client.pk,
             'attestation':json.dumps(f.attestation(receipt,signature_pm,signature_client,actor=pm)),

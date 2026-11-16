@@ -62,8 +62,14 @@ class FactoryEmergencyTests(native_tests.EmergencyFixture,TestCase):
         for role in ['Incident Lead','Engineering Lead','CTO']:
             self.human('preauthorization_decision',role=role,authority_role='Engineering Lead',verdict='approve',evidence=self.decision.pk,note='Actual prescribed human preauthorization decision')
         auth=self.human('authorize');self.select(auth);self.advance();self.assertEqual(emergency.report(self.work)['stage'],'implementation')
-        self.client.force_login(self.actor);url=reverse('factory_detail',args=[self.work.pk]);self.assertContains(self.client.get(url),'Timestamp time zone:')
-        response=self.client.post(url,{'action':'capture_outcome','revision':self.work.revision,'case_revision':rev(self.case),'profile':self.profile.pk,'implemented_at':timezone.now().isoformat(),'evidence':self.implementation.pk,'note':'Human records actual external implementation, not a dispatch request'})
+        self.client.force_login(self.actor);url=reverse('factory_detail',args=[self.work.pk])
+        response_url=reverse('factory_work_response',args=[self.work.pk]);self.assertContains(self.client.get(response_url),'Timestamp time zone:')
+        decision_url=reverse('factory_invoice_decision',args=[self.work.pk])
+        self.assertNotContains(self.client.get(decision_url),'Timestamp time zone:')
+        fields={'action':'capture_outcome','revision':self.work.revision,'case_revision':rev(self.case),'profile':self.profile.pk,'implemented_at':timezone.now().isoformat(),'evidence':self.implementation.pk,'note':'Human records actual external implementation, not a dispatch request'}
+        self.assertContains(self.client.post(decision_url,fields),'Choose an available action on this page')
+        self.assertFalse(EmergencyOutcome.objects.exists())
+        response=self.client.post(response_url,fields)
         self.assertEqual(response.status_code,302);actual=EmergencyOutcome.objects.get(profile=self.profile);self.assertGreaterEqual(actual.implemented_at,auth.created_at)
         self.select(auth,actual);self.clocks()
         self.human('record_review',evidence=self.review_evidence.pk,note='Actual human post-implementation review')

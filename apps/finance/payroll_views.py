@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render,redirect,get_object_or_404
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 from apps.core.views import accessible_case
 from apps.identity.services import require
 from apps.policy.services import resolve
@@ -15,15 +17,31 @@ from .payroll_forms import commands
 from .payroll_models import PayrollRequest,PayrollInput,PayrollRun,PayrollPublication
 from . import payroll as domain
 
+SECTIONS = {
+ 'inputs': ('Payroll inputs', {'request','capture','combine','review'}, {'combine'}),
+ 'matching': ('Payroll matching', {'match','review','investigate'}, {'combine','match'}),
+ 'corrections': ('Payroll corrections', {'hr_correction','investigate'}, {'match'}),
+}
+
 @login_required
-def workbench(request,case_id):
- case=accessible_case(request.user,case_id);require(request.user,case,'payroll.read');forms=commands(request.user,case,request.POST if request.method=='POST' else None)
+@require_http_methods(['GET','HEAD','POST'])
+def workbench(request,case_id,focus=None):
+ case=accessible_case(request.user,case_id);require(request.user,case,'payroll.read')
+ forms=commands(request.user,case,request.POST if request.method=='POST' else None, request.FILES)
+ title='Restricted payroll run'
+ if focus:
+  title, actions, kinds=SECTIONS[focus]
+  forms=[entry for entry in forms if entry['action'] in actions]
  if request.method=='POST':
   try:
    f=next((x['form'] for x in forms if x['action']==request.POST.get('action')),None)
    if not f or not f.is_valid():raise ValidationError('Choose a permitted command with valid typed fields')
-   if set(request.POST)-set(f.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Unexpected fields; supplied authority claims are not accepted')
+   if (set(request.POST)|set(request.FILES))-set(f.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Unexpected fields; supplied authority claims are not accepted')
    d=f.cleaned_data;k=d['action'];a=request.user;c=case.pk;v=d['revision'];e=d['evidence'].pk if d.get('evidence') else None
+   if k=='review' and focus:
+    scoped=PayrollRun.objects.filter(request__case=case,kind__in=kinds,pk=d['subject_id'])
+    if not (focus=='inputs' and d['subject_kind']=='input' or d['subject_kind']=='run' and scoped.exists()):
+     raise ValidationError('Select a review for this payroll screen.')
    if k=='request':domain.request(a,c,d['reference'],d['metadata'],e,v)
    elif k=='capture':
     r=domain.capture(a,c,d['request_record'].pk,d['provider'],d['operation_key'],d['body'],v)
@@ -38,10 +56,13 @@ def workbench(request,case_id):
    elif k=='investigate':investigate(a,c,v)
    elif k=='policy':
     with transaction.atomic():domain.locked(a,c,'policy.configure',v);draft_payroll_policy(a,c,d['component'],d['content'],e,d['effective_from'])
-   messages.success(request,'Payroll working history updated; no payment, journal or HR source edit');return redirect('payroll',case_id=c)
+   messages.success(request,'Payroll history updated.');return redirect(request.path)
   except (ValidationError,ValueError,TypeError) as exc:
-   messages.error(request,'Capture held: check owner authority, contract, schema and retry key; source values are never reflected.' if request.POST.get('action')=='capture' else str(exc));return redirect('payroll',case_id=case.pk)
- inputs=list(PayrollInput.objects.defer('payload').filter(request__case=case).order_by('-pk')[:50]);runs=list(PayrollRun.objects.defer('result').filter(request__case=case).order_by('-pk')[:50])
+   messages.error(request,'The upload could not be accepted. Check that you selected one UTF-8 JSON export for this provider and period.' if request.POST.get('action')=='capture' else str(exc));return redirect(request.path)
+ inputs=list(PayrollInput.objects.defer('payload').filter(request__case=case).order_by('-pk')[:50]) if focus in {None,'inputs'} else []
+ run_query=PayrollRun.objects.defer('result').filter(request__case=case)
+ if focus:run_query=run_query.filter(kind__in=kinds)
+ runs=list(run_query.order_by('-pk')[:50])
  for i in inputs:
   try:domain.access(i.request,request.user,True);i.can_read_private=True
   except (ValidationError,PermissionDenied):i.can_read_private=False
@@ -52,7 +73,13 @@ def workbench(request,case_id):
   except (ValidationError,PermissionDenied):r.can_read_private=False
   try:domain.run_current(r);r.current=True
   except (ValidationError,PermissionDenied):r.current=False
- response=render(request,'finance/payroll.html',{'case':case,'requests':PayrollRequest.objects.filter(case=case).order_by('-pk')[:30],'inputs':inputs,'runs':runs,'publications':PayrollPublication.objects.defer('payload').filter(request__case=case).order_by('-pk')[:30],'commands':forms,'policies':[resolve(k,case) for k in SCHEMAS],'schemas':SCHEMAS,'request_schema':domain.REQUEST,'agents':AgentRun.objects.filter(case=case,provider='deterministic-payroll-v1').order_by('-pk')[:5]});response['Cache-Control']='no-store';return response
+ navigation=[(key,label,reverse('design_payroll_'+key,args=[case.pk])) for key,(label,_,_) in SECTIONS.items()]
+ response=render(request,'finance/payroll.html',{'case':case,'title':title,'focus':focus,'navigation':navigation,
+  'requests':PayrollRequest.objects.filter(case=case).order_by('-pk')[:30],'inputs':inputs,'runs':runs,
+  'publications':PayrollPublication.objects.defer('payload').filter(request__case=case).order_by('-pk')[:30] if not focus else [],
+  'commands':forms,'policies':[resolve(k,case) for k in SCHEMAS],'schemas':SCHEMAS,'request_schema':domain.REQUEST,
+  'agents':AgentRun.objects.filter(case=case,provider='deterministic-payroll-v1').order_by('-pk')[:5]})
+ response['Cache-Control']='no-store';return response
 
 @login_required
 def data(request,case_id,kind,pk):

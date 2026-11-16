@@ -756,18 +756,20 @@ def create(request):
 @login_required
 @require_http_methods(['GET','HEAD','POST'])
 def detail(request,work_id,focus=None):
+    from .screen_focus import SCREENS, require_action
+
     work=get_object_or_404(visible(request.user),pk=work_id)
-    if focus and work.definition != 'pmo-finance/v1':
+    if focus and focus not in SCREENS.get(work.definition, {}):
         raise Http404
     if work.definition=='engagement/v1':
         from .factory_engagement_views import detail as engagement_detail
         return engagement_detail(request,work)
     if work.definition=='rfp-response/v1':
         from .factory_rfp_views import detail as rfp_detail
-        return rfp_detail(request,work)
+        return rfp_detail(request,work,focus)
     if work.definition=='finance-accounts/v1':
         from .factory_accounting_views import detail as accounting_detail
-        return accounting_detail(request,work)
+        return accounting_detail(request,work,focus)
     if work.definition=='pmo-issues/v1':
         from .factory_issue_views import detail
         return detail(request,work)
@@ -794,22 +796,22 @@ def detail(request,work_id,focus=None):
         return payroll_detail(request,work)
     if work.definition=='pmo-escalation/v1':
         from .factory_escalation_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='pmo-leadership-report/v1':
         from .factory_leadership_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='pmo-weekly-report/v1':
         from .factory_reporting_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='pmo-emergency/v1':
         from .factory_emergency_views import detail as emergency_detail
-        return emergency_detail(request,work)
+        return emergency_detail(request,work,focus)
     if work.definition=='pmo-change/v1':
         from .factory_change_views import detail as change_detail
         return change_detail(request,work)
     if work.definition=='delivery-go-live/v1':
         from .factory_go_live_views import detail as go_live_detail
-        return go_live_detail(request,work)
+        return go_live_detail(request,work,focus)
     if work.definition=='delivery-closure/v1':
         from .factory_closure_views import detail as closure_detail
         return closure_detail(request,work)
@@ -824,9 +826,7 @@ def detail(request,work_id,focus=None):
     if request.method=='POST':
         try:
             operation=request.POST.get('action');revision=int(request.POST.get('revision','0'))
-            if (focus == 'decision' and operation not in {'claim','release_claim','decide','information','responsibility_recheck'}
-                    or focus == 'recovery' and operation not in {'reconcile','replace_preparation','resume','cancel','adopt_profile'}):
-                raise ValidationError('Choose an available action on this page.')
+            require_action(work, focus, operation)
             if operation=='observe_department' and work.definition!='planning/v1' or operation=='reassess' and work.definition not in ['planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1']:raise ValidationError('Choose an action available for this work')
             if operation=='replace_preparation':
                 from .factory_invoice_intake import replace

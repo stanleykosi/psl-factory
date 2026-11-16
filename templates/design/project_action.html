@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Project action · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'design_project_tab' case.pk 'actions' %}">← Project actions</a><h1>{{ state.description }}</h1><p>{{ case|workspace_name }}</p></div></header>
+<div class="factory-case-layout"><section class="card"><h2>Commitment</h2><dl class="decision-facts"><dt>Owner</dt><dd>{{ state.owner.get_full_name|default:state.owner.username|default:'Owner needed' }}</dd><dt>Deadline</dt><dd>{{ state.due_at|date:'d M Y, H:i T'|default:'Unknown' }}</dd><dt>Status</dt><dd>{{ state.status|readable }}{% if timing == 'OVERDUE' %} · Overdue{% endif %}</dd></dl>
+<h2>Recorded changes</h2><ul>{% for entry in history %}<li>Version {{ entry.number }} · {{ entry.status|readable }} · {{ entry.reason }}</li>{% endfor %}</ul></section>
+<aside class="card"><h2>Update action</h2>{% if form %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Record change</button></form>{% else %}<p>No change is available for your current role and this action’s state.</p>{% endif %}<p><a href="{% url 'meetings' case.pk %}">Open meetings and deadline controls</a></p></aside></div>
+{% endblock %}

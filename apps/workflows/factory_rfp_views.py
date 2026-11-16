@@ -350,8 +350,9 @@ def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,
     work.status='ready';work.finding='';work.revision+=1;work.save(update_fields=['status','finding','revision','updated_at'])
 
 
-def detail(request,work):
+def detail(request,work,focus=None):
     from . import factory_rfp as service
+    from .screen_focus import require_action
     runtime.access(request.user,work.case,envelope=service.DEFINITION)
     queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
     if queue not in ['needs_me','active','decisions','exceptions','unassigned','verified']:queue='needs_me'
@@ -363,11 +364,12 @@ def detail(request,work):
     chosen=actual.filter(pk=selected_id).first() if selected_id is not None else None
     if request.GET.get('submission') and chosen:navigation['submission']=chosen.pk
     if request.GET.get('submission_page'):navigation['submission_page']=request.GET['submission_page']
-    url=reverse('factory_detail',args=[work.pk])+'?'+urlencode(navigation)
+    url=request.path+'?'+urlencode(navigation)
     source=None;mappings=None
     if request.method=='POST':
         try:
             action=request.POST.get('action');revision=int(request.POST.get('revision','0'))
+            require_action(work, focus, action)
             if action=='advance':runtime.advance(request.user,work.pk,revision)
             elif action=='reconcile':runtime.reconcile(request.user,work.pk,revision)
             elif action=='cancel':runtime.manage(request.user,work.pk,revision,'cancel')
@@ -388,7 +390,7 @@ def detail(request,work):
             else:raise ValidationError('Choose an action available for this work')
             if action=='outcome' and chosen and actual.count()>1:
                 navigation['submission']=chosen.pk
-                url=reverse('factory_detail',args=[work.pk])+'?'+urlencode(navigation)
+                url=request.path+'?'+urlencode(navigation)
             messages.success(request,'Action recorded. Inspect current decisions, output and receipts.');return redirect(url)
         except (ValidationError,ValueError,TypeError,KeyError) as exc:
             messages.error(request,'; '.join(exc.messages) if isinstance(exc,ValidationError) else 'Use complete current record references.')
@@ -415,11 +417,11 @@ def detail(request,work):
     for direction in ['previous','next']:
         if getattr(submission_page,'has_'+direction)():
             values=dict(navigation,submission_page=getattr(submission_page,direction+'_page_number')())
-            pager[direction]=reverse('factory_detail',args=[work.pk])+'?'+urlencode(values)
+            pager[direction]=request.path+'?'+urlencode(values)
     return response(request,'factory/rfp_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'source_form':source,'mappings':mappings,
         'review_evidence':evidence,'outcome_evidence':evidence.filter(kind='rfp_outcome'),'receipts':receipts,'activities':activities,
         'submission_selector':field.widget.render('target',chosen.pk if chosen else None,attrs={'required':True}),
-        'submission_page':submission_page,'submission_pager':pager})
+        'submission_page':submission_page,'submission_pager':pager,'focus':focus})
 
 
 class OutcomeSettingsForm(forms.Form):

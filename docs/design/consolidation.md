@@ -4,6 +4,18 @@ The 59 screen IDs come from `delivery/screen-coverage.md` at `4689cee`. Desktop,
 
 The first increment uses one server-rendered shell for native screens, including sign-in, onboarding, workspace creation, access setup and password change. My Work, Overview, Project Journey and the Assistant use native data. The Assistant accepts synthetic documents, queues one of eight worker roles and links to the draft, human review and native handoff. The standalone frontend remains a design reference. Its sample data and proposed workflow effects are outside the hosted application.
 
+## Railway browser walkthrough
+
+The named trial account reached the corresponding route or shared workspace for each of the 59 screen IDs. Some visits ended at an expected access hold or an empty state. Visiting a screen does not verify every board variant or every write. The interactive runs used separate synthetic workspaces. See [the test ledger](../../BUILD-TESTS.md) for run IDs and provider boundaries.
+
+| What was exercised | Observed result |
+| --- | --- |
+| Start Work and alerts | Opened the Planning form from the chooser. Marked an in-app alert as read and observed the updated inbox. |
+| Bid, costing and customer outcome | Recorded both reviews and all three ordered approvals. Approved the final draft, queued its controlled synthetic submission, saw the receipt, recorded the customer win and saw the verified Route A intake. |
+| Project actions | Completed the action and saw its earlier owner and deadline preserved in history. |
+| Client billing and company Month-end | Read the synthetic invoice, applied amount and remaining balance in the client view. Opened the scoped company Month-end and read the reviewed monthly figure. |
+| Other PMO and Finance destinations | Opened native destinations, including separate delivery intake forms, post-release work, ledger, schedules, assets and payroll. Many write, return, recovery and permission states still need interactive acceptance. |
+
 ## Functions added by the design
 
 | Design behavior | Native implementation | Open work |
@@ -13,8 +25,8 @@ The first increment uses one server-rendered shell for native screens, including
 | The assistant suggests another department, or turns an answer into work | Reviewed transfer with access on both sides. Planning, invoice, commercial and bid intake save exact editable draft versions and link the confirmed version to native work. The eight file specialists can use a human-edited summary and questions with their original excerpts. | Add the remaining draft types, more prefilled fields and expected output previews. |
 | Queue and overview show who is next, station progress, wait reasons and verified outcomes | Native work, tasks and receipts. Overview groups authorized open work. Project Journey adds access-scoped milestones, documents, invoices, registers and actions. | Consistent evidence and station views across all lines, including detailed filters and live agent progress. |
 | The factory keeps eligible work moving in the background | The 26 primary Start Work lines can request background progression as part of native start. Existing work also supports enrolling and pausing. Native gates handle current authority, unchanged waits and uncertain effects. | Connect background preferences to specialised prerequisite intake and verify remaining individual approval, recovery and final effect journeys. |
-| Decisions, response and recovery show exact version, allowed choices, proof, recipient and what happened | Native approvals, responses and selected reconciliation workflows. Invoice decision and recovery pages use the original native task and receipt. Standalone status reports show exact audience, allowed review decisions, returned wording and reviewed recipient packet. | Match remaining domain states to the exact native decisions, proof and receipt tools. |
-| Alerts, client register, templates and month-end summarize work across cases | The alert bell previews unread authorised items. The alert center stores personal read state and preferences. Clients preserve scoped contact revisions. Projects list protected templates and accept private first and revised files. Month-end shows scoped reviewed output with explicit coverage. | Approved email and WhatsApp delivery, remaining bell interaction acceptance, approved use of contacts as recipients and broader Finance coverage. |
+| Decisions, response and recovery show exact version, allowed choices, proof, recipient and what happened | Invoice, bid, Emergency, accounting, weekly report, leadership report, escalation and go-live use focused pages over the existing commands. Standalone status reports show exact audience, review decisions, returned wording and the reviewed recipient packet. | Exercise returned, declined and uncertain branches by line in the browser, and match the remaining board-specific presentation. |
+| Alerts, client register, templates and month-end summarize work across cases | In-app alert read state and preferences. Scoped client contacts and verified billed, applied and owed amounts. Protected template first files and revisions. Company Month-end shows reviewed project figures and confirmed cash-lot coverage independently. | Approved email and WhatsApp delivery, approved use of contacts as recipients and a complete cross-workspace Finance close including receivables coverage. |
 
 The implementation uses required proofs and stoppable exceptions along each workflow, narrow agent tools that return source facts, and persistent request keys at the handoff. These are engineering choices informed by the [Toyota Production System](https://global.toyota/en/company/vision-and-philosophy/production-system/), [Anthropic's tool-design guidance](https://www.anthropic.com/research/writing-tools-for-agents), and [Temporal's durable activity guidance](https://docs.temporal.io/activity-definition). The referenced guidance supplies no PSL policy values.
 
@@ -22,25 +34,25 @@ The implementation uses required proofs and stoppable exceptions along each work
 | --- | --- | --- |
 | SCR-01 My work | `home`, `work_inbox`; authorized factory work and recorded assignments | Match filters and verify queue coverage |
 | SCR-02 Work item | `factory_detail`; definition-specific views, coordinator and recovery | Align station progress, evidence and actions across definitions |
-| SCR-03 Decision | Dedicated invoice decision view and standalone status-report review, plus native `approvals`, `payment_controls`, `costing`, `emergencies` | Common presentation for other domain decisions and interactive acceptance |
+| SCR-03 Decision | Focused native invoice, bid, Emergency, accounting, weekly report, leadership report, escalation and go-live views, plus `approvals`, `payment_controls` and `costing` | Verify each remaining decision variant, return and authority hold in the browser |
 | SCR-04 Start work | Shared drawer or mobile sheet via `factory_intake`, native `factory_create` forms, `p56_intake` | Build remaining line-specific proof and recovery states |
 | SCR-05 Assistant | `design_agents`, `assistant_thread`, `assistant_transfer`, `case_uploads`; three conversational roles, one selected record, versioned Planning, invoice, commercial and bid drafts and editable review for eight file specialists | Wider tools, further draft types, multiple mentions, speech and approved provider data scope |
 | SCR-06 Overview | `design_overview`; current native factory summaries | Factory floor fidelity and station-level review |
 | SCR-07 Project journey | `design_project`, `design_project_tab`, `workspace_overview`, `case`, `project_audience`; current project records by permission | Complete inline proof and decision interactions and board acceptance |
 | SCR-08 Document review | `documents`, `case_uploads` and focused standalone status-report audience preview, source citations, return and rework, exact publication and delivery recovery | Coverage for other document types and interactive acceptance |
-| SCR-09 Payroll import | `payroll` | Restricted proof intake, reconciliation table and errors |
+| SCR-09 Payroll import | `design_payroll_inputs`, bounded UTF-8 JSON upload goes through the existing restricted source validator and import | Source-native spreadsheet mappings and reconciliation table variants |
 | SCR-10 Exceptions | `home?queue=exceptions`, native reconciliation views | Match filters and exception links |
 | SCR-11 Registers | Project register tab links native `issues`, `changes`, `rfp` | Design filters, dates, dispositions and exact record links |
 | SCR-12 Report drill-down | `project_audience`, `leadership_report` | Safe drill-down using each source’s reporting grants |
 | SCR-13 Setup | `policy`, `policy_scopes`, `factory_configuration`, `factory_responsibility` | Consolidate configuration menus while keeping each scoped validator |
 | SCR-14 Verified outputs | `home?queue=verified`, `factory_detail` | Show verified items and current evidence without treating sent as verified |
 | SCR-15 Alerts | Scoped unread bell preview, in-app alert list, personal read state and email/WhatsApp preferences | Browser acceptance of bell interaction and approved channel delivery with receipts |
-| SCR-16 Record a response | Invoice receipt and recovery view, `factory_detail`, `factory_receipt_recovery_review`, `commercial`, `rfp` | Match remaining proof and recovery panels using their native response variants |
+| SCR-16 Record a response | Dedicated bid, Emergency and go-live response views, plus exact invoice and supported workflow receipt recovery | Remaining source-specific proof fields and browser acceptance of each recovery state |
 | SCR-17 Sign in | `login`, `logout`, Django sessions | Match sign-in and account setup while enforcing redirect safety |
-| SCR-18 Restricted payroll matching | `payroll`, `payroll_inspect` | Align HR matching and permission states |
+| SCR-18 Restricted payroll matching | `design_payroll_matching`, `payroll_inspect` and exact HR-authorised receipts | Match the board's restricted HR and Finance table presentations |
 | SCR-19 Milestone completion | `case`, `delivery_progress`; native PMO completion and Finance handoff | Proof and exact version presentation |
 | SCR-20 Payments and follow-up | `finance_settlement`, `finance_receipt_followup` | Combine permitted views without conflating invoice, receipt and allocation |
-| SCR-21 Staff accounts | `tenant_access`, `case_access`; named-account provisioning and grant controls | Staff inventory and reviewed invite/deactivate behavior |
+| SCR-21 Staff accounts | `tenant_access`, `case_access`; a searchable paginated workspace roster and native grant controls use current technical delegation | Organization-wide invitation, resend, deactivation and safe reassignment through a reviewed authority contract |
 | SCR-22 Projects | `workspace_overview`, `project_views` | Match list filters and derive open/closed from source |
 | SCR-23 Log a bid request | `rfp`, `factory_create` for `rfp-response/v1` | Match request and proof form |
 | SCR-24 Assign project manager | `rfp`, `engagement` | Source-backed eligible choices |
@@ -48,15 +60,15 @@ The implementation uses required proofs and stoppable exceptions along each work
 | SCR-26 Bid response | `rfp`, `factory_detail` for `rfp-response/v1` and versioned Assistant draft with editable cited requirement rows | Remaining in-work response rework and browser acceptance |
 | SCR-27 Costing sheet | `costing`, `commercial`, commercial factory line | Use configured approval order and exact costing proof |
 | SCR-28 Minutes | `meetings`, `factory_detail` for `pmo-minutes/v1` | Show citations, agreed owners and deadlines through publication |
-| SCR-29 Project actions | Project Actions tab shows native owners and deadlines from `meetings` | Inline assignment, reassignment and completion through native controls |
+| SCR-29 Project actions | Project Actions tab and exact action page support native ownership, deadlines, completion and history | Interactive acceptance of reassignment, stale updates, reopening and cancellation for separate operators |
 | SCR-30 Issue detail | `issues`, `factory_detail` for `pmo-issues/v1` | Match owner, due date and verified follow-up states |
 | SCR-31 Change request | `changes`, `factory_detail` for `pmo-change/v1` | Align impact through signed closure, with configured approvers |
-| SCR-32 Payment reminder | `finance_receipt_followup`, `finance_settlement` | Reminder draft and recorded recipient outcome |
+| SCR-32 Payment reminder | `finance_receipt_followup`, `finance_settlement` provide the invoice and collection source | Build the editable reminder, exact approved destination, human-controlled send, receipt and uncertain-effect lookup |
 | SCR-33 Retrospective | `closure_preparation`, `delivery` | Retrospective view tied to exact closure evidence |
 | SCR-34 Templates | Protected catalogue, private Word/Excel/PDF first project template and revision uploads, and native owner current-use review | Revision notes, interactive file walkthrough and protected Finance definitions through their own domain |
-| SCR-35 Clients | Searchable project/client register with source-backed, scoped project and billing contact history | Client Finance coverage, billed totals, contact readiness and approved destination integration, and browser acceptance |
-| SCR-36 Month-end | Project Month-end selects the month and reads exact current reviewed figures via Finance performance | Cross-workspace approved coverage, cash and receivables reconciliation links, Finance walkthrough |
-| SCR-37 Payroll corrections | `payroll`, `payroll_inspect` | Restricted correction and supersession view |
+| SCR-35 Clients | Searchable project/client register with versioned contacts and currency-separated native invoiced, applied and owed amounts per approved customer scope | Approved destination use and cross-project customer identity when agreed |
+| SCR-36 Month-end | Project and company Month-end display exact reviewed figures, cash receipts and coverage by authorized workspace | A complete cross-workspace close with receivables coverage and reconciliation |
+| SCR-37 Payroll corrections | `design_payroll_corrections` routes exact match-version concerns to the native HR handoff | HR-side correction decision, configured masking and supersession presentation |
 | SCR-38 Project milestones | `commercial`, `delivery_progress`, `case` | Milestone table with controlled changes and completion state |
 | SCR-39 Costing rule | `costing`, `policy`, `policy_scopes` | Exact version, examples and reviewed configuration |
 | SCR-40 Bid submission | `rfp`, `factory_detail` for `rfp-response/v1` | Controlled presentation of reviewed submission and actual receipts |

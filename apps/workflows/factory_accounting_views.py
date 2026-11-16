@@ -192,14 +192,17 @@ def _presentation(actor,work):
         'coordination_needed':current and not planning_ready and execution_owner is not None,'execution_owner_needed':current and execution_owner is None,'can_configure_coordination':permitted('policy.configure'),
         'accounting':{'state':observed,'formula':formula,'value':value},'evidence_as_of':work.updated_at}
 
-def detail(request,work):
+def detail(request,work,focus=None):
+    from .screen_focus import require_action
+
     runtime.access(request.user,work.case,envelope=service.DEFINITION)
     queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
     if queue not in ['needs_me','active','decisions','exceptions','unassigned','verified']:queue='needs_me'
-    url=reverse('factory_detail',args=[work.pk])+'?'+urlencode({'queue':queue,'q':q})
+    url=request.path+'?'+urlencode({'queue':queue,'q':q})
     if request.method=='POST':
         try:
             action=request.POST.get('action');revision=int(request.POST.get('revision','0'))
+            require_action(work, focus, action)
             target=None
             if action in ['claim','decide']:
                 target=get_object_or_404(HumanTask,pk=int(request.POST.get('task','0')),case=work.case,kind='factory_accounting_review',context__work=work.pk)
@@ -235,5 +238,6 @@ def detail(request,work):
         receipt.current_recipient_name=(receipt.recipient.get_full_name() or receipt.recipient.username) if receipt.recipient.is_active and Grant.objects.filter(case=work.case,user=receipt.recipient,active=True,action='finance.read').exists() else 'Historical recipient'
     response=render(request,'factory/accounting_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,
         'review_evidence':public_evidence(work.case.evidence.filter(kind='finance_review')).order_by('-pk'),
-        'sources':source_choices,'receipts':receipts,'activities':activities,'intake_provenance':intake.provenance(request.user,work)})
+        'sources':source_choices,'receipts':receipts,'activities':activities,
+        'intake_provenance':intake.provenance(request.user,work) if not focus else None,'focus':focus})
     response['Cache-Control']='no-store';return response

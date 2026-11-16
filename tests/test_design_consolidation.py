@@ -53,6 +53,17 @@ class DesignConsolidationTests(TestCase):
         self.assertNotContains(response, reverse('issues', args=[self.case.pk]))
         self.assertNotContains(response, reverse('factory_detail', args=[self.work.pk]))
 
+    def test_leadership_reader_is_available_to_scoped_access_configuration(self):
+        from apps.identity.actions import ACTIONS
+
+        self.assertIn('report.read', ACTIONS)
+        self.client.force_login(self.actor)
+        url = reverse('leadership_report', args=[self.case.pk, 'monthly_executive'])
+        self.assertContains(self.client.get(url), 'Prepare the monthly leadership report')
+        self.assertEqual(self.client.get(reverse('leadership_report', args=[self.case.pk, 'unknown'])).status_code, 404)
+        Grant.objects.filter(case=self.case, user=self.actor, action='report.read').update(active=False)
+        self.assertEqual(self.client.get(url).status_code, 403)
+
     def test_onboarding_and_password_use_same_shell_and_do_not_grant_access(self):
         user = get_user_model().objects.create_user('new-operator', password='synthetic-new-account')
         response = self.client.post(reverse('login'), {'username': user.username, 'password': 'synthetic-new-account'},
@@ -76,6 +87,28 @@ class DesignConsolidationTests(TestCase):
         Grant.objects.filter(case=self.case, user=self.actor, action='finance.read').update(active=False)
         self.assertEqual(self.client.get(reverse('design_project_tab', args=[self.case.pk, 'money'])).status_code, 404)
 
+    def test_exact_project_action_uses_native_ownership_deadline_and_revision(self):
+        from django.utils import timezone
+        from apps.pmo.meetings import create_action
+
+        self.client.force_login(self.actor)
+        item = create_action(self.actor, self.case.pk, 'SCREEN-ACTION', 'Check the approval evidence', self.actor.pk,
+                             None, self.template_owner.pk, 'Synthetic action', rev(self.case))
+        url = reverse('design_project_action', args=[self.case.pk, item.pk])
+        self.assertContains(self.client.get(reverse('design_project_tab', args=[self.case.pk, 'actions'])), url)
+        due = timezone.localtime().replace(second=0, microsecond=0)
+        values = {'operation': 'assign', 'owner': self.actor.pk, 'due_at': due.isoformat(),
+                  'evidence': self.template_owner.pk, 'reason': 'Deadline recorded', 'revision': rev(self.case), 'action_revision': 1}
+        self.assertRedirects(self.client.post(url, values), url, fetch_redirect_response=False)
+        item.refresh_from_db()
+        self.assertEqual(item.current.due_at, due)
+        self.assertContains(self.client.post(url, {**values, 'revision': rev(self.case)}), 'stale action revision')
+        self.assertRedirects(self.client.post(url, {**values, 'operation': 'complete', 'revision': rev(self.case),
+                             'action_revision': 2}), url, fetch_redirect_response=False)
+        self.assertContains(self.client.get(url), 'Completed')
+        foreign = reverse('design_project_action', args=[self.other.pk, item.pk])
+        self.assertEqual(self.client.get(foreign).status_code, 404)
+
     def test_agent_entry_lists_eight_roles_and_checks_current_grants(self):
         self.client.force_login(self.actor)
         assistant = reverse('design_agents')
@@ -85,7 +118,10 @@ class DesignConsolidationTests(TestCase):
             self.assertContains(response, title)
         self.assertContains(response, f'{files}#agent-job-{self.job.pk}')
         self.assertNotContains(response, 'Private draft body')
-        self.assertContains(self.client.get(files), 'Private draft body')
+        files_page = self.client.get(files)
+        self.assertContains(files_page, 'Private draft body')
+        self.assertContains(files_page, 'Queue a fresh draft with source excerpts')
+        self.assertNotContains(files_page, 'Save as reviewed case evidence')
         Grant.objects.filter(case=self.case, user=self.actor, action='agent.extract').update(active=False)
         self.assertNotContains(self.client.get(assistant), 'permitted.txt')
         self.assertNotContains(self.client.get(files), 'Private draft body')

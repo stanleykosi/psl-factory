@@ -145,14 +145,21 @@ from apps.workflows import factory_progress_views
 from apps.core import alerts_views
 from apps.core import client_contacts
 from apps.documents import design_review, template_catalog
+from apps.finance import month_end
+from apps.pmo import project_action_views
 
 urlpatterns += [path('work/<int:work_id>/background/', factory_progress_views.change, name='factory_background')]
 urlpatterns += [path('work/<int:work_id>/decision/', factory_views.detail, {'focus': 'decision'}, name='factory_invoice_decision'),
-                path('work/<int:work_id>/recovery/', factory_views.detail, {'focus': 'recovery'}, name='factory_invoice_recovery')]
+                path('work/<int:work_id>/recovery/', factory_views.detail, {'focus': 'recovery'}, name='factory_invoice_recovery'),
+                path('work/<int:work_id>/response/', factory_views.detail, {'focus': 'response'}, name='factory_work_response')]
 urlpatterns += [path('projects/<uuid:case_id>/templates/upload/', template_catalog.upload, name='design_template_upload'),
                 path('projects/<uuid:case_id>/templates/<int:template_id>/file/', template_catalog.download, name='design_template_download')]
 urlpatterns += [path('clients/', client_contacts.index, name='design_clients'),
                 path('clients/<uuid:case_id>/', client_contacts.project, name='design_client_project')]
+urlpatterns += [path('finance/month-end/', month_end.company, name='design_company_month_end')]
+urlpatterns += [path('projects/<uuid:case_id>/actions/<int:item_id>/', project_action_views.show, name='design_project_action')]
+urlpatterns += [path(f'cases/<uuid:case_id>/finance/payroll/{key}/', payroll_views.workbench, {'focus': key},
+                     name=f'design_payroll_{key}') for key in payroll_views.SECTIONS]
 urlpatterns += [path('cases/<uuid:case_id>/documents/review/<int:version_id>/', design_review.show, name='design_document_review')]
 urlpatterns += [path('notifications/', alerts_views.index, name='design_alerts'),
                 path('notifications/preview/', alerts_views.preview, name='design_alert_preview'),

@@ -63,7 +63,8 @@ def create(request):
     return render(request,'factory/go_live_start.html',{'case':form.selected,'form':form,'inputs_form':inputs,'queue':queue,'q':q})
 
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
+def detail(request,work,focus=None):
+    from .screen_focus import require_action
     from .factory_views import presentation,QUEUES,permitted
     queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
     if queue not in QUEUES:queue='needs_me'
@@ -72,6 +73,7 @@ def detail(request,work):
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
+            require_action(work, focus, action)
             if action=='advance':factory.advance(request.user,work.pk,revision)
             elif action=='correct':
                 if not form.is_valid():raise ValidationError('Review the selected template and actual source records')
@@ -95,6 +97,6 @@ def detail(request,work):
             'ACT11':'Deliver the exact reviewed report','ACT12':'Reconcile original delivery','ACT13':'Verify actual go-live acceptance'}.get(activity.kind,'Review permitted work')
         for attempt in activity.attempts.all():attempt.display_result=go_live.attempt_projection(attempt)
     signatures=public_evidence(Evidence.objects.filter(case=work.case,kind='signature')).order_by('-pk')
-    response=render(request,'factory/go_live_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'inputs_form':form,'activities':activities,
+    response=render(request,'factory/go_live_detail.html',{'case':work.case,'focus':focus,'row':row,'queue':queue,'q':q,'inputs_form':form,'activities':activities,
         'signature_choices':list(signatures[:100]),'signature_limited':signatures.count()>100,'can_configure':permitted(request.user,work,'policy.configure')})
     response['Cache-Control']='no-store';return response

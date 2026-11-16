@@ -1,7 +1,23 @@
 {% extends 'base.html' %}{% load studio_ui %}
 {% block title %}Workspace access · PSL Factory{% endblock %}
 {% block content %}
-<header class="page-heading"><div><h1>Workspace access</h1><p class="lede">{{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Back to workspace</a></header>
+<header class="page-heading"><div><h1>People and access</h1><p class="lede">{{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Back to workspace</a></header>
+<section class="card table-wrap">
+  <h2>Staff accounts in this workspace</h2>
+  <form method="get"><label for="staff-search">Name or email</label> <input id="staff-search" name="person" value="{{ search }}" maxlength="100"> <button class="button secondary" type="submit">Search</button></form>
+  <table><thead><tr><th>Person</th><th>Account</th><th>Workspace access</th></tr></thead>
+    <tbody>{% for person in people %}<tr>
+      <td>{% firstof person.user__first_name person.user__username %}{% if person.user__first_name and person.user__last_name %} {{ person.user__last_name }}{% endif %}{% if person.user__email %}<br>{{ person.user__email }}{% endif %}</td>
+      <td>{{ person.user__is_active|yesno:'Active,Inactive' }}<br>Account {{ person.user_id }}</td>
+      <td>{% if person.record_actions %}<details><summary>{{ person.active_actions }} permitted action{{ person.active_actions|pluralize }}</summary><ul>{% for action in person.record_actions %}<li>{{ action|readable }}</li>{% endfor %}</ul></details>{% else %}No current access in this list{% endif %}</td>
+    </tr>{% empty %}<tr><td colspan="3">No matching accounts in the access you manage.</td></tr>{% endfor %}</tbody>
+  </table>
+  {% if people.has_other_pages %}<nav class="factory-queues" aria-label="Staff accounts pages">
+    {% if people.has_previous %}<a href="?person={{ search|urlencode }}&amp;page={{ people.previous_page_number }}">Previous</a>{% endif %}
+    <span>Page {{ people.number }} of {{ people.paginator.num_pages }}</span>
+    {% if people.has_next %}<a href="?person={{ search|urlencode }}&amp;page={{ people.next_page_number }}">Next</a>{% endif %}
+  </nav>{% endif %}
+</section>
 <section class="card onboarding-card">
   <h2>Grant or remove access</h2>
   <p>Choose which action the account can take in this workspace.</p>

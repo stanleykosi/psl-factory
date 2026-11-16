@@ -53,13 +53,15 @@ def create(request):
 
 @never_cache
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
+def detail(request,work,focus=None):
+    from .screen_focus import require_action
     from .factory_views import presentation,permitted
     r,data=domain.source(work,request.user,False)
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,issue_id=r.profile.state.issue_id,initial=data)
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
+            require_action(work, focus, action)
             if action=='advance':factory.advance(request.user,work.pk,revision)
             elif action=='correct':
                 if not form.is_valid():raise ValidationError(form.errors.as_text())
@@ -75,4 +77,4 @@ def detail(request,work):
             messages.success(request,'Communication action recorded. Issue resolution remains separate.');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
-    return render(request,'factory/escalation_detail.html',{'row':row,'case':work.case,'inputs_form':form,'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})
+    return render(request,'factory/escalation_detail.html',{'row':row,'case':work.case,'focus':focus,'inputs_form':form,'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})

@@ -63,14 +63,16 @@ def create(request):
     return render(request,'factory/emergency_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
+def detail(request,work,focus=None):
     from .factory_views import presentation,permitted
+    from .screen_focus import require_action
     p,data=emergency.source(work,request.user,False)
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,change_id=p.version.change_id,initial=dict(data['inputs'],profile_id=p.pk))
     actual_form=OutcomeForm(request.POST if request.method=='POST' and request.POST.get('action')=='capture_outcome' else None)
     if request.method=='POST':
         try:
             d=request.POST;action=d.get('action');revision=int(d.get('revision','0'));case_revision=int(d.get('case_revision','0'))
+            require_action(work, focus, action)
             if action=='advance':factory.advance(request.user,work.pk,revision)
             elif action=='correct':
                 if not form.is_valid():raise ValidationError('Choose exact native Emergency sources')
@@ -92,4 +94,4 @@ def detail(request,work):
             messages.success(request,'Emergency evidence action recorded. Select newly recorded native references explicitly when needed.');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
-    return render(request,'factory/emergency_detail.html',{'row':row,'case':work.case,'inputs_form':form,'outcome_form':actual_form,'time_zone':timezone.get_current_timezone_name(),'evidence':public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk'),'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})
+    return render(request,'factory/emergency_detail.html',{'row':row,'case':work.case,'inputs_form':form,'outcome_form':actual_form,'time_zone':timezone.get_current_timezone_name(),'evidence':public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk'),'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk'),'focus':focus})

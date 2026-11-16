@@ -173,8 +173,11 @@ class AccountingOperatorTests(TestCase):
         from apps.workflows import factory_accounting as accounting
         a,c,e,values,configs,source,template,recipient=self.data;f=configured(a,c,e,source,template,METRICS);work=f['work'];factory.run_until_wait(work.pk)
         task=HumanTask.objects.get(case=c,kind='factory_accounting_review',context__purpose='source',status='open')
-        client=Client();client.force_login(a);url=reverse('factory_detail',args=[work.pk])
+        client=Client();client.force_login(a);url=reverse('factory_invoice_decision',args=[work.pk])
         response=client.get(url);self.assertContains(response,'Review the trial-balance source');self.assertContains(response,'Claim Finance review')
+        self.assertNotContains(response, 'Continue eligible accounting work')
+        recover=client.get(reverse('factory_invoice_recovery',args=[work.pk]))
+        self.assertContains(recover, 'Report receipts');self.assertNotContains(recover,'Claim Finance review')
         secure=Client(enforce_csrf_checks=True);secure.force_login(a)
         self.assertEqual(secure.post(url,{'action':'claim','task':task.pk,'task_revision':task.revision}).status_code,403)
         self.assertEqual(client.post(url,{'action':'claim','task':task.pk,'task_revision':task.revision}).status_code,302)

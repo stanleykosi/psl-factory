@@ -50,7 +50,11 @@ def page_name(value):
         'login':'Sign in','planning':'Project planning','costing':'Project costing','finance_analysis':'Financial analysis',
         'finance_settlement':'Invoices and receipts','finance_billing':'Billing','meetings':'Meetings and actions','policy':'Workspace settings',
         'integration_readiness':'Connections','operations':'Business continuity','case_create':'New workspace','coverage':'Process directory','closure_preparation':'Prepare for closure',
-        'design_overview':'Factory overview','design_agents':'Assistant','design_project':'Project journey'}
+        'design_overview':'Factory overview','design_agents':'Assistant','design_project':'Project journey',
+        'design_project_tab':'Project journey','design_company_month_end':'Month-end','design_project_action':'Project action',
+        'design_clients':'Clients','design_client_project':'Client details','design_document_review':'Document review',
+        'design_template_upload':'Upload a template','design_alerts':'Alerts','design_alert_preferences':'Alert preferences',
+        'design_payroll_inputs':'Payroll inputs','design_payroll_matching':'Payroll matching','design_payroll_corrections':'Payroll corrections'}
     return names.get(value,str(value or 'Workspace').replace('_',' ').capitalize())
 
 
@@ -65,9 +69,11 @@ def workspace_sections(case,actions,can_manage_access=False):
         ('Finance','Billing, accounts and financial reporting.',[
         ('finance_billing','Billing','finance.read'),('finance_settlement','Invoices and receipts','finance.read'),('finance_corrections','Credits and corrections','finance.read'),
         ('finance_forecast','Cash forecast','finance.read'),('finance_analysis','Financial analysis','finance.read'),('finance_performance','Budgets and performance','finance.read'),
-        ('finance_schedules','Income and schedules','schedules.read'),('ppe','Assets and depreciation','ppe.read'),('payroll','Payroll and staff costs','payroll.read'),
+        ('finance_schedules','Income and schedules',('finance.read','schedules.read')),('ppe','Assets and depreciation',('finance.read','ppe.read')),('payroll','Payroll and staff costs','payroll.read'),
         ('bu','Business unit costs','bu.read'),('hrfinance','HR information','hrfinance.read'),('recognition','Revenue recognition','recognition.read'),
-        ('payment_controls','Payment review','payment.read'),('billing_evidence','Billing documents','d03.read'),('ledger_agents','Transaction evidence','ledger.agent.read')]),
+        ('payment_controls','Payment review','payment.read'),('billing_evidence','Billing documents','d03.read'),
+        ('finance_receipt_followup','Payment follow-up',('finance.read','finance.receipt_followup.read')),
+        ('ledger','Ledger references',('finance.read','ledger.read')),('ledger_agents','Transaction evidence','ledger.agent.read')]),
         ('Customers','Support cases, partners and service activity.',[
         ('support_flow','Customer support','support.read'),('support_agents','Response drafts','support.agent.read'),('complaint_summaries','Service reports','support.summary.read'),
         ('partner_operations','Partner services','partner.read'),('baas_reconciliation','Reconciliation','baas.read')]),
@@ -79,7 +85,8 @@ def workspace_sections(case,actions,can_manage_access=False):
         ('operations','Business continuity','ops.read'),('private_evidence','Restricted documents','agent.data.read')])]
     sections=[]
     for title,description,items in specs:
-        links=[{'label':label,'url':reverse(route,args=[case.pk])} for route,label,grant in items if grant in actions]
+        links=[{'label':label,'url':reverse(route,args=[case.pk])} for route,label,grant in items
+               if all(key in actions for key in (grant if isinstance(grant,tuple) else (grant,)))]
         if title=='Workspace settings' and can_manage_access:links.append({'label':'People and access','url':reverse('case_access',args=[case.pk])})
         if links:sections.append({'title':title,'description':description,'links':links})
     return sections

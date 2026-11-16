@@ -52,7 +52,7 @@ def sections(actor, case, tab, grants):
         return [section('Project actions', 'Manage actions and minutes', 'meetings', [
             {'title': a.current.description, 'state': a.current.status.replace('_', ' ').capitalize(),
              'detail': (a.current.owner.get_full_name() or a.current.owner.username) if a.current.owner else 'Owner needed',
-             'due': a.current.due_at, 'show_due': True} for a in actions])]
+             'due': a.current.due_at, 'show_due': True, 'url': reverse('design_project_action', args=[case.pk, a.pk])} for a in actions])]
     if tab == 'registers':
         result = []
         if 'issue.read' in grants:
