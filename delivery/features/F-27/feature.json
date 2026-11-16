@@ -3,26 +3,65 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-27",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Setup > Delegation: list the delegations the backend shows and add one from its own lists (contract mock only)",
+  "state": "READY",
   "task_ids": [
     "FE-SETUP-DELEGATION"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Both boards pass.** `SCR-13-desktop-delegation` at 1440 and `SCR-13-mobile-delegation` at 390: `pass: true`, coverage after exceptions 100, visual \u2265 90 (a D-83-style waiver only if the design engineer signs one). \u2014 verify: the commands; `round-<N>/fidelity/scores.txt`.",
+    "**Exceptions limited.** Each entry in `fidelity-exceptions.json` has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until signed) and maps to a Conflicts number; none covers a value the data supplies (name, role, date, reason, status). One fidelity run per round. \u2014 verify: file content; build.md.",
+    "**List from data.** With `default`, desktop shows FROM, TO, DATES, REASON, STATE with \"Kemi Adebayo \u00b7 PMO Lead\", \"Femi Ade \u00b7 PMO Lead\", \"18\u201325 Nov 2026\", \"Annual leave\", \"Upcoming\", and the ended row; phone shows \"Kemi Adebayo \u2192 Femi Ade\", \"PMO Lead \u00b7 18\u201325 Nov 2026 \u00b7 Annual leave\" and the tag. A row without `ends` shows \"Unknown\"; a row without `reason` or `role` draws nothing there; status comes only from `status` (a test with a past-dated `scheduled` row still shows \"Upcoming\"). \u2014 verify: `tests/setup-delegation.test.tsx`; page at 1440 and 390.",
+    "**Add control only on `can_add: true`.** `readonly` (no `can_add`) and a fixture with `can_add: false` show no panel, no button and no disabled placeholder; `default` shows them. The same fixture gives the same controls for personas `admin`, `finance_lead` and `ceo`; nothing reads `me.roles`. \u2014 verify: component tests; `grep -n \"roles\" frontend/src/features/setup/Delegation*.tsx frontend/src/features/setup/useDelegation*.ts` finds no read of `/me` roles.",
+    "**No list of its own.** From, To and Authority offer exactly the backend's options in its order, none pre-selected; there is no free-text input for a person or authority; a test that edits the DOM to add an option or dispatches a change to an unlisted value results in no PUT (the submit takes values only from the lists). No string naming a role, authority or person appears in `src/features/setup/Delegation*` or `useDelegation*`. \u2014 verify: component tests with a recording `fetch`; `grep -nE \"PMO Lead|Finance Lead|Admin|Kemi|Femi|Ada|Chika\" frontend/src/features/setup/Delegation*.tsx frontend/src/features/setup/useDelegation*.ts` returns nothing.",
+    "**From follows `from_options`.** `single` shows From as read-only \"You\" and sends no `from_person_id`; `authority` (one option) shows it as text; `default` (two) shows a `Select` and sends `from_person_id` of the chosen one. \u2014 verify: component tests.",
+    "**To pairing.** In `default`, To is disabled with \"Choose who is delegating first.\" until From is chosen; choosing Kemi lists only Femi, choosing Ada only Chika; changing From clears To. In `single` (no `for_person_id`) To lists every returned option. \u2014 verify: component tests.",
+    "**Authority.** No field and no `authority` in the body for `default`; read-only line and the single value sent for `single`; a required `Select` with no default for `authority`. Rows with `authority` show \"Authority: <label>\". \u2014 verify: component tests.",
+    "**Write request.** A valid add sends exactly one PUT `/api/v1/setup/delegation` with the CSRF header and a body that validates against the overlay `delegation_body`: `expected_revision` = the read's `revision`, `delegate` = the option's `person_id`, `starts`/`ends` as `YYYY-MM-DD`, `reason` trimmed or absent, no `idempotency_key`, no extra keys. A double click sends one. \u2014 verify: component tests; `setup-delegation-mock.test.ts`.",
+    "**Format checks only.** Missing To, an invalid date, or Ends before Starts shows the message under the field and sends nothing; a past Starts date or any other rule is sent as is. \u2014 verify: component tests.",
+    "**Success re-reads.** On 200 the first page is re-read, the new row appears from the re-read (not from the 200 body), the polite notice reads \"Delegation added: \u2026\", focus moves to the new row (or the table heading when no `delegation_id`), the form clears. \u2014 verify: component test and e2e.",
+    "**422.** With `psl_mock_delegations_save=invalid`, the top message and the messages under To and Ends show, focus goes to To, entries stay. \u2014 verify: component test and e2e.",
+    "**409.** With `stale`, the list is re-read, the stale sentence shows, entries stay, the next press sends the new `revision`; no automatic resend (fake timers 60 s: one PUT). \u2014 verify: component test.",
+    "**Uncertain write.** `uncertain`: never \"added\"; after the re-read, \"It was not added. You can add it again.\" and Add enabled. `uncertain_written`: the new row is listed, the \"list changed\" warning shows, Add is disabled with its reason and only \"Start again\" re-enables an empty form. A failed re-read locks the form with \"Try again\" (read only). \u2014 verify: component tests; e2e reads the mock state (one row added in `uncertain_written`, none in `uncertain`).",
+    "**Access.** 401 on read or write \u2192 signed-out with `next=/setup/delegation`; persona `pm`/`none` or `forbidden` \u2192 the not-open view, no names, no further call; 403/404 on the PUT \u2192 the backend message, list re-read; `/me` without `setup` \u2192 no delegation call at all. \u2014 verify: component tests with a recording `fetch`.",
+    "**No claimed effect, no agent.** The page contains no text saying a delegate can act, approve or has gained anything, other than the board's note and hint (Conflicts 4); there is no agent, suggestion or generated text. \u2014 verify: `grep -niE \"can now|now able|has been given|granted\" frontend/src/features/setup/Delegation*.tsx` returns nothing; component test of `document.body.textContent` after a success.",
+    "**Phone add form.** At 390, \"Add delegation\" opens the Drawer sheet \"Add a delegation\" with the same fields, messages and outcomes as desktop; Escape and Cancel close it and return focus to the button; after success the sheet closes and the new card is shown. (Pending Conflicts 1.) \u2014 verify: e2e at 390.",
+    "**Paging.** `many`: 20 rows, Show more appends the next 20 then 5 and the end message; a failed page keeps loaded rows with the problem callout. \u2014 verify: component test.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on default, the open phone sheet, the 422 state, the uncertain warning, empty, readonly and not-open; no sideways scroll at 390; visible focus; 44px targets on phones (D-92c); every field labelled, the Dates fieldset has a legend; errors announced; status words in text, not colour only; no animation under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/setup-delegation.spec.ts`.",
+    "**Tokens and components only.** `git diff` adds no `#hex`, `rgb(`, `hsl(` in `features/setup/*.css`; no local copy of a component that `@/components` exports. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `setup-delegation-mock.test.ts`: every fixture validates against the generated E-DELEGATIONS 200 schema plus the overlay; the check order; CSRF; persona rule; the 422s for an unlisted delegate, authority and from; 409; success bumps `revision`; reset clears. \u2014 verify: `cd frontend && npx vitest run tests/setup-delegation*.test.* tests/mock-contract.test.ts`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, protected paths, or existing fixtures; every overlay field is a contract proposal in build.md. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing behaviour kept.** `tests/setup*.test.*`, `shell.test.tsx`, `tests/components/**`, `e2e/setup.spec.ts`, `e2e/setup-templates.spec.ts` pass with no assertion removed or loosened; the other reserved tabs still render `ReservedTab`. \u2014 verify: `delivery/checks.sh`; the e2e command above.",
+    "**build.md evidence.** Commands and results, both scores, every exception with its Conflicts number, every contract proposal, the held items and the D-DELEGATION-VIEW limits in the PR description. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "security",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. The screen sets who may act for whom (identity and authority), and v7's own D-DELEGATION-VIEW is a proposal, D05 is open and no approver is named, so a wrong default or a derived-from-role control would grant authority. That is why every control follows the backend's response, and why SURFACES include auth and security (INV-ACCESS, no self-approval, authority ceiling). It is contained: only two boards, frontend and mock only (frontend/src/features/setup, frontend/mock), no backend and nothing released, so the damage a mistake can do is limited to the mock until the backend developer enforces the rules. PRODUCT-ACCEPTANCE is required: the add form and the authority wording are a business rule PSL must see, and the phone add form and the From and To narrowing go beyond what the boards draw."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-27/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +98,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-27/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +198,29 @@
   "created_at": "2026-11-16T17:39:35Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-16T17:53:13Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-27/readiness.md",
+      "delivery/features/F-27/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

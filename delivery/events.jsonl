@@ -1780,3 +1780,9 @@
 {"at":"2026-11-16T17:39:35Z","feature":"F-25","round":0,"kind":"created","tasks":["FE-M3-PROJECT-TABS"]}
 {"at":"2026-11-16T17:39:35Z","feature":"F-26","round":0,"kind":"created","tasks":["FE-M3-REPORT"]}
 {"at":"2026-11-16T17:39:35Z","feature":"F-27","round":0,"kind":"created","tasks":["FE-SETUP-DELEGATION"]}
+{"at":"2026-11-16T17:53:12Z","feature":"F-25","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-16T17:53:13Z","feature":"F-25","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-16T17:53:13Z","feature":"F-26","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-16T17:53:13Z","feature":"F-26","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-16T17:53:13Z","feature":"F-27","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","security","contract-change"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-16T17:53:13Z","feature":"F-27","round":0,"kind":"transition","from":"PLANNED","to":"READY"}

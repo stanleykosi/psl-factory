@@ -3,26 +3,68 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-25",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "A project's Milestones, Registers and Actions tabs show their rows, read-only (contract mock only)",
+  "state": "READY",
   "task_ids": [
     "FE-M3-PROJECT-TABS"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop boards at 1440.** `SCR-38-desktop`, `SCR-38-desktop-changed`, `SCR-11-desktop`, `SCR-29-desktop` each give `report.json` `pass: true`, `scores.coverageWithExceptions` = 100 and `scores.visual` >= 90 on the pages and cookies of the Boards table. \u2014 verify: the command per board, exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass.",
+    "**Phone boards at 390.** The four `-mobile` boards pass at `--width 390` with the same thresholds. \u2014 verify: same, rows in `scores.txt`.",
+    "**Exceptions are limited and explained.** Each `fidelity-exceptions.json` entry has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until signed) and maps to a Conflicts number; none covers a value the data can supply. A board below 90 visual for a Conflicts reason gets a per-board waiver proposal for the design engineer (D-83 is for line screens and does not apply). \u2014 verify: file content; build.md maps each entry to its Conflicts number.",
+    "**One fidelity run per round** (D-64). \u2014 verify: build.md.",
+    "**Tabs replace \"coming next\" for three tabs only.** `/projects/P-0101/milestones`, `/registers` and `/actions` show their tab content in the existing tab panel with the F-07 header and the tab selected; `/documents` still shows \"Documents come next\"; `/money` shows whatever F-26 or the current panel draws; `/projects/P-0101` (Journey) is unchanged. \u2014 verify: `tests/project-tabs.test.tsx`; `tests/projects-journey.test.tsx` passes with only the `:241-243` row changed.",
+    "**One read per view.** Opening a tab makes one E-PROJECT and one `GET /api/v1/projects/P-0101/<tab>` request with `limit=20` (and `register=issues` on Registers), no `q` when search is empty, no `cursor`; no polling (fake timers advanced 60 s, count unchanged). \u2014 verify: component test with a recording `fetch`.",
+    "**Milestones default.** The four P-0101 milestones show, in returned order: \"1 \u00b7 Kick-off\", \"\u20a63,000,000.00\", \"Done 27 Oct \u00b7 proof\", \"INV-0398 \u00b7 Verified\", \"Part paid \u00b7 \u20a6500,000.00 owed\"; \"2 \u00b7 UAT sign-off\", \"Done 11 Nov \u00b7 client UAT sign-off\", \"INV-0412 \u00b7 Waiting\", \"\u2014\"; \"3 \u00b7 Go-live\", \"Not yet\", \"\u2014\", \"\u2014\"; \"4 \u00b7 Hypercare\" with the `Unknown` tag and \"Not yet \u00b7 amount set at go-live\". No total row, no sum anywhere. \u2014 verify: component test; page at 1440 and 390.",
+    "**Unknown is never 0.** On P-0102 an unknown contract amount, an unknown change amount, an `owed.unknown`, `paid.status: unknown`, an unknown due date and an absent `age_seconds` each read \"Unknown\" (amber tag); `document.body.textContent` has no \"\u20a60\" and no \"0.00\" that the fixture did not send. \u2014 verify: component test and `tests/project-tabs-model.test.ts`.",
+    "**Facts stay separate (INV-FACTS).** A milestone with `invoice` and no `paid` shows \"\u2014\" under PAID (never \"Paid\" or \"Not paid\"); a `not_yet` milestone with an invoice still shows \"Not yet\"; every `paid.status` shows its own word; nothing reads `invoice.state` to decide paid. \u2014 verify: model tests over every `paid.status` and an invoice/paid mismatch fixture row.",
+    "**Changed milestone.** With `psl_mock_milestones=changed`, a CHANGES column appears (Conflicts 4) with \"CR-0031 \u00b7 SMS reminders\" linking to `/work/<work_id>`; Go-live's amount reads \"\u20a64,250,000.00 + the change \u00b7 change amount Unknown\"; INVOICE and PAID stay. On P-0102 a known change amount shows next to the contract amount and never added to it (no third figure). The phone card shows the \"CHANGED \u00b7 CR-0031\" tag. \u2014 verify: component test; page at 1440 and 390.",
+    "**No completion control.** No \"Mark milestone \u2026 complete\" button or link and no form exist on any milestone fixture. \u2014 verify: component test (`queryByRole('link'|'button', { name: /complete/i })` is null).",
+    "**Registers default.** Tabs read \"Issues 3\", \"Changes 2\", \"Emergencies 0\", \"RFPs 1\" from `summary.registers`; the toolbar shows search and \"3 ISSUES\" and no Filter; the Issues rows show reference, title, `PriorityTag` (\"\u25a0\u25a0\u25a0 High\" and so on), owner \"PM \u00b7 Tunde Bello\" / \"Engineering (recorded by PM)\", state text as given and \"2d\", \"4d\", \"Unknown\". The footer sentence shows. \u2014 verify: component test; page at both widths.",
+    "**Register switch and search use the URL.** Choosing Changes navigates to `?register=changes` and requests `register=changes` with no cursor; Issues removes `register` from the URL. Typing \"android\" and pausing sets `?q=android` and requests `q=android`; clearing removes both; an unknown `?register=x` reads as Issues. Keyboard: arrows, Home and End move along both tab bars. \u2014 verify: component test and e2e (URL and recorded requests).",
+    "**Empty and no match.** Emergencies (0 rows) shows \"No emergencies on this project yet.\"; a search with no rows shows the no-match sentence and \"Clear search\", which clears `q`; P-0106 shows each tab's empty sentence with no count text and no \"0\" invented where `summary` is absent. \u2014 verify: component test and e2e.",
+    "**Paging.** On P-0102 Issues, 20 rows and \"Show more\" show; pressing it sends one request with the returned `cursor` and appends the next rows, and focus stays on the control; changing register or search starts from page one; the URL never carries a cursor. \u2014 verify: component test and e2e.",
+    "**Actions default.** The header text reads \"9 ACTIONS \u00b7 3 OVERDUE \u00b7 1 WITHOUT OWNER\"; rows show title with \"From Weekly sync \u00b7 10 Nov\", owners \"Client \u00b7 Lagoon Health\", \"Engineering (recorded by PM)\", \"No owner\", \"Tunde Bello\", due \"13 Nov\" or \"Unknown\", and state tags OPEN, OVERDUE, DONE; the footer reads \"Actions come from confirmed minutes.\" and nothing about changing owners. \u2014 verify: component test; page at both widths.",
+    "**Rows link only with `work_id`.** Register titles, action titles, invoice references and change references link to `/work/<work_id>` when the row has one and are plain text otherwise; no link opens evidence. \u2014 verify: component test over fixtures with and without `work_id`.",
+    "**Access.** P-0103 (tab answers 403) and a tab 404 show \"No access to this tab\" in the panel with the header kept and no milestone name, amount, reference or title from the fixture in `document.body.textContent`; a 403 after a successful first page (search) removes the earlier rows. P-0099 shows F-07's `ProjectNoAccess` and makes no tab request. A tab 401 shows the sign-in link with `next=%2Fprojects%2FP-0101%2Fregisters` (query kept when present). A persona with any role gets the same columns and controls for the same fixture; nothing is read from `/me` beyond the Projects destination. \u2014 verify: component tests with a recording `fetch`; e2e for P-0103; `git diff` shows no new `/me` use in `features/projects`.",
+    "**Server and network errors.** A 500 or network failure on the tab read shows the error card with Retry; Retry sends exactly one new request; no automatic retry. \u2014 verify: component test.",
+    "**Static and data text.** Register `state`, owner `role`, `amount_note`, meeting names and references appear exactly as the fixture sends them; the frontend adds no state colour to register states and composes none of the backend sentences of Conflicts 3, 5 and 12. \u2014 verify: component test; `grep -n \"awaiting Finance decision\\|SOW amendment\\|recorded with your name\" frontend/src/features/projects` returns nothing.",
+    "**Accessibility and layout.** For the three tabs on P-0101, P-0102 and P-0106 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), one `h1`, the table `caption`s name the tables, no sideways page scroll (the table frame may scroll itself), visible focus, 44px targets on phones (D-92c; in-sentence links exempt, D-95), loading and result counts announced politely. \u2014 verify: `e2e/project-tabs.spec.ts`.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/projects/project-tabs.css` returns nothing. \u2014 verify: the command.",
+    "**Shared component change is general.** `ListToolbar` without `onFilterToggle` draws no Filter button; with it, behaviour is unchanged; existing component tests pass unchanged. \u2014 verify: a new case in `tests/project-tabs.test.tsx` or the components test; `delivery/checks.sh`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**` or `features/projects/model.ts`; every fixture validates against the generated E-PROJECT-TAB 200 schema with no stripping; every wanted field the schema lacks is a contract proposal in build.md. \u2014 verify: `tests/mock-project-tabs.test.ts`; `git diff --stat`; build.md.",
+    "**Mock matches the contract.** `mock-project-tabs.test.ts` runs every fixture through the handler: valid bodies for milestones, registers and actions; 404 for P-0099, an invisible case, a bad `limit`, a `register` on another tab, an empty `q`, a bad cursor; 403 for P-0103; 501 for `documents`; the changed cookie switches the milestones file; `q` and cursor slice the rows; the X-Mock-Scenario header still wins. \u2014 verify: the test.",
+    "**Existing behaviour kept.** `tests/projects*.test.*`, `mock-projects.test.ts`, `work-item*.test.tsx`, `shell.test.tsx`, component tests and `e2e/projects.spec.ts` pass; the only edited assertions are those listed under Shared files; no existing fixture changes. \u2014 verify: `delivery/checks.sh`; `git diff` on those files.",
+    "**New tests run.** `project-tabs.test.tsx`, `project-tabs-model.test.ts`, `mock-project-tabs.test.ts` and `e2e/project-tabs.spec.ts` exist and run in `delivery/checks.sh`, covering criteria 5 to 20. \u2014 verify: file presence and the run output in `round-<N>/build.md`.",
+    "**build.md evidence and limits.** build.md lists the commands run and results, the 8 scores, each exception with its Conflicts number, the ListToolbar change, every contract proposal and backend question, the static footer sentences for confirmation, and the mock limits below; the PR and build.md claim no real backend. Every e2e request goes to the mock (4791). \u2014 verify: file content; recorded requests."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The work is three read-only tab panels on a proposed v7 contract (D-PROJECT-TAB-ROWS) that the backend may change, reusing shared components and `features/projects`. It shows money (contract and change amounts, paid and owed), so Unknown handling and the separation of completion, invoice and payment must be exact (INV-UNKNOWN, INV-FACTS). It stays at medium and not high because there are no writes, no sends, no migrations and nothing is released. SURFACES: ui (8 boards), api (`E-PROJECT-TAB` typed arrays and `E-PROJECT` counts), contract-change (D-PROJECT-TAB-ROWS is a proposal and the gaps above), product-decision (the drawn controls that need a contract answer: complete, filter, owner edit). PRODUCT-ACCEPTANCE is not-required, because the work conforms to the client-approved boards and adds no new flow, rule or copy. Any omitted control is a fidelity exception for the design engineer to sign, as in D-99 and D-100."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-25/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +101,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": false,
+      "assessment_reason": "delivery/features/F-25/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +194,28 @@
   "created_at": "2026-11-16T17:39:35Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-16T17:53:13Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-25/readiness.md",
+      "delivery/features/F-25/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
