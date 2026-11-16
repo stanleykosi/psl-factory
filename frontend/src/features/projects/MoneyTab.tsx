@@ -342,8 +342,10 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
   const figure = figureOf(loaded, selectedId);
   return (
     <>
-      {title}
-      <p className="money__lead">Every figure links to the record it came from. Unknown amounts are shown as Unknown, never as 0.</p>
+      <div className="money__intro">
+        {title}
+        <p className="money__lead">Every figure links to the record it came from. Unknown amounts are shown as Unknown, never as 0.</p>
+      </div>
       <div className="money__body">
         <div className="money__main">
           <StageTable rows={rows} pick={pick} />

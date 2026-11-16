@@ -3,6 +3,12 @@
 
 .money__title { margin: 0; font-family: var(--font-display); font-stretch: 112%; font-weight: 800; font-size: var(--text-sheet-title-size); line-height: 1.2; overflow-wrap: anywhere; }
 .money__lead, .money__plain { margin: 0; }
+/* the report title leads the board's sentence on one line, so the table keeps the board's place */
+.money__intro { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3); }
+.money__intro { line-height: normal; }
+.money__intro .money__title { line-height: var(--text-sheet-title-size); }
+/* the board draws the table, the drill-down and the cards at the body's normal line height */
+.money__table th, .money__table td, .money__aside, .money__card { line-height: normal; }
 .money__lead { color: var(--ink-muted); }
 .money__empty { max-width: 720px; }
 
@@ -10,15 +16,25 @@
 .money__body { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
 .money__main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .money__table .psl-table { min-width: 700px; }
+/* the board's column widths: stage, amount, invoice, paid */
+.money__table th:nth-child(1) { width: 24%; }
+.money__table th:nth-child(2) { width: 17%; }
+.money__table th:nth-child(3) { width: 40%; }
 .money__amount, .money__note { display: block; }
 .money__note { font-size: var(--text-hint-size); color: var(--ink-muted); }
+/* the note wraps inside the amount column instead of widening it */
+.money__table .money__note { contain: inline-size; }
 .money__amountlink[aria-current="true"] { font-weight: 600; }
+/* Unknown as the boards draw it in the table and cards: amber text, no tint */
+.money__table .psl-unknown, .money__card .psl-unknown { padding: 0; background: none; font-weight: 600; }
+.money__table .psl-unknown { font-family: inherit; font-size: inherit; }
+.money__card .psl-unknown { font-size: var(--text-amount-size); }
 .money__asof { margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
 
 .money__aside { flex: 1 1 320px; max-width: 420px; }
 /* the board's head: sentence case on the action tint, 12px by 16px */
-.money__aside > .money__asidehead { display: block; padding: var(--space-3) var(--space-4); background: var(--action-tint); font-family: var(--font-sans); font-size: var(--text-body-size); font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink); }
-.money__aside > .money__asidebody { padding: 0; gap: 0; color: var(--ink); }
+.money__aside.psl-panel--agent > .money__asidehead { display: block; padding: var(--space-3) var(--space-4); background: var(--action-tint); font-family: var(--font-sans); font-size: var(--text-body-size); font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink); }
+.money__aside.psl-panel--agent > .money__asidebody { padding: 0; gap: 0; color: var(--ink); }
 .money__aside .money__explain { padding: var(--space-14px) var(--space-4); }
 .money__explain { display: flex; flex-direction: column; gap: var(--space-3); }
 .money__sources { margin: 0; padding: 0 0 0 var(--space-18px); display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-body-size); }
@@ -29,11 +45,19 @@
 .money__aside .money__agent { margin: 0 var(--space-4) var(--space-4); }
 .money__agent .psl-avatar { width: 36px; height: 36px; flex: none; }
 
-/* phones: one card per stage, the amount a 44px link (D-92c) */
+/* phones: one card per stage; the amount and invoice are standalone links, 44px tall (D-92c) */
 .money__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .money__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
 .money__stage { font-weight: 600; }
 .money__card .money__amount, .money__card .money__amountlink { font-family: var(--font-mono); font-size: var(--text-amount-size); }
-.money__card .money__amountlink { display: inline-flex; align-items: center; min-height: var(--control-md); }
+/* The targets grow with padding that a matching negative margin takes back, so the cards keep the board's spacing:
+   the amount reaches up over the stage name, the invoice down into the card's foot; they meet in the 6px gap. */
+.money__card .money__amountlink, .money__card .money__line > .psl-link { display: inline-block; box-sizing: border-box; min-height: var(--control-md); }
+.money__card .money__amountlink { padding: 20px 0 3px; margin: -20px 0 -3px; }
+.money__card .money__line > .psl-link { padding: 3px 0 24px; margin: -3px 0 -24px; }
 .money__line { font-size: var(--text-hint-size); color: var(--ink-muted); }
 .money__hint { margin: 0; font-size: var(--text-body-size); }
+
+@media (max-width: 719.98px) {
+  .money__title { font-size: var(--text-body-phone-size); }
+}
