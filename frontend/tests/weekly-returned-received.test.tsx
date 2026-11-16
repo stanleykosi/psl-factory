@@ -310,6 +310,21 @@ describe('an uncertain item with no reconcile (QA-2-3)', () => {
     expect(sent.filter((r) => r.method === 'POST')).toEqual([]);
   });
 
+  it('an uncertain item that still offers steps but no reconcile locks every step: the sentence, steps off, a forced press sends nothing', async () => {
+    const body = item('W-2205.next');
+    delete body.reconcile;
+    delete body.allowed_actions;
+    await open(body);
+    expect(screen.getByText('We are checking what happened. Nothing was sent again.')).toBeTruthy();
+    expect(screen.queryByRole('radiogroup', { name: 'Confirm what happened' })).toBeNull();
+    const steps = within(document.querySelector('.ws-steps') as HTMLElement).getAllByRole('button');
+    expect(steps.length).toBeGreaterThan(0);
+    for (const b of steps) expect(b.getAttribute('aria-disabled')).toBe('true');
+    await press('Approve and send');
+    await press('Return with a note');
+    expect(sent.filter((r) => r.method === 'POST')).toEqual([]);
+  });
+
   it('with its reconcile present the sentence is not drawn on load', async () => {
     await open(item('W-2212'));
     expect(screen.queryByText('We are checking what happened. Nothing was sent again.')).toBeNull();

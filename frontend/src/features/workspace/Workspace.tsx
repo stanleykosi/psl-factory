@@ -75,7 +75,7 @@ const itemName = (section: Section, item: Item) => item.text ?? item.label ?? it
 function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkItem; workspace: WorkspaceData; page: WorkspacePage }) {
   const steps = workspace.steps ?? [];
   const byKey = new Map(steps.map((s) => [s.key, s]));
-  const flow = useWorkspaceStep({ id, revision: workspace.revision, page, awaitingReconcile: Boolean(item.reconcile) });
+  const flow = useWorkspaceStep({ id, revision: workspace.revision, page, awaitingReconcile: Boolean(item.reconcile) || item.state === 'effect_uncertain' });
   const [open, setOpen] = useState<Open | null>(null);
   const [selected, setSelected] = useState<Record<string, string[]>>({});
   const controls = useRef(new Map<string, HTMLButtonElement | null>());
@@ -83,6 +83,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const last = useRef<Attempt | null>(null);
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   const decideId = useId();
+  // an uncertain item with no reconcile: nothing to confirm here, the notice says it is being checked
+  const noReconcile = item.state === 'effect_uncertain' && !item.reconcile;
   const hasReconcile = Boolean(item.reconcile) && (item.allowed_actions ?? []).includes('reconcile');
 
   // On a phone the Decide panel is pinned to the bottom: the page keeps its height clear below it (see workspace.css).
@@ -270,7 +272,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           </div>
         )}
         {/* an uncertain item the reload returned with no reconcile: nothing can be answered or sent, and the page says so */}
-        {item.state === 'effect_uncertain' && !item.reconcile && notice?.kind !== 'uncertain' && (
+        {noReconcile && notice?.kind !== 'uncertain' && (
           <div role="alert">
             <Callout kind="warning" className="ws-notice">
               <span>{STEP_TEXT.uncertainNoReconcile}</span>
@@ -338,7 +340,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                       {line}
                     </p>
                   ))}
-                  <StepRow steps={workspaceSteps} hint={flow.allLocked ? (item.reconcile && !hasReconcile ? STEP_TEXT.confirmFirstByOther : STEP_TEXT.confirmFirst) : undefined}>
+                  <StepRow steps={workspaceSteps} hint={flow.allLocked && !noReconcile ? (item.reconcile && !hasReconcile ? STEP_TEXT.confirmFirstByOther : STEP_TEXT.confirmFirst) : undefined}>
                     {(s, describedBy) => control(s, `ws:${s.key}`, undefined, { describedBy })}
                   </StepRow>
                 </div>

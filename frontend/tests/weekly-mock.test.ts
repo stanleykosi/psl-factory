@@ -21,19 +21,17 @@ const dir = join(__dirname, '../mock/fixtures/work');
 const fixture = (name: string) => JSON.parse(readFileSync(join(dir, `${name}.json`), 'utf8'));
 // PROPOSAL (BACKEND-HANDOFF 2): a records field carries its saved records as a list of {value, label} in `value`; the
 // generated type says string, so the list is checked here on its own and stripped before the schema check.
-const savedRecords = buildSavedRecords();
-function buildSavedRecords() {
-  return (item: object) => {
-    const copy = structuredClone(item) as { workspace: { steps?: { fields?: { type: string; value?: unknown }[] }[] } };
-    for (const step of copy.workspace.steps ?? []) {
-      for (const f of step.fields ?? []) {
-        if (f.type !== 'records' || f.value === undefined) continue;
-        expect(Array.isArray(f.value) && f.value.every((o: { value?: unknown; label?: unknown }) => typeof o.value === 'string' && typeof o.label === 'string' && Object.keys(o).length === 2)).toBe(true);
-        delete f.value;
-      }
+function savedRecords(item: object) {
+  const copy = structuredClone(item) as { workspace: { steps?: { fields?: { type: string; value?: unknown }[] }[] } };
+  for (const step of copy.workspace.steps ?? []) {
+    for (const f of step.fields ?? []) {
+      if (f.type !== 'records' || f.value === undefined) continue;
+      const list = f.value as { value?: unknown; label?: unknown }[];
+      expect(Array.isArray(list) && list.length > 0 && list.every((o) => typeof o.value === 'string' && typeof o.label === 'string' && Object.keys(o).length === 2)).toBe(true);
+      delete f.value;
     }
-    return copy;
-  };
+  }
+  return copy;
 }
 const IDS = ['W-2201', 'W-2202', 'W-2203', 'W-2204', 'W-2205', 'W-2206', 'W-2207', 'W-2208'];
 const F22 = ['W-2209', 'W-2210', 'W-2211', 'W-2212', 'W-2213', 'W-2214'];
