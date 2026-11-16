@@ -22,6 +22,8 @@ export type ChatMessageProps =
       steps?: ReactNode;
       /** Source tags. */
       sources?: ReactNode;
+      /** The agent is named by the steps card just below (the phone working card), so no byline. */
+      hideWho?: boolean;
       /** Why it cannot answer, a plain line. */
       cannot?: string;
       /** A DraftCard. */
@@ -38,14 +40,16 @@ export function ChatMessage(props: ChatMessageProps) {
       </div>
     );
   }
-  const { agent, children, handoff, steps, sources, cannot, draft, className } = props;
+  const { agent, children, handoff, steps, sources, cannot, draft, hideWho, className } = props;
   const who = AGENTS[agent];
   return (
-    <article className={cx('cmp-chat cmp-chat--agent', className)} aria-label={`${who.name}, ${who.role}`}>
-      <AgentAvatar agent={agent} size={phone ? 32 : 40} className="cmp-chat__avatar" />
-      <span className="cmp-chat__who">
-        <strong>{who.name}</strong> <span>· {who.role}</span>
-      </span>
+    <article className={cx('cmp-chat cmp-chat--agent', hideWho && 'cmp-chat--nowho', className)} aria-label={`${who.name}, ${who.role}`}>
+      {!hideWho && <AgentAvatar agent={agent} size={phone ? 32 : 40} className="cmp-chat__avatar" />}
+      {!hideWho && (
+        <span className="cmp-chat__who">
+          <strong>{who.name}</strong> <span>· {who.role}</span>
+        </span>
+      )}
       <div className="cmp-chat__body">
         {handoff && <p className="cmp-chat__handoff">{handoff}</p>}
         {steps}

@@ -142,6 +142,8 @@
 .cmp-agent--inline .psl-steps { padding: 0; margin-top: var(--space-1); }
 .cmp-agent--inline .psl-step { padding-block: var(--space-6px); }
 .cmp-agent--inline .psl-step__text { line-height: 1.3; gap: 2px; }
+/* the desktop boards draw the record as the data string in mono, as the source tags under the answer; phones draw capitals */
+.cmp-agent--inline .psl-step__ref { text-transform: none; }
 
 /* source tag (SourceTag): mono type and reference, outlined; restricted is dashed with a lock */
 .cmp-source { display: inline-flex; align-items: center; text-decoration: none; color: var(--ink); }
@@ -170,6 +172,7 @@
 .cmp-chat__text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .cmp-chat--person { align-self: flex-end; max-width: calc(var(--space-7) * 13 + var(--space-2)); background: var(--ink); color: var(--on-strong); padding: var(--space-3) var(--space-4); }
 .cmp-chat--agent { display: grid; grid-template-columns: var(--control-sm) minmax(0, 1fr); grid-template-areas: "av who" "av body"; column-gap: var(--space-3); row-gap: var(--space-10px); align-items: start; }
+.cmp-chat--nowho { display: block; }
 .cmp-chat__avatar { grid-area: av; }
 .cmp-chat__who { grid-area: who; font-weight: 600; }
 .cmp-chat__who span { font-weight: 400; color: var(--ink-muted); }
@@ -222,6 +225,8 @@
   .cmp-draft__foot { padding: 0 var(--space-3) var(--space-3); }
   .cmp-draft__foot > .psl-btn { flex: 1 1 100%; }
   .psl-agent.cmp-agent--inline { padding: var(--space-1) var(--space-10px); }
+  .cmp-agent--inline .psl-step__ref { text-transform: uppercase; }
+  .cmp-draft__title { font-family: var(--font-sans); font-size: var(--text-body-size); }
   .cmp-composer__input { font-size: var(--text-body-phone-size); min-height: auto; padding: var(--space-10px) var(--space-3); }
   .cmp-composer__remove { width: var(--control-md); height: var(--control-md); margin: calc((var(--control-md) - var(--chip-height)) / -2) calc(var(--space-2) * -1) calc((var(--control-md) - var(--chip-height)) / -2) 0; }
   .cmp-composer__chips { row-gap: var(--space-3); }

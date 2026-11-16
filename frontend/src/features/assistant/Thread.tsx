@@ -40,6 +40,7 @@ export function Thread({ conversation, reread }: { conversation: Conversation; r
             key={at}
             from="agent"
             agent={agent}
+            hideWho={card}
             handoff={message.handoff?.note}
             cannot={message.cannot_reason}
             steps={

@@ -20,13 +20,15 @@ export type StartEntry = 'default' | 'chooser';
 
 type Step = { kind: 'entry' } | { kind: 'chooser' } | { kind: 'line'; line: Line };
 
-export function StartWorkDrawer({ entry, onClose, prefill, onStarted: started }: {
+export function StartWorkDrawer({ entry, onClose, prefill, onStarted: started, onConflict }: {
   entry: StartEntry;
   onClose: () => void;
   /** The assistant's draft: opens this line's form directly, filled for the person to check. */
   prefill?: { line_key: string; intake: Record<string, unknown> };
   /** Replaces the default (close and go to the new work item). */
   onStarted?: (workId: string) => void;
+  /** Called when a start answers 409 (the record changed or was started elsewhere), so the caller can read it again. */
+  onConflict?: () => void;
 }) {
   const router = useRouter();
   const pathname = usePathname() ?? '/';
@@ -75,6 +77,7 @@ export function StartWorkDrawer({ entry, onClose, prefill, onStarted: started }:
         onClose={onClose}
         onStarted={onStarted}
         pathname={pathname}
+        onConflict={onConflict}
         initialIntake={prefill?.line_key === view.line.key ? prefill.intake : undefined}
       />
     );

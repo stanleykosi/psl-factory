@@ -3,7 +3,7 @@
 // The composer's state and the two writes (E-CONVERSATION-NEW, E-MESSAGE). One press is one request: a synchronous
 // lock ignores a second press while one is in flight. The typed bodies have no idempotency key (Conflicts 17,
 // G-SCR05-3), so nothing is ever resent automatically. After a network error or 5xx the conversation is read again:
-// if the person's message is there it is shown and not sent again; if not, "Try again" waits for the person.
+// if a new person message is there it is shown and not sent again; if not, "Try again" waits for the person.
 import { useCallback, useRef, useState } from 'react';
 
 import { fetchConversation, createConversation, postMessage } from './api';
@@ -15,12 +15,14 @@ export const chipKey = (chip: Pick<Chip, 'kind' | 'id'>) => `${chip.kind}:${chip
 /** "@" for a project or person, "#" for a work item or document (the boards' marks). */
 export const chipLabel = (chip: Chip) => `${chip.kind === 'project' || chip.kind === 'person' ? '@' : '#'}${chip.label}`;
 
-const lastPersonText = (conversation: Conversation) => [...conversation.messages].reverse().find((m) => m.role === 'person')?.text;
+const personMessages = (conversation: Conversation) => conversation.messages.filter((m) => m.role === 'person').length;
 
-export function useSend({ agent, conversationId, reload, listChanged, onSent }: {
+export function useSend({ agent, conversationId, personCount = 0, reload, listChanged, onSent }: {
   agent: AgentName;
   /** Set in a thread; absent on the home, where the first send makes the conversation. */
   conversationId?: string;
+  /** How many of the person's messages the thread shows now: a lost send is found by a new one appearing. */
+  personCount?: number;
   /** Re-reads the open thread (the thread's own hook). */
   reload?: () => Promise<Conversation | undefined>;
   /** The list should be read again. */
@@ -92,10 +94,10 @@ export function useSend({ agent, conversationId, reload, listChanged, onSent }: 
         }
         return setError(message);
       }
-      // Uncertain: read it again. If the person's message is there, it was sent.
+      // Uncertain: read it again. If a new person message of theirs is there (the count went up), it was sent.
       const latest = conversationId ? await reload?.() : await fetchConversation(id).catch(() => undefined);
       listChanged();
-      if (latest && lastPersonText(latest) === trimmed) {
+      if (latest && personMessages(latest) > personCount) {
         done();
         if (!conversationId) onSent?.(id);
         return;
@@ -106,7 +108,7 @@ export function useSend({ agent, conversationId, reload, listChanged, onSent }: 
       writing.current = false;
       setBusy(false);
     }
-  }, [agent, canSend, chips, conversationId, listChanged, onSent, reload, trimmed]);
+  }, [agent, canSend, chips, conversationId, listChanged, onSent, personCount, reload, trimmed]);
 
   return { text, setText, chips, addChip, removeChip, busy, canSend, error: tooLong ? TOO_LONG : error, unsure, notice, signedOut, send };
 }

@@ -1,7 +1,7 @@
 /* The Assistant (SCR-05). Tokens only. The page fills the frame's width: the list, the middle and the agent panel meet
    the edges as the boards draw them, so the frame's own padding is taken off while this page is in it. */
 main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
-.as { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 270px) minmax(0, 1fr) minmax(0, 300px); grid-template-areas: "list center side"; align-items: stretch; min-height: calc(100dvh - var(--space-7) - var(--space-3)); }
+.as { flex: 1 1 auto; display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr) minmax(0, 260px); grid-template-areas: "list center side"; align-items: stretch; min-height: calc(100dvh - var(--space-7) - var(--space-3)); }
 .as__list { grid-area: list; background: var(--surface); border-right: var(--rule-strong) solid var(--ink); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-10px); min-width: 0; }
 .as__new.psl-btn { white-space: nowrap; }
 .as__note { margin: auto 0 0; padding-top: var(--space-3); font-size: var(--text-small-size); color: var(--ink-muted); line-height: 1.5; }
@@ -57,17 +57,23 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
 .as__fact > span:first-child { font-size: var(--text-small-size); color: var(--ink-muted); }
 .as__cannot { margin: auto 0 0; padding: var(--space-3); background: var(--action-tint); border: var(--rule-strong) solid var(--action); font-size: var(--text-hint-size); color: var(--action-ink); line-height: 1.5; }
 
-.as-earlier { align-self: flex-end; min-height: var(--control-md); padding: 0 var(--space-1); border: none; background: none; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--action); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
 /* between phones and wide desktops the panel sits under the middle */
 @media (max-width: 1079.98px) {
-  .as { grid-template-columns: minmax(0, 270px) minmax(0, 1fr); grid-template-areas: "list center" "list side"; }
+  .as { grid-template-columns: minmax(0, 240px) minmax(0, 1fr); grid-template-areas: "list center" "list side"; }
   .as__side { border-left: none; border-top: var(--rule-strong) solid var(--ink); }
+}
+
+/* Keyboard focus is never hidden under the docked composer on phones */
+@media (max-width: 719.98px) {
+  html:has(.as) { scroll-padding-bottom: calc(var(--space-7) * 4); }
 }
 
 @media (max-width: 719.98px) {
   .as { display: flex; flex-direction: column; min-height: 0; }
-  .as__center { flex: 1 1 auto; }
+  .as__center { flex: 1 1 auto; min-height: calc(100dvh - var(--control-md) - var(--space-3)); }
+  .as__composer { margin-top: auto; }
+  .as__home { flex-grow: 1; }
   .as__talk { padding: var(--space-14px) var(--space-4); gap: var(--space-6px); border-bottom: none; background: none; }
   .as__eyebrow, .as-chip__team { display: none; }
   .as-chip { min-height: var(--control-md); padding-right: var(--space-3); font-size: var(--text-body-size); }
@@ -83,3 +89,5 @@ main.shell-main:has(> .as) { max-width: none; padding: 0; gap: 0; }
   .as-tool { height: var(--control-md); padding: 0 var(--space-10px); font-size: var(--text-body-size); }
   .as-row { min-height: var(--control-md); }
 }
+
+.as__open { padding: var(--space-3) var(--space-4) var(--space-18px); }

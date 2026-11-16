@@ -317,6 +317,18 @@ describe('errors keep the text and never resend on their own', () => {
     expect(assistantPosts()).toHaveLength(1);
   });
 
+  it('a lost send is not taken for a delivered one just because the same words were sent before', async () => {
+    await open('/assistant/CV-2401');
+    await thread();
+    // the thread already has "Create the invoice for Harmattan Bank milestone 2. ..." from the person
+    type('Create the invoice for Harmattan Bank milestone 2. UAT was signed off on Friday. [500]'.replace(' [500]', ''));
+    bridge.override((request) => (request.method === 'POST' ? Promise.reject(new TypeError('fetch failed')) : undefined));
+    send();
+    const alert = await screen.findByRole('alert');
+    expect(within(alert).getByRole('button', { name: 'Try again' })).toBeTruthy();
+    expect(box()).toHaveProperty('value', 'Create the invoice for Harmattan Bank milestone 2. UAT was signed off on Friday.');
+  });
+
   it('a new conversation whose first message is lost reuses the same conversation on Try again', async () => {
     await open('/assistant');
     type('Plan it [500]');
@@ -782,5 +794,39 @@ describe('"Start this invoice" opens the normal Start work drawer, prefilled', (
     expect(within(dialog()).queryByRole('combobox')).toBeNull();
     expect(within(dialog()).queryByRole('button', { name: /^Start the/ })).toBeNull();
     expect(startsRequests()).toEqual([]);
+  });
+});
+
+const dialog = () => screen.getByRole('dialog');
+
+describe('phone: the bar and the footer', () => {
+  it('the home bar reads "← Home" and "5 earlier" (a button that opens the list)', async () => {
+    phone();
+    await open('/assistant');
+    expect(await screen.findByRole('link', { name: 'Back to Home' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: '5 earlier' }).className).toContain('shell-phonenote');
+  });
+
+  it('the thread bar carries "← Assistant" and the title; the working card is the only byline', async () => {
+    phone();
+    await open('/assistant/CV-2405');
+    const section = await thread();
+    expect(screen.getByRole('link', { name: 'Back to Assistant' })).toBeTruthy();
+    expect(within(section).queryByText('· PMO agent')).toBeNull();
+    expect(within(section).getAllByText(/Tola · PMO agent/)).toHaveLength(1);
+  });
+
+  it('after the start the footer is a full-width "Open INV-0415" link to the work item, in place of the composer', async () => {
+    phone();
+    await open('/assistant/CV-2401');
+    await thread();
+    fireEvent.click(screen.getByRole('button', { name: 'Start this invoice' }));
+    await screen.findByRole('dialog');
+    await waitFor(() => expect((within(dialog()).getByRole('button', { name: 'Start the invoice' }) as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.click(within(dialog()).getByRole('button', { name: 'Start the invoice' }));
+    const footer = await screen.findByRole('link', { name: 'Open INV-0415' });
+    expect(footer.getAttribute('href')).toBe('/work/W-1401');
+    expect(footer.className).toContain('psl-btn--block');
+    expect(screen.queryByRole('textbox')).toBeNull();
   });
 });

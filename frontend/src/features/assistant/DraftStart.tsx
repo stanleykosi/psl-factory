@@ -5,7 +5,7 @@
 // sends or pays. Once `draft.started` is read, the button goes and the started line takes its place.
 import { useEffect, useRef, useState } from 'react';
 
-import { Button, DraftCard, Link, Money, Unknown, useIsPhone, type DraftRow } from '@/components';
+import { Button, DraftCard, formatAmount, Link, Unknown, useIsPhone, type DraftRow } from '@/components';
 import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
 
 import { workHref } from './model';
@@ -20,9 +20,10 @@ function rowValue(row: Row) {
     money.unknown || money.amount === undefined ? (
       <Unknown />
     ) : money.currency === 'NGN' ? (
-      <Money value={money.amount} />
+      // The boards draw the amount in the row's own sans, not mono (D-93).
+      <span>{formatAmount(money.amount)}</span>
     ) : (
-      <span className="psl-mono">
+      <span>
         {money.currency} {money.amount}
       </span>
     );
@@ -100,6 +101,7 @@ export function DraftStart({ draft, reread }: {
           prefill={{ line_key: start.line_key, intake: start.intake ?? {} }}
           onClose={closed}
           onStarted={closed}
+          onConflict={() => void reread()}
         />
       )}
     </>

@@ -12,7 +12,7 @@ import type { DestinationInfo } from './destinations';
 import { SampleLabel } from './SampleLabel';
 
 /** A sub-page's way back, drawn in the phone bar as "← label", with an optional mono note at the right ("RULES"). */
-export type PhoneBack = { label: string; href: string; note?: string };
+export type PhoneBack = { label: string; href: string; note?: string; /** Makes the note a button that does this (the assistant's "3 earlier"). */ onNote?: () => void };
 
 type Props = {
   me: Me | null;
@@ -67,7 +67,14 @@ export function PhoneBar({ me, destinations, current, back = null, bell }: Props
         ) : (
           <span className="psl-brand">PSL FACTORY</span>
         )}
-        {back?.note && <span className="shell-phonenote">{back.note}</span>}
+        {back?.note &&
+          (back.onNote ? (
+            <button type="button" className="shell-phonenote shell-phonenote--action" onClick={back.onNote}>
+              {back.note}
+            </button>
+          ) : (
+            <span className="shell-phonenote">{back.note}</span>
+          ))}
         <SampleLabel />
       </header>
       {hasMenu && open && (

@@ -20,12 +20,3 @@ export function TalkTo({ agents, selected, onPick }: { agents: AgentName[]; sele
     </div>
   );
 }
-
-/** Phones: "3 earlier" opens the conversation list as a sheet ("20+ earlier" when the list has another page). */
-export function Earlier({ count, more, onOpen }: { count: number; more: boolean; onOpen: () => void }) {
-  return (
-    <button type="button" className="as-earlier" onClick={onOpen}>
-      {`${count}${more ? '+' : ''} earlier`}
-    </button>
-  );
-}

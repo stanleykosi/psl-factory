@@ -3,15 +3,17 @@
 // /assistant/[conversationId]: one conversation. Reads E-CONVERSATION, polls while it is working, and holds the
 // composer for the agent that answered. A conversation that is not the person's, or unknown, shows nothing of it.
 import { usePathname, useRouter } from 'next/navigation';
+import NextLink from 'next/link';
 import { useCallback } from 'react';
 
-import { AGENTS, EmptyState, ErrorState, Loading, Skeleton, useIsPhone, VisuallyHidden } from '@/components';
+import { AGENTS, buttonClass, EmptyState, ErrorState, Loading, Skeleton, useIsPhone, VisuallyHidden } from '@/components';
 import { usePhoneBack } from '@/shell/AppShell';
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { useAssistant } from './AssistantContext';
 import { TalkTo } from './Chrome';
 import { ComposerBar } from './ComposerBar';
+import { workHref } from './model';
 import { NOT_FOUND, REFRESH_FAILED, sideSentence } from './labels';
 import { poseFor, SidePanel } from './SidePanel';
 import { Thread } from './Thread';
@@ -30,12 +32,13 @@ function Open({ id, conversation, refreshFailed, reload }: { id: string; convers
   const phone = useIsPhone();
   const pathname = usePathname() ?? '/assistant';
   const agent = conversation.agent;
-  const send = useSend({ agent: agent ?? 'tola', conversationId: id, reload, listChanged: list.refresh });
+  const send = useSend({ agent: agent ?? 'tola', conversationId: id, personCount: conversation.messages.filter((m) => m.role === 'person').length, reload, listChanged: list.refresh });
   // After a start the thread and the list both change ("Started · INV-0415").
   const afterStart = useCallback(async () => {
     await reload();
     void list.refresh();
   }, [reload, list]);
+  const started = conversation.messages.find((m) => m.draft?.started)?.draft?.started;
   const name = agent ? AGENTS[agent].name : '';
   return (
     <>
@@ -51,7 +54,16 @@ function Open({ id, conversation, refreshFailed, reload }: { id: string; convers
             {REFRESH_FAILED}
           </p>
         )}
-        {agent && <ComposerBar agent={agent} send={send} pathname={pathname} />}
+        {agent && phone && started ? (
+          // Phones: once the draft is started the footer action is the way to the work item, as the board draws it.
+          <div className="as__open">
+            <NextLink href={workHref(started.work_id)} className={buttonClass('primary', 'lg', true)}>
+              {started.reference ? `Open ${started.reference}` : 'Open the work item'}
+            </NextLink>
+          </div>
+        ) : (
+          agent && <ComposerBar agent={agent} send={send} pathname={pathname} />
+        )}
       </div>
       {agent && !phone && (
         <SidePanel

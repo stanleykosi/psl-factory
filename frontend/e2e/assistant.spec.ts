@@ -197,3 +197,41 @@ test('every request in this run went to the local mock', async ({ page }) => {
   await ready(page, '/assistant/CV-2401');
   for (const url of requests) expect(new URL(url).hostname, url).toMatch(/^(localhost|127\.0\.0\.1)$/);
 });
+
+test('desktop columns are the boards’: the list 240px and the agent panel 260px at 1440', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1040 });
+  await ready(page, '/assistant/CV-2401');
+  expect((await page.getByRole('complementary', { name: 'Conversations' }).boundingBox())!.width).toBe(240);
+  expect((await page.getByRole('complementary', { name: 'Agent and context' }).boundingBox())!.width).toBe(260);
+});
+
+test('phone: the bar keeps "← Assistant" on one line with a one-line ellipsed title; the home composer is docked at the bottom', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await ready(page, '/assistant/CV-2405');
+  const back = page.getByRole('link', { name: 'Back to Assistant' });
+  expect((await back.boundingBox())!.height).toBeLessThanOrEqual(48);
+  const note = page.locator('.shell-phonenote');
+  expect((await note.boundingBox())!.height).toBeLessThanOrEqual(48);
+  expect((await note.boundingBox())!.x).toBeGreaterThanOrEqual((await back.boundingBox())!.x + (await back.boundingBox())!.width);
+  await ready(page, '/assistant');
+  const composer = await page.locator('.as__composer').boundingBox();
+  expect(composer!.y + composer!.height).toBeGreaterThan(844 - 4);
+  await expect(page.getByRole('link', { name: 'Back to Home' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '5 earlier' })).toBeVisible();
+});
+
+test('phone: the draft button is never hidden under the docked composer when it takes focus; after the start the footer is "Open INV-0415"', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await ready(page, '/assistant/CV-2401');
+  const button = page.getByRole('button', { name: 'Start this invoice' });
+  await button.focus();
+  const b = (await button.boundingBox())!;
+  const c = (await page.locator('.as__composer').boundingBox())!;
+  expect(b.y + b.height).toBeLessThanOrEqual(c.y + 1);
+  const drawer = await startInvoice(page);
+  await drawer.getByRole('button', { name: 'Start the invoice' }).click();
+  const footer = page.getByRole('link', { name: 'Open INV-0415' });
+  await expect(footer).toHaveAttribute('href', '/work/W-1401');
+  expect((await footer.boundingBox())!.height).toBeGreaterThanOrEqual(50);
+  await expect(page.getByRole('textbox')).toHaveCount(0);
+});

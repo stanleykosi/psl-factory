@@ -7,9 +7,11 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { AGENTS, EmptyState, useIsPhone } from '@/components';
+import { usePhoneBack } from '@/shell/AppShell';
+import { visibleDestinations } from '@/shell/destinations';
 
 import { useAssistant } from './AssistantContext';
-import { Earlier, TalkTo } from './Chrome';
+import { TalkTo } from './Chrome';
 import { ComposerBar } from './ComposerBar';
 import { HOME_ABILITY, hello, NO_AGENTS } from './labels';
 import { SidePanel } from './SidePanel';
@@ -26,6 +28,12 @@ function HomeComposer({ agent }: { agent: AgentName }) {
     onSent: (id) => router.replace(`/assistant/${encodeURIComponent(id)}`),
   });
   return <ComposerBar agent={agent} send={send} pathname={pathname} />;
+}
+
+/** Phone bar: "← Home" and "N earlier", which opens the conversation list (the boards draw both in the bar). */
+function PhoneHome({ home, count, more, onOpen }: { home: string; count: number; more: boolean; onOpen: () => void }) {
+  usePhoneBack({ label: 'Home', href: home, note: count > 0 ? `${count}${more ? '+' : ''} earlier` : undefined, onNote: onOpen });
+  return null;
 }
 
 function Home() {
@@ -50,9 +58,12 @@ function Home() {
   return (
     <>
       <div className="as__center">
-        {phone && list.state.status === 'ready' && list.state.items.length > 0 && (
-          <Earlier count={list.state.items.length} more={Boolean(list.state.next)} onOpen={showList} />
-        )}
+        <PhoneHome
+          home={visibleDestinations(me.destinations)[0]?.href ?? '/my-work'}
+          count={list.state.status === 'ready' ? list.state.items.length : 0}
+          more={list.state.status === 'ready' && Boolean(list.state.next)}
+          onOpen={showList}
+        />
         <TalkTo agents={agents} selected={agent} onPick={(next) => router.replace(`/assistant?agent=${next}`, { scroll: false })} />
         <section className="as__home" aria-label="Start a request">
           <img className="as__idle" src={`/agents/${agent}-idle.png`} alt={`${who.name}, the ${who.role}, standing and ready`} />

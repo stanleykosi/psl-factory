@@ -128,7 +128,7 @@ async function findOptions(lineKey: string, field: string, parent: string | unde
  * (a value not served stays empty with a note), and the case and revision come from the chosen option as always. The
  * form is read-only meanwhile (`prefilling`). It is a starting point: nothing is sent until the person presses start.
  */
-export function useStartForm(line: Line, onStarted: (workId: string) => void, initialIntake?: Record<string, unknown>) {
+export function useStartForm(line: Line, onStarted: (workId: string) => void, initialIntake?: Record<string, unknown>, onConflict?: () => void) {
   const fields = useMemo(() => shownFields(line), [line]);
   const [values, setValues] = useState<Values>({});
   // A fixed case's revision as last read from E-LINES (it changes only after a 409 re-read).
@@ -295,6 +295,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
       if (response.status === 409) {
         setKey(newIdempotencyKey());
         if (apiError.code === 'idempotency_key_reused') return show({ kind: 'problem', message: apiError.message });
+        onConflict?.();
         return await reloadRevision();
       }
       const lead = response.status === 403 || response.status === 404 ? 'You can’t start this here.' : undefined;
@@ -303,7 +304,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
       writing.current = false;
       setBusy(false);
     }
-  }, [caseRef, fields, key, line.key, onStarted, prefilling, reloadRevision, show, uncertain, values]);
+  }, [caseRef, fields, key, line.key, onConflict, onStarted, prefilling, reloadRevision, show, uncertain, values]);
 
   return {
     fields,

@@ -28,6 +28,8 @@ type Props = {
   pathname: string;
   /** The assistant's draft: the form opens filled from it, for the person to check (see useStartForm). */
   initialIntake?: Record<string, unknown>;
+  /** A start answered 409 (see useStartForm). */
+  onConflict?: () => void;
 };
 
 export const CASE_UNUSABLE = 'This project can’t be started on from here.';
@@ -173,9 +175,9 @@ function movedHelp(fields: Field[], at: number): { id: string; text?: string } |
   return owner === fields[at] ? { id } : { id, text: owner.help };
 }
 
-export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIntake }: Props) {
+export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIntake, onConflict }: Props) {
   const wide = useWide();
-  const form = useStartForm(line, onStarted, initialIntake);
+  const form = useStartForm(line, onStarted, initialIntake, onConflict);
   const here = startableHere(line);
   const agent = line.next?.agent ? AGENT_NAMES[line.next.agent] : undefined;
   const { notice, noticeSeq } = form;

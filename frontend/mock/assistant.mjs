@@ -256,9 +256,14 @@ export function createAssistantMock({ openapi }) {
     const previous = startReplies.get(body.idempotency_key);
     if (previous) return canonical(previous.body) === canonical(body) ? previous.reply : null;
     const [id] = hit;
-    if (started.has(id)) return [409, { code: 'draft_already_started', message: 'This draft was already started.' }];
+    // Every reply is checked against the v7 E-WORK-START schema, as the other mock replies are.
+    const checked = (reply) => {
+      const validate = ops['E-WORK-START'].replies[String(reply[0])];
+      return validate && !validate(reply[1]) ? [500, { code: 'mock_invalid_reply', message: `The mock's E-WORK-START ${reply[0]} reply does not match v7.` }] : reply;
+    };
+    if (started.has(id)) return checked([409, { code: 'draft_already_started', message: 'This draft was already started.' }]);
     started.set(id, { ...STARTED });
-    const reply = [201, { work_id: STARTED.work_id, state: 'processing' }];
+    const reply = checked([201, { work_id: STARTED.work_id, state: 'processing' }]);
     startReplies.set(body.idempotency_key, { body, reply });
     return reply;
   }
