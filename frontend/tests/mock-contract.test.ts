@@ -60,7 +60,22 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-TEMPLATE-VERSION': { pm: 403, none: 403 },
 };
 // Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06, F-10, F-11).
+// PROPOSAL (BACKEND-HANDOFF 2, F-22): a records step field carries its saved records as a list of {value, label} in `value`;
+// the generated type says string, so the list's shape is checked here and it is removed before the schema check.
+function savedRecordsStripped(body: unknown): unknown {
+  const copy = structuredClone(body) as { workspace?: { steps?: { fields?: { type: string; value?: unknown }[] }[] } };
+  for (const step of copy.workspace?.steps ?? []) {
+    for (const f of step.fields ?? []) {
+      if (f.type !== 'records' || f.value === undefined) continue;
+      const list = f.value as { value?: unknown; label?: unknown }[];
+      expect(Array.isArray(list) && list.length > 0 && list.every((o) => typeof o.value === 'string' && typeof o.label === 'string' && Object.keys(o).length === 2)).toBe(true);
+      delete f.value;
+    }
+  }
+  return copy;
+}
 const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
+  'E-WORK-ITEM': savedRecordsStripped,
   'E-EXCEPTIONS': exceptionsBody,
   'E-MONTH-END': monthEndBody,
   'E-SETUP-RULES': contractRules,

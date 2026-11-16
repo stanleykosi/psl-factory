@@ -19,6 +19,22 @@ const itemSchema = ajv.compile(openapi.paths['/api/v1/work/{work_id}'].get.respo
 const stepReply = (status: number) => ajv.compile(openapi.paths['/api/v1/work/{work_id}/steps'].post.responses[String(status)].content['application/json'].schema);
 const dir = join(__dirname, '../mock/fixtures/work');
 const fixture = (name: string) => JSON.parse(readFileSync(join(dir, `${name}.json`), 'utf8'));
+// PROPOSAL (BACKEND-HANDOFF 2): a records field carries its saved records as a list of {value, label} in `value`; the
+// generated type says string, so the list is checked here on its own and stripped before the schema check.
+const savedRecords = buildSavedRecords();
+function buildSavedRecords() {
+  return (item: object) => {
+    const copy = structuredClone(item) as { workspace: { steps?: { fields?: { type: string; value?: unknown }[] }[] } };
+    for (const step of copy.workspace.steps ?? []) {
+      for (const f of step.fields ?? []) {
+        if (f.type !== 'records' || f.value === undefined) continue;
+        expect(Array.isArray(f.value) && f.value.every((o: { value?: unknown; label?: unknown }) => typeof o.value === 'string' && typeof o.label === 'string' && Object.keys(o).length === 2)).toBe(true);
+        delete f.value;
+      }
+    }
+    return copy;
+  };
+}
 const IDS = ['W-2201', 'W-2202', 'W-2203', 'W-2204', 'W-2205', 'W-2206', 'W-2207', 'W-2208'];
 const F22 = ['W-2209', 'W-2210', 'W-2211', 'W-2212', 'W-2213', 'W-2214'];
 
@@ -60,7 +76,7 @@ describe('weekly fixtures', () => {
     for (const id of F22) {
       const served = await get(id);
       expect(served, id).toEqual(fixture(id));
-      expect(itemSchema(served), id).toBe(true);
+      expect(itemSchema(savedRecords(served)), id).toBe(true);
       expect(served.sample, id).toBe(true);
       expect(served.workspace.line_key, id).toBe('weekly_report');
       expect(served.workspace.view, id).toBe(id <= 'W-2210' ? 'returned' : 'received');
@@ -81,7 +97,7 @@ describe('weekly fixtures', () => {
         if (entry.status === 422) expect(stepReply(422)(entry.body)).toBe(true);
       }
     }
-    for (const id of ['W-2201', 'W-2205', 'W-2206', 'W-2209']) expect(itemSchema(fixture(`${id}.next`)), id).toBe(true);
+    for (const id of ['W-2201', 'W-2205', 'W-2206', 'W-2209']) expect(itemSchema(savedRecords(fixture(`${id}.next`))), id).toBe(true);
     for (const id of F22) {
       const keys = (fixture(id).workspace.steps ?? []).map((s: { key: string }) => s.key);
       let script: Record<string, unknown> = {};
@@ -145,6 +161,7 @@ describe('E-WORK-STEP on the weekly fixtures', () => {
     expect(send.body).toMatchObject({ outcome: 'done' });
     expect(stepReply(200)(send.body)).toBe(true);
     const next = await get('W-2209');
+    expect(itemSchema(savedRecords(next))).toBe(true);
     expect(next.workspace.view).toBe('assembling');
     expect(next.workspace.revision).toBe(7);
     expect(await step('W-2209', { expected_revision: 6, step: 'send_to_tola', inputs: { status: 'x' }, idempotency_key: k })).toEqual(send);

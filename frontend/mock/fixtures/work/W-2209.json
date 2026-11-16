@@ -192,7 +192,17 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "value": [
+              {
+                "value": "MS-0002",
+                "label": "Milestone 2 · UAT signed 11 Nov"
+              },
+              {
+                "value": "MTG-0141",
+                "label": "UAT walkthrough · 11 Nov"
+              }
+            ]
           },
           {
             "name": "risks",
@@ -208,7 +218,13 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "value": [
+              {
+                "value": "ISS-0233",
+                "label": "ISS-0233 Login fails on older Android phones · High"
+              }
+            ]
           },
           {
             "name": "timeline",
@@ -224,7 +240,13 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "value": [
+              {
+                "value": "MTG-0140",
+                "label": "Weekly sync with Lagoon Health · 10 Nov"
+              }
+            ]
           },
           {
             "name": "next_steps",
@@ -240,7 +262,17 @@
             "required": false,
             "multiple": true,
             "options_source": "line_options",
-            "placeholder": "+ cite a record"
+            "placeholder": "+ cite a record",
+            "value": [
+              {
+                "value": "ACT-0412",
+                "label": "Client to send test accounts · due 13 Nov"
+              },
+              {
+                "value": "CR-0031",
+                "label": "CR-0031 Add SMS reminders · being assessed"
+              }
+            ]
           }
         ]
       }

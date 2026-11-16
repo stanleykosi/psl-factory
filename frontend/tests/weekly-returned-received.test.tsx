@@ -114,6 +114,11 @@ describe('returned (W-2209, W-2210)', () => {
     expect(document.activeElement?.textContent).toBe('Edit your update');
     expect((f.getByLabelText('Status (optional)') as HTMLTextAreaElement).value).toBe('Milestone 2 complete; go-live work started');
     expect(f.getAllByRole('combobox')).toHaveLength(4);
+    // the saved cites open with the words (QA-2-1)
+    for (const [part, labels] of [['status', ['Milestone 2 · UAT signed 11 Nov', 'UAT walkthrough · 11 Nov']], ['risks', ['ISS-0233 Login fails on older Android phones · High']], ['timeline', ['Weekly sync with Lagoon Health · 10 Nov']], ['next steps', ['Client to send test accounts · due 13 Nov', 'CR-0031 Add SMS reminders · being assessed']]] as const) {
+      const picker = f.getByRole('combobox', { name: `Cites for ${part} (optional)` });
+      for (const label of labels) expect(picker.textContent).toContain(label);
+    }
     fireEvent.change(f.getByLabelText('Status (optional)'), { target: { value: 'Milestone 2 complete; test devices needed by Friday.' } });
     await act(async () => {
       fireEvent.click(f.getByRole('button', { name: 'Edit your update' }));
@@ -126,7 +131,17 @@ describe('returned (W-2209, W-2210)', () => {
     const { idempotency_key: key, ...rest } = post.body!;
     expect(key).toMatch(UUID);
     expect(rest).toMatchObject({ expected_revision: 6, step: 'send_to_tola' });
-    expect(Object.keys(rest.inputs as object).sort()).toEqual(['next_steps', 'risks', 'status', 'timeline']);
+    // all eight inputs; the cites were not touched and are sent as they were saved
+    expect(rest.inputs).toEqual({
+      status: 'Milestone 2 complete; test devices needed by Friday.',
+      status_cites: ['MS-0002', 'MTG-0141'],
+      risks: 'Login fails on older Android phones (high)',
+      risks_cites: ['ISS-0233'],
+      timeline: 'Go-live 4 Dec, subject to the login fix',
+      timeline_cites: ['MTG-0140'],
+      next_steps: 'Fix verification; go-live plan',
+      next_steps_cites: ['ACT-0412', 'CR-0031'],
+    });
     expect(post.body).not.toHaveProperty('note');
     expect(post.body).not.toHaveProperty('evidence_ids');
     await waitFor(() => expect(sent.filter((r) => r.method === 'GET' && r.path === '/api/v1/work/W-2209')).toHaveLength(2));
@@ -280,6 +295,24 @@ describe('access', () => {
       fireEvent.click(within(screen.getByRole('form', { name: 'Edit your update' })).getByRole('button', { name: 'Edit your update' }));
     });
     await screen.findByText('You can’t take that step.');
+  });
+});
+
+describe('an uncertain item with no reconcile (QA-2-3)', () => {
+  it('says it is checking and offers only a reload; nothing is sent', async () => {
+    const body = item('W-2212');
+    delete body.reconcile;
+    delete body.allowed_actions;
+    await open(body);
+    expect(screen.getByText('We are checking what happened. Nothing was sent again.')).toBeTruthy();
+    expect(within(screen.getByText('We are checking what happened. Nothing was sent again.').closest('[role="alert"]') as HTMLElement).getAllByRole('button').map((b) => b.textContent)).toEqual(['Reload']);
+    expect(screen.queryByRole('radiogroup', { name: 'Confirm what happened' })).toBeNull();
+    expect(sent.filter((r) => r.method === 'POST')).toEqual([]);
+  });
+
+  it('with its reconcile present the sentence is not drawn on load', async () => {
+    await open(item('W-2212'));
+    expect(screen.queryByText('We are checking what happened. Nothing was sent again.')).toBeNull();
   });
 });
 

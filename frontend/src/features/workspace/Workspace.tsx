@@ -269,6 +269,17 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             </Callout>
           </div>
         )}
+        {/* an uncertain item the reload returned with no reconcile: nothing can be answered or sent, and the page says so */}
+        {item.state === 'effect_uncertain' && !item.reconcile && notice?.kind !== 'uncertain' && (
+          <div role="alert">
+            <Callout kind="warning" className="ws-notice">
+              <span>{STEP_TEXT.uncertainNoReconcile}</span>
+              <Button kind="secondary" onClick={() => void page.reload()}>
+                Reload
+              </Button>
+            </Callout>
+          </div>
+        )}
         {notice?.kind === 'stale' && (
           <div role="alert">
             <Callout kind="warning" className="ws-notice">
