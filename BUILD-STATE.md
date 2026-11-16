@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Expanded design states · 16–17 November 2026
+
+GitHub `main` at `1671409d` has 262 distinct non-concept states across the registered screen IDs. The isolated Railway checkpoint connects multi-record Assistant answers, weekly report correction and renewed review, formal minutes and linked actions, searchable project tabs, Money figure lineage and typed same-role delegation drafts. Signed agreement amounts, receipt amounts and missing source facts retain their native semantics. The [state acceptance ledger](docs/design/screen-state-acceptance.md) distinguishes observed browser behavior from pending states and device checks.
+
+The in-app browser recorded scoped observations for 23 of the 262 states. It exercised corrected weekly version 2 through recipient receipt 15, internal and outward minutes, linked action history, same-role delegation draft version 2, approved change timeline evidence and exact invoice balance evidence. Open work includes direct browser evidence for the remaining 239 states and complete acceptance for the partial cases. Engineering work still includes the inline Assistant draft experience, dated milestone variants where the source establishes dates and more signed-stage and approval variants. Department-head policies, actual role appointments, contact audiences and operational connectors remain deferred.
+
 ## Design consolidation · 16 November 2026
 
 Finance close now has company and project views of reviewed figures, verified cash by receipt date, dated receivables, unallocated cash and captured exceptions. Exact workspace coverage stays visible and missing figures remain unknown. The close view links to native accounting, corrections, forecasts, schedules, assets, recognition, transaction, payroll and business-unit workspaces under their own grants. The browser recorded a current receivables capture and reopened the reviewed October figure. Company-wide totals and final sign-off require an agreed Finance close policy.

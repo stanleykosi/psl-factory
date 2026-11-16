@@ -1,5 +1,24 @@
 {
   "design_consolidation_20261116": {
+    "expanded_state_checkpoint": {
+      "design_main": "1671409d",
+      "delivery_design": "a85d1d75",
+      "minutes_design": "2e5eab9e",
+      "source_commit": "98c340f1",
+      "environment": "design-acceptance",
+      "web": "107af6e7",
+      "worker": "fc988376",
+      "registered_screen_ids": 59,
+      "distinct_non_concept_states": 262,
+      "states_with_browser_observations": 23,
+      "final_postgresql": {"deployment": "ad9b49b7", "passed": 5},
+      "inventory": "docs/design/screen-state-inventory.csv",
+      "in_app_evidence": "docs/design/screen-state-acceptance.md",
+      "implemented": ["Multi-record Assistant and current-source recheck", "Weekly source-owned rework and per-recipient proof", "Cited minutes confirmation, distinct outward review and worker publication", "Searchable project registers, milestones and actions", "Money stage terms and invoice balance lineage", "Versioned same-role delegation drafts"],
+      "next": ["Complete remaining approval, work and layout variants by state", "Verify exact signed-stage and corrected figures on separate synthetic cases", "Exercise remaining Assistant inline drafts, clarifications and source tools"],
+      "owner_policy": "Deferred",
+      "all_states_accepted": false
+    },
     "branch": "build/design-consolidation",
     "design_source": "4689cee79facffbfa5773df534d932f7f5510972",
     "approved_screens": 59,

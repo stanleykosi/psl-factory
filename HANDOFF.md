@@ -1,5 +1,15 @@
 # PSL operations factory cloud handoff
 
+## Expanded state consolidation · 16–17 November 2026
+
+Resume on `build/design-consolidation` from runtime source `98c340f1`. The current design sources are GitHub `main` `1671409d`, delivery setup `a85d1d75` and minutes feature `2e5eab9e`. The board inventory and 23 observed states are in [the 262-state inventory](docs/design/screen-state-inventory.csv) and [browser acceptance ledger](docs/design/screen-state-acceptance.md). The prior 59-ID walkthrough reached native routes. Full acceptance across the expanded states and layout fidelity are open. Implementation can continue directly from this build.
+
+The isolated `design-acceptance` preview includes Assistant multi-select and migration `agents.0010`, weekly correction and reviewed recipient proof, formal minutes with cited proposals and controlled publication, searchable native project tabs, Money source lineage and a dated same-role delegation draft. Web `107af6e7` serves the final intake and minutes decision pages. The standard worker is deployment `fc988376`. Use the scoped `psl-agent-trial` browser session and `tests/railway_design_states_seed.py` in this isolated environment only. Browser evidence includes weekly work 19 and 21, minutes work 18 and 20, `BROWSER-INVOICE-001`, delegation draft 2 and `CR-001` plan evidence 350. See BUILD-TESTS.md for separate hosted tests. Keep live roles, report cadence, recipient lists and operational model and delivery access deferred.
+
+Next, complete the inline Assistant draft preview and fresh fallback scenarios, test contract-stage Money against exact signed evidence, and finish the pending device, review and recovery variants. Work across the rest of the state inventory with exact fixtures and operator actions. Keep existing domain approvals and grants as the source of authority.
+
+Final hosted PostgreSQL check `ad9b49b7` passed all five focused cases. The wider earlier check `18638b17` passed 33. Browser observations cover 23 state IDs and remaining checks are listed against their boards.
+
 ## Close and workflow recovery · 16 November 2026
 
 Resume `build/design-consolidation` from source checkpoint `5ea7844d`. Railway `design-acceptance` is the isolated test environment. The close web deployment is `6e5ed235` and the normal worker is `4b85c942`. The corrected Release path links directly to the owning teams' approvals. Release and Closure have dedicated decision and recovery pages and submit worker continuation in the background. Closure's decision page skips execution planning and shares one read-only native observation. The actual human decision, its evidence and the worker's verified result remain independent.

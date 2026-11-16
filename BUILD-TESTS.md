@@ -1,5 +1,15 @@
 # Actual test execution ledger
 
+## Expanded design states · 16–17 November 2026
+
+Isolated Railway `design-acceptance` PostgreSQL ran Django checks and the migration consistency check. Deployment `84e7b774` passed six focused cases. It exercised multi-source Assistant replay and revoked sources, legacy single selection, Money amounts and figure authorization, delegation draft storage, suggestion-to-form copying and weekly report rework from older content. Deployment `18638b17` passed all 33 cases, including the native minutes suite, concurrent intake, process interruption and original receipt recovery. Deployment `98a0eb0e` passed both focused checks on same-role delegation and exact outward minutes publication. All three returned exit 0. Deployment `11fa5aeb` reached all three targeted tests and failed one because the minutes review panel was missing the `HumanTask` import. Commit `98c340f1` includes the corrected import.
+
+In-app browser used `psl-agent-trial` with synthetic records. OpenRouter answered the multi-source Tola turn using two exact current refs. Weekly work 19 retained the selected period when version 1 was returned, then version 2 received a fresh review and reached Verified with delivery 15 to test recipient 25. Work 21 was started in the browser after validation blocked a reversed reporting period. Minutes work 18 verified internal version 21 with action 7 after the operator entered the owner and deadline. On outward work 20, the operator reviewed document version 23 and observed Verified with original delivery Confirmed in the local test channel. Delegation version 2 was saved as a draft. Project Money linked `BROWSER-INVOICE-001` to its exact invoice version and applied receipt, with zero horizontal overflow in the tested phone width. See [the state ledger](docs/design/screen-state-acceptance.md) for each scoped outcome. State coverage is partial.
+
+On final web deployment `107af6e7`, reread Verified minutes with no second approval button, confirmed that both intake forms showed their exact selected project, and re-opened weekly delivery 15. All 27 changed runtime files matched the staged web source at `98c340f1`. Normal worker `fc988376` started without one-time fixture setup and checked the durable queue.
+
+Final PostgreSQL deployment `ad9b49b7` passed all five tests in 71.450 seconds. It covered role-filtered delegation, current and superseded change timelines with grant enforcement, outward minutes review and receipts, formal minutes intake and confirmation, and weekly report return and renewed review. The final Django check reported no issues and the migration check allowed the suite to run.
+
 16 November 2026. Signed-in Codex browser evidence from Railway `design-acceptance`, using synthetic data and local recipient inboxes.
 
 | Path | Observed result |
