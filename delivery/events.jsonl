@@ -1786,3 +1786,43 @@
 {"at":"2026-11-16T17:53:13Z","feature":"F-26","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-16T17:53:13Z","feature":"F-27","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","security","contract-change"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-16T17:53:13Z","feature":"F-27","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-16T17:53:27Z","feature":"F-25","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-16T17:53:32Z","feature":"F-26","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-16T17:53:40Z","feature":"F-27","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UX-1-1","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UI-1-1","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UI-1-2","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UI-1-3","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"UI-1-4","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"finding","action":"fix","finding":"SEC-1-1","by":"builder"}
+{"at":"2026-11-16T17:57:53Z","feature":"F-23","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":222.0,"commit":"0d6dabf7e5d6"}
+{"at":"2026-11-16T17:57:54Z","feature":"F-23","round":2,"kind":"transition","head":"0d6dabf7e5d6","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-16T17:58:32Z","feature":"F-23","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"0d6dabf7e5d6","findings":{"TECH-2-1":"frontend/tests/mock-contract.test.ts:~76-110","TECH-2-2":"frontend/src/features/work-item/workitemoverview.tsx:719"},"written_at":"2026-11-16T17:58:32Z"}
+{"at":"2026-11-16T17:59:05Z","feature":"F-23","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"0d6dabf7e5d6","findings":{"UX-2-1":"w-2301 default"},"written_at":"2026-11-16T17:59:03Z"}
+{"at":"2026-11-16T17:59:17Z","feature":"F-23","round":2,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"0d6dabf7e5d6","findings":{"SEC-2-1":"low"},"written_at":"2026-11-16T17:59:15Z"}
+{"at":"2026-11-16T17:59:29Z","feature":"F-23","round":2,"kind":"review","role":"ui","verdict":"CHANGES","reviewer":"reviewer-ui","commit":"0d6dabf7e5d6","findings":{"UI-2-1":"low","UI-2-2":"low","UI-2-3":"low"},"written_at":"2026-11-16T17:59:28Z"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"verify","finding":"UX-1-1","by":"reviewer-ux"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"verify","finding":"UI-1-1","by":"reviewer-ui"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"verify","finding":"UI-1-2","by":"reviewer-ui"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"verify","finding":"UI-1-3","by":"reviewer-ui"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"verify","finding":"UI-1-4","by":"reviewer-ui"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"verify","finding":"SEC-1-1","by":"reviewer-security"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"add","finding":"TECH-2-1","by":"reviewer-technical","severity":"frontend/tests/mock-contract.test.ts:~76-110","owner":"`minutesProposalsStripped` strips `values` from every E-WORK-ITEM fixture, but the \"proposal keys exist on their own\" guard still covers only `links` and `items_default`. A stray `items[].values` in a pre-F-23 fixture would be stripped silently.","blocking":false,"role":"technical"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"add","finding":"TECH-2-2","by":"reviewer-technical","severity":"frontend/src/features/work-item/workitemoverview.tsx:719","owner":"The task card is hidden for every line whose workspace step links the task, not only minutes. The builder reports that no F-17/F-21/F-22 board has such a pair, and the suites pass. It would hide the card's status text for any future line that has both.","blocking":false,"role":"technical"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"add","finding":"UX-2-1","by":"reviewer-ux","severity":"w-2301 default","owner":"With `context.project` dropped (UI-1-1) the project tab bar (Journey, Milestones...) no longer shows on the default page, while it still shows on the review pages' board. Matches the board for the default state, so only noting it.","blocking":false,"role":"ux"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"add","finding":"UI-2-1","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"add","finding":"UI-2-2","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"add","finding":"UI-2-3","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"finding","action":"add","finding":"SEC-2-1","by":"reviewer-security","severity":"low","owner":"frontend","blocking":false,"role":"security"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":2,"kind":"transition","head":"0d6dabf7e5d6","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-16T18:00:01Z","feature":"F-23","round":3,"kind":"transition","head":"0d6dabf7e5d6","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-16T18:15:03Z","feature":"F-23","round":3,"kind":"finding","action":"fix","finding":"TECH-2-1","by":"builder"}
+{"at":"2026-11-16T18:15:03Z","feature":"F-23","round":3,"kind":"finding","action":"fix","finding":"UI-2-1","by":"builder"}
+{"at":"2026-11-16T18:15:03Z","feature":"F-23","round":3,"kind":"finding","action":"fix","finding":"UI-2-2","by":"builder"}
+{"at":"2026-11-16T18:15:03Z","feature":"F-23","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":399.3,"commit":"a3f43067bf20"}
+{"at":"2026-11-16T18:21:27Z","feature":"F-23","round":3,"kind":"gate","verdict":"PASS","attempt":2,"exit_code":0,"seconds":326.0,"commit":"a3f43067bf20"}
+{"at":"2026-11-16T18:21:28Z","feature":"F-23","round":3,"kind":"transition","head":"a3f43067bf20","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-16T18:22:42Z","feature":"F-23","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"a3f43067bf20","written_at":"2026-11-16T18:22:01Z"}
+{"at":"2026-11-16T18:22:42Z","feature":"F-23","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"a3f43067bf20","written_at":"2026-11-16T18:22:00Z"}
+{"at":"2026-11-16T18:22:42Z","feature":"F-23","round":3,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"a3f43067bf20","written_at":"2026-11-16T18:22:08Z"}
+{"at":"2026-11-16T18:23:12Z","feature":"F-23","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"a3f43067bf20","written_at":"2026-11-16T18:23:06Z"}
