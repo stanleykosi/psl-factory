@@ -240,13 +240,18 @@ def publication_scope(actor,case,version,work_id):
 
 def verify(work,actor=None):
     d,data,v,p,receipts=published(work,actor)
-    try:accepted=native.accepted_go_live(d)
-    except (ValidationError,PermissionDenied) as exc:raise ValidationError('Await actual PM attestation of distinct PM and Client signature evidence: '+finding(exc)) from None
-    if accepted.data['receipt_id'] not in [r.pk for r in receipts]:raise ValidationError('Actual PM and Client sign-off must cover this exact delivered document')
+    accepted=accepted_publication(d,receipts)
     return {'verified':True,'verification_scope':'synthetic_native_go_live_delivery_and_human_signature_attestation','head':work.source_head_id,
         'document_version':v.pk,'publication':p.pk,'receipt_ids':[r.pk for r in receipts],'acceptance':accepted.pk,
         'pm_signature':accepted.data['pm_signature_id'],'client_signature':accepted.data['client_signature_id'],
         'sign_off_inferred':False,'deployment_authorized':False,'financial_release_granted':False,'external_authenticity_verified':False}
+
+
+def accepted_publication(dossier, receipts):
+    try:accepted=native.accepted_go_live(dossier)
+    except (ValidationError,PermissionDenied) as exc:raise ValidationError('Await actual PM attestation of distinct PM and Client signature evidence: '+finding(exc)) from None
+    if accepted.data['receipt_id'] not in [r.pk for r in receipts]:raise ValidationError('Actual PM and Client sign-off must cover this exact delivered document')
+    return accepted
 
 @transaction.atomic
 def review(actor,work_id,expected,case_expected,version_id,verdict,note):
@@ -360,6 +365,7 @@ def restart(actor,work_id,expected,case_expected,reason):
     w.status='ready';w.finding='';w.lease_until=None;w.fence+=1;w.revision+=1;w.save()
     event(actor,case,'factory.go_live_restarted',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
+@read_observation
 def projection(actor,work):
     from .factory import access,profile
     access(actor,work.case,'factory.read',DEFINITION);d,data,_=source(work,actor,current=False);v=document(work);p=publication(work,v)
@@ -370,9 +376,14 @@ def projection(actor,work):
     if intake_current:
         try:prerequisites(d,data)
         except (ValidationError,PermissionDenied) as exc:issue=finding(exc)
-    if work.status=='verified':
-        try:verify(work,actor=actor)
-        except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
+    delivery_complete=False;verified_acceptance=None
+    if receipts or work.status=='verified':
+        try:
+            exact_dossier,_,_,_,exact_receipts=published(work,actor)
+            delivery_complete=True
+            verified_acceptance=accepted_publication(exact_dossier,exact_receipts)
+        except (ValidationError,PermissionDenied) as exc:
+            if work.status=='verified':changed=True;issue=finding(exc)
     live=not work.cancel_requested and not (work.lease_until and work.lease_until>timezone.now())
     previous=native.latest_go_live(d,False)
     pending_review=bool(v and HumanTask.objects.filter(version=v,status='open').exists());review_verdicts=[];can_accept=False;can_correct=False;can_restart=False
@@ -384,11 +395,11 @@ def projection(actor,work):
                     try:decision_authority(actor,work.case,'PMO Lead',verdict);review_verdicts.append(verdict)
                     except (ValidationError,PermissionDenied):pass
             except (ValidationError,PermissionDenied):pass
-        try:
-            published(work,actor);require(actor,work.case,'delivery.manage');decision_authority(actor,work.case,'PM','reaffirm_go_live' if previous else 'approve');delivery.ensure_open(d)
-            try:verify(work,actor=actor)
-            except (ValidationError,PermissionDenied):can_accept=True
-        except (ValidationError,PermissionDenied):pass
+        if delivery_complete and not verified_acceptance:
+            try:
+                require(actor,work.case,'delivery.manage');decision_authority(actor,work.case,'PM','reaffirm_go_live' if previous else 'approve');delivery.ensure_open(d)
+                can_accept=True
+            except (ValidationError,PermissionDenied):pass
         try:
             require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add');delivery.ensure_open(d)
             can_correct=not any(j.status in ['pending','unknown','leased','held'] for j in jobs)
@@ -399,9 +410,12 @@ def projection(actor,work):
             can_restart=work.status=='cancelled' and work.cancel_requested and not any(j.status in ['pending','unknown','leased','held'] for j in jobs) and not receipts
         except (ValidationError,PermissionDenied):pass
     next_options=[];next_action=issue or 'Review current go-live preparation and human sign-off evidence'
-    try:
-        _,value=profile(work);state,*args=snapshot(work,value);next_options,next_action=eligible(work,value,state,*args)
-    except (ValidationError,PermissionDenied):pass
+    if work.status=='verified' and verified_acceptance:
+        next_action='Inspect the exact delivered report and recorded sign-off'
+    else:
+        try:
+            _,value=profile(work);state,*args=snapshot(work,value);next_options,next_action=eligible(work,value,state,*args)
+        except (ValidationError,PermissionDenied):pass
     for job in jobs:
         job.can_cancel=job.can_retry=False
         try:
@@ -415,11 +429,6 @@ def projection(actor,work):
                 current_version(work.case,original.version_id);r=validate_review(work.case,original.version);policies,recipients,_=publication_requirements(work.case,original.version)
                 job.can_retry=original.policies==policies and original.recipient_ids==recipients and original.review_id==r.pk
         except (ValidationError,PermissionDenied):pass
-    delivery_complete=False
-    try:published(work,actor);delivery_complete=True
-    except (ValidationError,PermissionDenied):pass
-    from apps.pmo.go_live_attestations import declaration_draft
-    for receipt in receipts:receipt.attestation_draft=declaration_draft(d,receipt,actor)
     accepted=previous
     if accepted and accepted.data['receipt_id'] not in [r.pk for r in receipts]:accepted=None
     return {'dossier':d,'data':data,'report':LocalDeliveryAdapter().read_go_live(d,selected(data),data['inputs']['template_id']),

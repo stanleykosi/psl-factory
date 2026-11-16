@@ -4,7 +4,7 @@ from uuid import uuid4
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import OuterRef, Q, Subquery
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
@@ -14,7 +14,15 @@ from apps.core.presentation import workspace_name
 from apps.documents.contracts import digest
 
 from . import assistant
-from .assistant_models import AssistantConversation
+from .assistant_models import AssistantConversation, AssistantDraftVersion
+
+
+DRAFT_LABELS = {
+    'planning/v1': 'Project planning draft',
+    'commercial/v1': 'Costing and contract draft',
+    'rfp-response/v1': 'Bid response draft',
+    'pmo-finance/v1': 'Invoice work draft',
+}
 
 
 def owned_conversations(actor):
@@ -85,7 +93,12 @@ def thread(request, conversation_id):
             return redirect('assistant_thread', conversation_id=conversation.pk)
         except ValidationError as exc:
             form.add_error(None, exc)
-    turns = list(reversed(conversation.turns.order_by('-created_at', '-pk')[:30]))
+    saved = AssistantDraftVersion.objects.filter(turn_id=OuterRef('pk')).order_by('-number')
+    turns = list(reversed(conversation.turns.select_related('started_draft').annotate(
+        saved_number=Subquery(saved.values('number')[:1]),
+        saved_reference=Subquery(saved.values('payload__reference')[:1]),
+        saved_case_revision=Subquery(saved.values('case_revision')[:1]),
+    ).order_by('-created_at', '-pk')[:30]))
     started_ids = [turn.started_work_id for turn in turns if turn.started_work_id]
     visible_work = set()
     if started_ids:
@@ -102,6 +115,11 @@ def thread(request, conversation_id):
                 turn.stale = True
         if turn.started_work_id in visible_work:
             turn.started_url = reverse('factory_detail', args=[turn.started_work_id])
+            if turn.started_draft_id and turn.started_draft.turn_id == turn.pk:
+                turn.draft_label = DRAFT_LABELS.get(turn.next_work, 'Work draft')
+                turn.reviewed_number = turn.started_draft.number
+                turn.reviewed_reference = turn.started_draft.payload.get('reference')
+        turn.insufficient = turn.status == 'answered' and not turn.sources and turn.answer == assistant.INSUFFICIENT_EVIDENCE
         if turn.next_work.startswith('assistant:'):
             target = turn.next_work.split(':', 1)[1]
             if turn.next_work in next_work and not turn.stale:
@@ -110,7 +128,10 @@ def thread(request, conversation_id):
                     turn.transfer_url = reverse('assistant_thread', args=[turn.transferred_to_id])
                 else:
                     turn.transfer_action = reverse('assistant_transfer', args=[turn.pk, target])
-        elif not turn.started_work_id and turn.status == 'answered' and not turn.stale and turn.next_work in next_work:
+        elif (not turn.started_work_id and turn.status == 'answered' and not turn.stale
+              and turn.next_work in next_work and turn.next_work in DRAFT_LABELS):
+            turn.draft_label = DRAFT_LABELS[turn.next_work]
+            turn.draft_needs_refresh = bool(turn.saved_number and turn.saved_case_revision != conversation.case.revision)
             turn.next_url = reverse('factory_create') + '?' + urlencode({
                 'definition': turn.next_work, 'case': conversation.case_id, 'assistant_turn': turn.pk,
             })

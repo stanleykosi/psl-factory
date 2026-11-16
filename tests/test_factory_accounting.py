@@ -121,6 +121,10 @@ class FactoryAccountingTests(TestCase):
         self.assertNotIn('opaque-synthetic',str(receipt.payload));self.assertFalse(output.result['ledger_posted'])
         response=client.get(url);self.assertEqual(response.status_code,200);self.assertContains(response,'609.99')
         self.assertContains(response,'Confirmed for');self.assertEqual(response.context['row']['state'],'Verified')
+        recovery=client.get(f'/work/{work.pk}/recovery/',{'queue':'mine'})
+        self.assertContains(recovery,'Confirmed for')
+        self.assertEqual(recovery.context['queue'],'mine')
+        self.assertEqual(recovery.context['row']['state'],'Verified')
         from apps.finance import analysis
         from tests.helpers import rev
         analysis.capture_source(a,c.pk,source.batch_id,source.entity,source.accounting_basis,source.extracted_at,

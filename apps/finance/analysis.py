@@ -3,6 +3,7 @@ import hashlib,json,re
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.utils import timezone
+from apps.core.read_observation import observed_fact
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.policy.models import Configuration
@@ -142,13 +143,19 @@ def stage_snapshot(actor,source,kind,parent,request):
         **({'formula_result_implementation':'finance-note-lineage/v1'} if kind=='formula' else {}),**({'hr_basis_access':hr_basis_access} if hr_basis_access else {})},configs
 
 def ensure_current(run):
+    assert_run_current(run)
+    return run
+
+@observed_fact
+def assert_run_current(run):
     if run.kind=='statement':
         from .statements import ensure_current as current_statement
-        return current_statement(run)
+        current_statement(run)
+        return True
     parent=run.parent
     snapshot,_=stage_snapshot(run.actor,run.source,run.kind,parent,run.request)
     if snapshot!=run.snapshot:raise ValidationError('Source, policy, review or authority changed; rebuild the exact Finance preview')
-    return run
+    return True
 
 def store(actor,case,source,kind,parent,request,snapshot,result):
     key=digest({'actor':actor.pk,'case':str(case.pk),'source':source.pk,'kind':kind,'parent':parent.pk if parent else None,'request':request,'snapshot':snapshot})
@@ -204,6 +211,7 @@ def adjustment(actor,case_id,source_id,reference,kind,lines,evidence_id,note_tex
         evidence=subject(case,evidence_id,'finance_adjustment'),note=note_text,actor=actor)
     event(actor,case,'finance.reporting_adjustment',adjustment=a.pk,ledger_posted=False);bump(case);return a
 
+@observed_fact
 def certification_findings(run):
     if run.kind=='statement':
         ensure_current(run)

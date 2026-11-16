@@ -83,6 +83,7 @@ class DepartmentAssistantTests(TestCase):
         first = dict(fields, reference='DRAFT-ONE', action='save_draft')
         self.assertRedirects(self.client.post(next_url, first), next_url, fetch_redirect_response=False)
         self.assertContains(self.client.get(next_url), 'DRAFT-ONE')
+        self.assertContains(self.client.get(url), 'DRAFT-ONE · Draft 1')
         second = dict(fields, draft_version=1, action='save_draft')
         for _ in range(2):
             self.assertRedirects(self.client.post(next_url, second), next_url, fetch_redirect_response=False)
@@ -100,8 +101,24 @@ class DepartmentAssistantTests(TestCase):
         self.assertEqual(turn.started_draft.number, 2)
         self.assertEqual(self.work.background_progress.status, 'queued')
         self.assertContains(self.client.get(url), 'Open the work item')
+        self.assertContains(self.client.get(url), 'Started from draft 2')
         self.client.force_login(self.other)
         self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_no_citations_replace_provider_claim_and_offer_a_new_question(self):
+        self.client.force_login(self.actor)
+        conversation = self.start('zainab')
+        url = reverse('assistant_thread', args=[conversation.pk])
+        response = self.client.post(url, {'key': uuid4(), 'question': 'What is the salary in a record I do not have?'})
+        self.assertRedirects(response, url, fetch_redirect_response=False)
+        with patch('adapters.openrouter.answer', return_value={
+            'answer': 'Invented private amount', 'citations': [], 'next_work': '',
+        }):
+            self.assertTrue(assistant.worker_once())
+        answer = self.client.get(url)
+        self.assertContains(answer, 'Ask about a different record')
+        self.assertNotContains(answer, 'Invented private amount')
+        self.assertNotContains(answer, 'Edit draft')
 
     def test_personas_check_current_scope_and_hold_invalid_provider_output(self):
         self.client.force_login(self.actor)

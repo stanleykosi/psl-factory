@@ -7,6 +7,35 @@ from apps.identity.models import Grant
 from tests.factory_helpers import fixture
 
 class FactoryConsoleTests(TestCase):
+    def test_unfinished_queue_assessment_links_to_the_original_work(self):
+        from unittest.mock import patch
+        from apps.core.read_budget import ReadLimit
+
+        data = fixture()
+        self.client.force_login(data['actor'])
+        with patch('apps.workflows.factory_views.presentation', side_effect=ReadLimit):
+            page = self.client.get(reverse('home'), {'queue': 'active'})
+        self.assertContains(page, 'Open these records to check their status')
+        self.assertEqual(page.context['rows'], [])
+        self.assertEqual(page.context['evaluated'], 0)
+        self.assertEqual([work.pk for work in page.context['deferred']], [data['work'].pk])
+
+    def test_started_by_me_filters_before_reading_visible_work(self):
+        own = fixture(username='work-filter-starter')
+        other = fixture(username='work-filter-other')
+        actor = own['actor']
+        for action in ('case.read', 'finance.read', 'factory.read'):
+            Grant.objects.create(case=other['case'], user=actor, action=action)
+        self.client.force_login(actor)
+        url = reverse('home')
+        self.assertEqual({row['work'].pk for row in self.client.get(url, {'queue': 'active'}).context['rows']},
+                         {own['work'].pk, other['work'].pk})
+        page = self.client.get(url, {'queue': 'mine', 'line': 'pmo-finance/v1'})
+        self.assertContains(page, 'Filter work')
+        self.assertEqual([row['work'].pk for row in page.context['rows']], [own['work'].pk])
+        unseen = self.client.get(url, {'queue': 'mine', 'line': 'pmo-weekly-report/v1'})
+        self.assertContains(unseen, 'No work in this view')
+
     def test_unknown_intake_is_not_silently_aliased_by_default_or_query_definition(self):
         f=fixture();self.client.force_login(f['actor']);url=reverse('factory_create');f['case'].refresh_from_db()
         count=FactoryWork.objects.filter(case=f['case']).count()

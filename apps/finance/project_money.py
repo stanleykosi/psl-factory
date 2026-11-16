@@ -23,8 +23,7 @@ STAGES = {'signed_sow': 'Signed agreement', 'uat': 'User acceptance testing', 'c
 
 def terms(case):
     contract = resolve('D12.contract_version_ref', case)
-    stage_policy = resolve('D12.stage_terms', case)
-    if contract.status != 'ACTIVE' or stage_policy.status != 'ACTIVE':
+    if contract.status != 'ACTIVE':
         return {}, None, None
     contract_binding = reference_values(contract.configuration)[0]
     baseline = Baseline.objects.filter(case=case, signed_id=contract_binding['signed_evidence_id'],
@@ -32,7 +31,9 @@ def terms(case):
     if not baseline:
         return {}, None, None
     coverage_id = contract_binding['coverage_id']
-    rows = {item['stage']: item for item in reference_values(stage_policy.configuration) if item['coverage_id'] == coverage_id}
+    stage_policy = resolve('D12.stage_terms', case)
+    values = reference_values(stage_policy.configuration) if stage_policy.status == 'ACTIVE' else []
+    rows = {item['stage']: item for item in values if item['coverage_id'] == coverage_id}
     return rows, baseline, coverage_id
 
 
@@ -92,7 +93,7 @@ def build(case, records, baseline, cover, invoices, figure, budget):
         if cover and prep.coverage_id == cover.pk and prep.kind in STAGES:
             grouped.setdefault(prep.kind, []).append(invoice)
 
-    def add(key, label, amount, currency, completion, attached, sources):
+    def add(key, label, amount, currency, completion, attached, sources, *, due_date=None, contract_stage=False):
         nonlocal selected
         lines = []
         for invoice in attached:
@@ -107,6 +108,7 @@ def build(case, records, baseline, cover, invoices, figure, budget):
                 sources += [{'label': f'Applied receipt {item.lot.receipt.transaction_ref} · {invoice.currency} {item.amount:f}',
                              'url': finance_url} for item in allocations]
         item = {'label': label, 'amount': amount, 'currency': currency, 'completion': completion, 'invoices': lines,
+                'due_date': due_date, 'contract_stage': contract_stage,
                 'url': money_url + '?' + urlencode({'figure': key}) if amount is not None else None,
                 'sources': sources}
         rows.append(item)
@@ -122,7 +124,8 @@ def build(case, records, baseline, cover, invoices, figure, budget):
             record = records.get(stage, {})
             add(stage, label, record.get('amount'), cover.currency, completion, attached,
                 [{'label': f'Signed agreement · recorded signature {baseline.signed_id}', 'url': contract_url},
-                 {'label': 'Reviewed contract stage terms', 'url': reverse('finance_billing', args=[case.pk])}] if record else [])
+                 {'label': 'Reviewed contract stage terms', 'url': reverse('finance_billing', args=[case.pk])}] if record else [],
+                due_date=record.get('due_date'), contract_stage=True)
 
     grouped_ids = {item.pk for values in grouped.values() for item in values}
     for invoice in invoices:

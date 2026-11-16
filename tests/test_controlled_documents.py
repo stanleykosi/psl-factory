@@ -33,6 +33,32 @@ class ControlledDocumentTests(TestCase):
     def action_matrix(self,actions):
         return artifact(self.actor,self.case,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':actions},{'role':'PM','actions':['withdraw']}]},self.owner)
 
+    def test_publication_batch_checks_each_original_once_before_later_work(self):
+        from functools import partial
+        from io import StringIO
+        from unittest.mock import patch
+        from django.core.management import call_command
+
+        jobs=[]
+        for title in ('Uncertain first delivery', 'Independent second delivery'):
+            version=create_version(self.actor,self.case.pk,self.template.pk,title,'client',fields(self.source),rev(self.case))
+            request_review(self.actor,self.case.pk,version.pk,rev(self.case))
+            review_version(self.actor,self.case.pk,version.pk,'approve','Synthetic exact review',rev(self.case))
+            jobs.append(reserve_publication(self.actor,self.case.pk,version.pk,rev(self.case)).job)
+        first,second=jobs
+        class LostResponse(InternalPublicationAdapter):
+            def deliver(self,job_id,fence):
+                if job_id==first.pk:raise TimeoutError('Synthetic original result unknown')
+                return super().deliver(job_id,fence)
+
+        with patch('apps.documents.management.commands.work_publications.run_publication_once',
+                   side_effect=partial(run_publication_once,LostResponse())):
+            call_command('work_publications','--limit','20',stdout=StringIO())
+        first.refresh_from_db();second.refresh_from_db()
+        self.assertEqual((first.status,first.attempts),('unknown',1))
+        self.assertEqual(second.status,'confirmed')
+        self.assertEqual(PublicationReceipt.objects.get().publication_id,second.publication_id)
+
     def test_focused_status_report_returns_revises_and_shows_original_receipt(self):
         from django.urls import reverse
 

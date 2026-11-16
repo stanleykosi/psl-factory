@@ -1,0 +1,4 @@
+{% if delivery %}<section class="card" aria-label="Delivery by recipient"><h2>Delivery by recipient</h2><div class="table-wrap"><table>
+<thead><tr><th scope="col">Recipient</th><th scope="col">Delivery</th><th scope="col">Receipt</th></tr></thead><tbody>{% for send in delivery %}<tr>
+<th scope="row">{{ send.recipient }}</th><td>{{ send.status }}</td><td>{% if send.receipt %}{{ send.at|date:'d M Y, H:i T' }} · {{ send.receipt.pk }}{% else %}Awaiting evidence{% endif %}</td></tr>{% endfor %}</tbody>
+</table></div></section>{% endif %}

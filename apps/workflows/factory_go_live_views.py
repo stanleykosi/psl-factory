@@ -1,4 +1,3 @@
-from apps.pmo.go_live_attestations import parse_attestation
 """One console for actual go-live sources, native review, delivery and human sign-off."""
 from uuid import uuid4
 from urllib.parse import urlencode
@@ -8,13 +7,55 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import render,redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from apps.core.models import Evidence
 from apps.core.evidence_access import public_evidence
-from apps.documents.models import Template
+from apps.documents.models import PublicationReceipt, Template
+from apps.pmo import delivery
+from apps.pmo.go_live_attestations import PROTOCOL, PURPOSE, parse_attestation, pin, subject_pins
 from .factory_handover_views import StartForm as DossierStartForm
 from . import factory,factory_go_live as go_live
 from .factory_progress_views import enroll
+
+
+class SignerForm(forms.Form):
+    source_system = forms.CharField(label='Source system', max_length=160)
+    source_reference = forms.CharField(label='Source reference', max_length=160)
+    decision_id = forms.CharField(label='Decision reference', max_length=160)
+    decision_version = forms.CharField(label='Decision version', max_length=160)
+    signer_reference = forms.CharField(label='Signer reference', max_length=160)
+    signed_at = forms.DateTimeField(label='Signed at', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+
+    def declaration(self, evidence):
+        return {**self.cleaned_data, 'signed_at': self.cleaned_data['signed_at'].isoformat(),
+                'purpose': PURPOSE, 'evidence': pin(evidence)}
+
+
+def supplied_signer_facts(request, work, version, receipt_id, pm_id, client_id, forms_by_role):
+    if request.POST.get('attestation'):
+        if any(name.startswith(('pm-fact-', 'client-fact-')) for name in request.POST):
+            raise ValidationError('Choose one way to submit the signer details.')
+        return parse_attestation(request.POST['attestation'])
+    valid = [form.is_valid() for form in forms_by_role.values()]
+    if not all(valid):
+        raise ValidationError('Complete the signer details for both Project Manager and Client.')
+    if pm_id == client_id:
+        raise ValidationError('Choose a different source record for each signature.')
+    evidence = public_evidence(work.case.evidence.filter(kind='signature', pk__in=[pm_id, client_id])).in_bulk()
+    receipt = PublicationReceipt.objects.filter(pk=receipt_id, publication__factory_work=work,
+        publication__version_id=version).select_related('publication__version').first()
+    if not receipt or len(evidence) != 2:
+        raise ValidationError('Choose the exact delivered report and two signature sources for this project.')
+    dossier, _, _ = go_live.source(work, request.user, current=False)
+    release = delivery.latest(dossier, 'release_outcome', False)
+    if not release:
+        raise ValidationError('The report needs an exact recorded release.')
+    return {**subject_pins(dossier, receipt, release), 'protocol': PROTOCOL, 'purpose': PURPOSE,
+            'attesting_actor_id': request.user.pk, 'signatures': {
+                'PM': forms_by_role['PM'].declaration(evidence[pm_id]),
+                'Client': forms_by_role['Client'].declaration(evidence[client_id]),
+            }}
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,inputs=None,**kwargs):
@@ -70,6 +111,8 @@ def detail(request,work,focus=None):
     if queue not in QUEUES:queue='needs_me'
     _,data,_=go_live.source(work,request.user,current=False)
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,inputs=data['inputs'])
+    signer_input=request.POST if request.method=='POST' and request.POST.get('action')=='accept' and not request.POST.get('attestation') else None
+    signer_forms={'PM':SignerForm(signer_input,prefix='pm-fact'),'Client':SignerForm(signer_input,prefix='client-fact')}
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
@@ -79,7 +122,11 @@ def detail(request,work,focus=None):
                 if not form.is_valid():raise ValidationError('Review the selected template and actual source records')
                 go_live.correct(request.user,work.pk,revision,case_revision,form.inputs(),p.get('reason',''))
             elif action=='review':go_live.review(request.user,work.pk,revision,case_revision,int(p.get('version','0')),p.get('verdict',''),p.get('note',''))
-            elif action=='accept':go_live.accept(request.user,work.pk,revision,case_revision,int(p.get('version','0')),int(p.get('receipt','0')),int(p.get('pm_signature','0')),int(p.get('client_signature','0')),p.get('note',''),int(p['previous_acceptance']) if p.get('previous_acceptance') else None,attestation=parse_attestation(p.get('attestation','')),mode=p.get('mode','fresh_signatures'))
+            elif action=='accept':
+                version, receipt, pm, client = [int(p.get(key, '0')) for key in ('version', 'receipt', 'pm_signature', 'client_signature')]
+                attestation=supplied_signer_facts(request,work,version,receipt,pm,client,signer_forms)
+                go_live.accept(request.user,work.pk,revision,case_revision,version,receipt,pm,client,p.get('note',''),
+                    int(p['previous_acceptance']) if p.get('previous_acceptance') else None,attestation=attestation,mode=p.get('mode','fresh_signatures'))
             elif action in ['cancel','settle_stop']:go_live.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,action)
             elif action=='restart':go_live.restart(request.user,work.pk,revision,case_revision,p.get('reason',''))
@@ -91,12 +138,20 @@ def detail(request,work,focus=None):
         except ValidationError as exc:messages.error(request,go_live.finding(exc))
         except ValueError:messages.error(request,'Refresh the work and choose current recorded references.')
         work.refresh_from_db()
-    row=presentation(request.user,work);activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
+    row=presentation(request.user,work,focus=focus);activities=list(work.activities.prefetch_related('attempts').order_by('pk')) if not focus else []
     for activity in activities:
         activity.title={'ACT03':'Plan permitted work','ACT04':'Investigate go-live evidence','ACT09':'Prepare the client report','ACT10':'Resolve current authority',
             'ACT11':'Deliver the exact reviewed report','ACT12':'Reconcile original delivery','ACT13':'Verify actual go-live acceptance'}.get(activity.kind,'Review permitted work')
         for attempt in activity.attempts.all():attempt.display_result=go_live.attempt_projection(attempt)
     signatures=public_evidence(Evidence.objects.filter(case=work.case,kind='signature')).order_by('-pk')
     response=render(request,'factory/go_live_detail.html',{'case':work.case,'focus':focus,'row':row,'queue':queue,'q':q,'inputs_form':form,'activities':activities,
-        'signature_choices':list(signatures[:100]),'signature_limited':signatures.count()>100,'can_configure':permitted(request.user,work,'policy.configure')})
+        'pm_signer':signer_forms['PM'],'client_signer':signer_forms['Client'],'signer_time_zone':timezone.get_current_timezone_name(),
+        'selected_receipt':signer_input.get('receipt','') if signer_input is not None else '',
+        'selected_pm':signer_input.get('pm_signature','') if signer_input is not None else '',
+        'selected_client':signer_input.get('client_signature','') if signer_input is not None else '',
+        'selected_mode':signer_input.get('mode','') if signer_input is not None else '',
+        'signer_note':signer_input.get('note','') if signer_input is not None else '',
+        'signature_choices':list(signatures[:100]) if row['go_live']['can_accept'] and focus in [None,'response'] else [],
+        'signature_limited':row['go_live']['can_accept'] and focus in [None,'response'] and signatures.count()>100,
+        'can_configure':permitted(request.user,work,'policy.configure')})
     response['Cache-Control']='no-store';return response

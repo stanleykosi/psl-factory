@@ -11,7 +11,8 @@ from apps.finance.models import ReceivableSnapshot
 from apps.identity.models import Grant
 from apps.policy.services import active_component, transition
 from tests import settlement_helpers as finance
-from tests.helpers import rev, setup_case
+from tests.billing_helpers import stage_policy
+from tests.helpers import rev, setup_case, signed
 from tests.obligation_helpers import issue_identified
 
 
@@ -19,6 +20,24 @@ class DesignFinanceWorkbenchTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.actor, cls.case, cls.coverage, cls.preparation, cls.evidence = finance.fixture()
+
+    def test_project_money_displays_exact_signed_stages_and_unconfigured_terms(self):
+        proof = signed(self.actor, self.case)['signature']
+        stage_policy(self.actor, self.case, self.coverage, proof)
+        self.client.force_login(self.actor)
+        url = reverse('design_project_tab', args=[self.case.pk, 'money'])
+        page = self.client.get(url, {'figure': 'signed_sow'})
+        self.assertContains(page, 'Signed agreement · recorded signature')
+        self.assertContains(page, 'Due 2026-11-01')
+        self.assertContains(page, 'Due date unknown')
+        self.assertEqual(page.context['money']['selected']['amount'], '30.00')
+        self.assertEqual(self.client.get(url, {'figure': 'uat'}).status_code, 404)
+        rule = active_component('D12.stage_terms', self.case)
+        transition(self.actor, rule.pk, 'revoked')
+        missing = self.client.get(url)
+        self.assertContains(missing, 'Signed agreement')
+        self.assertContains(missing, 'User acceptance testing')
+        self.assertIsNone(missing.context['money']['rows'][0]['amount'])
 
     def test_project_money_separates_invoice_and_payment_and_resolves_exact_figure(self):
         self.client.force_login(self.actor)

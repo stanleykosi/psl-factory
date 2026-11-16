@@ -11,12 +11,13 @@ from .controlled import current_version, validate_review, publication_requiremen
 
 
 @transaction.atomic
-def claim_publication(case_id=None,job_id=None,*,include_previous=False):
+def claim_publication(case_id=None,job_id=None,*,include_previous=False,seen_jobs=None):
     now=timezone.now()
     query=PublicationJob.objects.select_for_update(skip_locked=True).filter(
         Q(status__in=['pending','unknown'])|Q(status='leased',lease_until__lte=now))
     if case_id is not None:query=query.filter(publication__version__document__case_id=case_id)
     if job_id is not None:query=query.filter(pk=job_id)
+    if seen_jobs:query=query.exclude(pk__in=seen_jobs)
     job=query.order_by('pk').first()
     if not job:
         return None
@@ -130,13 +131,14 @@ def receipt_only_recovery(publication):
         manifest__source_mode='weekly_client_facts/v1').exists()
 
 
-def run_publication_once(adapter=None,case_id=None,job_id=None,lookup_only=False):
+def run_publication_once(adapter=None,case_id=None,job_id=None,lookup_only=False,*,seen_jobs=None):
     from adapters.publications import InternalPublicationAdapter
     adapter=adapter or InternalPublicationAdapter()
-    lease=claim_publication(case_id,job_id,include_previous=True)
+    lease=claim_publication(case_id,job_id,include_previous=True,seen_jobs=seen_jobs)
     if not lease:
         return False
     job_id,fence,previous=lease
+    if seen_jobs is not None:seen_jobs.add(job_id)
     job=PublicationJob.objects.select_related('publication__version__document','publication__factory_work').get(pk=job_id)
     # A native immutable factory binding, not caller payload, owns this stricter recovery contract.
     uncertain_original=previous in ['unknown','leased'] and receipt_only_recovery(job.publication)

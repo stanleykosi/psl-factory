@@ -10,10 +10,12 @@ class ReadLimit(Exception):
 
 
 @contextmanager
-def limit_queries(remaining):
+def limit_queries(remaining, *, deadline=None):
+    from time import monotonic
+
     def charge(execute, sql, params, many, context):
         nonlocal remaining
-        if remaining == 0:
+        if remaining == 0 or (deadline is not None and monotonic() >= deadline):
             raise ReadLimit
         remaining -= 1
         return execute(sql, params, many, context)

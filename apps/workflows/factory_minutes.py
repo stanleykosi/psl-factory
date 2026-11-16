@@ -303,6 +303,22 @@ def projection(actor,work):
     return {'can_review':can_review,'reviewer_names':reviewers,'jobs':list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk')),'document':binding,'extraction':extraction(work),'confirmation':confirmation(work),'actions':list(meetings.meeting_actions(m)) if m else [],'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed}
 
 
+def delivery_readback(work, actor):
+    from apps.documents.delivery_readback import recipient_rows
+
+    try:
+        require(actor, work.case, 'document.read')
+        binding = current_document(work, actor)
+    except (PermissionDenied, ValidationError):
+        return []
+    job = PublicationJob.objects.filter(publication__factory_work=work, publication__factory_source=work.source_head,
+                                        publication__version=binding.version).select_related('publication').first()
+    if not job:
+        return []
+    receipts = PublicationReceipt.objects.filter(publication=job.publication).order_by('pk')
+    return recipient_rows(job, binding.version, receipts)
+
+
 def reconcile(actor,work_id,expected,adapter=None):
     from .factory import access,cancellation_status
     from .factory_execution import require_control

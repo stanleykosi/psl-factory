@@ -93,6 +93,12 @@ class FactoryMinutesTests(TestCase):
         self.assertNotContains(self.client.get(decision_url),'Approve exact outward minutes')
         self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         proof=flow.verify(self.work,self.actor);self.assertEqual(len(proof['receipt_ids']),2);self.assertEqual(Publication.objects.get().factory_source_id,self.work.source_head_id);self.assertEqual(ActionItem.objects.get().current.status,'open')
+        recovery=f'/work/{self.work.pk}/recovery/'
+        page=self.client.get(recovery)
+        self.assertContains(page,'Delivery by recipient')
+        self.assertEqual({row['receipt'].pk for row in page.context['delivery']},set(proof['receipt_ids']))
+        Grant.objects.filter(case=self.case,user=self.actor,action='document.read').update(active=False)
+        self.assertNotContains(self.client.get(recovery),'Delivery by recipient')
     def test_source_correction_preserves_old_minutes_budget_and_action_history(self):
         self.start();self.confirm();self.advance();before=self.work.budget_used;old=flow.document(self.work);item=ActionItem.objects.get()
         change_action(self.actor,self.case.pk,item.pk,'start',self.notes.pk,'Owner begins work',rev(self.case),1)

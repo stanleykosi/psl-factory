@@ -10,14 +10,24 @@
     <div class="assistant-reply">
       <strong>{{ persona.0 }}</strong>
       {% if turn.status == 'queued' %}<p role="status">Question queued. You can leave and check Alerts when the answer is ready.</p>
-      {% elif turn.status == 'running' %}<p role="status">Checking your project records.</p>
-      {% elif turn.status == 'held' %}<p role="status">An answer could not be completed. Check your access or ask again.</p>
+      {% elif turn.status == 'running' %}<p role="status">Checking your project records for this answer.</p>
+      {% elif turn.status == 'held' %}<p role="status">An answer could not be completed. Check your access or <a href="#assistant-compose">ask again</a>.</p>
       {% elif turn.stale %}<p role="status">This answer needs a fresh check because a source changed or is no longer available.</p>
       {% else %}<p>{{ turn.answer|linebreaksbr }}</p>
         {% if turn.sources %}<details><summary>Records checked</summary><ul>{% for source in turn.sources %}<li><a href="{{ source.url }}">{{ source.label }}</a> · {{ source.fact }}</li>{% endfor %}</ul></details>{% endif %}
+        {% if turn.insufficient %}<a href="#assistant-compose">Ask about a different record</a>{% endif %}
       {% endif %}
-      {% if turn.started_url %}<p>Work started. <a href="{{ turn.started_url }}">Open the work item →</a></p>
-      {% elif turn.next_url %}<p><a href="{{ turn.next_url }}" class="button secondary">Edit draft →</a></p>{% endif %}
+      {% if turn.started_url or turn.next_url %}<section class="assistant-draft" aria-label="{{ turn.draft_label|default:'Work' }}">
+        {% if turn.draft_label %}<h2>{{ turn.draft_label }}</h2>{% endif %}
+        {% if turn.started_url %}
+          {% if turn.reviewed_number %}<p>{{ turn.reviewed_reference }} · Started from draft {{ turn.reviewed_number }}</p>{% endif %}
+          <p>Work started. <a href="{{ turn.started_url }}">Open the work item →</a></p>
+        {% else %}
+          {% if turn.saved_number %}<p>{{ turn.saved_reference }} · Draft {{ turn.saved_number }}{% if turn.draft_needs_refresh %} · Project records changed{% endif %}</p>{% endif %}
+          <p>Check the draft before starting work.</p>
+          <a href="{{ turn.next_url }}" class="button secondary">Edit draft →</a>
+        {% endif %}
+      </section>{% endif %}
       {% if turn.transfer_url %}<p><a href="{{ turn.transfer_url }}">Open the conversation with {{ turn.transfer_name }} →</a></p>
       {% elif turn.transfer_action %}<form action="{{ turn.transfer_action }}" method="post">{% csrf_token %}<button type="submit" class="button secondary">Ask {{ turn.transfer_name }} instead</button></form>{% endif %}
     </div>
@@ -25,7 +35,7 @@
   {% empty %}<p>Ask about this project. {{ persona.0 }} will check the records you can access.</p>{% endfor %}
   {% if waiting %}{{ form.errors }}<p><a href="{% url 'assistant_thread' conversation.pk %}" data-assistant-wait>Check for an answer</a></p>
     <script defer src="{% static 'assistant-progress.js' %}"></script>
-  {% else %}<form method="post" class="assistant-compose">{% csrf_token %}{{ form.key }}{{ form.non_field_errors }}{{ form.question.as_field_group }}
+  {% else %}<form method="post" id="assistant-compose" class="assistant-compose">{% csrf_token %}{{ form.key }}{{ form.non_field_errors }}{{ form.question.as_field_group }}
   {% if form.focus.field.choices %}<details{% if form.focus.errors or form.is_bound %} open{% endif %}><summary>Select project records</summary>{{ form.focus.as_field_group }}</details>{% endif %}
   <button class="button primary" type="submit">Send</button></form>{% endif %}
 </section>

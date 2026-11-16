@@ -11,13 +11,14 @@ from django.utils import timezone
 from apps.identity.services import visible_cases,require
 from apps.identity.models import Grant
 from apps.core.evidence_access import public_evidence
+from apps.core.read_observation import read_observation
 from apps.finance.models import FinanceSource,FinanceAdjustment,FinanceRun
 from apps.core.models import Evidence, Audit
 from . import factory_accounting_intake as intake
 from apps.documents.models import Template,PublicationReceipt
 from . import factory as runtime,factory_accounting as service
 from .models import FactoryActivity,HumanTask
-from .factory_views import ProfileForm
+from .factory_views import ProfileForm, QUEUES
 from .factory_progress_views import StartWithBackground, start_work
 
 class AccountingProfileForm(ProfileForm):
@@ -114,6 +115,7 @@ def create(request):
     receipts=[{'receipt':r,'result':intake.latest(r)} for r in Audit.objects.filter(case=case,actor=request.user,action=intake.RECEIPT).order_by('-pk')[:30]]
     response=render(request,'factory/accounting_start.html',{'case':case,'form':form,'supplied_form':supplied,'receipts':receipts,'definition':service.DEFINITION});response['Cache-Control']='no-store';return response
 
+@read_observation
 def presentation(actor,work):
     from apps.agents.factory_coordinator import decorate
     return decorate(actor,work,_presentation(actor,work))
@@ -129,7 +131,7 @@ def _presentation(actor,work):
     value=None;observed=None;finding='';current=False;planning_ready=False;formula=None;options=[]
     try:
         _,value=runtime.profile(work,recovery=True);observed,latest,missing,stale,_,jobs=service.snapshot(work,value,reader=actor);current=True
-        options,_=service.eligible(work,value,observed,latest,missing,stale,tasks,jobs)
+        if work.status!='verified':options,_=service.eligible(work,value,observed,latest,missing,stale,tasks,jobs)
         formula=FinanceRun.objects.filter(pk=observed['formula']).first()
     except (ValidationError,PermissionDenied):finding='Review the current execution settings and source permissions before continuing.'
     if current:
@@ -197,7 +199,7 @@ def detail(request,work,focus=None):
 
     runtime.access(request.user,work.case,envelope=service.DEFINITION)
     queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
-    if queue not in ['needs_me','active','decisions','exceptions','unassigned','verified']:queue='needs_me'
+    if queue not in QUEUES:queue='needs_me'
     url=request.path+'?'+urlencode({'queue':queue,'q':q})
     if request.method=='POST':
         try:
@@ -232,7 +234,7 @@ def detail(request,work,focus=None):
     receipts=PublicationReceipt.objects.filter(publication__version__document__case=work.case).filter(
         service.Q(publication__factory_work=work)|service.Q(pk__in=receipt_ids)).select_related('recipient').order_by('pk')
     from apps.agents.factory_catalogue import CATALOGUE
-    activities=list(FactoryActivity.objects.filter(work=work).prefetch_related('attempts').order_by('pk'))
+    activities=list(FactoryActivity.objects.filter(work=work).prefetch_related('attempts').order_by('pk')) if not focus else []
     for activity in activities:activity.business_title=CATALOGUE[activity.kind].title if activity.kind in CATALOGUE else 'Recorded agent work'
     for receipt in receipts:
         receipt.current_recipient_name=(receipt.recipient.get_full_name() or receipt.recipient.username) if receipt.recipient.is_active and Grant.objects.filter(case=work.case,user=receipt.recipient,active=True,action='finance.read').exists() else 'Historical recipient'

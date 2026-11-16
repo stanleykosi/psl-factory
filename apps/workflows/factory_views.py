@@ -31,7 +31,7 @@ from . import factory as d
 from .factory_progress_views import StartWithBackground, start_work, started
 from .factory_definitions import DEFINITIONS,definition
 
-QUEUES={'needs_me':'Needs my attention','active':'Active work','decisions':'Decisions','exceptions':'Exceptions','unassigned':'Unassigned','verified':'Verified outcomes'}
+QUEUES={'needs_me':'Needs my attention','mine':'Started by me','active':'Active work','decisions':'Decisions','exceptions':'Exceptions','unassigned':'Unassigned','verified':'Verified outcomes'}
 
 # Discovery only: native forms and services still validate the exact project/action.
 INTAKES=(
@@ -538,6 +538,11 @@ def _presentation(actor,work,*,focus=None):
 
 @login_required
 def index(request):
+    from time import monotonic
+    from django.core.paginator import Paginator
+    from apps.core.read_budget import ReadLimit, limit_queries
+    from apps.core.read_observation import observation_scope
+
     # Retain legacy filtered workspace links while making the root a work-first surface.
     if any(k in request.GET for k in ['kind','area','tenant']):
         from apps.core.workbench_views import home
@@ -547,16 +552,25 @@ def index(request):
     if line not in DEFINITIONS:line=''
     if queue not in QUEUES:queue='needs_me'
     query=visible(request.user)
+    known_lines = set(query.order_by().values_list('definition', flat=True).distinct())
+    line_choices = sorted((key, value['title']) for key, value in DEFINITIONS.items() if key in known_lines)
     if line:query=query.filter(definition=line)
     if q:query=query.filter(Q(request__reference__icontains=q)|Q(case__title__icontains=q)|Q(key__icontains=q))
     if queue=='verified':query=query.filter(status='verified')
     elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','engagement/v1','pmo-minutes/v1','pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
     elif queue=='needs_me':query=query.exclude(status='cancelled').exclude(status='verified',definition='pmo-finance/v1')
+    elif queue=='mine':query=query.filter(actor=request.user)
     else:query=query.exclude(status__in=['verified','cancelled'])
-    query=query.distinct().order_by('-updated_at','-pk');items=[]
-    # Explicit bounded evaluated coverage: no global totals from a first page.
-    for work in query[:101]:
-        row=presentation(request.user,work)
+    candidates=Paginator(query.distinct().order_by('-updated_at','-pk'), 8).get_page(request.GET.get('page'))
+    items=[];deferred=[];evaluated=0;deadline=monotonic()+9
+    for work in candidates:
+        try:
+            with observation_scope(), limit_queries(1400, deadline=deadline):
+                row=presentation(request.user,work)
+        except ReadLimit:
+            deferred.append(work)
+            continue
+        evaluated+=1
         if queue=='verified' and row.get('readiness_changed'):continue
         if queue=='exceptions' and work.status=='verified' and not row.get('readiness_changed'):continue
         if queue=='exceptions' and work.status in ['ready','waiting'] and not (row.get('review_needs_update') or row.get('adoption') or row.get('coordination_needed') or row.get('execution_owner_needed') or row.get('source_instruction_needed') or row.get('source_followup_needed') or row.get('operation_followup_needed') or row.get('outcome_selection_needed') or row.get('held_publication_needs_operator') or any(d.uncertain_job(j) for j in row['jobs']) or row['state']=='Execution rules need review'):continue
@@ -564,11 +578,10 @@ def index(request):
         if queue=='decisions' and (row.get('review_needs_update') or row.get('review_ready') or not (row.get('department_wait') or any(t.status=='open' and t.kind=='factory_review' for t in row['tasks']))):continue
         if queue=='unassigned' and row['owner']!='Unassigned':continue
         items.append(row)
-    evaluated=query.count()
-    response=render(request,'factory/queue.html',{'rows':items[:50],
-        'queue':queue,'queues':QUEUES,'q':q,'line':line,
+    response=render(request,'factory/queue.html',{'rows':items,'candidates':candidates,'deferred':deferred,
+        'queue':queue,'queues':QUEUES,'q':q,'line':line,'line_choices':line_choices,
         'line_title':DEFINITIONS[line]['title'] if line else '', 'as_of':timezone.now(),
-        'evaluated':min(evaluated,101),'limited':len(items)>50 or evaluated>101,'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)})
+        'evaluated':evaluated,'limited':bool(deferred),'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)})
     response['Cache-Control']='no-store';return response
 
 def assistant_origin(request, form, envelope):

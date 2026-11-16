@@ -15,7 +15,7 @@ from apps.policy.models import Configuration,ScopeApplication
 from apps.finance import analysis
 from apps.finance.billing import digest
 from apps.finance.models import FinanceSource,FinanceRun,FinanceAdjustment,FinanceDocumentBinding
-from apps.finance.documents import report_inputs,binding_findings
+from apps.finance.documents import binding_findings
 from apps.documents.models import Publication,PublicationJob,PublicationReceipt
 from apps.documents.controlled import reserve_publication,current_version
 from adapters.factory_accounting import NativeAccountingAdapter
@@ -285,8 +285,9 @@ def act(work,choice,value,latest,missing,tasks,jobs):
 def verified(work,value,state=None):
     state=state if state is not None else snapshot(work,value)[0]
     if not state['formula'] or not state['document']:raise ValidationError('Current native accounting output and document binding required')
-    run=FinanceRun.objects.get(pk=state['formula']);report_inputs(run,value['audience'])
+    run=FinanceRun.objects.get(pk=state['formula'])
     binding=FinanceDocumentBinding.objects.select_related('version').get(pk=state['document'])
+    if binding.run_id!=run.pk or binding.version.audience!=value['audience']:raise ValidationError('Exact reviewed run and audience required')
     current_version(work.case,binding.version_id)
     if binding_findings(binding):raise ValidationError('Current exact Finance document projection required')
     publication=Publication.objects.select_related('job').filter(version=binding.version).first()
@@ -295,6 +296,7 @@ def verified(work,value,state=None):
     recipient_access(run,publication.recipient_ids)
     receipts=list(PublicationReceipt.objects.filter(publication=publication).order_by('pk'))
     if not publication.recipient_ids or sorted(r.recipient_id for r in receipts)!=sorted(publication.recipient_ids):raise ValidationError('Every exact native report recipient receipt is required')
+    if any(r.payload_sha256!=binding.version.payload_sha256 or r.payload!=binding.version.payload for r in receipts):raise ValidationError('Receipts must match the exact reviewed accounting document')
     return {'verified':True,'source':run.source_id,'run':run.pk,'binding':binding.pk,'publication':publication.pk,
         'document_version':binding.version_id,'receipt_ids':[r.pk for r in receipts],'ledger_posted':False}
 

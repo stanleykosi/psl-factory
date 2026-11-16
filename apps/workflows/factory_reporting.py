@@ -333,6 +333,7 @@ def restart(actor,work_id,expected,case_expected,reason):
 
 def projection(actor,work):
     from .factory import access,profile
+    from apps.documents.delivery_readback import recipient_rows
     from apps.policy.services import decision_authority
     access(actor,work.case,'factory.read',DEFINITION);data=source(work,actor,False);v=document(work)
     issue='';options=[];next_action='Review selected weekly report sources';current=True
@@ -342,19 +343,7 @@ def projection(actor,work):
     receipts=list(PublicationReceipt.objects.filter(publication__version=v,publication__factory_work=work).order_by('pk')) if v else []
     review=v.reviews.select_related('actor').order_by('-pk').first() if v else None
     selected_job=next((job for job in jobs if v and job.publication.version_id==v.pk),None)
-    delivery=[]
-    if selected_job:
-        recipient_ids=selected_job.publication.recipient_ids
-        people=get_user_model().objects.in_bulk(recipient_ids)
-        originals={receipt.recipient_id:receipt for receipt in receipts if receipt.payload_sha256==v.payload_sha256 and receipt.payload==v.payload}
-        for pk in recipient_ids:
-            person=people.get(pk);receipt=originals.get(pk)
-            status=('Delivered' if selected_job.status=='confirmed' else 'Original receipt found') if receipt else {
-                'pending':'Waiting to send','unknown':'Delivery uncertain','held':'Delivery needs review',
-                'leased':'Checking delivery','cancelled':'Cancelled',
-            }.get(selected_job.status,'Receipt unavailable')
-            delivery.append({'recipient':(person.get_full_name() or person.get_username()) if person else 'Recorded recipient',
-                             'status':status,'at':receipt.created_at if receipt else None,'receipt':receipt})
+    delivery=recipient_rows(selected_job,v,receipts)
     idle=not (work.lease_until and work.lease_until>timezone.now());live=idle and not work.cancel_requested;verdicts=[]
     if live and current and v and HumanTask.objects.filter(version=v,status='open').exists():
         try:

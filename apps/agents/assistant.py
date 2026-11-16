@@ -22,6 +22,7 @@ PERSONAS = {
     'chidi': ('Chidi', 'Finance', 'finance.read'),
     'zainab': ('Zainab', 'HR', 'hrfinance.read'),
 }
+INSUFFICIENT_EVIDENCE = 'I could not answer from the available records.'
 
 
 def cases_for(actor, persona):
@@ -269,7 +270,7 @@ def worker_once():
         if current != sources or (raw['next_work'] and raw['next_work'] not in current_next):
             raise ValidationError('Source access or records changed while the assistant was working.')
         # Without a source, show only a fixed insufficient-evidence message.
-        answer = raw['answer'].strip() if cited else 'I could not answer from the available records.'
+        answer = raw['answer'].strip() if cited else INSUFFICIENT_EVIDENCE
         AssistantTurn.objects.filter(pk=turn.pk, status='running').update(
             status='answered', answer=answer, sources=cited, context_hash=context_hash, next_work=raw['next_work'] if cited else '',
         )
