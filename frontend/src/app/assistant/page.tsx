@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-import { DestinationPage } from '@/shell/DestinationPage';
+import { AssistantHome } from '@/features/assistant/AssistantHome';
 
 export const metadata: Metadata = { title: 'Assistant · PSL Factory' };
 
 export default function AssistantPage() {
-  return <DestinationPage destination="assistant" />;
+  return <AssistantHome />;
 }

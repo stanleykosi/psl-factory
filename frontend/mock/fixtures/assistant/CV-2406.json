@@ -1,0 +1,51 @@
+{
+  "conversation_id": "CV-2406",
+  "agent": "chidi",
+  "title": "Invoice · amount not set",
+  "status": "drafted",
+  "context": {
+    "project": {
+      "case_id": "C-0101",
+      "title": "Lagoon Health · patient app"
+    },
+    "access": [
+      "PMO on this project"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Draft the invoice for Lagoon Health milestone 3.",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-16T07:20:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "I drafted the invoice, but the signed SOW does not state an amount for this stage, so I left it empty rather than guess.",
+      "steps": [
+        "Read the signed SOW"
+      ],
+      "sources": [],
+      "at": "2026-11-16T07:22:00Z",
+      "draft": {
+        "title": "Invoice draft · Lagoon Health · Milestone 3",
+        "status_label": "DRAFTED · NOT REVIEWED",
+        "rows": [
+          {
+            "label": "Amount",
+            "money": {
+              "currency": "NGN",
+              "unknown": true
+            }
+          },
+          {
+            "label": "Template",
+            "value": "Invoice · TEST TEMPLATE"
+          }
+        ],
+        "next": "Finance review by a Finance Lead"
+      }
+    }
+  ]
+}

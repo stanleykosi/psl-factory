@@ -1,0 +1,50 @@
+{
+  "conversation_id": "CV-2404",
+  "agent": "zainab",
+  "title": "A staff member’s salary",
+  "status": "cannot_answer",
+  "context": {
+    "project": {
+      "case_id": "C-0301",
+      "title": "October payroll"
+    },
+    "access": [
+      "PMO · no payroll access"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "What is Musa Ibrahim’s monthly salary?",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-16T07:50:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "I can’t share an individual’s pay with you; that is restricted to HR roles. I can show you staff-cost totals for your business unit, or you can ask the HR Lead for access if your work needs it.",
+      "steps": [
+        "Checked your access to payroll records"
+      ],
+      "sources": [],
+      "at": "2026-11-16T07:51:00Z",
+      "cannot_reason": "Individual pay is restricted to HR roles.",
+      "step_details": [
+        {
+          "text": "Checked your access to payroll records",
+          "state": "done",
+          "reference": {
+            "label": "ACCESS · payroll (restricted)"
+          }
+        }
+      ],
+      "source_details": [
+        {
+          "kind": "ACCESS",
+          "label": "ACCESS · payroll (restricted)",
+          "restricted": true
+        }
+      ]
+    }
+  ]
+}

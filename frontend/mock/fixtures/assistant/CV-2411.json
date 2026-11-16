@@ -1,0 +1,51 @@
+{
+  "conversation_id": "CV-2411",
+  "agent": "chidi",
+  "title": "Weekly report · Lagoon Health",
+  "status": "drafted",
+  "context": {
+    "project": {
+      "case_id": "C-0101",
+      "title": "Lagoon Health · patient app"
+    },
+    "access": [
+      "Finance · read"
+    ]
+  },
+  "messages": [
+    {
+      "role": "person",
+      "text": "Prepare this week’s client report for Lagoon Health.",
+      "steps": [],
+      "sources": [],
+      "at": "2026-11-16T08:15:00Z"
+    },
+    {
+      "role": "agent",
+      "text": "I drafted the report outline from this week’s records.",
+      "steps": [
+        "Read this week’s records"
+      ],
+      "sources": [],
+      "at": "2026-11-16T08:17:00Z",
+      "draft": {
+        "title": "Weekly report draft · Lagoon Health",
+        "status_label": "DRAFTED · NOT REVIEWED",
+        "rows": [
+          {
+            "label": "Week",
+            "value": "10 to 14 Nov"
+          }
+        ],
+        "next": "PMO review",
+        "start": {
+          "line_key": "weekly_report",
+          "case_id": "C-0101",
+          "case_revision": 6,
+          "intake": {},
+          "label": "Start this report"
+        }
+      }
+    }
+  ]
+}
