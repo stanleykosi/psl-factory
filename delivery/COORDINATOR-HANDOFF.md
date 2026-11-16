@@ -58,3 +58,10 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 - New decisions: D-94 (next milestone: closed "—", open Unknown; "All I can see" needs a per-row open/closed field from the backend), D-95 (links inside a sentence exempt from 44px).
 - Follow-ups (not started): UI-3-1 decide warning icon wraps on desktop (drop flex-wrap in decide.css:96); shared one-box date-time, compact file row and boxed radio so the response/RFP forms can use the library (UX-05); phone filter chips wrap vs board's sideways-scroll row (ask design engineer); raise testing-library async timeout (gate flakes).
 - Feature pause (D-76) still on: ask the design engineer to lift it. Next features: F-21b, FE-LINE-MINUTES, FE-ASSISTANT, FE-SETUP-DELEGATION, FE-M3-PROJECT-TABS, other line screens.
+
+### F-22 follow-ups (non-blocking, routed 16 Nov)
+- SEC-1-3: shared ReconcilePanel copy says the client "is never invoiced twice" (invoice wording on a report; a promise the mock can't keep). Reword per line.
+- UI-1-4: pinned phone bar shows the consequence line above the button (F-21 behaviour); board shows only the button.
+- UX-1-1: next line for failed/unknown delivery (backend handoff). UX-1-3 / QA-2-2: unknown work id gets the mock's default item (mock should 404).
+- UX-1-4, UX-3-1 (multi-cite pickers truncate), UX-4-1, TECH-1-2 (frame change already listed): polish.
+- Fidelity tool: labels that are entirely data bindings ({{…}}) can't be matched (F-24 "Start this invoice"); frame names like "Back to Home" vs board "← Home". Match by role and position, or allow per-board exceptions.

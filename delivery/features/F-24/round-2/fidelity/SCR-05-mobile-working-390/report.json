@@ -1,0 +1,348 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-16T14:10:15.249Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-05-mobile-working.dc.html",
+  "boardName": "SCR-05-mobile-working.dc.html",
+  "pageUrl": "http://localhost:4770/assistant/CV-2405",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-24/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 80.4 is below 90."
+  ],
+  "scores": {
+    "coverage": 60,
+    "coverageWithExceptions": 100,
+    "visual": 80.4
+  },
+  "visual": {
+    "score": 80.4,
+    "allCellsScore": 83.1,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2024,
+    "mismatchedCells": 397
+  },
+  "coverage": {
+    "total": 10,
+    "found": 6,
+    "coverage": 60,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "We won the Tamarind Loans RFP. Build the planning packet for the engagement.",
+        "pageName": "We won the Tamarind Loans RFP. Build the planning packet for the engagement.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "background #1F2427 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 50,
+          "y": 70,
+          "w": 324,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 82,
+          "y": 80,
+          "w": 280,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent · step 3 of 5",
+        "pageName": "Tola · PMO agent · step 3 of 5",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 74,
+          "y": 168,
+          "w": 185,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 74,
+          "y": 201,
+          "w": 157,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WORKING",
+        "pageName": "WORKING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 272,
+          "y": 156,
+          "w": 86,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 272,
+          "y": 176,
+          "w": 86,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Started 14:02",
+        "pageName": "Started 14:02",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 18,
+          "y": 419,
+          "w": 354,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 484,
+          "w": 81,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Working on it. I'll show the packet here when it's ready. Nothing is decided until you confirm the PM and register the engagement.",
+        "pageName": "Working on it. I will show the packet here when it is ready. Nothing is decided until you confirm the PM and register the engagement.",
+        "pageRole": "text",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 469,
+          "w": 358,
+          "h": 63
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 524,
+          "w": 358,
+          "h": 67
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Assistant",
+        "key": "link: ← Assistant",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 79,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: the back link is the app frame's phone bar (usePhoneBack \"← Assistant\" with the conversation title); \"← Home\" on the phone default is a frame item and is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TOLA",
+        "key": "text: TOLA",
+        "container": "page",
+        "boardBox": {
+          "x": 253,
+          "y": 21,
+          "w": 29,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 8 and 9: the phone header word and the task words (\"Building the planning packet\") are not fields; the card uses the conversation title as the task and the title is in the frame's phone bar.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Building the planning packet",
+        "key": "text: Building the planning packet",
+        "container": "page",
+        "boardBox": {
+          "x": 74,
+          "y": 150,
+          "w": 185,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 8 and 9: the phone header word and the task words (\"Building the planning packet\") are not fields; the card uses the conversation title as the task and the title is in the frame's phone bar.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Message Tola",
+        "key": "text: Message Tola",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 778,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 11: one text per agent at both widths; the composer is labelled \"Message Tola\" (the phone board says \"Message\").",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Assistant",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 74,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Planning packet · Tamarind Loans",
+        "container": "banner",
+        "pageBox": {
+          "x": 90,
+          "y": 19,
+          "w": 136,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Planning packet · Tamarind Loans",
+        "container": "main",
+        "pageBox": {
+          "x": 74,
+          "y": 156,
+          "w": 188,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Message Tola",
+        "container": "form",
+        "pageBox": {
+          "x": 18,
+          "y": 698,
+          "w": 354,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "@ Mention",
+        "container": "form",
+        "pageBox": {
+          "x": 28,
+          "y": 772,
+          "w": 89,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Send",
+        "container": "form",
+        "pageBox": {
+          "x": 318,
+          "y": 772,
+          "w": 44,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

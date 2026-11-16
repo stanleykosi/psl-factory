@@ -75,6 +75,7 @@ export const WS_TEXT = {
   showMore: 'Show more',
   filter: 'Filter',
   you: 'You',
+  timeUnknown: 'Time unknown',
 } as const;
 
 /** "As of 14 Nov 10:40 WAT", as the line boards write it. */

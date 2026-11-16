@@ -47,6 +47,7 @@ export const STEP_TEXT = {
   confirmFirst: 'Confirm what happened first.',
   confirmFirstByOther: 'Someone with reconcile access needs to confirm what happened first.',
   decide: 'Decide',
+  next: 'Next',
 } as const;
 
 export type StepResult = paths['/api/v1/work/{work_id}/steps']['post']['responses'][200]['content']['application/json'];

@@ -1,0 +1,5 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-25-desktop-returned-1440	1440	70.4	100	78	False
+SCR-25-desktop-received-1440	1440	65.4	100	78.3	False
+SCR-25-mobile-returned-390	390	66.7	100	83.3	False
+SCR-25-mobile-received-390	390	40	100	86.3	False
