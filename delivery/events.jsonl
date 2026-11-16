@@ -1731,3 +1731,4 @@
 {"at":"2026-11-16T15:42:58Z","feature":"F-24","round":3,"kind":"finding","action":"add","finding":"PMO-3-2","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-16T15:42:58Z","feature":"F-24","round":3,"kind":"finding","action":"add","finding":"PMO-3-3","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-16T15:42:58Z","feature":"F-24","round":3,"kind":"finding","action":"add","finding":"PMO-3-4","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-16T15:43:59Z","feature":"F-24","round":3,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"2075d4aa29aa","written_at":"2026-11-16T15:43:09Z"}
