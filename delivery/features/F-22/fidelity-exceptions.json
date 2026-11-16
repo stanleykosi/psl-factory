@@ -5,56 +5,56 @@
       "name": "PROJECTS",
       "category": "frame item",
       "reason": "Conflicts 7: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn (D-81 frame item). The page's crumb under the header carries the same words as plain text.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "link",
       "name": "LAGOON HEALTH",
       "category": "frame item",
       "reason": "Conflicts 7: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn (D-81 frame item). The page's crumb under the header carries the same words as plain text.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "tablist",
       "name": "Project",
       "category": "frame item",
       "reason": "Conflicts 7: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn (D-81 frame item). The page's crumb under the header carries the same words as plain text.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "tab",
       "name": "Milestones 4",
       "category": "frame item",
       "reason": "Conflicts 7: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn (D-81 frame item). The page's crumb under the header carries the same words as plain text.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "tab",
       "name": "Documents 6",
       "category": "frame item",
       "reason": "Conflicts 7: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn (D-81 frame item). The page's crumb under the header carries the same words as plain text.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "tab",
       "name": "Money",
       "category": "frame item",
       "reason": "Conflicts 7: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn (D-81 frame item). The page's crumb under the header carries the same words as plain text.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "tab",
       "name": "Registers 6",
       "category": "frame item",
       "reason": "Conflicts 7: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn (D-81 frame item). The page's crumb under the header carries the same words as plain text.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "tab",
       "name": "Actions 9",
       "category": "frame item",
       "reason": "Conflicts 7: the work item page keeps its own title, tabs, facts strip and station track; the board's project tab bar and its Projects / Lagoon Health crumb links are not drawn (D-81 frame item). The page's crumb under the header carries the same words as plain text.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "text",
@@ -68,49 +68,49 @@
       "name": "← Project",
       "category": "frame item",
       "reason": "Conflicts 7: the phone back link belongs to the frame (the page's crumbs carry the same destination), not to this feature.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "text",
       "name": "\"Say what we need from the client: test devices by Friday.\"",
       "category": "frame vocabulary",
       "reason": "Conflicts 6: the phone board draws a shorter quote than the desktop board. The frame has one data set for both widths, so the page shows the single backend-composed note (the desktop wording) at both widths.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "text",
       "name": "DONE",
       "category": "frame vocabulary",
       "reason": "Conflicts 6: the phone board writes the status as DONE; the page draws the backend's status label (Received by client) from workspace.status, never computed from state.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     },
     {
       "role": "text",
       "name": "Delivered to 2 client contacts. Verified.",
       "category": "frame vocabulary",
       "reason": "Conflicts 6: the phone board draws a shorter delivery sentence; the page draws the single backend-composed sentence at both widths (the count and wording come from data, never from the frame).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 16 Nov 2026 — D-99"
     }
   ],
   "visual_waivers": [
     {
       "board": "SCR-25-desktop-returned",
-      "approved_by": "builder proposal, pending design engineer",
+      "approved_by": "design engineer, 16 Nov 2026 — D-99",
       "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 78 (>= 70). The remainder is the frame's own title, tabs and facts strip (D-81), the Conflicts 1 to 3 choices (approved D-97) and phone wording the contract has one data set for. For the design engineer to sign."
     },
     {
       "board": "SCR-25-desktop-received",
-      "approved_by": "builder proposal, pending design engineer",
+      "approved_by": "design engineer, 16 Nov 2026 — D-99",
       "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 78.3 (>= 70). The remainder is the frame's own title, tabs and facts strip (D-81), the Conflicts 1 to 3 choices (approved D-97) and phone wording the contract has one data set for. For the design engineer to sign."
     },
     {
       "board": "SCR-25-mobile-returned",
-      "approved_by": "builder proposal, pending design engineer",
+      "approved_by": "design engineer, 16 Nov 2026 — D-99",
       "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 83.3 (>= 70). The remainder is the frame's own title, tabs and facts strip (D-81), the Conflicts 1 to 3 choices (approved D-97) and phone wording the contract has one data set for. For the design engineer to sign."
     },
     {
       "board": "SCR-25-mobile-received",
-      "approved_by": "builder proposal, pending design engineer",
+      "approved_by": "design engineer, 16 Nov 2026 — D-99",
       "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 86.3 (>= 70). The remainder is the frame's own title, tabs and facts strip (D-81), the Conflicts 1 to 3 choices (approved D-97) and phone wording the contract has one data set for. For the design engineer to sign."
     }
   ]
