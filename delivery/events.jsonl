@@ -1721,3 +1721,5 @@
 {"at":"2026-11-16T15:39:36Z","feature":"F-22","round":4,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"59254c6b23faa68c3386d45373abbb913ed38ec6"}}
 {"at":"2026-11-16T15:39:37Z","feature":"F-22","round":4,"kind":"transition","head":"57d38e53b8c1","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-16T15:39:37Z","feature":"F-22","round":4,"kind":"transition","head":"57d38e53b8c1","from":"MERGED","to":"DONE"}
+{"at":"2026-11-16T15:40:53Z","feature":"F-23","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-16T15:40:54Z","feature":"F-23","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
