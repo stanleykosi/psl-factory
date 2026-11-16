@@ -1,0 +1,9 @@
+{
+  "send_to_tola": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "Sent to Tola on the mock only. Tola is reassembling the report."
+    }
+  }
+}

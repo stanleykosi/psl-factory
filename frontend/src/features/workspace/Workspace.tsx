@@ -233,6 +233,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     };
   }
 
+  // Conflicts 4: when the backend returns `next` lines the panel is "Next" and carries them; lines a step already says are not repeated.
+  const said = new Set(workspaceSteps.map((s) => s.consequence));
+  const nextLines = (workspace.next ?? []).filter((line) => line.trim() !== '' && !said.has(line));
+  const hasNext = (workspace.next ?? []).length > 0;
+  const showPanel = workspaceSteps.length > 0 || nextLines.length > 0;
   const side = workspace.sections.filter(inSide(item));
   const main = workspace.sections.filter((section) => !inSide(item)(section));
   const notice = flow.notice;
@@ -306,17 +311,22 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
           ))}
         </div>
-        {(side.length > 0 || workspaceSteps.length > 0) && (
+        {(side.length > 0 || showPanel) && (
           <aside className="ws-side" aria-label="Review and decide">
             {side.map((section) => (
               <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
             ))}
-            {workspaceSteps.length > 0 && (
-              <section ref={decideRef} className={`psl-panel psl-panel--decide ws-decide${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
+            {showPanel && (
+              <section ref={decideRef} className={`psl-panel psl-panel--decide ws-decide${workspaceSteps.length === 0 ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
                 <h2 id={`${decideId}-head`} className="psl-panel__head psl-panel__head--decide ws-decide__head">
-                  {STEP_TEXT.decide}
+                  {hasNext ? STEP_TEXT.next : STEP_TEXT.decide}
                 </h2>
                 <div className="psl-panel__body ws-decide__body">
+                  {nextLines.map((line, i) => (
+                    <p key={i} className="ws-consequence">
+                      {line}
+                    </p>
+                  ))}
                   <StepRow steps={workspaceSteps} hint={flow.allLocked ? (item.reconcile && !hasReconcile ? STEP_TEXT.confirmFirstByOther : STEP_TEXT.confirmFirst) : undefined}>
                     {(s, describedBy) => control(s, `ws:${s.key}`, undefined, { describedBy })}
                   </StepRow>

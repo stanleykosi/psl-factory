@@ -1,0 +1,174 @@
+{
+  "id": "W-2210",
+  "title": "Weekly client report · 5–11 Nov",
+  "line": "Weekly client report",
+  "reference": "WCR-0216",
+  "revision": 6,
+  "tasks": [],
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "state": "action_needed",
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "current_person"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T09:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Assembled this from the week's records",
+        "status": "done"
+      }
+    ]
+  },
+  "workspace": {
+    "line_key": "weekly_report",
+    "screen": "SCR-25",
+    "view": "returned",
+    "subtitle": "Lagoon Health · week ending 11 Nov",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "WCR-0216",
+          "label": "Weekly client report · WCR-0216"
+        }
+      ]
+    },
+    "revision": 6,
+    "title": "Weekly client report · 5–11 Nov",
+    "status": {
+      "label": "Returned to you",
+      "tone": "stopped"
+    },
+    "sections": [
+      {
+        "key": "returned",
+        "kind": "text",
+        "items": [],
+        "note": "Kemi Adebayo returned v1 on 12 Nov: \"Say what we need from the client for the login fix: test devices by Friday.\""
+      },
+      {
+        "key": "update",
+        "kind": "text",
+        "title": "Your update",
+        "items": [
+          {
+            "id": "P-1",
+            "label": "Status",
+            "text": "Milestone 2 complete; go-live work started",
+            "cites": [
+              {
+                "label": "Milestone 2 · UAT signed 11 Nov",
+                "reference": "MS-0002"
+              },
+              {
+                "label": "UAT walkthrough · 11 Nov",
+                "reference": "MTG-0141"
+              }
+            ],
+            "cite_label": "2 RECORDS"
+          },
+          {
+            "id": "P-2",
+            "label": "Risks",
+            "text": "Login fails on older Android phones (high)",
+            "cites": [
+              {
+                "label": "ISS-0233 Login fails on older Android phones · High",
+                "reference": "ISS-0233"
+              }
+            ],
+            "cite_label": "ISS-0233"
+          },
+          {
+            "id": "P-3",
+            "label": "Timeline",
+            "text": "Go-live 4 Dec, subject to the login fix",
+            "cites": [
+              {
+                "label": "Weekly sync with Lagoon Health · 10 Nov",
+                "reference": "MTG-0140"
+              }
+            ],
+            "cite_label": "MIN-0141"
+          },
+          {
+            "id": "P-4",
+            "label": "Next steps",
+            "text": "Fix verification; go-live plan",
+            "cites": [
+              {
+                "label": "Client to send test accounts · due 13 Nov",
+                "reference": "ACT-0412"
+              },
+              {
+                "label": "CR-0031 Add SMS reminders · being assessed",
+                "reference": "CR-0031"
+              }
+            ],
+            "cite_label": "2 ACTIONS"
+          }
+        ]
+      }
+    ],
+    "next": [
+      "Edit your part, then Tola reassembles v2 and it goes back for review."
+    ]
+  }
+}

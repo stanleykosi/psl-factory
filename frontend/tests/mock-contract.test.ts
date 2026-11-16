@@ -510,10 +510,24 @@ describe('F-17 step scripts and sidecars', () => {
 
 describe('F-21 weekly fixtures (W-2201 to W-2208)', () => {
   const dir = join(__dirname, '../mock/fixtures/work');
-  const files = readdirSync(dir).filter((name) => /^W-22\d\d(\.next)?\.json$/.test(name));
+  const files = readdirSync(dir).filter((name) => /^W-22(0\d|\d\d)(\.next)?\.json$/.test(name) && name.slice(0, 6) <= 'W-2208');
 
   it('every weekly item and sidecar is schema-valid and marked sample, with no stripping', () => {
     expect(files.filter((name) => !name.includes('.next'))).toHaveLength(8);
+    for (const name of files) {
+      const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
+      expectValid('E-WORK-ITEM', 200, body);
+      expect(body.sample, name).toBe(true);
+    }
+  });
+});
+
+describe('F-22 weekly fixtures (W-2209 to W-2214)', () => {
+  const dir = join(__dirname, '../mock/fixtures/work');
+  const files = readdirSync(dir).filter((name) => /^W-22(09|1[0-4])(\.next)?\.json$/.test(name));
+
+  it('every returned or received item and sidecar is schema-valid and marked sample, with no stripping', () => {
+    expect(files.filter((name) => !name.includes('.next'))).toHaveLength(6);
     for (const name of files) {
       const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
       expectValid('E-WORK-ITEM', 200, body);

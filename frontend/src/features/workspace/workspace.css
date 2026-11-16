@@ -167,6 +167,10 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   html:has(.ws-decide--flow) { scroll-padding-bottom: calc(var(--control-lg) + var(--space-bar-clear)); }
   /* a flex item honours z-index even when static: without auto the flowing panel would sit over the reconcile panel's pinned button */
   .ws-decide.ws-decide--flow { position: static; z-index: auto; }
+  /* a Next panel with lines and no step has nothing to pin: it flows with the page and keeps its heading */
+  .ws-decide.ws-decide--info { position: static; border: var(--rule-strong) solid var(--ink); padding: 0; }
+  .ws-decide--info .ws-decide__head { position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; padding: var(--space-10px) var(--space-14px) var(--space-6px); background: none; color: inherit; border-bottom: none; }
+  .ws-decide--info .ws-decide__body { padding: 0 var(--space-14px) var(--space-10px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
