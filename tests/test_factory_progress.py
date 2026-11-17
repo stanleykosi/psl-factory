@@ -20,6 +20,26 @@ from tests.obligation_helpers import factory_approve_identified
 
 
 class FactoryProgressTests(TransactionTestCase):
+    def test_background_refresh_marks_only_active_or_woken_work_and_preserves_posted_errors(self):
+        data=fixture(missing=True)
+        work,actor=data['work'],data['actor']
+        job=factory_progress.set_progress(actor,work.pk,work.revision,True)
+        self.client.force_login(actor)
+        url=reverse('factory_detail',args=[work.pk])
+        page=self.client.get(url)
+        self.assertContains(page,'data-work-watch')
+        self.assertContains(page,'work-progress.js')
+        page=self.client.post(url,{'action':'unknown-action','revision':work.revision})
+        self.assertEqual(page.status_code,200)
+        self.assertContains(page,'data-preserve-form="true"')
+        self.assertEqual(self.drain(job),'waiting')
+        self.assertNotContains(self.client.get(url),'data-work-watch')
+        factory_progress.wake_waiting(work.pk)
+        self.assertContains(self.client.get(url),'data-work-watch')
+        work.refresh_from_db()
+        factory_progress.set_progress(actor,work.pk,work.revision,False)
+        self.assertNotContains(self.client.get(url),'data-work-watch')
+
     def drain(self, job):
         for _ in range(20):
             self.assertEqual(factory_progress.run_once(), job.pk)

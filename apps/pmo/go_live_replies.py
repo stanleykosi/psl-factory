@@ -101,6 +101,8 @@ def effect(dossier, data):
     for reply in rows:
         current_authority(reply, value)
         if reply.outcome == 'withdrawn':
+            contexts.append({'reply_id': reply.pk, 'receipt_id': reply.receipt_id,
+                             'evidence_id': reply.evidence_id, 'sha256': reply.evidence.sha256})
             continue
         if reply.outcome == 'declined':
             raise ValidationError('The client declined this release. Resolve the issue and review a new release candidate.')

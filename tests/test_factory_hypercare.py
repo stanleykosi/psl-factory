@@ -34,7 +34,11 @@ class FactoryHypercareTests(TestCase):
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.client.force_login(f.actor)
         url=reverse('factory_detail',args=[f.work.pk])
-        self.assertContains(self.client.get(url),'Engineering stability observation')
+        page = self.client.get(url)
+        self.assertContains(page,'Engineering stability observation')
+        self.assertTrue(page.context['row']['needs_me'])
+        waiting = self.client.get(reverse('home'), {'queue': 'waiting'})
+        self.assertNotIn(f.work.pk, [row['work'].pk for row in waiting.context['rows']])
         from apps.pmo.models import DeliverySource
         from apps.workflows.stability_forms import observation_forms
         form=observation_forms(f.actor,f.work)[0]

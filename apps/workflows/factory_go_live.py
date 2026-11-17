@@ -35,7 +35,11 @@ INPUT={'type':'object','properties':{k:ID for k in FIELDS},'required':FIELDS,'ad
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'dossier_id':{'type':'integer','minimum':1},'inputs':INPUT},
     'required':['protocol','dossier_id','inputs'],'additionalProperties':False}
 
-def finding(exc):return '; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)
+def finding(exc):
+    text = '; '.join(exc.messages) if isinstance(exc, ValidationError) else str(exc)
+    if 'D11.adapter_configuration_refs' in text:
+        return 'Review the client response handling rules before continuing.'
+    return text
 def selected(data):return {k:data['inputs'][k] for k in KINDS}
 
 def input_rows(case,inputs):
@@ -373,8 +377,8 @@ def prepare_client_revision(actor,work_id,expected,case_expected,inputs,reason):
     d,_,_=source(w,actor,current=False)
     version=document(w)
     rows=go_live_replies.current_heads(d)
-    if not version or not any(row.outcome=='changes_requested' and row.receipt.publication.version_id==version.pk for row in rows):
-        raise ValidationError('Select the client request for this current report. Already corrected work can continue from its next action.')
+    if not version or not any(row.outcome in ['changes_requested', 'withdrawn'] and row.receipt.publication.version_id==version.pk for row in rows):
+        raise ValidationError('Select the client request or reviewed correction for this current report.')
     input_rows(w.case,inputs)
     go_live_replies.effect(d,{key:inputs[key] for key in KINDS})
     correct(actor,w.pk,expected,case_expected,inputs,reason)
@@ -516,9 +520,10 @@ def projection(actor,work):
     responses=reply_projection(actor,d)
     for item in responses['items']:
         item['successor_number']=v.number if v and v.pk!=item['version_id'] and v.number>item['version_number'] else None
-    can_prepare_reply=bool(can_correct and v and responses['rules'] and
-        responses['rules']['changes_handling']=='reviewed_document_successor' and any(
-        item['outcome']=='changes_requested' and item['version_id']==v.pk for item in responses['items']))
+    can_prepare_reply=bool(can_correct and v and responses['rules'] and any(
+        item['version_id']==v.pk and (item['outcome']=='withdrawn' or
+        item['outcome']=='changes_requested' and responses['rules']['changes_handling']=='reviewed_document_successor')
+        for item in responses['items']))
     return {'dossier':d,'data':data,'report':LocalDeliveryAdapter().read_go_live(d,selected(data),data['inputs']['template_id']),
         'client_responses':responses,'can_prepare_reply_successor':can_prepare_reply,
         'document':v,'publication':p,'receipts':receipts,'delivery_complete':delivery_complete,'jobs':jobs,'acceptance':accepted,'previous_acceptance':previous,

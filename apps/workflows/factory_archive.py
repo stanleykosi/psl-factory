@@ -156,9 +156,9 @@ def snapshot(work,value,reader=None):
 
 
 def eligible(work,value,state,latest,missing,stale,tasks,jobs):
+    if not Activity.objects.filter(work=work,key=investigation_key(work,state),status='succeeded').exists():return ['ACT04'],'Investigate final-document evidence and declared archive inventory'
     if state.get('file_archive') and not state['file_archive']['verified']:
         return [], 'Confirm the original file receipts and retry only files found missing.'
-    if not Activity.objects.filter(work=work,key=investigation_key(work,state),status='succeeded').exists():return ['ACT04'],'Investigate final-document evidence and declared archive inventory'
     if missing or stale:return [],'Current required archive evidence is missing or stale: '+', '.join(missing+stale)
     if state['checks']['storage']['status']=='held':return ['ACT10'],'Resolve the reviewed storage and inventory rule'
     if state['checks']['archive']['status']=='held':return [],state['checks']['archive']['summary']
@@ -173,7 +173,14 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     list(Grant.objects.select_for_update().filter(case=case).order_by('pk'))
     if case.revision!=work.case.revision:raise ValidationError('STALE_VERSION: archive sources changed while planning')
     d,data,rows=source(work,work.execution_actor);kind=choice['activity']
-    if kind=='ACT04':return {'head':work.source_head_id,'dossier':d.pk,'checks':{k:v['status'] for k,v in checks(d,data).items()},'source_refs':sorted(rows)}
+    if kind=='ACT04':
+        result={'head':work.source_head_id,'dossier':d.pk,'checks':{k:v['status'] for k,v in checks(d,data).items()},'source_refs':sorted(rows)}
+        from apps.pmo.archive_transfer import projection as file_projection
+        files=file_projection(work.execution_actor,work)
+        if files['plan']:
+            result['file_archive']={'plan_id':files['plan'].pk,'total':files['total'],'confirmed':files['confirmed'],
+                'unconfirmed_file_ids':[file.pk for file in files['files'] if file.job.status!='confirmed']}
+        return result
     if kind=='ACT10':
         storage(case);user=operator(work,value);return {'head':work.source_head_id,'operator':user.pk,'configuration_available':True}
     if kind=='ACT08':
@@ -199,8 +206,11 @@ def verify(work,actor=None):
     if files['plan']:
         if not files['verified']:
             raise ValidationError('Confirm every selected archive file before completing the archive work.')
+        provider=reference_values(files['plan'].configuration)[0]['adapter']
         result.update(file_archive=files['plan'].pk, file_manifest_sha256=files['plan'].sha256,
-                      verification_scope='project_file_archive_byte_readback', external_bytes_verified=True)
+                      file_bytes_verified=True, external_bytes_verified=provider=='private_object_store/v1',
+                      verification_scope='synthetic_project_file_archive_byte_readback' if provider=='synthetic_archive/v1'
+                      else 'private_object_store_byte_readback')
     return result
 
 
@@ -299,6 +309,6 @@ def projection(actor,work):
 
 def attempt_projection(attempt):
     allowed={'head','dossier','archive','operator','created','checks','source_refs','configuration_available','verified','verification_scope',
-        'file_archive','file_manifest_sha256',
+        'file_archive','file_manifest_sha256','file_bytes_verified',
         'external_bytes_verified','external_authenticity_verified','physical_purge_performed','support_handover_received','closure_approved','financial_release_granted','deployment_authorized'}
     return {k:v for k,v in attempt.result.items() if k in allowed}

@@ -120,7 +120,10 @@ def detail(request,work):
             elif action=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
             else:raise ValidationError('Choose a currently available archive action')
             messages.success(request,'Archive action recorded. Review the current evidence and outcome.');return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc))
+        except ValidationError as exc:
+            messages.error(request,' '.join(exc.messages))
+        except ValueError:
+            messages.error(request,'Refresh this work and choose current record references.')
         work.refresh_from_db()
     row=presentation(request.user,work);activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
     files = archive_transfer.projection(request.user, work)

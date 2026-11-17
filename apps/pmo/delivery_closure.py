@@ -38,7 +38,11 @@ def go_live_requirements(d,data=None,template_id=None):
     def check(key,title,fn,next_action,unknown=False):
         if unknown:checks.append({'key':key,'title':title,'status':'unknown','summary':next_action,'references':[]});return
         try:row=fn();checks.append({'key':key,'title':title,'status':'current','summary':'Current recorded evidence is available','references':[row.pk]})
-        except (ValidationError,PermissionDenied) as exc:checks.append({'key':key,'title':title,'status':'held','summary':next_action,'references':[],'finding':str(exc)})
+        except (ValidationError,PermissionDenied) as exc:
+            finding=str(exc)
+            if key=='client_response' and 'D11.adapter_configuration_refs' in finding:
+                finding='Review the client response handling rules before continuing.'
+            checks.append({'key':key,'title':title,'status':'held','summary':next_action,'references':[],'finding':finding})
     def context():dossier_for(d.case,d.pk);return d
     check('context','Project scope',context,'Review the current project scope and any recorded closure')
     closed=latest(d,'closure',False)

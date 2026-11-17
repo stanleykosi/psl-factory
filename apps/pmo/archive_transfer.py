@@ -30,10 +30,15 @@ def access(actor, case):
 
 
 def rules(case):
-    configuration = active_component(COMPONENT, case)
+    try:
+        configuration = active_component(COMPONENT, case)
+    except ValidationError:
+        raise ValidationError('Review the archive store and designated operator rules before copying files.') from None
     value = reference_values(configuration)[0]
     validate(VALUE, value)
-    operator = get_user_model().objects.get(pk=value['operator_id'])
+    operator = get_user_model().objects.filter(pk=value['operator_id'], is_active=True).first()
+    if operator is None:
+        raise ValidationError('Review the current designated archive operator.')
     access(operator, case)
     if value['adapter'] == 'synthetic_archive/v1' and not case.synthetic:
         raise ValidationError('The sample archive store requires a synthetic project.')
@@ -180,7 +185,7 @@ def source_bytes(file):
 def run_once(job_id=None, *, actor=None, adapter=None, lookup_only=False, expected=None):
     now = timezone.now()
     with transaction.atomic():
-        query = ArchiveCopyJob.objects.select_for_update(skip_locked=True).select_related(
+        query = ArchiveCopyJob.objects.select_for_update(of=('self',), skip_locked=True).select_related(
             'file__plan__work__case', 'file__plan__configuration', 'file__plan__actor', 'file__upload')
         if job_id is not None:
             query = query.filter(pk=job_id)
@@ -202,10 +207,14 @@ def run_once(job_id=None, *, actor=None, adapter=None, lookup_only=False, expect
             list(Grant.objects.select_for_update().filter(case=job.file.plan.work.case, user=operator).order_by('pk'))
             value = authorize_file(job.file, operator, lookup=lookup)
         except (ValidationError, PermissionDenied):
+            ArchiveCopyAttempt.objects.create(job=job, token=token,
+                operation='lookup' if lookup else 'copy', outcome='held')
             job.status = 'held'
             job.finding = 'Review the current archive source, store rule and operator permission.'
             job.revision += 1
             job.save()
+            event(job.file.plan.actor, job.file.plan.work.case, 'delivery.archive_file_held',
+                  job_id=job.pk, provider_contacted=False)
             return True
         job.status = 'leased'
         job.lease_token = token
@@ -255,7 +264,7 @@ def run_once(job_id=None, *, actor=None, adapter=None, lookup_only=False, expect
 
 @transaction.atomic
 def retry_missing(actor, job_id, expected):
-    job = ArchiveCopyJob.objects.select_for_update().select_related('file__plan__work__case',
+    job = ArchiveCopyJob.objects.select_for_update(of=('self',)).select_related('file__plan__work__case',
         'file__plan__configuration', 'file__plan__actor', 'file__upload').get(pk=job_id)
     if job.revision != expected or job.status != 'missing' or ArchiveCopyReceipt.objects.filter(file=job.file).exists():
         raise ValidationError('Only a currently missing original file may be retried.')
@@ -287,16 +296,21 @@ def projection(actor, work):
     for file in files:
         file.plan = plan
         file.display_name = file.name if can_operate and file.evidence_id in visible else 'Project source file'
-        file.can_lookup = can_operate and file.job.status in ['unknown', 'missing', 'held']
-        file.can_retry = can_operate and file.job.status == 'missing'
+        file.display_status = {'pending':'Queued','leased':'Copying','unknown':'Confirmation missing',
+            'missing':'File not found','confirmed':'Archived','held':'Needs review'}[file.job.status]
+        file.can_lookup = can_operate and file.evidence_id in visible and file.job.status in ['unknown', 'missing', 'held']
+        file.can_retry = False
     confirmed = sum(file.job.status == 'confirmed' for file in files)
     verified = bool(files) and len(files) <= 500 and confirmed == len(files)
     finding = ''
+    current_scope = False
+    retry_actor_id = None
     try:
         plan_rules(plan)
         if len(files) != len(plan.manifest['files']):
             raise ValidationError('The archive file inventory is incomplete.')
-        configuration, _, _ = rules(work.case)
+        configuration, _, operator = rules(work.case)
+        retry_actor_id = operator.pk
         if configuration.pk != plan.configuration_id:
             raise ValidationError('The archive store rule changed.')
         if native_archive(work, actor).pk != plan.archive_id:
@@ -316,8 +330,12 @@ def projection(actor, work):
                             or receipt.size != file.size or receipt.attempt.job_id != file.job.pk
                             or receipt.attempt.outcome != 'found'):
                 raise ValidationError('The file receipt needs its exact original store observation.')
+        current_scope = True
     except (ValidationError, PermissionDenied):
         verified = False
         finding = 'Review the current source inventory, store connection and file receipt coverage.'
+    for file in files:
+        file.can_retry = (can_operate and current_scope and retry_actor_id == actor.pk and
+                          not work.cancel_requested and file.job.status == 'missing')
     return {'plan': plan, 'files': files, 'confirmed': confirmed, 'total': len(files),
             'can_operate': can_operate, 'verified': verified, 'finding': finding}

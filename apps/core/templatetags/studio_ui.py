@@ -34,7 +34,11 @@ def factory_background_status(context, work):
     if not isinstance(work, FactoryWork):
         return {}
     job = FactoryProgress.objects.filter(work=work).first()
+    watching=bool(job and not work.cancel_requested and work.status not in TERMINAL and
+        (job.status in ['queued','running'] or job.status=='waiting' and not job.observation))
+    request=context.get('request')
     return {'work': work, 'job': job, 'active': bool(job and job.status in ACTIVE),
+            'watching':watching,'preserve_form':bool(request and request.method=='POST'),
             'can_control': can_control(context['user'], work), 'csrf_token': context.get('csrf_token'),
             'can_continue': not work.cancel_requested and work.status not in TERMINAL | {'waiting_effect'}}
 

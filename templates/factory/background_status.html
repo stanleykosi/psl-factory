@@ -1,5 +1,5 @@
 {% if job or can_control and can_continue %}
-<section class="card">
+<section class="card"{% if watching %} data-work-watch data-preserve-form="{{ preserve_form|yesno:'true,false' }}"{% endif %}>
   <h2>Background work</h2>
   {% if job.status == 'running' %}<p>A worker is checking the next step.</p>
   {% elif job.status == 'queued' %}<p>The next step is queued.</p>
@@ -7,6 +7,7 @@
   {% elif job.status == 'held' %}<p>Background work needs attention. Check the work item’s current status and recovery options.</p>
   {% elif job.status == 'paused' %}<p>Background work is paused.</p>
   {% elif job.status == 'finished' %}<p>The background request ended. The work item shows its recorded outcome.</p>{% endif %}
+  {% if watching %}<p>This view updates as the work progresses. Unsaved form edits pause those updates.</p>{% endif %}
   {% if can_control %}
   <form action="{% url 'factory_background' work.pk %}" method="post">{% csrf_token %}
     <input type="hidden" name="revision" value="{{ work.revision }}">

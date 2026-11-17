@@ -1,5 +1,19 @@
 # Actual test execution ledger
 
+## Archive controls and connected UI regression suite · 18 November 2026
+
+Railway package 74 `d8f14e53-9f41-404c-ab43-c90430a14f8c` ran 21 tests on PostgreSQL `test_design_archive_20261117`, all passed in 867.694 seconds. Django checks and migration drift passed. Preview migration `pmo.0059` passed. Four response lookups, three handover/index fixtures and three archive-file fixtures completed, with `PSL_FIXTURE_EXIT=0` and `PSL_ACCEPTANCE_EXIT=0`. The intentional synthetic service-error traceback belongs to the passing secure-500-page test.
+
+Package 72 `b2425271` ran eleven tests in 654.423 seconds, ten passed and one failed because a raw missing-policy prefix remained in go-live requirements. Four tests were not run after fail-fast. Package 73 `2d268463` ran six tests in 137.332 seconds, five passed and one errored because the shared investigation key reused the prior archive observation without its new file plan. Twelve tests were not run. Both corrections passed in 74. Transport evidence remains synthetic or mocked until the separate private-store fixture succeeds. Package 75 is staged for that fixture and final archive controls, results pending.
+
+## Clean archive diagnosis and browser acceptance · 17 November 2026
+
+Package 70 `f23c0ab3` ran zero tests because the preserved shared test database contained a duplicate `human` fixture user after the interrupted run. It automatically retried under the service's existing failure setting. Switched to fresh isolated `test_design_archive_20261117`, preserving the old database. Package 71 `8ebdbadc` successfully migrated the full schema and ran one archive case in 122.364 seconds. It errored because `FOR UPDATE` included the nullable attachment side of a join. Corrected both job claim and missing-file retry to lock only their job row. That failed runner visibly held after exit marker 1, avoiding another repeated suite.
+
+Package 72 `b2425271` runs fifteen tests against the fresh isolated database. New file/attachment copying, current permission holds, interrupted-copy receipt recovery, missing-file-only retry, native downstream completion and draft-only rules have passed so far, along with existing inventory successors and Support handover. The final suite result, fixtures and deployment remain pending. Later archive hold auditing, bounded metadata-query and readable issue/stability routing checks are not included in that staged package.
+
+The browser completed report work 79 through Verified at 23:33:53 WAT. It retained original report version 1 and receipt 42, read corrected version 2 with contact source 1383, recorded a new approval, confirmed new receipt 46 and attested distinct synthetic sources 1502 and 1503 at 23:31 WAT. Work 81 saved a draft from source 1414 while its active-rule hold remained. Work 82 recorded a reviewed withdrawal from correction 1445. The waiting view showed the two named Planning source owners. A phone screenshot of the verified outcome was inspected and the viewport reset. No local database verification is claimed.
+
 ## Sixteen-test runtime checkpoint and archive diagnostic · 17 November 2026
 
 Package 68 run `7dd2b3c6-d8be-4edd-9c3e-640255765c33` passed all sixteen PostgreSQL tests in 899.166 seconds. Django and migration drift checks passed. Its go-live fixture lookups succeeded. The subsequent three recipient/archive seeds failed with missing PublicationReceipt because `DeliveryFixture.publish` selected a global pending job. Changed the helper to the exact reserved job and case. Overall fixture/acceptance exit was 1. Stopped automatic retries. The passed application source, excluding test runners, was hash-compared and deployed as web `49e3ff16` and worker `d835fa55`. Web startup reported no pending migrations.

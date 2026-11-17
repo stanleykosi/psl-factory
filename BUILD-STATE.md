@@ -1,5 +1,15 @@
 # PSL operations factory build state
 
+## Archive and response PostgreSQL controls passed · 18 November 2026
+
+Package 74 passed 21 PostgreSQL tests in 867.694 seconds, Django checks, migration drift and all ten guarded workflow fixtures. The preview schema includes `pmo.0059`. Verified native file copying and receipts, uncertain-effect lookup, file-only retries, concurrency, current permissions, response corrections, handover, issue controls, stability routing, progress refresh and secure error-page behavior. Archive transport tests used synthetic or mocked storage. Actual private-store verification is pending package 75, alongside final archive UI refinements. Hosted web and worker remain package 68 pending exact-source deployment and browser checks. Keep all 262 states open until their actual remaining journeys pass. HOD selections remain deferred.
+
+## Corrected go-live verified and archive fixes under test · 17 November 2026
+
+Browser work 79 reached Verified through report version 2, fresh review, receipt 46 and exact distinct synthetic signature facts from sources 1502 and 1503. Work 80 retains its reviewed fix handoff to dossier 23. Work 81 saved a draft without activating handling policy. Work 82 recorded an evidenced withdrawal. The waiting view showed named Planning source owners. Ledger coverage is 186 observed states, including partials, with 76 unseen.
+
+Fixed PostgreSQL's nullable joined-row locking error in archive claim and retry. The fresh isolated database migrated successfully. Package 72 is running fifteen tests, with the new archive cases and existing connected paths passing so far. Root's later issue console, stability routing, archive hold history and query regression await the next verification package. The hosted runtime remains passed package 68. Archive transfer deployment and its browser examples remain pending. HOD choices remain deferred.
+
 ## Hosted response controls and archive file work · 17 November 2026
 
 Package 68 passed all sixteen PostgreSQL tests in 899.166 seconds. Web `49e3ff16-5de0-447d-b73b-c233dea3352a` and matching worker `d835fa55-44e4-42cc-97c8-7c66b92cf708` deploy that checked application source. Runtime hashes matched. Its four go-live fixtures were retained. Three new handover/archive fixtures failed because the test helper selected a global publication job. The helper now targets its exact case and reserved job. This fixture repair is under recheck.

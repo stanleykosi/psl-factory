@@ -4,6 +4,7 @@ from pathlib import Path
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import DatabaseError,transaction
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 from apps.core.services import add_evidence
 from apps.identity.models import Grant
@@ -28,6 +29,24 @@ class FactoryIssueTests(TestCase):
         issue,_=domain.source(self.work,self.a)
         operation='progress' if issue.current.acknowledged_at else 'acknowledge'
         return domain.respond(self.a,self.work.pk,self.work.revision,rev(self.c),t.pk,t.revision,operation,self.e['requirements'].pk,'I will investigate cause','Gather source-owner evidence')
+
+    def test_issue_console_uses_readable_records_and_current_operation_permissions(self):
+        self.client.force_login(self.a)
+        url=reverse('issues',args=[self.c.pk])
+        page=self.client.get(url)
+        self.assertContains(page,'No external records linked.')
+        self.assertNotContains(page,'external_lifecycle_changed')
+        self.assertContains(page,'Owner acknowledges')
+        self.assertNotContains(page,'Owner resolves with fix')
+        Grant.objects.filter(case=self.c,user=self.a,action__in=['issue.manage','issue.work','issue.reference.observe',
+            'issue.reference.configure','issue.close_log','agent.issues']).update(active=False)
+        page=self.client.get(url)
+        self.assertEqual(page.status_code,200)
+        self.assertContains(page,self.state.title)
+        self.assertNotContains(page,'Record owned issue</button>')
+        self.assertNotContains(page,'Record issue state</button>')
+        self.assertNotContains(page,'Record source observation</button>')
+        self.assertNotContains(page,'Investigate acknowledgement and root-cause gaps</button>')
     def test_scoped_investigation_owned_followup_verified_without_issue_closure(self):
         self.advance();self.assertEqual(self.work.status,'waiting',self.work.finding)
         attempt=FactoryAttempt.objects.get(activity__work=self.work,activity__kind='ACT04',phase='observed')

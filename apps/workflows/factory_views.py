@@ -324,6 +324,9 @@ def _presentation(actor,work,*,focus=None):
             if prerequisite:row.update(blocker=prerequisite['summary'],next_action=prerequisite['summary'])
             elif row['hypercare']['assessment'] and row['hypercare']['assessment'].snapshot['qualified'] is not True:
                 row.update(blocker='Current stability observations remain unknown or fail the configured criteria.',next_action='Obtain corrected source observations before qualification')
+                if row['hypercare']['observation_forms']:
+                    row.update(needs_me=True, owner=actor.get_full_name() or actor.username,
+                               next_action='Record the current stability observations')
         if work.status=='configuration_needed' and profile_available:
             if resolve('D11.hypercare_criteria_ref',work.case).status=='ACTIVE':
                 row.update(state='Prerequisites need recheck',blocker='A current stability rule is available. Recheck the held work and any remaining source requirements.',next_action='Recheck corrected prerequisites')
@@ -556,6 +559,10 @@ def _presentation(actor,work,*,focus=None):
                 reply['version_id'] == panel['document'].pk for reply in responses):
             row.update(state='Client requested changes', department_wait=False,
                        needs_me=panel['can_prepare_reply_successor'] or permitted(actor, work, 'policy.configure'))
+        elif panel['document'] and any(reply['outcome'] == 'withdrawn' and
+                reply['version_id'] == panel['document'].pk for reply in responses):
+            row.update(state='Response correction recorded', department_wait=False,
+                       needs_me=panel['can_prepare_reply_successor'])
         if any(j.status in ['unknown','leased'] and (j.status=='unknown' or j.lease_until and j.lease_until<=timezone.now()) for j in panel['jobs']):
             row.update(state='Document delivery uncertain',next_action='Reconcile the original go-live delivery before further work',can_advance=False,
                 can_reconcile=controlled and not (work.lease_until and work.lease_until>timezone.now()))

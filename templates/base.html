@@ -10,6 +10,7 @@
   {% if choose_work_url %}<script defer src="{% static 'start-work.js' %}"></script>{% endif %}
   {% if user.is_authenticated and not control_plane %}<script defer src="{% static 'rfp-requirements.js' %}"></script>{% endif %}
   {% if user.is_authenticated and not control_plane %}<script defer src="{% static 'alerts-preview.js' %}"></script>{% endif %}
+  {% if row.work %}<script defer src="{% static 'work-progress.js' %}?v=1"></script>{% endif %}
 </head>
 <body class="design-shell{% if not user.is_authenticated %} signed-out{% endif %}">
   <a class="skip-link" href="#main-content">Skip to content</a>

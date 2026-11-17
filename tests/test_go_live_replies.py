@@ -138,6 +138,8 @@ class GoLiveReplyTests(TestCase):
         self.client.force_login(f.actor)
         page=self.client.get(reverse('factory_work_response',args=[f.work.pk]))
         self.assertContains(page,'Changes requested')
+        self.assertEqual(page.context['row']['state'], 'Client requested changes')
+        self.assertNotContains(page, 'D11.adapter_configuration_refs: MISSING')
         self.assertContains(page,'Prepare client response rules for owner review')
         self.assertNotContains(page,'Prepare next report with the agent')
         configure(f)
@@ -240,7 +242,7 @@ class GoLiveReplyTests(TestCase):
         with self.assertRaises(DatabaseError),transaction.atomic():
             GoLiveClientReply.objects.filter(pk=response.pk).update(outcome='withdrawn')
         f.work.refresh_from_db()
-        go_live.correct(f.actor,f.work.pk,f.work.revision,rev(f.case),f.inputs,
+        go_live.prepare_client_revision(f.actor,f.work.pk,f.work.revision,rev(f.case),f.inputs,
             'Prepare a fresh reviewed report after the evidenced response correction.')
         factory.run_until_wait(f.work.pk)
         f.work.refresh_from_db()

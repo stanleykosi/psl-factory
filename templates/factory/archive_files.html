@@ -8,7 +8,7 @@
     <div class="table-scroll"><table>
       <thead><tr><th>File</th><th>Store confirmation</th><th>Next action</th></tr></thead>
       <tbody>{% for file in file_archive.files %}<tr>
-        <td>{{ file.display_name }}</td><td>{{ file.job.status|readable }}{% if file.job.finding %}<p>{{ file.job.finding }}</p>{% endif %}</td>
+        <td>{{ file.display_name }}</td><td>{{ file.display_status }}{% if file.job.finding %}<p>{{ file.job.finding }}</p>{% endif %}</td>
         <td>{% if file.can_lookup or file.can_retry %}<form method="post">
           {% csrf_token %}<input type="hidden" name="revision" value="{{ row.work.revision }}">
           <input type="hidden" name="job" value="{{ file.job.pk }}"><input type="hidden" name="job_revision" value="{{ file.job.revision }}">

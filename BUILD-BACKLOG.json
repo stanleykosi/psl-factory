@@ -1,5 +1,33 @@
 {
   "design_consolidation_20261116": {
+    "archive_controls_verified_20261118": {
+      "status": "postgresql_passed_final_transport_check_pending",
+      "package": 74,
+      "deployment": "d8f14e53-9f41-404c-ab43-c90430a14f8c",
+      "postgresql": {"passed": 21, "seconds": 867.694},
+      "checks": "Django and migration drift passed",
+      "fixtures": "ten passed, preview pmo.0059 applied, final exit zero",
+      "next_package": 75,
+      "pending": ["Final archive UI and missing-rule regression", "Actual private-store byte-readback fixture", "Exact-source web and worker deployment", "Archive and handover browser journeys", "Remaining state functions and partials"],
+      "states_with_browser_observations": 186,
+      "states_without_direct_browser_observation": 76,
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
+    "archive_locks_and_reply_acceptance_20261117": {
+      "status": "verification_in_progress",
+      "package": 72,
+      "deployment": "b2425271-89d7-422a-b1e5-6e377fd53cae",
+      "test_database": "test_design_archive_20261117",
+      "prior_diagnostic": {"deployment": "8ebdbadc-b09b-4985-a7fc-640dc9d3335c", "tests": 1, "errors": 1, "seconds": 122.364, "cause": "nullable_join_row_lock", "correction": "job_row_only_locks"},
+      "browser_completed": ["Work 79 corrected report through fresh review, receipt 46 and verified distinct signature attestation", "Work 81 draft-only rule save with dependent hold retained", "Work 82 evidenced withdrawal preserving the original reply", "Named Planning source owners in Waiting on others"],
+      "later_source_pending_checks": ["Archive preflight hold audit history and metadata query regression", "Current stability observation attention routing", "Readable issue presentation and current role/action controls"],
+      "states_with_browser_observations": 186,
+      "observed_states_with_open_checks": 185,
+      "states_without_direct_browser_observation": 76,
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
     "archive_file_receipts_20261117": {
       "status": "diagnosing_test_errors",
       "runtime_package": 68,

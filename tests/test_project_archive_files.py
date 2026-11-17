@@ -24,13 +24,14 @@ from .helpers import rev
 from .test_factory_archive import setup, ready
 
 
-def configured():
+def configured(adapter='synthetic_archive/v1'):
     f = setup()
     ready(f)
     factory.run_until_wait(f.work.pk)
     f.work.refresh_from_db()
     value = json.loads(Path('fixtures/archive-file-transfer.json').read_text())
     value.pop('classification')
+    value['adapter']=adapter
     value['operator_id'] = f.actor.pk
     f.transfer_policy = draft_operator_policy(f.actor, f.case.pk, COMPONENT, value,
         f.e['policy_decision'].pk, timezone.now())
@@ -69,6 +70,9 @@ class ArchiveFileTests(TestCase):
         factory.run_until_wait(f.work.pk)
         f.work.refresh_from_db()
         self.assertEqual(f.work.status, 'waiting', f.work.finding)
+        observation=f.work.activities.filter(kind='ACT04').latest('pk').attempts.filter(phase='observed').latest('pk')
+        self.assertEqual(observation.result['file_archive']['plan_id'],plan.pk)
+        self.assertEqual(len(observation.result['file_archive']['unconfirmed_file_ids']),3)
         for job in ArchiveCopyJob.objects.filter(file__plan=plan):
             self.assertTrue(archive_transfer.run_once(job.pk))
         result = archive_transfer.projection(f.actor, f.work)
@@ -79,7 +83,11 @@ class ArchiveFileTests(TestCase):
         factory.run_until_wait(f.work.pk)
         f.work.refresh_from_db()
         self.assertEqual(f.work.status, 'verified', f.work.finding)
-        self.assertEqual(factory_archive.verify(f.work)['file_archive'], plan.pk)
+        verified=factory_archive.verify(f.work)
+        self.assertEqual(verified['file_archive'], plan.pk)
+        self.assertTrue(verified['file_bytes_verified'])
+        self.assertFalse(verified['external_bytes_verified'])
+        self.assertEqual(verified['verification_scope'],'synthetic_project_file_archive_byte_readback')
         with self.assertRaises(DatabaseError), transaction.atomic():
             plan.files.update(sha256='0' * 64)
         with self.assertRaises(DatabaseError), transaction.atomic():
@@ -116,6 +124,14 @@ class ArchiveFileTests(TestCase):
         self.assertEqual(job.status, 'missing')
         page = self.client.get(url)
         self.assertContains(page, 'Retry missing file')
+        self.assertContains(page, 'File not found')
+        Grant.objects.get_or_create(case=f.case,user=f.operator,action='delivery.archive_files')
+        other=archive_transfer.projection(f.operator,f.work)
+        other_file=next(file for file in other['files'] if file.job.pk==job.pk)
+        self.assertTrue(other_file.can_lookup)
+        self.assertFalse(other_file.can_retry)
+        with self.assertRaises(ValidationError):
+            archive_transfer.retry_missing(f.operator,job.pk,job.revision)
         stale = job.revision
         archive_transfer.retry_missing(f.actor, job.pk, job.revision)
         with self.assertRaises(ValidationError):
@@ -135,6 +151,7 @@ class ArchiveFileTests(TestCase):
         archive_transfer.run_once(jobs[1].pk)
         jobs[1].refresh_from_db()
         self.assertEqual(jobs[1].status, 'held')
+        self.assertEqual(jobs[1].attempts.latest('pk').outcome, 'held')
         self.assertFalse(SyntheticArchiveObject.objects.filter(file=jobs[1].file).exists())
         self.assertTrue(ArchiveCopyReceipt.objects.filter(pk=receipt.pk).exists())
         self.client.force_login(f.actor)
@@ -143,6 +160,19 @@ class ArchiveFileTests(TestCase):
         self.assertNotContains(page, 'Check original file</button>')
         transition(f.actor, f.transfer_policy.pk, 'revoked')
         self.assertFalse(archive_transfer.projection(f.actor, f.work)['verified'])
+
+    def test_file_list_reuses_the_reserved_plan_and_loads_metadata_only(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        f = self.f
+        reserve(f)
+        with CaptureQueriesContext(connection) as captured:
+            state = archive_transfer.projection(f.actor, f.work)
+        self.assertEqual(state['total'], 3)
+        plan_reads = [query for query in captured.captured_queries if 'FROM "pmo_archivecopyplan"' in query['sql']]
+        self.assertEqual(len(plan_reads), 1)
+        self.assertFalse(any('pmo_syntheticarchiveobject' in query['sql'] for query in captured.captured_queries))
 
     def test_actual_reviewed_upload_attachment_is_copied_with_its_source(self):
         f = self.f
@@ -181,6 +211,20 @@ class ArchiveFileTests(TestCase):
         with self.assertRaises(ValidationError):
             reserve(f, [99999999])
         self.assertFalse(ArchiveCopyJob.objects.exists())
+
+    def test_missing_store_rules_hold_only_copy_and_show_plain_owner_controls(self):
+        f=self.f
+        transition(f.actor,f.transfer_policy.pk,'revoked')
+        f.work.refresh_from_db()
+        self.client.force_login(f.actor)
+        page=self.client.post(reverse('factory_detail',args=[f.work.pk]),{
+            'action':'archive_files','revision':f.work.revision,'case_revision':rev(f.case),
+            'sources':[str(pk) for pk in f.inventory.values()]})
+        self.assertContains(page,'Review the archive store and designated operator rules before copying files.')
+        self.assertNotContains(page,'OPS.archive_file_transfer: MISSING')
+        self.assertContains(page,'Prepare archive store rules for owner review')
+        self.assertFalse(ArchiveCopyJob.objects.exists())
+        self.assertIsNotNone(delivery_closure.current_archive(f.d))
 
 
 class ArchiveFileConcurrencyTests(TransactionTestCase):

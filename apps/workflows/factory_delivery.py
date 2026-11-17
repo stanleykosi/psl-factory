@@ -150,7 +150,11 @@ def snapshot(work,value,reader=None):
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],[]
 
-def investigation_key(work,state):return digest(['ACT04',state['sources'],state['checks'],state['native']])
+def investigation_key(work,state):
+    inputs=['ACT04',state['sources'],state['checks'],state['native']]
+    if 'file_archive' in state:
+        inputs.append(state['file_archive'])
+    return digest(inputs)
 
 def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     key=investigation_key(work,state)

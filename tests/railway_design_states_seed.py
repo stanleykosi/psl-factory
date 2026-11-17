@@ -71,7 +71,7 @@ def prepare(key, operator):
         existing = FactoryWork.objects.filter(case=case).first()
         return {'case': str(case.pk), 'work': existing.pk if existing else None}
     Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
-    if key in {'archive-file-receipts', 'archive-file-uncertain', 'archive-file-missing'}:
+    if key in {'archive-file-receipts', 'archive-file-uncertain', 'archive-file-missing', 'archive-private-store'}:
         from tests import test_delivery
         from tests.test_project_archive_files import configured, reserve, LostCopyResponse, MissingCopyResponse
         from apps.pmo.archive_transfer import run_once
@@ -84,17 +84,21 @@ def prepare(key, operator):
             patch.object(users, 'create_user', side_effect=lambda username, **values:
                          create_user(username='state-' + key + '-' + username, **values)),
         ):
-            data = configured()
+            data = configured('private_object_store/v1' if key=='archive-private-store' else 'synthetic_archive/v1')
             plan = reserve(data)
+            from apps.workflows.factory_progress import set_progress
+            data.work.refresh_from_db()
+            set_progress(operator,data.work.pk,data.work.revision,False)
             jobs = list(ArchiveCopyJob.objects.filter(file__plan=plan).order_by('pk'))
-            for index, job in enumerate(jobs):
+            for index, job in enumerate(jobs if key!='archive-private-store' else []):
                 adapter = None
                 if index == 0 and key == 'archive-file-uncertain':
                     adapter = LostCopyResponse()
                 if index == 0 and key == 'archive-file-missing':
                     adapter = MissingCopyResponse()
                 run_once(job.pk, adapter=adapter)
-            factory.run_until_wait(data.work.pk)
+            if key!='archive-private-store':
+                factory.run_until_wait(data.work.pk)
         return {'case': str(case.pk), 'work': data.work.pk, 'plan': plan.pk,
                 'jobs': [job.pk for job in jobs], 'proof': data.e['policy_decision'].pk}
     if key in {'handover-review', 'handover-receipt', 'archive-inventory'}:
@@ -374,12 +378,33 @@ elif workflow == 'delivery-recipient-states':
     fixtures = ('handover-review', 'handover-receipt', 'archive-inventory')
 elif workflow == 'archive-file-states':
     fixtures = ('archive-file-receipts', 'archive-file-uncertain', 'archive-file-missing')
+elif workflow == 'archive-private-store':
+    fixtures = ('archive-private-store',)
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False
 for fixture in fixtures:
     try:
         result = prepare(fixture, trial)
+        if fixture=='archive-private-store':
+            from django.core.exceptions import ValidationError
+            from apps.pmo import archive_transfer
+            from apps.pmo.models import ArchiveCopyJob
+            from apps.workflows import factory_archive
+            work=FactoryWork.objects.get(pk=result['work'],case__synthetic=True,
+                case__tenant='design-state-walkthrough',case__title='Browser design states · archive-private-store')
+            plan=work.file_archives.latest('pk')
+            for job in ArchiveCopyJob.objects.filter(file__plan=plan).order_by('pk'):
+                if job.status in ['pending','unknown','leased']:
+                    archive_transfer.run_once(job.pk,actor=trial)
+            files=archive_transfer.projection(trial,work)
+            if not files['verified']:
+                raise ValidationError('Review the original private-store receipts before continuing this synthetic archive trial.')
+            factory.run_until_wait(work.pk)
+            work.refresh_from_db()
+            proof=factory_archive.verify(work,actor=trial)
+            result.update(plan=plan.pk,external_store_bytes_verified=proof['external_bytes_verified'],
+                verified_files=files['confirmed'],work_status=work.status)
     except Exception as exc:
         failed = True
         print(f'PSL_STATE_ERROR={fixture}: {type(exc).__name__}: {str(exc)[:240]}', flush=True)
