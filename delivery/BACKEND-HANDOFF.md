@@ -150,9 +150,9 @@ Screens: SCR-05 default, working, thread, draft-started (`/assistant`, `/assista
 
 ## Added during F-26: the project Money tab (17 Nov)
 
-Screen: SCR-12 (`/projects/{id}?tab=money`), read-only, on the contract mock (`frontend/mock/money.mjs`; D-PROJECT-TAB-ROWS is still proposed; nothing released). Gap ids G-SCR12-1..4 are in [gaps-a-project-setup.md](backend-handoff/gaps-a-project-setup.md).
+Screen: SCR-12 (`/projects/{caseId}/money`), read-only, on the contract mock (`frontend/mock/money.mjs`; D-PROJECT-TAB-ROWS is still proposed; nothing released). Gap ids G-SCR12-1..4 are in [gaps-a-project-setup.md](backend-handoff/gaps-a-project-setup.md).
 
-- **Source details** (G-SCR12-1): add `version`, `rule_version` and `case_id` to `source_details[]`. Until then the panel shows what is sent and no version line.
+- **Source details** (G-SCR12-1): add `component`, `version`, `rule_version` and `case_id` to `source_details[]`. Until then the panel shows what is sent and no version line.
 - **Figure context for the assistant** (G-SCR12-2): E-CONVERSATION-NEW needs a figure context. Until then "Ask me about any figure here" is a plain link to `/assistant`.
 - **Rows with no figure** (G-SCR12-3): a row without `figure_id` shows "No source recorded" and its amount is not a link. Please document this case.
 - **`as_of` on E-REPORT figures**: the page shows E-PROJECT-TAB's `as_of`; figures need their own.
