@@ -1,0 +1,10 @@
+{
+  "assign_owner": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "Done: owner assigned."
+    },
+    "next": false
+  }
+}

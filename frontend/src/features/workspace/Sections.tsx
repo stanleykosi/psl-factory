@@ -342,8 +342,8 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {item.channel && <span className="ws-detail">{item.channel}</span>}
               </span>,
               <>
-                {/* the backend's own tag, when it sends one, stands in for the receipt word (Conflicts 2) */}
-                {item.tag ? <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag> : item.receipt && <StatusWord value={item.receipt} kind="receipt" />}
+                {/* the backend's own tag, when it sends one, stands in for the receipt word (Conflicts 2); a person on a channel with no receipt reads Unknown, never blank (F-28) */}
+                {item.tag ? <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag> : (item.receipt ?? (item.channel ? 'unknown' : undefined)) && <StatusWord value={item.receipt ?? 'unknown'} kind="receipt" />}
                 {item.at ? <time dateTime={item.at}> {formatDayTime(item.at)}</time> : (item.receipt === 'received' || item.receipt === 'uncertain') && <span> {WS_TEXT.timeUnknown}</span>}
               </>,
             );
