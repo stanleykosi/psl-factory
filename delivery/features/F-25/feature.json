@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-25",
   "outcome": "A project's Milestones, Registers and Actions tabs show their rows, read-only (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M3-PROJECT-TABS"
   ],
@@ -132,7 +132,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delivery technical review",
-      "snapshot_ref": "ba04923c108e0180ffdbd49404afc42fceeb191d",
+      "snapshot_ref": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
       "evidence_refs": [
         "delivery/features/F-25/round-3/review-technical.md"
       ]
@@ -164,7 +164,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delivery UX review",
-      "snapshot_ref": "ba04923c108e0180ffdbd49404afc42fceeb191d",
+      "snapshot_ref": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
       "evidence_refs": [
         "delivery/features/F-25/round-3/review-ux.md"
       ]
@@ -173,7 +173,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delivery UI review",
-      "snapshot_ref": "ba04923c108e0180ffdbd49404afc42fceeb191d",
+      "snapshot_ref": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
       "evidence_refs": [
         "delivery/features/F-25/round-3/review-ui.md"
       ]
@@ -1271,6 +1271,57 @@
           "head": "ba04923c108e0180ffdbd49404afc42fceeb191d"
         }
       ]
+    },
+    {
+      "id": "UI-3-2",
+      "round": 3,
+      "snapshot_ref": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+      "owner": "Commit 93dc1e56 changed `.ptabs__card { line-height: 1.3 }` to `line-height: var(--text-hint-line)` (`frontend/src/features/projects/project-tabs.css:31`). An absolute 18 px line height now applies to every line in a card, including the 12px invoice/paid/reference lines (15.6 px tall before, now 18 px) and the 13px main lines (16.9 px, now 18 px). The boards draw these cards at the font's normal line height. Each milestone card grows by about 5\u20136 px (about 23 px over the four cards), and register cards by about 3 px. So the phone cards move away from the board, and the signed SCR-38-mobile waiver's sentence \"Card text sizes and spacing match the board\" is no longer true. All four phone waivers (D-110: 76.7, 80.8, 77.6, 84.3) were measured on the 1.3 cards, not on this head.",
+      "severity": "scr-38-mobile, scr-38-mobile-changed, scr-11-mobile, scr-29-mobile",
+      "blocking": true,
+      "summary": "Put `.ptabs__card` back to `line-height: 1.3`. The phones hide the route line, so the card CSS would then be exactly what round 3 measured, and the signed phone numbers hold without a new run. Keep `var(--text-hint-line)` on `.ptabs__route` only. If 1.3 is to be replaced later, re-measure the four phone boards and re-sign.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T13:21:32Z",
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T13:21:39Z",
+          "refs": [
+            "delivery/features/F-25/round-3/build.md"
+          ],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T13:21:39Z",
+          "refs": [
+            "delivery/features/F-25/round-3/review-ui.md"
+          ],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-25/round-3/build.md"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-25/round-3/review-ui.md"
+      ]
     }
   ],
   "prior_review_records": [
@@ -1407,7 +1458,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "7ec9929619c2138cf814036c65eedc58f05a577a",
     "task_branch": "fe-m3-project-tabs-a-project-s-milestones-registers-and-act",
-    "head_sha": "5df518a70dfc82f804313de77cb95ae51e1b38c3",
+    "head_sha": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-25",
     "pr_url": null,
     "pr_number": null,
@@ -1915,6 +1966,7 @@
       "delivery/features/F-27/round-2/review-technical.md",
       "delivery/features/F-27/round-2/review-ui.md",
       "delivery/features/F-27/round-2/review-ux.md",
+      "frontend/e2e/minutes.spec.ts",
       "frontend/e2e/money.spec.ts",
       "frontend/e2e/project-tabs.spec.ts",
       "frontend/e2e/projects.spec.ts",
@@ -1923,6 +1975,7 @@
       "frontend/mock/delegations.mjs",
       "frontend/mock/fixtures/E-DELEGATION.json",
       "frontend/mock/fixtures/E-DELEGATIONS.json",
+      "frontend/mock/fixtures/E-DOCUMENT.json",
       "frontend/mock/fixtures/delegations/authority.json",
       "frontend/mock/fixtures/delegations/default.json",
       "frontend/mock/fixtures/delegations/empty.json",
@@ -1951,13 +2004,34 @@
       "frontend/mock/fixtures/reports/R-0102.json",
       "frontend/mock/fixtures/reports/R-0106.json",
       "frontend/mock/fixtures/reports/index.json",
+      "frontend/mock/fixtures/start-work/options/owner.json",
+      "frontend/mock/fixtures/work/W-2301.json",
+      "frontend/mock/fixtures/work/W-2301.next.json",
+      "frontend/mock/fixtures/work/W-2301.steps.json",
+      "frontend/mock/fixtures/work/W-2302.json",
+      "frontend/mock/fixtures/work/W-2303.json",
+      "frontend/mock/fixtures/work/W-2303.next.json",
+      "frontend/mock/fixtures/work/W-2303.steps.json",
+      "frontend/mock/fixtures/work/W-2304.approve.json",
+      "frontend/mock/fixtures/work/W-2304.json",
+      "frontend/mock/fixtures/work/W-2304.return.json",
+      "frontend/mock/fixtures/work/W-2305.approve.json",
+      "frontend/mock/fixtures/work/W-2305.json",
+      "frontend/mock/fixtures/work/W-2306.json",
+      "frontend/mock/fixtures/work/W-2306.next.json",
+      "frontend/mock/fixtures/work/W-2306.steps.json",
+      "frontend/mock/fixtures/work/W-2307.json",
+      "frontend/mock/fixtures/work/W-2308.json",
       "frontend/mock/money.mjs",
       "frontend/mock/project-tabs.mjs",
       "frontend/mock/projects.mjs",
       "frontend/mock/proposals/setup.json",
       "frontend/mock/server.mjs",
+      "frontend/mock/start-work.mjs",
       "frontend/src/app/setup/delegation/page.tsx",
       "frontend/src/components/ListToolbar.tsx",
+      "frontend/src/features/decide/DecideStates.tsx",
+      "frontend/src/features/decide/DecideView.tsx",
       "frontend/src/features/projects/ActionsTab.tsx",
       "frontend/src/features/projects/MilestonesTab.tsx",
       "frontend/src/features/projects/MoneyTab.tsx",
@@ -1980,6 +2054,18 @@
       "frontend/src/features/setup/setup.css",
       "frontend/src/features/setup/useDelegationAdd.ts",
       "frontend/src/features/setup/useDelegations.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/StepForm.tsx",
+      "frontend/src/features/workspace/Steps.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/useWorkspaceStep.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/decide.test.tsx",
+      "frontend/tests/minutes-mock.test.ts",
+      "frontend/tests/minutes.test.tsx",
       "frontend/tests/mock-contract.test.ts",
       "frontend/tests/mock-money.test.ts",
       "frontend/tests/mock-project-tabs.test.ts",
@@ -1990,7 +2076,8 @@
       "frontend/tests/project-tabs.test.tsx",
       "frontend/tests/projects-journey.test.tsx",
       "frontend/tests/setup-delegation-mock.test.ts",
-      "frontend/tests/setup-delegation.test.tsx"
+      "frontend/tests/setup-delegation.test.tsx",
+      "frontend/tests/workspace-step.test.tsx"
     ]
   },
   "parallel_execution": {
@@ -2097,6 +2184,14 @@
       "at": "2026-11-17T11:41:24Z",
       "round": 3,
       "head": "ba04923c108e0180ffdbd49404afc42fceeb191d",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T13:21:39Z",
+      "round": 3,
+      "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
       "reason": null
     }
   ],

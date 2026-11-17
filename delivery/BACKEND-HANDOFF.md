@@ -193,3 +193,17 @@ Screens: SCR-28 default, suggesting, drafted, review (work item line workspace, 
 - **Approve and Return** go through the decision page (claim; Return needs a note). After an uncertain approve, the page shows "result not confirmed" and the work item offers only reconcile (QA-3-1); please define the reconcile reply (W-2305).
 - **Open**: G-SCR28-5 (audience change after drafting), G-SCR28-7 (when actions are created), G-SCR28-8 (recipients from client records), G-SCR28-9 (meeting notes are untrusted input), D-RETURN.
 - **Wording asks**: the shared decision copy "Paid is tracked separately by Finance" shows on minutes approves (QA-3-2); "Approve and send" on the work page vs "Approve v1" on the decision page (UX-1-3).
+
+## Added during F-25: project tabs — Milestones, Registers, Actions (17 Nov)
+
+Screens: SCR-38 (default, changed), SCR-11, SCR-29 (`/projects/{caseId}/milestones|registers|actions`), read-only, on the contract mock (`frontend/mock/project-tabs.mjs`; D-PROJECT-TAB-ROWS proposed; nothing released). Documents stays "coming next" (no approved list board). Gap ids are in [gaps-a-project-setup.md](backend-handoff/gaps-a-project-setup.md).
+
+- **Invoice status label** (G-SCR38-1): `milestones[].invoice.status_label`. Until then the cell shows the reference with the standard state word ("INV-0412 · Waiting"); a missing or unknown state reads "Unknown".
+- **Mark milestone complete** (G-SCR38-2, G-SCR19-2): `milestone_id`, `reference`, `can_complete`, `cannot_complete_reason`. The button is left out until the backend decides who may complete (D-104); FE-MILESTONE-COMPLETE builds it.
+- **Change amount note** (G-SCR38-3): `contract_amount_note` or `changes[].amount_note` ("Unknown until a SOW amendment is signed"); the page builds "+ the change · change amount Unknown" from data and never sums a milestone with its change.
+- **Filters** (G-SCR11-1, G-SCR29-1): severity, state and owner filters with options as `filters:[{key, options}]`. Today only search is offered and "Filter" is left out (D-104).
+- **Row shapes** (G-SCR11-2): confirm Changes, Emergencies and RFPs share the register row shape.
+- **`state_key`** on register and action rows if states are to be coloured; today `state` is display text only.
+- **Owner/due edit** (G-SCR29-2): the board sentence implies one, but there is no operation; design to keep or drop.
+- **Questions**: is `age_seconds` computed at response time (a closed issue's age shows "Unknown" until a not-applicable signal exists); which `paid.status` the board's "—" maps to; tab reads must hide figures and names on 403/404 (the page shows one "No access" panel and no row text).
+- **Money rules relied on**: Unknown is never 0; completion, invoice and paid are separate facts; amounts as decimal strings.
