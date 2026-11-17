@@ -17,12 +17,13 @@ import { SearchField } from './SearchField';
 
 export type FilterChip = { key: string; name: string; value: string; onRemove: () => void };
 
-export function ListToolbar({ search, filterCount, filterOpen, onFilterToggle, filterPanel, resultText, chips = [], onClearAll, className }: {
+export function ListToolbar({ search, filterCount = 0, filterOpen = false, onFilterToggle, filterPanel, resultText, chips = [], onClearAll, className }: {
   search: { label: string; placeholder: string; value: string; onChange: (value: string) => void; onSearch?: (query: string) => void };
   /** How many filters are on. */
-  filterCount: number;
-  filterOpen: boolean;
-  onFilterToggle: () => void;
+  filterCount?: number;
+  filterOpen?: boolean;
+  /** Without it no Filter button is drawn (a list with nothing to filter by yet). */
+  onFilterToggle?: () => void;
   /** The FilterPanel, drawn while `filterOpen`. */
   filterPanel?: ReactNode;
   /** "32 items", "4 of 32". */
@@ -36,24 +37,26 @@ export function ListToolbar({ search, filterCount, filterOpen, onFilterToggle, f
     <div className={cx('cmp-listtools', className)}>
       <div className="psl-toolbar">
         <SearchField {...search} fieldClassName="cmp-toolsearch" />
-        <span className="cmp-anchor cmp-anchor--inline">
-          {phone ? (
-            <IconButton icon="filter" label="Filter" count={filterCount > 0 ? filterCount : undefined} aria-expanded={filterOpen} onClick={onFilterToggle} />
-          ) : (
-            <Button kind="secondary" aria-expanded={filterOpen} onClick={onFilterToggle}>
-              <Icon name="filter" />
-              Filter
-              {filterCount > 0 && (
-                <>
-                  {' '}
-                  <CountBadge count={filterCount} tone="ink" />
-                  <span className="cmp-sr"> on</span>
-                </>
-              )}
-            </Button>
-          )}
-          {filterOpen && filterPanel}
-        </span>
+        {onFilterToggle && (
+          <span className="cmp-anchor cmp-anchor--inline">
+            {phone ? (
+              <IconButton icon="filter" label="Filter" count={filterCount > 0 ? filterCount : undefined} aria-expanded={filterOpen} onClick={onFilterToggle} />
+            ) : (
+              <Button kind="secondary" aria-expanded={filterOpen} onClick={onFilterToggle}>
+                <Icon name="filter" />
+                Filter
+                {filterCount > 0 && (
+                  <>
+                    {' '}
+                    <CountBadge count={filterCount} tone="ink" />
+                    <span className="cmp-sr"> on</span>
+                  </>
+                )}
+              </Button>
+            )}
+            {filterOpen && filterPanel}
+          </span>
+        )}
         {/* a polite live region without the status role, so the count reads as the page's text, as drawn */}
         <span className="psl-resultcount" aria-live="polite">
           {resultText}

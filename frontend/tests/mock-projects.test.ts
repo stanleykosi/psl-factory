@@ -206,8 +206,8 @@ describe('E-PROJECT mock', () => {
     expect((await journey('P-0105', 'pm')).body.lines).toEqual([]);
   });
 
-  it('E-PROJECT-TAB and E-DOCUMENT still answer 501', async () => {
-    for (const path of ['/api/v1/projects/P-0101/milestones', '/api/v1/documents/D-1/versions/1']) {
+  it('E-DOCUMENT and the documents tab still answer 501', async () => {
+    for (const path of ['/api/v1/projects/P-0101/documents', '/api/v1/documents/D-1/versions/1']) {
       const response = await fetch(base + path);
       expect([response.status, await response.json()]).toEqual([501, { code: 'not_mocked', message: 'Not available in the mock yet.' }]);
     }

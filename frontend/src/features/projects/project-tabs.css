@@ -1,0 +1,49 @@
+/* Project tabs (SCR-38 Milestones, SCR-11 Registers, SCR-29 Actions). Token variables only; layout switches at 720px
+   (bp-phone). No bundle or shell class is restyled: the ptabs__ classes sit beside them. */
+
+.ptabs__route { margin: 0; line-height: var(--text-hint-line); color: var(--ink-muted); }
+.ptabs__table .psl-table { min-width: 880px; }
+.ptabs__table td { vertical-align: middle; line-height: normal; }
+.ptabs__block { display: block; }
+.ptabs__hint { font-size: var(--text-small-size); font-weight: 400; color: var(--ink-muted); }
+
+/* SCR-38: the board's column widths (13/14/24/27/22% of the frame); at the board's width every P-0101 value fits on one line; narrower windows wrap, nothing is cut */
+.ptabs__ms { table-layout: fixed; }
+.ptabs__ms td:first-child { font-weight: 700; }
+.ptabs__ms--5 th:nth-child(1) { width: 13%; } .ptabs__ms--5 th:nth-child(2) { width: 14%; } .ptabs__ms--5 th:nth-child(3) { width: 24%; }
+.ptabs__ms--5 th:nth-child(4) { width: 27%; } .ptabs__ms--5 th:nth-child(5) { width: 22%; }
+/* with CHANGES as a sixth column */
+.ptabs__ms--6 th:nth-child(1) { width: 11%; } .ptabs__ms--6 th:nth-child(2) { width: 20%; } .ptabs__ms--6 th:nth-child(3) { width: 20%; }
+.ptabs__ms--6 th:nth-child(4) { width: 13%; } .ptabs__ms--6 th:nth-child(5) { width: 20%; } .ptabs__ms--6 th:nth-child(6) { width: 16%; }
+/* SCR-29: the action title is bold, its "From" line is not; SCR-11: references are plain mono */
+.ptabs__actions-table td:first-child { font-weight: 700; }
+
+.ptabs__noowner { font-weight: 700; color: var(--signal-ink); }
+.ptabs__registers { align-self: flex-start; flex-wrap: wrap; }
+.ptabs__noaccess { max-width: 720px; }
+
+/* under the rows: Show more, the time the figures are as of, the rule the page restates */
+.ptabs__foot { display: flex; flex-direction: column; gap: var(--space-2); }
+.ptabs__asof, .ptabs__note { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
+
+/* phone cards */
+.ptabs__cards { display: flex; flex-direction: column; gap: var(--space-3); }
+.ptabs__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); font-size: var(--text-body-size); border: var(--rule-strong) solid var(--ink); line-height: 1.3; }
+.ptabs__cardmain { font-size: var(--text-hint-size); }
+.ptabs__cardnote { font-size: var(--text-small-size); color: var(--ink-muted); }
+.ptabs__cardhint { font-size: var(--text-hint-size); color: var(--ink-muted); }
+.ptabs__cardhead { align-self: stretch; display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); }
+.ptabs__cardtitle { font-weight: 600; }
+.ptabs__ref { font-size: var(--text-reference-size); color: var(--ink-muted); }
+.ptabs__changelink { text-decoration: none; }
+
+@media (max-width: 719.98px) {
+  .ptabs__route, .ptabs__note { display: none; }
+  .ptabs__registers { align-self: stretch; flex-wrap: nowrap; margin-right: calc(-1 * var(--space-4)); border-right: none; }
+  .ptabs__registers .psl-tab { padding: 0 var(--space-14px); font-size: var(--text-body-phone-size); }
+  /* the phone board draws no count beside the search; it stays for screen readers */
+  .ptabs__toolbar .psl-toolbar { flex-wrap: nowrap; gap: var(--space-2); }
+  .ptabs__toolbar .cmp-toolsearch { flex: 1 1 0; min-width: 0; max-width: none; }
+  .ptabs__toolbar .psl-resultcount { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+.ptabs__table .psl-sample, .ptabs__cardtitle .psl-sample { margin-left: var(--space-2); }

@@ -113,8 +113,8 @@ describe('the mock serves money and reports', () => {
     expect(result).toEqual({ status: 500, body: { code: 'server_error', message: 'Something went wrong on our side.' } });
   });
 
-  it('the other tabs, and a case with no money fixture, still answer exactly 501', async () => {
-    for (const path of ['/api/v1/projects/P-0101/milestones', '/api/v1/projects/P-0101/documents', '/api/v1/projects/P-0101/registers', '/api/v1/projects/P-0101/actions', '/api/v1/projects/P-0109/money']) {
+  it('the documents tab, and a case with no money fixture, still answer exactly 501 (milestones, registers and actions are F-25\'s)', async () => {
+    for (const path of ['/api/v1/projects/P-0101/documents', '/api/v1/projects/P-0109/money']) {
       const result = await get(path);
       expect(result, path).toEqual({ status: 501, body: NOT_MOCKED });
     }

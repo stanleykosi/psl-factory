@@ -1,0 +1,169 @@
+{
+  "items": [
+    {
+      "position": 1,
+      "name": "Kick-off",
+      "contract_amount": {
+        "amount": "3000000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "done",
+        "at": "2026-10-27T10:00:00Z",
+        "evidence_id": "EV-3101"
+      },
+      "invoice": {
+        "reference": "INV-0398",
+        "work_id": "W-1713",
+        "state": "verified"
+      },
+      "paid": {
+        "status": "part_paid",
+        "owed": {
+          "amount": "500000.00",
+          "currency": "NGN",
+          "unknown": false
+        }
+      }
+    },
+    {
+      "position": 2,
+      "name": "UAT sign-off",
+      "contract_amount": {
+        "amount": "4250000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "done",
+        "at": "2026-11-11T10:00:00Z",
+        "proof": "client UAT sign-off"
+      },
+      "invoice": {
+        "reference": "INV-0412",
+        "work_id": "W-1001",
+        "state": "waiting"
+      }
+    },
+    {
+      "position": 3,
+      "name": "Go-live",
+      "contract_amount": {
+        "amount": "4250000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "changes": [
+        {
+          "reference": "CR-0031",
+          "title": "SMS reminders",
+          "amount": {
+            "currency": "NGN",
+            "unknown": true
+          },
+          "work_id": "W-1005"
+        }
+      ]
+    },
+    {
+      "position": 4,
+      "name": "Hypercare",
+      "contract_amount": {
+        "currency": "NGN",
+        "unknown": true
+      },
+      "amount_note": "amount set at go-live",
+      "completion": {
+        "status": "not_yet"
+      }
+    }
+  ],
+  "as_of": "2026-11-12T15:40:00Z",
+  "milestones": [
+    {
+      "position": 1,
+      "name": "Kick-off",
+      "contract_amount": {
+        "amount": "3000000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "done",
+        "at": "2026-10-27T10:00:00Z",
+        "evidence_id": "EV-3101"
+      },
+      "invoice": {
+        "reference": "INV-0398",
+        "work_id": "W-1713",
+        "state": "verified"
+      },
+      "paid": {
+        "status": "part_paid",
+        "owed": {
+          "amount": "500000.00",
+          "currency": "NGN",
+          "unknown": false
+        }
+      }
+    },
+    {
+      "position": 2,
+      "name": "UAT sign-off",
+      "contract_amount": {
+        "amount": "4250000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "done",
+        "at": "2026-11-11T10:00:00Z",
+        "proof": "client UAT sign-off"
+      },
+      "invoice": {
+        "reference": "INV-0412",
+        "work_id": "W-1001",
+        "state": "waiting"
+      }
+    },
+    {
+      "position": 3,
+      "name": "Go-live",
+      "contract_amount": {
+        "amount": "4250000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "changes": [
+        {
+          "reference": "CR-0031",
+          "title": "SMS reminders",
+          "amount": {
+            "currency": "NGN",
+            "unknown": true
+          },
+          "work_id": "W-1005"
+        }
+      ]
+    },
+    {
+      "position": 4,
+      "name": "Hypercare",
+      "contract_amount": {
+        "currency": "NGN",
+        "unknown": true
+      },
+      "amount_note": "amount set at go-live",
+      "completion": {
+        "status": "not_yet"
+      }
+    }
+  ]
+}

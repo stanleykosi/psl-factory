@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 8a307a5e4ff82ec1c78356f3971b0a6490ba10c9
+COMMIT: fb9f9fc1ef11f56b9d0416b4b36497a1be123f63
 BUILDER: builder
 LANE: full
 
@@ -75,3 +75,6 @@ Head 5df518a7 is the coordinator's merge of dlv-00 (delivery records and the D-1
 
 ### Verified
 - UI-3-2 | `grep -n "line-height" frontend/src/features/projects/project-tabs.css` shows `1.3` on `.ptabs__card` and the token only on `.ptabs__route`; `git diff 5df518a7 8a307a5e` changes that one declaration.
+
+## Base merge with F-23
+The coordinator merged `origin/dlv-00-delivery-setup` (F-23, the minutes) into the branch; head fb9f9fc1. I checked both conflict resolutions in the worktree: no conflict markers remain; `mock/server.mjs` `M1_OPERATIONS` has `'E-PROJECT-TAB'` (after `'E-PROJECT'`) and F-23's `E-DOCUMENT`, and still has the loader exclusion, the `projectTab` import and dispatch, and F-26's money routing before the M1 check (F-23's `E-DOCUMENT` line returns 501 except for D-2304, so my `documents` tab behaviour is unaffected); `tests/mock-contract.test.ts` `PATH_VALUES` has `tab: 'milestones'` plus `document_id: 'D-2304'` and `version: '1'`. No frontend file of F-25's own changed in the merge. The coordinator's runs on this head (checks.sh exit 0 with 2085 tests, one setup-rules flake passing on re-run; e2e 106 of 106) stand; I did not re-run them. No fidelity re-run (no scored board changed).

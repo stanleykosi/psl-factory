@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 5df518a70dfc82f804313de77cb95ae51e1b38c3
+COMMIT: fb9f9fc1ef11f56b9d0416b4b36497a1be123f63
 REVIEWER: reviewer-technical
 AUTHORITY: delivery technical review
 
@@ -31,3 +31,10 @@ AUTHORITY: delivery technical review
 - mock-contract.test.ts | verified | F-27 adds delegation cases (body, persona statuses, contract bodies). `tab: 'milestones'` in `PATH_VALUES` is kept, and nothing of F-25's or F-26's is removed.
 - Everything else in the diff is F-27's Setup delegation code and its tests, outside this feature. I did not review it.
 - Verdict unchanged: PASS. I did not run the checks; I relied on build.md (`delivery/checks.sh` exit 0 with 2015 tests, and 71 of 71 e2e).
+
+## Update for head fb9f9fc1 (diff 5df518a7..fb9f9fc1)
+- UI-3-2 CSS | verified | The only F-25 change is `.ptabs__card` `line-height: 1.3` in `project-tabs.css` (back from the token, as the card board needs). No other F-25 file changed.
+- server.mjs after the F-23 merge | verified | `M1_OPERATIONS` has `E-PROJECT-TAB` once, all of F-27's entries, and now `'E-DOCUMENT'`. F-26's `isMoneyRequest` dispatch still comes before the `M1_OPERATIONS` check. F-25's loader exclusion, import and dispatch are intact. F-23's added line answers 501 `not_mocked` for any E-DOCUMENT path except `D-2304/versions/1`, so other document reads behave as before. `mock-projects.test.ts` uses `D-1`, so its 501 case still holds.
+- mock-contract.test.ts | verified | `PATH_VALUES` keeps `tab: 'milestones'` and adds `document_id: 'D-2304'`, `version: '1'`. Nothing of F-25's is lost. The other additions (the `minutesProposalsStripped` checks and the F-23 fixture tests) are F-23's.
+- The rest of the diff is F-23's minutes work, outside this feature. I did not review it.
+- Verdict: PASS, unchanged. I did not run the checks; the coordinator reports checks.sh exit 0 (2085 tests) and 106 of 106 e2e.

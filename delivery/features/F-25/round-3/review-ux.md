@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 5df518a70dfc82f804313de77cb95ae51e1b38c3
+COMMIT: fb9f9fc1ef11f56b9d0416b4b36497a1be123f63
 REVIEWER: reviewer-ux
 AUTHORITY: delivery UX review
 
@@ -19,3 +19,6 @@ None.
 ## Head update (ba04923c to 5df518a7)
 - Re-read the diff: project-tab code changed only in `project-tabs.css` (route line and card line-height now use the `--text-hint-line` token, 18px, instead of 1.3), plus the mock routing in `mock/project-tabs.mjs` and `mock/server.mjs` (comment and the F-27 delegation operations). The rest is the F-27 delegation setup screens, which the project tabs do not use. No tab flow, state, link or copy changed.
 - The live walk above was done on ba04923c; I carry it forward on this impact assessment and did not rerun it.
+
+## Head update (5df518a7 to fb9f9fc1)
+- Diff re-read: the only project-tab change is one line in `project-tabs.css` (phone card line-height back to 1.3 from the token). Nothing else under `features/projects`, `components` or `mock/project-tabs.mjs` changed; the rest is the dlv-00 merge bringing F-23 (minutes). No tab flow, state, link or copy changed; verdict kept.

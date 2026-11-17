@@ -1,0 +1,331 @@
+{
+  "items": [
+    {
+      "position": 1,
+      "name": "Discovery",
+      "contract_amount": {
+        "currency": "NGN",
+        "unknown": true
+      },
+      "completion": {
+        "status": "done"
+      },
+      "paid": {
+        "status": "unknown"
+      }
+    },
+    {
+      "position": 2,
+      "name": "Design (billed in USD)",
+      "contract_amount": {
+        "amount": "1250000.50",
+        "currency": "USD",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "paid": {
+        "status": "paid"
+      }
+    },
+    {
+      "position": 3,
+      "name": "Build",
+      "contract_amount": {
+        "amount": "9500000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "done",
+        "at": "2026-11-05T09:00:00Z",
+        "proof": "build sign-off"
+      },
+      "invoice": {
+        "reference": "INV-0501",
+        "work_id": "W-1001",
+        "state": "verified"
+      },
+      "changes": [
+        {
+          "reference": "CR-0090",
+          "title": "Biometric login",
+          "amount": {
+            "amount": "750000.00",
+            "currency": "NGN",
+            "unknown": false
+          },
+          "work_id": "W-1005"
+        }
+      ]
+    },
+    {
+      "position": 4,
+      "name": "Pilot",
+      "contract_amount": {
+        "amount": "2000000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "done",
+        "at": "2026-11-08T09:00:00Z",
+        "evidence_id": "EV-3201"
+      },
+      "invoice": {
+        "reference": "INV-0502",
+        "state": "ready"
+      },
+      "paid": {
+        "status": "part_paid",
+        "owed": {
+          "currency": "NGN",
+          "unknown": true
+        }
+      },
+      "changes": [
+        {
+          "reference": "CR-0091",
+          "title": "Dark mode",
+          "amount": {
+            "currency": "NGN",
+            "unknown": true
+          }
+        }
+      ]
+    },
+    {
+      "position": 5,
+      "name": "Rollout",
+      "contract_amount": {
+        "amount": "3000000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "invoice": {
+        "reference": "INV-0503",
+        "work_id": "W-1713",
+        "state": "action_needed"
+      },
+      "paid": {
+        "status": "not_paid",
+        "owed": {
+          "amount": "3000000.00",
+          "currency": "NGN",
+          "unknown": false
+        }
+      }
+    },
+    {
+      "position": 6,
+      "name": "Training",
+      "contract_amount": {
+        "amount": "500000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "paid": {
+        "status": "not_due"
+      }
+    },
+    {
+      "position": 7,
+      "name": "Support retainer",
+      "contract_amount": {
+        "amount": "1200000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "paid": {
+        "status": "finance_tracks"
+      }
+    },
+    {
+      "position": 8,
+      "name": "Close-out",
+      "contract_amount": {
+        "amount": "400000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      }
+    }
+  ],
+  "as_of": "2026-11-12T15:40:00Z",
+  "milestones": [
+    {
+      "position": 1,
+      "name": "Discovery",
+      "contract_amount": {
+        "currency": "NGN",
+        "unknown": true
+      },
+      "completion": {
+        "status": "done"
+      },
+      "paid": {
+        "status": "unknown"
+      }
+    },
+    {
+      "position": 2,
+      "name": "Design (billed in USD)",
+      "contract_amount": {
+        "amount": "1250000.50",
+        "currency": "USD",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "paid": {
+        "status": "paid"
+      }
+    },
+    {
+      "position": 3,
+      "name": "Build",
+      "contract_amount": {
+        "amount": "9500000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "done",
+        "at": "2026-11-05T09:00:00Z",
+        "proof": "build sign-off"
+      },
+      "invoice": {
+        "reference": "INV-0501",
+        "work_id": "W-1001",
+        "state": "verified"
+      },
+      "changes": [
+        {
+          "reference": "CR-0090",
+          "title": "Biometric login",
+          "amount": {
+            "amount": "750000.00",
+            "currency": "NGN",
+            "unknown": false
+          },
+          "work_id": "W-1005"
+        }
+      ]
+    },
+    {
+      "position": 4,
+      "name": "Pilot",
+      "contract_amount": {
+        "amount": "2000000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "done",
+        "at": "2026-11-08T09:00:00Z",
+        "evidence_id": "EV-3201"
+      },
+      "invoice": {
+        "reference": "INV-0502",
+        "state": "ready"
+      },
+      "paid": {
+        "status": "part_paid",
+        "owed": {
+          "currency": "NGN",
+          "unknown": true
+        }
+      },
+      "changes": [
+        {
+          "reference": "CR-0091",
+          "title": "Dark mode",
+          "amount": {
+            "currency": "NGN",
+            "unknown": true
+          }
+        }
+      ]
+    },
+    {
+      "position": 5,
+      "name": "Rollout",
+      "contract_amount": {
+        "amount": "3000000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "invoice": {
+        "reference": "INV-0503",
+        "work_id": "W-1713",
+        "state": "action_needed"
+      },
+      "paid": {
+        "status": "not_paid",
+        "owed": {
+          "amount": "3000000.00",
+          "currency": "NGN",
+          "unknown": false
+        }
+      }
+    },
+    {
+      "position": 6,
+      "name": "Training",
+      "contract_amount": {
+        "amount": "500000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "paid": {
+        "status": "not_due"
+      }
+    },
+    {
+      "position": 7,
+      "name": "Support retainer",
+      "contract_amount": {
+        "amount": "1200000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      },
+      "paid": {
+        "status": "finance_tracks"
+      }
+    },
+    {
+      "position": 8,
+      "name": "Close-out",
+      "contract_amount": {
+        "amount": "400000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "completion": {
+        "status": "not_yet"
+      }
+    }
+  ]
+}
