@@ -1,0 +1,141 @@
+{
+  "id": "W-2412",
+  "title": "Login fails on older Android phones",
+  "line": "Issue follow-up",
+  "reference": "ISS-0233",
+  "revision": 4,
+  "tasks": [],
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "state": "processing",
+  "stations": [
+    {
+      "name": "Log",
+      "status": "done"
+    },
+    {
+      "name": "Investigate",
+      "status": "done"
+    },
+    {
+      "name": "Follow up",
+      "status": "current_person"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "waiting"
+  },
+  "workspace": {
+    "line_key": "issue_followup",
+    "screen": "SCR-30",
+    "view": "default",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "registers",
+          "label": "Registers"
+        },
+        {
+          "value": "issues",
+          "label": "Issues"
+        },
+        {
+          "value": "ISS-0233",
+          "label": "ISS-0233"
+        }
+      ]
+    },
+    "revision": 4,
+    "title": "Login fails on older Android phones",
+    "status": {
+      "label": "REPLY RECORDED",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "happened",
+        "kind": "timeline",
+        "title": "What has happened",
+        "items": [
+          {
+            "id": "r1",
+            "label": "Owner reply · recorded by PM",
+            "text": "Engineering is looking at it today.",
+            "at": "2026-11-12T11:05:00+01:00"
+          }
+        ]
+      },
+      {
+        "key": "chasing",
+        "kind": "timeline",
+        "title": "Chasing",
+        "items": [
+          {
+            "id": "c1",
+            "label": "Asked the owner",
+            "at": "2026-11-09T18:05:00+01:00"
+          },
+          {
+            "id": "c2",
+            "label": "Reminder sent",
+            "at": "2026-11-11T09:00:00+01:00",
+            "channel": "whatsapp"
+          },
+          {
+            "id": "c3",
+            "label": "Escalate if nothing by",
+            "at": "2026-11-13T09:00:00+01:00"
+          }
+        ]
+      }
+    ],
+    "next": [
+      "The reply is on the record."
+    ]
+  }
+}

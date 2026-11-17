@@ -12,7 +12,7 @@ import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { SampleLabel } from '@/shell/SampleLabel';
 import { useWorkspacePage } from '@/features/workspace/usePageReload';
 
-import { tagTone } from '@/features/workspace/labels';
+import { SEVERITY_WORDS, tagTone } from '@/features/workspace/labels';
 
 import { startedLine, STATE_TAGS, type WorkItem } from './labels';
 import { presentationOf, viewFor } from './presentation';
@@ -126,23 +126,18 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
  * the crumb line (desktop) or the meta line (phone), and the reference sits at the end of the phone bar and the status tag shares the meta line.
  */
 /**
- * The project tab bar the line boards draw under the title (desktop), from the project the workspace names. Journey is
- * the one built page, so it is the one link; the other tabs are plain text, never a dead link, as on the RFP frame.
+ * The project tab bar the line boards draw under the title (desktop), from the project the workspace names. Every tab
+ * with a page is a link to it (F-30); none is marked current, since the response does not say which tab the item
+ * belongs to and the frontend does not read that from the crumbs.
  */
 function ProjectBar({ caseId }: { caseId: string }) {
   return (
     <nav aria-label="Project" className="psl-tabs work-projecttabs">
-      {PROJECT_TABS.map((t) =>
-        t.key === 'journey' ? (
-          <Link key={t.key} className="psl-tab" href={`/projects/${encodeURIComponent(caseId)}`}>
-            {t.label}
-          </Link>
-        ) : (
-          <span key={t.key} className="psl-tab work-projecttab--plain">
-            {t.label}
-          </span>
-        ),
-      )}
+      {PROJECT_TABS.map((t) => (
+        <Link key={t.key} className="psl-tab" href={`/projects/${encodeURIComponent(caseId)}${t.path}`}>
+          {t.label}
+        </Link>
+      ))}
     </nav>
   );
 }
@@ -157,6 +152,8 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
       <Link href={historyHref}>History</Link>
     </nav>
   );
+  // F-30: a severity the workspace's facts carry is drawn beside the status, as the issue boards do
+  const severity = ws?.sections.flatMap((section) => (section.kind === 'facts' && !section.restricted ? section.items : [])).find((i) => i.severity !== undefined)?.severity;
   const tag = status ? (
     <Tag tone={tagTone(status.tone)} className="work-state">
       {status.label}
@@ -193,6 +190,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
           <span className="work-lineend">
             {/* INV-SAMPLE: the record says it is sample data, whatever the build's API mode */}
             <SampleLabel show={item.sample} />
+            {severity && <Tag tone="neutral">{SEVERITY_WORDS[severity]}</Tag>}
             {tag}
           </span>
         )}
@@ -240,7 +238,9 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   const item = state.status === 'ready' ? state.item : undefined;
   const view = item && presentationOf(item);
   // The phone bar's way back: the queue from the overview (and while loading or without access); the item from history.
-  usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : { label: 'Queue', href: '/my-work' });
+  // F-30: an issue's work item goes back to its project (D-111 item 9); every other work item keeps the queue.
+  const projectId = item?.workspace?.line_key === 'issue_followup' ? item.workspace.context?.project?.case_id : undefined;
+  usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : projectId ? { label: 'Project', href: `/projects/${encodeURIComponent(projectId)}` } : { label: 'Queue', href: '/my-work' });
 
   if (state.status === 'loading') return <LoadingState />;
   if (state.status === 'error') {

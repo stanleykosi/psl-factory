@@ -709,7 +709,8 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
         <NextStep item={item} quiet />
       </div>
     );
-    after = hasExceptionsLink(item) ? (
+    // F-30: the issue follow-up boards draw no exceptions button above the workspace
+    after = hasExceptionsLink(item) && item.workspace.line_key !== 'issue_followup' ? (
       <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
         See all exceptions
       </Link>

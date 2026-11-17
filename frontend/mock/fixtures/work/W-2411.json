@@ -1,0 +1,241 @@
+{
+  "id": "W-2411",
+  "title": "Login fails on older Android phones",
+  "line": "Issue follow-up",
+  "reference": "ISS-0233",
+  "revision": 3,
+  "tasks": [],
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "state": "processing",
+  "stations": [
+    {
+      "name": "Log",
+      "status": "done"
+    },
+    {
+      "name": "Investigate",
+      "status": "done"
+    },
+    {
+      "name": "Follow up",
+      "status": "current_agent"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Following up with the owner",
+        "status": "working"
+      }
+    ]
+  },
+  "workspace": {
+    "line_key": "issue_followup",
+    "screen": "SCR-30",
+    "view": "default",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "registers",
+          "label": "Registers"
+        },
+        {
+          "value": "issues",
+          "label": "Issues"
+        },
+        {
+          "value": "ISS-0233",
+          "label": "ISS-0233"
+        }
+      ]
+    },
+    "revision": 3,
+    "title": "Login fails on older Android phones",
+    "status": {
+      "label": "FIX IN TESTING",
+      "tone": "uncertain"
+    },
+    "sections": [
+      {
+        "key": "facts",
+        "kind": "facts",
+        "items": [
+          {
+            "id": "f-owner",
+            "label": "OWNER",
+            "value": "Engineering"
+          },
+          {
+            "id": "f-raised",
+            "label": "RAISED",
+            "value": "09 Nov"
+          },
+          {
+            "id": "f-age",
+            "label": "AGE",
+            "value": "3 days"
+          },
+          {
+            "id": "f-blocks",
+            "label": "BLOCKS",
+            "value": "Go-live",
+            "status": "blocked"
+          },
+          {
+            "id": "f-sev",
+            "label": "SEVERITY",
+            "severity": "high"
+          }
+        ]
+      },
+      {
+        "key": "happened",
+        "kind": "timeline",
+        "title": "What has happened",
+        "items": [
+          {
+            "id": "e4",
+            "label": "Owner update",
+            "text": "Fix is in testing on 3 older Android models.",
+            "at": "2026-11-11T16:40:00+01:00"
+          },
+          {
+            "id": "e3",
+            "label": "Owner acknowledged",
+            "text": "Engineering (recorded by PM) took it.",
+            "at": "2026-11-10T09:15:00+01:00"
+          },
+          {
+            "id": "e2",
+            "label": "Tola investigated",
+            "text": "Found 14 failed logins, all Android 9 or older, since release 1.4.",
+            "at": "2026-11-09T18:02:00+01:00",
+            "agent": "tola"
+          },
+          {
+            "id": "e1",
+            "label": "Logged",
+            "text": "Reported by Lagoon Health support; severity High set by the PM.",
+            "at": "2026-11-09T17:30:00+01:00"
+          }
+        ]
+      },
+      {
+        "key": "chasing",
+        "kind": "timeline",
+        "title": "Chasing",
+        "items": [
+          {
+            "id": "c1",
+            "label": "Asked the owner",
+            "at": "2026-11-09T18:05:00+01:00"
+          },
+          {
+            "id": "c2",
+            "label": "Reminder sent",
+            "at": "2026-11-11T09:00:00+01:00",
+            "channel": "whatsapp"
+          },
+          {
+            "id": "c3",
+            "label": "Escalate by",
+            "at": "2026-11-13T09:00:00+01:00"
+          }
+        ]
+      }
+    ],
+    "agent_note": {
+      "agent": "tola",
+      "lines": [
+        "This issue is blocking go-live. I'll remind the owner if there's no update by 13 Nov."
+      ]
+    },
+    "next": [
+      "The owner can acknowledge, start and report progress. Severity, resolution and closing stay in the issue register (closing needs QA and the PM)."
+    ],
+    "steps": [
+      {
+        "key": "post_owner_update",
+        "label": "Post update",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "consequence": "The owner can acknowledge, start and report progress. Severity, resolution and closing stay in the issue register (closing needs QA and the PM).",
+        "fields": [
+          {
+            "name": "update_type",
+            "label": "Update type",
+            "type": "choice",
+            "required": true,
+            "options": [
+              {
+                "value": "acknowledged",
+                "label": "Acknowledge"
+              },
+              {
+                "value": "started",
+                "label": "Started"
+              },
+              {
+                "value": "progress",
+                "label": "Progress update"
+              }
+            ]
+          },
+          {
+            "name": "update",
+            "label": "Update",
+            "type": "long_text",
+            "required": true
+          }
+        ]
+      }
+    ]
+  }
+}

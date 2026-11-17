@@ -14,7 +14,7 @@ import { buildIntake, dependentsOf, parentValue, type FieldValue, type Values } 
 import { IntakeField } from '@/features/start-work/IntakeField';
 import type { Field, LineOption } from '@/features/start-work/types';
 import { api, call } from '@/api/client';
-import { Button, Callout, MoneyField as MoneyInput, type ButtonKind } from '@/components';
+import { Button, Callout, MoneyField as MoneyInput, ValidationSummary, type ButtonKind, type FieldProblem } from '@/components';
 
 import type { Step } from './labels';
 import type { StepBody, SubmitResult } from './useWorkspaceStep';
@@ -163,9 +163,11 @@ type FormProps = {
   onClose: () => void;
   onAccessError: (error: ApiError) => void;
   consequence?: React.ReactNode;
+  /** A top summary of the problems, linked to their fields (F-30 criterion 12); other lines draw none. */
+  summary?: boolean;
 };
 
-export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending, off, submitLabel, initial, onSubmit, onClose, onAccessError, consequence }: FormProps) {
+export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending, off, submitLabel, initial, onSubmit, onClose, onAccessError, consequence, summary }: FormProps) {
   const fields = step.fields ?? [];
   const headId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
@@ -195,6 +197,8 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
   const [evidence, setEvidence] = useState<Record<string, string[]>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [messages, setMessages] = useState<string[]>([]);
+  const [attempt, setAttempt] = useState(0);
+  const [problems, setProblems] = useState<FieldProblem[]>([]);
   const labels = Object.fromEntries(fields.map((f) => [f.name, f.label]));
 
   useEffect(() => {
@@ -224,10 +228,24 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
     });
   };
 
+  // The first control inside a field that can take focus (an invalid choice field's wrapper cannot, its first option can).
+  const controlOf = (name: string) => formRef.current?.querySelector<HTMLElement>(`[data-field="${CSS.escape(name)}"] :is(input, textarea, button, select)`) ?? undefined;
+
+  // The top summary links each message to its field's first control (ids are given to those controls when needed).
+  const summarise = (messages: Record<string, string>) =>
+    setProblems(
+      fields.flatMap((f) => {
+        const control = messages[f.name] ? controlOf(f.name) : undefined;
+        if (!control) return [];
+        control.id ||= `${headId}-${f.name}`;
+        return [{ fieldId: control.id, message: messages[f.name] }];
+      }),
+    );
+
   const focusFirst = (names: string[]) => {
     requestAnimationFrame(() => {
       for (const name of names) {
-        const control = formRef.current?.querySelector<HTMLElement>(`[data-field="${CSS.escape(name)}"] [aria-invalid="true"], [data-field="${CSS.escape(name)}"] input, [data-field="${CSS.escape(name)}"] textarea, [data-field="${CSS.escape(name)}"] button`);
+        const control = controlOf(name);
         if (control) {
           control.focus();
           return;
@@ -241,8 +259,13 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
     const found = checkFields(fields, values, evidence);
     setErrors(found);
     setMessages([]);
+    setProblems([]);
     const named = fields.map((f) => f.name).filter((name) => found[name]);
-    if (named.length > 0) return focusFirst(named);
+    if (named.length > 0) {
+      summarise(found);
+      setAttempt((n) => n + 1);
+      return focusFirst(named);
+    }
     const result = await onSubmit(stepRequest(fields, values, evidence));
     if (result.kind !== 'invalid') return;
     const known = fields.map((f) => f.name).filter((name) => result.fields[name]);
@@ -252,7 +275,11 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
     const unnamed = Object.keys(result.fields).length === 0 || unmatched.length > 0;
     // The same sentence is told once (a server may name a whole-form problem as a field the form doesn't show and in `message`).
     setMessages(unnamed ? [...new Set([result.message, ...unmatched].filter((m): m is string => Boolean(m)))] : []);
-    if (known.length > 0) focusFirst(known);
+    if (known.length > 0) {
+      summarise(result.fields);
+      setAttempt((n) => n + 1);
+      focusFirst(known);
+    }
   };
 
   return (
@@ -271,6 +298,7 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
       </h3>
       <div className="psl-panel__body ws-form__body">
         {consequence}
+        {summary && <ValidationSummary problems={problems} attempt={attempt} />}
         {messages.length > 0 && (
           <Callout kind="problem">
             <span className="ws-stack">

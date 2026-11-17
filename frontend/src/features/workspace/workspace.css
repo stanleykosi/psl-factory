@@ -94,6 +94,7 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws-facts { margin: 0; }
 .ws-fact { display: flex; justify-content: space-between; align-items: center; gap: var(--space-10px); min-height: var(--control-sm); border-top: var(--rule-thin) solid var(--rule-soft); font-size: var(--text-body-size); }
 .ws-fact dt { font-weight: 600; }
+.ws-fact--blocked dd { color: var(--signal-ink); }
 .ws-fact dd { margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); text-align: right; }
 
 /* tables scroll inside their own frame on phones */
@@ -203,3 +204,16 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws-links { display: flex; flex-direction: column; gap: var(--space-3); }
 .ws-links__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
 .ws-links__row .psl-link { display: inline-flex; align-items: center; min-height: var(--control-md); }
+
+/* F-30: the issue board's facts are a strip of boxes under the title on desktop (a list on a phone) */
+@media (min-width: 720px) {
+  .ws-section--strip { border: var(--rule-strong) solid var(--ink); background: var(--surface); }
+  .ws-section--strip .ws-section__body { padding: 0; }
+  .ws-section--strip .ws-facts { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; }
+  .ws-section--strip .ws-fact { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: var(--space-1); border-top: none; border-right: var(--rule-strong) solid var(--ink); padding: var(--space-3) var(--space-14px); }
+  .ws-section--strip .ws-fact:last-child { border-right: none; }
+  .ws-section--strip .ws-fact dt { order: -1; font-family: var(--font-mono); font-size: var(--text-label-size); font-weight: 500; letter-spacing: .06em; color: var(--ink-muted); }
+  .ws-section--strip .ws-fact dd { text-align: left; font-family: var(--font-display); font-size: var(--text-body-size); font-weight: 700; color: var(--ink-subtle); }
+  .ws-section--strip .ws-fact--blocked { background: var(--signal-tint); }
+  .ws-section--strip .ws-fact--blocked dd, .ws-section--strip .ws-fact--blocked dt { color: var(--signal-ink); }
+}

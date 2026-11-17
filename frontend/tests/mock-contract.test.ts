@@ -97,7 +97,7 @@ const linkSchema = {
 };
 const validLinks = ajv.compile(linkSchema);
 function minutesProposalsStripped(body: unknown): unknown {
-  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { columns?: { date_format?: unknown }[]; items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; items_default?: unknown }[] } };
+  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { columns?: { date_format?: unknown }[]; items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; items_default?: unknown; starts_line?: unknown }[] } };
   const w = copy.workspace;
   if (w?.links !== undefined) {
     expect(validLinks(w.links), ajv.errorsText(validLinks.errors)).toBe(true);
@@ -124,7 +124,19 @@ function minutesProposalsStripped(body: unknown): unknown {
       delete row.values;
     }
   }
+  // PROPOSAL (F-30): `steps[].starts_line` {line_key, prefill} and `assign.candidates[].kind`
+  const candidates = (copy as { assign?: { candidates: { kind?: unknown }[] } }).assign?.candidates ?? [];
+  for (const candidate of candidates) {
+    if (candidate.kind === undefined) continue;
+    expect(['person', 'team', 'outside_party']).toContain(candidate.kind);
+    delete candidate.kind;
+  }
   for (const step of w?.steps ?? []) {
+    if (step.starts_line !== undefined) {
+      const { line_key: line, prefill } = step.starts_line as { line_key?: unknown; prefill?: unknown };
+      expect(typeof line === 'string' && line !== '' && typeof prefill === 'object' && prefill !== null, step.key).toBe(true);
+      delete step.starts_line;
+    }
     if (step.items_default === undefined) continue;
     expect(step.items_default, step.key).toBe('checked');
     delete step.items_default;

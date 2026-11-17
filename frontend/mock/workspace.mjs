@@ -1,4 +1,10 @@
-// Contract mock for F-17's E-WORK-STEP (PROPOSAL D-LINE-WORKSPACE). Local use only: nothing is sent to anyone.
+// Contract mock for F-17's E-WORK-STEP and F-30's E-WORK-ASSIGN (PROPOSAL D-LINE-WORKSPACE). Local use only: nothing is sent to anyone.
+//
+// E-WORK-ASSIGN (set an owner): scenario, CSRF, the item (404), the body against the v7 request schema, the 2000-character
+// note and a person_id outside the served item's `assign.candidates` (422 naming the fields), then cookie psl_mock_assign =
+// stale (the item moves on, then 409) | invalid (422 naming person_id) | uncertain (500, nothing written) | uncertain_written
+// (written, then 500); then expected_revision (409). A 200 serves <id>.next.json when present, else the item one revision
+// higher. There is no idempotency key on this operation (not in the typed body): each request is in the log's `assignments`.
 //
 // Order of checks: scenario (numeric, declared by the operation), CSRF, the item (404), the body against the v7
 // request schema and the 2000-character note (422 naming the fields), the step key in the served item's workspace.steps (404), a key seen
@@ -15,7 +21,7 @@ import addFormats from 'ajv-formats';
 
 import { DEFAULT_PERSONA, OPENAPI_PATH, PERSONAS, SCENARIO_BODIES } from './server.mjs';
 
-export const WORKSPACE_OPERATIONS = ['E-WORK-STEP'];
+export const WORKSPACE_OPERATIONS = ['E-WORK-STEP', 'E-WORK-ASSIGN'];
 export const WORKSPACE_LOG_PATH = '/__mock/workspace-log';
 
 const CSRF_FAILED = { code: 'csrf_failed', message: 'Your session check failed. Reload and try again.' };
@@ -24,39 +30,44 @@ const NOTE_MAX = 2000;
 const SERVER = { code: 'server_error', message: 'The mock answered with a scripted server error.' };
 
 let compiled;
-function validators() {
-  if (compiled) return compiled;
-  const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'));
-  const ajv = new Ajv2020({ allErrors: true, strict: true });
-  addFormats(ajv);
-  for (const ops of Object.values(openapi.paths)) {
-    for (const op of Object.values(ops)) {
-      if (op?.operationId !== 'E-WORK-STEP') continue;
-      const replies = {};
-      for (const [status, reply] of Object.entries(op.responses)) {
-        const schema = reply.content?.['application/json']?.schema;
-        if (schema) replies[status] = ajv.compile(schema);
+function validators(operationId = 'E-WORK-STEP') {
+  if (!compiled) {
+    compiled = {};
+    const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'));
+    const ajv = new Ajv2020({ allErrors: true, strict: true });
+    addFormats(ajv);
+    for (const ops of Object.values(openapi.paths)) {
+      for (const op of Object.values(ops)) {
+        if (!WORKSPACE_OPERATIONS.includes(op?.operationId)) continue;
+        const replies = {};
+        for (const [status, reply] of Object.entries(op.responses)) {
+          const schema = reply.content?.['application/json']?.schema;
+          if (schema) replies[status] = ajv.compile(schema);
+        }
+        compiled[op.operationId] = { request: ajv.compile(op.requestBody.content['application/json'].schema), replies };
       }
-      compiled = { request: ajv.compile(op.requestBody.content['application/json'].schema), replies };
     }
   }
-  return compiled;
+  return compiled[operationId];
 }
 
 // idempotency_key -> the reply first given; and every request, in order, for GET /__mock/workspace-log.
 const replies = new Map();
 const log = [];
+// E-WORK-ASSIGN: every request that reached the write, in order ({work_id, person_id, expected_revision, status, written}).
+const assignments = [];
 
 export function resetWorkspace() {
   replies.clear();
   log.length = 0;
+  assignments.length = 0;
 }
 
 /** The log: each request's key, step, item ids and status; `replay` marks an answer from the map (no send). */
 export function workspaceLog() {
   const sends = {};
   for (const entry of log) if (!entry.replay) sends[entry.idempotency_key] = (sends[entry.idempotency_key] ?? 0) + 1;
-  return { entries: log.map((entry) => ({ ...entry })), sends };
+  return { entries: log.map((entry) => ({ ...entry })), sends, assignments: assignments.map((entry) => ({ ...entry })) };
 }
 
 function decodeSegment(value) {
@@ -69,7 +80,62 @@ function decodeSegment(value) {
 
 const fieldNames = (errors) => [...new Set(errors.map((e) => e.params.missingProperty ?? e.params.additionalProperty ?? (e.instancePath.split('/')[1] || 'body')))];
 
-function handle({ req, url, raw, cookies, me, work, overrides }) {
+/** E-WORK-ASSIGN (F-30). */
+function handleAssign({ req, url, raw, cookies, me, work, overrides }) {
+  const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+  const { request, replies: declared } = validators('E-WORK-ASSIGN');
+  const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+  if (scenario && SCENARIO_BODIES[scenario] && declared[String(scenario)]) return { status: Number(scenario), body: SCENARIO_BODIES[scenario] };
+  if (req.headers['x-csrftoken'] !== me[persona].csrf_token) return { status: 403, body: CSRF_FAILED };
+
+  const workId = decodeSegment(url.pathname.split('/')[4] ?? '');
+  const item = /^W-\d+$/.test(workId) ? (overrides.get(workId) ?? work[workId]) : undefined;
+  if (!item) return { status: 404, body: SCENARIO_BODIES[404] };
+
+  let body;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    return { status: 422, body: { code: 'invalid', message: 'Check these fields: body.', fields: [{ name: 'body', message: 'The request body is not JSON.' }] } };
+  }
+  const invalid = (names) => ({ status: 422, body: { code: 'invalid', message: `Check these fields: ${names.join(', ')}.`, fields: names.map((name) => ({ name, message: `Check ${name}.` })) } });
+  const valid = request(body);
+  const tooLong = typeof body?.note === 'string' && body.note.length > NOTE_MAX;
+  const candidate = valid ? item.assign?.candidates?.find((c) => c.person_id === body.person_id) : undefined;
+  if (!valid || tooLong || !candidate) {
+    return invalid([...new Set([...(valid ? [] : fieldNames(request.errors)), ...(tooLong ? ['note'] : []), ...(valid && !candidate ? ['person_id'] : [])])]);
+  }
+  const entry = { work_id: workId, person_id: body.person_id, expected_revision: body.expected_revision };
+  const cookie = cookies.psl_mock_assign;
+  if (cookie === 'invalid') return invalid(['person_id']);
+  let current = item;
+  if (cookie === 'stale') {
+    current = { ...structuredClone(item), revision: item.revision + 1, workspace: { ...structuredClone(item.workspace), revision: item.workspace.revision + 1 } };
+    overrides.set(workId, current);
+  }
+  if (body.expected_revision !== current.workspace?.revision) {
+    assignments.push({ ...entry, status: 409, written: false });
+    return { status: 409, body: SCENARIO_BODIES[409] };
+  }
+  if (cookie === 'uncertain') {
+    assignments.push({ ...entry, status: 500, written: false });
+    return { status: 500, body: SERVER };
+  }
+  const next = work[`${workId}.next`];
+  const served = next ? structuredClone(next) : { ...structuredClone(current), revision: current.revision + 1, workspace: { ...structuredClone(current.workspace), revision: current.workspace.revision + 1 } };
+  // the owner is set, so the served item no longer offers an assignment
+  delete served.assign;
+  overrides.set(workId, served);
+  if (cookie === 'uncertain_written') {
+    assignments.push({ ...entry, status: 500, written: true });
+    return { status: 500, body: SERVER };
+  }
+  assignments.push({ ...entry, status: 200, written: true });
+  return { status: 200, body: { work_id: workId, state: served.state, revision: served.workspace?.revision ?? served.revision, assigned_to: candidate.name } };
+}
+
+function handle({ req, url, raw, cookies, me, work, overrides, operationId }) {
+  if (operationId === 'E-WORK-ASSIGN') return handleAssign({ req, url, raw, cookies, me, work, overrides });
   const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
   const { request } = validators();
   const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
@@ -129,12 +195,13 @@ function handle({ req, url, raw, cookies, me, work, overrides }) {
   return reply;
 }
 
-/** One E-WORK-STEP reply, validated against its v7 schema (an undeclared 5xx is not). */
+/** One E-WORK-STEP or E-WORK-ASSIGN reply, validated against its v7 schema (an undeclared 5xx is not). */
 export function workspaceRoute(args) {
   const { status, body } = handle(args);
-  const validate = validators().replies[String(status)];
+  const operationId = args.operationId ?? 'E-WORK-STEP';
+  const validate = validators(operationId).replies[String(status)];
   if (validate && !validate(body)) {
-    return [500, { code: 'mock_invalid_reply', message: `The mock's E-WORK-STEP ${status} reply does not match v7.` }];
+    return [500, { code: 'mock_invalid_reply', message: `The mock's ${operationId} ${status} reply does not match v7.` }];
   }
   return [status, body];
 }
