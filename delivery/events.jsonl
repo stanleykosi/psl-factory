@@ -2160,3 +2160,12 @@
 {"at":"2026-11-17T15:46:37Z","feature":"F-25","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"caf3e28f89eb3986f31b1ff2d9c4bd503b60b4cf"}}
 {"at":"2026-11-17T15:46:37Z","feature":"F-25","round":3,"kind":"transition","head":"fb9f9fc1ef11","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-17T15:46:37Z","feature":"F-25","round":3,"kind":"transition","head":"fb9f9fc1ef11","from":"MERGED","to":"DONE"}
+{"at":"2026-11-17T17:18:00Z","feature":"F-28","round":0,"kind":"created","tasks":["FE-LINE-MINUTES"]}
+{"at":"2026-11-17T17:18:01Z","feature":"F-29","round":0,"kind":"created","tasks":["FE-DOCUMENT-REVIEW"]}
+{"at":"2026-11-17T17:18:01Z","feature":"F-30","round":0,"kind":"created","tasks":["FE-ISSUE"]}
+{"at":"2026-11-17T17:28:06Z","feature":"F-28","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-17T17:28:07Z","feature":"F-28","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-17T17:28:07Z","feature":"F-29","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-17T17:28:07Z","feature":"F-29","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-17T17:28:07Z","feature":"F-30","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-17T17:28:07Z","feature":"F-30","round":0,"kind":"transition","from":"PLANNED","to":"READY"}

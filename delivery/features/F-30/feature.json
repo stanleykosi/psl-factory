@@ -1,0 +1,220 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-30",
+  "outcome": "Issue detail: an issue's work item shows what it is, what happened and how it is being chased, in four states (contract mock only)",
+  "state": "READY",
+  "task_ids": [
+    "FE-ISSUE"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-2411`, `-2412`, `-2413`, `-2414` show the status label and tone, facts, timeline, \"Chasing\", lead text, agent note and \"Next\" lines of their fixture, and nothing else; every board string comes from a fixture (`grep -rn \"NO RESPONSE\\|OWNER NEEDED\\|FIX IN TESTING\\|FOLLOW-UP VERIFIED\" frontend/src` returns nothing). \u2014 verify: `cd frontend && npx vitest run tests/issue-detail.test.tsx`; pages at 1440 and 390.",
+    "**Unknown, not zero.** A copy of W-2411 with the age fact, the owner and the Reminder time removed shows \"Unknown\" (or \"Time unknown\" for a missing `at`) in each place; no blank and no \"0\". \u2014 verify: component test on the modified copy.",
+    "**Status and overdue come from the response.** Changing the fixture's dates without changing `status` leaves the status and the overdue words unchanged; no component compares a date with now to decide a state (`grep -rniE \"Date\\.now|new Date\\(\\)\" frontend/src/features/workspace/Assign* ` and the diff of `Workspace.tsx` return nothing). \u2014 verify: component test with fake timers; grep.",
+    "**Controls only from the response.** W-2411 shows only \"Post update\"; W-2412 shows \"Record a reply\" and \"Raise an escalation\"; W-2413 shows \"Set an owner\" only; W-2414 shows no button. The same pages for the personas `pm`, `finance_lead` and `ceo` draw the same controls from the same data; a fixture with the steps removed draws none, and `/me` is not read by the issue code (`grep -n \"/me\\b\" frontend/src/features/workspace` unchanged). \u2014 verify: component test with three personas and a stripped copy.",
+    "**Verified is read-only.** W-2414 has no form and no POST of any kind; the status tag is the `verified` tone only because the response says so; \"Open the issue register\" links to `/projects/P-0101/registers`. \u2014 verify: component test with a recording `fetch`; link href.",
+    "**The register row opens the issue.** From `/projects/P-0101/registers`, pressing the title \"Login fails on older Android phones\" goes to `/work/W-2411`, which shows ISS-0233's facts. \u2014 verify: e2e.",
+    "**Agent text is only displayed.** Tola's note and lead sentences appear as returned; there is no generated text, no suggestion button and nothing says the reminder or escalation was sent unless the timeline item says so; \"verified\" never appears from agent text. \u2014 verify: component test of `document.body.textContent` on W-2411 and W-2412 (no \"sent\" beyond fixture words); review.",
+    "**Post an owner update.** Pressing \"Post update\" opens the shared step form with an unselected required Update type (three options) and a required Update box; submitting sends exactly one POST `/api/v1/work/W-2411/steps` with the CSRF header and a body that validates against the generated request schema: `expected_revision` = `workspace.revision`, `step: \"post_owner_update\"`, `inputs.update_type` one of the step's options, `inputs.update` trimmed, a UUID `idempotency_key`, no extra keys. A double press sends one. On 200 the page re-reads and the new timeline item appears from the re-read; the notice reads \"Done: \u2026\". \u2014 verify: component test with a recording `fetch`; `GET /__mock/workspace-log`.",
+    "**Record a reply.** On W-2412, \"Record a reply\" opens a form with one required Reply box; submitting sends one POST with `step: \"record_reply\"`, `inputs.reply`, the revision and a key; the result and attribution (\"recorded by PM\") come from the re-read item, not from the page. \u2014 verify: component test and e2e.",
+    "**Raise an escalation does not claim.** On W-2412, \"Raise an escalation\" opens the Start work drawer on the `escalation` form with the fixture's prefill shown for checking and sends nothing until the person presses the drawer's own start; nothing on the issue page says an escalation was started before the backend answers. Without `starts_line` (stripped copy) the button is not drawn. \u2014 verify: component tests; e2e at 1440.",
+    "**Set an owner.** On W-2413, \"Set an owner\" opens a form with a required Owner `Select` listing exactly the three `assign.candidates` (name, role, hint, `kind` as the backend words it), no preselection and no typed-owner option, plus a Note; submitting sends one POST `/api/v1/work/W-2413/assignment` with CSRF and `{expected_revision, person_id, note?}`, no extra key. On 200 the page re-reads: the lead, status and \"Next\" change only as the re-read says; the notice reads \"Owner set: <assigned_to>\". With `assign` and an empty `candidates`, \"No one can be chosen yet.\" and no control. \u2014 verify: component tests; `issue-assign-mock.test.ts`.",
+    "**Validation.** Submitting without Update type, Update, Reply or Owner shows the message under the field, a top summary, focus on the first, and sends nothing. A note over 2000 characters is refused client-side. \u2014 verify: component tests.",
+    "**Failures never say recorded.** For each write, `psl_mock_scenario` 422 (messages under the named fields, entries kept), 409 (re-read, stale sentence, entries kept, one POST after 60 s of fake time, the next press sends the new revision), 500 and a network error (\"Not recorded\", Try again after a re-read, same key for a step) never show \"Done\", \"recorded\" or \"Owner set\". \u2014 verify: component tests.",
+    "**Uncertain.** With `psl_mock_assign=uncertain` the page says it could not confirm, re-reads, offers \"Set an owner\" again only if the re-read shows no owner; with `uncertain_written` the re-read shows the owner and the form does not offer a second assignment. A step result `uncertain` shows the existing reconcile panel and no \"Send again\". \u2014 verify: component tests; e2e reads the mock state (one assignment in `uncertain_written`, none in `uncertain`).",
+    "**Access.** 401 on read or write \u2192 signed-out with `next=/work/<id>`; 403 and 404 look the same and show no title, name or fact; a persona `none` gets the same not-open view with no further call. \u2014 verify: component tests with a recording `fetch`.",
+    "**No outside claim from the owner.** The page never says the owner logged in or updated it themselves; attribution words come only from the response (`recorded_by_pm`, item text). \u2014 verify: `grep -rniE \"logged in|signed in as the owner\" frontend/src/features/workspace` returns nothing; fixture review.",
+    "**Frame.** The project tab bar on W-2411 to W-2414 links every tab with a route (Journey, Milestones, Documents, Money, Registers, Actions) to its address and marks none current; F-22's work items draw as before; no plain-text tab remains for a tab that has a page. (Pending Conflicts 7 and 8.) \u2014 verify: component test of `WorkItemView` against W-2209; e2e link check.",
+    "**Phone.** At 390 the page is one column, the same sections in the same order as desktop, \"Post an update\", \"Record a reply\" and \"Set an owner\" open the full-height `Drawer` with the desktop form's fields and the same outcomes; Escape and Cancel close it and return focus to the button; no sideways scroll; every target is at least 44px (D-92c). (Pending Conflicts 5.) \u2014 verify: e2e at 390.",
+    "**Fidelity (D-64).** One design-fidelity run per round over all 8 boards on a production build; every board's element coverage after approved exceptions is 100% with visual at least 90, or a board-level waiver (D-83 floor 70) citing the shared frame in `fidelity-exceptions.json`; every exception has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number; none covers a value the data can supply (a name, a time, a tag, a count, a sentence). \u2014 verify: the fidelity command per board (`--width 1440` and `--width 390`); `round-<N>/fidelity/`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on all four states, each open form, the 422 state, the uncertain state, the not-open view and the empty workspace; every field labelled; errors announced; status words in text, not colour only; visible focus; no animation under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/issue-detail.spec.ts`.",
+    "**Tokens and components only.** `git diff` adds no `#hex`, `rgb(`, `hsl(` in `features/workspace/*.css`; no local copy of a component `@/components` exports. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `issue-assign-mock.test.ts`: every fixture validates against the generated E-WORK-ITEM schema plus the overlay; the E-WORK-ASSIGN check order (scenario, CSRF, 404, 422 body and unlisted `person_id`, 409, success bumps revision); step scripts; reset clears. \u2014 verify: `cd frontend && npx vitest run tests/issue-detail.test.tsx tests/issue-assign-mock.test.ts tests/mock-contract.test.ts tests/workspace.test.tsx tests/work-item.test.tsx tests/project-tabs.test.tsx`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `src/shell/**`, protected paths or existing fixtures other than the single ISS-0233 `work_id` line; every overlay field is a contract proposal in build.md. \u2014 verify: `git diff --stat`; build.md."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The page has several behaviours (four states, three writes) and sits on the shared workspace block (F-17), so a cross-layer contract is involved, with two additive proposals. It touches no money, migration or identity change, and the owner assignment is limited to the candidates the backend returns. SURFACES are ui, api and contract-change (G-SCR30-1 and -3). Auth is not ticked because no new authority rule is added: the controls follow the response. PRODUCT-ACCEPTANCE is required because the owner-update, reply, escalate and set-owner flows and their wording are new to the client."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-30/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "not_run",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-30/readiness.md",
+      "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-ISSUE",
+    "base_branch": null,
+    "base_sha": null,
+    "task_branch": null,
+    "head_sha": null,
+    "worktree": null,
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": null
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-17T17:18:01Z",
+  "round": 0,
+  "round_limit": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-17T17:28:07Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-30/readiness.md",
+      "delivery/features/F-30/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 0,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}

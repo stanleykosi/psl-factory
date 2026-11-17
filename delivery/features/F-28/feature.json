@@ -1,0 +1,230 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-28",
+  "outcome": "The minutes line, finished: filed internal minutes and published client minutes show the actions created and who each recipient's delivery receipt says got them (contract mock only)",
+  "state": "READY",
+  "task_ids": [
+    "FE-LINE-MINUTES"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Desktop boards at 1440.** Both have `scores.coverageWithExceptions` = 100 and `scores.visual` >= 90. A board at >= 70 but below 90 passes only with a D-83 visual waiver signed for that board in `fidelity-exceptions.json` and the UI reviewer's side-by-side reading finding no fixable gap. \u2014 verify: the commands exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass and waiver.",
+    "**Phone boards at 390.** The same rule at `--width 390`. The phone boards are sparse, so extras are expected (Conflicts 4). \u2014 verify: same command, rows in `scores.txt`.",
+    "**Exceptions limited.** Each entry has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number; none covers a value the data supplies (name, date, count, receipt, owner, state). One fidelity run per round (D-64). \u2014 verify: file content; `build.md`.",
+    "**Internal from data.** `/work/W-2310` shows the status \"Filed \u00b7 Internal\", the returned sentence, the \"Created\" table with each action's owner, due (\"Unknown\" when missing) and state, the Next sentence and \"Open actions\". Nothing is counted or composed by the frame: a fixture whose sentence says \"3 actions\" over two rows shows both unchanged. \u2014 verify: `tests/minutes-end.test.tsx`; page at 1440 and 390.",
+    "**Published from data.** `/work/W-2311` shows the sentence, three actions with \"OWNER NEEDED\" on the ownerless one (owner cell \"No owner yet\", due \"Unknown\"), \"Sent to\" with each person's name, channel and receipt word and time, Next and \"Open actions\". \u2014 verify: component test; page at 1440 and 390.",
+    "**Receipts are per person.** On W-2312 the received recipient reads Received, the uncertain one reads Uncertain, the `not_yet` one reads Not yet, and a recipient with `unknown` or an absent `receipt` reads Unknown or \"Not yet\" (never blank). The strings \"Sent\" and \"Delivered\" appear only for a recipient whose `receipt` is `received`. No aggregate \"Delivered\" is drawn by the frame; only the returned sentence and tag are. \u2014 verify: component test over all five `receipt` values; `grep -rnE \"Delivered|delivery confirmed\" frontend/src/features/workspace` finds none in code (fixtures only).",
+    "**Uncertain send keeps the lock (INV-RESEND).** On W-2312 the only action is `ReconcilePanel`; \"Open actions\" and \"Open the minutes\" (reads only) stay usable; any step control is `aria-disabled`; one reconcile press sends one POST to `/actions` and none to `/steps`, `/claim` or `/decision`; no new idempotency key; the same after a reload. \u2014 verify: component test with a recording `fetch`; e2e at 1440 and 390.",
+    "**No claim beyond the data.** A published fixture with every recipient `not_yet` and a sentence \"Minutes v1 approved by Kemi Adebayo.\" shows no \"emailed\" or \"delivered\" text from the frame; the page contains only returned strings. \u2014 verify: component test of `document.body.textContent`.",
+    "**OWNER NEEDED and Unknown.** An action with no owner shows \"OWNER NEEDED\" only because the data returns that tag; no owner is guessed from the sentence or notes text (a fixture row text \"owner Tunde\" changes no owner cell). A missing due shows \"Unknown\", never 0, blank or \"-\". \u2014 verify: component test on W-2311/W-2314.",
+    "**Links only from data.** \"Open actions\" appears only when `workspace.links[]` supplies a `project_tab` target whose `tab` is a known project tab and whose `case_id` is a valid id; it links to `/projects/C-0211/actions`. W-2314 shows neither \"Open actions\" nor \"Open the minutes\". A target of an unknown kind or tab draws nothing. \"Open the minutes\" (W-2312) sends exactly one GET `/api/v1/documents/D-2304/versions/1`. \u2014 verify: component tests; recording `fetch`.",
+    "**Reaching internal.** On `/work/W-2301` choosing audience Internal and pressing \"Confirm and create actions\" sends the F-23 request (F-23 criterion 8 unchanged) and the reloaded item renders as the internal view; choosing Client still ends on the drafted view (W-2303). \u2014 verify: component test and e2e.",
+    "**Reaching published.** On `/work/W-2309/decide?task=T-2309` an approve sends the F-16 requests only; back on `/work/W-2309` the item renders as the published view. The work page sends nothing to `/steps`, `/claim` or `/decision`. \u2014 verify: e2e with recorded requests.",
+    "**Owner assignment (W-2313 only).** The \"assign owner\" control exists only on the item whose data lists the step; it uses the F-23 form, sends one POST with `expected_revision` = `workspace.revision` and a UUID key, leaves a blank owner out of `inputs`, shows a 422 under the field with focus there and keeps inputs, and reloads on 409. W-2310, W-2311 and W-2314 draw no such control. \u2014 verify: component tests. (If the builder drops this per the proposal table, `build.md` says so and this criterion is removed by the approver.)",
+    "**Wrong user, wrong tenant, signed out.** With `X-Mock-Scenario: 404` or `403`, `/work/W-2311` shows `NoAccessState` with no title, client, project or id and none of those strings in `document.body.textContent`. A 401 shows the signed-out callout with `next`. \u2014 verify: component tests.",
+    "**Nothing derived from `/me`.** Personas `pm`, `ceo` and `finance_lead` see the same controls for the same fixture; `git diff` adds no `/me` read under `frontend/src/features/workspace`. \u2014 verify: component test across personas; diff.",
+    "**Nothing sends, nothing files.** No request is made on load or on a timer (fake timers advanced 60 s); every e2e request goes to port 4792; the views contain no button that sends, resends, files or approves. \u2014 verify: recording `fetch`; e2e request log; `grep -rniE \"resend|send again\" frontend/src/features/workspace` finds nothing new.",
+    "**Accessibility.** For W-2310 to W-2314 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`); no sideways scroll; visible focus; 44px phone targets (D-92c); the table has real headers and keeps its meaning on a phone; receipts and state are text, not colour only; no wrapping button labels or tags on one line; live regions for the reconcile result; `prefers-reduced-motion` respected. \u2014 verify: `e2e/minutes-end.spec.ts`.",
+    "**Shared components and tokens.** New UI imports from `@/components`; no new local button, tag, table or panel. `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\"` on this feature's CSS diff returns nothing. \u2014 verify: diff and grep.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**` or the protected paths, and no existing fixture edited. The `project_tab` key exists only in fixtures and `proposals.ts`, is checked on its own and stripped in `mock-contract.test.ts`; the fixtures otherwise validate with no stripping. \u2014 verify: `tests/mock-contract.test.ts`; `git diff --stat`.",
+    "**Mock matches the contract.** `minutes-end-mock.test.ts`: W-2310 to W-2314 and the sidecars load; the audience branch serves the internal sidecar for `internal` and `W-2301.next` for `client`; the W-2309 decide sidecar applies once; a repeated step key returns the stored reply with send count 1. \u2014 verify: `cd frontend && npx vitest run tests/minutes-end*.test.* tests/mock-contract.test.ts`.",
+    "**No overclaim.** `build.md` and the PR state the \"What is sent\" section: contract mock only, nothing sent, filed or created; D-LINE-WORKSPACE limits; the template is a test template. \u2014 verify: file content.",
+    "**Existing behaviour not weakened.** `tests/minutes*.test.*`, `tests/workspace*.test.*`, `weekly*.test.*`, `work-item*.test.tsx`, `decide*.test.tsx`, `response*.test.tsx`, `shell.test.tsx` and the matching e2e specs pass with no assertion removed or loosened; F-23's eight scores and F-21's scores do not drop. \u2014 verify: `delivery/checks.sh`; `e2e/minutes.spec.ts`; `git diff`.",
+    "**build.md evidence:** commands and results, the 4 scores and waivers, every exception with its Conflicts number, every frame change with its reason, every proposal and backend item, and the held list from \"What is sent\". \u2014 verify: file content."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The work sits on the shared F-17 renderer (`features/workspace/**`, `features/work-item/**`) and a proposed v7 contract (D-LINE-WORKSPACE), and the published board shows per-recipient delivery of client minutes (external-messaging, INV-RESEND, uncertain effect). It stays at medium because it is 4 read-mostly boards, everything is on the mock, the backend send and filing are unimplemented and nothing is released. SURFACES match F-23: ui, api, contract-change, external-messaging, product-decision (the audience rule and order of creation belong to the backend and PSL, not this build). PRODUCT-ACCEPTANCE is not-required: the work conforms to the client-approved boards and adds no flow, copy or rule the boards do not already draw."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-28/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "not_run",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": false,
+      "assessment_reason": "delivery/features/F-28/readiness.md",
+      "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-LINE-MINUTES",
+    "base_branch": null,
+    "base_sha": null,
+    "task_branch": null,
+    "head_sha": null,
+    "worktree": null,
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": null
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-17T17:18:00Z",
+  "round": 0,
+  "round_limit": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-17T17:28:07Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-28/readiness.md",
+      "delivery/features/F-28/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 0,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}
