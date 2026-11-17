@@ -237,21 +237,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
   });
 });
 
-describe('tabs other than Journey (contents come with FE-M3-PROJECT-TABS)', () => {
-  it.each([
-    ['documents', 'Documents come next', 2],
-  ] as const)('%s: same header, the tab selected and a coming-next panel instead of the journey', async (tab, heading, index) => {
-    await open('P-0101', tab);
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
-    expect(projectTabs()[index].getAttribute('aria-selected')).toBe('true');
-    expect(projectTabs()[index].tabIndex).toBe(0);
-    const panel = screen.getByRole('tabpanel', { name: projectTabs()[index].textContent!.replace(/ ?\d+$/, '') });
-    expect(within(panel).getByRole('heading', { level: 2, name: heading })).toBeTruthy();
-    expect(within(panel).getByRole('link', { name: 'Open the journey' }).getAttribute('href')).toBe('/projects/P-0101');
-    expect(lineItems()).toHaveLength(0);
-    expect(calls).toHaveLength(1);
-  });
-
+describe('tabs other than Journey', () => {
   it('401 on a tab signs in back to that tab', async () => {
     respond = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open('P-0101', 'milestones');

@@ -25,6 +25,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
+import { documentRead } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
@@ -300,6 +301,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona }));
       if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
+      // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.
+      if (route.operationId === 'E-DOCUMENT') { const r = documentRead({ url, persona, cookies, work, overrides }); if (r) return send(res, r.status, r.body); }
       // F-23: the one document the minutes fixtures name (D-2304 v1); any other document stays unmocked, as before.
       if (route.operationId === 'E-DOCUMENT' && url.pathname !== '/api/v1/documents/D-2304/versions/1') return send(res, 501, NOT_MOCKED);
       return send(res, 200, fixtures[route.operationId]);
