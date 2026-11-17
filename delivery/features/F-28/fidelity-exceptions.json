@@ -1,0 +1,154 @@
+{
+ "exceptions": [
+  {
+   "role": "text",
+   "name": "PROJECTS / LAGOON HEALTH / MINUTES · MIN-0141",
+   "category": "frame item",
+   "reason": "Conflicts 11: the project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "link",
+   "name": "PROJECTS",
+   "category": "frame item",
+   "reason": "Conflicts 11: the project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "link",
+   "name": "LAGOON HEALTH",
+   "category": "frame item",
+   "reason": "Conflicts 11: the project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "tablist",
+   "name": "Project",
+   "category": "frame item",
+   "reason": "Conflicts 11: the project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "tab",
+   "name": "Milestones 4",
+   "category": "frame item",
+   "reason": "Conflicts 11: the project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "tab",
+   "name": "Documents 6",
+   "category": "frame item",
+   "reason": "Conflicts 11: the project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "tab",
+   "name": "Money",
+   "category": "frame item",
+   "reason": "Conflicts 11: the project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "tab",
+   "name": "Registers 6",
+   "category": "frame item",
+   "reason": "Conflicts 11: the project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "tab",
+   "name": "Actions 9",
+   "category": "frame item",
+   "reason": "Conflicts 11: the project crumb links and tab bar with counts belong to the frame; counts are a missing field (D-83).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Internal minutes are filed straight away; no review. 2 actions were created on the action list.",
+   "category": "frame layout",
+   "reason": "Conflicts 2, 7: the sentence is on the page as a returned text item with a tag. The tool does not read text inside a list row, so it reports it missing; placement (a panel, not a full-width band) and style differ.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Minutes v1 approved by Kemi Adebayo and emailed to Lagoon Health on 10 Nov 17:30, delivery confirmed. 3 actions are on the action list.",
+   "category": "frame layout",
+   "reason": "Conflicts 2, 7: the sentence is on the page as a returned text item with a tag. The tool does not read text inside a list row, so it reports it missing; placement (a panel, not a full-width band) and style differ.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "link",
+   "name": "← Project",
+   "category": "phone wording / frame item",
+   "reason": "Conflicts 5: the frame's back link and bar tag are the shell's; one back link for every width.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "FILED",
+   "category": "phone wording",
+   "reason": "Conflicts 5: the phone board's bar tag; the frame shows the returned desktop status at every width.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Internal: filed, no review. 2 actions created.",
+   "category": "phone wording",
+   "reason": "Conflicts 4, 5: the phone board writes its own short sentence; the frame shows the one returned sentence, whose words come from the data.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "DONE",
+   "category": "phone wording",
+   "reason": "Conflicts 5: the phone board's bar tag; the frame shows the returned desktop status at every width.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Sent to Lagoon Health, delivered. 3 actions created.",
+   "category": "phone wording",
+   "reason": "Conflicts 4, 5: the phone board writes its own short sentence; the frame shows the one returned sentence, whose words come from the data.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "link",
+   "name": "Open actions",
+   "category": "frame layout",
+   "reason": "Conflicts 6: Open actions sits in the links row under the main column, not in the Next panel in the right column.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Owners see their actions in My work.",
+   "category": "frame layout",
+   "reason": "Conflicts 8: the Next sentence is drawn in the frame's side column, after the main column.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "tab",
+   "name": "Journey",
+   "category": "frame item",
+   "reason": "Conflicts 11: the frame's project tab bar shows no current tab and Projects is not marked current in the top nav.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-28-desktop-internal",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112",
+   "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 76.9. The remainder is the frame's own layout (Conflicts 7, 8, 6), the added Owner and Due columns (Conflicts 3), the added Sent to list (Conflicts 1) and phone wording the contract has one data set for (Conflicts 4, 5)."
+  },
+  {
+   "board": "SCR-28-mobile-internal",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112",
+   "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 89.0. The remainder is the frame's own layout (Conflicts 7, 8, 6), the added Owner and Due columns (Conflicts 3), the added Sent to list (Conflicts 1) and phone wording the contract has one data set for (Conflicts 4, 5)."
+  },
+  {
+   "board": "SCR-28-desktop-published",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112",
+   "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 81.5. The remainder is the frame's own layout (Conflicts 7, 8, 6), the added Owner and Due columns (Conflicts 3), the added Sent to list (Conflicts 1) and phone wording the contract has one data set for (Conflicts 4, 5)."
+  }
+ ]
+}
