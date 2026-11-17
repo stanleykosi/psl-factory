@@ -92,6 +92,13 @@ class PlanningDepartmentInputTests(TestCase):
 
     def test_received_facts_survive_missing_policy_unknowns_and_cannot_disable_collection(self):
         f = enhanced(False)
+        self.client.force_login(f['a'])
+        url=reverse('factory_detail',args=[f['work'].pk])
+        self.assertNotContains(self.client.get(url),'Record Engineering input or correction')
+        factory.run_until_wait(f['work'].pk)
+        page=self.client.get(url)
+        self.assertContains(page,'Record Engineering input or correction')
+        self.assertNotContains(page,'owner_needed:')
         row = record(f, state='unknown', days=None)
         self.assertIsNone(row.person_days)
         self.assertEqual(planning_inputs.projection(f['a'], f['c'], f['packet'])['rows'][0]['record']['effort_state'], 'unknown')
@@ -107,7 +114,7 @@ class PlanningDepartmentInputTests(TestCase):
             planning_inputs.required(f['c'], f['packet'], f['a'])
         current = record(f, previous=row, days=Decimal('0'))
         self.assertEqual(current.person_days, 0)
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesMessage(ValidationError, 'Review the changed effort'):
             planning_inputs.required(f['c'], f['packet'], f['a'])
         self.assertEqual(PlanningDepartmentInput.objects.filter(case=f['c']).count(), 6)
 
@@ -134,6 +141,11 @@ class PlanningDepartmentInputTests(TestCase):
         f['work'].refresh_from_db()
         self.assertEqual(f['work'].status, 'verified', f['work'].finding)
         self.assertGreater(f['work'].budget_used, spent)
+        self.client.force_login(f['a'])
+        page=self.client.get(reverse('factory_detail',args=[f['work'].pk]))
+        self.assertContains(page,'Changed effort reviewed')
+        self.assertNotContains(page,'Changed effort needs review')
+        self.assertContains(page,'Input revision 2')
         self.assertEqual(successor.previous_id, rows['Engineering'].pk)
         record(f, previous=successor, days=Decimal('3'))
         with self.assertRaisesMessage(ValidationError, 'exact department inputs'):

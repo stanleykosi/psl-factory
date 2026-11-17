@@ -19,8 +19,10 @@ PROCESS_IDS=['P17','P21','P25','P26','P63']
 
 def investigation_key(work, observed):
     values=['ACT04',observed['sources'],work.source_head_id]
-    if observed['report'].get('department_inputs') is not None:
-        values.append(observed['report']['department_inputs'])
+    collection=observed['report'].get('department_inputs')
+    if collection is not None:
+        values.append({'inputs':[{'id':row['record']['id'],'source_hash':row['record']['source_hash']}
+                       if row['record'] else None for row in collection['rows']], 'context':collection['context']})
     return digest(values)
 
 @transaction.atomic
@@ -283,7 +285,7 @@ def department_action(actor,work_id,expected,case_expected,action,data):
            'department_input_rules':DepartmentRulesForm}
     if action not in forms:raise ValidationError('Choose a department input action.')
     form=forms[action](data)
-    if not form.is_valid():raise ValidationError(form.errors.as_text())
+    if not form.is_valid():raise ValidationError([message for messages in form.errors.values() for message in messages])
     values=form.cleaned_data
     if action=='department_input_rules':
         case=lock_case(actor,work.case_id,'policy.configure',case_expected)

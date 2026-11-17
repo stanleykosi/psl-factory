@@ -32,7 +32,7 @@ class DepartmentInputForm(forms.Form):
 
 class DepartmentReviewForm(forms.Form):
     packet_id = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
-    role = forms.ChoiceField(label='Review role', choices=[(role, role) for role in ROLES])
+    role = forms.ChoiceField(label='Review role', choices=[('', 'Choose your configured role')] + [(role, role) for role in ROLES])
     disposition = forms.ChoiceField(label='Costing decision', choices=[('', 'Choose the evidenced decision'),
         ('retain_costing', 'Existing costing may be retained'), ('new_costing', 'Fresh costing and commercial approvals completed')])
     evidence_id = forms.IntegerField(min_value=1, label='Decision evidence reference')
@@ -89,13 +89,18 @@ def panels(actor, case, packet, projection, data=None, action=None):
         result['inputs'].append({'department': row['department'], 'form': DepartmentInputForm(
             data if action == 'department_input' and data.get('department') == row['department'] else None,
             initial=initial, auto_id='department_' + row['department'] + '_%s')})
-    if projection['changed'] and may_record:
+    try:
+        configuration, current = planning.criteria(case)
+    except ValidationError:
+        return result
+    rules=current.get('department_inputs')
+    if projection['changed'] and may_record and rules:
         result['review'] = DepartmentReviewForm(data if action == 'department_effort_review' else None,
             initial={'packet_id': packet.pk}, auto_id='department_review_%s')
+        result['review'].fields['role'].choices=[('', 'Choose your configured role')]+[(role,role) for role in rules['reviewer_roles']]
     try:
         require(actor, case, 'policy.configure')
-        configuration, current = planning.criteria(case)
-    except (PermissionDenied, ValidationError):
+    except PermissionDenied:
         return result
     initial = dict(current.get('department_inputs', {}), base_configuration=configuration.pk)
     if 'allow_recorder_review' in initial:

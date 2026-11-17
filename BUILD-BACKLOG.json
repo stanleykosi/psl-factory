@@ -1,5 +1,41 @@
 {
   "design_consolidation_20261116": {
+    "final_department_interface_20261117": {
+      "environment": "design-acceptance",
+      "package": 65,
+      "web": "4445395e-7809-463d-ae33-cf24b36114c0",
+      "worker": "82f6e3a7-00c5-4ff6-85db-bf661db85260",
+      "postgresql": {"deployment": "5be4c6f7-19ca-4b51-8232-253522739111", "passed": 9, "seconds": 285.196},
+      "fixture_step": "passed",
+      "runtime_hashes": "matched",
+      "states_with_browser_observations": 181,
+      "observed_states_with_open_checks": 180,
+      "states_without_direct_browser_observation": 81,
+      "all_states_accepted": false,
+      "completed": ["Final reviewed-effort, source-version and current reviewer display", "Stale-packet input guard and plain owner-rule holds", "Native five-department handoff and independent fresh-costing tests"],
+      "next": ["Go-live client changes, declines and controlled native rework", "Remaining actual functions and direct state checks"],
+      "owner_policy": "Deferred"
+    },
+    "department_browser_handoff_20261117": {
+      "environment": "design-acceptance",
+      "runtime_source": "427ad0b4",
+      "package": 63,
+      "web": "3f84c164-6554-4cd5-bd6f-dcdeae119905",
+      "worker": "6ff1de8d-0e6e-4ca3-b6f9-8d48ea33bd96",
+      "states_with_browser_observations": 181,
+      "observed_states_with_open_checks": 180,
+      "states_without_direct_browser_observation": 81,
+      "all_states_accepted": false,
+      "postgresql": [
+        {"deployment": "2187bccd-50b6-4d1f-95be-89ce92013534", "passed": 8, "seconds": 230.435},
+        {"deployment": "02b26d2d-618e-4afd-b40b-e5e112cdf422", "passed": 9, "seconds": 546.646}
+      ],
+      "pending_check": "5be4c6f7-19ca-4b51-8232-253522739111",
+      "completed": ["Five department responses and native verified internal handoff in the browser", "Unknown and fractional effort, explicit correction and exact human costing review", "Draft rule save without activation and evidence capture during the dependent hold", "Positive native fresh-costing path with four direct commercial approvals on PostgreSQL"],
+      "current": ["Final source-version, review-state, source-adoption and plain-language display checks"],
+      "next": ["Go-live client change requests and declines with native rework and issue/release handoff", "Remaining unobserved and substantive partial states"],
+      "owner_policy": "Deferred"
+    },
     "department_inputs_and_disclosure_20261117": {
       "environment": "design-acceptance",
       "checked_package": 60,

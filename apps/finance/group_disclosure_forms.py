@@ -99,7 +99,7 @@ def save(actor, case, run, data, expected):
         raise ValidationError('Review the forecast audience rules before adding group disclosure.')
     form = GroupDisclosureForm(actor, case, run, configuration, data)
     if not form.is_valid():
-        raise ValidationError(form.errors.as_text())
+        raise ValidationError([message for messages in form.errors.values() for message in messages])
     content = copy.deepcopy(reference_values(configuration)[0])
     content['group'] = form.record()
     return draft_finance_policy(actor, case.pk, 'D10.audience_projection_rules', content,

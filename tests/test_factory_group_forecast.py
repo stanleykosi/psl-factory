@@ -37,7 +37,9 @@ class GroupForecastFactoryTests(TestCase):
             'effective_from':timezone.now().isoformat()}
         before=Configuration.objects.filter(case=self.c).count()
         self.assertContains(self.client.post(url,{**values,'base_configuration':0}),'disclosure rules changed')
-        self.assertContains(self.client.post(url,{**values,'metadata':['as_of']}),'currency, accounting basis')
+        invalid=self.client.post(url,{**values,'metadata':['as_of']})
+        self.assertContains(invalid,'currency, accounting basis')
+        self.assertNotContains(invalid,'__all__')
         wrong=evidence(self.a,self.c,'forecast_group_oracle','{}')
         values['case_revision']=rev(self.c)
         self.assertContains(self.client.post(url,{**values,'oracle':wrong.pk}),'independent expected report differs')

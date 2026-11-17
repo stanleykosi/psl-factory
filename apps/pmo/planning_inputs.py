@@ -129,6 +129,8 @@ def required(case, packet, reader):
     context = current_context(case, packet, rows, configuration, rules)
     if any(changed(row) for row in rows):
         item = planning.latest(case, 'department_review')
+        if item is None:
+            raise ValidationError('Review the changed effort against these exact department inputs.')
         value = planning.read(case, item, 'department_review', 'coordinate')
         if value.get('context') != context:
             raise ValidationError('Review the changed effort against these exact department inputs.')
@@ -190,7 +192,10 @@ def projection(actor, case, packet):
         context = None
         finding = '; '.join(exc.messages) if isinstance(exc, ValidationError) else 'Department input authority needs review.'
     records = {row.department: {**pin(row), 'source_party': row.source_party, 'received_at': row.received_at.isoformat(),
+        'received_at_display': timezone.localtime(row.received_at).strftime('%d %b %Y, %H:%M %Z'),
+        'source_version': row.source.version,
         'summary': row.summary, 'actor': row.actor.get_full_name() or row.actor.username,
         'changed_effort': changed(row)} for row in rows}
     return {'rows': [{'department': department, 'record': records.get(department)} for department in DEPARTMENTS],
-            'finding': finding, 'context': context, 'changed': any(changed(row) for row in rows)}
+            'finding': finding, 'context': context, 'changed': any(changed(row) for row in rows),
+            'effort_reviewed':bool(context and context.get('review_id'))}

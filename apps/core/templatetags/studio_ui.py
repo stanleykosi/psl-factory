@@ -47,6 +47,13 @@ def readable(value):return str(value or '').replace('_',' ').replace('.',' · ')
 
 
 @register.filter
+def business_finding(value):
+    text=str(value or '')
+    prefix,separator,detail=text.partition(':')
+    return detail.strip() if separator and prefix in ['owner_needed','configuration_needed','STALE_VERSION','CONFLICT'] else text
+
+
+@register.filter
 def decimal_display(value):
     if not isinstance(value, Decimal):
         return value

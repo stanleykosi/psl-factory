@@ -117,7 +117,9 @@ def detail(request,work,focus=None):
             elif action=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             else:raise ValidationError('Choose a current forecast work action')
             messages.success(request,'Forecast action recorded');return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
+        except (ValidationError,ValueError) as exc:
+            messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
+            work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
     if focus:
         forms_list=[entry for entry in forms_list if entry['action'] in SCREENS[work.definition][focus]]

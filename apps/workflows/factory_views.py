@@ -960,7 +960,8 @@ def detail(request,work_id,focus=None):
             else:raise ValidationError('Choose a current available action')
             messages.success(request,'Action recorded. Check the current work and receipt status.')
             return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc))
+        except (ValidationError,ValueError) as exc:
+            messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
         work=get_object_or_404(visible(request.user),pk=work_id)
     row=presentation(request.user,work)
     if work.definition=='delivery-hypercare/v1' and request.method=='POST' and request.POST.get('action')=='stability_source':
@@ -1012,7 +1013,8 @@ def detail(request,work_id,focus=None):
         row['current_packet']=planning.latest(work.case,'packet')
         from apps.pmo.planning_input_forms import panels as department_panels
         row['department_panels']=department_panels(request.user,work.case,work.source_head,
-            row['planning'].get('department_inputs'),request.POST,request.POST.get('action'))
+            row['planning'].get('department_inputs') if row['planning'].get('packet_id')==work.source_head_id else None,
+            request.POST,request.POST.get('action'))
         from .factory_planning import owner_panels
         row['owner_panels']=owner_panels(request.user,work)
         from apps.pmo.models import DeliverySource

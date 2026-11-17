@@ -1,5 +1,15 @@
 # PSL operations factory build state
 
+## Final department interface checkpoint · 17 November 2026
+
+Package 65 passed nine PostgreSQL tests in run `5be4c6f7`, 285.196 seconds, with both fixture checks successful. Runtime and regression source hashes matched the tested package before deployment. Web `4445395e-7809-463d-ae33-cf24b36114c0` and worker `82f6e3a7-00c5-4ff6-85db-bf661db85260` serve these changes. The browser rechecked verified work 77, delivery dossier 15, local receipt times, input revision 2 against source document version 1, the reviewed-effort label and only the configured PM review choice. Layout widths 375, 600 and 1265 CSS pixels had no body overflow. The viewport has been reset. Continue the actual go-live response and other remaining state work. Counts remain 181 observed and 81 unseen, with partial checks recorded individually.
+
+## Five-department browser handoff · 17 November 2026
+
+Runtime source `427ad0b4` is deployed as package 63 web `3f84c164-6554-4cd5-bd6f-dcdeae119905` and worker `6ff1de8d-0e6e-4ca3-b6f9-8d48ea33bd96`. Run `2187bccd` passed all eight PostgreSQL tests in 230.435 seconds, then applied `pmo.0056` in the isolated preview and prepared both browser examples successfully. Run `02b26d2d` passed nine tests in 546.646 seconds and completed the idempotent fixture step. It includes the readable group-rule validation repair.
+
+Browser work 77 captured five department responses, retained unknown and not-applicable values, recorded fractional estimates, corrected Engineering to known zero and required an exact human costing decision. The worker then verified the native internal handoff. Work 78 saved a typed rule draft without activation and retained received facts while readiness stayed held. Work 37 rejected missing report currency and saved a corrected group-rule draft while its existing publication remained current. Later source-version labels, review-state labels, configured reviewer options, plain hold text and stale-packet form controls await package 65 verification and deployment. The ledger now has 181 observed states, 180 with further checks and 81 awaiting first observation. All 262 are not yet accepted.
+
 ## Department inputs and tested disclosure controls · 17 November 2026
 
 Package 60 runs on isolated preview web `b36ef469-b8e9-41f2-acab-62ed08b47fca`, with worker deployment `af3ae96d-138d-487f-b025-ebc56e17363f` submitted. The web applied `pmo.0055`. Corrected the private Finance oracle selector using explicit Finance and policy grants. The structured group-rule editor saves a draft, preserves other audience rules and checks the independent expected output. The rotating message scan, exact issue links and current-owner console passed their selected PostgreSQL checks. Planning and commercial pages now use readable current-source and document content. Run `1931e822` passed fifteen tests.

@@ -1,5 +1,21 @@
 # Actual test execution ledger
 
+## Final department interface regression · 17 November 2026
+
+Run `5be4c6f7-19ca-4b51-8232-253522739111` passed all nine PostgreSQL tests in 285.196 seconds, exit 0. Django checks and model drift passed. Both guarded fixture lookups returned works 77 and 78 with exit 0. The expanded assertions cover stale-packet input suppression, readable configuration holds, reviewed-effort display and distinct input revisions. Runtime and test file hashes matched the staged package. The deployed web started without pending migrations and the worker continued its queues.
+
+The Codex browser rechecked work 77 after deployment. It retained Verified and dossier 15, showed source document 1311 version 1 separately from Engineering input revision 2, rendered WAT times and identified the completed effort review. The review selector contained its empty prompt and configured PM role. Body widths 600 and 1265 matched scroll widths, following the earlier 375-pixel capture check. A desktop screenshot was inspected. The temporary viewport was reset. Live business choices and external source authenticity remain outside this synthetic evidence.
+
+## Department end-to-end browser and final regression · 17 November 2026
+
+Run `2187bccd-50b6-4d1f-95be-89ce92013534` passed eight PostgreSQL tests in 230.435 seconds, exit 0. The positive fresh-costing case used a real native calculation and binding, required all four current direct commercial approvals, then bound the exact calculation and proposal to the department review. Django checks and migration drift checks passed. The runner subsequently applied `pmo.0056` to the isolated preview, created work 77 in `3ffae9ca-3523-4a59-ad24-5c29e7efaac5` and work 78 in `8c0f4a2a-d9bd-4bd2-b270-b9ff268c958c`, and exited with both fixture and acceptance markers 0.
+
+Run `02b26d2d-618e-4afd-b40b-e5e112cdf422` passed all nine tests in 546.646 seconds, exit 0, including readable group validation and the existing complete department and legacy paths. Its repeated fixture step returned the same two work IDs and exited 0. Final display and source-adoption refinements are pending run `5be4c6f7-19ca-4b51-8232-253522739111`, package 65.
+
+The intermediate package 62 deployment `5eed86e6` ran no tests because its shell script had not been copied into the image. The corrected explicit Docker copy ran in package 63. Earlier staged `restartPolicyType=NEVER` did not change the effective Railway check-service setting. Remote metadata still reported `ON_FAILURE`. Treat the staged setting as an attempted configuration, and inspect or stop failed deployments explicitly. The earlier prose claiming that automatic test retries were disabled was premature. Normal web and worker settings were preserved.
+
+In the Codex browser, work 77 recorded Engineering unknown, QA 2.250 person-days, Security 0.500, Product 1.000 and Infrastructure not applicable. Each fact retained its recorder, receipt time and source 1311. Engineering correction to 0.000 created input revision 2. Human review cited proof 1316 and explicitly retained the synthetic costing. Background work reached Verified at 21:06:10 WAT. A stale manual continuation preserved that completed result. The page measured 375 CSS pixels with scroll width 375. Work 78 saved synthetic rule choices as a draft and captured an unknown Engineering input from source 1339 while readiness remained held. Work 37 rejected omitted currency, retained form values and saved the corrected draft. No live rules were activated.
+
 ## Disclosure repair and department collection · 17 November 2026
 
 Package 59 run `952d9be4-dcfa-4175-bf46-96c689f764b8` ran thirteen PostgreSQL tests in 210.626 seconds. Twelve passed and the new group-rule editor failed because its generic public-evidence filter excluded the private Finance oracle. The failed check service automatically retried under its prior restart setting. Stopped that test deployment and changed subsequent check-only deployments to `NEVER`. Web and worker retain their normal restart behavior.
