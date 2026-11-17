@@ -1,5 +1,9 @@
 # PSL operations factory build state
 
+## Client reply and release recovery verification · 17 November 2026
+
+Implemented client reply facts, report version 2 through fresh review and receipt, decline-to-issue handling, correction controls and a reviewed fix handoff to a distinct release candidate. Typed owner-rule drafting preserves other connection configuration. Native readiness enforces the recorded decline origin, current review and native resolution provenance. The hosted app remains verified package 65 while these changes are checked. Package 66 passed eight of nine PostgreSQL tests with one fixture reference error. The corrected package 67 is running. Browser acceptance and deployment are pending. The milestone remains open with 181 observed states and 81 unseen states. HOD policy values stay deferred.
+
 ## Final department interface checkpoint · 17 November 2026
 
 Package 65 passed nine PostgreSQL tests in run `5be4c6f7`, 285.196 seconds, with both fixture checks successful. Runtime and regression source hashes matched the tested package before deployment. Web `4445395e-7809-463d-ae33-cf24b36114c0` and worker `82f6e3a7-00c5-4ff6-85db-bf661db85260` serve these changes. The browser rechecked verified work 77, delivery dossier 15, local receipt times, input revision 2 against source document version 1, the reviewed-effort label and only the configured PM review choice. Layout widths 375, 600 and 1265 CSS pixels had no body overflow. The viewport has been reset. Continue the actual go-live response and other remaining state work. Counts remain 181 observed and 81 unseen, with partial checks recorded individually.

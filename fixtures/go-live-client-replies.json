@@ -1,0 +1,15 @@
+{
+  "classification": "Synthetic acceptance choices only. Operational response handling and human authority remain deferred.",
+  "rules": {
+    "kind": "go_live_reply",
+    "key": "client_responses",
+    "recording_roles": ["PM"],
+    "correction_roles": ["PMO Lead"],
+    "remediation_roles": ["PMO Lead"],
+    "allow_recorder_correction": true,
+    "channels": ["email"],
+    "changes_handling": "reviewed_document_successor",
+    "decline_handling": "new_release_candidate",
+    "issue_states_for_new_release": ["Resolved"]
+  }
+}

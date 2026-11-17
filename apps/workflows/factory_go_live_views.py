@@ -110,7 +110,7 @@ def detail(request,work,focus=None):
     queue=request.GET.get('queue','needs_me');q=request.GET.get('q','')[:120]
     if queue not in QUEUES:queue='needs_me'
     _,data,_=go_live.source(work,request.user,current=False)
-    form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,inputs=data['inputs'])
+    form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','prepare_client_revision'] else None,inputs=data['inputs'])
     signer_input=request.POST if request.method=='POST' and request.POST.get('action')=='accept' and not request.POST.get('attestation') else None
     signer_forms={'PM':SignerForm(signer_input,prefix='pm-fact'),'Client':SignerForm(signer_input,prefix='client-fact')}
     if request.method=='POST':
@@ -121,12 +121,17 @@ def detail(request,work,focus=None):
             elif action=='correct':
                 if not form.is_valid():raise ValidationError('Review the selected template and actual source records')
                 go_live.correct(request.user,work.pk,revision,case_revision,form.inputs(),p.get('reason',''))
+            elif action=='prepare_client_revision':
+                if not form.is_valid():raise ValidationError('Choose the corrected source documents for the next report.')
+                go_live.prepare_client_revision(request.user,work.pk,revision,case_revision,form.inputs(),p.get('reason',''))
             elif action=='review':go_live.review(request.user,work.pk,revision,case_revision,int(p.get('version','0')),p.get('verdict',''),p.get('note',''))
             elif action=='accept':
                 version, receipt, pm, client = [int(p.get(key, '0')) for key in ('version', 'receipt', 'pm_signature', 'client_signature')]
                 attestation=supplied_signer_facts(request,work,version,receipt,pm,client,signer_forms)
                 go_live.accept(request.user,work.pk,revision,case_revision,version,receipt,pm,client,p.get('note',''),
                     int(p['previous_acceptance']) if p.get('previous_acceptance') else None,attestation=attestation,mode=p.get('mode','fresh_signatures'))
+            elif action in ['client_reply','client_decline_issue','client_decline_handoff','client_decline_candidate','client_reply_rules']:
+                go_live.client_response_action(request.user,work.pk,revision,case_revision,action,p)
             elif action in ['cancel','settle_stop']:go_live.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,action)
             elif action=='restart':go_live.restart(request.user,work.pk,revision,case_revision,p.get('reason',''))
@@ -139,6 +144,8 @@ def detail(request,work,focus=None):
         except ValueError:messages.error(request,'Refresh the work and choose current recorded references.')
         work.refresh_from_db()
     row=presentation(request.user,work,focus=focus);activities=list(work.activities.prefetch_related('attempts').order_by('pk')) if not focus else []
+    from apps.pmo.go_live_reply_forms import panels as reply_panels
+    row['client_reply_panels']=reply_panels(request.user,work,row['go_live'],request.POST,request.POST.get('action'))
     for activity in activities:
         activity.title={'ACT03':'Plan permitted work','ACT04':'Investigate go-live evidence','ACT09':'Prepare the client report','ACT10':'Resolve current authority',
             'ACT11':'Deliver the exact reviewed report','ACT12':'Reconcile original delivery','ACT13':'Verify actual go-live acceptance'}.get(activity.kind,'Review permitted work')

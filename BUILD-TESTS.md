@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## Client replies and native release recovery · 17 November 2026
+
+Package 66 deployment `2fbb35b0-4ace-4851-9adf-a56bf98d065f` ran nine PostgreSQL tests in 321.212 seconds. Eight passed and the decline recovery test errored when its fixture reused the original KICKOFF meeting reference. The native duplicate guard correctly refused it. Fixed the fixture to use distinct kickoff and GLPI request references for the new candidate. Package 67 deployment `48b95351-5e77-48a6-a07e-9aaaf6d122ad` is running the corrected suite, including native readiness enforcement, response concurrency, HTTP permissions, exact receipts, immutable corrections, missing handling rules and legacy go-live behavior. Its final result, migrations, fixtures and browser paths remain pending. No current go-live deployment claim follows from the earlier eight passing cases.
+
 ## Final department interface regression · 17 November 2026
 
 Run `5be4c6f7-19ca-4b51-8232-253522739111` passed all nine PostgreSQL tests in 285.196 seconds, exit 0. Django checks and model drift passed. Both guarded fixture lookups returned works 77 and 78 with exit 0. The expanded assertions cover stale-packet input suppression, readable configuration holds, reviewed-effort display and distinct input revisions. Runtime and test file hashes matched the staged package. The deployed web started without pending migrations and the worker continued its queues.

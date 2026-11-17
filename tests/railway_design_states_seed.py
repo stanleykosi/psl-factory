@@ -75,6 +75,22 @@ def prepare(key, operator):
         with patch.object(planning_helpers, 'setup_case', return_value=(operator, case)):
             planning = planning_helpers.fixture(configured=True, username='state-assistant-draft')
         return {'case': str(case.pk), 'packet': planning['packet'].pk}
+    if key in {'go-live-client-changes','go-live-client-decline','go-live-client-rules','go-live-client-correction'}:
+        from tests import test_delivery
+        from tests.test_go_live_replies import delivered,reply
+        users=get_user_model().objects
+        create_user=users.create_user
+        with (patch.object(test_delivery,'setup_case',return_value=(operator,case)),
+              patch.object(users,'create_user',side_effect=lambda username,**values:create_user(username='state-'+key+'-'+username,**values))):
+            data=delivered(configured=key!='go-live-client-rules')
+            response=reply(data,'declined' if key in {'go-live-client-decline','go-live-client-correction'} else 'changes_requested')
+            corrected=data.evidence('incident_reporting','Synthetic revised incident plan includes the requested fallback contact, sample-contact@example.invalid.')
+            fix=data.evidence('resolution','Synthetic fix and regression evidence for the declined release.')
+            correction=data.evidence('go_live_response_correction','Synthetic evidence correcting a report reference or reviewing the fixed issue.')
+            factory.run_until_wait(data.work.pk)
+        return {'case':str(case.pk),'work':data.work.pk,'reply':response.pk,'version':data.version.pk,
+                'receipt':data.receipt.pk,'corrected_incident':corrected.pk,'fix':fix.pk,
+                'correction':correction.pk,'decision':data.e['policy_decision'].pk}
     if key in {'planning-departments','planning-department-rules'}:
         from tests.test_planning_department_inputs import enhanced
         users=get_user_model().objects
@@ -305,6 +321,8 @@ elif workflow == 'planning-commercial-issue-states':
                 'commercial-review','commercial-information','issue-followup','issue-owner-access','issue-verified')
 elif workflow == 'department-input-states':
     fixtures = ('planning-departments','planning-department-rules')
+elif workflow == 'go-live-response-states':
+    fixtures = ('go-live-client-changes','go-live-client-decline','go-live-client-rules','go-live-client-correction')
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

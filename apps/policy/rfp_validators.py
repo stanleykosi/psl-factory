@@ -7,6 +7,9 @@ ROLE_LIST={'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':ROLES}
 
 
 def validate_reference(component,target,case,runtime=False):
+    if target.schema_ref == 'schema:psl/go-live-client-replies/v1':
+        from .go_live_reply_validators import validate_reference as validate_go_live_replies
+        return validate_go_live_replies(target,case)
     if target.schema_ref == 'schema:psl/rfp-followup-route/v1':
         return validate_followup(target,case,runtime)
     c=typed(target,'schema:psl/rfp-submission-route/v1',{'type':'object','properties':{

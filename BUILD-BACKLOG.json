@@ -1,5 +1,16 @@
 {
   "design_consolidation_20261116": {
+    "go_live_client_replies_20261117": {
+      "status": "verification_in_progress",
+      "environment": "design-acceptance",
+      "package": 67,
+      "deployment": "48b95351-5e77-48a6-a07e-9aaaf6d122ad",
+      "prior_run": {"deployment": "2fbb35b0-4ace-4851-9adf-a56bf98d065f", "passed": 8, "errors": 1, "seconds": 321.212, "result": "fixture_reference_error_corrected"},
+      "implemented": ["Evidenced client replies and immutable corrections", "Freshly reviewed report successors", "Native issue and exact fix handoff to a distinct candidate", "Native release readiness provenance guard", "Typed draft-only rules and human forms"],
+      "pending": ["Corrected PostgreSQL run", "Preview migration and guarded fixtures", "Exact-package deployment", "In-app browser response and recovery journeys"],
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
     "final_department_interface_20261117": {
       "environment": "design-acceptance",
       "package": 65,

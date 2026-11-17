@@ -55,7 +55,7 @@ class DeliveryFixture:
     def plan(self):
         for kind in PLANNING:self.source(kind,{'requires_ui':False,'client_signoff_required':False} if kind=='ui_applicability' else {})
         decision=decide_planning(self.actor,self.case.pk,self.d.pk,'approve',self.e['plan'].pk,'PMO Lead exact Planning exit',rev(self.case))
-        m=record_meeting(self.actor,self.case.pk,'KICKOFF','kickoff',timezone.now(),'Delivery expectations','Participants aligned with approved plan',[self.actor.pk],[],self.e['requirements'].pk,rev(self.case))
+        m=record_meeting(self.actor,self.case.pk,getattr(self,'kickoff_reference','KICKOFF'),'kickoff',timezone.now(),'Delivery expectations','Participants aligned with approved plan',[self.actor.pk],[],self.e['requirements'].pk,rev(self.case))
         record_progress(self.actor,self.case.pk,self.d.pk,'kickoff',m.evidence_id,'Actual kickoff after plan approval',rev(self.case),m.pk)
         return decision
 
@@ -66,8 +66,9 @@ class DeliveryFixture:
 
     def ready(self):
         self.plan();self.gates(UPSTREAM_GATES)
-        record_release_request(self.actor,self.case.pk,self.d.pk,'GLPI-001',self.e['requirements'].pk,'Actual externally raised request',rev(self.case))
-        self.gates(GLPI_GATES,'GLPI-001')
+        request_reference=getattr(self,'release_request_reference','GLPI-001')
+        record_release_request(self.actor,self.case.pk,self.d.pk,request_reference,self.e['requirements'].pk,'Actual externally raised request',rev(self.case))
+        self.gates(GLPI_GATES,request_reference)
         return prepare_readiness(self.actor,self.case.pk,self.d.pk,rev(self.case))
 
     def release(self):

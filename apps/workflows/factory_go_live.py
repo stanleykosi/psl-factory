@@ -137,6 +137,12 @@ def snapshot(work,value,reader=None):
     latest={KIND:work.source_head}
     for e in public_evidence(Evidence.objects.filter(case=work.case,pk__in=set(current['source_evidence_ids'])|set(chosen))).order_by('pk'):
         if e.kind not in latest or e.version>latest[e.kind].version:latest[e.kind]=e
+    from apps.pmo.go_live_replies import projection as reply_projection
+    replies=reply_projection(actor,d)
+    for item in replies['items']:
+        if item['source_available']:
+            e=public_evidence(Evidence.objects.filter(case=work.case,pk=item['evidence_id'])).first()
+            if e:latest['client_reply:'+str(item['id'])]=e
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
     stale+=['input:'+e.kind for e in chosen.values() if e.created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
@@ -151,7 +157,8 @@ def snapshot(work,value,reader=None):
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],
         'native':current,'checks':checks,'document':v.pk if v else None,'review':review,'publication':p.pk if p else None,
         'jobs':[(j.pk,j.status) for j in jobs],'receipts':list(PublicationReceipt.objects.filter(publication=p).order_by('pk').values_list('pk','payload_sha256')) if p else [],
-        'acceptance':accepted.pk if accepted else None,'pm_owners':[u.pk for u in attestation_owners(work,d)]}
+        'acceptance':accepted.pk if accepted else None,'pm_owners':[u.pk for u in attestation_owners(work,d)],
+        'client_responses':replies['items']}
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],jobs
 
@@ -192,8 +199,12 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     d,data,_=source(work,work.execution_actor);kind=choice['activity']
     if kind=='ACT04':
         report=LocalDeliveryAdapter().read_go_live(d,selected(data),data['inputs']['template_id'])
+        from apps.pmo.go_live_replies import projection as reply_projection
+        replies=reply_projection(work.execution_actor,d)['items']
         return {'head':work.source_head_id,'dossier':d.pk,'source_refs':sorted(e.pk for e in latest.values()),
-            'checks':report['checks'],'observed_at':report['as_of'],'sign_off_inferred':False}
+            'checks':report['checks'],'observed_at':report['as_of'],'sign_off_inferred':False,
+            'client_response_refs':[{'reply':row['id'],'outcome':row['outcome'],'evidence':row['evidence_id']} for row in replies],
+            'client_requests':[{'reply':row['id'],'text':row['note']} for row in replies if row['source_available']]}
     if kind=='ACT10':
         v=document(work)
         if not v:principal(work,value,'preparer_id')
@@ -202,7 +213,11 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         return {'head':work.source_head_id,'current_authority_checked':True}
     if kind=='ACT09':
         prerequisites(d,data);user=principal(work,value,'preparer_id');v=document(work)
-        if not v:v=draft_delivery_document(user,case.pk,d.pk,'go_live',data['inputs']['template_id'],selected(data),case.revision)
+        if not v:
+            previous_id=Attempt.objects.filter(activity__work=work,phase='observed',result__has_key='document_version').order_by('-pk').values_list('result__document_version',flat=True).first()
+            previous=DeliveryDocumentBinding.objects.select_related('version__document').filter(version_id=previous_id,dossier=d,purpose='go_live').first()
+            if not previous or previous.version.document.current_id!=previous_id:previous_id=None
+            v=draft_delivery_document(user,case.pk,d.pk,'go_live',data['inputs']['template_id'],selected(data),case.revision,previous_version_id=previous_id)
         task=None;waiting=None
         if not HumanTask.objects.filter(version=v).exists():
             from apps.documents.controlled import request_review
@@ -302,6 +317,72 @@ def correct(actor,work_id,expected,case_expected,inputs,reason):
         else:raise ValidationError('This document and its publication contract remain current; provide corrected evidence')
     old=w.source_head_id;w.source_head=capture(actor,case,d,inputs,'factory.go_live_source');w.status='ready';w.finding='';w.revision+=1;w.save()
     event(actor,case,'factory.go_live_corrected',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
+
+
+@transaction.atomic
+def client_response_action(actor,work_id,expected,case_expected,action,data):
+    from .factory import access
+    from apps.pmo import go_live_replies
+    from apps.pmo.go_live_reply_forms import panels
+    w=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
+    access(actor,w.case,'factory.read',DEFINITION)
+    if w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():
+        raise ValidationError('The go-live work changed. Review the current report and client response.')
+    state=projection(actor,w)
+    available=panels(actor,w,state,data,action)
+    if action=='client_reply':
+        choices=available['corrections'] if data.get('outcome')=='withdrawn' else available['capture']
+        form=next((row['form'] for row in choices if str(row['form']['receipt_id'].value())==data.get('receipt_id')),None)
+    elif action in ['client_decline_issue','client_decline_handoff','client_decline_candidate']:
+        key={'client_decline_issue':'problems','client_decline_candidate':'candidates','client_decline_handoff':'remediation'}[action]
+        choices=available[key]
+        form=next((row['form'] for row in choices if str(row['reply'].pk)==data.get('reply_id')),None)
+    else:
+        form=available['rules'] if action=='client_reply_rules' else None
+    if form is None:raise PermissionDenied('This response action requires current project authority and its configured role.')
+    if not form.is_valid():raise ValidationError([message for messages in form.errors.values() for message in messages])
+    values=form.cleaned_data
+    if action=='client_reply':
+        result=go_live_replies.record(actor,w.case_id,w.request['dossier'],expected=case_expected,**values)
+    elif action=='client_decline_issue':
+        values['owner_id']=values['owner_id'].pk if values['owner_id'] else None
+        values['existing_issue_id']=values['existing_issue_id'].pk if values['existing_issue_id'] else None
+        result=go_live_replies.log_problem(actor,w.case_id,expected=case_expected,**values)
+    elif action=='client_decline_handoff':
+        values['destination_id']=values['destination_id'].pk
+        result=go_live_replies.remediate(actor,w.case_id,expected=case_expected,**values)
+    elif action=='client_decline_candidate':
+        result=go_live_replies.create_candidate(actor,w.case_id,expected=case_expected,**values)
+    else:
+        case=lock_case(actor,w.case_id,'policy.configure',case_expected)
+        result=form.save(actor,case)
+    w.revision+=1
+    if w.status=='waiting':w.status='ready';w.finding=''
+    w.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(w.pk)
+    event(actor,w.case,'factory.go_live_response_action',work_id=w.pk,operation=action,result_id=result.pk)
+    return result
+
+
+@transaction.atomic
+def prepare_client_revision(actor,work_id,expected,case_expected,inputs,reason):
+    from apps.pmo import go_live_replies
+    from .factory_progress import set_progress
+    w=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
+    d,_,_=source(w,actor,current=False)
+    version=document(w)
+    rows=go_live_replies.current_heads(d)
+    if not version or not any(row.outcome=='changes_requested' and row.receipt.publication.version_id==version.pk for row in rows):
+        raise ValidationError('Select the client request for this current report. Already corrected work can continue from its next action.')
+    input_rows(w.case,inputs)
+    go_live_replies.effect(d,{key:inputs[key] for key in KINDS})
+    correct(actor,w.pk,expected,case_expected,inputs,reason)
+    w.refresh_from_db()
+    set_progress(actor,w.pk,w.revision,True)
+    event(actor,w.case,'factory.go_live_successor_requested',work_id=w.pk,previous_version=version.pk,
+          response_ids=[row.pk for row in rows if row.outcome=='changes_requested'],approval_inferred=False)
+    return w
 
 def reconcile(actor,work_id,expected,adapter=None):
     from .factory import access,cancellation_status
@@ -431,7 +512,15 @@ def projection(actor,work):
         except (ValidationError,PermissionDenied):pass
     accepted=previous
     if accepted and accepted.data['receipt_id'] not in [r.pk for r in receipts]:accepted=None
+    from apps.pmo.go_live_replies import projection as reply_projection
+    responses=reply_projection(actor,d)
+    for item in responses['items']:
+        item['successor_number']=v.number if v and v.pk!=item['version_id'] and v.number>item['version_number'] else None
+    can_prepare_reply=bool(can_correct and v and responses['rules'] and
+        responses['rules']['changes_handling']=='reviewed_document_successor' and any(
+        item['outcome']=='changes_requested' and item['version_id']==v.pk for item in responses['items']))
     return {'dossier':d,'data':data,'report':LocalDeliveryAdapter().read_go_live(d,selected(data),data['inputs']['template_id']),
+        'client_responses':responses,'can_prepare_reply_successor':can_prepare_reply,
         'document':v,'publication':p,'receipts':receipts,'delivery_complete':delivery_complete,'jobs':jobs,'acceptance':accepted,'previous_acceptance':previous,
         'legacy_unbound':bool(previous and not previous.data.get('attestation')),'finding':issue,'readiness_changed':changed,'intake_current':intake_current,'pending_review':pending_review,
         'review_names':[u.get_full_name() or u.username for u in owners(work.case,'PMO Lead','document.review_controlled')],
@@ -443,5 +532,5 @@ def projection(actor,work):
 def attempt_projection(attempt):
     allowed={'head','dossier','checks','observed_at','document_version','native_review_task','preparer','publication','publisher','verified','verification_scope',
         'receipt_ids','acceptance','pm_signature','client_signature','sign_off_inferred','deployment_authorized','financial_release_granted',
-        'external_authenticity_verified','current_authority_checked','waiting'}
+        'external_authenticity_verified','current_authority_checked','waiting','client_response_refs'}
     return {k:v for k,v in attempt.result.items() if k in allowed}

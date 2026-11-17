@@ -18,8 +18,12 @@ def go_live_inputs(d,data):
     outcome=valid_release(d)
     kinds={'checklist':'deployment_checklist','incident_reporting':'incident_reporting','rollback':'rollback_plan'}
     if set(data)!=set(kinds):raise ValidationError('Exact deployment checklist, incident reporting and rollback source evidence required')
-    return {'outcome_id':outcome.pk,'readiness_id':outcome.parent_id,
+    result={'outcome_id':outcome.pk,'readiness_id':outcome.parent_id,
         'evidence':{k:subject(d.case,data[k],kind).pk for k,kind in kinds.items()}}
+    from .go_live_replies import effect
+    replies=effect(d,data)
+    if replies is not None:result['client_responses']=replies
+    return result
 
 def go_live_requirements(d,data=None,template_id=None):
     """Independent native facts for useful preparation; no signature or acceptance inference."""
@@ -48,6 +52,12 @@ def go_live_requirements(d,data=None,template_id=None):
     check('template','Client report template',template,'Choose the controlled client report template',template_id is None)
     for key,title in [('checklist','Deployment checklist'),('incident_reporting','Incident reporting'),('rollback','Rollback plan')]:
         check(key,title,lambda key=key:subject(d.case,data[key],kinds[key]),'Provide the actual '+title.lower()+' evidence',data[key] is None)
+    if d.client_replies.exists():
+        from .go_live_replies import effect
+        def replies():
+            effect(d,data)
+            return d
+        check('client_response','Client response and revised sources',replies,'Review client changes, declines or recorded corrections')
     return {'as_of':timezone.now().isoformat(),'checks':checks,'ready_to_prepare':all(c['status']=='current' for c in checks),
         'selected':data,'template_id':template_id,'sign_off_inferred':False,'deployment_authorized':False,'financial_release_granted':False}
 

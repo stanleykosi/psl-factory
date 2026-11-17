@@ -46,14 +46,29 @@ def record(actor,case,d,kind,evidence,data,snapshot,parent=None):
 
 
 @transaction.atomic
-def open_dossier(actor,case_id,candidate_id,evidence_id,note,expected):
+def open_dossier(actor,case_id,candidate_id,evidence_id,note,expected,*,declined_reply_id=None):
     case=lock_case(actor,case_id,'delivery.manage',expected);decision_authority(actor,case,'PM');note_required(note)
     candidate=DeliveryCandidate.objects.filter(case=case,pk=candidate_id).first();base=baseline_manifest(case)
     if case.kind!='project' or not candidate or not base:raise ValidationError('Project candidate and prepared plan/cost/SOW baseline required; signature is not a planning prerequisite')
     if DeliveryDossier.objects.filter(candidate=candidate).exists():raise ValidationError('Candidate dossier already exists')
+    origin=None
+    if declined_reply_id is not None:
+        from .models import GoLiveClientReply
+        origin=GoLiveClientReply.objects.filter(pk=declined_reply_id,dossier__case=case,outcome='declined').exclude(dossier__candidate=candidate).first()
+        if not origin:raise ValidationError('Select the source decline for this distinct candidate.')
+        from .go_live_replies import rules,current_authority,head
+        _,handling=rules(case)
+        if handling['decline_handling']!='new_release_candidate' or head(origin).pk!=origin.pk:
+            raise ValidationError('Review current decline handling before opening this candidate.')
+        current_authority(origin,handling)
     d=DeliveryDossier.objects.create(case=case,candidate=candidate,baseline={k:v for k,v in base.items() if k!='signed_id'},
-        evidence=subject(case,evidence_id),actor=actor)
-    event(actor,case,'delivery.opened',dossier=d.pk,note=note);bump(case);return d
+        evidence=subject(case,evidence_id),actor=actor,declined_reply=origin)
+    event(actor,case,'delivery.opened',dossier=d.pk,note=note)
+    if origin:
+        event(actor,case,'delivery.client_decline_candidate',reply_id=origin.pk,candidate_id=candidate.pk,
+              dossier_id=d.pk,deployment_authorized=False)
+    bump(case)
+    return d
 
 
 def validate_source_payload(kind,payload):
@@ -269,6 +284,8 @@ def record_release_request(actor,case_id,dossier_id,external_ref,evidence_id,not
 
 @observed_fact
 def readiness_inputs(d):
+    from .go_live_replies import release_handoff
+    handoff=release_handoff(d)
     from .signature_exemptions import assert_current_baseline_assurance
     assurance = assert_current_baseline_assurance(d.case)
     request=latest(d,'glpi_request');require(request.actor,d.case,'delivery.release_request');decision_authority(request.actor,d.case,'PM')
@@ -276,6 +293,7 @@ def readiness_inputs(d):
     if request.snapshot!=source:raise ValidationError('Deployment request prerequisites changed; reconcile the exact source request')
     result = {'upstream':source,'request_id':request.pk,'signed_id':baseline_manifest(d.case)['signed_id'],
         'glpi':verified_gates(d,GLPI_GATES,request.data['external_ref']), 'deployment_authorized':False,'financial_controls':'independent'}
+    if handoff is not None:result['client_decline_handoff']=handoff
     if assurance['kind'] == 'internal_signature_exemption':
         result.update(signature_requirement='not_applicable', signature_exemption_id=assurance['id'])
     return result

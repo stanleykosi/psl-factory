@@ -68,7 +68,7 @@ SCREENS = {
     },
     'delivery-go-live/v1': {
         'decision': ('review',),
-        'response': ('accept',),
+        'response': ('accept','client_reply','client_decline_issue','client_decline_handoff','client_decline_candidate','client_reply_rules','prepare_client_revision'),
         'recovery': ('reconcile', 'operate_delivery', 'settle_stop'),
     },
     'delivery-release/v1': {
