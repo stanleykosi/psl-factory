@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-23",
   "outcome": "The minutes line: the PM confirms Tola's suggested decisions and actions, and client minutes go to the PMO Lead for review (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-LINE-MINUTES"
   ],
@@ -133,13 +133,11 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "delivery technical review",
-      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
-      "evidence_refs": [
-        "delivery/features/F-23/round-3/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
       "status": "pending",
@@ -165,31 +163,25 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "delivery UX review",
-      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
-      "evidence_refs": [
-        "delivery/features/F-23/round-3/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "passed",
-      "reviewer": "reviewer-ui",
-      "authority": "delivery UI review",
-      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
-      "evidence_refs": [
-        "delivery/features/F-23/round-3/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "security": {
-      "status": "passed",
-      "reviewer": "reviewer-security",
-      "authority": "delivery security review",
-      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
-      "evidence_refs": [
-        "delivery/features/F-23/round-3/review-security.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -1157,6 +1149,98 @@
           "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
         }
       ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**The decision page hides the uncertain send (AC 19).**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:35:17Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**A Finance sentence on a minutes decision.** After any minutes approve (W-2304, W-2305), the desktop done page shows \"Paid is tracked separately by Finance and is not part of this decision.\" `DoneView` adds it for every approve whose `next_step` lacks it (`DecideStates.tsx:413`). It is irrelevant to client minutes and confusing next to \"Minutes v1 is approved\". Fix: show the Paid line only when the data says money is involved, e.g. a field or the item's line, not on every approve.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:35:17Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-3",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend (fixtures)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The done page contradicts itself.** `W-2304.approve.json` and `W-2305.approve.json` still have stations `approved: not_yet` and `reviewed: current`. So the done page reads \"Minutes v1 is approved\" above \"APPROVED \u2014\" and \"REVIEWED In progress\". Fix: set `reviewed` earned and `approved` earned (with a time) in the two approve sidecars.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:35:17Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-4",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend (tests)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**AC 10 wording vs behaviour.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:35:17Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1284,6 +1368,72 @@
           "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
           "evidence_refs": [
             "delivery/features/F-23/round-2/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-23/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-security.md"
           ]
         }
       }
@@ -1841,7 +1991,7 @@
     }
   },
   "created_at": "2026-11-16T03:30:17Z",
-  "round": 3,
+  "round": 4,
   "round_limit": 5,
   "history": [
     {
@@ -1923,6 +2073,22 @@
       "round": 3,
       "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
       "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T10:35:18Z",
+      "round": 3,
+      "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T10:35:18Z",
+      "round": 4,
+      "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "reason": null
     }
   ],
   "routing": {
@@ -1939,10 +2105,10 @@
     ]
   },
   "gate": {
-    "round": 3,
-    "attempts": 2,
-    "verdict": "PASS",
-    "commit": "a3f43067bf20e8474e3a6bb54d273597154d6f28"
+    "round": 4,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
