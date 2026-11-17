@@ -93,7 +93,8 @@ def build(case, records, baseline, cover, invoices, figure, budget):
         if cover and prep.coverage_id == cover.pk and prep.kind in STAGES:
             grouped.setdefault(prep.kind, []).append(invoice)
 
-    def add(key, label, amount, currency, completion, attached, sources, *, due_date=None, contract_stage=False):
+    def add(key, label, amount, currency, completion, attached, sources, *, due_date=None, contract_stage=False,
+            missing_reason=None):
         nonlocal selected
         lines = []
         for invoice in attached:
@@ -107,12 +108,13 @@ def build(case, records, baseline, cover, invoices, figure, budget):
                              'url': reverse('finance_corrections', args=[case.pk])} for item in corrections_used]
                 sources += [{'label': f'Applied receipt {item.lot.receipt.transaction_ref} · {invoice.currency} {item.amount:f}',
                              'url': finance_url} for item in allocations]
+        has_figure = amount is not None or bool(sources)
         item = {'label': label, 'amount': amount, 'currency': currency, 'completion': completion, 'invoices': lines,
                 'due_date': due_date, 'contract_stage': contract_stage,
-                'url': money_url + '?' + urlencode({'figure': key}) if amount is not None else None,
-                'sources': sources}
+                'url': money_url + '?' + urlencode({'figure': key}) if has_figure else None,
+                'sources': sources, 'missing_reason': missing_reason}
         rows.append(item)
-        if key == figure and amount is not None:
+        if key == figure and has_figure:
             selected = item
 
     if cover:
@@ -122,10 +124,15 @@ def build(case, records, baseline, cover, invoices, figure, budget):
             if completion and not public_evidence(case.evidence.filter(pk=completion.evidence_id)).exists():
                 completion = None
             record = records.get(stage, {})
-            add(stage, label, record.get('amount'), cover.currency, completion, attached,
-                [{'label': f'Signed agreement · recorded signature {baseline.signed_id}', 'url': contract_url},
-                 {'label': 'Reviewed contract stage terms', 'url': reverse('finance_billing', args=[case.pk])}] if record else [],
-                due_date=record.get('due_date'), contract_stage=True)
+            sources = [{'label': f'Signed agreement · recorded signature {baseline.signed_id}', 'url': contract_url}]
+            if record:
+                sources.append({'label': 'Reviewed contract stage terms', 'url': reverse('finance_billing', args=[case.pk])})
+            amount = record.get('amount')
+            reason = None
+            if amount is None:
+                reason = 'The reviewed stage terms do not state an amount.' if record else 'There are no current reviewed terms for this stage.'
+            add(stage, label, amount, cover.currency, completion, attached, sources,
+                due_date=record.get('due_date'), contract_stage=True, missing_reason=reason)
 
     grouped_ids = {item.pk for values in grouped.values() for item in values}
     for invoice in invoices:
