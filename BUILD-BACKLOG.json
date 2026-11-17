@@ -1,5 +1,21 @@
 {
   "design_consolidation_20261116": {
+    "account_delivery_and_reviewed_recovery_20261117": {
+      "runtime_source": "20518c5a",
+      "environment": "design-acceptance",
+      "web": "07d0af4b",
+      "worker": "35128e3e",
+      "states_with_browser_observations": 95,
+      "states_without_direct_browser_observation": 167,
+      "all_states_accepted": false,
+      "evidence": "docs/design/screen-state-acceptance.md",
+      "postgresql_account_delivery": {"deployment": "5a39e685", "passed": 12, "seconds": 565.390},
+      "postgresql_recovery_followup": {"deployment": "d8ce0847", "passed": 3, "seconds": 1337.667},
+      "completed": ["Native password recovery with expiring recipient-bound link and protected confirmation", "Versioned contact relay and synthetic email and WhatsApp receipts", "Closure missing evidence, returned report correction, retained decisions and reuse of the original stopped work", "Focused Finance source-owner recheck and fresh review", "Separate escalation and leadership approvals with recipient receipts"],
+      "current": ["Finish exact browser checks and partial results by state"],
+      "next": ["Cover release returns and other invoice and Finance approval variants", "Exercise independent operators and the remaining layout states", "Continue with line-specific Start Work, role and recovery cases in the 262-state ledger"],
+      "owner_policy": "Deferred"
+    },
     "state_acceptance_followup_20261117": {
       "runtime_source": "883992dd",
       "environment": "design-acceptance",

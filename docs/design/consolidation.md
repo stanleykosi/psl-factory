@@ -61,9 +61,9 @@ The implementation uses required proofs and stoppable exceptions along each work
 | SCR-12 Report drill-down | `project_audience`, `leadership_report` | Safe drill-down using each source’s reporting grants |
 | SCR-13 Setup | `policy`, `policy_scopes`, `factory_configuration`, `factory_responsibility` | Consolidate configuration menus while keeping each scoped validator |
 | SCR-14 Verified outputs | `home?queue=verified`, `factory_detail` | Show verified items and current evidence without treating sent as verified |
-| SCR-15 Alerts | Scoped unread bell preview, in-app alert list, personal read state and email/WhatsApp preferences | Browser acceptance of bell interaction and approved channel delivery with receipts |
+| SCR-15 Alerts | Scoped unread bell preview, in-app alert history, personal read state, opt-in email and WhatsApp alerts, and exact delivery receipts | Operational relay and approved channel destinations. Both sample channel receipts were verified in Codex. |
 | SCR-16 Record a response | Dedicated bid, Emergency and go-live response views, plus exact invoice and supported workflow receipt recovery | Remaining source-specific proof fields and browser acceptance of each recovery state |
-| SCR-17 Sign in | `login`, `logout`, Django sessions | Match sign-in and account setup while enforcing redirect safety |
+| SCR-17 Sign in | Native sign-in, sessions and one-use account recovery with delivery receipt and expiry | Fresh sign-in and account setup variants in the browser, and operational recovery email |
 | SCR-18 Restricted payroll matching | `design_payroll_matching`, `payroll_inspect` and exact HR-authorised receipts | Match the board's restricted HR and Finance table presentations |
 | SCR-19 Milestone completion | `case`, `delivery_progress`; native PMO completion and Finance handoff | Proof and exact version presentation |
 | SCR-20 Payments and follow-up | `finance_settlement`, `finance_receipt_followup` | Combine permitted views without conflating invoice, receipt and allocation |
@@ -95,7 +95,7 @@ The implementation uses required proofs and stoppable exceptions along each work
 | SCR-46 Post-release support | `delivery`, `factory_detail` for `delivery-hypercare/v1` | Configured stability criteria and actual observations |
 | SCR-47 Archive | `delivery`, `factory_detail` for `delivery-archive/v1` | Controlled inventory and unresolved archive effects |
 | SCR-48 Support handover | `delivery`, `factory_detail` for `delivery-handover/v1` | Recipient gaps and verified receipt |
-| SCR-49 Closure | `closure_preparation`, focused decision and recovery for `delivery-closure/v1`, exact Finance confirmation and durable worker finalisation | Operational Head of PMO and finaliser authority, and further return variants |
+| SCR-49 Closure | `closure_preparation`, exact Finance confirmation, missing-evidence and returned views, fresh review, retained decisions and durable worker finalisation | Operational Head of PMO and finaliser authority, and separate-reviewer and device acceptance |
 | SCR-50 Emergency change | `emergencies`, `authority_recovery`, `factory_detail` for `pmo-emergency/v1` | Preauthorization, refusal, actual work and retrospective receipt |
 | SCR-51 Escalation | `escalations`, exact request decision, document review, controlled delivery and receipt recovery for `pmo-escalation/v1` | Operational clocks, recipients and remaining rework variants |
 | SCR-52 Leadership report | `leadership_report`, selected source citations, exact review, delivery and original receipt lookup | Actual audience, authority and calendar rules |

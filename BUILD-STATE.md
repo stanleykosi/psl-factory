@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Account delivery and reviewed recovery · 17 November 2026
+
+Account recovery now sends a one-use 30-minute link through a durable delivery job. Personal email and WhatsApp alerts share the same original-effect verification. The isolated Railway worker confirmed both sample channel receipts. The browser verified recovery through the private sample link, its invalid-code state and phone layouts. PostgreSQL verified the credential change and subsequent sign-in. Live channel access and authorised account addresses remain deferred.
+
+Missing closure evidence, corrections, original closure restart and earlier decisions are connected to the existing native workflow. A returned report must receive a corrected source and fresh approval. The accounting recovery page now offers the source-owned recheck with the original inputs preselected. The browser also exercised escalation authority, separate document approval and recipient receipt, an exact leadership review through delivery, a milestone handoff, cash verification and a fresh attached reminder through the test inbox. Current browser counts are 95 observed states including partial checks, with 167 awaiting a direct check. See the [state ledger](docs/design/screen-state-acceptance.md) for per-state evidence and open branches.
+
 ## Connected state acceptance · 17 November 2026
 
 The isolated Railway build connects the Assistant draft card to saved drafts and exact work items, shows signed stage terms and unknowns in Money, and uses structured signer forms for exact go-live acceptance. My Work now has an actor-scoped Started by Me view, workflow filters and bounded current-state checks. It exposes records that need more checking without including them in the confirmed view. Go-live and accounting recovery reuse read-only evidence within the request. Minutes and weekly reports show exact per-recipient receipts. The publication worker processes each original at most once in a batch.
