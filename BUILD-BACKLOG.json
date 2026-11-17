@@ -1,5 +1,21 @@
 {
   "design_consolidation_20261116": {
+    "restricted_finance_reviews_20261117": {
+      "runtime_source": "0be42e66",
+      "design_main_observed": "16568bf5",
+      "environment": "design-acceptance",
+      "web": "927aab0e",
+      "worker": "3ca41f0e",
+      "states_with_browser_observations": 138,
+      "states_without_direct_browser_observation": 124,
+      "all_states_accepted": false,
+      "evidence": "docs/design/screen-state-acceptance.md",
+      "postgresql_focused_finance": {"deployment": "773d6d11", "passed": 7, "seconds": 791.321},
+      "completed": ["Business-unit source and result decisions, disclosure hold, publication and recipient receipt", "Ledger outcome and proof agreement, duplicate refusal, same-lineage correction and independent rejection", "Payroll staged reviews, assigned-matcher receipt, controlled publication and recipient verification", "Independent payroll withdrawal and corrected reviewed successor with retained receipts"],
+      "current": ["Finish partial acceptance in the 262-state ledger and verify remaining board variants"],
+      "next": ["Reconcile the latest Money and Delegation design changes against their server-rendered views and exact sources", "Exercise RFP outcome states and remaining project variants", "Complete remaining correction, phone and separate-recipient scenarios"],
+      "owner_policy": "Deferred"
+    },
     "release_and_finance_review_20261117": {
       "runtime_source": "838cd2e6",
       "environment": "design-acceptance",

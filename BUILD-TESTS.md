@@ -1,5 +1,17 @@
 # Actual test execution ledger
 
+## Restricted Finance decisions and recovery · 17 November 2026
+
+All runs used Railway `design-acceptance` and named synthetic data. The [browser ledger](docs/design/screen-state-acceptance.md) records the exact work and receipts for the 22 covered variants. Payroll, business-unit and incumbent evidence checks used the actual native services, synthetic role configuration and supplied QuickBooks evidence.
+
+| Run or preview | Recorded result |
+| --- | --- |
+| `95788e78` | Django and migration drift checks passed. The first full workflow test was still running when superseded for diagnostics. No suite verdict. |
+| `a678ff21` | Created business-unit browser fixtures 41 and 42, then replaced the slow setup with the optimized source checks. PostgreSQL tests for this deployment did not start. |
+| `f11e48db`, `85599295`, `d937e9c2` | Browser reproduced a decision timeout during repeated payroll validation, a non-transactional lock introduced during the first optimization, a preview blocked by the worker’s case lock, and a stale worker revision preventing receipt. Later previews verified the read-only refactor, the exact approval and the recipient’s write while the worker was active. |
+| `773d6d11` | All seven tests passed in 791.321 seconds with exit 0. Tested restricted staff totals and receipt, small-group hold, separate payroll approvals and receipts, missing assigned-matcher receipt and recomputation, payroll withdrawal through verified successor, ledger duplicate refusal and same-lineage correction, and rejection requiring fresh proof. The diagnostic timer emitted slow-path stack samples before the successful outcome. |
+| `fa70f77f` | Django and migration drift checks passed on the exact deployed package. Three focused PostgreSQL regressions started for receipt concurrency, background wake and continued ledger rejection protection. Final verdict pending. |
+
 ## Release and Finance returns, actuals and original receipts · 17 November 2026
 
 All runs below used Django and PostgreSQL in Railway `design-acceptance`, with named synthetic work. The test deploys use separate PostgreSQL test databases. The browser used the trial operator and the isolated worker. No live provider, financial posting, operating approver or real recipient was exercised.

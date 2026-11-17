@@ -1,5 +1,13 @@
 # PSL operations factory build state
 
+## Restricted Finance decisions and recovery · 17 November 2026
+
+The [262-state ledger](docs/design/screen-state-acceptance.md) now has 138 direct browser observations, including scoped partial checks. This increment added evidence for all 22 registered business-unit, ledger and payroll variants. Another 124 states await a first browser check. The ledger records the open branch, role and phone checks separately.
+
+Business-unit allocation has an exact source and rule review, calculated total review, controlled publication, small-group protection and recipient-owned receipt. Supplied QuickBooks evidence is bound to the selected observation. A duplicate offers correction against its earlier lineage, and rejected proof cannot be replayed. Payroll now separates provider, combine, staff match and totals reviews. A missing matching receipt holds the calculation. A stopped publication can be withdrawn by an independent reviewer and rebuilt from corrected sources, while original receipts remain in history.
+
+The isolated worker rechecks enrolled work after authorised decisions or receipts. Human receipts are pinned to the exact published version, independently of routine worker revision changes. Private Finance review still checks source owners, payroll authority and recipient access. The preview uses supplied QuickBooks evidence and synthetic roles. Real authorities, sources and audiences remain deferred. Next map the remaining RFP outcome and Project Money branches and close the exceptions recorded in the ledger.
+
 ## Release and Finance returns, actuals and original receipts · 17 November 2026
 
 Release returns now require a source change or the exact linked issue fix before a fresh Planning decision. The isolated preview verified the fix and release readiness and showed the missing-approver hold separately. Invoice recovery now checks the original reservation only. Income schedules and asset schedules use separate native review, correction and verification. Income schedules support approval withdrawal, restoration and an exact handoff to downstream Finance adjustment review.

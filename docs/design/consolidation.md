@@ -6,7 +6,7 @@ The first increment uses one server-rendered shell for native screens, including
 
 The newer GitHub design expands the registered screen IDs into [262 distinct non-concept states](screen-state-inventory.csv). The [current state acceptance ledger](screen-state-acceptance.md) records actual browser outcomes for the Assistant, reports, minutes, project tabs, Money, delegation, release returns and Finance review, including cash forecasts. Remaining states still need their own acceptance.
 
-The isolated Railway preview has 116 directly observed states. It includes the Start Work drawer, exact go-live signatures, minutes and standalone document rework, signed Money figures, the mobile delegation repair, release remedies, corrected Finance schedules and forecast actuals and recovery. The state ledger identifies where only a form, partial branch or retained outcome was checked. Another 146 states await first observation.
+The isolated Railway preview has 138 directly observed states. It includes the Start Work drawer, exact go-live signatures, minutes and standalone document rework, signed Money figures, mobile delegation, release remedies, corrected schedules, cash forecasts, business-unit totals, ledger corrections and restricted payroll. The ledger marks partial branches. Another 124 states await first observation. GitHub `main` at `16568bf5` adds the F-26 Money and F-27 Delegation implementations and review material. The 262 board IDs are unchanged. The new Money and Delegation behavior still needs comparison with the native server-rendered views.
 
 ## Railway browser walkthrough
 
