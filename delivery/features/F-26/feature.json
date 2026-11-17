@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-26",
   "outcome": "A project's Money tab: each contract stage's amount, invoice and paid state as the backend sends them, and where each amount comes from (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M3-REPORT"
   ],
@@ -118,11 +118,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -483,15 +485,24 @@
         "delivery/features/F-26/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-17T09:33:18Z",
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T10:44:24Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "resolved by D-108 wording/waiver text"
         }
-      ]
+      ],
+      "risk_authority": "design engineer D-108"
     },
     {
       "id": "TECH-2-2",
@@ -506,15 +517,24 @@
         "delivery/features/F-26/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-17T09:33:18Z",
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T10:44:23Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "double Try again on phone is repetition only; follow-up"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing"
     },
     {
       "id": "UI-2-1",
@@ -561,15 +581,24 @@
         "delivery/features/F-26/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T09:33:18Z",
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T10:44:24Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "resolved by D-108 wording/waiver text"
         }
-      ]
+      ],
+      "risk_authority": "design engineer D-108"
     },
     {
       "id": "UI-2-3",
@@ -590,6 +619,52 @@
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`delivery/checks.sh` (gate) | I could not reproduce a whole-suite exit 0. Two full runs failed only on timeouts (10 s hook timeouts in the `*-mock` suites; `waitFor` on \"Loading\u2026\") in files F-26 does not touch, at load averages of 111 to 585 with three features' vitest runs at once. Each failed file passes when re-run, and the builder's run at this head was exit 0 (86 files, 1882 tests). | Fix: run the gate on ac401c09 once the other builds are idle, to confirm exit 0 before merge. No code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:36:33Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`MoneyTab.tsx:343-349` | Confirms TECH-2-2. On a phone, P-0103 `?figure=FIG-0101-S1` shows 2 \"Try again\" buttons: one under the cards and one in the open sheet. Both re-read only E-REPORT. | Fix: as TECH-2-2 (render the inline error only when no sheet is open), or accept.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:36:33Z",
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
         }
       ]
@@ -1010,6 +1085,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-17T09:38:22Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T10:36:33Z",
       "round": 2,
       "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
       "reason": null

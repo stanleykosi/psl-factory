@@ -147,3 +147,32 @@ Screens: SCR-05 default, working, thread, draft-started (`/assistant`, `/assista
 - **Restricted sources** (INV-RESTRICTED): the mock sends a restricted source's label and the frontend drops it, showing only "Restricted". The real API should not send the label at all.
 - **Edit draft** (G-SCR05-2), **mentions echo and milestone/meeting kinds** (G-SCR05-4), **an alert when a working conversation ends** (G-SCR05-7: the page says "You can leave; you'll be alerted"), backend-owned agent copy and status words: see the gap file.
 - **Speech input** stays held by D-SPEECH-INPUT: the microphone is drawn but does nothing.
+
+## Added during F-26: the project Money tab (17 Nov)
+
+Screen: SCR-12 (`/projects/{id}?tab=money`), read-only, on the contract mock (`frontend/mock/money.mjs`; D-PROJECT-TAB-ROWS is still proposed; nothing released). Gap ids G-SCR12-1..4 are in [gaps-a-project-setup.md](backend-handoff/gaps-a-project-setup.md).
+
+- **Source details** (G-SCR12-1): add `version`, `rule_version` and `case_id` to `source_details[]`. Until then the panel shows what is sent and no version line.
+- **Figure context for the assistant** (G-SCR12-2): E-CONVERSATION-NEW needs a figure context. Until then "Ask me about any figure here" is a plain link to `/assistant`.
+- **Rows with no figure** (G-SCR12-3): a row without `figure_id` shows "No source recorded" and its amount is not a link. Please document this case.
+- **`as_of` on E-REPORT figures**: the page shows E-PROJECT-TAB's `as_of`; figures need their own.
+- **`finance_tracks`**: the page reads "Finance tracks" and infers nothing. Please say whether it means "not shown to this person".
+- **Who may read the Money tab**: per record. 403 or 404 for PMO? A 404 must reveal no stage names. Today a refused read shows "You can't see this project's money." (D-108) and no stage or amount.
+- **Optional display fields**: report title and eyebrow (the page writes no title of its own).
+- **"—" versus Unknown**: paid `not_due` shows "—"; an absent `paid` shows "Unknown", so an unknown paid state must be sent as `paid.status: unknown`, never by leaving it out. An absent `invoice`/`invoice_status` shows "—", meaning no invoice yet. Please confirm.
+- **Money rules the page relies on**: amounts as decimal strings (never numbers); no totals are drawn; invoice and paid are separate; a report figure whose value differs from the row shows both with "These figures differ".
+
+## Added during F-27: Setup delegation (17 Nov)
+
+Screen: SCR-13 delegation (`/setup/delegation`), on the contract mock (`frontend/mock/delegations.mjs`). Held: D05 (identity delegation), D-ADMIN-AUTHORITY, D-DELEGATION-VIEW (proposed). Contract mock only, nothing released. Gap ids G-SCR13A-1..6 are in [gaps-a-project-setup.md](backend-handoff/gaps-a-project-setup.md); the items below supersede its older text where they differ.
+
+- **G-SCR13A-1..6** (all proposals, unconfirmed): `from_person_id` and `from_options[]`; `delegate_options[].for_person_id`; end-early; `delegation_id` returned; authority-ceiling enforcement; tab counts.
+- **From semantics**: an absent `from_person_id` means the caller. The page sends it whenever From comes from `from_options[]`, including a single option (F-27 SEC-1-1). The older "optional, defaults to the caller" note and the spec's "two or more choices" rule are superseded.
+- **To pairing**: when `for_person_id` is present, To lists only delegates paired with the From shown; with no From list, only unpaired delegates (SEC-1-2). The backend still decides.
+- **List-level `can_add`**: absent or false means no add control. Today only per-row `can_change` exists.
+- **First delegation**: v7's E-DELEGATION body requires `expected_revision` ≥ 1, but a list's `revision` can be 0. Please allow 0 (the mock does).
+- **422 `fields[]`** with names `from`, `delegate`, `authority`, `starts`, `ends`, `reason`; the page labels them "From", "To", "Authority", "Starts", "Ends", "Reason".
+- **Uncertain add**: on an unconfirmed write the page re-reads the list; if the revision moved it offers only "Start again", so a second press can't duplicate. Please make a replayed PUT with the same body answer 409, as the mock does.
+- **The two board sentences** ("Only people who already hold the same role are listed", "Delegating can't give anyone authority they don't already have") are shown as drawn (D-103). The backend must enforce both.
+- **Mock question** (F-27 TECH-1-1): in the readonly scenario the mock refuses with 422 before its "no `can_add` → 403" check. Which should the real API return?
+- **Open**: project-scoped delegation; what happens to claimed tasks when a delegation ends; optional `delegate_hint`/`note`.

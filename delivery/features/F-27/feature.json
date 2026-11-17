@@ -177,15 +177,24 @@
         "delivery/features/F-27/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-16T19:55:48Z",
           "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T10:44:24Z",
+          "refs": [],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": "mock-only; question in backend handoff (Added during F-27)"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing"
     },
     {
       "id": "TECH-1-2",
