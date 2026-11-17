@@ -98,6 +98,10 @@ type Open = { token: string; step: Step; itemIds?: string[]; items?: { section?:
 const ISSUE_LINE = 'issue_followup';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
 
+/** The lead banner's tone follows the status tone the response sends (never the words); only the issue follow-up reads it (F-30). */
+const bannerTone = (workspace: WorkspaceData): 'warning' | 'success' | 'problem' =>
+  workspace.line_key !== ISSUE_LINE ? (workspace.status?.tone === 'verified' ? 'success' : 'warning') : workspace.status?.tone === 'verified' ? 'success' : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain' ? 'problem' : 'warning';
+
 const scope = (step: Step) => step.applies_to ?? 'workspace';
 const needsForm = (step: Step) => (step.fields?.length ?? 0) > 0 || step.confirm !== undefined;
 const itemName = (section: Section, item: Item) => item.text ?? item.label ?? item.cells?.find((c) => c.text)?.text ?? item.id;
@@ -460,7 +464,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
           {workspace.sections.length === 0 && workspaceSteps.length === 0 && assign === undefined && <p className="ws-empty">{WS_TEXT.empty}</p>}
           {main.map((section) => (
-            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} banner={workspace.status?.tone === 'verified' ? 'success' : 'warning'} />
+            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} banner={bannerTone(workspace)} />
           ))}
           <WorkspaceLinks links={workspaceLinks(workspace)} page={page} />
         </div>

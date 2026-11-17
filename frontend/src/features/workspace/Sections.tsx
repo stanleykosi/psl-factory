@@ -440,7 +440,7 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
 }
 
 /** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default. */
-export function SectionView({ section, level, controls, banner = 'warning' }: { section: Section; level: 2 | 3; controls?: ItemControls; banner?: 'warning' | 'success' }) {
+export function SectionView({ section, level, controls, banner = 'warning' }: { section: Section; level: 2 | 3; controls?: ItemControls; banner?: 'warning' | 'success' | 'problem' }) {
   const headId = useId();
   const noteId = useId();
   const Heading = level === 2 ? 'h2' : 'h3';

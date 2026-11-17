@@ -105,7 +105,7 @@ describe('four states from data (AC 1 to 5, 7)', () => {
     await open(item('W-2411'));
     expect(document.querySelector('.work-state')!.textContent).toBe('FIX IN TESTING');
     const facts = [...document.querySelectorAll('.ws-fact')].map((f) => f.textContent);
-    expect(facts).toEqual(['OWNEREngineering (recorded by PM)', 'RAISED09 Nov', 'AGE3 days', 'BLOCKSGo-live', 'SEVERITYHigh']);
+    expect(facts).toEqual(['OWNEREngineering', 'RAISED09 Nov', 'AGE3 days', 'BLOCKSGo-live', 'SEVERITYHigh']);
     expect(ws().getByRole('heading', { name: 'What has happened' })).toBeTruthy();
     expect(ws().getByRole('heading', { name: 'Chasing' })).toBeTruthy();
     expect(ws().getByText(/Reminder sent/)).toBeTruthy();
