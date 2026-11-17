@@ -2129,3 +2129,20 @@
 {"at":"2026-11-17T13:21:39Z","feature":"F-25","round":3,"kind":"finding","action":"fix","finding":"UI-3-2","by":"builder"}
 {"at":"2026-11-17T13:21:39Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"UI-3-2","by":"reviewer-ui"}
 {"at":"2026-11-17T13:21:39Z","feature":"F-25","round":3,"kind":"transition","head":"fb9f9fc1ef11","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-17T13:36:27Z","feature":"F-25","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"fb9f9fc1ef11","written_at":"2026-11-17T13:35:55Z"}
+{"at":"2026-11-17T13:36:27Z","feature":"F-25","round":3,"kind":"transition","head":"fb9f9fc1ef11","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-17T13:38:35Z","feature":"F-25","round":3,"kind":"finding","action":"fix","finding":"TECH-3-1","by":"builder"}
+{"at":"2026-11-17T13:38:35Z","feature":"F-25","round":3,"kind":"finding","action":"fix","finding":"UI-3-1","by":"builder"}
+{"at":"2026-11-17T13:38:35Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"TECH-2-1","by":"reviewer-technical"}
+{"at":"2026-11-17T13:38:35Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"TECH-3-1","by":"reviewer-technical"}
+{"at":"2026-11-17T13:38:36Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"UI-2-4","by":"reviewer-ui"}
+{"at":"2026-11-17T13:38:36Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"UI-3-1","by":"reviewer-ui"}
+{"at":"2026-11-17T13:38:36Z","feature":"F-25","round":3,"kind":"finding","action":"accept-risk","finding":"TECH-1-4","by":"coordinator"}
+{"at":"2026-11-17T13:38:36Z","feature":"F-25","round":3,"kind":"finding","action":"accept-risk","finding":"TECH-1-6","by":"coordinator"}
+{"at":"2026-11-17T13:38:36Z","feature":"F-25","round":3,"kind":"finding","action":"accept-risk","finding":"UX-1-2","by":"coordinator"}
+{"at":"2026-11-17T13:38:36Z","feature":"F-25","round":3,"kind":"finding","action":"accept-risk","finding":"UX-1-3","by":"coordinator"}
+{"at":"2026-11-17T13:38:36Z","feature":"F-25","round":3,"kind":"finding","action":"accept-risk","finding":"UI-1-8","by":"coordinator"}
+{"at":"2026-11-17T13:38:36Z","feature":"F-25","round":3,"kind":"finding","action":"accept-risk","finding":"UI-1-10","by":"coordinator"}
+{"at":"2026-11-17T13:38:37Z","feature":"F-25","round":3,"kind":"finding","action":"accept-risk","finding":"TECH-2-2","by":"coordinator"}
+{"at":"2026-11-17T13:38:37Z","feature":"F-25","round":3,"kind":"finding","action":"accept-risk","finding":"UI-1-7","by":"design engineer"}
+{"at":"2026-11-17T13:38:37Z","feature":"F-25","round":3,"kind":"finding","action":"accept-risk","finding":"UI-1-9","by":"design engineer"}

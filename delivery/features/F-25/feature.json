@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-25",
   "outcome": "A project's Milestones, Registers and Actions tabs show their rows, read-only (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M3-PROJECT-TABS"
   ],
@@ -138,11 +138,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+      "evidence_refs": [
+        "delivery/features/F-25/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -346,15 +348,24 @@
         "delivery/features/F-25/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-17T09:33:18Z",
           "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T13:38:36Z",
+          "refs": [],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": "non-blocking, no value/state/access change; reviewer-accepted or routed to follow-ups / backend handoff Added during F-25"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "TECH-1-5",
@@ -420,15 +431,24 @@
         "delivery/features/F-25/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-17T09:33:18Z",
           "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T13:38:36Z",
+          "refs": [],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": "non-blocking, no value/state/access change; reviewer-accepted or routed to follow-ups / backend handoff Added during F-25"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-1-1",
@@ -494,15 +514,24 @@
         "delivery/features/F-25/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-17T09:33:18Z",
           "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T13:38:36Z",
+          "refs": [],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": "non-blocking, no value/state/access change; reviewer-accepted or routed to follow-ups / backend handoff Added during F-25"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-1-3",
@@ -517,15 +546,24 @@
         "delivery/features/F-25/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-17T09:33:18Z",
           "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T13:38:36Z",
+          "refs": [],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": "non-blocking, no value/state/access change; reviewer-accepted or routed to follow-ups / backend handoff Added during F-25"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UI-1-1",
@@ -846,15 +884,24 @@
         "delivery/features/F-25/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T09:33:18Z",
           "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T13:38:37Z",
+          "refs": [],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": "covered by the signed waivers"
         }
-      ]
+      ],
+      "risk_authority": "design engineer D-110"
     },
     {
       "id": "UI-1-8",
@@ -869,15 +916,24 @@
         "delivery/features/F-25/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T09:33:18Z",
           "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T13:38:36Z",
+          "refs": [],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": "non-blocking, no value/state/access change; reviewer-accepted or routed to follow-ups / backend handoff Added during F-25"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UI-1-9",
@@ -892,15 +948,24 @@
         "delivery/features/F-25/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T09:33:18Z",
           "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T13:38:37Z",
+          "refs": [],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": "covered by the signed waivers"
         }
-      ]
+      ],
+      "risk_authority": "design engineer D-110"
     },
     {
       "id": "UI-1-10",
@@ -915,15 +980,24 @@
         "delivery/features/F-25/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T09:33:18Z",
           "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T13:38:36Z",
+          "refs": [],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": "non-blocking, no value/state/access change; reviewer-accepted or routed to follow-ups / backend handoff Added during F-25"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "TECH-2-1",
@@ -938,7 +1012,7 @@
         "delivery/features/F-25/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -955,11 +1029,25 @@
           ],
           "head": "ba04923c108e0180ffdbd49404afc42fceeb191d",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T13:38:35Z",
+          "refs": [
+            "delivery/features/F-25/round-3/review-technical.md"
+          ],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "bde3607c"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "delivery/features/F-25/round-3/review-technical.md"
       ]
     },
     {
@@ -975,15 +1063,24 @@
         "delivery/features/F-25/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-17T10:47:58Z",
           "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T13:38:37Z",
+          "refs": [],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": "non-blocking, no value/state/access change; reviewer-accepted or routed to follow-ups / backend handoff Added during F-25"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-2-1",
@@ -1202,7 +1299,7 @@
         "delivery/features/F-25/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1219,11 +1316,25 @@
           ],
           "head": "ba04923c108e0180ffdbd49404afc42fceeb191d",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T13:38:36Z",
+          "refs": [
+            "delivery/features/F-25/round-3/review-ui.md"
+          ],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "bde3607c"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-25/round-3/review-ui.md"
       ]
     },
     {
@@ -1239,14 +1350,42 @@
         "delivery/features/F-25/round-3/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-17T12:16:49Z",
           "head": "ba04923c108e0180ffdbd49404afc42fceeb191d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T13:38:35Z",
+          "refs": [
+            "delivery/features/F-25/round-3/build.md"
+          ],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T13:38:35Z",
+          "refs": [
+            "delivery/features/F-25/round-3/review-technical.md"
+          ],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-25/round-3/build.md"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "delivery/features/F-25/round-3/review-technical.md"
       ]
     },
     {
@@ -1262,14 +1401,42 @@
         "delivery/features/F-25/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T12:16:49Z",
           "head": "ba04923c108e0180ffdbd49404afc42fceeb191d"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T13:38:35Z",
+          "refs": [
+            "delivery/features/F-25/round-3/build.md"
+          ],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T13:38:36Z",
+          "refs": [
+            "delivery/features/F-25/round-3/review-ui.md"
+          ],
+          "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-25/round-3/build.md"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-25/round-3/review-ui.md"
       ]
     },
     {
@@ -2190,6 +2357,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-17T13:21:39Z",
+      "round": 3,
+      "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T13:36:27Z",
       "round": 3,
       "head": "fb9f9fc1ef11f56b9d0416b4b36497a1be123f63",
       "reason": null
