@@ -1,5 +1,22 @@
 {
   "design_consolidation_20261116": {
+    "release_and_finance_review_20261117": {
+      "runtime_source": "838cd2e6",
+      "environment": "design-acceptance",
+      "web": "ce7b1daf",
+      "worker": "ed4617b6",
+      "states_with_browser_observations": 116,
+      "states_without_direct_browser_observation": 146,
+      "all_states_accepted": false,
+      "evidence": "docs/design/screen-state-acceptance.md",
+      "postgresql_release_and_finance": {"deployment": "e86caf12", "passed": 6, "seconds": 146.520},
+      "postgresql_invoice_receipt": {"deployment": "90c8d3cc", "passed": 1, "seconds": 18.356},
+      "postgresql_final_forecast": {"deployment": "9795daee", "passed": 5, "seconds": 70.109},
+      "completed": ["Release return holds unchanged inputs until linked issue remedy or changed verified sources", "Original invoice and forecast receipt lookup, absence hold and no automatic resend", "Income schedule reviewed correction, withdrawal, restoration and reporting-adjustment handoff", "Asset register, reporting basis and calculated schedule reviews through corrected verification", "Exact forecast decisions, actual verification and match, distinct group projection and verified recipient receipts"],
+      "current": ["Complete partial states and verify the remaining board variants in the Codex browser"],
+      "next": ["Business-unit source and result review, publication and independent receipts in SCR-57", "Transaction and payroll review and recovery variants in SCR-58 and SCR-59", "Typed group disclosure draft editor and release client workaround acceptance", "Further invoice and project variants and original role and phone coverage"],
+      "owner_policy": "Deferred"
+    },
     "account_delivery_and_reviewed_recovery_20261117": {
       "runtime_source": "20518c5a",
       "environment": "design-acceptance",

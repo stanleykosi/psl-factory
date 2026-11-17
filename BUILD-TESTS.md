@@ -1,5 +1,21 @@
 # Actual test execution ledger
 
+## Release and Finance returns, actuals and original receipts · 17 November 2026
+
+All runs below used Django and PostgreSQL in Railway `design-acceptance`, with named synthetic work. The test deploys use separate PostgreSQL test databases. The browser used the trial operator and the isolated worker. No live provider, financial posting, operating approver or real recipient was exercised.
+
+| Railway check deployment | Observed result |
+| --- | --- |
+| `5c01ba43` | Two focused release tests passed in 19.378 seconds, covering the unchanged decision hold and the exact linked issue remedy. |
+| `2fa92d72` | Three tests ran in 75.932 seconds. The schedule page errored due to an extra missing template include. The corrected run below removed that include. |
+| `e86caf12` | Six tests passed in 146.520 seconds. Exact release return; income return, correction and withdrawal; asset return, corrected-source workflow and typed reporting-date evidence; invoice batch fairness and absence of a duplicate effect after lookup. Django and migration drift checks passed. |
+| `90c8d3cc` | One test passed in 18.356 seconds. Verified accepted invoice delivery after a lost response, before changed terms could replace the reservation. |
+| `f318d9ce` | Four tests passed in 162.163 seconds. Scope-separated forecast review, read-only legacy page, original accepted delivery reconciliation and separate group review with recipient scoping. |
+| `cb9a5c1d` | Four passed and one failed in the initially completed five-test run. The test matched the words of the actual-cash navigation link when it meant to check that the actuals heading was absent. Tightened the assertion to the heading. Browser investigation also reproduced a distinct missing-receipt resend bug on work 39, corrected in the final package. |
+| `9795daee` | Final package passed all five tests in 70.109 seconds. Confirmed that an uncertain forecast with no background request receives a lookup from both worker and operator without a replacement send. Also verified original accepted receipt recovery, focused approval boundaries, actual capture and recalculation, and separate group artifact content and access. Django and migration drift checks passed. |
+
+The browser verified work 31 after issue 5 resolution with evidence 494, new decision 76 and readiness 79. Work 35 showed a missing Planning approver. Invoice job 2 stayed uncertain with its original version after manual lookup. Work 33 verified income schedule 4, exported reporting adjustment 1, withheld export after approval withdrawal and restored that exact approval. Work 34 returned schedule 5, approved corrected register 6 and reporting-date evidence, and verified schedule 7. Work 36 recorded and matched actual 1, required a new review of run 5 and retained receipts 28 and 31. Work 37 confirmed the group recipient's receipt 29 and showed only the configured rows at 390 CSS pixels. Work 40's manual forecast lookup kept job 33 uncertain with no receipt and no resend. Earlier intermediate browser navigation and stale case responses were resolved by rereading the current work before proceeding.
+
 ## Account delivery and reviewed recovery · 17 November 2026
 
 Railway migration `core.0005_account_delivery` applied. Browser verified sample email receipt `test-46ccd009`, distinct sample WhatsApp receipt `test-70809fe2`, restored opt-in choices and retained receipts. Account recovery showed the same confirmation for registered and unregistered addresses. On a 390 CSS-pixel layout the original sample inbox link opened the two masked fields without retaining the code in the address. An invalid code offered a fresh request. The first HTTPS form test returned 403 because the page suppressed the same-site referrer. The corrected deployment passed the same check. Browser coverage stops before entering a new credential.

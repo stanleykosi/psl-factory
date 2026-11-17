@@ -4,9 +4,9 @@ The 59 screen IDs come from `delivery/screen-coverage.md` at `4689cee`. Desktop,
 
 The first increment uses one server-rendered shell for native screens, including sign-in, onboarding, workspace creation, access setup and password change. My Work, Overview, Project Journey and the Assistant use native data. The Assistant accepts synthetic documents, queues one of eight worker roles and links to the draft, human review and native handoff. The standalone frontend remains a design reference. Its sample data and proposed workflow effects are outside the hosted application.
 
-The newer GitHub design expands the registered screen IDs into [262 distinct non-concept states](screen-state-inventory.csv). The [current state acceptance ledger](screen-state-acceptance.md) records actual browser outcomes for the latest Assistant, weekly report, minutes, project tab, Money and delegation work. Remaining states still need their own acceptance.
+The newer GitHub design expands the registered screen IDs into [262 distinct non-concept states](screen-state-inventory.csv). The [current state acceptance ledger](screen-state-acceptance.md) records actual browser outcomes for the Assistant, reports, minutes, project tabs, Money, delegation, release returns and Finance review, including cash forecasts. Remaining states still need their own acceptance.
 
-The 17 November Railway increment adds 50 state observations to the ledger, with 73 of 262 states now represented. It includes the Start Work drawer, exact go-live signatures, minutes and standalone document rework, work and delivery status, signed Money figures and the mobile delegation repair. The state ledger identifies where only a form or retained outcome was checked and which workflow branches remain open.
+The isolated Railway preview has 116 directly observed states. It includes the Start Work drawer, exact go-live signatures, minutes and standalone document rework, signed Money figures, the mobile delegation repair, release remedies, corrected Finance schedules and forecast actuals and recovery. The state ledger identifies where only a form, partial branch or retained outcome was checked. Another 146 states await first observation.
 
 ## Railway browser walkthrough
 

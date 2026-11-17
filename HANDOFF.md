@@ -1,5 +1,15 @@
 # PSL operations factory cloud handoff
 
+## Release and Finance review checkpoint · 17 November 2026
+
+Resume `build/design-consolidation` at runtime source `838cd2e6`. Railway `design-acceptance` web is `ce7b1daf` and worker is `ed4617b6`. No new migration. The [board inventory](docs/design/screen-state-inventory.csv) records 262 states across 59 screen IDs. The [state ledger](docs/design/screen-state-acceptance.md) now records 116 direct observations, with partial checks marked individually. The other 146 still need direct browser evidence. The earlier 59-route walkthrough is historical routing evidence.
+
+Release work 31 links the return to issue 5 and fix evidence 494. It preserves the return alongside fresh Planning decision 76 and readiness 79. Work 35 demonstrates the missing Planning approver hold. Invoice work 32 has original job 2, version 1 and an absent receipt. The worker and the operator can look up that original safely. Work 33 contains verified income schedule 4, earlier return and withdrawal, controlled restoration and linked reporting adjustment 1 awaiting its own native approval. Work 34 contains returned schedule 5 and verified schedule 7 from corrected register 6 and independently reviewed reporting dates.
+
+Forecast work 36 has management receipts 28 and 31 across distinct native reviewed calculations. Actual 1, verification evidence 617 and match 1 led to new run 5. Work 37 has separate group artifact 41, recipient 39 and receipt 29. Work 38 recovered receipt 27 for original delivery 28. Work 39 documents the earlier synthetic resend defect. Use work 40 and original job 33 to verify receipt-only recovery with no receipt. Final forecast check `9795daee` passed five PostgreSQL cases. Keep every sample in the isolated environment. The named fixtures and Railway checks are in `tests/railway_close_seed.py` and BUILD-TESTS.md.
+
+Next, finish the business-unit allocation source and result decisions, controlled publication and recipient receipt states `SCR-57-*` using `factory_bu` and distinct sample preparer, reviewer and recipient. The current BU console has the native backend commands but its record action areas share one view. Continue with `SCR-58` transaction exceptions and `SCR-59` payroll reviews, and with the open invoice and project variants in the ledger. The client workaround branch and typed group-row draft editor still need engineering. Keep operational approvers, actual group choices, recipients and live connectors deferred. The browser tab is left on the isolated forecast recovery case.
+
 ## Account delivery and reviewed recovery · 17 November 2026
 
 Resume `build/design-consolidation` at runtime source `20518c5a`. The isolated Railway web is `07d0af4b` and the standard worker is `35128e3e`. Migration `core.0005_account_delivery` is applied. The [inventory](docs/design/screen-state-inventory.csv) contains 262 states across 59 screen IDs. The [ledger](docs/design/screen-state-acceptance.md) records 95 direct browser observations, including partial checks. Another 167 need direct browser evidence. Use matching stored operator actions and actual native receipts to close each state.

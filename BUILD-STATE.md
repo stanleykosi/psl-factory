@@ -1,5 +1,13 @@
 # PSL operations factory build state
 
+## Release and Finance returns, actuals and original receipts · 17 November 2026
+
+Release returns now require a source change or the exact linked issue fix before a fresh Planning decision. The isolated preview verified the fix and release readiness and showed the missing-approver hold separately. Invoice recovery now checks the original reservation only. Income schedules and asset schedules use separate native review, correction and verification. Income schedules support approval withdrawal, restoration and an exact handoff to downstream Finance adjustment review.
+
+The forecast console now separates exact review, actual capture and matching, group disclosure and original delivery recovery. Browser work reached verified management and group recipient receipts and preserved the first management receipt after a matched actual produced a new reviewed report. A missing original forecast receipt continues to hold delivery after lookup. Group fields on the screen come from the validated disclosure policy. The interactive group policy editor and release client workaround acceptance remain engineering tasks.
+
+The [state ledger](docs/design/screen-state-acceptance.md) has 116 of 262 states with direct browser evidence, including partial checks. Another 146 await first observation. Continue with business-unit source and result reviews and receipts, then the remaining staffing, invoice and project variants. Named operational approvers, actual disclosure choices, audiences, and live connector access stay deferred. No schema change in this checkpoint.
+
 ## Account delivery and reviewed recovery · 17 November 2026
 
 Account recovery now sends a one-use 30-minute link through a durable delivery job. Personal email and WhatsApp alerts share the same original-effect verification. The isolated Railway worker confirmed both sample channel receipts. The browser verified recovery through the private sample link, its invalid-code state and phone layouts. PostgreSQL verified the credential change and subsequent sign-in. Live channel access and authorised account addresses remain deferred.
