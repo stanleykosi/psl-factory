@@ -1,0 +1,292 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-17T08:35:00.937Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-13-mobile-delegation.dc.html",
+  "boardName": "SCR-13-mobile-delegation.dc.html",
+  "pageUrl": "http://localhost:4801/setup/delegation",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-27/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 98.6 meets 90."
+  ],
+  "scores": {
+    "coverage": 80,
+    "coverageWithExceptions": 100,
+    "visual": 98.6
+  },
+  "visual": {
+    "score": 98.6,
+    "allCellsScore": 98.8,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2103,
+    "mismatchedCells": 29
+  },
+  "coverage": {
+    "total": 10,
+    "found": 8,
+    "coverage": 80,
+    "matched": [
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Delegation",
+        "pageName": "Delegation",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kemi Adebayo → Femi Ade",
+        "pageName": "Kemi Adebayo → Femi Ade",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 120,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 122,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PMO Lead · 18–25 Nov 2026 · Annual leave",
+        "pageName": "PMO Lead · 18–25 Nov 2026 · Annual leave",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 144,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 146,
+          "w": 330,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "UPCOMING",
+        "pageName": "UPCOMING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 167,
+          "w": 80,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 169,
+          "w": 80,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor → Chika Obi",
+        "pageName": "Ada Okafor → Chika Obi",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 228,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 232,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finance Lead · 02–04 Nov 2026 · Conference",
+        "pageName": "Finance Lead · 02–04 Nov 2026 · Conference",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 252,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 256,
+          "w": 330,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ENDED",
+        "pageName": "ENDED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 275,
+          "w": 56,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 279,
+          "w": 56,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Add delegation",
+        "pageName": "Add delegation",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Setup",
+        "key": "link: ← Setup",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 56,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: the phone bar link comes from useSetupPhoneBack and the frame names it \"Back to Setup\" (it reads \"← Setup\"); as F-20 (D-71).",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "key": "link: Start",
+        "container": "page",
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: the phone bar's Start belongs to the shell; the admin persona has no startable lines. As F-20 (D-71).",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Setup",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 330,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

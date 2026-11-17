@@ -133,11 +133,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -163,25 +165,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -803,7 +811,7 @@
         "delivery/features/F-23/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -820,11 +828,25 @@
           ],
           "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T08:30:56Z",
+          "refs": [
+            "The new test checks both `items[].values` and `columns[].date_format`, requires at least one carrier of each, and limits both to `W-23xx` files. The `links`/`items_default` guard is retained."
+          ],
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "7abfbcb94384c4380adf6bb289961f547c735e98"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The new test checks both `items[].values` and `columns[].date_format`, requires at least one carrier of each, and limits both to `W-23xx` files. The `links`/`items_default` guard is retained."
       ]
     },
     {
@@ -886,7 +908,7 @@
         "delivery/features/F-23/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -903,11 +925,25 @@
           ],
           "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T08:30:56Z",
+          "refs": [
+            "Round-3 SCR-28-desktop side-by-side shows Due \"13 Nov\", \"15 Nov\" and an amber Unknown pill (`psl-unknown`, waiting tint) on A-3. The fixture has `date` cells with `{unknown: true}`. `Sections.tsx` `DateText` shortens the date only when `columns[].date_format: \"day_month\"` is set and the date is known, so an unknown still reads Unknown (INV-UNKNOWN). Without the option, other lines keep the full date. Single-board rescore: desktop 69.1, phone 74.2. The phone row reads \"13 Nov\" and an amber Unknown."
+          ],
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "7abfbcb94384c4380adf6bb289961f547c735e98"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Round-3 SCR-28-desktop side-by-side shows Due \"13 Nov\", \"15 Nov\" and an amber Unknown pill (`psl-unknown`, waiting tint) on A-3. The fixture has `date` cells with `{unknown: true}`. `Sections.tsx` `DateText` shortens the date only when `columns[].date_format: \"day_month\"` is set and the date is known, so an unknown still reads Unknown (INV-UNKNOWN). Without the option, other lines keep the full date. Single-board rescore: desktop 69.1, phone 74.2. The phone row reads \"13 Nov\" and an amber Unknown."
       ]
     },
     {
@@ -923,7 +959,7 @@
         "delivery/features/F-23/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -940,11 +976,25 @@
           ],
           "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T08:30:56Z",
+          "refs": [
+            "Rebuilt head on 4769 with the mock on 4768, W-2303 and W-2304 at 1440 and 390. The row tag \"DRAFTED\" and the W-2303 status \"Drafted\" are `psl-tag psl-tag--agent`: background rgb(233, 238, 251), ink rgb(22, 56, 143), 70\u00d723 / 71\u00d723. That matches the boards' blue tag. `agent` is a contract tone, mapped through `labels.ts` TONE, so no hard-coded colour was added."
+          ],
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "7abfbcb94384c4380adf6bb289961f547c735e98"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Rebuilt head on 4769 with the mock on 4768, W-2303 and W-2304 at 1440 and 390. The row tag \"DRAFTED\" and the W-2303 status \"Drafted\" are `psl-tag psl-tag--agent`: background rgb(233, 238, 251), ink rgb(22, 56, 143), 70\u00d723 / 71\u00d723. That matches the boards' blue tag. `agent` is a contract tone, mapped through `labels.ts` TONE, so no hard-coded colour was added."
       ]
     },
     {
@@ -1146,7 +1196,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "06e64168c3a74edd358fb74b1998203f4b709c95",
     "task_branch": "fe-line-minutes-the-minutes-line-the-pm-confirms-tola-s",
-    "head_sha": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+    "head_sha": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-23",
     "pr_url": null,
     "pr_number": null,
@@ -1330,6 +1380,43 @@
       "delivery/features/F-23/round-2/review-technical.md",
       "delivery/features/F-23/round-2/review-ui.md",
       "delivery/features/F-23/round-2/review-ux.md",
+      "delivery/features/F-23/round-3/build.md",
+      "delivery/features/F-23/round-3/checks.md",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/drive-states.mjs",
+      "delivery/features/F-23/round-3/fidelity/frozen/default-1440.html",
+      "delivery/features/F-23/round-3/fidelity/scores.txt",
+      "delivery/features/F-23/round-3/fidelity/serve-frozen.mjs",
+      "delivery/features/F-23/round-3/review-security.md",
+      "delivery/features/F-23/round-3/review-technical.md",
+      "delivery/features/F-23/round-3/review-ui.md",
+      "delivery/features/F-23/round-3/review-ux.md",
       "delivery/features/F-24/feature.json",
       "delivery/features/F-24/fidelity-exceptions.json",
       "delivery/features/F-24/round-3/acceptance-pmo.md",
@@ -1339,13 +1426,174 @@
       "delivery/features/F-24/round-3/review-ui.md",
       "delivery/features/F-24/round-3/review-ux.md",
       "delivery/features/F-25/feature.json",
+      "delivery/features/F-25/fidelity-exceptions.json",
       "delivery/features/F-25/readiness.md",
+      "delivery/features/F-25/round-1/build.md",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/scores.txt",
+      "delivery/features/F-25/round-1/fidelity/summary.txt",
       "delivery/features/F-25/spec.md",
       "delivery/features/F-26/feature.json",
+      "delivery/features/F-26/fidelity-exceptions.json",
       "delivery/features/F-26/readiness.md",
+      "delivery/features/F-26/round-1/build.md",
+      "delivery/features/F-26/round-1/checks.md",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/run.sh",
+      "delivery/features/F-26/round-1/fidelity/scores.txt",
+      "delivery/features/F-26/round-1/review-technical.md",
+      "delivery/features/F-26/round-1/review-ui.md",
+      "delivery/features/F-26/round-1/review-ux.md",
+      "delivery/features/F-26/round-2/build.md",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board.rendered.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/diff.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/page-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/page.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/report.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/report.json",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/side-by-side.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board.rendered.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/diff.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/page-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/page.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/report.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/report.json",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/side-by-side.png",
+      "delivery/features/F-26/round-2/fidelity/run.sh",
+      "delivery/features/F-26/round-2/fidelity/scores.txt",
       "delivery/features/F-26/spec.md",
       "delivery/features/F-27/feature.json",
+      "delivery/features/F-27/fidelity-exceptions.json",
       "delivery/features/F-27/readiness.md",
+      "delivery/features/F-27/round-1/build.md",
+      "delivery/features/F-27/round-1/checks.md",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.rendered.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/diff.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/page-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/page.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/report.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/report.json",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/side-by-side.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board.rendered.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/diff.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/page-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/page.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/report.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/report.json",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/side-by-side.png",
+      "delivery/features/F-27/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-27/round-1/fidelity/frozen/default-1440.html",
+      "delivery/features/F-27/round-1/fidelity/run.sh",
+      "delivery/features/F-27/round-1/fidelity/scores.txt",
+      "delivery/features/F-27/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-27/round-1/review-security.md",
+      "delivery/features/F-27/round-1/review-technical.md",
+      "delivery/features/F-27/round-1/review-ui.md",
+      "delivery/features/F-27/round-1/review-ux.md",
       "delivery/features/F-27/spec.md",
       "frontend/e2e/assistant.spec.ts",
       "frontend/e2e/minutes.spec.ts",

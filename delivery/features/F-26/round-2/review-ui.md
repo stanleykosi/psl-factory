@@ -1,0 +1,24 @@
+VERDICT: CHANGES
+COMMIT: ac401c09e80d4398acb8101994d6f18b4b0f1d76
+REVIEWER: reviewer-ui
+AUTHORITY: delivery UI review
+
+## Summary
+- UI-1-1 (bold selected amount) and UI-1-2 (semibold phone Unknown) are fixed and match the boards in the round-2 side-by-sides.
+- UI-1-4 is fixed as written: tokens are used and the stage name is no longer covered. But the builder fixed it by making every linked phone card about 12–14px taller. The gap between the amount and the invoice line is now about 18px where the board draws 6px, so by Stage 4 the cards sit about 95px below the board (53px in round 1). This is a new visible spacing difference, and the D-107 phone waiver text does not name it (UI-2-1).
+- The D-107 waivers match the round-2 scores (85.7 and 77.8) and honestly cover the D-104 choices and the shared frame. Each text leaves out one thing it actually covers: on the phone, the taller cards; on the desktop, the shorter Chidi card and the report title sitting beside the board's sentence (UI-2-1, UI-2-2).
+- Tokens and colour meaning are still right. The new no-access panel uses `psl-panel` and the phone report error uses the shared ErrorState. There are no hex values in money.css.
+
+## Findings
+- UI-2-1 | blocking | SCR-12-mobile | Linked phone cards are about 12–14px taller than the board's because of the new tap-area geometry. Cause: `money.css` `.money__card .money__amountlink { padding-top: var(--space-6px); margin: calc(-1 * var(--space-6px)) 0; }` together with `min-height: var(--control-md)`. This leaves about 18px under the amount text before the invoice line, where the board's gap is 6px. Measured: Stage 1 invoice text is 41px below the board in round 2, against about 30px in round 1; Stage 4's card top is about 95px low, against about 53px. The cause is my own UI-1-4 note, not a builder error: two 44px targets cannot fit in the board's 6px-gap card unless one reaches over the stage name or the card grows. | Fix, either one: (a) the design engineer adds "phone cards about 12px taller per linked stage, for the two 44px tap targets (D-92c)" to the D-107 SCR-12-mobile waiver text, with no code change (my recommendation, since the 77.8 being signed is this exact build); or (b) frontend restores the round-1 geometry using tokens (the amount reaches up over the non-interactive stage name, `calc(var(--space-3) + var(--space-6px) + …)`). I withdraw the "covers the stage name" part of UI-1-4. Option (b) needs one more recorded fidelity run and a new score in the waiver. Owner: product (design engineer) for (a), frontend for (b).
+- UI-2-2 | non-blocking | SCR-12-desktop | The D-107 desktop waiver text leaves out two differences it in fact covers. The Chidi card's D-104 sentence "Ask me about any figure here." makes the aside about 20px shorter. The report title sits on the same line as the board's sentence, before it, rather than "below" the heading on a line of its own. Both are D-104-approved. | Fix: the design engineer may add them to the waiver reason. No code change.
+- UI-2-3 | non-blocking | none (P-0102, not on a board) | An Unknown amount that has a figure is now a link with the amber Unknown as its text (TECH-1-2). On desktop it is amber, semibold and underlined in the link. This is acceptable: amber keeps its "waiting" meaning (D-92b) and the underline marks it as a link. No board draws this case. | Fix: none needed; noted for the design engineer.
+
+## Verified
+- UI-1-1 | verified | In round-2/fidelity/SCR-12-desktop-1440/side-by-side.png, Stage 2's ₦4,250,000.00 has the same weight as Stages 1 and 3. The rule `.money__amountlink[aria-current="true"] { font-weight: 600; }` is removed (git diff 14c685cf..ac401c09 money.css), and `aria-current` is kept.
+- UI-1-2 | verified | In round-2/fidelity/SCR-12-mobile-390/side-by-side.png, Stage 4's "Unknown" is mono, regular weight, 16px, amber, as the board draws it. `.money__card .psl-unknown` is `--font-mono` / `--text-amount-size` / 400. The desktop table keeps 600, which matches its board.
+- UI-1-4 | verified (with a consequence, see UI-2-1) | The tap-area values are now `--space-6px`, `--space-3` and `--control-md`, and the amount no longer reaches over the stage name. The cost is the taller cards in UI-2-1.
+- UI-1-3 | verified | D-107 signs `visual_waivers` for SCR-12-desktop at 85.7 and SCR-12-mobile at 77.8 in fidelity-exceptions.json, matching round-2/fidelity/scores.txt. The coverage is honest apart from the text gaps in UI-2-1 and UI-2-2.
+
+## Carried forward (impact assessment)
+- The round-2 changes outside these findings touch no board-scored layout: the money and report guards (TECH-1-1), the phone report error under the cards (UX-1-1), the money no-access line (UX-1-2) and the Chidi `agentKey`. Desktop visual is unchanged at 85.7, and the desktop side-by-side matches round 1 apart from the UI-1-1 weight. My round-1 notes on table, aside and card proportions still hold.
