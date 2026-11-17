@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-23",
   "outcome": "The minutes line: the PM confirms Tola's suggested decisions and actions, and client minutes go to the PMO Lead for review (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-LINE-MINUTES"
   ],
@@ -136,7 +136,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delivery technical review",
-      "snapshot_ref": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
       "evidence_refs": [
         "delivery/features/F-23/round-3/review-technical.md"
       ]
@@ -168,7 +168,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delivery UX review",
-      "snapshot_ref": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
       "evidence_refs": [
         "delivery/features/F-23/round-3/review-ux.md"
       ]
@@ -177,7 +177,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delivery UI review",
-      "snapshot_ref": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
       "evidence_refs": [
         "delivery/features/F-23/round-3/review-ui.md"
       ]
@@ -186,7 +186,7 @@
       "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "delivery security review",
-      "snapshot_ref": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
       "evidence_refs": [
         "delivery/features/F-23/round-3/review-security.md"
       ]
@@ -1042,6 +1042,121 @@
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
         }
       ]
+    },
+    {
+      "id": "TECH-3-1",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "The W-23xx-only guard for `warn_lines` has no non-vacuous check. The `values` and `date_format` carriers assert `length > 0`, but `warns` does not, so the guard would still pass if no fixture carried the key.",
+      "severity": "frontend/tests/mock-contract.test.ts:~639",
+      "blocking": false,
+      "summary": "Add `expect(warns.length).toBeGreaterThan(0)`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "TECH-3-2",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "Flagged lines always draw after the plain lines, in a second callout, whatever their index. A `warn_lines` entry of 0 or 1 would reorder the sentences. The agent name is also not repeated if all lines are flagged. Current fixtures use index 2 (the last line), so there is no visible issue.",
+      "severity": "frontend/src/features/workspace/workspace.tsx:29-52",
+      "blocking": false,
+      "summary": "Document that `warn_lines` should name trailing lines, or keep the original order when the warn lines are not last. Not needed for this release.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "(no board) | If every line of a note is flagged, the info callout is skipped. The amber callout then carries no agent name (\"Tola\"), so nothing on screen says who wrote the line (`Workspace.tsx` `AgentNote`). No fixture does this today. When the proposal goes to the backend list, either keep the name on the amber block when it stands alone, or say that at least one line must stay unflagged.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-2",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-desktop, SCR-28-mobile | `round-3/fidelity/scores.txt` still lists 69.1 and 74.2. The sign-off runs (`SCR-28-desktop-1440-signoff` 65.3, `SCR-28-mobile-390-signoff` 70.2, from their report.json) are not in it. Add the two rows so the record matches the signed waivers.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "SEC-3-1",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Agent output loses its label when every line is flagged. At `frontend/src/features/workspace/Workspace.tsx:28-54`, the warning callout has no agent name. Only the info callout shows `agentName(note.agent)`. If `warn_lines` flagged every line, Tola's words would appear as an unlabelled warning, and a reader could take them for a system or policy message. The current fixtures flag one line out of three, so the name still shows nearby. Expected: agent-written text always shows which agent wrote it. Fix: show the agent name in the warning callout too, or keep the info callout (with the name) whenever the note has lines.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1799,6 +1914,14 @@
       "at": "2026-11-16T18:21:28Z",
       "round": 3,
       "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T09:33:26Z",
+      "round": 3,
+      "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
       "reason": null
     }
   ],

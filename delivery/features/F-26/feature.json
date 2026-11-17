@@ -109,11 +109,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -139,18 +141,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -167,7 +173,7 @@
         "delivery/features/F-26/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -184,11 +190,25 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "The fix is in `moneyModel.ts:22-84`."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The fix is in `moneyModel.ts:22-84`."
       ]
     },
     {
@@ -204,7 +224,7 @@
         "delivery/features/F-26/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -221,11 +241,25 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "At `MoneyTab.tsx:86-104`, the link depends only on a matched figure, and its content is `<Value>` (the amber Unknown for an unknown amount, never 0 or blank). `anyLinked` was changed to match. The component test \"an Unknown amount whose figure the report has is a link\" asserts the href, the `psl-unknown` text inside the link, `aria-current`, and the exact differ sentence."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "At `MoneyTab.tsx:86-104`, the link depends only on a matched figure, and its content is `<Value>` (the amber Unknown for an unknown amount, never 0 or blank). `anyLinked` was changed to match. The component test \"an Unknown amount whose figure the report has is a link\" asserts the href, the `psl-unknown` text inside the link, `aria-current`, and the exact differ sentence."
       ]
     },
     {
@@ -264,7 +298,7 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -281,11 +315,25 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "In round-2/fidelity/SCR-12-desktop-1440/side-by-side.png, Stage 2's \u20a64,250,000.00 has the same weight as Stages 1 and 3. The rule `.money__amountlink[aria-current=\"true\"] { font-weight: 600; }` is removed (git diff 14c685cf..ac401c09 money.css), and `aria-current` is kept."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "In round-2/fidelity/SCR-12-desktop-1440/side-by-side.png, Stage 2's \u20a64,250,000.00 has the same weight as Stages 1 and 3. The rule `.money__amountlink[aria-current=\"true\"] { font-weight: 600; }` is removed (git diff 14c685cf..ac401c09 money.css), and `aria-current` is kept."
       ]
     },
     {
@@ -301,7 +349,7 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -318,11 +366,25 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "In round-2/fidelity/SCR-12-mobile-390/side-by-side.png, Stage 4's \"Unknown\" is mono, regular weight, 16px, amber, as the board draws it. `.money__card .psl-unknown` is `--font-mono` / `--text-amount-size` / 400. The desktop table keeps 600, which matches its board."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "In round-2/fidelity/SCR-12-mobile-390/side-by-side.png, Stage 4's \"Unknown\" is mono, regular weight, 16px, amber, as the board draws it. `.money__card .psl-unknown` is `--font-mono` / `--text-amount-size` / 400. The desktop table keeps 600, which matches its board."
       ]
     },
     {
@@ -383,6 +445,121 @@
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The money no-access state now uses the spec's Option B, and no design-engineer approval for it is recorded.** `MoneyTab.tsx:268-278,309` shows \"You can't see this project's money.\" instead of `ProjectNoAccess` (the UX-1-2 fix). Spec Conflicts 14 recommended building readiness rule 6 as written, and criterion 20 names `ProjectNoAccess`. D-104 (\"the rest as the spec\") and D-107 do not mention Option B. The no-leak behaviour is unchanged and tested: no stage, amount, report title or server message appears, and the report is not read. Fix: have the design engineer confirm Option B in a D-entry, or note it in build.md as a UX-review change awaiting that sign-off.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**On phones, a deep link to a figure while the report has failed shows the report error twice.** At `MoneyTab.tsx:343`, a failed report renders `explanation` under the cards. When `?figure=` is set, the BottomSheet (`:345-349`) renders the same `explanation` again, so there are two ErrorStates and two \"Try again\" buttons, one behind the sheet. Both retry the same report read, so nothing is wrong, just repeated. Fix: render the inline copy only when no sheet is open (`report.status === 'error' && selectedId === undefined`), or leave it as is.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "Linked phone cards are about 12\u201314px taller than the board's because of the new tap-area geometry. Cause: `money.css` `.money__card .money__amountlink { padding-top: var(--space-6px); margin: calc(-1 * var(--space-6px)) 0; }` together with `min-height: var(--control-md)`. This leaves about 18px under the amount text before the invoice line, where the board's gap is 6px. Measured: Stage 1 invoice text is 41px below the board in round 2, against about 30px in round 1; Stage 4's card top is about 95px low, against about 53px. The cause is my own UI-1-4 note, not a builder error: two 44px targets cannot fit in the board's 6px-gap card unless one reaches over the stage name or the card grows.",
+      "severity": "scr-12-mobile",
+      "blocking": true,
+      "summary": "Fix, either one: (a) the design engineer adds \"phone cards about 12px taller per linked stage, for the two 44px tap targets (D-92c)\" to the D-107 SCR-12-mobile waiver text, with no code change (my recommendation, since the 77.8 being signed is this exact build); or (b) frontend restores the round-1 geometry using tokens (the amount reaches up over the non-interactive stage name, `calc(var(--space-3) + var(--space-6px) + \u2026)`). I withdraw the \"covers the stage name\" part of UI-1-4. Option (b) needs one more recorded fidelity run and a new score in the waiver. Owner: product (design engineer) for (a), frontend for (b).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "The D-107 desktop waiver text leaves out two differences it in fact covers. The Chidi card's D-104 sentence \"Ask me about any figure here.\" makes the aside about 20px shorter. The report title sits on the same line as the board's sentence, before it, rather than \"below\" the heading on a line of its own. Both are D-104-approved.",
+      "severity": "scr-12-desktop",
+      "blocking": false,
+      "summary": "Fix: the design engineer may add them to the waiver reason. No code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "An Unknown amount that has a figure is now a link with the amber Unknown as its text (TECH-1-2). On desktop it is amber, semibold and underlined in the link. This is acceptable: amber keeps its \"waiting\" meaning (D-92b) and the underline marks it as a link. No board draws this case.",
+      "severity": "none (p-0102, not on a board)",
+      "blocking": false,
+      "summary": "Fix: none needed; noted for the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
       ]
     }
   ],
