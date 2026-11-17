@@ -1927,3 +1927,18 @@
 {"at":"2026-11-17T09:33:27Z","feature":"F-25","round":2,"kind":"transition","head":"4686abdab3e8","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
 {"at":"2026-11-17T09:36:39Z","feature":"F-27","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":192.0,"commit":"34c38e4e3da8"}
 {"at":"2026-11-17T09:36:40Z","feature":"F-27","round":2,"kind":"transition","head":"34c38e4e3da8","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-17T09:38:10Z","feature":"F-26","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"ac401c09e80d","findings":{"UI-2-3":"none (p-0102, not on a board)"},"written_at":"2026-11-17T09:37:50Z"}
+{"at":"2026-11-17T09:38:10Z","feature":"F-26","round":2,"kind":"finding","action":"verify","finding":"UI-1-4","by":"reviewer-ui"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-26","round":2,"kind":"finding","action":"accept-risk","finding":"UI-1-3","by":"design engineer"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-26","round":2,"kind":"finding","action":"accept-risk","finding":"UI-2-1","by":"design engineer"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-26","round":2,"kind":"transition","head":"ac401c09e80d","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"34c38e4e3da8","written_at":"2026-11-17T09:38:04Z"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"34c38e4e3da8","written_at":"2026-11-17T09:37:51Z"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"34c38e4e3da8","written_at":"2026-11-17T09:37:53Z"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"finding","action":"verify","finding":"UX-1-1","by":"reviewer-ux"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"finding","action":"verify","finding":"UX-1-2","by":"reviewer-ux"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"finding","action":"verify","finding":"UI-1-1","by":"reviewer-ui"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"finding","action":"verify","finding":"UI-1-2","by":"reviewer-ui"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"finding","action":"verify","finding":"UI-1-3","by":"reviewer-ui"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"finding","action":"verify","finding":"SEC-1-1","by":"reviewer-security"}
+{"at":"2026-11-17T09:38:22Z","feature":"F-27","round":2,"kind":"finding","action":"verify","finding":"SEC-1-2","by":"reviewer-security"}

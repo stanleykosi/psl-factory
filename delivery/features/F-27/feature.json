@@ -132,25 +132,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+      "evidence_refs": [
+        "delivery/features/F-27/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+      "evidence_refs": [
+        "delivery/features/F-27/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+      "evidence_refs": [
+        "delivery/features/F-27/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -250,7 +256,7 @@
         "delivery/features/F-27/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -267,11 +273,25 @@
           ],
           "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [
+            "422 (`invalid`) on phone sheet reads \"Check these fields: To, Ends.\" with \"This person can't take this delegation.\" under To; same code path serves the 1440 panel (also run, no raw keys)."
+          ],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "34c38e4e"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "422 (`invalid`) on phone sheet reads \"Check these fields: To, Ends.\" with \"This person can't take this delegation.\" under To; same code path serves the 1440 panel (also run, no raw keys)."
       ]
     },
     {
@@ -287,7 +307,7 @@
         "delivery/features/F-27/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -304,11 +324,25 @@
           ],
           "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [
+            "390 `uncertain_written`: sheet closes (no dialog), warning \"The list changed while we were checking. Look for your delegation before adding it again.\" shows above the cards, new 01-03 Dec row visible. Reopen-with-Start-again taken from build.md/e2e, not re-driven."
+          ],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "34c38e4e"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "390 `uncertain_written`: sheet closes (no dialog), warning \"The list changed while we were checking. Look for your delegation before adding it again.\" shows above the cards, new 01-03 Dec row visible. Reopen-with-Start-again taken from build.md/e2e, not re-driven."
       ]
     },
     {
@@ -324,7 +358,7 @@
         "delivery/features/F-27/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -341,11 +375,25 @@
           ],
           "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [
+            "`fidelity-exceptions.json` has \"ADD A DELEGATION\" with category \"colour meaning\", approved \"design engineer, 16 Nov 2026 \u2014 D-107\". report.json still shows the same head difference (board #2459D6 fill and white text; page ink text, no fill), and the signed entry covers it. D-107: \"the Setup panel heading stays ink\"."
+          ],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "34c38e4e"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`fidelity-exceptions.json` has \"ADD A DELEGATION\" with category \"colour meaning\", approved \"design engineer, 16 Nov 2026 \u2014 D-107\". report.json still shows the same head difference (board #2459D6 fill and white text; page ink text, no fill), and the signed entry covers it. D-107: \"the Setup panel heading stays ink\"."
       ]
     },
     {
@@ -361,7 +409,7 @@
         "delivery/features/F-27/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -378,11 +426,25 @@
           ],
           "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [
+            "`DelegationView.tsx`: the phone `Drawer` gets `footer={actions}` (Add delegation, Cancel, and Start again when held). The body holds the fields and the note. The builder's component test checks the footer contents, and the e2e checks the footer buttons are at least 44px. D-107 confirms the full-height Drawer is what D-103 meant."
+          ],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "34c38e4e"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`DelegationView.tsx`: the phone `Drawer` gets `footer={actions}` (Add delegation, Cancel, and Start again when held). The body holds the fields and the note. The builder's component test checks the footer contents, and the e2e checks the footer buttons are at least 44px. D-107 confirms the full-height Drawer is what D-103 meant."
       ]
     },
     {
@@ -398,7 +460,7 @@
         "delivery/features/F-27/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -415,11 +477,25 @@
           ],
           "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [
+            "`setup.css:106-108`: `.setup-deleg__bar` keeps only the fixed position, and padding, ground and rule come from `psl-actionbar`. The bottom room is `calc(var(--space-3) + var(--control-lg) + var(--space-18px) + var(--rule-strong))` (`--rule-strong: 2px`, so still 82px). No px literal is left. The phone render is pixel-identical to round 1 (98.6)."
+          ],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "34c38e4e"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`setup.css:106-108`: `.setup-deleg__bar` keeps only the fixed position, and padding, ground and rule come from `psl-actionbar`. The bottom room is `calc(var(--space-3) + var(--control-lg) + var(--space-18px) + var(--rule-strong))` (`--rule-strong: 2px`, so still 82px). No px literal is left. The phone render is pixel-identical to round 1 (98.6)."
       ]
     },
     {
@@ -435,7 +511,7 @@
         "delivery/features/F-27/round-1/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -452,11 +528,25 @@
           ],
           "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-security",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [
+            "**Form.** `frontend/src/features/setup/DelegationForm.tsx:124` now reads `if (fromPerson) body.from_person_id = fromPerson.person_id`. `fromPerson` exists only when it comes from `from_options[]` (a single option, or the chosen one, line 81), so the \"You\" case still sends nothing. **Mock.** `frontend/mock/delegations.mjs:130-135` no longer falls back to the single option: a missing `from_person_id` is the caller, and the new row's From is `{name: <persona name>, is_you: true}`. **Tests.** The component test for the `authority` scenario expects `from_person_id: 'P-KEMI'`. A new mock test shows that a request without From is recorded as `{name:'Ada Okafor', is_you:true}`, and the Kemi\u2192Chika combination is refused. The round-2 build.md says these tests fail on the round-1 code."
+          ],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "34c38e4e"
+      ],
+      "verified_by": "reviewer-security",
+      "verification_refs": [
+        "**Form.** `frontend/src/features/setup/DelegationForm.tsx:124` now reads `if (fromPerson) body.from_person_id = fromPerson.person_id`. `fromPerson` exists only when it comes from `from_options[]` (a single option, or the chosen one, line 81), so the \"You\" case still sends nothing. **Mock.** `frontend/mock/delegations.mjs:130-135` no longer falls back to the single option: a missing `from_person_id` is the caller, and the new row's From is `{name: <persona name>, is_you: true}`. **Tests.** The component test for the `authority` scenario expects `from_person_id: 'P-KEMI'`. A new mock test shows that a request without From is recorded as `{name:'Ada Okafor', is_you:true}`, and the Kemi\u2192Chika combination is refused. The round-2 build.md says these tests fail on the round-1 code."
       ]
     },
     {
@@ -472,7 +562,7 @@
         "delivery/features/F-27/round-1/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -489,11 +579,25 @@
           ],
           "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-security",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [
+            "**Form.** `DelegationForm.tsx:84-86` sets `paired` from the presence of any `for_person_id`. If there are two or more From options and none is chosen, To has no options and waits. Otherwise To keeps only the options whose `for_person_id` equals the shown From's `person_id`. With no From list that value is `undefined`, so only unpaired options remain. **Mock.** `delegatesFor` (`frontend/mock/delegations.mjs:97-102`) uses the same exact match. **Tests.** New component test \"pairing keys without a From list (SEC-1-2)\": To lists only the unpaired option, and the PUT carries no `from_person_id`. In the `authority` scenario, with Kemi shown, only Femi is listed."
+          ],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "34c38e4e"
+      ],
+      "verified_by": "reviewer-security",
+      "verification_refs": [
+        "**Form.** `DelegationForm.tsx:84-86` sets `paired` from the presence of any `for_person_id`. If there are two or more From options and none is chosen, To has no options and waits. Otherwise To keeps only the options whose `for_person_id` equals the shown From's `person_id`. With no From list that value is `undefined`, so only unpaired options remain. **Mock.** `delegatesFor` (`frontend/mock/delegations.mjs:97-102`) uses the same exact match. **Tests.** New component test \"pairing keys without a From list (SEC-1-2)\": To lists only the unpaired option, and the PUT carries no `from_person_id`. In the `authority` scenario, with Kemi shown, only Femi is listed."
       ]
     }
   ],

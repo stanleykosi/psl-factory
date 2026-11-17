@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-26",
   "outcome": "A project's Money tab: each contract stage's amount, invoice and paid state as the backend sends them, and where each amount comes from (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-M3-REPORT"
   ],
@@ -150,7 +150,7 @@
       ]
     },
     "ui": {
-      "status": "changes_requested",
+      "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delivery UI review",
       "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
@@ -400,15 +400,24 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-16T19:01:08Z",
           "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "the remaining visual gap is covered by the signed waiver texts; the UI reviewer verified them in round-2/review-ui.md"
         }
-      ]
+      ],
+      "risk_authority": "design engineer, D-107/D-108 (16-17 Nov 2026): resolved by the signed visual waivers"
     },
     {
       "id": "UI-1-4",
@@ -423,7 +432,7 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -440,11 +449,25 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:38:10Z",
+          "refs": [
+            "The tap areas use `--space-6px`, `--space-3` and `--control-md`, and the amount no longer reaches over the stage name. The resulting card height is waived under UI-2-1."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The tap areas use `--space-6px`, `--space-3` and `--control-md`, and the amount no longer reaches over the stage name. The resulting card height is waived under UI-2-1."
       ]
     },
     {
@@ -506,15 +529,24 @@
         "delivery/features/F-26/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T09:33:18Z",
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "the remaining visual gap is covered by the signed waiver texts; the UI reviewer verified them in round-2/review-ui.md"
         }
-      ]
+      ],
+      "risk_authority": "design engineer, D-107/D-108 (16-17 Nov 2026): resolved by the signed visual waivers"
     },
     {
       "id": "UI-2-2",
@@ -970,6 +1002,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-17T08:30:10Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T09:38:22Z",
       "round": 2,
       "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
       "reason": null
