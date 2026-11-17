@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-23",
   "outcome": "The minutes line: the PM confirms Tola's suggested decisions and actions, and client minutes go to the PMO Lead for review (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-LINE-MINUTES"
   ],
@@ -154,11 +154,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "778e868137d79b0b808b55c5c994c7345613d586",
+      "evidence_refs": [
+        "delivery/features/F-23/round-4/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -1257,7 +1259,7 @@
         "delivery/features/F-23/round-3/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1274,11 +1276,25 @@
           ],
           "head": "778e868137d79b0b808b55c5c994c7345613d586",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-17T11:41:41Z",
+          "refs": [
+            "The done pages now agree with their headings."
+          ],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "eb6ddf081dbbdb476a6e2b71bd94140073b4b219"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "The done pages now agree with their headings."
       ]
     },
     {
@@ -1294,7 +1310,7 @@
         "delivery/features/F-23/round-3/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1311,11 +1327,25 @@
           ],
           "head": "778e868137d79b0b808b55c5c994c7345613d586",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-17T11:41:41Z",
+          "refs": [
+            "The test title at `tests/minutes.test.tsx:326` now says a blank is refused before any request and typed text reaches the 422. Live, W-2306 behaves that way:"
+          ],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "eb6ddf081dbbdb476a6e2b71bd94140073b4b219"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "The test title at `tests/minutes.test.tsx:326` now says a blank is refused before any request and typed text reaches the 422. Live, W-2306 behaves that way:"
       ]
     },
     {
@@ -1383,6 +1413,29 @@
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T11:26:38Z",
+          "head": "778e868137d79b0b808b55c5c994c7345613d586"
+        }
+      ]
+    },
+    {
+      "id": "QA-4-1",
+      "round": 4,
+      "snapshot_ref": "778e868137d79b0b808b55c5c994c7345613d586",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The uncertain notice blames the wrong thing.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-4/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T11:41:41Z",
           "head": "778e868137d79b0b808b55c5c994c7345613d586"
         }
       ]
@@ -2515,6 +2568,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-17T11:27:06Z",
+      "round": 4,
+      "head": "778e868137d79b0b808b55c5c994c7345613d586",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T11:41:41Z",
       "round": 4,
       "head": "778e868137d79b0b808b55c5c994c7345613d586",
       "reason": null
