@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3
+COMMIT: 43a3d5fcad8e0072a85bcab2625a446b88d037e6
 REVIEWER: reviewer-technical
 AUTHORITY: delivery technical review
 
@@ -24,3 +24,4 @@ AUTHORITY: delivery technical review
 - Phone sheet: the buttons go to the `Drawer` footer through a render prop, inside the same `DelegationForm` instance, so entries, errors and the busy state stay shared with the fields. `settle()` closes the sheet only in the "changed" branch. In the "not added" branch the sheet stays open with its entries, and in the "locked" state "Try again" stays in the sheet.
 - Tokens: `.psl-actionbar` (bundle: 12/16/18 padding, 2px rule, `--surface`) replaces the local padding and border. The bottom room is `calc(var(--space-3) + var(--control-lg) + var(--space-18px) + var(--rule-strong))`, which works out to the 82px used in round 1. All four tokens exist in `src/styles/tokens.css`, and the diff adds no raw colour.
 - Read-only review: I ran nothing. `round-2/checks.md` covers the gate on this head.
+- Merged head 43a3d5fc (the dlv-00 merge that brings in F-26): I read the merge diff `34c38e4e..43a3d5fc`. No delegation or Setup file changed, and nothing changed under `src/api`, `src/components`, `src/styles`, `src/shell`, `mock/proposals` or `package.json`. In `mock/server.mjs`, the delegation entries are intact: `E-DELEGATIONS`/`E-DELEGATION` in `M1_OPERATIONS`, `resetDelegations()` and the route line. F-26's new `isMoneyRequest` route runs before the CSRF check, but it matches only `E-REPORT` and the `money` tab of `E-PROJECT-TAB`, so delegation writes still pass through the CSRF check. The `mock-contract.test.ts` change only moves the 501 example from `E-REPORT` to `E-PAYROLL-MATCH`. My verdict stands. The test results come from the coordinator's `round-2/merge-checks.log` and `merge-e2e.log`; I did not run anything.

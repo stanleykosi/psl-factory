@@ -69,3 +69,11 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 ### F-24 follow-ups (non-blocking)
 - QA-3-1: a second start of the same draft shows Start work's generic 409 text and re-enables start; show the backend's message and offer only Close once the 409 shape is confirmed (backend handoff, Added during F-24).
 - TECH-3-1: tighten the e2e dock assertion to the real viewport height. TECH-1-3: prefill option search stops after 5 pages.
+
+### F-23 follow-ups (non-blocking)
+- QA-3-2: shared decision copy "Paid is tracked separately by Finance" shows on minutes approves; make the decide copy line-specific (with F-22 SEC-1-3 and F-23 UX-1-2/1-3).
+- QA-4-1 / UX-4-1 / UI-4-1: the uncertain decision notice says "We couldn't confirm your decision" though the decision was recorded and the send is uncertain; point to "Confirm what happened" on the work item; don't stack two amber notices when the reload also fails.
+- TECH-2-2 (task-card hiding rule is general), TECH-3-1/3-2 (warn_lines guard and ordering), UI-3-1.
+### Process lesson (17 Nov)
+- Several features running full test suites at once drove load past 500 and made untouched tests time out. Run full checks one at a time; the coordinator re-runs them quietly before each merge. Merge dlv-00 into a branch before the final reviews, not after. Write the backend-handoff section during the build, not after PMO asks.
+- F-23 also routed (non-blocking, many fixed in later rounds): TECH-1-1..1-4, UX-1-2..1-8, UI-1-5/1-6, TECH-2-2, UX-2-1, UI-2-3, SEC-2-1, TECH-3-1/3-2, UI-3-1/3-2, SEC-3-1, TECH-4-1 — see each round's reviews; contract items are in BACKEND-HANDOFF "Added during F-23".

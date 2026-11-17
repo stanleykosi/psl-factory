@@ -22,6 +22,8 @@ import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
 import { contractBody as monthEndBody } from '../mock/finance.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractRules } from '../mock/setup.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { contractDelegation, contractDelegations } from '../mock/delegations.mjs';
 
 type Operation = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
 const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
@@ -47,6 +49,7 @@ const BODY: Record<string, unknown> = {
   'E-CLIENT-CONTACT': { expected_revision: 3, name: 'Ada Okoye', email: 'ada@example.org' },
   'E-EVIDENCE-UPLOAD': { kind: 'rule_proof', filename: 'minutes.pdf', content_base64: 'JVBERi0xLjQK', case_revision: 1 },
   'E-TEMPLATE-VERSION': { expected_revision: 1, filename: 'invoice.pdf', content_base64: 'JVBERi0xLjQK' },
+  'E-DELEGATION': { expected_revision: 2, from_person_id: 'P-KEMI', delegate: 'P-FEMI', starts: '2026-11-18', ends: '2026-11-25' },
 };
 // Operations a persona may not use answer the declared status instead of 200 (Setup is for Leads and Admin; E-EXCEPTIONS is Leads only; E-MONTH-END Finance only).
 const PERSONA_STATUS: Record<string, Record<string, number>> = {
@@ -60,6 +63,8 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-EVIDENCE-UPLOAD': { pm: 403, none: 403 },
   'E-TEMPLATES': { pm: 403, none: 403 },
   'E-TEMPLATE-VERSION': { pm: 403, none: 403 },
+  'E-DELEGATIONS': { pm: 403, none: 403 },
+  'E-DELEGATION': { pm: 403, none: 403 },
 };
 // Engineering-proposal fields the mock serves ahead of the contract are removed before the schema check (F-06, F-10, F-11).
 // PROPOSAL (BACKEND-HANDOFF 2, F-22): a records step field carries its saved records as a list of {value, label} in `value`;
@@ -131,6 +136,8 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
   'E-MONTH-END': monthEndBody,
   'E-SETUP-RULES': contractRules,
   'E-EVIDENCE-UPLOAD': contractEvidence,
+  'E-DELEGATIONS': contractDelegations,
+  'E-DELEGATION': contractDelegation,
 };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 

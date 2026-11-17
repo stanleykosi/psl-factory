@@ -14,6 +14,7 @@
 // Overview: E-OVERVIEW serves fixtures/overview/<v>.json when cookie psl_mock_overview names a variant.
 // Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
+// Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
@@ -31,6 +32,7 @@ import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.m
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
+import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
@@ -40,7 +42,7 @@ import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog,
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DOCUMENT', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DOCUMENT', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DELEGATIONS', 'E-DELEGATION'];
 export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -239,6 +241,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetResponses();
         resetSetup();
         resetTemplates();
+        resetDelegations();
         alerts.reset();
         resetWorkspace();
         resetClients();
@@ -280,6 +283,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-MONTH-END') { const r = monthEnd({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-SETUP-RULES' || route.operationId === 'E-SETUP-RULE-SAVE') { const r = (route.operationId === 'E-SETUP-RULES' ? setupRules : saveSetupRule)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-TEMPLATES' || route.operationId === 'E-TEMPLATE-VERSION') { const r = (route.operationId === 'E-TEMPLATES' ? templatesList : templateVersion)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-DELEGATIONS' || route.operationId === 'E-DELEGATION') { const r = (route.operationId === 'E-DELEGATIONS' ? delegationsList : saveDelegation)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EVIDENCE-UPLOAD') { const r = uploadEvidence({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         return send(res, ...workResponse(route.operationId, url, fixtures, work, overrides));

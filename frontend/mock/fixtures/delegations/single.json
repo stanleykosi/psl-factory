@@ -1,0 +1,42 @@
+{
+  "items": [
+    {
+      "delegation_id": "DL-0001",
+      "from": {
+        "name": "Ada Okafor",
+        "role": "Admin",
+        "is_you": true
+      },
+      "delegate": {
+        "name": "Femi Ade",
+        "role": "PMO Lead"
+      },
+      "starts": "2026-11-18",
+      "ends": "2026-11-25",
+      "reason": "Annual leave",
+      "status": "scheduled",
+      "revision": 1
+    }
+  ],
+  "as_of": "2026-11-16T09:00:00+01:00",
+  "can_add": true,
+  "delegate_options": [
+    {
+      "person_id": "P-FEMI",
+      "name": "Femi Ade",
+      "role": "PMO Lead"
+    },
+    {
+      "person_id": "P-CHIKA",
+      "name": "Chika Obi",
+      "role": "Finance Lead"
+    }
+  ],
+  "authorities": [
+    {
+      "value": "approve_milestones",
+      "label": "Approve milestones"
+    }
+  ],
+  "revision": 1
+}
