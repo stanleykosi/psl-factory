@@ -209,14 +209,42 @@
         "delivery/features/F-27/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-16T19:55:48Z",
           "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:44:39Z",
+          "refs": [
+            "delivery/features/F-27/round-2/build.md"
+          ],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:44:40Z",
+          "refs": [
+            "delivery/features/F-27/round-2/review-technical.md"
+          ],
+          "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "delivery/features/F-27/round-2/build.md"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "delivery/features/F-27/round-2/review-technical.md"
       ]
     },
     {

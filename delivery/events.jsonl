@@ -1975,3 +1975,5 @@
 {"at":"2026-11-17T10:44:24Z","feature":"F-26","round":2,"kind":"finding","action":"accept-risk","finding":"TECH-2-1","by":"design engineer"}
 {"at":"2026-11-17T10:44:24Z","feature":"F-26","round":2,"kind":"finding","action":"accept-risk","finding":"UI-2-2","by":"design engineer"}
 {"at":"2026-11-17T10:44:24Z","feature":"F-27","round":2,"kind":"finding","action":"accept-risk","finding":"TECH-1-1","by":"coordinator"}
+{"at":"2026-11-17T10:44:39Z","feature":"F-27","round":2,"kind":"finding","action":"fix","finding":"TECH-1-2","by":"builder"}
+{"at":"2026-11-17T10:44:40Z","feature":"F-27","round":2,"kind":"finding","action":"verify","finding":"TECH-1-2","by":"reviewer-technical"}
