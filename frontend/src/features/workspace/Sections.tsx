@@ -148,11 +148,11 @@ function StatusWord({ value, kind }: { value: string; kind: 'status' | 'receipt'
   return <span className={`ws-word ws-word--${kind}-${value}`}>{word(words, value)}</span>;
 }
 
-function FactsList({ section }: { section: Section }) {
+function FactsList({ section, strip }: { section: Section; strip?: boolean }) {
   return (
     <dl className="ws-facts">
-      {section.items.map((item) => (
-        <div key={item.id} className="ws-fact">
+      {section.items.filter((item) => !(strip && item.severity)).map((item) => (
+        <div key={item.id} className={`ws-fact${item.status === 'blocked' ? ' ws-fact--blocked' : ''}`}>
           {item.restricted ? (
             <dd>{WS_TEXT.restricted}</dd>
           ) : (
@@ -440,7 +440,7 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
 }
 
 /** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default. */
-export function SectionView({ section, level, controls, banner = 'warning' }: { section: Section; level: 2 | 3; controls?: ItemControls; banner?: 'warning' | 'success' | 'problem' }) {
+export function SectionView({ section, level, controls, banner = 'warning', strip = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; banner?: 'warning' | 'success' | 'problem' }) {
   const headId = useId();
   const noteId = useId();
   const Heading = level === 2 ? 'h2' : 'h3';
@@ -455,7 +455,7 @@ export function SectionView({ section, level, controls, banner = 'warning' }: { 
     );
   }
   return (
-    <section className={`psl-panel ws-section ws-section--${section.kind}${section.title ? '' : ' ws-section--untitled'}`} aria-labelledby={section.title ? headId : undefined}>
+    <section className={`psl-panel ws-section ws-section--${section.kind}${strip ? ' ws-section--strip' : ''}${section.title ? '' : ' ws-section--untitled'}`} aria-labelledby={section.title ? headId : undefined}>
       {section.title && (
         <Heading id={headId} className="psl-panel__head ws-section__head">
           {section.title}
@@ -477,7 +477,7 @@ export function SectionView({ section, level, controls, banner = 'warning' }: { 
             {empty ? (
               <p className="ws-empty">{WS_TEXT.empty}</p>
             ) : section.kind === 'facts' ? (
-              <FactsList section={section} />
+              <FactsList section={section} strip={strip} />
             ) : section.kind === 'table' ? (
               <Table section={section} controls={controls} />
             ) : (

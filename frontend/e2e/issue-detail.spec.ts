@@ -165,6 +165,7 @@ for (const [label, viewport] of [
       test('the phone forms open in the full-height Drawer; Escape and Cancel close it and focus returns', async ({ page }) => {
         await page.goto('/work/W-2411');
         await loaded(page);
+        await expect(page.getByRole('link', { name: /Project/ }).first()).toHaveAttribute('href', '/projects/P-0101');
         const opener = page.getByRole('button', { name: 'Post update' });
         await opener.click();
         await expect(page.getByRole('dialog')).toBeVisible();

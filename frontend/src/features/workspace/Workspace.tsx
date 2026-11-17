@@ -63,6 +63,8 @@ function AgentNote({ note }: { note: NonNullable<WorkspaceData['agent_note']> })
 
 /** While the agent works on a checklist the boards put the agent note beside that panel, in the main column. */
 const noteBeside = (item: WorkItem) => item.agent.status === 'working' && (item.workspace?.sections.some((s) => s.kind === 'checklist') ?? false);
+/** F-30: the issue follow-up's board draws the agent note in the side column, under the panel; its facts as a strip under the title. */
+const issueLine = (workspace: WorkspaceData) => workspace.line_key === 'issue_followup';
 
 function WorkspaceHeader({ workspace, itemTitle, beside }: { workspace: WorkspaceData; itemTitle: string; beside: boolean }) {
   const { title, byline, version } = workspace;
@@ -362,8 +364,10 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const registerCase = workspace.line_key === ISSUE_LINE && workspaceSteps.length === 0 && assign === undefined ? workspace.context?.project?.case_id : undefined;
   const readOnlyIssue = registerCase !== undefined;
   const showPanel = workspaceSteps.length > 0 || nextLines.length > 0 || assign !== undefined || readOnlyIssue;
+  const strip = issueLine(workspace) ? workspace.sections.filter((section) => section.kind === 'facts') : [];
   const side = workspace.sections.filter(inSide(item));
-  const main = workspace.sections.filter((section) => !inSide(item)(section));
+  const main = workspace.sections.filter((section) => !inSide(item)(section) && !strip.includes(section));
+  const sideNote = issueLine(workspace) && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
   const notice = flow.notice;
   return (
     <>
@@ -459,6 +463,9 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       )}
       {/* The line boards' shared layout, by section kind and step type (D-62): suggestions and the workspace
           steps sit in a side column with a coloured head; on a phone the steps pin to the bottom. */}
+      {strip.map((section) => (
+        <SectionView key={section.key} section={section} level={titled ? 3 : 2} strip />
+      ))}
       <div className="ws-cols">
         <div className="ws-main">
           {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
@@ -468,13 +475,13 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           ))}
           <WorkspaceLinks links={workspaceLinks(workspace)} page={page} />
         </div>
-        {(side.length > 0 || showPanel) && (
+        {(side.length > 0 || showPanel || sideNote) && (
           <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
             {side.map((section) => (
               <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
             ))}
             {showPanel && (
-              <section ref={decideRef} className={`psl-panel ${hasNext ? 'ws-decide--next' : 'psl-panel--decide'} ws-decide${workspaceSteps.length === 0 ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
+              <section ref={decideRef} className={`psl-panel ${hasNext ? 'ws-decide--next' : 'psl-panel--decide'} ws-decide${workspaceSteps.length === 0 && !(assign && assign.candidates.length > 0) ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
                 <h2 id={`${decideId}-head`} className={`psl-panel__head ${hasNext ? '' : 'psl-panel__head--decide '}ws-decide__head`}>
                   {hasNext ? STEP_TEXT.next : STEP_TEXT.decide}
                 </h2>
@@ -515,6 +522,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             )}
             {workspaceSteps.map((s) => form(`ws:${s.key}`))}
             {assignForm()}
+            {sideNote && <AgentNote note={workspace.agent_note!} />}
           </aside>
         )}
       </div>
@@ -541,7 +549,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   const writable = page !== undefined && typeof workspace.revision === 'number';
   return (
     <div className="ws" data-line={workspace.line_key}>
-      <WorkspaceHeader workspace={workspace} itemTitle={item.title} beside={noteBeside(item)} />
+      <WorkspaceHeader workspace={workspace} itemTitle={item.title} beside={noteBeside(item) || issueLine(workspace)} />
       {writable ? (
         <WorkspaceSteps id={id} item={item} workspace={workspace} page={page} />
       ) : (

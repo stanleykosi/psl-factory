@@ -100,7 +100,7 @@
     "title": "Login fails on older Android phones",
     "status": {
       "label": "FIX IN TESTING",
-      "tone": "agent"
+      "tone": "uncertain"
     },
     "sections": [
       {
@@ -125,7 +125,8 @@
           {
             "id": "f-blocks",
             "label": "BLOCKS",
-            "value": "Go-live"
+            "value": "Go-live",
+            "status": "blocked"
           },
           {
             "id": "f-sev",

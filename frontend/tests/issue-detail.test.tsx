@@ -105,7 +105,9 @@ describe('four states from data (AC 1 to 5, 7)', () => {
     await open(item('W-2411'));
     expect(document.querySelector('.work-state')!.textContent).toBe('FIX IN TESTING');
     const facts = [...document.querySelectorAll('.ws-fact')].map((f) => f.textContent);
-    expect(facts).toEqual(['OWNEREngineering', 'RAISED09 Nov', 'AGE3 days', 'BLOCKSGo-live', 'SEVERITYHigh']);
+    expect(facts).toEqual(['OWNEREngineering', 'RAISED09 Nov', 'AGE3 days', 'BLOCKSGo-live']);
+    expect(document.querySelector('.work-lineend')!.textContent).toContain('High');
+    expect(document.querySelector('.ws-fact--blocked dt')!.textContent).toBe('BLOCKS');
     expect(ws().getByRole('heading', { name: 'What has happened' })).toBeTruthy();
     expect(ws().getByRole('heading', { name: 'Chasing' })).toBeTruthy();
     expect(ws().getByText(/Reminder sent/)).toBeTruthy();
@@ -527,6 +529,15 @@ describe('access (AC 15)', () => {
 });
 
 describe('frame (AC 16, 17)', () => {
+  it('no exceptions button above an owner-needed issue; the agent note sits in the side column', async () => {
+    await open(item('W-2413'));
+    expect(screen.queryByRole('link', { name: 'See all exceptions' })).toBeNull();
+    cleanupView();
+    await open(item('W-2411'));
+    expect(document.querySelector('.ws-side .ws-agentnote')).not.toBeNull();
+    expect(document.querySelector('.ws-header .ws-agentnote')).toBeNull();
+  });
+
   it('the project bar links every tab with a page and marks none current', async () => {
     await open(item('W-2411'));
     const bar = screen.getByRole('navigation', { name: 'Project' });
