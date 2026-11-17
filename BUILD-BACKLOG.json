@@ -1,5 +1,28 @@
 {
   "design_consolidation_20261116": {
+    "reviewed_messages_stability_and_filters_20261117": {
+      "environment": "design-acceptance",
+      "web": "05315978-c102-4a19-ac6f-fe16b3824c26",
+      "worker": "58510e9b-3ab2-44db-8bfc-3400e2e767c6",
+      "package": 58,
+      "states_with_browser_observations": 171,
+      "observed_states_with_open_checks": 170,
+      "states_without_direct_browser_observation": 91,
+      "all_states_accepted": false,
+      "postgresql": [
+        {"deployment": "8d12d90c-dd69-475d-994d-050e2e12d895", "passed": 5, "seconds": 227.293},
+        {"deployment": "cd337b62-5911-462a-b638-04ecb46fbbec", "passed": 6, "seconds": 99.579},
+        {"deployment": "d6a5f672-0a80-4e2c-bcd8-ab35cfc390d8", "passed": 3, "seconds": 640.495},
+        {"deployment": "24b03bd8-19db-4462-9404-e10c2bf0d48d", "passed": 8, "seconds": 148.501},
+        {"deployment": "404658a5-a881-481a-9a06-2191f67d3f12", "passed": 10, "seconds": 712.183}
+      ],
+      "current_test": {"package": 59, "status": "staged"},
+      "current_fixtures": {"deployment": "404658a5-a881-481a-9a06-2191f67d3f12", "status": "running"},
+      "completed": ["Reviewed customer follow-up release and exact original receipt recovery", "Synthetic mailbox and manual evidence adapters", "Current contact and sender checks before first delivery", "Project owner, status and severity filters with retained pagination", "Finance return rationale and source correction entry", "Typed stability observations using reviewed project criteria"],
+      "current": ["Stability, Planning, commercial and issue acceptance examples", "Structured group disclosure editor, rotating message queue and issue presentation verification"],
+      "next": ["Unobserved states and actual unfinished behaviors in the state ledger", "Remaining decision, recovery, device and scoped-operator checks"],
+      "owner_policy": "Deferred"
+    },
     "portal_quote_followup_and_setup_20261117": {
       "runtime_source": "db710104",
       "environment": "design-acceptance",

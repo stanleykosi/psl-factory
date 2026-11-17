@@ -9,7 +9,7 @@ SCREENS = {
     },
     'rfp-response/v1': {
         'decision': ('response', 'commercial', 'document'),
-        'response': ('outcome','portal_receipt','followup_draft','followup_review'),
+        'response': ('outcome','portal_receipt','followup_draft','followup_review','followup_send','followup_confirm','followup_lookup','followup_route'),
         'recovery': ('reconcile', 'cancel'),
     },
     'finance-accounts/v1': {
@@ -25,7 +25,7 @@ SCREENS = {
         'recovery': ('advance', 'resume', 'cancel', 'restart', 'correct', 'adopt_profile'),
     },
     'finance-forecast/v1': {
-        'decision': ('review', 'priority', 'group_review'),
+        'decision': ('review', 'priority', 'group_review', 'group_rules'),
         'response': ('support', 'actual', 'verify', 'match', 'unmatch'),
         'recovery': ('advance', 'correct', 'restart', 'cancel', 'resume', 'reconcile', 'operate_delivery', 'adopt_profile'),
     },

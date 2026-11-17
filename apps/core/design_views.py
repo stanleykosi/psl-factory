@@ -146,7 +146,9 @@ def project(request, case_id, tab='journey'):
         return render(request, 'design/project_money.html', {'case': case, 'tab': tab, 'tabs': navigation, 'money': money})
     if tab != 'journey':
         query = request.GET.get('q', '').strip()[:120]
-        sections = project_journey.sections(request.user, case, tab, actions, query, request.GET)
+        filter_form=project_journey.filters(case,tab,actions,request.GET)
+        sections = project_journey.sections(request.user, case, tab, actions, query, request.GET,
+            selected=filter_form.cleaned_data) if filter_form.is_valid() else []
         stages = None
         if tab == 'milestones' and 'finance.read' in actions:
             from apps.finance.project_money import projection
@@ -154,7 +156,7 @@ def project(request, case_id, tab='journey'):
             stages = projection(request.user, case)
             stages['rows'] = [row for row in stages['rows'] if row['contract_stage']]
         return render(request, 'design/project_tab.html', {
-            'case': case, 'tab': tab, 'tabs': navigation, 'panels': sections, 'q': query, 'stages': stages,
+            'case': case, 'tab': tab, 'tabs': navigation, 'panels': sections, 'q': query, 'stages': stages,'filter_form':filter_form,
             'change_timeline': project_journey.change_timeline(case, query, request.GET.get('plan-page'))
                 if tab == 'milestones' and 'change.read' in actions else None,
         })

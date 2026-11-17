@@ -1,5 +1,13 @@
 # PSL operations factory build state
 
+## Reviewed customer delivery and stability observations · 17 November 2026
+
+The isolated Railway preview now supports human release of a reviewed bid follow-up, exact project contacts, a test mailbox and structured manual-channel receipts. Original message attempts and receipts are immutable. Interrupted delivery performs receipt lookup and blocks another message while the original remains unresolved. Current contact and sender authority are checked before the first effect. Project actions and issue registers now have native status and owner filters, with severity on issues and filter-preserving pagination. Finance recovery displays the actual reviewer decision and its correction link.
+
+Stability work has a typed observation form generated from the project's active reviewed criteria. It records owner confirmation, observed time, exact units and unknown measurements through native delivery services. Synthetic verification is explicit. Changed observations invalidate earlier qualification and require reviewed reassessment. PostgreSQL runs passed 5, 6, 3, 8 and 10 tests respectively. Current work adds structured group-disclosure policy editing, a bounded rotating message queue and the current issue-owner console. Their thirteen selected tests remain pending in staged package 59.
+
+Web `05315978` and worker `58510e9b` run package 58 in `design-acceptance`. Migration `pmo.0054` is applied. Browser work verified follow-up deliveries 59 and 60, held uncertain original 61, verified invoice 62, returned invoice 63, ownership hold 64 and missing-information recovery 65. The final message view keeps released wording and suppresses its duplicate release control. The ledger has 171 observed states, 170 with further checks and 91 awaiting first observation. Continue the prepared Planning, commercial, issue and stability examples and close the remaining actual behavior gaps. HOD policy and live destinations remain deferred.
+
 ## Portal receipts, award comparison, follow-up and workspace controls · 17 November 2026
 
 Source `db710104` runs in the isolated Railway preview. Work 57 verified a manual client portal receipt against pack 51 and submission 6. The browser compared NGN 100.00 in the reviewed quote with NGN 101.25 in the award on the same declared basis. The assigned project manager edited and saved an internal follow-up and saw its reminder disappear after the newer win. Work 58 verified internal minutes version 52 after selected suggestions were edited and explicitly confirmed, with action 10 linked. Setup reads existing rule status by area and the project register includes authorized escalation history. Two preliminary and four expanded PostgreSQL checks passed.

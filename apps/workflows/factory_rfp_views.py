@@ -407,6 +407,39 @@ def detail(request,work,focus=None):
                 else:
                     rfp_followup.review(request.user,work.case_id,outcome_id,int(request.POST.get('run','0')),
                         request.POST.get('text',''),int(request.POST.get('reviewed','0')),expected)
+            elif action=='followup_send':
+                from apps.pmo.rfp_messages import reserve
+                reserve(request.user,work.case_id,int(request.POST.get('target','0')),int(request.POST.get('reviewed','0')),
+                        request.POST.get('route',''),int(request.POST.get('case_revision','0')))
+            elif action=='followup_confirm':
+                from apps.pmo.rfp_messages import confirm
+                confirm(request.user,work.case_id,int(request.POST.get('dispatch','0')),int(request.POST.get('evidence','0')),
+                        request.POST.get('reference',''),request.POST.get('delivered')=='yes',int(request.POST.get('case_revision','0')))
+            elif action=='followup_lookup':
+                from apps.pmo.models import RFPFollowupDispatch
+                from apps.pmo.rfp_messages import run_once
+                require(request.user,work.case,'rfp.submit')
+                dispatch=RFPFollowupDispatch.objects.filter(pk=int(request.POST.get('dispatch','0')),actor=request.user,
+                    outcome__submission__response__rfp__case=work.case).first()
+                if dispatch is None:raise ValidationError('Choose your original message.')
+                run_once(dispatch.pk,lookup_only=True)
+            elif action=='followup_route':
+                from apps.core.models import ClientContactRevision
+                from apps.policy.change_drafts import draft_standard_policy
+                from apps.policy.document_validators import ROLES
+                contact=ClientContactRevision.objects.filter(case=work.case,purpose='project',customer='',pk=request.POST.get('contact')).first()
+                role=request.POST.get('sender_role','')
+                mode=request.POST.get('mode','')
+                if contact is None or role not in ROLES or mode not in ['synthetic_mailbox','manual_evidence']:
+                    raise ValidationError('Choose an existing project contact, sender role and delivery method.')
+                resolved=resolve('D11.adapter_configuration_refs',work.case)
+                if resolved.status in ['CONFLICT','AMBIGUOUS']:raise ValidationError('Resolve conflicting delivery rules before adding a route.')
+                records=reference_values(resolved.configuration) if resolved.status=='ACTIVE' else []
+                key='customer_followup'
+                value={'kind':'rfp_followup','key':key,'mode':mode,'contact_id':contact.pk,'sender_roles':[role]}
+                draft_standard_policy(request.user,work.case_id,'D11.adapter_configuration_refs',
+                    [entry for entry in records if entry.get('kind')!='rfp_followup' or entry['key']!=key]+[value],
+                    int(request.POST.get('evidence','0')),timezone.now())
             elif action in ['response','commercial','document','outcome']:
                 observed=None;selection_context=None;followup_on=None
                 if action=='outcome':
@@ -459,10 +492,24 @@ def detail(request,work,focus=None):
     selected = chosen or (submission_page.object_list[0] if submission_page.paginator.count == 1 else None)
     from apps.pmo.rfp_pricing import comparison
     from apps.pmo.rfp_followup import panel as followup_panel
+    from apps.pmo.models import RFPFollowupDispatch
+    from apps.core.models import ClientContactRevision
+    from apps.policy.document_validators import ROLES
+    resolved=resolve('D11.adapter_configuration_refs',work.case)
+    followup_routes=[value for value in reference_values(resolved.configuration) if value.get('kind')=='rfp_followup'] if resolved.status=='ACTIVE' else []
+    messages_sent=list(RFPFollowupDispatch.objects.filter(outcome__submission__response__rfp__case=work.case,
+        actor=request.user).select_related('outcome','receipt','attempt','mailbox','contact').order_by('-pk')[:10])
+    followup=followup_panel(request.user,work.case,row['rfp']['outcome']) if focus in [None,'response'] else None
+    if followup and followup.get('reviewed'):
+        followup['released']=RFPFollowupDispatch.objects.filter(review=followup['reviewed'],actor=request.user).exists()
     portal_pack=RFPDocumentBinding.objects.filter(version=document,snapshot__route__method='manual_client_portal').first() if document else None
     return response(request,'factory/rfp_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'source_form':source,'mappings':mappings,
         'award_comparison':comparison(work.case,row['rfp']['outcome']),
-        'followup':followup_panel(request.user,work.case,row['rfp']['outcome']) if focus in [None,'response'] else None,
+        'followup':followup,
+        'followup_routes':followup_routes,'followup_messages':messages_sent,
+        'followup_receipt_evidence':evidence.filter(kind='rfp_followup_receipt'),
+        'followup_contacts':ClientContactRevision.objects.filter(case=work.case,purpose='project',customer='').order_by('-number')[:20],
+        'followup_sender_roles':ROLES,
         'portal_receipt':getattr(row['rfp']['submission'],'portal_receipt',None),
         'portal_pack':portal_pack if not row['rfp']['submission'] and allowed(request.user,work.case,'rfp.submit') and allowed(request.user,work.case,'document.read') else None,
         'portal_evidence':evidence.filter(kind='rfp_portal_receipt'),

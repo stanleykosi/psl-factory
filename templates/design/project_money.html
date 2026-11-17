@@ -3,6 +3,7 @@
 {% block content %}
 <header class="page-heading"><div><a class="back-link" href="{% url 'design_project' case.pk %}">← Project journey</a><h1>Money</h1><p>{{ case|workspace_name }}</p></div></header>
 {% include 'design/project_tabs.html' %}
+{% if not access_required %}<p><a href="{% url 'finance_settlement' case.pk %}">Open invoices and receipts</a></p>{% endif %}
 {% if access_required %}<section class="card"><h2>Finance access required</h2><p>Ask the workspace administrator for access to this project’s Money tab.</p></section>{% else %}
 <div class="factory-case-layout"><section class="card" aria-label="Contract and invoice amounts">
   <h2>Contract stages and invoices</h2>

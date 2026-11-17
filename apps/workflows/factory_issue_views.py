@@ -55,10 +55,10 @@ def presentation(actor,work):
     except (ValidationError,PermissionDenied):
         row.update(state='Source access needs review',next_action='Current issue and external source-reader permission is required');return row
     stopped=work.cancel_requested or work.status in ['verified','cancelled','followup_needed']
-    row.update(title=panel['issue'].reference+' · Issue investigation',owner=panel['issue'].current.owner.username,issues=panel,tasks=panel['tasks'],blocker=panel['finding'],next_action=panel['finding'],readiness_changed=panel['readiness_changed'],can_advance=bool(panel['options']) and not stopped and permitted(actor,work,'factory.execute'),can_configure=permitted(actor,work,'policy.configure'),can_manage=permitted(actor,work,'factory.manage'))
+    row.update(title=panel['issue'].current.title,owner=panel['issue'].current.owner.username,issues=panel,tasks=panel['tasks'],blocker=panel['finding'],next_action=panel['finding'],readiness_changed=panel['readiness_changed'],can_advance=bool(panel['options']) and not stopped and permitted(actor,work,'factory.execute'),can_configure=permitted(actor,work,'policy.configure'),can_manage=permitted(actor,work,'factory.manage'))
     panel['can_respond']=panel['can_respond'] and not stopped and permitted(actor,work,'issue.work')
     row['needs_me']=panel['can_respond'] and any(t.status=='open' for t in panel['tasks']) or row['can_advance']
-    if work.status=='verified' and not panel['readiness_changed']:row['next_action']='Owner follow-up recorded. Issue resolution remains in the native issue lifecycle.'
+    if work.status=='verified' and not panel['readiness_changed']:row['next_action']='Owner follow-up recorded. Review issue resolution in the issue register.'
     return row
 
 

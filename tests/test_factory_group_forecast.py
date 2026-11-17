@@ -20,6 +20,40 @@ from .billing_helpers import evidence,policy
 from .helpers import rev
 
 class GroupForecastFactoryTests(TestCase):
+    def test_structured_group_rule_editor_retains_base_requires_oracle_and_saves_only_a_draft(self):
+        from apps.policy.models import Configuration
+        from apps.policy.services import resolve
+        from apps.identity.models import Grant
+        self.start();self.advance();self.client.force_login(self.a)
+        url=reverse('factory_invoice_decision',args=[self.w.pk])
+        self.assertContains(self.client.get(url),'Save group rules for review')
+        base=active_component('D10.audience_projection_rules',self.c)
+        previous=reference_values(base)[0]
+        values={'action':'group_rules','work_revision':self.w.revision,'case_revision':rev(self.c),
+            'base_configuration':base.pk,'rows':self.g['rows'],'fields':self.g['fields'],
+            'metadata':self.g['metadata'],'recipients':[self.reader.pk],'reviewer_roles':['Finance'],
+            'publisher_roles':['Finance'],'allow_preparer_review':'yes','oracle':self.g['oracle_evidence_id'],
+            'decision':self.c.evidence.filter(kind='policy_decision').first().pk,
+            'effective_from':timezone.now().isoformat()}
+        before=Configuration.objects.filter(case=self.c).count()
+        self.assertContains(self.client.post(url,{**values,'base_configuration':0}),'disclosure rules changed')
+        self.assertContains(self.client.post(url,{**values,'metadata':['as_of']}),'currency, accounting basis')
+        wrong=evidence(self.a,self.c,'forecast_group_oracle','{}')
+        values['case_revision']=rev(self.c)
+        self.assertContains(self.client.post(url,{**values,'oracle':wrong.pk}),'independent expected report differs')
+        self.assertEqual(Configuration.objects.filter(case=self.c).count(),before)
+        self.assertRedirects(self.client.post(url,values),url)
+        successor=Configuration.objects.filter(case=self.c,component='D10.audience_projection_rules').latest('pk')
+        self.assertNotEqual(successor.pk,base.pk)
+        self.assertEqual(resolve('D10.audience_projection_rules',self.c).configuration.pk,base.pk)
+        result=reference_values(successor)[0]
+        self.assertEqual(result['forecast'],previous['forecast'])
+        self.assertEqual(result['group']['run_hash'],self.run.sha256)
+        self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
+        Grant.objects.filter(case=self.c,user=self.a,action='policy.configure').update(active=False)
+        values['case_revision']=rev(self.c)
+        self.assertEqual(self.client.post(url,values).status_code,403)
+
     def setUp(self):
         self.a,self.c,self.run,self.reader,self.t,self.g,self.expected=configured()
         s=self.run.scenario;p=s.payload

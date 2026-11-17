@@ -17,7 +17,7 @@ def inputs(v,key,*,dispatch=False):
     public_terms_for(v)
     reviews=reviewed(v);decisions=valid_approvals(v.commercial,['PM','Head of PMO','CEO'])
     c=active_component('D11.adapter_configuration_refs',case)
-    routes=[r for r in reference_values(c) if r['key']==key]
+    routes=[r for r in reference_values(c) if r.get('kind')=='rfp_submission' and r['key']==key]
     if len(routes)!=1:raise ValidationError('Select one verified configured RFP route')
     route=routes[0];i=v.intake
     if dispatch and i.deadline_status=='unknown':raise ValidationError('Verify the actual submission deadline or attest explicitly that none is stated')

@@ -1,5 +1,17 @@
 # Actual test execution ledger
 
+## Bid message delivery, project filters and stability forms · 17 November 2026
+
+Railway `design-acceptance` run `8d12d90c-dd69-475d-994d-050e2e12d895` passed five PostgreSQL tests in 227.293 seconds, exit 0. Run `cd337b62-5911-462a-b638-04ecb46fbbec` passed six in 99.579 seconds, exit 0. They cover exact reviewed messages, manual receipt matching, interrupted-effect lookup with a late original receipt, changed contact and revoked sender holds, portal comparison, bid outcome variants, current Finance access and native project-action filtering and revisions. Django checks and migration drift checks passed. `pmo.0054_rfp_followup_delivery` applied in the isolated test databases and preview.
+
+Run `d6a5f672-0a80-4e2c-bcd8-ab35cfc390d8` passed three PostgreSQL tests in 640.495 seconds, exit 0. The new typed observation test covered blank measurements remaining unknown, changed configuration rejection, source-owned capture and explicit sample verification, qualification, invalidation after new evidence and revoked source permission. Existing negative/unknown observations and private source suppression also passed. No production policy values were selected.
+
+Run `24b03bd8-19db-4462-9404-e10c2bf0d48d` passed all eight PostgreSQL tests in 148.501 seconds, exit 0, including competing message workers and returned invoice readback. Run `404658a5-a881-481a-9a06-2191f67d3f12` passed ten tests in 712.183 seconds, exit 0, including the fresh-outcome and already-released presentation regression. Its subsequent eleven named acceptance fixtures are still running. The structured group-policy editor, rotating message cursor and current issue-owner presentation have new regression tests staged in package 59. That package has not yet been test-run or deployed.
+
+Fixture run `bfd4bf82-78b2-47c7-bbb1-c33fb2bc1233` successfully created seven synthetic cases, works 59–65. In the Codex browser, work 59's reviewed message reached `procurement@example.invalid` with original receipt `bid-889ab424c11c4f5aa82c7a05e82fc9c9`. Work 60 refused the wrong reference and accepted exact supplied receipt `SAMPLE-MANUAL-BID-001`. Work 61 retained its absent original receipt after lookup and refused another release. Work 62 was claimed, approved and continued to verified invoice issuance and delivery. Work 65 received its requested information and continued to a separate Finance review. Work 63 displayed the retained return reason. Phone reads for invoice and follow-up measured 375 CSS pixels with no horizontal overflow. Action 10 recorded deadline change, cancellation and explicit reopening with retained versions. Filtering Unassigned returned no records and clearing restored it.
+
+Diagnostic SSH was unavailable because Railway has no registered SSH key. The isolated database has no public connection URL. Neither access setting was changed. Hosted tests continued through the existing check service. These runs use native internal services with synthetic people, policies, evidence and transports. They establish no live customer-channel delivery or business-owner approval.
+
 ## Portal receipt, quote comparison and workspace controls · 17 November 2026
 
 All runs used Railway `design-acceptance`. Initial deployment `2c1aa1c1` passed two PostgreSQL tests in 141.121 seconds with exit 0. It verified portal capture, refusal of inbox dispatch and wrong pack evidence, native Route A verification and exact award comparison, plus the existing local inbox outcome path.

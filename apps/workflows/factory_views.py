@@ -235,6 +235,8 @@ def _presentation(actor,work,*,focus=None):
         row['preparation_selection']=preparation_selection(work)
         row['preparation_history']=work.preparation_bindings.select_related('actor','preparation').order_by('sequence')
     if work.definition=='pmo-finance/v1' and work.invoice_id:
+        from apps.finance.models import InvoiceReview
+        row['invoice_decisions']=InvoiceReview.objects.filter(invoice=work.invoice).select_related('actor').order_by('-pk')[:10]
         from .factory_routing import evaluate,task_authority_current
         row['routing']=evaluate(work)
         row['reviewer_findings']=sorted({r['summary'] for r in row['routing'].get('reviewer_findings',[])})
@@ -928,6 +930,10 @@ def detail(request,work_id,focus=None):
                     'client_signature':int(request.POST.get('client_signature','0')),'attestation':parse_attestation(request.POST.get('attestation','')),'packet':request.POST.get('packet',''),'note':request.POST.get('note','')}
                 else:raise ValidationError('Choose an actual release or go-live acceptance observation')
                 observe(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),kind,data)
+            elif operation=='stability_source':
+                if work.definition!='delivery-hypercare/v1':raise ValidationError('Release follow-up work required')
+                from .factory_hypercare import record_stability
+                record_stability(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),request.POST)
             elif operation=='reconcile':d.reconcile(request.user,work.pk,revision)
             elif operation in ['resume','cancel']:d.manage(request.user,work.pk,revision,operation)
             elif operation=='adopt_profile':d.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
@@ -953,6 +959,9 @@ def detail(request,work_id,focus=None):
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc))
         work=get_object_or_404(visible(request.user),pk=work_id)
     row=presentation(request.user,work)
+    if work.definition=='delivery-hypercare/v1' and request.method=='POST' and request.POST.get('action')=='stability_source':
+        from .stability_forms import observation_forms
+        row['hypercare']['observation_forms']=observation_forms(request.user,work,request.POST)
     from apps.agents.factory_catalogue import CATALOGUE
     activities=[] if focus else list(work.activities.prefetch_related('attempts').order_by('pk'))
     for activity in activities:

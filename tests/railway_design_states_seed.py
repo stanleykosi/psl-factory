@@ -21,7 +21,7 @@ from apps.policy.role_assignments import draft as draft_roles, draft_delegations
 from apps.policy.services import resolve, transition
 from apps.workflows import factory, factory_minutes
 from apps.workflows.models import FactoryWork
-from tests import correction_helpers, document_helpers, factory_rfp_helpers, planning_helpers, settlement_helpers, test_commercial_changes, test_rfp
+from tests import correction_helpers, document_helpers, factory_helpers, factory_rfp_helpers, planning_helpers, settlement_helpers, test_commercial_changes, test_rfp
 from tests.billing_helpers import coverage, policy, stage_policy
 from tests.helpers import rev, signed
 from tests.test_change_impacts import ChangeImpactTests
@@ -75,6 +75,103 @@ def prepare(key, operator):
         with patch.object(planning_helpers, 'setup_case', return_value=(operator, case)):
             planning = planning_helpers.fixture(configured=True, username='state-assistant-draft')
         return {'case': str(case.pk), 'packet': planning['packet'].pk}
+    if key in {'planning-ready','planning-owner-wait','planning-rules-needed','planning-verified'}:
+        from tests.test_factory_planning import setup
+        users=get_user_model().objects
+        create_user=users.create_user
+        with (patch.object(planning_helpers,'setup_case',return_value=(operator,case)),
+              patch.object(users,'create_user',side_effect=lambda username,**values:create_user(username='state-'+key+'-'+username,**values))):
+            data=setup(department_configured=key!='planning-rules-needed')
+            if key!='planning-ready':factory.run_until_wait(data['work'].pk)
+            if key=='planning-verified':
+                planning_helpers.observe(data)
+                factory.run_until_wait(data['work'].pk)
+        return {'case':str(case.pk),'work':data['work'].pk,'packet':data['packet'].pk}
+    if key in {'commercial-review','commercial-information'}:
+        from tests import costing_helpers
+        from tests.test_factory_commercial import setup
+        users=get_user_model().objects
+        create_user=users.create_user
+        with (patch.object(costing_helpers,'setup_case',return_value=(operator,case)),
+              patch.object(users,'create_user',side_effect=lambda username,**values:create_user(username='state-'+key+'-'+username,**values))):
+            data=setup(missing=key=='commercial-information')
+            factory.run_until_wait(data['work'].pk)
+        return {'case':str(case.pk),'work':data['work'].pk,'head':data['head'].pk}
+    if key in {'issue-followup','issue-owner-access','issue-verified'}:
+        from tests import test_factory_issues
+        log_issue=test_factory_issues.log_issue
+        with (patch.object(test_factory_issues,'setup_case',return_value=(operator,case)),
+              patch.object(test_factory_issues,'log_issue',side_effect=lambda actor,case_id,reference,*args:log_issue(actor,case_id,'SAMPLE-'+key.upper(),*args))):
+            entry=test_factory_issues.FactoryIssueTests()
+            entry.setUp()
+        entry.advance()
+        if key=='issue-verified':
+            entry.respond()
+            entry.advance()
+        if key=='issue-owner-access':
+            Grant.objects.filter(case=case,user=operator,action='issue.own').update(active=False)
+            factory.run_until_wait(entry.work.pk)
+        return {'case':str(case.pk),'work':entry.work.pk,'issue':entry.state.issue_id,'proof':entry.e['requirements'].pk}
+    if key in {'bid-followup-delivery','bid-followup-manual','bid-followup-uncertain'}:
+        from tests.test_rfp_messages import configured
+        from apps.pmo import rfp,rfp_followup,rfp_messages
+        from adapters.rfp_followup import SyntheticBidMailbox
+        with patch.object(test_commercial_changes,'setup_case',return_value=(operator,case)):
+            data=factory_rfp_helpers.configured(reference='SAMPLE-'+key.upper())
+        configured(data,'manual_evidence' if key=='bid-followup-manual' else 'synthetic_mailbox')
+        work=factory_rfp_helpers.start(data,key=key)
+        response,_=factory_rfp_helpers.reviewed_document(data,work)
+        factory.run_until_wait(work.pk)
+        submission=response.submissions.get()
+        result=rfp.outcome(operator,case.pk,submission.pk,'unknown',timezone.now(),'Client',None,
+                           'Sample no-reply check',rev(case),followup_on=timezone.localdate())
+        draft=rfp_followup.draft(operator,case.pk,result.pk,rev(case))
+        review=rfp_followup.review(operator,case.pk,result.pk,draft.pk,'Sample reviewed bid follow-up',0,rev(case))
+        if key=='bid-followup-uncertain':
+            class Interrupted(SyntheticBidMailbox):
+                def deliver(self,dispatch):
+                    raise TimeoutError('Synthetic channel response was interrupted')
+            dispatch=rfp_messages.reserve(operator,case.pk,result.pk,review.pk,'customer_followup',rev(case))
+            rfp_messages.run_once(dispatch.pk,Interrupted())
+        return {'case':str(case.pk),'work':work.pk,'outcome':result.pk,'review':review.pk}
+    if key in {'invoice-review','invoice-returned','invoice-owner-needed','invoice-information'}:
+        from tests.obligation_helpers import factory_identified
+        from apps.workflows.models import HumanTask
+        with patch.object(factory_helpers,'setup_case',return_value=(operator,case)):
+            data=factory_helpers.fixture(missing=key=='invoice-information',responsibility=key!='invoice-owner-needed')
+        work=data['work']
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        if work.invoice_id:
+            factory_identified(data)
+        if key=='invoice-returned':
+            task=HumanTask.objects.get(case=case,kind='factory_review',status='open')
+            task=factory.claim_task(operator,task.pk,task.revision)
+            factory.decide(operator,task.pk,task.revision,'return',data['proof'].pk,'Synthetic invoice needs a corrected preparation.')
+        return {'case':str(case.pk),'work':work.pk,'proof':data['proof'].pk}
+    if key in {'stability-observations','stability-missing-rule'}:
+        from tests import test_delivery
+        from tests.test_factory_hypercare import setup
+        from apps.documents.controlled import request_review,reserve_publication
+        from apps.documents.delivery import run_publication_once
+        from apps.documents.models import PublicationReceipt
+
+        def publish_exact(fixture,version):
+            if version.audience=='client':
+                request_review(operator,case.pk,version.pk,rev(case))
+                review_version(operator,case.pk,version.pk,'approve','Synthetic client projection',rev(case))
+            publication=reserve_publication(operator,case.pk,version.pk,rev(case))
+            run_publication_once(job_id=publication.job.pk)
+            return PublicationReceipt.objects.get(publication=publication)
+
+        with (patch.object(test_delivery,'setup_case',return_value=(operator,case)),
+              patch.object(test_delivery.DeliveryFixture,'publish',publish_exact)):
+            entry=setup()
+            entry.accepted()
+            if key=='stability-observations':entry.criteria()
+            entry.observations(errors=2)
+            factory.run_until_wait(entry.work.pk)
+        return {'case':str(case.pk),'work':entry.work.pk,'dossier':entry.d.pk,'proof':entry.e['requirements'].pk}
     if key == 'bid-intake-walkthrough':
         with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
             _, _, evidence, _, _ = test_rfp.fixture(record_intake=False)
@@ -188,6 +285,14 @@ elif workflow == 'award-and-money-access':
     fixtures = ('bid-award-walkthrough', 'money-read-only', 'bid-intake-walkthrough', 'corrected-money')
 elif workflow == 'portal-and-followup':
     fixtures = ('portal-pricing', 'minutes-selected')
+elif workflow == 'message-and-invoice-states':
+    fixtures = ('bid-followup-delivery','bid-followup-manual','bid-followup-uncertain',
+                'invoice-review','invoice-returned','invoice-owner-needed','invoice-information')
+elif workflow == 'stability-states':
+    fixtures = ('stability-observations','stability-missing-rule')
+elif workflow == 'planning-commercial-issue-states':
+    fixtures = ('planning-ready','planning-owner-wait','planning-rules-needed','planning-verified',
+                'commercial-review','commercial-information','issue-followup','issue-owner-access','issue-verified')
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

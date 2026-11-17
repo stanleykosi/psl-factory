@@ -205,4 +205,10 @@ def projection(actor,work):
         if work.status=='verified':verify(work,actor)
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified'
     ts=list(tasks(work))
-    return {'issue':issue,'native':n,'finding':message,'readiness_changed':changed,'options':options,'tasks':ts,'investigation':latest.result if latest else None,'can_respond':actor.pk==issue.current.owner_id and not work.cancel_requested,'reference_head':data['reference_revision_id']}
+    owner_actions=set(Grant.objects.filter(case=work.case,user_id=issue.current.owner_id,user__is_active=True,
+        active=True,action__in=['issue.own','issue.work']).values_list('action',flat=True))
+    owner_available=owner_actions=={'issue.own','issue.work'}
+    return {'issue':issue,'native':n,'finding':message,'readiness_changed':changed,'options':options,'tasks':ts,
+        'owner_available':owner_available,'investigation':latest.result if latest else None,
+        'can_respond':owner_available and actor.pk==issue.current.owner_id and not work.cancel_requested,
+        'reference_head':data['reference_revision_id']}

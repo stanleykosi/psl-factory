@@ -85,7 +85,8 @@ class DesignConsolidationTests(TestCase):
         self.assertContains(self.client.get(reverse('design_project_tab', args=[self.case.pk, 'money'])), 'Open invoices and receipts')
         self.assertEqual(self.client.get(reverse('design_project_tab', args=[self.other.pk, 'milestones'])).status_code, 404)
         Grant.objects.filter(case=self.case, user=self.actor, action='finance.read').update(active=False)
-        self.assertEqual(self.client.get(reverse('design_project_tab', args=[self.case.pk, 'money'])).status_code, 404)
+        self.assertContains(self.client.get(reverse('design_project_tab', args=[self.case.pk, 'money'])),
+                            'Finance access required',status_code=403)
 
     def test_exact_project_action_uses_native_ownership_deadline_and_revision(self):
         from django.utils import timezone
@@ -106,6 +107,10 @@ class DesignConsolidationTests(TestCase):
         self.assertRedirects(self.client.post(url, {**values, 'operation': 'complete', 'revision': rev(self.case),
                              'action_revision': 2}), url, fetch_redirect_response=False)
         self.assertContains(self.client.get(url), 'Completed')
+        actions=reverse('design_project_tab',args=[self.case.pk,'actions'])
+        self.assertContains(self.client.get(actions,{'state':'completed','owner':self.actor.pk}),'Check the approval evidence')
+        self.assertNotContains(self.client.get(actions,{'owner':'unassigned'}),'Check the approval evidence')
+        self.assertContains(self.client.get(actions,{'owner':'999999999999'}),'Select a valid choice')
         foreign = reverse('design_project_action', args=[self.other.pk, item.pk])
         self.assertEqual(self.client.get(foreign).status_code, 404)
 

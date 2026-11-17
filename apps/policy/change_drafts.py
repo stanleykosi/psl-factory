@@ -28,7 +28,9 @@ def draft_standard_policy(actor, case_id, component, value, evidence_id, effecti
     if component in ['D01.change_type_catalogue','D11.adapter_configuration_refs']:
         if not isinstance(value, list) or not 1 <= len(value) <= 100:
             raise ValidationError('Catalogue draft needs 1–100 explicit entry objects')
-        records = [register_reference(actor, case_id, 'standard:'+str(uuid4()), SCHEMAS[component], item, evidence_id) for item in value]
+        records = [register_reference(actor, case_id, 'standard:'+str(uuid4()),
+            'schema:psl/rfp-followup-route/v1' if component=='D11.adapter_configuration_refs' and isinstance(item,dict) and item.get('kind')=='rfp_followup' else SCHEMAS[component],
+            item, evidence_id) for item in value]
         value = [r.ref for r in records]
     else:
         schema=SCHEMAS[component]

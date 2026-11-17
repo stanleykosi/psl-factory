@@ -149,7 +149,9 @@ def projection(actor,work):
     except PermissionDenied:author_current=False
     from apps.pmo.go_live_attestations import declaration_draft
     for receipt in current_receipts:receipt.attestation_draft=declaration_draft(d,receipt,actor)
+    from .stability_forms import observation_forms
     return {'dossier':d,'checks':observed,'assessment':assessed(work),'source_coverage':coverage,'intake_valid':intake_valid,'can_record_release':can_release,
+        'observation_forms':observation_forms(actor,work),
         'can_reaffirm':instruction_packet is not None,'intake_authority_current':author_current,
         'can_accept_go_live':can_accept,'acceptance_packet':packet,'go_live_receipts':current_receipts,'readiness_changed':changed,
         'public_sources':list(public_evidence(Evidence.objects.filter(case=work.case,pk__in=public_ids))),
@@ -178,6 +180,39 @@ def observe(actor,work_id,expected,case_expected,kind,data):
     work.revision+=1
     if work.status not in ['configuration_needed','owner_needed','blocked']:work.status='ready';work.finding=''
     work.save();return result
+
+
+@transaction.atomic
+def record_stability(actor,work_id,expected,case_expected,data):
+    from .factory import access
+    from .stability_forms import observation_forms
+    work=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
+    access(actor,work.case,envelope=DEFINITION)
+    case=lock_case(actor,work.case_id,'delivery.source',case_expected)
+    work.case=case
+    if work.revision!=expected or work.cancel_requested:
+        raise ValidationError('The stability work changed. Review its current evidence.')
+    forms=observation_forms(actor,work,data)
+    form=next((form for form in forms if form.owner_name==data.get('owner')),None)
+    if form is None:
+        raise ValidationError('A current reviewed stability rule and permitted source owner are required.')
+    if not form.is_valid():
+        raise ValidationError([message for messages in form.errors.values() for message in messages])
+    subject(work,actor)
+    values=form.cleaned_data
+    source=delivery.capture_source(actor,case.pk,work.request['dossier'],'hypercare_'+form.owner_name.lower(),
+        values['reference'],values['evidence'].pk,form.payload(),case.revision)
+    if values.get('verify_sample'):
+        case.refresh_from_db()
+        delivery.verify_source(actor,case.pk,source.pk,case.revision)
+    work.revision+=1
+    if work.status not in {'verified','configuration_needed','owner_needed','blocked'}:
+        work.status='ready'
+        work.finding=''
+    work.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
+    return source
 
 @transaction.atomic
 def reassess(actor,work_id,expected,reason):

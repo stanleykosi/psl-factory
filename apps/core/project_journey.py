@@ -1,4 +1,6 @@
 """Project views over existing records. Native screens own edits and decisions."""
+from django import forms
+from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from django.db.models import F, OuterRef, Q, Subquery
 from django.http import Http404
@@ -45,15 +47,50 @@ def change_timeline(case, query, page):
     return {'rows': rows, 'page': window}
 
 
-def sections(actor, case, tab, grants, query='', pages=None):
+def filters(case,tab,grants,data):
+    fields={}
+    records=None
+    if tab=='actions' and 'meeting.read' in grants:
+        records=ActionItem.objects.filter(case=case,current__isnull=False)
+    if tab=='registers' and 'issue.read' in grants:
+        records=Issue.objects.filter(case=case,current__isnull=False)
+        severities=records.exclude(current__severity__isnull=True).order_by('current__severity').values_list('current__severity',flat=True).distinct()[:30]
+        fields['severity']=forms.ChoiceField(required=False,label='Issue severity',choices=[('','All severities')]+[(value,value) for value in severities])
+    if records is not None:
+        states=records.order_by('current__status').values_list('current__status',flat=True).distinct()[:30]
+        fields['state']=forms.ChoiceField(required=False,label='Action status' if tab=='actions' else 'Issue status',choices=[('','All statuses')]+[(value,value.replace('_',' ').capitalize()) for value in states])
+        owners=get_user_model().objects.filter(pk__in=records.values('current__owner_id')).order_by('username','pk')[:100]
+        fields['owner']=forms.ChoiceField(required=False,label='Owner',choices=[('','All owners'),('unassigned','Unassigned')]+[(str(person.pk),person.get_full_name() or person.get_username()) for person in owners])
+    form=type('ProjectReadFilters',(forms.Form,),fields)(data)
+    return form
+
+
+def sections(actor, case, tab, grants, query='', pages=None, selected=None):
     if not any(item['key'] == tab for item in tabs(case, grants)):
         raise Http404
 
     def section(title, action, route, records, present):
         page_key = route + '-page'
         window = Paginator(records, 25).get_page(pages.get(page_key) if pages else None)
-        return {'title': title, 'action': action, 'url': reverse(route, args=[case.pk]), 'page': window, 'page_key': page_key,
+        result={'title': title, 'action': action, 'url': reverse(route, args=[case.pk]), 'page': window, 'page_key': page_key,
                 'items': [present(record) for record in window]}
+        if pages is not None:
+            for direction in ['previous','next']:
+                if getattr(window,'has_'+direction)():
+                    params=pages.copy()
+                    params[page_key]=getattr(window,direction+'_page_number')()
+                    result[direction+'_url']='?'+params.urlencode()+'#'+page_key
+        return result
+
+    def apply(records):
+        values=selected or {}
+        if values.get('state'):
+            records=records.filter(current__status=values['state'])
+        if values.get('owner'):
+            records=records.filter(current__owner_id=None if values['owner']=='unassigned' else values['owner'])
+        if values.get('severity'):
+            records=records.filter(current__severity=values['severity'])
+        return records
 
     if tab == 'milestones':
         milestones = Milestone.objects.filter(case=case, name__icontains=query,
@@ -67,7 +104,7 @@ def sections(actor, case, tab, grants, query='', pages=None):
                         evidence, lambda e: {'title': e.kind.replace('_', ' ').capitalize(),
                             'state': f'Version {e.version}', 'at': e.created_at})]
     if tab == 'actions':
-        actions = ActionItem.objects.filter(case=case, current__isnull=False).filter(
+        actions = apply(ActionItem.objects.filter(case=case, current__isnull=False)).filter(
             Q(reference__icontains=query) | Q(current__description__icontains=query)
         ).select_related('current__owner').order_by('current__due_at', 'pk')
         return [section('Project actions', 'Manage actions and minutes', 'meetings', actions,
@@ -77,10 +114,11 @@ def sections(actor, case, tab, grants, query='', pages=None):
     if tab == 'registers':
         result = []
         if 'issue.read' in grants:
-            issues = Issue.objects.filter(case=case, current__isnull=False).filter(
+            issues = apply(Issue.objects.filter(case=case, current__isnull=False)).filter(
                 Q(reference__icontains=query) | Q(current__title__icontains=query)).select_related('current').order_by('-pk')
             result.append(section('Issues', 'Open issues', 'issues', issues, lambda issue: {
-                'title': issue.reference, 'state': issue.current.status.replace('_', ' ').capitalize(), 'detail': issue.current.title}))
+                'title': issue.reference, 'state': issue.current.status.replace('_', ' ').capitalize(), 'detail': issue.current.title,
+                'url':reverse('issues',args=[case.pk])+'#issue-'+str(issue.pk)}))
             decision = EscalationDecision.objects.filter(request=OuterRef('pk')).order_by('-pk').values('verdict')[:1]
             escalations = EscalationRequest.objects.filter(
                 profile__state__issue__case=case, profile__state__issue__reference__icontains=query,

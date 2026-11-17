@@ -2,7 +2,7 @@
 from uuid import uuid4
 from django import forms
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from apps.core.models import Case, Evidence
@@ -103,6 +103,13 @@ def detail(request,work,focus=None):
                 form=next(r['form'] for r in forms_list if r['action']==action)
                 if not form.is_valid():raise ValidationError(form.errors.as_text())
                 service.human_action(request.user,work.pk,revision,form.cleaned_data['revision'],int(p.get('selected_scenario','0')),action,form.cleaned_data)
+            elif action=='group_rules':
+                from apps.finance.group_disclosure_forms import save
+                if selected['audience']!='group' or work.revision!=revision:
+                    raise ValidationError('Review the current group forecast work before changing disclosure rules.')
+                run=service.calculation(work,request.user)
+                if run is None:raise ValidationError('Review a forecast calculation before selecting group disclosure.')
+                save(request.user,work.case,run,p,case_revision)
             elif action=='cancel':service.cancel(request.user,work.pk,revision)
             elif action=='resume':factory.manage(request.user,work.pk,revision,'resume')
             elif action=='reconcile':service.reconcile(request.user,work.pk,revision)
@@ -119,6 +126,19 @@ def detail(request,work,focus=None):
                         (entry['action']!='review' or row['forecast']['review_roles']) and
                         (entry['action']!='group_review' or row['forecast']['group_disclosure'])]
     group_table=None
+    group_rules_form=None
+    if selected['audience']=='group' and focus in (None,'decision') and permitted(request.user,work,'policy.configure'):
+        from apps.finance.group_disclosure_forms import GroupDisclosureForm
+        from apps.policy.services import active_component
+        try:
+            run=service.calculation(work,request.user)
+            if run:
+                service.forecast.approved(run)
+                configuration=active_component('D10.audience_projection_rules',work.case)
+                group_rules_form=GroupDisclosureForm(work.case,run,configuration,
+                    request.POST if request.method=='POST' and request.POST.get('action')=='group_rules' else None)
+        except (ValidationError,PermissionDenied):
+            pass
     binding=row['forecast']['document']
     if binding and binding.version.audience=='group' and focus in (None,'decision'):
         try:
@@ -131,6 +151,7 @@ def detail(request,work,focus=None):
                          'metadata':projected['metadata']}
     return render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
         'group_table':group_table,
+        'group_rules_form':group_rules_form,
         'inputs_form':inputs,'commands':forms_list,'activities':work.activities.prefetch_related('attempts').order_by('pk') if not focus else (),
         'can_configure':permitted(request.user,work,'policy.configure')})
 

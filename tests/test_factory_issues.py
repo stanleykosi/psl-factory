@@ -49,6 +49,10 @@ class FactoryIssueTests(TestCase):
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
         self.advance();Grant.objects.filter(case=self.c,user=self.a,action='issue.work').update(active=False)
         with self.assertRaises(PermissionDenied):self.respond()
+        self.client.force_login(self.a)
+        page=self.client.get(f'/work/{self.work.pk}/')
+        self.assertContains(page,'The recorded owner needs current access')
+        self.assertNotContains(page,'Record my update')
         self.assertEqual(HumanTask.objects.get().status,'open')
     def test_cancel_and_explicit_restart_preserve_owner_task_and_budget(self):
         self.advance();spent=self.work.budget_used
@@ -67,7 +71,9 @@ class FactoryIssueTests(TestCase):
         self.assertRedirects(started, f'/work/{self.work.pk}/', fetch_redirect_response=False)
         self.assertEqual(self.work.background_progress.status, 'queued')
         before=(rev(self.c),self.work.revision,FactoryAttempt.objects.count())
-        r=self.client.get(f'/work/{self.work.pk}/');self.assertEqual(r.status_code,200);self.assertContains(r,'Native issue lifecycle')
+        r=self.client.get(f'/work/{self.work.pk}/');self.assertEqual(r.status_code,200);self.assertContains(r,'Issue register')
+        register=self.client.get(f'/projects/{self.c.pk}/registers/')
+        self.assertContains(register,f'/cases/{self.c.pk}/issues/#issue-{self.state.issue_id}')
         self.assertEqual(before,(rev(self.c),FactoryWork.objects.get(pk=self.work.pk).revision,FactoryAttempt.objects.count()))
         self.advance();t=HumanTask.objects.get()
         r=self.client.post(f'/work/{self.work.pk}/',{'action':'respond','revision':self.work.revision,'case_revision':rev(self.c),'task':t.pk,'task_revision':t.revision,'operation':'acknowledge','evidence':self.e['requirements'].pk,'note':'Accountable owner response','next_action':'Gather evidence'})

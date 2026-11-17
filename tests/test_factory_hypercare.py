@@ -29,6 +29,40 @@ def setup(configure=True):
 
 
 class FactoryHypercareTests(TestCase):
+    def test_typed_observation_uses_current_rule_unknown_metrics_and_source_permissions(self):
+        f=setup();f.accepted();f.criteria();f.observations(errors=2)
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
+        self.client.force_login(f.actor)
+        url=reverse('factory_detail',args=[f.work.pk])
+        self.assertContains(self.client.get(url),'Engineering stability observation')
+        from apps.pmo.models import DeliverySource
+        from apps.workflows.stability_forms import observation_forms
+        form=observation_forms(f.actor,f.work)[0]
+        values={'action':'stability_source','revision':f.work.revision,'case_revision':rev(f.case),
+            'configuration':form.configuration_id,'owner':'Engineering',
+            'observed_at':timezone.now().isoformat(),'confirmed':'yes','reference':'SUPPLIED-METRICS',
+            'evidence':f.e['requirements'].pk,'verify_sample':'on','metric_0':''}
+        self.assertRedirects(self.client.post(url,values),url)
+        source=DeliverySource.objects.filter(dossier=f.d,kind='hypercare_engineering').latest('pk')
+        self.assertIsNone(source.payload['metrics']['errors']['value'])
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
+        self.assertNotEqual(f.work.status,'verified')
+        values.update(revision=f.work.revision,case_revision=rev(f.case),configuration=0,metric_0='0')
+        count=DeliverySource.objects.filter(dossier=f.d).count()
+        self.assertContains(self.client.post(url,values),'stability rule or source owner changed')
+        self.assertEqual(DeliverySource.objects.filter(dossier=f.d).count(),count)
+        values['configuration']=form.configuration_id
+        self.assertRedirects(self.client.post(url,values),url)
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
+        self.assertEqual(f.work.status,'verified',f.work.finding)
+        values.update(revision=f.work.revision,case_revision=rev(f.case),metric_0='2')
+        self.assertRedirects(self.client.post(url,values),url)
+        f.work.refresh_from_db()
+        self.assertTrue(factory_hypercare.projection(f.actor,f.work)['readiness_changed'])
+        Grant.objects.filter(case=f.case,user=f.actor,action='delivery.source').update(active=False)
+        values.update(revision=f.work.revision,case_revision=rev(f.case))
+        self.assertEqual(self.client.post(url,values).status_code,403)
+
     def test_technical_policy_refuses_business_authority_invalid_allowance_and_private_source_requirements(self):
         from apps.policy.factory_validators import validate_reference,HYPERCARE_COMPONENT,HYPERCARE_SCHEMA
         from types import SimpleNamespace

@@ -1,4 +1,4 @@
-{% if followup %}<section class="card" aria-label="Customer follow-up"><h2>Customer follow-up</h2>
+{% load studio_ui %}{% if followup %}<section class="card" aria-label="Customer follow-up"><h2>Customer follow-up</h2>
 <p>Submission {{ followup.outcome.submission_id }}{% if followup.outcome.followup_on %} · Check again {{ followup.outcome.followup_on|date:'j M Y' }}{% endif %}.</p>
 <form method="post">{% csrf_token %}
   <input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
@@ -6,10 +6,26 @@
   {% if followup.run %}
     <input type="hidden" name="run" value="{{ followup.run.pk }}"><input type="hidden" name="reviewed" value="{{ followup.reviewed.pk|default:'0' }}">
     <label>Follow-up wording<textarea name="text" required maxlength="4000" rows="5">{{ followup.text }}</textarea></label>
-    {% if followup.reviewed %}<p role="status">Reviewed wording saved. Customer delivery needs its own authorized route and receipt.</p>{% endif %}
+    {% if followup.reviewed %}<p role="status">Reviewed wording saved.</p>{% endif %}
     <button name="action" value="followup_review">Save reviewed wording</button>
   {% else %}
     <p>Prepare a draft from the verified submission for the project manager to check.</p>
     <button name="action" value="followup_draft">Prepare a follow-up draft</button>
   {% endif %}
-</form></section>{% endif %}
+</form>
+{% if followup.reviewed and not followup.released %}<form method="post">{% csrf_token %}
+<input type="hidden" name="action" value="followup_send"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="target" value="{{ followup.outcome.pk }}"><input type="hidden" name="reviewed" value="{{ followup.reviewed.pk }}">
+<label>Reviewed delivery route<select name="route" required><option value="">Choose a route</option>{% for route in followup_routes %}<option value="{{ route.key }}">{{ route.key }} · {{ route.mode|readable }}</option>{% endfor %}</select></label>
+{% if followup_routes %}<button>Release reviewed follow-up</button>{% else %}<p>Review a customer delivery route before releasing this message.</p>{% endif %}</form>{% endif %}
+</section>{% endif %}
+{% for sent in followup_messages %}<section class="card"><h2>Follow-up delivery</h2><p>Submission {{ sent.outcome.submission_id }} · {{ sent.contact.email }}</p>
+<details><summary>Released wording</summary><p>{{ sent.payload.body|linebreaksbr }}</p></details>
+{% if sent.receipt %}<p role="status">{% if sent.receipt.delivered %}Delivery verified{% else %}Delivery not completed{% endif %} · {{ sent.receipt.reference }}</p>{% elif sent.route.mode == 'manual_evidence' %}<p role="status">Awaiting the actual channel receipt.</p>{% elif sent.attempt %}<p role="status">Awaiting evidence for the original message.</p>{% else %}<p role="status">Delivery queued for the reviewed route.</p>{% endif %}
+{% if sent.mailbox %}<details><summary>Read sample inbox message</summary><p>{{ sent.mailbox.payload.body|linebreaksbr }}</p><p>Original reference {{ sent.mailbox.reference }}</p></details>{% endif %}
+{% if not sent.receipt and sent.route.mode == 'synthetic_mailbox' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="followup_lookup"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="dispatch" value="{{ sent.pk }}"><button>Check original message receipt</button></form>{% endif %}
+{% if not sent.receipt and sent.route.mode == 'manual_evidence' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="followup_confirm"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="dispatch" value="{{ sent.pk }}">
+<label>Actual receipt reference<input name="reference" required maxlength="160"></label><label>Delivery result<select name="delivered" required><option value="yes">Delivered</option><option value="no">Not delivered</option></select></label><label>Channel receipt evidence<select name="evidence" required>{% for proof in followup_receipt_evidence %}<option value="{{ proof.pk }}">{{ proof.source }} · version {{ proof.version }}</option>{% endfor %}</select></label><button>Record original delivery evidence</button></form>
+<details><summary>Original message identifiers</summary><p>{{ sent.operation }} · {{ sent.sha256 }}</p></details>{% endif %}
+</section>{% endfor %}
+{% if row.can_configure and followup %}<details class="card"><summary>Configure customer follow-up delivery</summary><p><a href="{% url 'design_client_project' case.pk %}">Record the evidenced project contact</a></p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="followup_route"><input type="hidden" name="revision" value="{{ row.work.revision }}">
+<label>Project contact<select name="contact" required>{% for contact in followup_contacts %}<option value="{{ contact.pk }}">{{ contact.name }} · {{ contact.email }} · version {{ contact.number }}</option>{% endfor %}</select></label><label>Sender role<select name="sender_role">{% for role in followup_sender_roles %}<option>{{ role }}</option>{% endfor %}</select></label><label>Delivery method<select name="mode"><option value="manual_evidence">Manual channel with exact receipt evidence</option>{% if case.synthetic %}<option value="synthetic_mailbox">Isolated test mailbox</option>{% endif %}</select></label><label>Recorded owner decision<select name="evidence" required>{% for proof in review_evidence %}{% if proof.kind == 'policy_decision' %}<option value="{{ proof.pk }}">{{ proof.source }} · version {{ proof.version }}</option>{% endif %}{% endfor %}</select></label><button>Save delivery rule for review</button></form><p><a href="{% url 'policy' case.pk %}">Review, validate and activate rule versions</a></p></details>{% endif %}
