@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: eb6ddf081dbbdb476a6e2b71bd94140073b4b219
+COMMIT: 778e868137d79b0b808b55c5c994c7345613d586
 BUILDER: builder
 LANE: full
 
@@ -31,3 +31,6 @@ LANE: full
 - QA-3-1 | verified | decide.test.tsx: effect_uncertain answer and a reloaded reconcile both show the notice, no success banner, no "Next step.", no "is approved", no Paid line; the existing approve test (ready answer) is unchanged and passes; e2e W-2305 at 1440, 390 and 320.
 - QA-3-3 | verified | fixtures show reviewed and approved earned.
 - QA-3-4 | verified | test title now matches its behaviour.
+
+## Base merge
+The coordinator merged dlv-00 (with F-26, the Money tab) into the branch; head is 778e868137d79b0b808b55c5c994c7345613d586 (my last own commit was eb6ddf081dbbdb476a6e2b71bd94140073b4b219). I checked the two files the merge touched: `frontend/mock/server.mjs` still lists `'E-DOCUMENT'` and the assistant operations in `M1_OPERATIONS` and keeps the D-2304-only 501 guard; `frontend/tests/mock-contract.test.ts` keeps `minutesProposalsStripped` and its `warn_lines`, `values`, `date_format`, `items_default` and `links` guards. `mock-contract`, `minutes-mock` and `minutes` tests pass on this head (325). The coordinator's merged-head checks.sh and 116 e2e passed, so the round-4 evidence stands.

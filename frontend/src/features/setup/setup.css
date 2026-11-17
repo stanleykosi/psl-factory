@@ -90,3 +90,19 @@
 /* the board draws the trail in plain grey */
 .setup-page .psl-crumb a { color: inherit; }
 
+
+/* delegation: the add form (desktop panel and phone sheet), the two dates under one legend, the phone bottom bar */
+.setup-deleg__form { display: flex; flex-direction: column; gap: var(--space-3); }
+.setup-deleg__value { min-height: var(--control-md); display: flex; align-items: center; }
+.setup-deleg__line { display: block; }
+.setup-deleg__dates { margin: 0; padding: 0; border: none; min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.setup-deleg__dates legend { padding: 0; margin-bottom: var(--space-6px); }
+/* the board's column widths for the delegation list (in place of the rules widths above); a long reason wraps */
+.setup-main .setup-table--deleg .psl-table th:nth-child(1) { width: 26.6%; }
+.setup-main .setup-table--deleg .psl-table th:nth-child(2) { width: 25%; }
+.setup-main .setup-table--deleg .psl-table th:nth-child(3) { width: 18.5%; }
+.setup-main .setup-table--deleg .psl-table th:nth-child(4), .setup-main .setup-table--deleg .psl-table th:nth-child(5) { width: 15%; }
+.setup-table--deleg td:not(:nth-child(4)) { white-space: nowrap; }
+.setup-deleg__bar { position: fixed; z-index: 1; left: 0; right: 0; bottom: 0; }
+/* room under the last card for the fixed action bar: its padding, the large button and its rule */
+.setup-phone.setup-deleg--bar { padding-bottom: calc(var(--space-3) + var(--control-lg) + var(--space-18px) + var(--rule-strong)); }
