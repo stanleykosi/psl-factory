@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: ba04923c108e0180ffdbd49404afc42fceeb191d
+COMMIT: 5df518a70dfc82f804313de77cb95ae51e1b38c3
 REVIEWER: reviewer-ux
 AUTHORITY: delivery UX review
 
@@ -15,3 +15,7 @@ None.
 - UX-2-1 | verified | P-0106 Actions headings are H1 then H2 "No actions on this project yet"; `TabEmpty` renders an h2.
 - Long values wrap | verified | no td has scrollWidth above clientWidth on Milestones at 1024 (changed) and 1440, Registers 1440, Actions 390; the ellipsis rule is gone from `project-tabs.css`.
 - Money and tabs together | verified | Money shows the billing-by-stage panel (h2 under the page h1), Documents shows the coming-next panel, at both widths.
+
+## Head update (ba04923c to 5df518a7)
+- Re-read the diff: project-tab code changed only in `project-tabs.css` (route line and card line-height now use the `--text-hint-line` token, 18px, instead of 1.3), plus the mock routing in `mock/project-tabs.mjs` and `mock/server.mjs` (comment and the F-27 delegation operations). The rest is the F-27 delegation setup screens, which the project tabs do not use. No tab flow, state, link or copy changed.
+- The live walk above was done on ba04923c; I carry it forward on this impact assessment and did not rerun it.

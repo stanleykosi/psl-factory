@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 778e868137d79b0b808b55c5c994c7345613d586
+COMMIT: 81e06419df1929371e460af6cd2f2adb13192903
 REVIEWER: reviewer-ux
 AUTHORITY: delivery UX review
 
@@ -17,3 +17,7 @@ AUTHORITY: delivery UX review
 ## Findings
 - UX-4-1 | non-blocking | uncertain notice | The notice says "see whether it was recorded" but does not say that Open the work item leads to a confirm step. | Optional: add "Open the work item to confirm what happened." Not needed for this feature.
 - The shared Paid sentence on a normal approve (UX-1-2) stays accepted for the follow-up.
+
+## Re-check at 81e06419 (dlv-00 merge bringing F-27 delegation)
+- Diff 778e868..81e06419 under `frontend/`: 25 files, all delegation (setup delegation page, DelegationForm/View, `mock/delegations.mjs` and its fixtures, setup tests) plus a small `mock/server.mjs` change (delegation import, reset call, two operations added to `M1_OPERATIONS`; `E-DOCUMENT` and the other minutes operations remain) and a 7-line `mock-contract.test.ts` addition.
+- No file under decide, work-item, workspace or minutes fixtures changed (name filter on the diff is empty). The round-4 verdict stands unchanged.

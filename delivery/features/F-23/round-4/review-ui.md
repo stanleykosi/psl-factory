@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 778e868137d79b0b808b55c5c994c7345613d586
+COMMIT: 81e06419df1929371e460af6cd2f2adb13192903
 REVIEWER: reviewer-ui
 AUTHORITY: delivery UI review
 
@@ -10,7 +10,7 @@ AUTHORITY: delivery UI review
   - The header uses the existing `decide-banner--neutral` (`--neutral-tint`/`--neutral-ink`).
   - No new CSS and no hard-coded colour.
   - Colour never carries the meaning alone: "NOT CONFIRMED", "result not confirmed" and the notice sentence say it in words.
-- No scored board moves (see Verified).
+- No scored board moves, including after the F-27 delegation merge at 81e06419 (see Verified).
 
 ## Findings
 - UI-4-1 | non-blocking | low | frontend | (no board) | `DecideStates.tsx` `DoneView` can show two amber alerts that contradict each other. When the decide answers `work_state: "effect_uncertain"` and the reload then fails (`useDecision.ts:197-202` sets `refreshFailed`), the page shows the uncertain notice ("…We've reloaded this item so you can see whether it was recorded.") and directly under it "We couldn't refresh this item. Open the work item to see the latest." The same first sentence also shows in the moment before the reload returns, while `reloaded` is still null. Suggestion: when `refreshFailed` and `uncertain`, show one notice. Or reuse `DecideView`'s `UnconfirmedNotice` wording, which already covers "uncertain and the reload failed". Wording is the UX lens's call, so not blocking here.
@@ -27,6 +27,11 @@ AUTHORITY: delivery UI review
   - **Changed fixtures:** the only fixtures changed this round are `W-2304.approve.json` and `W-2305.approve.json`, decide sidecars that no board scores.
   - **dlv-00 (F-26) merge:** changes nothing under `features/work-item`, `features/workspace`, `components`, `styles` or `shell` (`git diff --stat d5f10f5a 778e8681` on those paths is empty). Its only shared touch is `ProjectJourney.tsx` mounting `MoneyTab`, which no SCR-28 page renders; the work page draws its own `ProjectBar`.
   - **Result:** the signed D-105/D-106 scores stand.
+- dlv-00 (F-27 delegation) merge, 778e8681..81e06419 | verified | no SCR-28 board can move.
+  - **What the merge touches:** the frontend diff is only F-27 code. That is `src/app/setup/delegation/page.tsx`, `src/features/setup/*` (Delegation view, form and hooks, `api.ts`, `format.ts`, `contract-proposal.ts`, and `setup.css` rules scoped to `.setup-deleg*`, `.setup-table--deleg` and `.setup-phone`, imported only by `SetupFrame.tsx`). It also adds `mock/delegations.mjs` and its fixtures, `mock/proposals/setup.json`, the setup e2e and tests, and the `mock-contract.test.ts` delegation entries.
+  - **The one `server.mjs` list:** `M1_OPERATIONS` gains `'E-DELEGATIONS', 'E-DELEGATION'`. It keeps `'E-DOCUMENT'` and `...ASSISTANT_OPERATIONS`, plus one reset and one route line for delegations.
+  - **What it leaves alone:** `git diff --stat 778e8681 81e06419` is empty for `features/work-item`, `features/workspace`, `features/decide`, `components`, `styles`, `shell`, `mock/fixtures/work`, `mock/workspace.mjs` and `mock/start-work.mjs`.
+  - **Result:** the eight SCR-28 work pages and their fixtures render exactly as at 778e8681, and the signed scores stand.
 - UI-3-1, UI-3-2 | carried | non-blocking, unchanged by this round.
 
 ## Waivers (unchanged, signed)
