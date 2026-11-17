@@ -75,6 +75,16 @@ def prepare(key, operator):
         with patch.object(planning_helpers, 'setup_case', return_value=(operator, case)):
             planning = planning_helpers.fixture(configured=True, username='state-assistant-draft')
         return {'case': str(case.pk), 'packet': planning['packet'].pk}
+    if key in {'planning-departments','planning-department-rules'}:
+        from tests.test_planning_department_inputs import enhanced
+        users=get_user_model().objects
+        create_user=users.create_user
+        with (patch.object(planning_helpers,'setup_case',return_value=(operator,case)),
+              patch.object(users,'create_user',side_effect=lambda username,**values:create_user(username='state-'+key+'-'+username,**values))):
+            data=enhanced(configured=key=='planning-departments')
+            planning_helpers.observe(data)
+            factory.run_until_wait(data['work'].pk)
+        return {'case':str(case.pk),'work':data['work'].pk,'packet':data['packet'].pk,'proof':data['e']['plan'].pk,'decision':data['e']['policy_decision'].pk}
     if key in {'planning-ready','planning-owner-wait','planning-rules-needed','planning-verified'}:
         from tests.test_factory_planning import setup
         users=get_user_model().objects
@@ -293,6 +303,8 @@ elif workflow == 'stability-states':
 elif workflow == 'planning-commercial-issue-states':
     fixtures = ('planning-ready','planning-owner-wait','planning-rules-needed','planning-verified',
                 'commercial-review','commercial-information','issue-followup','issue-owner-access','issue-verified')
+elif workflow == 'department-input-states':
+    fixtures = ('planning-departments','planning-department-rules')
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

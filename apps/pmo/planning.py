@@ -77,6 +77,8 @@ def capture(a,case_id,payload,predecessor=None):
     from .planning_sources import context,validate_successor,historical_predecessor
     prior,old_value,skipped=historical_predecessor(c)
     if prior:validate_successor(c,old_value['payload'],payload)
+    if prior and old_value['payload'].get('collect_department_inputs') and not payload.get('collect_department_inputs'):
+        raise ValidationError('Retain department input collection when correcting this planning packet.')
     item=write(a,c,'packet',{'protocol':'planning-packet/v2','engagement_id':source.pk,'engagement_hash':digest(source.data),'payload':payload,'action_heads':heads,'source_pins':context(c,payload)})
     event(a,c,'planning.packet_source_lineage',packet_id=item.pk,explicit_predecessor=predecessor,
         trusted_historical_predecessor=prior.pk if prior else None,skipped_heads=skipped,
@@ -196,8 +198,12 @@ def inputs(c,e,comparison_required,reader):
         links[purpose]=[item.pk,m.pk];meeting_ids.append((m.meeting_id,m.occurred_at))
     if meeting_ids[0][0]==meeting_ids[1][0] or meeting_ids[1][1]<meeting_ids[0][1]:raise ValidationError('Two distinct alignment sessions in their documented order required')
     pair,observations=requests(c,e,reader)
-    return {'policy_id':p.pk,'alignment_links':links,'candidate_id':pair['candidate_id'],'observations':observations,'comparison_id':comparison_context(c,e,p,rules) if comparison_required else None,
+    result={'policy_id':p.pk,'alignment_links':links,'candidate_id':pair['candidate_id'],'observations':observations,'comparison_id':comparison_context(c,e,p,rules) if comparison_required else None,
         'source_hashes':{k:proof(c,payload[k]).sha256 for k in SOURCE_KINDS},'source_correlation':correlation,'native_verified':False}
+    if payload.get('collect_department_inputs'):
+        from .planning_inputs import required
+        result['department_inputs']=required(c,e,reader)
+    return result
 
 def guard_prepare(a,c,packet_id):
     readable(a,c);require(a,c,'planning.prepare')
@@ -240,6 +246,9 @@ def report(a,case_id):
     current=latest(c,'packet');out['current_packet_id']=current.pk if current else None
     try:
         e,v=packet(c);out.update(packet_id=e.pk,packet_sha256=e.sha256,payload=v['payload'])
+        if v['payload'].get('collect_department_inputs'):
+            from .planning_inputs import projection
+            out['department_inputs']=projection(a,c,e)
         from .planning_sources import assessment,clarifications
         out['source_clarifications']=clarifications(c,e.pk)
         out['source_correlation']=assessment(c,v['payload'])

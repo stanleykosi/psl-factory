@@ -909,6 +909,10 @@ def detail(request,work_id,focus=None):
             elif operation=='observe_department':
                 from .factory_planning import observe_department
                 observe_department(request.user,work.pk,revision,int(request.POST.get('request','0')),int(request.POST.get('receipt','0')),int(request.POST.get('evidence','0')))
+            elif operation in ['department_input','department_effort_review','department_input_rules']:
+                if work.definition!='planning/v1':raise ValidationError('Planning work required.')
+                from .factory_planning import department_action
+                department_action(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),operation,request.POST)
             elif operation=='commercial_decision':
                 if work.definition!='commercial/v1':raise ValidationError('Commercial work required')
                 from .factory_commercial import decide
@@ -1006,6 +1010,9 @@ def detail(request,work_id,focus=None):
         try:planning.read(work.case,work.source_head,'packet','coordinate')
         except (ValidationError,PermissionDenied):row['packet']=None
         row['current_packet']=planning.latest(work.case,'packet')
+        from apps.pmo.planning_input_forms import panels as department_panels
+        row['department_panels']=department_panels(request.user,work.case,work.source_head,
+            row['planning'].get('department_inputs'),request.POST,request.POST.get('action'))
         from .factory_planning import owner_panels
         row['owner_panels']=owner_panels(request.user,work)
         from apps.pmo.models import DeliverySource

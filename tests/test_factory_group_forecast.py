@@ -50,6 +50,13 @@ class GroupForecastFactoryTests(TestCase):
         self.assertEqual(result['forecast'],previous['forecast'])
         self.assertEqual(result['group']['run_hash'],self.run.sha256)
         self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
+        from apps.finance.group_disclosure_forms import GroupDisclosureForm
+        from django.core.exceptions import PermissionDenied
+        Grant.objects.filter(case=self.c,user=self.a,action='finance.read').update(active=False)
+        with self.assertRaises(PermissionDenied):
+            GroupDisclosureForm(self.a,self.c,self.run,base)
+        self.assertEqual(self.client.post(url,values).status_code,404)
+        Grant.objects.filter(case=self.c,user=self.a,action='finance.read').update(active=True)
         Grant.objects.filter(case=self.c,user=self.a,action='policy.configure').update(active=False)
         values['case_revision']=rev(self.c)
         self.assertEqual(self.client.post(url,values).status_code,403)

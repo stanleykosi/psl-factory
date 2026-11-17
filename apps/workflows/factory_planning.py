@@ -16,6 +16,13 @@ from .models import FactoryWork as Work,FactoryActivity as Activity
 DEFINITION='planning/v1'
 PROCESS_IDS=['P17','P21','P25','P26','P63']
 
+
+def investigation_key(work, observed):
+    values=['ACT04',observed['sources'],work.source_head_id]
+    if observed['report'].get('department_inputs') is not None:
+        values.append(observed['report']['department_inputs'])
+    return digest(values)
+
 @transaction.atomic
 def start(actor,case_id,key,packet_id,reference,expected):
     from .factory import access
@@ -77,7 +84,7 @@ def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
         if pending:return (['ACT12'],'Reconcile the original department request before adopting changed sources') if pending.status=='unknown' else ([], 'Stop or reconcile outstanding department routing before adopting changed sources')
         return ['ACT07'],'Adopt the current native packet within the same planning engagement'
     if missing or stale:return [],'Planning source information needs correction: '+', '.join(missing+stale)
-    key=digest(['ACT04',observed['sources'],work.source_head_id])
+    key=investigation_key(work,observed)
     if not Activity.objects.filter(work=work,key=key,status='succeeded').exists():return ['ACT04'],'Investigate planning evidence and dependencies'
     correlation=observed['report'].get('source_correlation')
     if correlation and not correlation['complete']:return [],observed['report'].get('finding','Resolve exact source correlation with the internal owner')
@@ -257,10 +264,41 @@ def attempt_projection(attempt):
     out={key:value for key,value in result.items() if key in keys}
     if 'investigation' in result:
         investigation=result['investigation']
-        out['investigation']={key:investigation[key] for key in ['capability','provider','status','native_verified','unknown_source_fields','unresolved_question_keys'] if key in investigation}
+        out['investigation']={key:investigation[key] for key in ['capability','provider','status','native_verified','unknown_source_fields','unresolved_question_keys','department_input_questions'] if key in investigation}
     if 'department_requests' in result:out['department_requests']='Separate native requests recorded; no approval granted'
     if 'approval_job' in result:out['request_delivery']='Selected native receipt worker requested; inspect its observed status'
     return out
+
+
+@transaction.atomic
+def department_action(actor,work_id,expected,case_expected,action,data):
+    from . import factory
+    from apps.pmo import planning_inputs
+    from apps.pmo.planning_input_forms import DepartmentInputForm,DepartmentReviewForm,DepartmentRulesForm
+    work=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id,definition=DEFINITION)
+    factory.access(actor,work.case,'factory.read',DEFINITION)
+    if work.revision!=expected or work.cancel_requested or work.status=='cancelled':
+        raise ValidationError('The planning work changed. Review its current inputs.')
+    forms={'department_input':DepartmentInputForm,'department_effort_review':DepartmentReviewForm,
+           'department_input_rules':DepartmentRulesForm}
+    if action not in forms:raise ValidationError('Choose a department input action.')
+    form=forms[action](data)
+    if not form.is_valid():raise ValidationError(form.errors.as_text())
+    values=form.cleaned_data
+    if action=='department_input_rules':
+        case=lock_case(actor,work.case_id,'policy.configure',case_expected)
+        result=form.save(actor,case)
+    else:
+        if values['packet_id']!=work.source_head_id:
+            raise ValidationError('Use the current planning work packet.')
+        command=planning_inputs.record if action=='department_input' else planning_inputs.review
+        result=command(actor,work.case_id,expected=case_expected,**values)
+    work.revision+=1
+    if work.status=='waiting':work.status='ready';work.finding=''
+    work.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
+    return result
 
 @transaction.atomic
 def reassess(actor,work_id,expected,reason):

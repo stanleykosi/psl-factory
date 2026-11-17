@@ -1,5 +1,24 @@
 {
   "design_consolidation_20261116": {
+    "department_inputs_and_disclosure_20261117": {
+      "environment": "design-acceptance",
+      "checked_package": 60,
+      "web": "b36ef469-b8e9-41f2-acab-62ed08b47fca",
+      "worker_submitted": "af3ae96d-138d-487f-b025-ebc56e17363f",
+      "states_with_browser_observations": 179,
+      "observed_states_with_open_checks": 178,
+      "states_without_direct_browser_observation": 83,
+      "all_states_accepted": false,
+      "postgresql": [
+        {"deployment": "1931e822-e695-4016-9c90-842f8cf6599d", "passed": 15, "seconds": 260.134},
+        {"deployment": "fb37363f-71e8-4f97-b8a0-0026c7134566", "passed": 7, "seconds": 221.462}
+      ],
+      "pending_check": "5eed86e6-7726-4f00-9601-633362230b1a",
+      "completed": ["Private Finance oracle selector and draft group rules", "Rotating bounded bid-message scan and current issue-owner console", "Readable Planning holds, commercial sections and costing outputs", "Seven-test department input workflow with native handoff and exact reviewed corrections"],
+      "current": ["Final department input checks, fresh-costing positive path and guarded browser examples", "Remaining current-owner, role, failure and device checks"],
+      "next": ["Client change requests and declines on exact delivered go-live versions", "Unobserved states and actual unfinished functions in the 262-state ledger"],
+      "owner_policy": "Deferred"
+    },
     "reviewed_messages_stability_and_filters_20261117": {
       "environment": "design-acceptance",
       "web": "05315978-c102-4a19-ac6f-fe16b3824c26",

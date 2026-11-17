@@ -1,5 +1,6 @@
 """Draft exact group disclosure choices against a reviewed native forecast."""
 import copy
+import hashlib
 import json
 
 from django import forms
@@ -36,7 +37,11 @@ class GroupDisclosureForm(forms.Form):
     decision = forms.ModelChoiceField(queryset=Evidence.objects.none(), label='Recorded owner decision')
     effective_from = forms.DateTimeField(label='Effective from', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
 
-    def __init__(self, case, run, configuration, data=None):
+    def __init__(self, actor, case, run, configuration, data=None):
+        require(actor, case, 'finance.read')
+        require(actor, case, 'policy.configure')
+        if run.case_id != case.pk:
+            raise ValidationError('Select a forecast from this project.')
         self.case, self.run, self.configuration = case, run, configuration
         existing = reference_values(configuration)[0].get('group', {})
         initial = {key: existing.get(key) for key in ['rows', 'fields', 'metadata', 'reviewer_roles', 'publisher_roles']}
@@ -47,7 +52,9 @@ class GroupDisclosureForm(forms.Form):
         self.fields['rows'].choices = [(row['key'], row['key']) for row in run.result['items']]
         self.fields['recipients'].queryset = get_user_model().objects.filter(is_active=True,
             grant__case=case, grant__action='document.receive:group', grant__active=True).distinct().order_by('username')
-        self.fields['oracle'].queryset = public_evidence(case.evidence.filter(kind='forecast_group_oracle')).defer('body')
+        # These are private Finance sources. The domain grants above authorise
+        # this exact case and kind, while generic evidence pickers keep hiding them.
+        self.fields['oracle'].queryset = case.evidence.filter(kind='forecast_group_oracle').defer('body')
         self.fields['decision'].queryset = public_evidence(case.evidence.filter(kind='policy_decision')).defer('body')
 
     def record(self):
@@ -68,8 +75,12 @@ class GroupDisclosureForm(forms.Form):
         validate_group(record)
         forecast.approved(self.run)
         expected = group_forecast.project(self.run.result, record)
+        oracle = values['oracle']
+        if oracle.sha256 != hashlib.sha256(oracle.body.encode()).hexdigest():
+            self.add_error('oracle', 'The independent evidence content differs from its recorded fingerprint.')
+            return values
         try:
-            supplied = json.loads(values['oracle'].body)
+            supplied = json.loads(oracle.body)
         except ValueError as exc:
             raise ValidationError('The independent evidence must contain the exact expected report.') from exc
         if supplied != expected:
@@ -86,7 +97,7 @@ def save(actor, case, run, data, expected):
     configuration = active_component('D10.audience_projection_rules', case)
     if 'forecast' not in reference_values(configuration)[0]:
         raise ValidationError('Review the forecast audience rules before adding group disclosure.')
-    form = GroupDisclosureForm(case, run, configuration, data)
+    form = GroupDisclosureForm(actor, case, run, configuration, data)
     if not form.is_valid():
         raise ValidationError(form.errors.as_text())
     content = copy.deepcopy(reference_values(configuration)[0])

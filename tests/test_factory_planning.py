@@ -39,6 +39,10 @@ class FactoryPlanningTests(TestCase):
         self.assertEqual(len(pair['requests']),2)
         used=w.budget_used;factory.run_until_wait(w.pk);w.refresh_from_db();self.assertEqual(w.budget_used,used)
         self.assertFalse(HumanTask.objects.filter(case=f['c']).exists())
+        self.client.force_login(f['a'])
+        page=self.client.get(reverse('factory_detail',args=[w.pk]))
+        self.assertContains(page,'Owner configuration required')
+        self.assertNotContains(page,'None:')
 
     def test_exact_department_panel_records_only_native_owner_observation(self):
         f=setup();w=f['work'];factory.run_until_wait(w.pk)

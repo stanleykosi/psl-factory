@@ -670,6 +670,9 @@ def run_once(work_id,provider=None,adapter=None):
                 process=('P14' if answer['activity']=='ACT04' else 'P06' if answer['activity']=='ACT08' else 'P07') if work.definition=='commercial/v1' else 'F29' if answer['activity']=='ACT08' else 'F30' if answer['activity'] in ['ACT09','ACT10','ACT11','ACT12','ACT13'] else 'P34'
             run=AgentRun.objects.create(case=work.case,actor=work.execution_actor,evidence=latest[next(iter(latest))],provider=provider_name,process_id=process,result=answer)
             child_key=digest(['ACT04',observed['sources'],work.source_head_id]) if answer['activity']=='ACT04' and work.definition in ['planning/v1','commercial/v1'] else digest(['ACT04',observed['sources']]) if answer['activity']=='ACT04' else digest([activity.key,answer['activity']])
+            if answer['activity']=='ACT04' and work.definition=='planning/v1':
+                from .factory_planning import investigation_key as planning_investigation_key
+                child_key=planning_investigation_key(work,observed)
             if 'bound_preparation' in observed and answer['activity']=='ACT04':
                 child_key=digest(['ACT04',observed['sources'],observed['bound_preparation']])
             if work.definition=='finance-accounts/v1' and answer['activity']=='ACT04':

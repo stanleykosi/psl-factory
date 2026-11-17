@@ -135,7 +135,7 @@ def detail(request,work,focus=None):
             if run:
                 service.forecast.approved(run)
                 configuration=active_component('D10.audience_projection_rules',work.case)
-                group_rules_form=GroupDisclosureForm(work.case,run,configuration,
+                group_rules_form=GroupDisclosureForm(request.user,work.case,run,configuration,
                     request.POST if request.method=='POST' and request.POST.get('action')=='group_rules' else None)
         except (ValidationError,PermissionDenied):
             pass

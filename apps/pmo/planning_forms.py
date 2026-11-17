@@ -14,6 +14,7 @@ def capture_forms(case,data=None,initial=None,predecessor=None):
     people=get_user_model().objects.filter(is_active=True,grant__case=case,grant__active=True,grant__action='planning.participate').distinct().order_by('username','pk')
     class Sources(forms.Form):
         predecessor=forms.IntegerField(min_value=1,required=False,widget=forms.HiddenInput)
+        collect_department_inputs=forms.BooleanField(required=False,label='Collect separate inputs from the five delivery departments')
     labels={'prd_id':'Product PRD / requirements source','scope_id':'Scope baseline source','engineering_estimate_id':'Engineering estimate source','security_estimate_id':'Security estimate source'}
     for key,kinds in SOURCE_KINDS.items():Sources.base_fields[key]=forms.ModelChoiceField(sources.filter(kind__in=kinds),required=False,empty_label='Unknown / not supplied',label=labels[key])
     class Stakeholder(forms.Form):
@@ -41,7 +42,7 @@ def capture_forms(case,data=None,initial=None,predecessor=None):
     Teams=formset_factory(Stakeholder,extra=0,min_num=4,max_num=4,validate_min=True,validate_max=True,absolute_max=4)
     Questions=formset_factory(Question,extra=1,max_num=100,validate_max=True,absolute_max=100,can_delete=True)
     current={row['team']:row for row in initial.get('stakeholders',[])}
-    return (Sources(data,prefix='packet',initial={'predecessor':predecessor,**{k:initial.get(k) for k in SOURCE_KINDS}}),
+    return (Sources(data,prefix='packet',initial={'predecessor':predecessor,'collect_department_inputs':initial.get('collect_department_inputs',not predecessor),**{k:initial.get(k) for k in SOURCE_KINDS}}),
         Teams(data,prefix='stakeholders',initial=[current.get(team,{'team':team,'contact_id':None,'evidence_id':None}) for team in TEAMS]),
         Questions(data,prefix='questions',initial=initial.get('questions',[])),
         Correlations(data,prefix='correlations',initial=initial.get('source_correlations',[])))
@@ -49,6 +50,8 @@ def capture_forms(case,data=None,initial=None,predecessor=None):
 def payload(sources,teams,questions,correlations):
     identity=lambda obj:obj.pk if obj is not None else None
     value={key:identity(sources.cleaned_data[key]) for key in SOURCE_KINDS}
+    if sources.cleaned_data['collect_department_inputs']:
+        value['collect_department_inputs']=True
     value['stakeholders']=[{'team':f.cleaned_data['team'],'contact_id':identity(f.cleaned_data['contact_id']),'evidence_id':identity(f.cleaned_data['evidence_id'])} for f in teams]
     value['questions']=[]
     for form in questions:

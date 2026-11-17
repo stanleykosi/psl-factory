@@ -15,10 +15,12 @@ CORRELATIONS = {'type': 'array', 'maxItems': 50, 'items': CORRELATION_ROW}
 
 # Optional at intake, never an implicit source binding or readiness exemption.
 INPUT['properties']['source_correlations']=CORRELATIONS
+INPUT['properties']['collect_department_inputs']={'type':'boolean'}
 SOURCE_KINDS={'prd_id':['prd','requirements'],'scope_id':['scope_baseline','requirements','plan'],
  'engineering_estimate_id':['engineering_estimate'],'security_estimate_id':['security_estimate']}
 PURPOSES=['prd_walkthrough','scope_estimate_alignment']
 KINDS={'packet':'planning_packet','prd_walkthrough':'planning_prd_alignment','scope_estimate_alignment':'planning_scope_alignment','comparison':'planning_contract_comparison','ready':'planning_readiness'}
+KINDS['department_review']='planning_department_review'
 
 class PlanningPacketAdapter:
     name='referenced-planning-packet-v2'
