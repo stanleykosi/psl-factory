@@ -2021,3 +2021,12 @@
 {"at":"2026-11-17T11:24:40Z","feature":"F-23","round":4,"kind":"finding","action":"fix","finding":"QA-3-4","by":"builder"}
 {"at":"2026-11-17T11:24:40Z","feature":"F-23","round":4,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":322.9,"commit":"778e868137d7"}
 {"at":"2026-11-17T11:24:41Z","feature":"F-23","round":4,"kind":"transition","head":"778e868137d7","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-17T11:26:38Z","feature":"F-23","round":4,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"778e868137d7","findings":{"TECH-4-1":"frontend/src/features/decide/decidestates.tsx:417"},"written_at":"2026-11-17T11:25:45Z"}
+{"at":"2026-11-17T11:26:38Z","feature":"F-23","round":4,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"778e868137d7","findings":{"UX-4-1":"uncertain notice"},"written_at":"2026-11-17T11:25:44Z"}
+{"at":"2026-11-17T11:26:38Z","feature":"F-23","round":4,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"778e868137d7","findings":{"UI-4-1":"low"},"written_at":"2026-11-17T11:26:15Z"}
+{"at":"2026-11-17T11:26:38Z","feature":"F-23","round":4,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"778e868137d7","written_at":"2026-11-17T11:26:05Z"}
+{"at":"2026-11-17T11:26:38Z","feature":"F-23","round":4,"kind":"finding","action":"add","finding":"TECH-4-1","by":"reviewer-technical","severity":"frontend/src/features/decide/decidestates.tsx:417","owner":"The uncertain condition is `result.work_state === 'effect_uncertain'","blocking":false,"role":"technical"}
+{"at":"2026-11-17T11:26:38Z","feature":"F-23","round":4,"kind":"finding","action":"add","finding":"UX-4-1","by":"reviewer-ux","severity":"uncertain notice","owner":"The notice says \"see whether it was recorded\" but does not say that Open the work item leads to a confirm step.","blocking":false,"role":"ux"}
+{"at":"2026-11-17T11:26:38Z","feature":"F-23","round":4,"kind":"finding","action":"add","finding":"UI-4-1","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-17T11:27:06Z","feature":"F-23","round":4,"kind":"finding","action":"verify","finding":"QA-3-1","by":"reviewer-security"}
+{"at":"2026-11-17T11:27:06Z","feature":"F-23","round":4,"kind":"transition","head":"778e868137d7","from":"IN_REVIEW","to":"INTEGRATED_QA"}
