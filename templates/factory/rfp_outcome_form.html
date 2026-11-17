@@ -21,6 +21,11 @@
       <option value="">{% if outcome_variant == 'unknown' %}Use original verified submission{% else %}Choose evidence{% endif %}</option>
       {% for evidence in outcome_evidence %}<option value="{{ evidence.pk }}"{% if outcome_values.evidence == evidence.pk|stringformat:'s' %} selected{% endif %}>{{ evidence.source }} · version {{ evidence.version }}</option>{% endfor %}
     </select></label>
+    {% if outcome_variant == 'won' %}
+      <label>Awarded amount (if stated)<input name="award_amount" inputmode="decimal" maxlength="64" value="{{ outcome_values.award_amount }}"></label>
+      <label>Award currency<input name="award_currency" maxlength="3" value="{{ outcome_values.award_currency }}"></label>
+      <p>Enter both as stated in the award evidence.</p>
+    {% endif %}
     {% if outcome_variant == 'pending' or outcome_variant == 'unknown' %}<label>Next check date (optional)<input name="followup_on" type="date" value="{{ outcome_values.followup_on }}"></label>{% endif %}
     <label>{% if outcome_variant == 'lost' %}Customer reason and notes{% else %}Explanation{% endif %}<textarea name="note" required maxlength="4000">{{ outcome_values.note }}</textarea></label>
     {% if row.rfp.selection.required and row.rfp.selection.configuration and outcome_variant == 'won' or row.rfp.selection.required and row.rfp.selection.configuration and outcome_variant == 'lost' %}

@@ -13,13 +13,14 @@ from apps.core.models import Case
 from apps.core.services import add_evidence
 from apps.documents.controlled import review_version
 from apps.documents.models import PublicationJob
+from apps.finance import invoice_delivery
 from apps.identity.actions import ACTIONS
 from apps.identity.models import Grant
 from apps.policy.role_assignments import draft as draft_roles, draft_delegations
 from apps.policy.services import resolve, transition
 from apps.workflows import factory, factory_minutes
 from apps.workflows.models import FactoryWork
-from tests import document_helpers, factory_rfp_helpers, planning_helpers, test_commercial_changes
+from tests import correction_helpers, document_helpers, factory_rfp_helpers, planning_helpers, settlement_helpers, test_commercial_changes, test_rfp
 from tests.billing_helpers import coverage, policy, stage_policy
 from tests.helpers import rev, signed
 from tests.test_change_impacts import ChangeImpactTests
@@ -36,6 +37,9 @@ class InterruptedMinutesDelivery(InternalPublicationAdapter):
 def prepare(key, operator):
     case, created = Case.objects.get_or_create(tenant='design-state-walkthrough', kind='project', synthetic=True,
                                                title='Browser design states · ' + key)
+    if key == 'money-read-only':
+        Grant.objects.get_or_create(case=case, user=operator, action='case.read')
+        return {'case': str(case.pk)}
     if key in {'delegation', 'delegation-periods', 'delegation-read-only'}:
         if created:
             Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
@@ -70,6 +74,26 @@ def prepare(key, operator):
         with patch.object(planning_helpers, 'setup_case', return_value=(operator, case)):
             planning = planning_helpers.fixture(configured=True, username='state-assistant-draft')
         return {'case': str(case.pk), 'packet': planning['packet'].pk}
+    if key == 'bid-intake-walkthrough':
+        with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
+            _, _, evidence, _, _ = test_rfp.fixture(record_intake=False)
+        return {'case': str(case.pk), 'intake_source': evidence['rfp_intake'].pk}
+    if key == 'corrected-money':
+        run_invoice = invoice_delivery.run_once
+        with (
+            patch.object(settlement_helpers, 'setup_case', return_value=(operator, case)),
+            patch.object(invoice_delivery, 'run_once', side_effect=lambda: run_invoice(case_id=case.pk)),
+        ):
+            _, _, billing, issue, evidence = correction_helpers.fixture(identity=True)
+            credit = correction_helpers.note(operator, case, issue, evidence, reference='BROWSER-MONEY-CREDIT')
+            correction = correction_helpers.apply(operator, case, credit, evidence)
+            correction.refresh_from_db()
+            if correction.status != 'confirmed':
+                raise ValueError('Synthetic invoice credit was not verified')
+            receipt, lot = settlement_helpers.receipt(operator, case, ref='browser-money-corrected-cash')
+            settlement_helpers.assign(operator, case, receipt, billing, evidence)
+            settlement_helpers.allocate(operator, case, lot, issue, '20.00', evidence)
+        return {'case': str(case.pk), 'invoice': issue.invoice_id, 'credit': credit.pk, 'receipt': receipt.pk}
     if key in {'signed-money', 'known-money'}:
         agreement = signed(operator, case)['signature']
         billing = coverage(operator, case)
@@ -84,15 +108,20 @@ def prepare(key, operator):
             policy(operator, case, 'D12.uat_billing_predicate_ref',
                    {'coverage_id': billing.pk, 'stage': 'uat', 'milestone_name': 'Synthetic client acceptance'})
         return {'case': str(case.pk), 'agreement': agreement.pk}
-    if key in {'bid-loss-walkthrough', 'bid-win-walkthrough'}:
+    if key in {'bid-loss-walkthrough', 'bid-win-walkthrough', 'bid-award-walkthrough'}:
         with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
             data = factory_rfp_helpers.configured(reference='RFP-SAMPLE-' + key.upper())
         work = factory_rfp_helpers.start(data, key=key)
         response, _ = factory_rfp_helpers.reviewed_document(data, work)
         factory.run_until_wait(work.pk)
         submission = response.submissions.get()
+        evidence = data['evidence']['rfp_outcome']
+        if key == 'bid-award-walkthrough':
+            evidence = add_evidence(operator, case.pk, 'rfp_outcome',
+                                    'Synthetic award notice for the exact submitted response. Awarded price NGN 101.25.',
+                                    'synthetic:priced-award')
         return {'case': str(case.pk), 'work': work.pk, 'submission': submission.pk,
-                'evidence': data['evidence']['rfp_outcome'].pk}
+                'evidence': evidence.pk}
     users = get_user_model().objects
     create_user = users.create_user
     if key == 'changed-milestone':
@@ -137,8 +166,13 @@ if (os.environ.get('RAILWAY_ENVIRONMENT_NAME') != 'design-acceptance' or
     raise SystemExit('Exact isolated acceptance environment required')
 
 trial = get_user_model().objects.get(username='psl-agent-trial', is_active=True, is_staff=False, is_superuser=False)
-fixtures = ('known-money', 'bid-loss-walkthrough', 'bid-win-walkthrough', 'delegation-periods', 'delegation-read-only') if os.environ.get('PSL_STATE_WALKTHROUGH') == 'money-and-bids' else (
-    'delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
+workflow = os.environ.get('PSL_STATE_WALKTHROUGH')
+if workflow == 'money-and-bids':
+    fixtures = ('known-money', 'bid-loss-walkthrough', 'bid-win-walkthrough', 'delegation-periods', 'delegation-read-only')
+elif workflow == 'award-and-money-access':
+    fixtures = ('bid-award-walkthrough', 'money-read-only', 'bid-intake-walkthrough', 'corrected-money')
+else:
+    fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False
 for fixture in fixtures:
     try:

@@ -1,11 +1,13 @@
 """Source-bound RFP services. A win starts Route A; it never signs a SOW."""
 import json
+import re
 from datetime import date
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case, bump, event, add_evidence
 from apps.core.evidence_access import public_evidence
+from apps.finance.rules import decimal
 from apps.identity.services import require
 from apps.policy.services import active_component, reference_values, decision_authority
 from .models import (RFPCase,RFPIntake,RFPAssignment,RFPContribution,RFPResponse,
@@ -169,13 +171,20 @@ def reviewed(v):
     return ids
 
 @transaction.atomic
-def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note_text,expected,selection_context=None,*,followup_on=None):
+def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note_text,expected,selection_context=None,*,
+            followup_on=None,award_amount=None,award_currency=None):
     from .models import RFPSubmission
     case=lock_case(actor,case_id,'rfp.outcome',expected);r=root(case);ensure_open(r);note(note_text);past(observed_at)
     require(actor,case,'case.read');require(actor,case,'rfp.read')
     s=RFPSubmission.objects.filter(pk=submission_id,response__rfp=r).first()
     if not s or observed_at<s.submitted_at:raise ValidationError('Outcome must follow an actual exact submission')
     if result not in ['won','lost','pending','unknown']:raise ValidationError('Record won, lost, pending or unknown')
+    amount = currency = None
+    if award_amount is not None or award_currency is not None:
+        if result != 'won' or not isinstance(award_currency, str) or not re.fullmatch(r'[A-Z]{3}', award_currency):
+            raise ValidationError('Record an award amount only for a won bid, with its three-letter currency.')
+        amount = decimal(award_amount, nonnegative=True)
+        currency = award_currency
     from .rfp_outcomes import historical_submission, selection_authority
     auth=authority(actor,case,'outcome',role)
     if followup_on is not None and (result not in ['pending','unknown'] or type(followup_on) is not date or
@@ -193,7 +202,8 @@ def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note
     selection=selection_authority(case,s,selection_context)
     if selection:auth['_selection_context']=selection
     x=RFPOutcome.objects.create(submission=s,result=result,observed_at=observed_at,role=role,authority=auth,
-                               evidence=evidence,note=note_text,actor=actor,followup_on=followup_on)
+                               evidence=evidence,note=note_text,actor=actor,followup_on=followup_on,
+                               award_amount=amount,award_currency=currency)
     event(actor,case,'rfp.outcome_recorded',outcome=x.pk,result=result);bump(case);return x
 
 @transaction.atomic

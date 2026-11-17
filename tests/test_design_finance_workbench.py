@@ -90,6 +90,7 @@ class DesignFinanceWorkbenchTests(TestCase):
         for stage, amount, due_date in [('uat', '42.50', '2026-12-02'), ('completion', '63.75', '2026-12-16')]:
             page = self.client.get(url, {'figure': stage})
             self.assertContains(page, f'Due {due_date}')
+            self.assertContains(page, f'Where NGN {amount} comes from')
             self.assertContains(page, f'Reviewed contract stage terms · version {current.revision}')
             self.assertEqual(page.context['money']['selected']['amount'], amount)
             self.assertEqual(page.context['money']['selected']['invoices'], [])

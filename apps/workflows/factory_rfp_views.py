@@ -290,6 +290,9 @@ def presentation(actor,work,submission_id=None):
         label = 'Customer decision pending' if outcome.result == 'pending' else 'Customer outcome unconfirmed'
         due = outcome.followup_on
         next_action = ('Check customer response on ' + due.strftime('%d %b %Y')) if due else 'Check for a confirmed customer response'
+    if outcome and outcome.result in ['won', 'lost'] and not disposition and options:
+        label = 'Customer win recorded' if outcome.result == 'won' else 'Customer loss recorded'
+        next_action = 'Verify the project handoff' if outcome.result == 'won' else 'Verify the loss archive'
     if source_followup:
         label='Response inputs need follow-up';next_action='Review the response sources and required team inputs'
     elif operation_followup:
@@ -329,7 +332,8 @@ def presentation(actor,work,submission_id=None):
 
 
 @transaction.atomic
-def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,evidence,note,observed_at=None,selection_context=None,followup_on=None):
+def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,evidence,note,observed_at=None,
+                  selection_context=None,*,followup_on=None,award_amount=None,award_currency=None):
     from . import factory_rfp as service
     work=FactoryWork.objects.select_for_update().select_related('case').get(pk=work_id,definition=service.DEFINITION)
     runtime.access(actor,work.case,envelope=service.DEFINITION)
@@ -352,7 +356,8 @@ def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,
         submission=RFPSubmission.objects.filter(pk=target,response__rfp=service.subject(work)).first()
         if not submission:raise ValidationError('Choose an actual submission from this RFP workspace')
         rfp.outcome(actor,case.pk,submission.pk,verdict,observed_at,role,evidence,note,case.revision,
-                    selection_context=selection_context,followup_on=followup_on)
+                    selection_context=selection_context,followup_on=followup_on,
+                    award_amount=award_amount,award_currency=award_currency)
     else:raise ValidationError('Choose a current human decision')
     work.status='ready';work.finding='';work.revision+=1;work.save(update_fields=['status','finding','revision','updated_at'])
 
@@ -395,7 +400,8 @@ def detail(request,work,focus=None):
                         selection_context={'packet':request.POST.get('selection_packet',''),'acknowledged':True}
                 human_command(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),action,int(request.POST.get('target','0')),
                     request.POST.get('role',''),request.POST.get('verdict',''),int(request.POST.get('evidence') or '0'),
-                    request.POST.get('note',''),observed,selection_context,followup_on)
+                    request.POST.get('note',''),observed,selection_context,followup_on=followup_on,
+                    award_amount=request.POST.get('award_amount') or None,award_currency=request.POST.get('award_currency') or None)
             elif action=='correct':
                 source=SourceForm(work.case,request.POST);mappings=Mappings(request.POST,prefix='requirements',form_kwargs={'case':work.case})
                 if source.is_valid() and mappings.is_valid():

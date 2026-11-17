@@ -36,5 +36,7 @@ def forms_for(case,data=None):
         if action=='outcome':
             f.fields['evidence'].required=False
             f.fields['followup_on']=forms.DateField(required=False, label='Next check date')
+            f.fields['award_amount']=forms.CharField(required=False, max_length=64, label='Awarded amount')
+            f.fields['award_currency']=forms.CharField(required=False, max_length=3, label='Award currency')
         result.append({'action':action,'label':label,'form':f})
     return result

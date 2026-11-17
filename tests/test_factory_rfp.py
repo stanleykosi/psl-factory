@@ -1,8 +1,9 @@
 """Real native RFP factory behavior; only recipient-transport faults are synthetic."""
 from copy import deepcopy
 from datetime import timedelta
+from decimal import Decimal
 from django.core.exceptions import ValidationError,PermissionDenied
-from django.db import connection,transaction,DatabaseError
+from django.db import connection,transaction,DatabaseError,IntegrityError
 from django.test import TestCase,TransactionTestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -123,6 +124,23 @@ class FactoryRFPTests(TestCase):
         self.assertContains(result, 'Customer decision pending')
         self.assertEqual(submission.outcomes.count(), 2)
         self.assertFalse(RFPDisposition.objects.exists())
+
+        work.refresh_from_db()
+        confirmed = {**data, 'revision': work.revision, 'case_revision': rev(f['case']),
+                     'evidence': f['evidence']['rfp_outcome'].pk, 'followup_on': '', 'award_amount': '101.25'}
+        invalid = self.client.post(url, {**confirmed, 'verdict': 'won'})
+        self.assertContains(invalid, 'with its three-letter currency')
+        invalid = self.client.post(url, {**confirmed, 'verdict': 'lost', 'award_currency': 'NGN'})
+        self.assertContains(invalid, 'only for a won bid')
+        result = self.client.post(url, {**confirmed, 'verdict': 'won', 'award_currency': 'NGN'}, follow=True)
+        self.assertContains(result, 'Amount stated in the award')
+        self.assertContains(result, 'NGN 101.25')
+        latest = submission.outcomes.latest('pk')
+        self.assertEqual((latest.award_amount, latest.award_currency), (Decimal('101.25'), 'NGN'))
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            submission.outcomes.create(result='lost', observed_at=now, role=latest.role, evidence=latest.evidence,
+                                       actor=latest.actor, authority=latest.authority, note='Invalid direct award insert',
+                                       award_amount=latest.award_amount, award_currency=latest.award_currency)
 
     def test_unknown_inputs_get_useful_investigation_then_source_owned_correction(self):
         f=self.data;payload=deepcopy(f['payload']);payload['response_evidence']=None;work=helpers.start(f,payload=payload)

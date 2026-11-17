@@ -1,4 +1,6 @@
 """Presentation only: stored records, evidence and authority remain unchanged."""
+from decimal import Decimal
+
 from django import template
 register=template.Library()
 
@@ -42,6 +44,14 @@ register.filter('workspace_name',workspace_name)
 
 @register.filter
 def readable(value):return str(value or '').replace('_',' ').replace('.',' · ').strip().capitalize()
+
+
+@register.filter
+def decimal_display(value):
+    if not isinstance(value, Decimal):
+        return value
+    whole, _, fraction = format(value, 'f').partition('.')
+    return whole + '.' + fraction.rstrip('0').ljust(2, '0')
 
 
 @register.filter

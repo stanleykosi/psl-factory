@@ -11,14 +11,14 @@
     <thead><tr><th scope="col">Stage or billing item</th><th scope="col">Recorded amount</th><th scope="col">Invoice</th><th scope="col">Payment</th></tr></thead>
     <tbody>{% for item in money.rows %}
       <tr><th scope="row">{{ item.label }}{% if item.completion %}<p>{{ item.completion.name }} · Completed {{ item.completion.completed_at|date:'d M Y' }}</p>{% endif %}</th>
-      <td data-label="Recorded amount"><div>{% if item.url %}<a href="{{ item.url }}#figure-sources">{% if item.amount is None %}Unknown{% else %}{{ item.currency }} {{ item.amount|floatformat:'-8' }}{% endif %}</a>{% else %}Unknown{% endif %}{% if item.contract_stage %}<p>Due {{ item.due_date|default:'date unknown' }}</p>{% endif %}</div></td>
+      <td data-label="Recorded amount"><div>{% if item.url %}<a href="{{ item.url }}#figure-sources">{% if item.amount is None %}Unknown{% else %}{{ item.currency }} {{ item.amount|decimal_display }}{% endif %}</a>{% else %}Unknown{% endif %}{% if item.contract_stage %}<p>Due {{ item.due_date|default:'date unknown' }}</p>{% endif %}</div></td>
       <td data-label="Invoice">{% for line in item.invoices %}<p><a href="{{ money.finance_url }}">{{ line.reference }}</a> · {{ line.status }}</p>{% empty %}No invoice recorded{% endfor %}</td>
-      <td data-label="Payment">{% for line in item.invoices %}<p>{% if line.paid is None %}Unknown{% else %}Applied {{ line.currency }} {{ line.paid|floatformat:'-8' }} · Outstanding {% if line.owed is None %}Unknown{% else %}{{ line.currency }} {{ line.owed|floatformat:'-8' }}{% endif %}{% endif %}</p>{% empty %}Unknown{% endfor %}</td></tr>
+      <td data-label="Payment">{% for line in item.invoices %}<p>{% if line.paid is None %}Unknown{% else %}Applied {{ line.currency }} {{ line.paid|decimal_display }} · Outstanding {% if line.owed is None %}Unknown{% else %}{{ line.currency }} {{ line.owed|decimal_display }}{% endif %}{% endif %}</p>{% empty %}Unknown{% endfor %}</td></tr>
     {% empty %}<tr><td colspan="4">No supported contract amounts or invoice records are available.</td></tr>{% endfor %}</tbody>
   </table></div>
 </section>
 {% if money.selected %}<aside id="figure-sources" class="card" aria-label="Figure sources" tabindex="-1">
-  {% if money.selected.amount is None %}<h2>Why this amount is unknown</h2>{% else %}<h2>Where {{ money.selected.currency }} {{ money.selected.amount|floatformat:'-8' }} comes from</h2>{% endif %}
+  {% if money.selected.amount is None %}<h2>Why this amount is unknown</h2>{% else %}<h2>Where {{ money.selected.currency }} {{ money.selected.amount|decimal_display }} comes from</h2>{% endif %}
   <p>{{ money.selected.label }}</p>
   {% if money.selected.missing_reason %}<p>{{ money.selected.missing_reason }}</p>{% endif %}
   <ul>{% for source in money.selected.sources %}<li><a href="{{ source.url }}">{{ source.label }}</a>{% if source.at %} · <time datetime="{{ source.at|date:'c' }}">{{ source.at|date:'d M Y, H:i T' }}</time>{% endif %}</li>{% endfor %}</ul>

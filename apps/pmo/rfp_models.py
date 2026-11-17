@@ -103,7 +103,7 @@ class RFPOutcome(AppendOnly):
     evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT,null=True,blank=True)
     note=models.TextField()
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
-    created_at=models.DateTimeField(auto_now_add=True)    class Meta:        constraints = [models.CheckConstraint(condition=models.Q(result='unknown') | models.Q(evidence__isnull=False),                                              name='rfp_asserted_outcome_has_evidence')]
+    created_at=models.DateTimeField(auto_now_add=True)    award_amount = models.DecimalField(max_digits=32, decimal_places=8, null=True, blank=True)    award_currency = models.CharField(max_length=3, null=True, blank=True)    class Meta:        constraints = [            models.CheckConstraint(condition=models.Q(result='unknown') | models.Q(evidence__isnull=False),                                   name='rfp_asserted_outcome_has_evidence'),            models.CheckConstraint(condition=(models.Q(award_amount__isnull=True, award_currency__isnull=True) |                models.Q(result='won', award_amount__isnull=False, award_amount__gte=0, award_amount__lt=10**24,                         award_currency__isnull=False, award_currency__regex=r'^[A-Z]{3}$')),                name='rfp_award_complete_won_pair'),        ]
 
 
 class RFPDisposition(AppendOnly):
