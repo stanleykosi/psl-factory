@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-27",
   "outcome": "Setup > Delegation: list the delegations the backend shows and add one from its own lists (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-SETUP-DELEGATION"
   ],
@@ -141,8 +141,304 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock's \"no `can_add` \u2192 403\" step cannot be reached with the shipped fixtures, and no test covers it. The only fixture without `can_add` is `readonly`, and it has no options, so every add from it fails earlier with a 422 at the delegate check. Expected: the check-order step exists and is tested. Actual: dead code at `frontend/mock/delegations.mjs:151`; build.md (AC 21) admits this. Because of the spec's order, a view-only caller probing the mock also gets a 422 or 409 instead of a 403. That is acceptable for a mock, but the backend developer should know it is a choice to confirm. Fix: in `setup-delegation-mock.test.ts`, add a test that drives `saveDelegation` against a `default`-shaped fixture with `can_add` removed (for example, a `readonly_options` scenario or a fixture override that only the test can use), and assert the 403. Or record the order (403 after the 409) as a backend question in build.md.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The frontend and the mock pair To options differently in two cases. (a) When `from_options` is absent but `for_person_id` is present, the frontend shows the whole `delegate_options` list (`DelegationForm.tsx:61-62`). The mock's `delegatesFor(data, undefined)` then accepts only unpaired options (`frontend/mock/delegations.mjs:97-101`), so every option offered gets a 422. (b) In a mixed list, the mock still accepts options without `for_person_id`, while the frontend drops them (exact match). Only backend values are ever sent and the backend's 422 decides, so this does not break authority. But the mock does not model what the page offers. Fix: make `delegatesFor` use the frontend's exact match, and list \"pairing with no From list\" as an open question in build.md's contract proposals. The spec does not define that case.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On a 409 whose re-read fails without losing access, the page still shows \"This changed while you were working. The list has been reloaded; check it and add again.\" The list was not reloaded, and the page keeps the old revision (`DelegationView.tsx:135-137`, `useDelegationAdd.ts:42-43`). Nothing unsafe follows: the next press gets another 409. But the sentence is untrue. Fix: when `outcome.page` is an `ApiError`, show the backend message, or a \"couldn't reload the list\" sentence with the read's retry.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "422 top message reads \"Check these fields: delegate, ends.\" using the backend's raw field keys (lowercase, \"delegate\" is not the label \"To\"). Expected the visible labels (\"To, Ends\"). Seen at 1440 panel and 390 sheet. Map field names to the labels in DelegationForm.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On phone, after uncertain_written the sheet stays open over the list and says \"Check the list for your delegation\", but the list is hidden behind the sheet; the person must press Cancel to look. Suggest \"Close this to check the list, or start again.\" on phones.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-13-desktop-delegation | The restyled panel head is not listed in `fidelity-exceptions.json`. The tool reports it as a style difference on the matched \"ADD A DELEGATION\" text: the board has a #2459D6 background, white text and a blue 2px border; the page has no fill, ink text and an ink border. build.md mentions it only inside the waiver text. A restyled board element needs an exception for the design engineer to sign. | Add an entry: role text, name \"Add a delegation\", category \"colour meaning\", reason \"D-92b/D-93: blue is for buttons and agent work; Setup form panels use the standard ink panel, as F-11 Set a rule and F-20 upload (design-system-conformance/review-ui.md)\". Can ride with the sign-off; no code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-13-mobile-delegation (sheet, not drawn) | In the phone `Drawer`, \"Add delegation\" and \"Cancel\" sit at the end of the scrolling body (`DelegationView.tsx:275-279`, `DelegationForm.tsx:204-215`). The Drawer spec puts the main action in a footer that stays put (\"the body scrolls and the footer stays\"; README Layout: \"the main action goes full width in a footer\"). At 390 the five fields push the button below the fold. | Optional. Pass the submit/cancel buttons through `Drawer footer` on phones, or accept it as is (the sheet is on no board). Not a gate item.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-13-mobile-delegation | `setup.css:108` hard-codes `padding-bottom: 82px` (the comment shows it is 12 + 50 + 18 + 2). `.setup-deleg__bar` (`setup.css:106`) repeats the bundle's `.psl-actionbar` padding, ground and rule. No colour literal, so spec item 20 holds, but D-92a says every size comes from a token. | `calc(var(--space-3) + var(--control-lg) + var(--space-18px) + var(--rule-strong))`, and build the bar on `psl-actionbar` with a fixed-position modifier. Fix if a round 2 happens for another reason.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**Problem.** With exactly one entry in `from_options[]`, the read-only From shows that person, but `from_person_id` is not sent. The overlay schema defines an absent `from_person_id` as \"absent means the caller\" (`frontend/mock/proposals/setup.json`, delegation_body.from_person_id; G-SCR13A-1 \"defaults to the caller\"). **Concrete case, `authority` scenario.** The person signed in is admin Ada Okafor. The page shows \"From: Kemi Adebayo \u00b7 PMO Lead\" and narrows To to Kemi's paired delegate. It then sends `{expected_revision, delegate: 'P-FEMI', authority, ...}` with no From. A backend that follows the proposed contract would record Ada \u2192 Femi, not Kemi \u2192 Femi. The success notice still reads \"Kemi Adebayo to Femi Ade\" when it falls back to the form summary. So the page implies an identity and an eligibility pairing that the request does not ask for. The mock hides this because, against its own schema text, it falls back to the single option (`frontend/mock/delegations.mjs:133-134`). The test locks the behaviour in (`frontend/tests/setup-delegation.test.tsx:365`, body without `from_person_id`). Code: `frontend/src/features/setup/DelegationForm.tsx:100` (`if (fromOptions.length > 1 && fromPerson) body.from_person_id = ...`). The spec line in Contract/E-DELEGATION (\"sent only when From came from `from_options[]` with two or more choices\") causes this, so the spec writer should note the correction. **Fix.** Whenever From is drawn from `from_options[]` (one or more entries), send `from_person_id = fromPerson.person_id`, so the request names exactly the person the screen shows. In the mock, treat an absent `from_person_id` as the caller (the `is_you` row) and not as the single option. Update the `authority` test to expect `from_person_id: 'P-KEMI'`, and add a mock test showing that a single-option add without `from_person_id` is recorded from the caller.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-2",
+      "round": 1,
+      "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Problem.** When `delegate_options[].for_person_id` is present but `from_options[]` is absent (From reads \"You\"), `paired` is false and To lists every option, including delegates the backend paired with other delegators (`frontend/src/features/setup/DelegationForm.tsx:61-62`). The backend still decides, so this grants nothing, but the page offers choices the backend marked as belonging to someone else. **Fix.** When pairing keys are present and no From option is offered, show only the options with no `for_person_id` (or none) and record the case for the backend developer. Do not fall back to the whole list.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-27/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-16T19:55:48Z",
+          "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+          "evidence_refs": [
+            "delivery/features/F-27/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-27/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+          "evidence_refs": [
+            "delivery/features/F-27/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+          "evidence_refs": [
+            "delivery/features/F-27/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+          "evidence_refs": [
+            "delivery/features/F-27/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -300,7 +596,7 @@
     }
   },
   "created_at": "2026-11-16T17:39:35Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -326,6 +622,22 @@
       "round": 1,
       "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-16T19:55:49Z",
+      "round": 1,
+      "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T19:55:49Z",
+      "round": 2,
+      "head": "ab5a4f0f8046ab431cd183345b6e98f8012369ca",
+      "reason": null
     }
   ],
   "routing": {
@@ -342,10 +654,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "ab5a4f0f8046ab431cd183345b6e98f8012369ca"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

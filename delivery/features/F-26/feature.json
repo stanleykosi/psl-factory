@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-26",
   "outcome": "A project's Money tab: each contract stage's amount, invoice and paid state as the backend sends them, and where each amount comes from (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M3-REPORT"
   ],
@@ -93,6 +93,18 @@
       "at": "2026-11-16T18:50:52Z",
       "seconds": 375.0,
       "evidence_ref": "delivery/features/F-26/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T08:30:09Z",
+      "seconds": 246.1,
+      "evidence_ref": "delivery/features/F-26/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -155,14 +167,28 @@
         "delivery/features/F-26/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-16T19:01:08Z",
           "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
       ]
     },
     {
@@ -178,14 +204,28 @@
         "delivery/features/F-26/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-16T19:01:08Z",
           "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
       ]
     },
     {
@@ -224,14 +264,28 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-16T19:01:08Z",
           "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
       ]
     },
     {
@@ -247,14 +301,28 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-16T19:01:08Z",
           "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
       ]
     },
     {
@@ -293,14 +361,28 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-16T19:01:08Z",
           "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
       ]
     }
   ],
@@ -383,7 +465,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "7ec9929619c2138cf814036c65eedc58f05a577a",
     "task_branch": "fe-m3-report-a-project-s-money-tab-each-contract-stag",
-    "head_sha": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+    "head_sha": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-26",
     "pr_url": null,
     "pr_number": null,
@@ -406,6 +488,15 @@
       "delivery/features/F-23/round-2/review-ux.md",
       "delivery/features/F-23/round-3/build.md",
       "delivery/features/F-23/round-3/checks.md",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/side-by-side.png",
       "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board-marked.png",
       "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.png",
       "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.rendered.html",
@@ -433,10 +524,142 @@
       "delivery/features/F-23/round-3/review-ui.md",
       "delivery/features/F-23/round-3/review-ux.md",
       "delivery/features/F-25/feature.json",
+      "delivery/features/F-25/fidelity-exceptions.json",
+      "delivery/features/F-25/round-1/build.md",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/scores.txt",
+      "delivery/features/F-25/round-1/fidelity/summary.txt",
       "delivery/features/F-26/feature.json",
       "delivery/features/F-26/fidelity-exceptions.json",
+      "delivery/features/F-26/round-1/build.md",
+      "delivery/features/F-26/round-1/checks.md",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/run.sh",
+      "delivery/features/F-26/round-1/fidelity/scores.txt",
+      "delivery/features/F-26/round-1/review-technical.md",
+      "delivery/features/F-26/round-1/review-ui.md",
+      "delivery/features/F-26/round-1/review-ux.md",
+      "delivery/features/F-26/round-2/build.md",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board.rendered.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/diff.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/page-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/page.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/report.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/report.json",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/side-by-side.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board.rendered.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/diff.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/page-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/page.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/report.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/report.json",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/side-by-side.png",
+      "delivery/features/F-26/round-2/fidelity/run.sh",
+      "delivery/features/F-26/round-2/fidelity/scores.txt",
       "delivery/features/F-27/feature.json",
       "delivery/features/F-27/fidelity-exceptions.json",
+      "delivery/features/F-27/round-1/build.md",
+      "delivery/features/F-27/round-1/checks.md",
       "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board-marked.png",
       "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.png",
       "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.rendered.html",
@@ -460,6 +683,10 @@
       "delivery/features/F-27/round-1/fidelity/run.sh",
       "delivery/features/F-27/round-1/fidelity/scores.txt",
       "delivery/features/F-27/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-27/round-1/review-security.md",
+      "delivery/features/F-27/round-1/review-technical.md",
+      "delivery/features/F-27/round-1/review-ui.md",
+      "delivery/features/F-27/round-1/review-ux.md",
       "frontend/e2e/money.spec.ts",
       "frontend/mock/fixtures/projects/money/P-0101.json",
       "frontend/mock/fixtures/projects/money/P-0102.json",
@@ -561,6 +788,14 @@
       "round": 2,
       "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T08:30:10Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
     }
   ],
   "routing": {
@@ -577,9 +812,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
   },
   "blocked": null
 }
