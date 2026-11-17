@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 4852fb3acbd5687980687a05731b5da006ef9373
+COMMIT: 5df518a70dfc82f804313de77cb95ae51e1b38c3
 BUILDER: builder
 LANE: full
 
@@ -67,3 +67,5 @@ Merged `origin/dlv-00-delivery-setup` (F-26 Money tab) into the branch (merge co
 - Merged `origin/dlv-00-delivery-setup` (F-27 delegation). One textual conflict: the `M1_OPERATIONS` line in `mock/server.mjs` (F-27 added `E-DELEGATIONS` and `E-DELEGATION`, F-25 added `E-PROJECT-TAB`); resolved by taking F-27's line and inserting `'E-PROJECT-TAB'` after `'E-PROJECT'`. The loader exclusion, `projectTab` import and dispatch line, F-26's money routing and F-27's delegation dispatch were checked and are all present. `tests/mock-contract.test.ts` auto-merged with both features' entries (including `tab: 'milestones'`).
 - Re-scored with board fonts loaded (no `Fonts:` warning in any report; `round-3/fidelity-rescore/`): SCR-38-desktop 82.4, SCR-38-desktop-changed 79.1, SCR-29-desktop 90.4 (pass); coverage 100% after exceptions on all three. These replace the 78.1, 75.1 and 90.2 above. The other five boards were not re-run (no change to them); their round-3 scores stand. The two SCR-38 waivers carry the new numbers and stay "builder proposal, pending design engineer".
 - Checks on this head: `bash delivery/checks.sh` exit 0 (91 files, 2015 tests); e2e `project-tabs`, `projects` and `money` specs: 71 passed, 0 failed (both widths).
+
+Head 5df518a7 is the coordinator's merge of dlv-00 (delivery records and the D-110 signatures only): `git diff --stat 4852fb3a 5df518a7 -- frontend` is empty, so the checks and e2e results above on 4852fb3a stand.

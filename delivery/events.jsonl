@@ -2097,3 +2097,10 @@
 {"at":"2026-11-17T11:58:13Z","feature":"F-23","round":4,"kind":"finding","action":"accept-risk","finding":"UX-4-1","by":"coordinator"}
 {"at":"2026-11-17T11:58:13Z","feature":"F-23","round":4,"kind":"finding","action":"accept-risk","finding":"UI-4-1","by":"coordinator"}
 {"at":"2026-11-17T11:58:14Z","feature":"F-23","round":4,"kind":"finding","action":"accept-risk","finding":"QA-4-1","by":"coordinator"}
+{"at":"2026-11-17T12:16:49Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"UX-2-1","by":"reviewer-ux"}
+{"at":"2026-11-17T12:16:49Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"UI-2-1","by":"reviewer-ui"}
+{"at":"2026-11-17T12:16:49Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"UI-2-2","by":"reviewer-ui"}
+{"at":"2026-11-17T12:16:49Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"UI-2-3","by":"reviewer-ui"}
+{"at":"2026-11-17T12:16:49Z","feature":"F-25","round":3,"kind":"finding","action":"add","finding":"TECH-3-1","by":"reviewer-technical","severity":"frontend/mock/project-tabs.mjs:1-5","owner":"The header comment still says \"Documents and Money are not mocked here (501)\". Money is now answered by `money.mjs` before this handler, and `OTHER_TABS` was correctly cut to `['documents']`.","blocking":false,"role":"technical"}
+{"at":"2026-11-17T12:16:49Z","feature":"F-25","round":3,"kind":"finding","action":"add","finding":"UI-3-1","by":"reviewer-ui","severity":"scr-38-desktop, scr-38-desktop-changed, scr-29-desktop","owner":"`.ptabs__route { line-height: 1.3; }` gives an 18.2 px line, which moves the content below it off whole pixels and costs about 4 points on the two SCR-38 desktop boards. You see no difference, but the waived numbers come out about 4 points low.","blocking":false,"role":"ui"}
+{"at":"2026-11-17T12:16:58Z","feature":"F-25","round":3,"kind":"finding","action":"verify","finding":"UI-1-2","by":"reviewer-ui"}

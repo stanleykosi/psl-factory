@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 778e868137d79b0b808b55c5c994c7345613d586
+COMMIT: 81e06419df1929371e460af6cd2f2adb13192903
 BUILDER: builder
 LANE: full
 
@@ -34,3 +34,6 @@ LANE: full
 
 ## Base merge
 The coordinator merged dlv-00 (with F-26, the Money tab) into the branch; head is 778e868137d79b0b808b55c5c994c7345613d586 (my last own commit was eb6ddf081dbbdb476a6e2b71bd94140073b4b219). I checked the two files the merge touched: `frontend/mock/server.mjs` still lists `'E-DOCUMENT'` and the assistant operations in `M1_OPERATIONS` and keeps the D-2304-only 501 guard; `frontend/tests/mock-contract.test.ts` keeps `minutesProposalsStripped` and its `warn_lines`, `values`, `date_format`, `items_default` and `links` guards. `mock-contract`, `minutes-mock` and `minutes` tests pass on this head (325). The coordinator's merged-head checks.sh and 116 e2e passed, so the round-4 evidence stands.
+
+## Base merge 2
+The coordinator merged dlv-00 (F-27, delegation) into the branch; head is 81e06419df1929371e460af6cd2f2adb13192903. I checked the one conflict resolution in `frontend/mock/server.mjs`: `M1_OPERATIONS` is the union and still lists `'E-DOCUMENT'` with the delegation operations and the assistant, start and client operations; the D-2304-only 501 guard is intact; no conflict markers remain. The coordinator's merged-head checks.sh and 122 e2e passed, so the round-4 evidence stands.
