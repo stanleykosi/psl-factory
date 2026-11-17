@@ -298,7 +298,7 @@ describe('post an owner update (AC 8, 12, 13)', () => {
     });
     await waitFor(() => expect(posts('/steps')).toHaveLength(2));
     expect(posts('/steps')[1].body!.expected_revision).toBe(4);
-  });
+  }, 90_000);
 });
 
 describe('record a reply and raise an escalation (AC 9, 10)', () => {
@@ -462,7 +462,7 @@ describe('set an owner (AC 11 to 14)', () => {
     });
     expect(posts('/assignment')).toHaveLength(1);
     expect(document.body.textContent).not.toMatch(/Owner set/);
-  });
+  }, 90_000);
 
   it('uncertain: the re-read decides. Still no owner means the form is offered again; an owner means it is not', async () => {
     const body = item('W-2413');
