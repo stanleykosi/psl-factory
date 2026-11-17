@@ -1,0 +1,1537 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-25",
+  "outcome": "A project's Milestones, Registers and Actions tabs show their rows, read-only (contract mock only)",
+  "state": "IMPLEMENTING",
+  "task_ids": [
+    "FE-M3-PROJECT-TABS"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Desktop boards at 1440.** `SCR-38-desktop`, `SCR-38-desktop-changed`, `SCR-11-desktop`, `SCR-29-desktop` each give `report.json` `pass: true`, `scores.coverageWithExceptions` = 100 and `scores.visual` >= 90 on the pages and cookies of the Boards table. \u2014 verify: the command per board, exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass.",
+    "**Phone boards at 390.** The four `-mobile` boards pass at `--width 390` with the same thresholds. \u2014 verify: same, rows in `scores.txt`.",
+    "**Exceptions are limited and explained.** Each `fidelity-exceptions.json` entry has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until signed) and maps to a Conflicts number; none covers a value the data can supply. A board below 90 visual for a Conflicts reason gets a per-board waiver proposal for the design engineer (D-83 is for line screens and does not apply). \u2014 verify: file content; build.md maps each entry to its Conflicts number.",
+    "**One fidelity run per round** (D-64). \u2014 verify: build.md.",
+    "**Tabs replace \"coming next\" for three tabs only.** `/projects/P-0101/milestones`, `/registers` and `/actions` show their tab content in the existing tab panel with the F-07 header and the tab selected; `/documents` still shows \"Documents come next\"; `/money` shows whatever F-26 or the current panel draws; `/projects/P-0101` (Journey) is unchanged. \u2014 verify: `tests/project-tabs.test.tsx`; `tests/projects-journey.test.tsx` passes with only the `:241-243` row changed.",
+    "**One read per view.** Opening a tab makes one E-PROJECT and one `GET /api/v1/projects/P-0101/<tab>` request with `limit=20` (and `register=issues` on Registers), no `q` when search is empty, no `cursor`; no polling (fake timers advanced 60 s, count unchanged). \u2014 verify: component test with a recording `fetch`.",
+    "**Milestones default.** The four P-0101 milestones show, in returned order: \"1 \u00b7 Kick-off\", \"\u20a63,000,000.00\", \"Done 27 Oct \u00b7 proof\", \"INV-0398 \u00b7 Verified\", \"Part paid \u00b7 \u20a6500,000.00 owed\"; \"2 \u00b7 UAT sign-off\", \"Done 11 Nov \u00b7 client UAT sign-off\", \"INV-0412 \u00b7 Waiting\", \"\u2014\"; \"3 \u00b7 Go-live\", \"Not yet\", \"\u2014\", \"\u2014\"; \"4 \u00b7 Hypercare\" with the `Unknown` tag and \"Not yet \u00b7 amount set at go-live\". No total row, no sum anywhere. \u2014 verify: component test; page at 1440 and 390.",
+    "**Unknown is never 0.** On P-0102 an unknown contract amount, an unknown change amount, an `owed.unknown`, `paid.status: unknown`, an unknown due date and an absent `age_seconds` each read \"Unknown\" (amber tag); `document.body.textContent` has no \"\u20a60\" and no \"0.00\" that the fixture did not send. \u2014 verify: component test and `tests/project-tabs-model.test.ts`.",
+    "**Facts stay separate (INV-FACTS).** A milestone with `invoice` and no `paid` shows \"\u2014\" under PAID (never \"Paid\" or \"Not paid\"); a `not_yet` milestone with an invoice still shows \"Not yet\"; every `paid.status` shows its own word; nothing reads `invoice.state` to decide paid. \u2014 verify: model tests over every `paid.status` and an invoice/paid mismatch fixture row.",
+    "**Changed milestone.** With `psl_mock_milestones=changed`, a CHANGES column appears (Conflicts 4) with \"CR-0031 \u00b7 SMS reminders\" linking to `/work/<work_id>`; Go-live's amount reads \"\u20a64,250,000.00 + the change \u00b7 change amount Unknown\"; INVOICE and PAID stay. On P-0102 a known change amount shows next to the contract amount and never added to it (no third figure). The phone card shows the \"CHANGED \u00b7 CR-0031\" tag. \u2014 verify: component test; page at 1440 and 390.",
+    "**No completion control.** No \"Mark milestone \u2026 complete\" button or link and no form exist on any milestone fixture. \u2014 verify: component test (`queryByRole('link'|'button', { name: /complete/i })` is null).",
+    "**Registers default.** Tabs read \"Issues 3\", \"Changes 2\", \"Emergencies 0\", \"RFPs 1\" from `summary.registers`; the toolbar shows search and \"3 ISSUES\" and no Filter; the Issues rows show reference, title, `PriorityTag` (\"\u25a0\u25a0\u25a0 High\" and so on), owner \"PM \u00b7 Tunde Bello\" / \"Engineering (recorded by PM)\", state text as given and \"2d\", \"4d\", \"Unknown\". The footer sentence shows. \u2014 verify: component test; page at both widths.",
+    "**Register switch and search use the URL.** Choosing Changes navigates to `?register=changes` and requests `register=changes` with no cursor; Issues removes `register` from the URL. Typing \"android\" and pausing sets `?q=android` and requests `q=android`; clearing removes both; an unknown `?register=x` reads as Issues. Keyboard: arrows, Home and End move along both tab bars. \u2014 verify: component test and e2e (URL and recorded requests).",
+    "**Empty and no match.** Emergencies (0 rows) shows \"No emergencies on this project yet.\"; a search with no rows shows the no-match sentence and \"Clear search\", which clears `q`; P-0106 shows each tab's empty sentence with no count text and no \"0\" invented where `summary` is absent. \u2014 verify: component test and e2e.",
+    "**Paging.** On P-0102 Issues, 20 rows and \"Show more\" show; pressing it sends one request with the returned `cursor` and appends the next rows, and focus stays on the control; changing register or search starts from page one; the URL never carries a cursor. \u2014 verify: component test and e2e.",
+    "**Actions default.** The header text reads \"9 ACTIONS \u00b7 3 OVERDUE \u00b7 1 WITHOUT OWNER\"; rows show title with \"From Weekly sync \u00b7 10 Nov\", owners \"Client \u00b7 Lagoon Health\", \"Engineering (recorded by PM)\", \"No owner\", \"Tunde Bello\", due \"13 Nov\" or \"Unknown\", and state tags OPEN, OVERDUE, DONE; the footer reads \"Actions come from confirmed minutes.\" and nothing about changing owners. \u2014 verify: component test; page at both widths.",
+    "**Rows link only with `work_id`.** Register titles, action titles, invoice references and change references link to `/work/<work_id>` when the row has one and are plain text otherwise; no link opens evidence. \u2014 verify: component test over fixtures with and without `work_id`.",
+    "**Access.** P-0103 (tab answers 403) and a tab 404 show \"No access to this tab\" in the panel with the header kept and no milestone name, amount, reference or title from the fixture in `document.body.textContent`; a 403 after a successful first page (search) removes the earlier rows. P-0099 shows F-07's `ProjectNoAccess` and makes no tab request. A tab 401 shows the sign-in link with `next=%2Fprojects%2FP-0101%2Fregisters` (query kept when present). A persona with any role gets the same columns and controls for the same fixture; nothing is read from `/me` beyond the Projects destination. \u2014 verify: component tests with a recording `fetch`; e2e for P-0103; `git diff` shows no new `/me` use in `features/projects`.",
+    "**Server and network errors.** A 500 or network failure on the tab read shows the error card with Retry; Retry sends exactly one new request; no automatic retry. \u2014 verify: component test.",
+    "**Static and data text.** Register `state`, owner `role`, `amount_note`, meeting names and references appear exactly as the fixture sends them; the frontend adds no state colour to register states and composes none of the backend sentences of Conflicts 3, 5 and 12. \u2014 verify: component test; `grep -n \"awaiting Finance decision\\|SOW amendment\\|recorded with your name\" frontend/src/features/projects` returns nothing.",
+    "**Accessibility and layout.** For the three tabs on P-0101, P-0102 and P-0106 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), one `h1`, the table `caption`s name the tables, no sideways page scroll (the table frame may scroll itself), visible focus, 44px targets on phones (D-92c; in-sentence links exempt, D-95), loading and result counts announced politely. \u2014 verify: `e2e/project-tabs.spec.ts`.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/projects/project-tabs.css` returns nothing. \u2014 verify: the command.",
+    "**Shared component change is general.** `ListToolbar` without `onFilterToggle` draws no Filter button; with it, behaviour is unchanged; existing component tests pass unchanged. \u2014 verify: a new case in `tests/project-tabs.test.tsx` or the components test; `delivery/checks.sh`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**` or `features/projects/model.ts`; every fixture validates against the generated E-PROJECT-TAB 200 schema with no stripping; every wanted field the schema lacks is a contract proposal in build.md. \u2014 verify: `tests/mock-project-tabs.test.ts`; `git diff --stat`; build.md.",
+    "**Mock matches the contract.** `mock-project-tabs.test.ts` runs every fixture through the handler: valid bodies for milestones, registers and actions; 404 for P-0099, an invisible case, a bad `limit`, a `register` on another tab, an empty `q`, a bad cursor; 403 for P-0103; 501 for `documents`; the changed cookie switches the milestones file; `q` and cursor slice the rows; the X-Mock-Scenario header still wins. \u2014 verify: the test.",
+    "**Existing behaviour kept.** `tests/projects*.test.*`, `mock-projects.test.ts`, `work-item*.test.tsx`, `shell.test.tsx`, component tests and `e2e/projects.spec.ts` pass; the only edited assertions are those listed under Shared files; no existing fixture changes. \u2014 verify: `delivery/checks.sh`; `git diff` on those files.",
+    "**New tests run.** `project-tabs.test.tsx`, `project-tabs-model.test.ts`, `mock-project-tabs.test.ts` and `e2e/project-tabs.spec.ts` exist and run in `delivery/checks.sh`, covering criteria 5 to 20. \u2014 verify: file presence and the run output in `round-<N>/build.md`.",
+    "**build.md evidence and limits.** build.md lists the commands run and results, the 8 scores, each exception with its Conflicts number, the ListToolbar change, every contract proposal and backend question, the static footer sentences for confirmation, and the mock limits below; the PR and build.md claim no real backend. Every e2e request goes to the mock (4791). \u2014 verify: file content; recorded requests."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The work is three read-only tab panels on a proposed v7 contract (D-PROJECT-TAB-ROWS) that the backend may change, reusing shared components and `features/projects`. It shows money (contract and change amounts, paid and owed), so Unknown handling and the separation of completion, invoice and payment must be exact (INV-UNKNOWN, INV-FACTS). It stays at medium and not high because there are no writes, no sends, no migrations and nothing is released. SURFACES: ui (8 boards), api (`E-PROJECT-TAB` typed arrays and `E-PROJECT` counts), contract-change (D-PROJECT-TAB-ROWS is a proposal and the gaps above), product-decision (the drawn controls that need a contract answer: complete, filter, owner edit). PRODUCT-ACCEPTANCE is not-required, because the work conforms to the client-approved boards and adds no new flow, rule or copy. Any omitted control is a fidelity exception for the design engineer to sign, as in D-99 and D-100."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-25/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T07:49:38Z",
+      "seconds": 291.0,
+      "evidence_ref": "delivery/features/F-25/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T08:26:02Z",
+      "seconds": 354.5,
+      "evidence_ref": "delivery/features/F-25/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T10:43:56Z",
+      "seconds": 426.3,
+      "evidence_ref": "delivery/features/F-25/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": false,
+      "assessment_reason": "delivery/features/F-25/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "`GET /projects/P-0101/money` is asserted to be 501 through the full mock server. F-26 routes money to `money.mjs` before the M1 check (its server.mjs line ahead of `if (!M1_OPERATIONS...)`), so this assertion fails after the second merge.",
+      "severity": "frontend/tests/mock-project-tabs.test.ts:70",
+      "blocking": false,
+      "summary": "Whoever merges second drops `money` from this assertion and keeps `documents`. Do not restore the 501 in `projectTab()`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`mock-project-tabs.test.ts` no longer asserts that money returns 501; the case is now \"documents answers 501; unknown tab 404\", and the test name matches. The assertion is safe against the F-26 merge, and the `projectTab()` handler is unchanged."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`mock-project-tabs.test.ts` no longer asserts that money returns 501; the case is now \"documents answers 501; unknown tab 404\", and the test name matches. The assertion is safe against the F-26 merge, and the `projectTab()` handler is unchanged."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The test title says \"documents and money keep their coming-next panel\" but it only opens `documents`, so the name over-claims. It is not wrong today. After the F-26 merge, money is no longer coming-next.",
+      "severity": "frontend/tests/project-tabs.test.tsx:426",
+      "blocking": false,
+      "summary": "Rename to \"documents keeps its coming-next panel\" in this round or at merge. This also affects the `projects-journey.test.tsx` row (see the merge list below).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`project-tabs.test.tsx` is renamed \"documents keeps its coming-next panel\", and the body still opens `documents`."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`project-tabs.test.tsx` is renamed \"documents keeps its coming-next panel\", and the body still opens `documents`."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "`ProjectView` and `ProjectPage` gain a `caseId` prop. The spec says \"one import and one branch, nothing else changes\", and `journey.case_id` is already available (F-26 uses it for `MoneyTab`). The extra prop widens the diff in a file both features touch and makes the second merge conflict more likely.",
+      "severity": "frontend/src/features/projects/projectjourney.tsx:187",
+      "blocking": false,
+      "summary": "Pass `journey.case_id` to `ProjectTabContent` and revert the signature change. Optional, because the result is the same.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "The `caseId` prop is gone from `ProjectView` and `ProjectPage`; `ProjectTabContent` gets `journey.case_id`. The `ProjectJourney.tsx` diff against the base is now one import, one `hasTabContent` branch and that prop, which is the same shape F-26 uses."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The `caseId` prop is gone from `ProjectView` and `ProjectPage`; `ProjectTabContent` gets `journey.case_id`. The `ProjectJourney.tsx` diff against the base is now one import, one `hasTabContent` branch and that prop, which is the same shape F-26 uses."
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "On a tab 403/404 the `PmRoute` line (\"PM <name> \u00b7 Route ...\") still draws above the panel that says \"Nothing from it is shown here\". The name comes from E-PROJECT, which the person may already read, so this is not a leak. It is a mixed message, and the PM name appears on the one state where the spec asked for no names.",
+      "severity": "frontend/src/features/projects/projecttabcontent.tsx:21",
+      "blocking": false,
+      "summary": "Either hide `PmRoute` while the tab state is an access error, or accept it and confirm with the security reviewer. The tab state lives inside each tab, so hiding it needs the state lifted or a small context. Likely accept.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "An invoice whose `state` is absent or not in `STATE_TAGS` shows only its reference. That reads as \"no status\" and not as Unknown. It is a fact the data could not supply, so the amber Unknown the spec uses elsewhere would be more honest.",
+      "severity": "frontend/src/features/projects/tabsmodel.ts:`invoiceword` and milestonestab.tsx:`invoicecell`",
+      "blocking": false,
+      "summary": "Draw `<Unknown />` in place of the word when the state is missing or unrecognised. Small change plus one test.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`InvoiceCell` draws `' \u00b7 '` and then the state word or `<Unknown />`, so a missing or unlisted state reads Unknown. The new test covers both an absent state and `state: 'surprise'`, expecting `INV-0398 \u00b7 Unknown` and `INV-0412 \u00b7 Unknown`."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`InvoiceCell` draws `' \u00b7 '` and then the state word or `<Unknown />`, so a missing or unlisted state reads Unknown. The new test covers both an absent state and `state: 'surprise'`, expecting `INV-0398 \u00b7 Unknown` and `INV-0412 \u00b7 Unknown`."
+      ]
+    },
+    {
+      "id": "TECH-1-6",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "`tab: 'milestones'` was added to `PATH_VALUES`. The spec does not list this file, but without it the generic persona and schema loop cannot call E-PROJECT-TAB. The addition is additive, loosens nothing, and is flagged in build.md.",
+      "severity": "frontend/tests/mock-contract.test.ts:39",
+      "blocking": false,
+      "summary": "Accept. When F-26 merges, keep this entry. F-26 edits other lines in this file (E-REPORT becomes E-PAYROLL-MATCH), so a conflict is unlikely.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "An empty tab shows a heading (\"No actions yet\") and then the sentence (\"No actions on this project yet.\"), which says the same thing twice.",
+      "severity": "p-0106 and empty registers, desktop and phone",
+      "blocking": false,
+      "summary": "Keep one of the two, or make the heading a short title that adds something.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`TabEmpty` in `MilestonesTab.tsx`, `RegistersTab.tsx` and `ActionsTab.tsx` renders the sentence once; `project-tabs.test.tsx` \"shows the empty sentence once\" passes per the builder's run."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "`TabEmpty` in `MilestonesTab.tsx`, `RegistersTab.tsx` and `ActionsTab.tsx` renders the sentence once; `project-tabs.test.tsx` \"shows the empty sentence once\" passes per the builder's run."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "Dates read \"04 Nov\" with a leading zero; the board draws \"4 Nov\".",
+      "severity": "actions due column, desktop and phone",
+      "blocking": false,
+      "summary": "Drop the leading zero in the shared day format for this tab (or confirm it is the app's convention).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "A closed issue shows \"Unknown\" under AGE where the board draws \"\u2014\". This is the approved Conflicts 11 exception, but a PM may read it as a data fault.",
+      "severity": "registers, iss-0221 age",
+      "blocking": false,
+      "summary": "Resolve with the backend \"age does not apply\" signal when it exists.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The Milestones column widths follow the cell content, not the board. Page header boxes are 185/199/342/218/316 px; the board draws 164/176/302/338/280 px (report.json, columnheader boxes). The approved shorter invoice text (\"INV-0412 \u00b7 Waiting\") lets the columns re-flow, so every cell from CONTRACT AMOUNT onward sits 20\u201380 px away from where the board draws it (diff.png: whole table red). This is the largest fixable part of the 73.1.",
+      "severity": "scr-38-desktop",
+      "blocking": true,
+      "summary": "Give the milestones table a class with `table-layout: fixed` and percentage widths in `project-tabs.css` that match the board (about 13/14/24/27/22% of the 1260 px frame). This must not affect the Registers or Actions tables.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "round-2 SCR-38-desktop side-by-side.png: header columns start at 92/237/393/661/963 px against the board's 92/237/393/661/961. CSS `.ptabs__ms--5` widths are 13/14/24/27/22%, on a milestones-only class; Registers and Actions tables are untouched. Visual went from 73.1 to 82.4."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "round-2 SCR-38-desktop side-by-side.png: header columns start at 92/237/393/661/963 px against the board's 92/237/393/661/961. CSS `.ptabs__ms--5` widths are 13/14/24/27/22%, on a milestones-only class; Registers and Actions tables are untouched. Visual went from 73.1 to 82.4."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "With the six approved columns (Conflicts 4), rows wrap to two lines: \"2 \u00b7 UAT sign-/off\", \"INV-0398 \u00b7/Verified\", \"Part paid \u00b7 \u20a6500,000.00/owed\", \"CR-0031 \u00b7 SMS/reminders\", \"Done 11 Nov \u00b7 client UAT sign-/off\". Rows are 57 px tall where the board draws 39 px, and the table is 249 px tall against 192 px, so everything below it moves down.",
+      "severity": "scr-38-desktop-changed",
+      "blocking": true,
+      "summary": "Keep each row to one line as the board does: `white-space: nowrap` on MILESTONE, INVOICE, PAID and CHANGES. Let CONTRACT AMOUNT (the wide column on the board, about 650 px) take the remaining width and be the only cell allowed to wrap.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "`.ptabs__table td:first-child { font-weight: 700; }` (`frontend/src/features/projects/project-tabs.css:38`) bolds the whole first cell. ISS-0233/0229/0221 come out bold (report: \"weight 400 on the board, 700 on the page\"). The Actions second line \"From Weekly sync \u00b7 10 Nov\" is also bold, where the board draws it at 12px, muted, weight 400 (visible in side-by-side.png).",
+      "severity": "scr-11-desktop, scr-29-desktop",
+      "blocking": true,
+      "summary": "Bold only the milestone name and the action title (a `<strong>` or a class in those cell renderers) and remove the first-child rule. The issue reference stays mono (README: references in mono) at weight 400.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "the blanket `td:first-child` bold rule is gone. Bold now applies only to `.ptabs__ms td:first-child` and `.ptabs__actions-table td:first-child`, and `.ptabs__hint` is 12px weight 400 muted. In the SCR-11 side-by-side, ISS-0233/0229/0221 are mono at 400. In the SCR-29 side-by-side, \"From Weekly sync \u00b7 10 Nov\" is regular and muted."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "the blanket `td:first-child` bold rule is gone. Bold now applies only to `.ptabs__ms td:first-child` and `.ptabs__actions-table td:first-child`, and `.ptabs__hint` is 12px weight 400 muted. In the SCR-11 side-by-side, ISS-0233/0229/0221 are mono at 400. In the SCR-29 side-by-side, \"From Weekly sync \u00b7 10 Nov\" is regular and muted."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The phone milestone card swaps the board's text sizes. The board draws the \"amount \u00b7 completion\" line at 13px ink and the invoice line at 12px muted (`SCR-38-mobile.dc.html`). The page uses `.ptabs__cardmain` = `--text-small-size` (12px) and `.ptabs__cardhint` = `--text-hint-size` (13px), so the invoice and paid lines are larger than the main line.",
+      "severity": "scr-38-mobile, scr-38-mobile-changed",
+      "blocking": true,
+      "summary": "Set the milestones main line to `--text-hint-size` (13px). Set the invoice and paid lines to `--text-small-size` (12px), muted, using their own class. Registers and Actions cards keep the 13px hint line their boards draw.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`.ptabs__cardmain` is `--text-hint-size` (13px). The new `.ptabs__cardnote` is `--text-small-size` (12px) muted and is used for the invoice and paid lines. Registers and Actions keep `.ptabs__cardhint` at 13px. The SCR-38-mobile side-by-side shows the board's line rhythm (name, main line and invoice line at the board's spacing)."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`.ptabs__cardmain` is `--text-hint-size` (13px). The new `.ptabs__cardnote` is `--text-small-size` (12px) muted and is used for the invoice and paid lines. Registers and Actions keep `.ptabs__cardhint` at 13px. The SCR-38-mobile side-by-side shows the board's line rhythm (name, main line and invoice line at the board's spacing)."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The gap inside each card is `--space-2` (8px); all three phone boards draw `gap: 6px`. On cards with 3 to 4 lines this adds 4\u20136 px per card, and the error builds up down the list (SCR-29-mobile cards are 75\u201388 px tall against the board's 70 px).",
+      "severity": "scr-38-mobile, scr-38-mobile-changed, scr-11-mobile, scr-29-mobile",
+      "blocking": true,
+      "summary": "`.ptabs__card { gap: var(--space-6px); }` (the token exists). Check that the card's 14px base size matches the board's `font-size: 14px`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`.ptabs__card { gap: var(--space-6px); font-size: var(--text-body-size); }`. SCR-29-mobile cards are 72\u201375 px against the board's 70 px (the \"No owner\" card is taller because of its tag), and visual went from 76.8 to 84.3. The list gap stays 12 px, which matches the boards' column `gap: 12px`. SCR-38-mobile fell from 80.8 to 76.7 even though its card text now matches the board. The cause is the approved extra Paid line: with shorter cards, each following card is offset 22\u201324 px against the board's grid instead of about 30 px. It is not a regression in the code."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`.ptabs__card { gap: var(--space-6px); font-size: var(--text-body-size); }`. SCR-29-mobile cards are 72\u201375 px against the board's 70 px (the \"No owner\" card is taller because of its tag), and visual went from 76.8 to 84.3. The list gap stays 12 px, which matches the boards' column `gap: 12px`. SCR-38-mobile fell from 80.8 to 76.7 even though its card text now matches the board. The cause is the approved extra Paid line: with shorter cards, each following card is offset 22\u201324 px against the board's grid instead of about 30 px. It is not a regression in the code."
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The severity-marker exceptions (\"\u25a0\u25a0\u25a0\", \"\u25a0\u25a0\u25a1\", \"\u25a0\u25a1\u25a1\") are correct in substance. The marker is drawn: it sits inside the shared `PriorityTag` and is marked `aria-hidden`, so the tool cannot read it as separate text. The tag itself matches. But the category \"sample data\" is wrong: nothing here is sample data.",
+      "severity": "scr-11-mobile",
+      "blocking": false,
+      "summary": "Change the category to \"frame item\" (shared component, D-91) and keep \"builder proposal, pending design engineer\" until it is signed. I recommend approving them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "the three marker entries are category \"frame item\", still \"builder proposal, pending design engineer\". I recommend signing them."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "the three marker entries are category \"frame item\", still \"builder proposal, pending design engineer\". I recommend signing them."
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The biggest gap still left on SCR-38 desktop is the approved route-line position (Conflicts 16, D-104). The line is drawn under the tab bar (y 250) instead of above it (y 176), so the 48 px tab band moves 32 px. The route line is also 21 px tall against the board's 18 px (line height). The line comes from this feature's own `PmRoute` (`ProjectTabContent.tsx`). Moving it into the F-07 header above the tab bar would be a small change to `ProjectView`, but the spec's shared-files rule keeps it out of F-25's lane.",
+      "severity": "scr-38-desktop, scr-38-desktop-changed, scr-29-desktop",
+      "blocking": false,
+      "summary": "No change required this round. Tell the design engineer this is the one lever that would move SCR-38-desktop most towards 90 if they want more than a waiver. Matching the board's line height (18 px) is a fixable detail inside this feature.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The page title is 36px; the boards draw 34px (report \"text size 34px on the board, 36px on the page\"). It comes from the F-07 `PageTitle`, which this feature may not change. The README allows 34px where the board draws it.",
+      "severity": "all desktop boards",
+      "blocking": false,
+      "summary": "Frame follow-up outside F-25; cover it in the waivers.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-9",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The shared priority marker (`.psl-tag .psl-prio`: 9px, +1px tracking) shows three separate small squares. The boards draw the marker at the tag size with -1px tracking, which reads as a solid bar. This is a shared-component style, not F-25 code.",
+      "severity": "scr-11-desktop, scr-11-mobile",
+      "blocking": false,
+      "summary": "Design-system follow-up; cover it in the SCR-11 waivers.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-10",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "Unknown appears as the amber Unknown tag (with background) where the boards draw amber bold text, or plain text on the changed board. On the phone, \"No owner\" is in signal-ink bold, while the phone board draws the line plain and muted. Both follow the README (\"Unknown is the amber Unknown tag\") and the desktop board's \"No owner\". These are consistent across features.",
+      "severity": "scr-29-mobile, scr-38-desktop, scr-29-desktop",
+      "blocking": false,
+      "summary": "Keep as built; list them in the waivers.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "Milestone cells other than CONTRACT AMOUNT are now one line with an ellipsis. A long completion text, invoice word or change title is cut on screen, so the full fact is no longer visible. The text stays in the DOM and is read by screen readers, but a sighted user cannot read it. This trades fidelity for completeness.",
+      "severity": "frontend/src/features/projects/project-tabs.css:`.ptabs__ms td:not(:nth-child(2))`",
+      "blocking": false,
+      "summary": "Accept for this round. Give the cells a `title` attribute (or let the cell wrap at phone width), and note it for the UI round.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "`TabEmpty` hard-codes the `psl-empty` markup and an `h3` in place of the shared `EmptyState`. This avoids the repeated sentence the UX review asked to remove. It copies the shared component's markup, and the page's heading levels for the empty state are unchecked.",
+      "severity": "frontend/src/features/projects/tabparts.tsx:`tabempty`",
+      "blocking": false,
+      "summary": "Accept. Better still, give `EmptyState` an optional title-only mode later and use it here.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "The empty sentence is now an `h3` directly under the page `h1` and the table caption level, so the heading outline may skip a level.",
+      "severity": "`tabparts.tsx` `tabempty`",
+      "blocking": false,
+      "summary": "Use the same level as the other panel headings (h2), or a paragraph.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "`project-tabs.css` has `.ptabs__ms td:not(:nth-child(2)) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }`. With the fixed percentage widths, this visually cuts amounts, owed figures, invoice states and proof text whenever the table is narrower than the board. The desktop layout runs from 720 px and the table's minimum width is 880 px. Measured text widths at 14px: \"Part paid \u00b7 \u20a6500,000.00 owed\" is about 190 px, \"INV-0398 \u00b7 Verified\" about 123 px and \"Done 11 Nov \u00b7 client UAT sign-off\" about 207 px. A 22% PAID column has room for that line only when the table is at least about 990 px wide. In the 6-column state, the 13% INVOICE column cuts \"INV-0398 \u00b7 Verified\" whenever the table is under about 1160 px wide. That covers common 1024\u20131280 px laptop windows. A cut-off money or completion fact breaks the \"facts shown separately, never hidden\" rule (INV-FACTS) and the readability bar. The P-0102 edge rows (non-NGN amounts, several changes) are longer still.",
+      "severity": "scr-38-desktop, scr-38-desktop-changed",
+      "blocking": true,
+      "summary": "Remove the nowrap/overflow/ellipsis rule and keep the fixed widths. At 1440 every P-0101 value already fits its column on one line: 6-column room is about 111/224/136/224/174 px against texts of about 99/207/123/190/162 px. So the board still matches at board width, and below it cells wrap instead of being cut. Add a component or e2e check at about 1024 px that the owed amount and invoice state are fully visible.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "The round-2 board render of `SCR-11-desktop.dc.html` differs from round 1 (board.png md5 4a0857ce\u2026 vs ab554d12\u2026), with the h1 and wordmark in a fallback font. The other 7 board renders are byte-identical across rounds. The drop from 84.6 to 82.8 therefore says nothing about the page, whose only change was the 400-weight references and that brings it closer to the board.",
+      "severity": "scr-11-desktop",
+      "blocking": false,
+      "summary": "Re-run SCR-11-desktop alone once its fonts load, and sign the waiver at that number.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "The `visual_waivers` reasons in `fidelity-exceptions.json` are now out of date. For example, SCR-38-desktop still says \"the table column widths follow the page's own table\", which is no longer true.",
+      "severity": "all 7 waived boards",
+      "blocking": false,
+      "summary": "Replace each reason with the waiver text below, and update the scores after the UI-2-1 fix and the SCR-11 re-measure.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-4",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "`.ptabs__route { line-height: 18px; }` is a literal pixel value. It passes AC 22, which only greps for colours, but it is the only non-token size in the file.",
+      "severity": "scr-38-desktop, scr-38-desktop-changed, scr-29-desktop",
+      "blocking": false,
+      "summary": "Use a token or a unitless line height (for example 1.3 at the 14px body size) the next time the file is touched.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-25/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-25/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-2/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-M3-PROJECT-TABS",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "7ec9929619c2138cf814036c65eedc58f05a577a",
+    "task_branch": "fe-m3-project-tabs-a-project-s-milestones-registers-and-act",
+    "head_sha": "b9c62eb095afab1a2df87f562ffef833678e021c",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-25",
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-23/feature.json",
+      "delivery/features/F-23/fidelity-exceptions.json",
+      "delivery/features/F-23/round-2/checks.md",
+      "delivery/features/F-23/round-2/review-security.md",
+      "delivery/features/F-23/round-2/review-technical.md",
+      "delivery/features/F-23/round-2/review-ui.md",
+      "delivery/features/F-23/round-2/review-ux.md",
+      "delivery/features/F-23/round-3/build.md",
+      "delivery/features/F-23/round-3/checks.md",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/drive-states.mjs",
+      "delivery/features/F-23/round-3/fidelity/frozen/default-1440.html",
+      "delivery/features/F-23/round-3/fidelity/scores.txt",
+      "delivery/features/F-23/round-3/fidelity/serve-frozen.mjs",
+      "delivery/features/F-23/round-3/review-security.md",
+      "delivery/features/F-23/round-3/review-technical.md",
+      "delivery/features/F-23/round-3/review-ui.md",
+      "delivery/features/F-23/round-3/review-ux.md",
+      "delivery/features/F-25/feature.json",
+      "delivery/features/F-25/fidelity-exceptions.json",
+      "delivery/features/F-25/round-1/build.md",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/scores.txt",
+      "delivery/features/F-25/round-1/fidelity/summary.txt",
+      "delivery/features/F-26/feature.json",
+      "delivery/features/F-26/fidelity-exceptions.json",
+      "delivery/features/F-26/round-1/build.md",
+      "delivery/features/F-26/round-1/checks.md",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/run.sh",
+      "delivery/features/F-26/round-1/fidelity/scores.txt",
+      "delivery/features/F-27/feature.json",
+      "delivery/features/F-27/fidelity-exceptions.json",
+      "delivery/features/F-27/round-1/build.md",
+      "delivery/features/F-27/round-1/checks.md",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.rendered.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/diff.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/page-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/page.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/report.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/report.json",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/side-by-side.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board.rendered.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/diff.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/page-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/page.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/report.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/report.json",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/side-by-side.png",
+      "delivery/features/F-27/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-27/round-1/fidelity/frozen/default-1440.html",
+      "delivery/features/F-27/round-1/fidelity/run.sh",
+      "delivery/features/F-27/round-1/fidelity/scores.txt",
+      "delivery/features/F-27/round-1/fidelity/serve-frozen.mjs",
+      "frontend/e2e/project-tabs.spec.ts",
+      "frontend/e2e/projects.spec.ts",
+      "frontend/mock/fixtures/projects/tabs/P-0101.actions.json",
+      "frontend/mock/fixtures/projects/tabs/P-0101.milestones.changed.json",
+      "frontend/mock/fixtures/projects/tabs/P-0101.milestones.json",
+      "frontend/mock/fixtures/projects/tabs/P-0101.registers.json",
+      "frontend/mock/fixtures/projects/tabs/P-0102.actions.json",
+      "frontend/mock/fixtures/projects/tabs/P-0102.milestones.json",
+      "frontend/mock/fixtures/projects/tabs/P-0102.registers.json",
+      "frontend/mock/fixtures/projects/tabs/P-0106.actions.json",
+      "frontend/mock/fixtures/projects/tabs/P-0106.milestones.json",
+      "frontend/mock/fixtures/projects/tabs/P-0106.registers.json",
+      "frontend/mock/project-tabs.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/src/components/ListToolbar.tsx",
+      "frontend/src/features/projects/ActionsTab.tsx",
+      "frontend/src/features/projects/MilestonesTab.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/ProjectTabContent.tsx",
+      "frontend/src/features/projects/RegistersTab.tsx",
+      "frontend/src/features/projects/TabParts.tsx",
+      "frontend/src/features/projects/project-tabs.css",
+      "frontend/src/features/projects/tabsModel.ts",
+      "frontend/src/features/projects/useFocusAfterMore.ts",
+      "frontend/src/features/projects/useProjectTab.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-project-tabs.test.ts",
+      "frontend/tests/mock-projects.test.ts",
+      "frontend/tests/project-tabs-model.test.ts",
+      "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/projects-journey.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-16T17:39:35Z",
+  "round": 3,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-16T17:53:13Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T17:53:27Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T08:26:03Z",
+      "round": 1,
+      "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T09:33:27Z",
+      "round": 1,
+      "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T09:33:27Z",
+      "round": 2,
+      "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T10:43:57Z",
+      "round": 2,
+      "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T10:47:59Z",
+      "round": 2,
+      "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T10:48:00Z",
+      "round": 3,
+      "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-25/readiness.md",
+      "delivery/features/F-25/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}

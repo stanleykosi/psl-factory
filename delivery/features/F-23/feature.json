@@ -81,7 +81,56 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T16:17:25Z",
+      "seconds": 225.5,
+      "evidence_ref": "delivery/features/F-23/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T17:57:53Z",
+      "seconds": 222.0,
+      "evidence_ref": "delivery/features/F-23/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T18:15:03Z",
+      "seconds": 399.3,
+      "evidence_ref": "delivery/features/F-23/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 2,
+      "commit": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T18:21:27Z",
+      "seconds": 326.0,
+      "evidence_ref": "delivery/features/F-23/round-3/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -135,8 +184,1261 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "Item-scope steps now send `item_ids` for every line, not only minutes (F-17 `accept_answer`, F-21/F-22 item steps). The contract allows it and the checks pass, but the backend handler for each line must accept or ignore it.",
+      "severity": "frontend/src/features/workspace/workspace.tsx:200",
+      "blocking": false,
+      "summary": "Add one line to build.md or the backend handoff: \"item-scope steps send `item_ids: [id]`\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "Edit forms do not prefill the row's current text, because item-scope descriptors are per step. A PM editing a decision must retype it, and `text` is required. This is the builder's own note.",
+      "severity": "frontend/mock/fixtures/work/w-2301.json (edit_item / edit_decision)",
+      "blocking": false,
+      "summary": "Record it as a backend ask: a per-item `value` on the descriptor, or a per-item step. Do not change the frame in this PR.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "`minutesProposalsStripped` strips `links` and `items_default` from every E-WORK-ITEM fixture, not only W-23xx. The \"exist on their own\" test limits where the keys occur and checks that they live only in W-23xx, which is acceptable. A malformed `items_default` in an older fixture would still be caught by `toBe('checked')`.",
+      "severity": "frontend/tests/mock-contract.test.ts:99",
+      "blocking": false,
+      "summary": "None needed. Keep the guard test.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The phone boards were not re-scored after the F-24 phone-bar change (the builder says so). Desktop default visual 69.7 is under the D-83 floor and needs the design engineer. This is the UI and fidelity lane, not technical.",
+      "severity": "delivery/features/f-23/round-1/build.md",
+      "blocking": false,
+      "summary": "Leave it to the UI review and the coordinator. Re-score the phone boards once after merge if the UI reviewer asks.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The form opens with \"Action\" and \"Due\" (or \"Decision\") empty and the owner on its placeholder. I measured `Action=`, `Due (optional)=`. To fix one typo the PM must retype the whole action, and a blank owner or due is \"left out\" of the request, so an edit can silently drop the owner and due Tola found. The spec (item 10) says Edit opens a form with text, owner and due; D-98 approved opening a form on press, not an empty one. build.md line 77 admits \"Edit forms do not prefill\".",
+      "severity": "edit on any decision or action (w-2301, 1440 and 390)",
+      "blocking": true,
+      "summary": "Prefill each form from the row it was opened on (text, owner, due), or if the frame cannot, show the current text above the form and send only what the PM changed. Get design engineer sign-off if left as is.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T17:57:53Z",
+          "refs": [
+            "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "Live at 1440 and 390 on the mock: Edit on action A-1 shows \"Send test accounts for UAT\", owner Lagoon Health, due \"13 Nov 2026\"; untouched save sent `{text, owner:\"O-LAGOON\", due:\"2026-11-13\"}` with item_ids [\"A-1\"]. Decision D-1 edit shows its text and sends the same text."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Live at 1440 and 390 on the mock: Edit on action A-1 shows \"Send test accounts for UAT\", owner Lagoon Health, due \"13 Nov 2026\"; untouched save sent `{text, owner:\"O-LAGOON\", due:\"2026-11-13\"}` with item_ids [\"A-1\"]. Decision D-1 edit shows its text and sends the same text."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The result page says \"Paid is tracked separately by Finance and is not part of this decision\", and the reconcile panel says \"so the client is never invoiced twice\". Both are invoice wording on a minutes send.",
+      "severity": "w-2305 after approve: decision result and reconcile panel",
+      "blocking": false,
+      "summary": "Use minutes wording (for example \"so the client never gets the minutes twice\"); drop the Finance line for the minutes line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The work page says \"Approve and send\" and \"Approving sends this exact version to the client\". The decision page button is \"Approve v1\" with \"Approving earns APPROVED only. Send is the next station.\" The two pages promise different things for the same click. D-98 accepted the F-16 page, but the sentences contradict each other.",
+      "severity": "decision page `/work/w-2304/decide`",
+      "blocking": false,
+      "summary": "Make one sentence true for both, and say plainly whether Approve sends.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "The Actions table keeps its 560px width inside a scroll region, so Due, Edit and Remove sit off screen (Remove starts at x=492 of 390). The region is focusable and labelled, so it is reachable, but the PM has to scroll sideways to edit or remove, and the board draws \"owner \u00b7 due\" rows.",
+      "severity": "w-2301 phone (390)",
+      "blocking": false,
+      "summary": "Stack action rows on a phone with Edit and Remove visible.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "Decisions sit in the right column with the tick above the text and a full-width Edit button, so the page reads Actions first, Decisions second. The board has decisions first, a tick beside the text and a link Edit. This is exception 6 (frame layout), which D-98 did not list as signed.",
+      "severity": "w-2301",
+      "blocking": false,
+      "summary": "Get the exception signed, or draw the tick inline.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "After \"+ Add an action\" the page says \"Done: + Add an action.\" with the plus sign in it, and a blank add says \"Add action to continue.\"",
+      "severity": "step result, w-2301",
+      "blocking": false,
+      "summary": "Say \"Done: action added.\" and \"Write the action to continue.\"",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-7",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "Tola's panel says \"step 1 of 1\" and \"Reading the meeting notes\", while the board and the checklist say \"step 3 of 4\".",
+      "severity": "w-2302",
+      "blocking": false,
+      "summary": "Return the same \"step 3 of 4\" in the agent block.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-8",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "A large empty area sits under the tab bar beside the \"Review client minutes\" card, and the same review is offered twice (card with \"Open the decision\", then the Decide panel). Disabled \"Approve and send\" on W-2305 has near-invisible text (also UX-1-3 in F-21 round 1).",
+      "severity": "w-2304 and w-2305 at 1440",
+      "blocking": false,
+      "summary": "Raise the disabled contrast in the frame and close the gap.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-28-desktop (and W-2306..W-2308, same view) | The default board has no project tab bar: crumbs, h1 and subtitle are followed straight by the panels at y 230. The page draws the Journey\u2026Actions bar because `WorkItemView.tsx:200` shows `ProjectBar` whenever `workspace.context.project` is set, and `mock/fixtures/work/W-2301.json` sets it. That puts the subtitle under the tabs and starts the panels about 60px lower (the agent band at y 292 and Meeting at 402, against 230 on the board). This is most of the shortfall below 70. Spec item `context.crumbs` (spec.md:91) needs only the crumbs. Fix: drop `context.project` from W-2301 and W-2306..W-2308 (keep `context.crumbs`), keep it on W-2302..W-2305, whose boards draw the tab bar, then do the round's one fidelity run. | fixture",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T17:57:53Z",
+          "refs": [
+            "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "round-2 SCR-28-desktop side-by-side: no project tab bar; the subtitle sits under the h1 at y 202, as on the board; the panels start at y 340 (the agent band is the remaining offset, a frame item). W-2301/W-2306..W-2308 have no `context.project`; W-2302..W-2305 keep it."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "round-2 SCR-28-desktop side-by-side: no project tab bar; the subtitle sits under the h1 at y 202, as on the board; the panels start at y 340 (the agent band is the remaining offset, a frame item). W-2301/W-2306..W-2308 have no `context.project`; W-2302..W-2305 keep it."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-28-desktop, SCR-28-mobile | The decision rows in the side column draw the ticked box centred on a line of its own above the words. The board draws the box at the left, level with the decision text. Cause: `workspace.css:44` (`.ws-side .ws-row { flex-direction: column; align-items: stretch }`) stretches `.ws-checkwrap` (`:136`, `justify-content: center`) across the whole column. F-23 is the first line to put tick boxes in the side column (items_default plus the cross-section confirm). Fix in workspace.css, general: `.ws-side .ws-row:has(> .ws-checkwrap) { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--space-10px); align-items: start; }` and `.ws-side .ws-row:has(> .ws-checkwrap) > :not(.ws-checkwrap) { grid-column: 2; }`. Check the same rows at 390.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T17:57:53Z",
+          "refs": [
+            "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "`workspace.css` grid rule for `.ws-side .ws-row:has(> .ws-checkwrap)`: the tick is level with the words at 1440 (decisions panel) and at 390 (SCR-28-mobile side-by-side)."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`workspace.css` grid rule for `.ws-side .ws-row:has(> .ws-checkwrap)`: the tick is level with the words at 1440 (decisions panel) and at 390 (SCR-28-mobile side-by-side)."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-28-desktop-review, SCR-28-mobile-review | W-2304 has `tasks[]` (needed so the F-16 page works). Because of that, `WorkItemOverview.tsx:727` draws `TaskPanels`, a red \"REVIEW CLIENT MINUTES V1\" card with Basis/To/Version/Prepared by and a blue \"Open the decision\" button, above the workspace. Neither review board draws it. On desktop it sits alone in the right column, so the main column is empty from y 240 to 590 and \"Minutes v1 \u00b7 for Lagoon Health\" starts at y 600 against 255 on the board. On the phone it fills the first screen above the minutes. It also repeats the decision: \"Open the decision\", \"Approve and send\" and \"Return with a note\" all go to the same F-16 page. Fix (general): do not draw a `TaskPanels` card for a task that the workspace's steps already link to (some `workspace.steps[].task_id === task.id`). The tasks stay in the data for the F-16 page. Keep the recipients in \"Goes to\" (D-98 item 5).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T17:57:53Z",
+          "refs": [
+            "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "SCR-28-desktop-review: the Minutes panel starts at y 258, level with Decide, and the empty band is gone. SCR-28-mobile-review: no task card; the minutes panel is first. `WorkItemOverview.tsx:719-733` filters out only the tasks a step's `task_id` names."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "SCR-28-desktop-review: the Minutes panel starts at y 258, level with Decide, and the empty band is gone. SCR-28-mobile-review: no task card; the minutes panel is first. `WorkItemOverview.tsx:719-733` filters out only the tasks a step's `task_id` names."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-28-desktop-drafted, SCR-28-desktop-review, both phone counterparts | The fixtures draw headings and rows the boards don't have. This is the same kind of issue as F-21's UI-1-1. Drafted: the board has one panel \"MINUTES\" whose first row is \"Minutes v1 \u00b7 client version\" with a DRAFTED tag, then the three rows. The page has a separate h2 \"Minutes\" (`workspace.title`) and a panel titled \"Minutes v1 \u00b7 client version\" with no DRAFTED row. Review: the board has one panel titled \"MINUTES V1 \u00b7 FOR LAGOON HEALTH\" whose first row is \"Minutes v1 \u00b7 client version \u00b7 DRAFTED\". The page has a bare h2, a mono `version` byline repeating \"Minutes v1 \u00b7 client version\", and an untitled checklist. Fix in W-2303/W-2304/W-2305: drop `workspace.title` (and `version`'s byline, if links don't need it), give the summary checklist the board's title, and add the first row with tag DRAFTED. While there, make the IN tags `neutral`, not `verified`: \"IN\" is not a verification, and green means verified (D-92b). Note that the Conflicts 9 exception \"DRAFTED: no field\" is then no longer needed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T17:57:53Z",
+          "refs": [
+            "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "drafted: one \"MINUTES\" panel whose first row is \"Minutes v1 \u00b7 client version \u00b7 DRAFTED\"; review: \"MINUTES V1 \u00b7 FOR LAGOON HEALTH\" panel with the same first row; no extra h2 or version line; IN tags neutral."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "drafted: one \"MINUTES\" panel whose first row is \"Minutes v1 \u00b7 client version \u00b7 DRAFTED\"; review: \"MINUTES V1 \u00b7 FOR LAGOON HEALTH\" panel with the same first row; no extra h2 or version line; IN tags neutral."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-desktop | The board draws Due as \"13 Nov\" / \"15 Nov\" (D-93: the boards' date formats). The table cell reads \"13 Nov 2026\". This is the frame's `date` formatter, so it belongs in the frame backlog unless every line board drops the year.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-desktop | The third sentence of the Tola note (\"One action has no owner and its due date is Unknown\u2026\") is amber, a warning, on the board. The page shows it in the blue info band because the spec (spec.md:94) puts all three sentences in `agent_note`. The frame can already draw an amber line (an untitled, empty section with a `note`, `Sections.tsx:443`). This is for the design engineer: keep it as built, or move that sentence to a warning note.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Defence in depth for \"the set sent is the set shown\". At `frontend/src/features/workspace/Workspace.tsx:194-197`, `ticked`, `tickedFor` and `liveIds` skip restricted items (`it.restricted`) but not restricted sections. `Sections.tsx:441-460` draws a restricted section as its label only. So if a backend ever returned rows inside a `restricted: true` section, with the confirm step and `items_default: \"checked\"`, their ids would be sent in `item_ids` without being on screen. Rows in that section would also count towards the `cross` test at `Workspace.tsx:99`. The contract text at `schema.d.ts:1692` says restricted sections carry no rows, so today's data cannot trigger this. Expected: a section that is not drawn adds nothing to the confirm set. Fix: skip `section.restricted === true` in `ticked`/`tickedFor` (and in the `cross` count), and add one component test with a restricted section that has rows.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-16T16:26:07Z",
+          "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T17:57:53Z",
+          "refs": [
+            "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-security",
+          "at": "2026-11-16T18:00:01Z",
+          "refs": [
+            "`Workspace.tsx:99` `cross` now skips `sec.restricted`, and `Workspace.tsx:196` `ticked` returns false for any item in a restricted section. `tickedFor` and `liveIds` depend on `ticked`, so neither the section footer, the workspace-row control nor the submit set can include those ids. The test \"a section that is not drawn adds nothing to the confirm set (SEC-1-1)\" (`frontend/tests/minutes.test.tsx`) makes `decisions` restricted on W-2301. It checks that D-1 is not drawn, that the confirm moves back to the table's own control, and that `item_ids` is exactly `['A-1','A-2','A-3']`."
+          ],
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+      ],
+      "verified_by": "reviewer-security",
+      "verification_refs": [
+        "`Workspace.tsx:99` `cross` now skips `sec.restricted`, and `Workspace.tsx:196` `ticked` returns false for any item in a restricted section. `tickedFor` and `liveIds` depend on `ticked`, so neither the section footer, the workspace-row control nor the submit set can include those ids. The test \"a section that is not drawn adds nothing to the confirm set (SEC-1-1)\" (`frontend/tests/minutes.test.tsx`) makes `decisions` restricted on W-2301. It checks that D-1 is not drawn, that the confirm moves back to the table's own control, and that `item_ids` is exactly `['A-1','A-2','A-3']`."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "`minutesProposalsStripped` strips `values` from every E-WORK-ITEM fixture, but the \"proposal keys exist on their own\" guard still covers only `links` and `items_default`. A stray `items[].values` in a pre-F-23 fixture would be stripped silently.",
+      "severity": "frontend/tests/mock-contract.test.ts:~76-110",
+      "blocking": false,
+      "summary": "Add `values` to that guard so it appears only in W-23xx fixtures.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T18:15:03Z",
+          "refs": [
+            "7abfbcb94384c4380adf6bb289961f547c735e98"
+          ],
+          "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T08:30:56Z",
+          "refs": [
+            "The new test checks both `items[].values` and `columns[].date_format`, requires at least one carrier of each, and limits both to `W-23xx` files. The `links`/`items_default` guard is retained."
+          ],
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "7abfbcb94384c4380adf6bb289961f547c735e98"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The new test checks both `items[].values` and `columns[].date_format`, requires at least one carrier of each, and limits both to `W-23xx` files. The `links`/`items_default` guard is retained."
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "The task card is hidden for every line whose workspace step links the task, not only minutes. The builder reports that no F-17/F-21/F-22 board has such a pair, and the suites pass. It would hide the card's status text for any future line that has both.",
+      "severity": "frontend/src/features/work-item/workitemoverview.tsx:719",
+      "blocking": false,
+      "summary": "Leave as is. Note it in the frame backlog.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "With `context.project` dropped (UI-1-1) the project tab bar (Journey, Milestones...) no longer shows on the default page, while it still shows on the review pages' board. Matches the board for the default state, so only noting it.",
+      "severity": "w-2301 default",
+      "blocking": false,
+      "summary": "None needed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-28-desktop, SCR-28-mobile (and W-2306..W-2308) | Several things went wrong in fixing UI-1-5:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T18:15:03Z",
+          "refs": [
+            "7abfbcb94384c4380adf6bb289961f547c735e98"
+          ],
+          "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T08:30:56Z",
+          "refs": [
+            "Round-3 SCR-28-desktop side-by-side shows Due \"13 Nov\", \"15 Nov\" and an amber Unknown pill (`psl-unknown`, waiting tint) on A-3. The fixture has `date` cells with `{unknown: true}`. `Sections.tsx` `DateText` shortens the date only when `columns[].date_format: \"day_month\"` is set and the date is known, so an unknown still reads Unknown (INV-UNKNOWN). Without the option, other lines keep the full date. Single-board rescore: desktop 69.1, phone 74.2. The phone row reads \"13 Nov\" and an amber Unknown."
+          ],
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "7abfbcb94384c4380adf6bb289961f547c735e98"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Round-3 SCR-28-desktop side-by-side shows Due \"13 Nov\", \"15 Nov\" and an amber Unknown pill (`psl-unknown`, waiting tint) on A-3. The fixture has `date` cells with `{unknown: true}`. `Sections.tsx` `DateText` shortens the date only when `columns[].date_format: \"day_month\"` is set and the date is known, so an unknown still reads Unknown (INV-UNKNOWN). Without the option, other lines keep the full date. Single-board rescore: desktop 69.1, phone 74.2. The phone row reads \"13 Nov\" and an amber Unknown."
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-desktop-drafted, -review (both widths) | The board draws the DRAFTED row tag and the drafted status tag in blue. The page draws them in neutral grey (`status.tone: neutral`, row tag neutral). Taste-level; leave as is unless the design engineer wants the board's tone.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-16T18:15:03Z",
+          "refs": [
+            "7abfbcb94384c4380adf6bb289961f547c735e98"
+          ],
+          "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T08:30:56Z",
+          "refs": [
+            "Rebuilt head on 4769 with the mock on 4768, W-2303 and W-2304 at 1440 and 390. The row tag \"DRAFTED\" and the W-2303 status \"Drafted\" are `psl-tag psl-tag--agent`: background rgb(233, 238, 251), ink rgb(22, 56, 143), 70\u00d723 / 71\u00d723. That matches the boards' blue tag. `agent` is a contract tone, mapped through `labels.ts` TONE, so no hard-coded colour was added."
+          ],
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "7abfbcb94384c4380adf6bb289961f547c735e98"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Rebuilt head on 4769 with the mock on 4768, W-2303 and W-2304 at 1440 and 390. The row tag \"DRAFTED\" and the W-2303 status \"Drafted\" are `psl-tag psl-tag--agent`: background rgb(233, 238, 251), ink rgb(22, 56, 143), 70\u00d723 / 71\u00d723. That matches the boards' blue tag. `agent` is a contract tone, mapped through `labels.ts` TONE, so no hard-coded colour was added."
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-mobile | The stacked phone rows (UX-1-4) are readable and keep Edit and Remove on screen. Each cell sits on its own line about 40px apart, though, where the board's phone rows are compact (\"owner \u00b7 due\" on one line). This is frame, covered by Conflicts 10.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        }
+      ]
+    },
+    {
+      "id": "SEC-2-1",
+      "round": 2,
+      "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Possible loss of the decision path. `frontend/src/features/work-item/WorkItemOverview.tsx:719-721` hides the task card for any task named by `item.workspace.steps[].task_id`. It does this even when `Workspace` draws no steps, which is the read-only branch at `frontend/src/features/workspace/Workspace.tsx:378-381` (no `page`, or no numeric `workspace.revision`). In that case the PM loses the link to the decision page. This is availability, not exposure, and no fixture triggers it. Expected: the card is hidden only when the workspace's own link is drawn. Fix: build `linked` only when the workspace is writable (`typeof item.workspace.revision === 'number'`), or move the rule into `Workspace`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-2/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-16T18:00:01Z",
+          "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        }
+      ]
+    },
+    {
+      "id": "TECH-3-1",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "The W-23xx-only guard for `warn_lines` has no non-vacuous check. The `values` and `date_format` carriers assert `length > 0`, but `warns` does not, so the guard would still pass if no fixture carried the key.",
+      "severity": "frontend/tests/mock-contract.test.ts:~639",
+      "blocking": false,
+      "summary": "Add `expect(warns.length).toBeGreaterThan(0)`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "TECH-3-2",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "Flagged lines always draw after the plain lines, in a second callout, whatever their index. A `warn_lines` entry of 0 or 1 would reorder the sentences. The agent name is also not repeated if all lines are flagged. Current fixtures use index 2 (the last line), so there is no visible issue.",
+      "severity": "frontend/src/features/workspace/workspace.tsx:29-52",
+      "blocking": false,
+      "summary": "Document that `warn_lines` should name trailing lines, or keep the original order when the warn lines are not last. Not needed for this release.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "(no board) | If every line of a note is flagged, the info callout is skipped. The amber callout then carries no agent name (\"Tola\"), so nothing on screen says who wrote the line (`Workspace.tsx` `AgentNote`). No fixture does this today. When the proposal goes to the backend list, either keep the name on the amber block when it stands alone, or say that at least one line must stay unflagged.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-2",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-28-desktop, SCR-28-mobile | `round-3/fidelity/scores.txt` still lists 69.1 and 74.2. The sign-off runs (`SCR-28-desktop-1440-signoff` 65.3, `SCR-28-mobile-390-signoff` 70.2, from their report.json) are not in it. Add the two rows so the record matches the signed waivers.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "SEC-3-1",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Agent output loses its label when every line is flagged. At `frontend/src/features/workspace/Workspace.tsx:28-54`, the warning callout has no agent name. Only the info callout shows `agentName(note.agent)`. If `warn_lines` flagged every line, Tola's words would appear as an unlabelled warning, and a reader could take them for a system or policy message. The current fixtures flag one line out of three, so the name still shows nearby. Expected: agent-written text always shows which agent wrote it. Fix: show the agent name in the warning callout too, or keep the info callout (with the name) whenever the note has lines.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**The decision page hides the uncertain send (AC 19).**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:35:17Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**A Finance sentence on a minutes decision.** After any minutes approve (W-2304, W-2305), the desktop done page shows \"Paid is tracked separately by Finance and is not part of this decision.\" `DoneView` adds it for every approve whose `next_step` lacks it (`DecideStates.tsx:413`). It is irrelevant to client minutes and confusing next to \"Minutes v1 is approved\". Fix: show the Paid line only when the data says money is involved, e.g. a field or the item's line, not on every approve.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:35:17Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-3",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend (fixtures)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The done page contradicts itself.** `W-2304.approve.json` and `W-2305.approve.json` still have stations `approved: not_yet` and `reviewed: current`. So the done page reads \"Minutes v1 is approved\" above \"APPROVED \u2014\" and \"REVIEWED In progress\". Fix: set `reviewed` earned and `approved` earned (with a time) in the two approve sidecars.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:35:17Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-4",
+      "round": 3,
+      "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "owner": "frontend (tests)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**AC 10 wording vs behaviour.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:35:17Z",
+          "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+          "evidence_refs": [
+            "delivery/features/F-23/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-23/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+          "evidence_refs": [
+            "delivery/features/F-23/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+          "evidence_refs": [
+            "delivery/features/F-23/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "d5046515521bca99b4b7de220c4d524838cfff1f",
+          "evidence_refs": [
+            "delivery/features/F-23/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "evidence_refs": [
+            "delivery/features/F-23/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-23/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "evidence_refs": [
+            "delivery/features/F-23/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "evidence_refs": [
+            "delivery/features/F-23/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+          "evidence_refs": [
+            "delivery/features/F-23/round-2/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-23/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+          "evidence_refs": [
+            "delivery/features/F-23/round-3/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -159,7 +1461,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "06e64168c3a74edd358fb74b1998203f4b709c95",
     "task_branch": "fe-line-minutes-the-minutes-line-the-pm-confirms-tola-s",
-    "head_sha": "06e64168c3a74edd358fb74b1998203f4b709c95",
+    "head_sha": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-23",
     "pr_url": null,
     "pr_number": null,
@@ -170,7 +1472,493 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "delivery/COORDINATOR-HANDOFF.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-23/feature.json",
+      "delivery/features/F-23/fidelity-exceptions.json",
+      "delivery/features/F-23/round-1/build.md",
+      "delivery/features/F-23/round-1/checks.md",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/board-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/board.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/board.rendered.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/diff.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/page-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/page.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/report.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/report.json",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-1440/side-by-side.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-drafted-1440/board-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-drafted-1440/board.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-drafted-1440/board.rendered.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-drafted-1440/diff.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-drafted-1440/page-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-drafted-1440/page.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-drafted-1440/report.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-drafted-1440/report.json",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-drafted-1440/side-by-side.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-review-1440/board-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-review-1440/board.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-review-1440/diff.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-review-1440/page-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-review-1440/page.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-review-1440/report.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-review-1440/report.json",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-suggesting-1440/board-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-suggesting-1440/board.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-suggesting-1440/board.rendered.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-suggesting-1440/diff.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-suggesting-1440/page-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-suggesting-1440/page.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-suggesting-1440/report.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-suggesting-1440/report.json",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-desktop-suggesting-1440/side-by-side.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-390/board-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-390/board.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-390/board.rendered.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-390/diff.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-390/page-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-390/page.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-390/report.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-390/report.json",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-390/side-by-side.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-drafted-390/board-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-drafted-390/board.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-drafted-390/board.rendered.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-drafted-390/diff.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-drafted-390/page-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-drafted-390/page.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-drafted-390/report.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-drafted-390/report.json",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-drafted-390/side-by-side.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-review-390/board-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-review-390/board.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-review-390/board.rendered.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-review-390/diff.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-review-390/page-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-review-390/page.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-review-390/report.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-review-390/report.json",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-review-390/side-by-side.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-suggesting-390/board-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-suggesting-390/board.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-suggesting-390/board.rendered.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-suggesting-390/diff.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-suggesting-390/page-marked.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-suggesting-390/page.png",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-suggesting-390/report.html",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-suggesting-390/report.json",
+      "delivery/features/F-23/round-1/fidelity/SCR-28-mobile-suggesting-390/side-by-side.png",
+      "delivery/features/F-23/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-23/round-1/fidelity/frozen/default-1440.html",
+      "delivery/features/F-23/round-1/fidelity/run.sh",
+      "delivery/features/F-23/round-1/fidelity/scores.txt",
+      "delivery/features/F-23/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-23/round-1/review-security.md",
+      "delivery/features/F-23/round-1/review-technical.md",
+      "delivery/features/F-23/round-1/review-ui.md",
+      "delivery/features/F-23/round-1/review-ux.md",
+      "delivery/features/F-23/round-2/build.md",
+      "delivery/features/F-23/round-2/checks.md",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-1440/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-drafted-1440/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-review-1440/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-desktop-suggesting-1440/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-390/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-drafted-390/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-review-390/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/board-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/board.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/board.rendered.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/diff.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/page-marked.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/page.png",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/report.html",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/report.json",
+      "delivery/features/F-23/round-2/fidelity/SCR-28-mobile-suggesting-390/side-by-side.png",
+      "delivery/features/F-23/round-2/fidelity/drive-states.mjs",
+      "delivery/features/F-23/round-2/fidelity/frozen/default-1440.html",
+      "delivery/features/F-23/round-2/fidelity/run.sh",
+      "delivery/features/F-23/round-2/fidelity/scores.txt",
+      "delivery/features/F-23/round-2/fidelity/serve-frozen.mjs",
+      "delivery/features/F-23/round-2/review-security.md",
+      "delivery/features/F-23/round-2/review-technical.md",
+      "delivery/features/F-23/round-2/review-ui.md",
+      "delivery/features/F-23/round-2/review-ux.md",
+      "delivery/features/F-23/round-3/build.md",
+      "delivery/features/F-23/round-3/checks.md",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/drive-states.mjs",
+      "delivery/features/F-23/round-3/fidelity/frozen/default-1440.html",
+      "delivery/features/F-23/round-3/fidelity/scores.txt",
+      "delivery/features/F-23/round-3/fidelity/serve-frozen.mjs",
+      "delivery/features/F-23/round-3/review-security.md",
+      "delivery/features/F-23/round-3/review-technical.md",
+      "delivery/features/F-23/round-3/review-ui.md",
+      "delivery/features/F-23/round-3/review-ux.md",
+      "delivery/features/F-24/feature.json",
+      "delivery/features/F-24/fidelity-exceptions.json",
+      "delivery/features/F-24/round-3/acceptance-pmo.md",
+      "delivery/features/F-24/round-3/acceptance-product.md",
+      "delivery/features/F-24/round-3/review-qa.md",
+      "delivery/features/F-24/round-3/review-technical.md",
+      "delivery/features/F-24/round-3/review-ui.md",
+      "delivery/features/F-24/round-3/review-ux.md",
+      "delivery/features/F-25/feature.json",
+      "delivery/features/F-25/fidelity-exceptions.json",
+      "delivery/features/F-25/readiness.md",
+      "delivery/features/F-25/round-1/build.md",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/scores.txt",
+      "delivery/features/F-25/round-1/fidelity/summary.txt",
+      "delivery/features/F-25/spec.md",
+      "delivery/features/F-26/feature.json",
+      "delivery/features/F-26/fidelity-exceptions.json",
+      "delivery/features/F-26/readiness.md",
+      "delivery/features/F-26/round-1/build.md",
+      "delivery/features/F-26/round-1/checks.md",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/run.sh",
+      "delivery/features/F-26/round-1/fidelity/scores.txt",
+      "delivery/features/F-26/round-1/review-technical.md",
+      "delivery/features/F-26/round-1/review-ui.md",
+      "delivery/features/F-26/round-1/review-ux.md",
+      "delivery/features/F-26/round-2/build.md",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board.rendered.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/diff.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/page-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/page.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/report.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/report.json",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/side-by-side.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board.rendered.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/diff.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/page-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/page.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/report.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/report.json",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/side-by-side.png",
+      "delivery/features/F-26/round-2/fidelity/run.sh",
+      "delivery/features/F-26/round-2/fidelity/scores.txt",
+      "delivery/features/F-26/spec.md",
+      "delivery/features/F-27/feature.json",
+      "delivery/features/F-27/fidelity-exceptions.json",
+      "delivery/features/F-27/readiness.md",
+      "delivery/features/F-27/round-1/build.md",
+      "delivery/features/F-27/round-1/checks.md",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.rendered.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/diff.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/page-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/page.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/report.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/report.json",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/side-by-side.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board.rendered.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/diff.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/page-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/page.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/report.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/report.json",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/side-by-side.png",
+      "delivery/features/F-27/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-27/round-1/fidelity/frozen/default-1440.html",
+      "delivery/features/F-27/round-1/fidelity/run.sh",
+      "delivery/features/F-27/round-1/fidelity/scores.txt",
+      "delivery/features/F-27/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-27/round-1/review-security.md",
+      "delivery/features/F-27/round-1/review-technical.md",
+      "delivery/features/F-27/round-1/review-ui.md",
+      "delivery/features/F-27/round-1/review-ux.md",
+      "delivery/features/F-27/spec.md",
+      "frontend/e2e/assistant.spec.ts",
+      "frontend/e2e/minutes.spec.ts",
+      "frontend/mock/assistant.mjs",
+      "frontend/mock/fixtures/E-DOCUMENT.json",
+      "frontend/mock/fixtures/assistant/CV-2401.json",
+      "frontend/mock/fixtures/assistant/CV-2402.json",
+      "frontend/mock/fixtures/assistant/CV-2403.json",
+      "frontend/mock/fixtures/assistant/CV-2404.json",
+      "frontend/mock/fixtures/assistant/CV-2405.json",
+      "frontend/mock/fixtures/assistant/CV-2406.json",
+      "frontend/mock/fixtures/assistant/CV-2411.json",
+      "frontend/mock/fixtures/assistant/index.json",
+      "frontend/mock/fixtures/assistant/mentions.json",
+      "frontend/mock/fixtures/me.admin.json",
+      "frontend/mock/fixtures/me.ceo.json",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/me.pm.json",
+      "frontend/mock/fixtures/start-work/options/owner.json",
+      "frontend/mock/fixtures/work/W-2301.json",
+      "frontend/mock/fixtures/work/W-2301.next.json",
+      "frontend/mock/fixtures/work/W-2301.steps.json",
+      "frontend/mock/fixtures/work/W-2302.json",
+      "frontend/mock/fixtures/work/W-2303.json",
+      "frontend/mock/fixtures/work/W-2303.next.json",
+      "frontend/mock/fixtures/work/W-2303.steps.json",
+      "frontend/mock/fixtures/work/W-2304.approve.json",
+      "frontend/mock/fixtures/work/W-2304.json",
+      "frontend/mock/fixtures/work/W-2304.return.json",
+      "frontend/mock/fixtures/work/W-2305.approve.json",
+      "frontend/mock/fixtures/work/W-2305.json",
+      "frontend/mock/fixtures/work/W-2306.json",
+      "frontend/mock/fixtures/work/W-2306.next.json",
+      "frontend/mock/fixtures/work/W-2306.steps.json",
+      "frontend/mock/fixtures/work/W-2307.json",
+      "frontend/mock/fixtures/work/W-2308.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/start-work.mjs",
+      "frontend/public/agents/chidi-idle.png",
+      "frontend/public/agents/tola-idle.png",
+      "frontend/public/agents/tola-working.png",
+      "frontend/public/agents/zainab-done.png",
+      "frontend/public/agents/zainab-idle.png",
+      "frontend/public/agents/zainab-working.png",
+      "frontend/src/app/assistant/[conversationId]/page.tsx",
+      "frontend/src/app/assistant/layout.tsx",
+      "frontend/src/app/assistant/page.tsx",
+      "frontend/src/components/AgentChecklist.tsx",
+      "frontend/src/components/Avatar.tsx",
+      "frontend/src/components/ChatMessage.tsx",
+      "frontend/src/components/Composer.tsx",
+      "frontend/src/components/DraftCard.tsx",
+      "frontend/src/components/README.md",
+      "frontend/src/components/SourceTag.tsx",
+      "frontend/src/components/components.css",
+      "frontend/src/components/index.ts",
+      "frontend/src/features/assistant/AssistantContext.tsx",
+      "frontend/src/features/assistant/AssistantFrame.tsx",
+      "frontend/src/features/assistant/AssistantHome.tsx",
+      "frontend/src/features/assistant/Chrome.tsx",
+      "frontend/src/features/assistant/ComposerBar.tsx",
+      "frontend/src/features/assistant/ConversationList.tsx",
+      "frontend/src/features/assistant/DraftStart.tsx",
+      "frontend/src/features/assistant/MentionPicker.tsx",
+      "frontend/src/features/assistant/SidePanel.tsx",
+      "frontend/src/features/assistant/Thread.tsx",
+      "frontend/src/features/assistant/ThreadPage.tsx",
+      "frontend/src/features/assistant/api.ts",
+      "frontend/src/features/assistant/assistant.css",
+      "frontend/src/features/assistant/labels.ts",
+      "frontend/src/features/assistant/model.ts",
+      "frontend/src/features/assistant/types.ts",
+      "frontend/src/features/assistant/useConversation.ts",
+      "frontend/src/features/assistant/useConversationList.ts",
+      "frontend/src/features/assistant/useSend.ts",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/StartWorkDrawer.tsx",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/StepForm.tsx",
+      "frontend/src/features/workspace/Steps.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/useWorkspaceStep.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/styles/shell.css",
+      "frontend/tests/assistant-bridge.ts",
+      "frontend/tests/assistant-mock.test.ts",
+      "frontend/tests/assistant.test.tsx",
+      "frontend/tests/components/assistant-components.test.tsx",
+      "frontend/tests/minutes-mock.test.ts",
+      "frontend/tests/minutes.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/start-work-prefill.test.tsx",
+      "frontend/tests/workspace-step.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -203,7 +1991,7 @@
     }
   },
   "created_at": "2026-11-16T03:30:17Z",
-  "round": 1,
+  "round": 4,
   "round_limit": 5,
   "history": [
     {
@@ -221,6 +2009,86 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-16T16:17:26Z",
+      "round": 1,
+      "head": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-16T16:26:08Z",
+      "round": 1,
+      "head": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T16:26:08Z",
+      "round": 2,
+      "head": "d5046515521bca99b4b7de220c4d524838cfff1f",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-16T17:57:54Z",
+      "round": 2,
+      "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-16T18:00:01Z",
+      "round": 2,
+      "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T18:00:01Z",
+      "round": 3,
+      "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-16T18:21:28Z",
+      "round": 3,
+      "head": "a3f43067bf20e8474e3a6bb54d273597154d6f28",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T09:33:26Z",
+      "round": 3,
+      "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T10:35:18Z",
+      "round": 3,
+      "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T10:35:18Z",
+      "round": 4,
+      "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7",
+      "reason": null
     }
   ],
   "routing": {
@@ -237,7 +2105,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 4,
     "attempts": 0,
     "verdict": null,
     "commit": null

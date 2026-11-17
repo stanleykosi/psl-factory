@@ -1,0 +1,607 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-16T18:33:39.080Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-38-mobile.dc.html",
+  "boardName": "SCR-38-mobile.dc.html",
+  "pageUrl": "http://localhost:4790/projects/P-0101/milestones",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-25/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 80.8 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 86.4,
+    "coverageWithExceptions": 100,
+    "visual": 80.8
+  },
+  "visual": {
+    "score": 80.8,
+    "allCellsScore": 81.4,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2266,
+    "mismatchedCells": 436
+  },
+  "coverage": {
+    "total": 22,
+    "found": 19,
+    "coverage": 86.4,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Lagoon Health\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 106,
+          "w": 374,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 108,
+          "w": 84,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 110,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones",
+        "pageName": "Milestones",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 102,
+          "y": 108,
+          "w": 103,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 110,
+          "w": 104,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents",
+        "pageName": "Documents",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 205,
+          "y": 108,
+          "w": 107,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 208,
+          "y": 110,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 312,
+          "y": 108,
+          "w": 75,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers",
+        "pageName": "Registers",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 387,
+          "y": 108,
+          "w": 93,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 391,
+          "y": 110,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 · Kick-off",
+        "pageName": "1 · Kick-off",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 180,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 182,
+          "w": 71,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦3,000,000.00 · Done 27 Oct · proof",
+        "pageName": "₦3,000,000.00 · Done 27 Oct · proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 204,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 208,
+          "w": 198,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0398 · verified",
+        "pageName": "INV-0398 · Verified",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 227,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 232,
+          "w": 113,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 · UAT sign-off",
+        "pageName": "2 · UAT sign-off",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 282,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 313,
+          "w": 99,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00 · Done 11 Nov · client UAT sign-off",
+        "pageName": "₦4,250,000.00 · Done 11 Nov · client UAT sign-off",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 306,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 340,
+          "w": 270,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3 · Go-live",
+        "pageName": "3 · Go-live",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 384,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 445,
+          "w": 67,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00 · Not yet",
+        "pageName": "₦4,250,000.00 · Not yet",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 408,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 471,
+          "w": 132,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 431,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 626,
+          "w": 10,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "4 · Hypercare",
+        "pageName": "4 · Hypercare",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 486,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 576,
+          "w": 87,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown · Not yet · amount set at go-live",
+        "pageName": "Unknown · Not yet · amount set at go-live",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 510,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 603,
+          "w": 234,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 533,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 495,
+          "w": 10,
+          "h": 17
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Projects",
+        "key": "link: ← Projects",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 16: phone back link wording belongs to the shared frame ('Back to Projects').",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412 · awaiting Finance decision",
+        "key": "text: INV-0412 · awaiting Finance decision",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 329,
+          "w": 330,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 3: the row carries invoice.state, not human status text (G-SCR38-1). The cell reads 'INV-0412 · Waiting' from the shared state words until invoice.status_label exists.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Mark milestone 3 complete",
+        "key": "link: Mark milestone 3 complete",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Conflicts 1: no field says which milestone may be completed or by whom (G-SCR38-2, G-SCR19-2); SCR-19 is FE-MILESTONE-COMPLETE. Not drawn.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-104"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"—\"",
+        "kind": "Text",
+        "name": "—",
+        "boardBox": {
+          "x": 30,
+          "y": 431,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 626,
+          "w": 10,
+          "h": 17
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"₦4,250,000.00 · Not yet\"; on the page it comes after Text \"Unknown · Not yet · amount set at go-live\""
+        ]
+      },
+      {
+        "label": "Text \"—\"",
+        "kind": "Text",
+        "name": "—",
+        "boardBox": {
+          "x": 30,
+          "y": 533,
+          "w": 330,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 495,
+          "w": 10,
+          "h": 17
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Unknown · Not yet · amount set at go-live\"; on the page it comes after Text \"₦4,250,000.00 · Not yet\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Projects",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Milestones",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 168,
+          "w": 358,
+          "h": 546
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As of 12 Nov 16:40",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 694,
+          "w": 358,
+          "h": 20
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

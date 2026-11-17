@@ -1,0 +1,119 @@
+{
+  "items": [],
+  "as_of": "2026-11-12T09:05:00Z",
+  "money": [
+    {
+      "position": 3,
+      "stage": "Stage 3 · go-live",
+      "amount": {
+        "amount": "1200.00",
+        "currency": "USD",
+        "unknown": false
+      },
+      "invoice": {
+        "reference": "INV-0503"
+      },
+      "paid": {
+        "status": "not_paid",
+        "owed": {
+          "currency": "USD",
+          "unknown": true
+        }
+      },
+      "figure_id": "FIG-0102-S3"
+    },
+    {
+      "position": 1,
+      "stage": "Stage 1 · kick-off",
+      "amount": {
+        "amount": "2500000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "invoice": {
+        "reference": "INV-0501",
+        "work_id": "W-1713",
+        "state": "verified"
+      },
+      "invoice_status": "Verified 20 Oct",
+      "paid": {
+        "status": "part_paid",
+        "owed": {
+          "amount": "1250000.00",
+          "currency": "NGN",
+          "unknown": false
+        }
+      },
+      "figure_id": "FIG-0102-S1"
+    },
+    {
+      "position": 2,
+      "stage": "Stage 2 · UAT",
+      "amount": {
+        "amount": "2500000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "invoice_status": "Awaiting Finance decision",
+      "figure_id": "FIG-0102-S2"
+    },
+    {
+      "position": 4,
+      "stage": "Stage 4 · hypercare",
+      "amount": {
+        "currency": "NGN",
+        "unknown": false
+      },
+      "paid": {
+        "status": "unknown"
+      }
+    },
+    {
+      "position": 5,
+      "stage": "Change request CR-0031",
+      "amount": {
+        "amount": "800000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "paid": {
+        "status": "not_due"
+      },
+      "figure_id": "FIG-0102-S5"
+    },
+    {
+      "position": 6,
+      "stage": "Stage 6 · support",
+      "amount": {
+        "amount": "500000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "invoice": {
+        "reference": "INV-0506",
+        "work_id": "W-1001",
+        "state": "verified"
+      },
+      "invoice_status": "Verified 05 Nov",
+      "paid": {
+        "status": "paid"
+      },
+      "figure_id": "FIG-0102-S6"
+    },
+    {
+      "position": 7,
+      "stage": "Stage 7 · extension",
+      "amount": {
+        "amount": "9223372036854775807.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "paid": {
+        "status": "not_due"
+      }
+    }
+  ],
+  "summary": {
+    "report_id": "R-0102"
+  }
+}

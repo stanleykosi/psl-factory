@@ -32,6 +32,7 @@ import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { workList } from './work-list.mjs';
+import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, createAssistantMock } from './assistant.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
@@ -256,6 +257,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {
         return send(res, ...responseRoute(route.operationId, { req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
       }
+      // F-26: the money tab of E-PROJECT-TAB and E-REPORT go to money.mjs (its own persona and scenario check); other tabs stay 501.
+      if (isMoneyRequest(route.operationId, url)) return send(res, ...moneyRoute({ route, url, req, cookies: parseCookies(req.headers.cookie) }));
       if (!M1_OPERATIONS.includes(route.operationId)) return send(res, 501, NOT_MOCKED);
 
       const cookies = parseCookies(req.headers.cookie);

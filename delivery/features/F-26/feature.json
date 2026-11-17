@@ -1,0 +1,1311 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-26",
+  "outcome": "A project's Money tab: each contract stage's amount, invoice and paid state as the backend sends them, and where each amount comes from (contract mock only)",
+  "state": "DONE",
+  "task_ids": [
+    "FE-M3-REPORT"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Desktop board.** `SCR-12-desktop` at 1440 on `/projects/P-0101/money?figure=FIG-0101-S2`: `report.json` `pass: true`, `scores.coverageWithExceptions` = 100, `scores.visual` >= 90. \u2014 verify: the command, exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass.",
+    "**Phone board.** `SCR-12-mobile` at 390 on `/projects/P-0101/money`, same thresholds. \u2014 verify: same command with `--width 390`; row in `scores.txt`.",
+    "**No D-83 waiver.** D-83 covers line screens only; a board under 90 needs a signed per-board waiver from the design engineer, not a builder note. \u2014 verify: `fidelity-exceptions.json` has no visual waiver unless signed.",
+    "**Exceptions are limited and explained.** Each entry has `role`, `name`, `category`, `reason`, `approved_by` (`\"builder proposal, pending design engineer\"` until confirmed) and maps to a Conflicts number; none covers a value the data can supply (an amount, a status, a source). \u2014 verify: file content; build.md maps each to a Conflicts number.",
+    "**One fidelity run per round** (D-64). \u2014 verify: build.md.",
+    "**Board rows from data.** `/projects/P-0101/money` (finance_lead) shows four stages in `position` order with \"\u20a63,000,000.00\", \"\u20a64,250,000.00\", \"\u20a64,250,000.00\", \"Unknown\"; \"Verified 03 Nov\", \"Awaiting Finance decision\", \"Held \u00b7 owner needed\"; PAID \"Finance tracks\" then \"\u2014\" three times; \"Not yet due \u00b7 amount set at go-live\" under Stage 4's amount; \"As of 12 Nov 16:40\". \u2014 verify: `tests/money.test.tsx`; page at 1440 and 390.",
+    "**Unknown is not zero.** For every unknown amount, unknown owed and unknown figure value (P-0101 S4, P-0102 edges including `unknown: false` with no `amount`): the text is \"Unknown\" with the amber `psl-unknown` class; `document.body.textContent` of the Money panel contains no \"\u20a60\", \"0.00\" or \"NaN\" and the unknown cells are not \"\u2014\" or empty. \u2014 verify: `tests/money.test.tsx`, `tests/money-model.test.ts`.",
+    "**No total, no computation.** No row, footer, heading or text on the tab shows a sum, total, balance, percentage, count of money or \"outstanding\"; P-0101 renders exactly four stage rows and no footer row. `moneyModel.ts`, `MoneyTab.tsx` and `useMoney.ts` contain no `parseFloat`, `Number(`, `+amount`, `reduce(` over amounts or arithmetic on amount strings. \u2014 verify: component test (row count, no `tfoot`); `grep -nE \"parseFloat|Number\\(|\\.reduce\\(\" frontend/src/features/projects/{moneyModel.ts,MoneyTab.tsx,useMoney.ts}` returns nothing on amount values (any hit explained in build.md).",
+    "**Exact decimals.** `formatAmount` output is used for every amount: \"4250000.00\" \u2192 \"\u20a64,250,000.00\"; a USD row reads \"1,200.00 USD\"; a 19-digit amount renders every digit unchanged. \u2014 verify: `tests/money-model.test.ts`.",
+    "**Invoice and paid are separate (INV-FACTS).** P-0102: a row with `paid` absent reads \"Unknown\" in PAID whatever its INVOICE says; `part_paid` with owed reads \"Part paid \u00b7 \u20a6\u2026 owed\"; `not_paid` with unknown owed reads \"Not paid \u00b7 owed Unknown\"; `not_due` reads \"\u2014\" with accessible text \"Not due\"; changing only `invoice_status` in a test body never changes the PAID cell. The words come from one `PAID_WORDS` constant. \u2014 verify: `tests/money.test.tsx`, `tests/money-model.test.ts`.",
+    "**Invoice cell.** \"Verified 03 Nov\" is a link to `/work/W-1713` whose accessible name includes \"INV-0398\"; a row with only `invoice.reference` shows the reference; a row with neither shows \"\u2014\" with accessible text \"No invoice\". \u2014 verify: component test.",
+    "**Deep link opens the figure.** `/projects/P-0101/money?figure=FIG-0101-S2` at 1440 shows the aside titled \"Where \u20a64,250,000.00 comes from\" (accessible name includes the figure label) with three sources in order: \"Signed SOW v2, stage table, row 2\" with \"SOW-0198 v2\", \"Stage terms v1, active since 30 Jun\" with \"RULE \u00b7 stage terms\", \"Milestone 2 completion, recorded by Tunde Bello\" with \"HB-M2\"; none of the three is a link. A reload keeps it. \u2014 verify: e2e and component test.",
+    "**Press to select.** Pressing Stage 3's amount replaces the URL with `?figure=FIG-0101-S3` (no new history entry), updates the aside to FIG-0101-S3's own sources, keeps focus on the pressed amount with `aria-current=\"true\"`, and announces \"Showing where \u20a64,250,000.00 comes from\". \u2014 verify: e2e at 1440.",
+    "**Title comes from the figure.** In P-0102 the differing figure's panel title uses the figure's value, not the row's, and the warning reads \"These figures differ: the table shows <row>; the report shows <figure>.\" with both values. \u2014 verify: component test.",
+    "**No source, never empty.** P-0101 Stage 4 (no `figure_id`) shows \"Unknown\" as plain text, not a link. P-0102: an unmatched `figure_id` is plain text; `?figure=<unmatched id>` shows \"Where this figure comes from\" and \"No source recorded\"; a figure with no sources shows \"No source recorded\"; a figure with `sources[]` only lists those strings; a source with `work_id` links to `/work/<id>`; a `document_id` source is text. \u2014 verify: component tests.",
+    "**Phone sheet.** At 390, P-0101 shows four cards, the hint \"Tap an amount to see where it comes from\" as plain text, and \"Paid \u00b7 Finance tracks\" on Stage 1 only; each linked amount is at least 44px tall; pressing Stage 2's amount opens a `BottomSheet` with the same title and sources; Esc and the close button close it, remove `figure` from the URL and return focus to that amount; `?figure=FIG-0101-S2` opens the sheet on load. \u2014 verify: e2e at 390.",
+    "**Chidi card.** With finance_lead, the card shows \"Chidi \u00b7 Finance agent\", the agreed sentence (Conflicts 10) and \"Ask me\" linking to `/assistant?agent=chidi`; with a `/me` that lacks `assistant` (component test) the link is absent; with no `agent` in the report the card is absent. The link carries no figure or report id. \u2014 verify: component test.",
+    "**Report failure keeps the table.** P-0103 (E-REPORT 500): the four rows show; amounts are plain text; the aside shows \"We couldn't load where these figures come from. Your work is safe; nothing was changed.\" and \"Try again\", which makes exactly one more E-REPORT request and no E-PROJECT-TAB request. \u2014 verify: component test with a recording `fetch`; e2e.",
+    "**Report refused.** P-0106 (E-REPORT 403): rows show, amounts plain, the aside says \"You can't see where these figures come from.\" and no figure label, source label or reference from the report body appears in the DOM. \u2014 verify: component test.",
+    "**Money refused or hidden.** P-0107 (403) and P-0108 (404) show `ProjectNoAccess` in the tab panel; no stage name, amount, report title or server `message` appears in `document.body.textContent`; no E-REPORT request is made. \u2014 verify: component test with a recording `fetch`; e2e.",
+    "**Wrong user, wrong tenant.** Persona `pm` opening `/projects/P-0104/money` (a project not in pm's rows) gets 404 from E-PROJECT and shows `ProjectNoAccess` with no stage or amount in the DOM and no E-REPORT request; `/projects/P-0099/money` the same. A 401 on the money read shows the signed-out callout with `next` `/projects/<id>/money`. \u2014 verify: e2e with cookie `psl_mock_persona=pm`; component test for 401.",
+    "**Money read failure.** A 500 or network failure on E-PROJECT-TAB shows \"We couldn't load this project's money. Your work is safe; nothing was changed.\" with \"Try again\"; a body without `money` or with a malformed row shows the same card and no partial table. \u2014 verify: component tests.",
+    "**Empty.** P-0105 shows \"No contract stages yet\" and no table, total or aside. \u2014 verify: component test.",
+    "**No role logic.** `MoneyTab.tsx`, `moneyModel.ts` and `useMoney.ts` read nothing from `/me` except the `assistant` destination for the Chidi link; the same fixture renders the same rows for finance_lead and pm. \u2014 verify: `grep -n \"useMe\\|roles\" frontend/src/features/projects/{MoneyTab.tsx,moneyModel.ts,useMoney.ts}`; component test with two personas.",
+    "**Mock matches the contract.** `tests/mock-money.test.ts`: every money and report 200 body validates against the generated schema with no stripping; P-0107 403, P-0108 404, P-0099 404, pm on P-0104 404, R-0103 500, R-0106 403; `GET /api/v1/projects/P-0101/milestones` (and the other non-money tabs) still answers exactly `501 {code: not_mocked, message: \"Not available in the mock yet.\"}`; `X-Mock-Scenario: 403` still wins. \u2014 verify: the test.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `src/components/**`; every wanted field is a contract proposal in build.md (G-SCR12-1, G-SCR12-2, G-SCR12-3, figure `as_of`, report title/eyebrow) with the backend questions of Conflicts 5. \u2014 verify: `git diff --stat`; build.md.",
+    "**Shared-file footprint.** `git diff` of `frontend/src/features/projects/ProjectJourney.tsx` is one import line and one branch; `model.ts`, `projects.css`, `ProjectTabs.tsx`, `ProjectStates.tsx`, `useProject.ts` are unchanged; existing fixtures are byte-for-byte unchanged. \u2014 verify: `git diff --stat` and `git diff frontend/src/features/projects/ProjectJourney.tsx`.",
+    "**Accessibility and layout.** For P-0101 (with and without `?figure`), P-0102, P-0103 and P-0105 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), no sideways page scroll at 390 (the desktop table may scroll inside its own box as drawn), visible focus rings, the table has a caption or accessible name, column headers are `th` with `scope`, 44px standalone targets on phones (D-92c, D-95). \u2014 verify: `e2e/money.spec.ts`.",
+    "**Tokens only.** `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" frontend/src/features/projects/money.css` returns nothing. \u2014 verify: the command.",
+    "**New tests run; nothing weakened.** `money.test.tsx`, `money-model.test.ts` and `mock-money.test.ts` run under `npm test` in `delivery/checks.sh`, covering criteria 6 to 25; `e2e/money.spec.ts` runs with the ports above and its output is in build.md. `tests/projects*.test.tsx`, `mock-projects.test.ts`, `mock-contract.test.ts`, `e2e/projects*.spec.ts` and `shell.test.tsx` pass with no assertion removed or loosened (the one E-REPORT 501 case is swapped, not deleted). \u2014 verify: `delivery/checks.sh`; `git diff` on those files.",
+    "**No overclaim.** Every e2e request goes to the mock (4781). The PR description and build.md state the limits: contract mock only, D-PROJECT-TAB-ROWS is a proposal, the backend developer may change or refuse any field, nothing released; they do not claim real money data, real access rules or a working backend. \u2014 verify: build.md; recorded requests.",
+    "**build.md evidence.** Lists the `design.py check` result, commands and results, both scores, every exception with its Conflicts number, every contract proposal and backend question, and the shared-file diff. \u2014 verify: file content."
+  ],
+  "risk": {
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High, because this screen shows money and a mistake (a missing unknown shown as 0, a total, a paid state inferred from an invoice) is what the product rules forbid most (AGENTS.md invariants: unknown is not zero, invoices and receipts are separate). The work itself is a read-only display on the contract mock with no calculation, which keeps it contained and easy to verify against fixtures. SURFACES: ui (2 boards), api (E-PROJECT-TAB money rows, E-REPORT), contract-change (D-PROJECT-TAB-ROWS proposal and four optional field additions below), product-decision (what Finance is allowed to see on a money figure is a backend access rule, not decided here). PRODUCT-ACCEPTANCE is not-required: the work conforms to client-approved boards, adds no flow, no copy beyond the boards and no business rule."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-26/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-16T18:50:52Z",
+      "seconds": 375.0,
+      "evidence_ref": "delivery/features/F-26/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T08:30:09Z",
+      "seconds": 246.1,
+      "evidence_ref": "delivery/features/F-26/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": false,
+      "assessment_reason": "delivery/features/F-26/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**A malformed report or amount crashes the tab instead of showing the error state, so the table disappears.** The spec says \"5xx, network or bad shape \u2192 the aside shows ErrorState \u2026 the table never disappears because the report failed\", and that a money body with a bad shape shows the error card.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "The fix is in `moneyModel.ts:22-84`."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The fix is in `moneyModel.ts:22-84`."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**A row whose amount is Unknown cannot open its figure by press.** In `MoneyTab.tsx:90`, the amount becomes a link only when `figure && text`, so an Unknown row amount with a matching figure is plain text. The spec makes the link depend only on `figure_id` matching a loaded figure. This is the case where a \"These figures differ\" warning matters most, because the table says Unknown and the report may hold a value. Today it is reachable only by deep link. Fix: render the matched figure's link with the amber `<Unknown />` as its text (and count it in `anyLinked`), or record the narrowing in build.md as an assumption for the design engineer. Neither the P-0101 nor the P-0102 fixtures exercise it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "At `MoneyTab.tsx:86-104`, the link depends only on a matched figure, and its content is `<Value>` (the amber Unknown for an unknown amount, never 0 or blank). `anyLinked` was changed to match. The component test \"an Unknown amount whose figure the report has is a link\" asserts the href, the `psl-unknown` text inside the link, `aria-current`, and the exact differ sentence."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "At `MoneyTab.tsx:86-104`, the link depends only on a matched figure, and its content is `<Value>` (the amber Unknown for an unknown amount, never 0 or blank). `anyLinked` was changed to match. The component test \"an Unknown amount whose figure the report has is a link\" asserts the href, the `psl-unknown` text inside the link, `aria-current`, and the exact differ sentence."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**One test swap is in a file the spec's lane did not list.** `tests/projects-journey.test.tsx:73-79,243` swaps the `money` coming-next case for `documents` / \"Documents come next\" / index 2. The assertion is unchanged and the swap is required, because Money no longer renders `ComingNext`, so nothing is loosened.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "The selected amount is drawn at weight 600 (the tool reports \"weight 400 on the board, 600 on the page\" for Stage 2 \u20a64,250,000.00). The board draws all three amounts the same, as plain default links, and no exception covers a bold selected state. Source: `frontend/src/features/projects/money.css:27` `.money__amountlink[aria-current=\"true\"] { font-weight: 600; }`.",
+      "severity": "scr-12-desktop",
+      "blocking": true,
+      "summary": "Fix: remove the rule and keep `aria-current=\"true\"` (the panel title already names the stage and amount). If the design engineer wants a visible selected state, add it as an exception instead. Owner: frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "In round-2/fidelity/SCR-12-desktop-1440/side-by-side.png, Stage 2's \u20a64,250,000.00 has the same weight as Stages 1 and 3. The rule `.money__amountlink[aria-current=\"true\"] { font-weight: 600; }` is removed (git diff 14c685cf..ac401c09 money.css), and `aria-current` is kept."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "In round-2/fidelity/SCR-12-desktop-1440/side-by-side.png, Stage 2's \u20a64,250,000.00 has the same weight as Stages 1 and 3. The rule `.money__amountlink[aria-current=\"true\"] { font-weight: 600; }` is removed (git diff 14c685cf..ac401c09 money.css), and `aria-current` is kept."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "Stage 4's amber \"Unknown\" in the phone card is semibold. The board draws it as `IBM Plex Mono 16px`, regular weight, `#6E4700` (an amount in the amount's own type, just amber). The build note says \"as both boards draw it\", but that is true only of the desktop table, which is 600 weight in body type. Source: `money.css:29` applies `font-weight: 600` to `.money__card .psl-unknown` as well as the table.",
+      "severity": "scr-12-mobile",
+      "blocking": true,
+      "summary": "Fix: limit the 600 weight to `.money__table .psl-unknown`, and give `.money__card .psl-unknown` `font-weight: 400` with `font-family: var(--font-mono)` (16px is already `--text-amount-size`). Owner: frontend.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "In round-2/fidelity/SCR-12-mobile-390/side-by-side.png, Stage 4's \"Unknown\" is mono, regular weight, 16px, amber, as the board draws it. `.money__card .psl-unknown` is `--font-mono` / `--text-amount-size` / 400. The desktop table keeps 600, which matches its board."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "In round-2/fidelity/SCR-12-mobile-390/side-by-side.png, Stage 4's \"Unknown\" is mono, regular weight, 16px, amber, as the board draws it. `.money__card .psl-unknown` is `--font-mono` / `--text-amount-size` / 400. The desktop table keeps 600, which matches its board."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "Tool gate: visual 85.7 (desktop) and 71.4 (phone) are below 90 at 100% coverage. Apart from UI-1-1 and UI-1-2 the gap comes from approved D-104 choices and the shared frame, so the builder cannot close it. Fixing UI-1-1 and UI-1-2 is worth well under 1 point on each board.",
+      "severity": "both",
+      "blocking": true,
+      "summary": "Fix: the design engineer signs one per-board waiver for each board (wording below), or chooses a different layout. Owner: product (design engineer).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "the remaining visual gap is covered by the signed waiver texts; the UI reviewer verified them in round-2/review-ui.md"
+        }
+      ],
+      "risk_authority": "design engineer, D-107/D-108 (16-17 Nov 2026): resolved by the signed visual waivers"
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "owner": "The tap-target padding uses raw pixel values rather than tokens: `money.css` `.money__card .money__amountlink { padding: 20px 0 3px; margin: -20px 0 -3px; }` and `.money__line > .psl-link { padding: 3px 0 24px; margin: -3px 0 -24px; }`. Side effect: the amount's 20px of upward padding is painted over the stage name, so tapping the left part of \"Stage 2 \u00b7 UAT\" opens the figure. That is harmless, but it is a target nobody can see.",
+      "severity": "scr-12-mobile",
+      "blocking": false,
+      "summary": "Fix: when this code is next touched, express the values as `calc(var(--control-md) - \u2026)` or with spacing tokens. Optional.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-16T19:01:08Z",
+          "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T08:30:09Z",
+          "refs": [
+            "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:38:10Z",
+          "refs": [
+            "The tap areas use `--space-6px`, `--space-3` and `--control-md`, and the amount no longer reaches over the stage name. The resulting card height is waived under UI-2-1."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The tap areas use `--space-6px`, `--space-3` and `--control-md`, and the amount no longer reaches over the stage name. The resulting card height is waived under UI-2-1."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The money no-access state now uses the spec's Option B, and no design-engineer approval for it is recorded.** `MoneyTab.tsx:268-278,309` shows \"You can't see this project's money.\" instead of `ProjectNoAccess` (the UX-1-2 fix). Spec Conflicts 14 recommended building readiness rule 6 as written, and criterion 20 names `ProjectNoAccess`. D-104 (\"the rest as the spec\") and D-107 do not mention Option B. The no-leak behaviour is unchanged and tested: no stage, amount, report title or server message appears, and the report is not read. Fix: have the design engineer confirm Option B in a D-entry, or note it in build.md as a UX-review change awaiting that sign-off.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T10:44:24Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "resolved by D-108 wording/waiver text"
+        }
+      ],
+      "risk_authority": "design engineer D-108"
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**On phones, a deep link to a figure while the report has failed shows the report error twice.** At `MoneyTab.tsx:343`, a failed report renders `explanation` under the cards. When `?figure=` is set, the BottomSheet (`:345-349`) renders the same `explanation` again, so there are two ErrorStates and two \"Try again\" buttons, one behind the sheet. Both retry the same report read, so nothing is wrong, just repeated. Fix: render the inline copy only when no sheet is open (`report.status === 'error' && selectedId === undefined`), or leave it as is.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T10:44:23Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "double Try again on phone is repetition only; follow-up"
+        }
+      ],
+      "risk_authority": "coordinator, non-blocking routing"
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "Linked phone cards are about 12\u201314px taller than the board's because of the new tap-area geometry. Cause: `money.css` `.money__card .money__amountlink { padding-top: var(--space-6px); margin: calc(-1 * var(--space-6px)) 0; }` together with `min-height: var(--control-md)`. This leaves about 18px under the amount text before the invoice line, where the board's gap is 6px. Measured: Stage 1 invoice text is 41px below the board in round 2, against about 30px in round 1; Stage 4's card top is about 95px low, against about 53px. The cause is my own UI-1-4 note, not a builder error: two 44px targets cannot fit in the board's 6px-gap card unless one reaches over the stage name or the card grows.",
+      "severity": "scr-12-mobile",
+      "blocking": true,
+      "summary": "Fix, either one: (a) the design engineer adds \"phone cards about 12px taller per linked stage, for the two 44px tap targets (D-92c)\" to the D-107 SCR-12-mobile waiver text, with no code change (my recommendation, since the 77.8 being signed is this exact build); or (b) frontend restores the round-1 geometry using tokens (the amount reaches up over the non-interactive stage name, `calc(var(--space-3) + var(--space-6px) + \u2026)`). I withdraw the \"covers the stage name\" part of UI-1-4. Option (b) needs one more recorded fidelity run and a new score in the waiver. Owner: product (design engineer) for (a), frontend for (b).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "the remaining visual gap is covered by the signed waiver texts; the UI reviewer verified them in round-2/review-ui.md"
+        }
+      ],
+      "risk_authority": "design engineer, D-107/D-108 (16-17 Nov 2026): resolved by the signed visual waivers"
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "The D-107 desktop waiver text leaves out two differences it in fact covers. The Chidi card's D-104 sentence \"Ask me about any figure here.\" makes the aside about 20px shorter. The report title sits on the same line as the board's sentence, before it, rather than \"below\" the heading on a line of its own. Both are D-104-approved.",
+      "severity": "scr-12-desktop",
+      "blocking": false,
+      "summary": "Fix: the design engineer may add them to the waiver reason. No code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T10:44:24Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "resolved by D-108 wording/waiver text"
+        }
+      ],
+      "risk_authority": "design engineer D-108"
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "An Unknown amount that has a figure is now a link with the amber Unknown as its text (TECH-1-2). On desktop it is amber, semibold and underlined in the link. This is acceptable: amber keeps its \"waiting\" meaning (D-92b) and the underline marks it as a link. No board draws this case.",
+      "severity": "none (p-0102, not on a board)",
+      "blocking": false,
+      "summary": "Fix: none needed; noted for the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`delivery/checks.sh` (gate) | I could not reproduce a whole-suite exit 0. Two full runs failed only on timeouts (10 s hook timeouts in the `*-mock` suites; `waitFor` on \"Loading\u2026\") in files F-26 does not touch, at load averages of 111 to 585 with three features' vitest runs at once. Each failed file passes when re-run, and the builder's run at this head was exit 0 (86 files, 1882 tests). | Fix: run the gate on ac401c09 once the other builds are idle, to confirm exit 0 before merge. No code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:36:33Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`MoneyTab.tsx:343-349` | Confirms TECH-2-2. On a phone, P-0103 `?figure=FIG-0101-S1` shows 2 \"Try again\" buttons: one under the cards and one in the open sheet. Both re-read only E-REPORT. | Fix: as TECH-2-2 (render the inline error only when no sheet is open), or accept.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:36:33Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "`delivery/BACKEND-HANDOFF.md:151-163`",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "Closed. The section carries G-SCR12-1..3, `as_of` on E-REPORT figures, `finance_tracks`, who may read the money tab (403 versus 404, a 404 revealing no stage names), the optional report title and eyebrow, and the \"\u2014\" versus Unknown meanings for paid and invoice. Two small slips remain. The route is written `/projects/{id}?tab=money`, but the real route is `/projects/{caseId}/money`. G-SCR12-1 lists `version`, `rule_version` and `case_id` and leaves out `component`, which gaps-a-project-setup.md and the readiness proposal include. | Fix: correct both on the next touch of the handoff. This does not block acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "`feature.json` TECH-2-1",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "The coordinator accepts TECH-2-1 under D-108 (`OVERNIGHT-DECISIONS.md:177-178`). | Fix: record the closure in `feature.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "`feature.json` UI-2-2",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "The two differences it names are in the SCR-12-desktop waiver text, and the coordinator accepts it under D-108. UI-2-3 is only a note for the design engineer. | Fix: record the closure in `feature.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "`MoneyTab.tsx:343-349` (TECH-2-2, QA-2-2)",
+      "severity": "frontend",
+      "blocking": false,
+      "summary": "The double \"Try again\" on a phone deep link with a failed report. Both buttons re-read only E-REPORT. The coordinator accepts it as a follow-up. | Fix: later, render the inline error only when no sheet is open.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "TECH-1-3 and the F-25 merge",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "`frontend/tests/projects-journey.test.tsx` is a third file shared with F-25. Nothing was loosened. The second feature to merge must repoint or delete the coming-next case and keep both features' cases in `mock-contract.test.ts` and the E-PROJECT-TAB dispatch. | Fix: the coordinator handles it at the F-25 merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-6",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "QA-2-1",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "QA could not reproduce a whole-suite exit 0 under heavy load. Each failed file passes when re-run, and the harness gate and the builder's run were exit 0. | Fix: the coordinator re-runs the gate on ac401c09 on an idle machine before merge. This is a pre-merge condition, not a code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+          "evidence_refs": [
+            "delivery/features/F-26/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-26/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+          "evidence_refs": [
+            "delivery/features/F-26/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+          "evidence_refs": [
+            "delivery/features/F-26/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-M3-REPORT",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "7ec9929619c2138cf814036c65eedc58f05a577a",
+    "task_branch": "fe-m3-report-a-project-s-money-tab-each-contract-stag",
+    "head_sha": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-26",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/50",
+    "pr_number": 50,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "b02a167df80d7e617c1876e6096b92af6e478888",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-23/feature.json",
+      "delivery/features/F-23/fidelity-exceptions.json",
+      "delivery/features/F-23/round-2/checks.md",
+      "delivery/features/F-23/round-2/review-security.md",
+      "delivery/features/F-23/round-2/review-technical.md",
+      "delivery/features/F-23/round-2/review-ui.md",
+      "delivery/features/F-23/round-2/review-ux.md",
+      "delivery/features/F-23/round-3/build.md",
+      "delivery/features/F-23/round-3/checks.md",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440-signoff/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-desktop-1440/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/board.rendered.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/diff.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/page-marked.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/page.png",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/report.html",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/report.json",
+      "delivery/features/F-23/round-3/fidelity/SCR-28-mobile-390/side-by-side.png",
+      "delivery/features/F-23/round-3/fidelity/drive-states.mjs",
+      "delivery/features/F-23/round-3/fidelity/frozen/default-1440.html",
+      "delivery/features/F-23/round-3/fidelity/scores.txt",
+      "delivery/features/F-23/round-3/fidelity/serve-frozen.mjs",
+      "delivery/features/F-23/round-3/review-security.md",
+      "delivery/features/F-23/round-3/review-technical.md",
+      "delivery/features/F-23/round-3/review-ui.md",
+      "delivery/features/F-23/round-3/review-ux.md",
+      "delivery/features/F-25/feature.json",
+      "delivery/features/F-25/fidelity-exceptions.json",
+      "delivery/features/F-25/round-1/build.md",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-11-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-29-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-desktop-changed-1440/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390.txt",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/board.rendered.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/diff.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page-marked.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/page.png",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.html",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/report.json",
+      "delivery/features/F-25/round-1/fidelity/SCR-38-mobile-changed-390/side-by-side.png",
+      "delivery/features/F-25/round-1/fidelity/scores.txt",
+      "delivery/features/F-25/round-1/fidelity/summary.txt",
+      "delivery/features/F-26/feature.json",
+      "delivery/features/F-26/fidelity-exceptions.json",
+      "delivery/features/F-26/round-1/build.md",
+      "delivery/features/F-26/round-1/checks.md",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-desktop-1440/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/board.rendered.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/diff.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page-marked.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/page.png",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.html",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/report.json",
+      "delivery/features/F-26/round-1/fidelity/SCR-12-mobile-390/side-by-side.png",
+      "delivery/features/F-26/round-1/fidelity/run.sh",
+      "delivery/features/F-26/round-1/fidelity/scores.txt",
+      "delivery/features/F-26/round-1/review-technical.md",
+      "delivery/features/F-26/round-1/review-ui.md",
+      "delivery/features/F-26/round-1/review-ux.md",
+      "delivery/features/F-26/round-2/build.md",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/board.rendered.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/diff.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/page-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/page.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/report.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/report.json",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-desktop-1440/side-by-side.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/board.rendered.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/diff.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/page-marked.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/page.png",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/report.html",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/report.json",
+      "delivery/features/F-26/round-2/fidelity/SCR-12-mobile-390/side-by-side.png",
+      "delivery/features/F-26/round-2/fidelity/run.sh",
+      "delivery/features/F-26/round-2/fidelity/scores.txt",
+      "delivery/features/F-27/feature.json",
+      "delivery/features/F-27/fidelity-exceptions.json",
+      "delivery/features/F-27/round-1/build.md",
+      "delivery/features/F-27/round-1/checks.md",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/board.rendered.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/diff.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/page-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/page.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/report.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/report.json",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-desktop-delegation-1440/side-by-side.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/board.rendered.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/diff.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/page-marked.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/page.png",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/report.html",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/report.json",
+      "delivery/features/F-27/round-1/fidelity/SCR-13-mobile-delegation-390/side-by-side.png",
+      "delivery/features/F-27/round-1/fidelity/drive-states.mjs",
+      "delivery/features/F-27/round-1/fidelity/frozen/default-1440.html",
+      "delivery/features/F-27/round-1/fidelity/run.sh",
+      "delivery/features/F-27/round-1/fidelity/scores.txt",
+      "delivery/features/F-27/round-1/fidelity/serve-frozen.mjs",
+      "delivery/features/F-27/round-1/review-security.md",
+      "delivery/features/F-27/round-1/review-technical.md",
+      "delivery/features/F-27/round-1/review-ui.md",
+      "delivery/features/F-27/round-1/review-ux.md",
+      "frontend/e2e/money.spec.ts",
+      "frontend/mock/fixtures/projects/money/P-0101.json",
+      "frontend/mock/fixtures/projects/money/P-0102.json",
+      "frontend/mock/fixtures/projects/money/P-0103.json",
+      "frontend/mock/fixtures/projects/money/P-0105.json",
+      "frontend/mock/fixtures/projects/money/P-0106.json",
+      "frontend/mock/fixtures/projects/money/P-0107.json",
+      "frontend/mock/fixtures/projects/money/P-0108.json",
+      "frontend/mock/fixtures/projects/money/index.json",
+      "frontend/mock/fixtures/reports/R-0101.json",
+      "frontend/mock/fixtures/reports/R-0102.json",
+      "frontend/mock/fixtures/reports/R-0106.json",
+      "frontend/mock/fixtures/reports/index.json",
+      "frontend/mock/money.mjs",
+      "frontend/mock/projects.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/src/features/projects/MoneyTab.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/money.css",
+      "frontend/src/features/projects/moneyModel.ts",
+      "frontend/src/features/projects/useMoney.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-money.test.ts",
+      "frontend/tests/money-model.test.ts",
+      "frontend/tests/money.test.tsx",
+      "frontend/tests/projects-journey.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'high' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "236 changed files exceed the auto-merge limit of 15",
+      "finding UI-1-3 was accepted as a risk",
+      "finding TECH-2-1 was accepted as a risk",
+      "finding TECH-2-2 was accepted as a risk",
+      "finding UI-2-1 was accepted as a risk",
+      "finding UI-2-2 was accepted as a risk",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-16T17:39:35Z",
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-16T17:53:13Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T17:53:32Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-16T18:50:53Z",
+      "round": 1,
+      "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-16T19:01:08Z",
+      "round": 1,
+      "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-16T19:01:09Z",
+      "round": 2,
+      "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T08:30:10Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T09:38:22Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T10:36:33Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-17T10:55:45Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-17T10:55:56Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-17T10:58:57Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": "design engineer approved merge of PR #50, 17 Nov"
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-17T10:59:05Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-17T10:59:05Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-26/readiness.md",
+      "delivery/features/F-26/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+  },
+  "blocked": null
+}

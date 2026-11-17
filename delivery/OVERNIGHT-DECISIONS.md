@@ -155,3 +155,24 @@ Signed all: left out until the contract has them ("Edit draft", attach "+", the 
 
 ## D-101 · F-24 assistant product acceptance (16 Nov 2026, design engineer: "accept")
 After a demo of the F-24 branch on localhost:3000 (contract mock), the design engineer accepted the assistant: a person starts every work item from the prefilled Start work drawer; nothing offers approve, send or pay; replies show steps and sources; the microphone is held; agent wording claims nothing the backend won't do. Known limits: the work item reached after a start is an existing sample item; a second start shows the generic 409 text (QA-3-1 follow-up).
+
+## D-102 · Run more features in parallel (16 Nov 2026, design engineer: "can we start other task as well")
+While F-23 is in rework: F-25 project tabs (FE-M3-PROJECT-TABS: SCR-11 registers and the project's tabs) starts now; F-26 report with drill-down (FE-M3-REPORT, SCR-12) and F-27 Setup delegation (FE-SETUP-DELEGATION, SCR-13 delegation) get readiness. Builds limited by disk (one working copy ~1 GB; keep ≥3 GB free).
+
+## D-103 · F-27 delegation calls; caches cleared (16 Nov 2026, design engineer)
+F-27: the phone "Add delegation" opens the shared bottom sheet with the desktop fields (a listed difference); the two rule sentences ("Only people who already hold the same role are listed", "Delegating can't give anyone authority they don't already have") show as drawn, the backend is asked to enforce both, and their wording is checked at product acceptance. The design engineer approved clearing the Homebrew and VS Code update caches (`brew cleanup -s`, Homebrew downloads, VS Code ShipIt); free disk rose from 6.3 GB to 11 GB, so up to 3–4 builds run in parallel.
+
+## D-104 · F-25 and F-26 spec conflicts approved as recommended; F-23 desktop default waived at 69.2 (16 Nov 2026, design engineer)
+F-25 project tabs: all 16 recommendations (Mark complete and Filter left out until supported; invoice cell "INV-0412 · Waiting" until a status label; the changed state keeps Invoice/Paid and adds Changes; phone changed uses the normal list with a "CHANGED · CR-0031" tag; rows link only when a work_id exists; "As of" added; the rest as the spec). F-26 Money tab: money always to two decimals; no source panel open on load (opens on press); project title stays the page heading with the report title below; Stage 4's note under the amount; paid line on phones; phone drill-down in a bottom sheet; Chidi's card "Ask me about any figure here"; the rest as the spec. F-23: SCR-28-desktop default accepted at visual 69.2, a one-board exception to the D-83 floor of 70, because the remaining gap is the approved shared frame.
+
+## D-105 · F-23 minutes differences and waivers signed; Tola's "needs you" sentence amber (16 Nov 2026, design engineer)
+Signed all F-23 differences and the 8 visual waivers: desktop default 69.1 (D-104), suggesting 81.3, drafted 85.4, review 78.7; phone 74.2 / 82 / 82.5 / 78.7. Tola's minutes note: the third sentence (the part asking the PM to act) shows amber as the board draws it — amber means waiting on someone (D-92b).
+
+## D-106 · F-23 amber line kept at 65.3 (16 Nov 2026, design engineer)
+Tola's "needs you" sentence stays amber (D-105) even though it drops SCR-28-desktop default from 69.1 to 65.3 (the frame draws it as a full-width warning band; the board draws it in the right column). The coordinator had said there'd be no score loss; that was wrong and was corrected before this call. The desktop default waiver is signed at 65.3; the phone default waiver at its measured score.
+
+## D-107 · F-26 Money tab waivers; F-27 delegation sign-off (16 Nov 2026, design engineer)
+F-26: visual waivers signed — SCR-12-desktop 85.7 and SCR-12-mobile 77.8 — covering the D-104 choices (project title as heading, report title below, two decimals, Stage 4 note under the amount, phone paid line, "As of" line, underlined links, plain "Tap an amount" text) and the shared F-07 frame/phone bar. F-27: SCR-13-desktop-delegation visual waiver at 84.0 (two date fields, 44px fields vs the board's 48px, the shared Setup frame); the Setup panel heading stays ink (blue means agent work, D-92b; other Setup panels are ink); the phone add form uses the full-height Drawer (D-103's "bottom sheet" meant this); the 10 frame/form differences plus the panel-head entry are signed.
+
+## D-108 · F-26 phone waiver line; Money no-access wording (17 Nov 2026, design engineer)
+The SCR-12-mobile waiver (77.8, D-107) also covers: phone cards about 12px taller per linked stage, for the two 44px tap targets (D-92c). The refused-money panel says "You can't see this project's money." (spec Conflicts 14, Option B), approved.
