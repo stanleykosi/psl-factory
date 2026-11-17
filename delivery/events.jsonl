@@ -1952,3 +1952,5 @@
 {"at":"2026-11-17T10:35:17Z","feature":"F-23","round":3,"kind":"finding","action":"add","finding":"QA-3-4","by":"qa","severity":"low","owner":"frontend (tests)","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-17T10:35:18Z","feature":"F-23","round":3,"kind":"transition","head":"d5f10f5a22b0","from":"INTEGRATED_QA","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-17T10:35:18Z","feature":"F-23","round":4,"kind":"transition","head":"d5f10f5a22b0","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-17T10:35:45Z","feature":"F-27","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"34c38e4e3da8","written_at":"2026-11-17T10:35:06Z"}
+{"at":"2026-11-17T10:35:46Z","feature":"F-27","round":2,"kind":"transition","head":"34c38e4e3da8","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-27",
   "outcome": "Setup > Delegation: list the delegations the backend shows and add one from its own lists (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-SETUP-DELEGATION"
   ],
@@ -111,11 +111,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+      "evidence_refs": [
+        "delivery/features/F-27/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -1051,6 +1053,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-17T09:38:47Z",
+      "round": 2,
+      "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T10:35:46Z",
       "round": 2,
       "head": "34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3",
       "reason": null
