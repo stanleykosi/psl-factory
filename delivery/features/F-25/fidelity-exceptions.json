@@ -87,22 +87,22 @@
     {
       "role": "text",
       "name": "■■■",
-      "category": "sample data",
-      "reason": "Shared PriorityTag draws the marker inside one tag ('■■■ High', marker aria-hidden); the board lists the marker as separate text. The tag itself matches.",
+      "category": "frame item",
+      "reason": "Shared PriorityTag (D-91) draws the marker inside one tag ('■■■ High', marker aria-hidden); the board lists the marker as separate text. The tag itself matches.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "role": "text",
       "name": "■■□",
-      "category": "sample data",
-      "reason": "Shared PriorityTag draws the marker inside one tag; see '■■■'.",
+      "category": "frame item",
+      "reason": "Shared PriorityTag (D-91) draws the marker inside one tag; see '■■■'.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "role": "text",
       "name": "■□□",
-      "category": "sample data",
-      "reason": "Shared PriorityTag draws the marker inside one tag; see '■■■'.",
+      "category": "frame item",
+      "reason": "Shared PriorityTag (D-91) draws the marker inside one tag; see '■■■'.",
       "approved_by": "builder proposal, pending design engineer"
     }
   ],
@@ -162,49 +162,49 @@
     {
       "board": "SCR-38-desktop",
       "width": 1440,
-      "visual": 73.1,
+      "visual": 82.4,
       "reason": "Frame and layout: PM/route line sits under the tab bar, not above; the page title is 36px; the table column widths follow the page's own table; the omitted Mark complete button leaves the board's lower area empty (Conflicts 1, 16).",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-38-desktop-changed",
       "width": 1440,
-      "visual": 73,
+      "visual": 79.1,
       "reason": "As SCR-38-desktop, plus the page keeps INVOICE and PAID columns (Conflicts 4).",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-11-desktop",
       "width": 1440,
-      "visual": 84.6,
+      "visual": 82.8,
       "reason": "The board's eyebrow and h1 are replaced by the F-07 project header; Filter not drawn; the PM line differs (Conflicts 2, 9, 16).",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-38-mobile",
       "width": 390,
-      "visual": 80.8,
+      "visual": 76.7,
       "reason": "Phone frame (full project title, 'Back to Projects', bell) and the extra Paid line and As-of line; Mark complete not drawn (Conflicts 1, 7, 14, 16).",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-38-mobile-changed",
       "width": 390,
-      "visual": 83.1,
+      "visual": 80.8,
       "reason": "The board draws a different page (no tab bar); the page keeps the default phone list with a CHANGED tag (Conflicts 6).",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-11-mobile",
       "width": 390,
-      "visual": 77.7,
+      "visual": 77.6,
       "reason": "Phone frame, register tab strip and the F-07 header instead of 'Issues · 3'; Filter not drawn (Conflicts 2, 9, 10, 16).",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-29-mobile",
       "width": 390,
-      "visual": 76.8,
+      "visual": 84.3,
       "reason": "Phone frame (full project title, 'Back to Projects', bell), nine cards where five are drawn, Filter not drawn (Conflicts 2, 15, 16).",
       "approved_by": "builder proposal, pending design engineer"
     }
