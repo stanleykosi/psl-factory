@@ -162,15 +162,15 @@
     {
       "board": "SCR-38-desktop",
       "width": 1440,
-      "visual": 78.1,
-      "reason": "Covers Mark milestone 3 complete not drawn (Conflicts 1); the PM/route line under the tab bar, which moves the tab band 32 px (16); the 'As of 12 Nov 16:40' line (14); 'INV-0412 · Waiting' and 'INV-0398 · Verified' in place of the board's status text (3); invoice references as links (8); Unknown as the amber tag (README); and the shared F-07 frame (36px title, Alerts bell, 'Tunde Bello · PM', '+ Start work' position; D-89). Column positions match the board.",
+      "visual": 82.4,
+      "reason": "Measured 82.4 with board fonts loaded (route line height from the hint-line token). Covers Mark milestone 3 complete not drawn (Conflicts 1); the PM/route line under the tab bar, which moves the tab band 32 px (16); the 'As of 12 Nov 16:40' line (14); 'INV-0412 · Waiting' and 'INV-0398 · Verified' in place of the board's status text (3); invoice references as links (8); Unknown as the amber tag (README); and the shared F-07 frame (36px title, Alerts bell, 'Tunde Bello · PM', '+ Start work' position; D-89). Column positions match the board.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-38-desktop-changed",
       "width": 1440,
-      "visual": 75.1,
-      "reason": "Covers everything listed for SCR-38-desktop, plus INVOICE and PAID kept with CHANGES as a sixth column (4); the default completion text kept ('Done 27 Oct · proof', 'Not yet · amount set at go-live') (4); the change-amount wording composed only from returned values, with Unknown as a tag, so CONTRACT AMOUNT wraps on Go-live (5); the CR-0031 amber sentence not drawn because no backend note exists (5); and the SOW static sentence shown (13).",
+      "visual": 79.1,
+      "reason": "Measured 79.1 with board fonts loaded (route line height from the hint-line token). Covers everything listed for SCR-38-desktop, plus INVOICE and PAID kept with CHANGES as a sixth column (4); the default completion text kept ('Done 27 Oct · proof', 'Not yet · amount set at go-live') (4); the change-amount wording composed only from returned values, with Unknown as a tag, so CONTRACT AMOUNT wraps on Go-live (5); the CR-0031 amber sentence not drawn because no backend note exists (5); and the SOW static sentence shown (13).",
       "approved_by": "builder proposal, pending design engineer"
     },
     {

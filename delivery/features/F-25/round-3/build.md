@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: ba04923c108e0180ffdbd49404afc42fceeb191d
+COMMIT: 4852fb3acbd5687980687a05731b5da006ef9373
 BUILDER: builder
 LANE: full
 
@@ -61,3 +61,9 @@ Merged `origin/dlv-00-delivery-setup` (F-26 Money tab) into the branch (merge co
 - Small edits after the merge: `mock/project-tabs.mjs` answers 501 for `documents` only (money never reaches it); `tests/mock-money.test.ts` (F-26's file) expected milestones, registers and actions to answer 501, which is no longer true with F-25 merged, so that case now lists only `documents` and the `P-0109` money case.
 - Fidelity: not re-run. The merge changes no scored board (no change under the three tabs' components, CSS or fixtures; the delivery files and F-26's Money files are the only new content).
 - On the merged head: `bash delivery/checks.sh` first run failed one `setup-rules` timing test (untouched file, machine load near 50); a full `npm test` re-run passed all 89 files and 1950 tests, and lint passes. An earlier merged run failed only `mock-money.test.ts` (fixed above). e2e `project-tabs`, `projects` and `money` specs at 1440 and 390 passed 71 of 71 on the merge commit e5f5dad0 (before the one test-file change in ba04923c).
+
+## Final round-3 changes (UI-3-1, TECH-3-1, F-27 merge)
+- UI-3-1: `.ptabs__route` line height is `var(--text-hint-line)` (exactly 18px). TECH-3-1: the `mock/project-tabs.mjs` header says "Documents is not mocked here (501); money goes to money.mjs (F-26)".
+- Merged `origin/dlv-00-delivery-setup` (F-27 delegation). One textual conflict: the `M1_OPERATIONS` line in `mock/server.mjs` (F-27 added `E-DELEGATIONS` and `E-DELEGATION`, F-25 added `E-PROJECT-TAB`); resolved by taking F-27's line and inserting `'E-PROJECT-TAB'` after `'E-PROJECT'`. The loader exclusion, `projectTab` import and dispatch line, F-26's money routing and F-27's delegation dispatch were checked and are all present. `tests/mock-contract.test.ts` auto-merged with both features' entries (including `tab: 'milestones'`).
+- Re-scored with board fonts loaded (no `Fonts:` warning in any report; `round-3/fidelity-rescore/`): SCR-38-desktop 82.4, SCR-38-desktop-changed 79.1, SCR-29-desktop 90.4 (pass); coverage 100% after exceptions on all three. These replace the 78.1, 75.1 and 90.2 above. The other five boards were not re-run (no change to them); their round-3 scores stand. The two SCR-38 waivers carry the new numbers and stay "builder proposal, pending design engineer".
+- Checks on this head: `bash delivery/checks.sh` exit 0 (91 files, 2015 tests); e2e `project-tabs`, `projects` and `money` specs: 71 passed, 0 failed (both widths).
