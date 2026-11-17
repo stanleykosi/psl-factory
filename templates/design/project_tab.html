@@ -3,6 +3,14 @@
 {% block content %}
 <header class="page-heading"><div><a class="back-link" href="{% url 'workspace_overview' %}?kind=project">← Projects</a><h1>{{ case|workspace_name }}</h1></div></header>
 {% include 'design/project_tabs.html' %}
+{% if stages.rows %}<section class="card" aria-label="Signed billing milestones">
+  <div class="panel-heading"><h2>Signed billing milestones</h2><a class="button secondary" href="{% url 'design_project_tab' case.pk 'money' %}">Open Money →</a></div>
+  {% for stage in stages.rows %}<div class="floor-line"><div><strong>{{ stage.expected_name|default:stage.label }}</strong>
+    {% if stage.due_date %}<p>Contract due {{ stage.due_date }}</p>{% endif %}
+    <a href="{{ stage.url }}#figure-sources">{% if stage.amount is None %}Amount unknown{% else %}{{ stage.currency }} {{ stage.amount|floatformat:'-8' }}{% endif %}</a></div>
+    <div>{% if stage.completion %}<strong>Completed {{ stage.completion.completed_at|date:'d M Y' }}</strong>{% elif stage.expected_name %}<strong>Completion awaits evidence</strong>{% endif %}
+      {% for line in stage.invoices %}<p><a href="{{ stages.finance_url }}">{{ line.reference }}</a> · {{ line.status }}{% if line.paid is not None %} · Applied {{ line.currency }} {{ line.paid|floatformat:'-8' }}{% endif %}</p>{% empty %}<p>No invoice recorded</p>{% endfor %}</div></div>{% endfor %}
+</section>{% endif %}
 {% if tab == 'actions' or tab == 'registers' or tab == 'milestones' %}<form method="get" class="actions"><label for="project-search">Search {{ tab }}</label><input id="project-search" name="q" type="search" maxlength="120" value="{{ q }}"><button type="submit">Search</button>{% if q %}<a href="?">Clear search</a>{% endif %}</form>{% endif %}
 {% for panel in panels %}<section class="card" id="{{ panel.page_key }}">
   <div class="panel-heading"><h2>{{ panel.title }}</h2><a class="button secondary" href="{{ panel.url }}">{{ panel.action }} →</a></div>

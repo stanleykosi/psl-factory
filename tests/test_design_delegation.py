@@ -1,4 +1,5 @@
 from datetime import timedelta
+from uuid import uuid4
 
 from django.test import TestCase
 from django.urls import reverse
@@ -34,6 +35,8 @@ class DesignDelegationTests(TestCase):
                 'evidence': proof.pk}
         self.assertNotContains(self.client.get(url, {'role': 'PM'}), other.username)
         self.assertContains(self.client.post(url, {**data, 'delegate': other.pk}), 'Select a valid choice')
+        self.assertContains(self.client.post(url, {**data, 'delegate': actor.pk}), 'Choose a different person')
+        self.assertContains(self.client.post(url, {**data, 'ends': now.isoformat()}), 'Enter a time after the start')
         self.assertRedirects(self.client.post(url, data), url)
         draft = Configuration.objects.get(case=case, component='D05.delegation_rules')
         self.assertEqual(list(draft.states.values_list('state', flat=True)), ['draft'])
@@ -41,7 +44,17 @@ class DesignDelegationTests(TestCase):
         self.assertNotEqual(resolve('D05.delegation_rules', case).status, 'ACTIVE')
         self.client.post(url, data)
         self.assertEqual(Configuration.objects.filter(case=case, component='D05.delegation_rules').count(), 1)
+
+        keyed = {**data, 'revision': rev(case), 'submission_key': uuid4(), 'principal': delegate.pk, 'delegate': actor.pk}
+        saved = self.client.post(url, keyed)
+        readback = self.client.get(saved.url)
+        self.assertContains(readback, 'Your submission was recorded as delegation draft version')
+        self.assertRedirects(self.client.post(url, keyed), saved.url)
+        self.assertContains(self.client.post(url, {**keyed, 'ends': (now + timedelta(days=2)).isoformat()}),
+                            'This submission already saved a different draft')
+        self.assertEqual(Configuration.objects.filter(case=case, component='D05.delegation_rules').count(), 2)
         Grant.objects.create(case=case, user=delegate, action='policy.read')
         self.client.force_login(delegate)
         self.assertNotContains(self.client.get(url), 'Add a delegation draft')
+        self.assertNotContains(self.client.get(saved.url), 'Your submission was recorded')
         self.assertEqual(self.client.post(url, data).status_code, 403)

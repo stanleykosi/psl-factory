@@ -33,6 +33,8 @@ from apps.documents import controlled
 from .models import FactoryWork,FactoryActivity,HumanTask
 from . import factory as runtime
 
+OUTCOME_CHOICES = {'won': 'Won', 'lost': 'Lost', 'pending': 'Pending', 'unknown': 'Unconfirmed'}
+
 
 class RFPProfileForm(ProfileForm):
     template_id=forms.ModelChoiceField(queryset=Template.objects.none(),required=False,label='Client response template')
@@ -284,6 +286,10 @@ def presentation(actor,work,submission_id=None):
     next_action=finding or ('Continue permitted response work' if can_advance else 'Inspect current sources and recorded decisions')
     if decisions:next_action=decisions[0]['title']
     elif outcome_roles:next_action='Record the actual customer outcome'
+    if outcome and outcome.result in ['pending', 'unknown'] and not disposition:
+        label = 'Customer decision pending' if outcome.result == 'pending' else 'Customer outcome unconfirmed'
+        due = outcome.followup_on
+        next_action = ('Check customer response on ' + due.strftime('%d %b %Y')) if due else 'Check for a confirmed customer response'
     if source_followup:
         label='Response inputs need follow-up';next_action='Review the response sources and required team inputs'
     elif operation_followup:
@@ -323,7 +329,7 @@ def presentation(actor,work,submission_id=None):
 
 
 @transaction.atomic
-def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,evidence,note,observed_at=None,selection_context=None):
+def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,evidence,note,observed_at=None,selection_context=None,followup_on=None):
     from . import factory_rfp as service
     work=FactoryWork.objects.select_for_update().select_related('case').get(pk=work_id,definition=service.DEFINITION)
     runtime.access(actor,work.case,envelope=service.DEFINITION)
@@ -345,7 +351,8 @@ def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,
     elif kind=='outcome':
         submission=RFPSubmission.objects.filter(pk=target,response__rfp=service.subject(work)).first()
         if not submission:raise ValidationError('Choose an actual submission from this RFP workspace')
-        rfp.outcome(actor,case.pk,submission.pk,verdict,observed_at,role,evidence,note,case.revision,selection_context=selection_context)
+        rfp.outcome(actor,case.pk,submission.pk,verdict,observed_at,role,evidence,note,case.revision,
+                    selection_context=selection_context,followup_on=followup_on)
     else:raise ValidationError('Choose a current human decision')
     work.status='ready';work.finding='';work.revision+=1;work.save(update_fields=['status','finding','revision','updated_at'])
 
@@ -362,6 +369,11 @@ def detail(request,work,focus=None):
     try:selected_id=int(requested) if requested else None
     except (ValueError,TypeError):selected_id=None
     chosen=actual.filter(pk=selected_id).first() if selected_id is not None else None
+    outcome_post = request.method == 'POST' and request.POST.get('action') == 'outcome'
+    outcome_variant = request.POST.get('verdict') if outcome_post else request.GET.get('outcome')
+    if outcome_variant not in OUTCOME_CHOICES:
+        outcome_variant = 'unknown'
+    outcome_values = request.POST if outcome_post else {}
     if request.GET.get('submission') and chosen:navigation['submission']=chosen.pk
     if request.GET.get('submission_page'):navigation['submission_page']=request.GET['submission_page']
     url=request.path+'?'+urlencode(navigation)
@@ -375,13 +387,15 @@ def detail(request,work,focus=None):
             elif action=='cancel':runtime.manage(request.user,work.pk,revision,'cancel')
             elif action=='adopt_profile':runtime.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
             elif action in ['response','commercial','document','outcome']:
-                observed=None;selection_context=None
+                observed=None;selection_context=None;followup_on=None
                 if action=='outcome':
                     observed=forms.DateTimeField().clean(request.POST.get('observed_at'))
+                    followup_on=forms.DateField(required=False).clean(request.POST.get('followup_on'))
                     if request.POST.get('selection_acknowledged')=='on':
                         selection_context={'packet':request.POST.get('selection_packet',''),'acknowledged':True}
                 human_command(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),action,int(request.POST.get('target','0')),
-                    request.POST.get('role',''),request.POST.get('verdict',''),int(request.POST.get('evidence','0')),request.POST.get('note',''),observed,selection_context)
+                    request.POST.get('role',''),request.POST.get('verdict',''),int(request.POST.get('evidence') or '0'),
+                    request.POST.get('note',''),observed,selection_context,followup_on)
             elif action=='correct':
                 source=SourceForm(work.case,request.POST);mappings=Mappings(request.POST,prefix='requirements',form_kwargs={'case':work.case})
                 if source.is_valid() and mappings.is_valid():
@@ -418,10 +432,14 @@ def detail(request,work,focus=None):
         if getattr(submission_page,'has_'+direction)():
             values=dict(navigation,submission_page=getattr(submission_page,direction+'_page_number')())
             pager[direction]=request.path+'?'+urlencode(values)
+    outcome_links = [{'key': key, 'label': label, 'url': request.path + '?' + urlencode(dict(navigation, outcome=key)) + '#customer-outcome'}
+                     for key, label in OUTCOME_CHOICES.items()]
+    selected = chosen or (submission_page.object_list[0] if submission_page.paginator.count == 1 else None)
     return response(request,'factory/rfp_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'source_form':source,'mappings':mappings,
         'review_evidence':evidence,'outcome_evidence':evidence.filter(kind='rfp_outcome'),'receipts':receipts,'activities':activities,
-        'submission_selector':field.widget.render('target',chosen.pk if chosen else None,attrs={'required':True}),
-        'submission_page':submission_page,'submission_pager':pager,'focus':focus})
+        'submission_selector':field.widget.render('target',selected.pk if selected else None,attrs={'required':True}),
+        'submission_page':submission_page,'submission_pager':pager,'focus':focus,'outcome_variant':outcome_variant,
+        'outcome_values':outcome_values,'outcome_links':outcome_links})
 
 
 class OutcomeSettingsForm(forms.Form):

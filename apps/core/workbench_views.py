@@ -10,6 +10,7 @@ class SearchForm(forms.Form):
     kind=forms.ChoiceField(required=False,label='Workspace type',choices=[('','All workspaces'),('project','Projects'),('support','Customer support')],widget=forms.Select(attrs={'aria-label':'Workspace type'}))
     cursor=forms.CharField(max_length=4096,required=False,widget=forms.HiddenInput,error_messages={'max_length':'This page link is invalid. Restart the search.'})
     area=forms.ChoiceField(required=False,choices=[('','All areas'),('finance','Finance')],widget=forms.HiddenInput)
+    lifecycle=forms.ChoiceField(required=False,label='Project status',choices=[('','All I can see'),('active','Active'),('closed','Closed')])
 
 @login_required
 def home(request):

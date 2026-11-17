@@ -1,8 +1,10 @@
 """Real native RFP factory behavior; only recipient-transport faults are synthetic."""
 from copy import deepcopy
+from datetime import timedelta
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import connection,transaction,DatabaseError
 from django.test import TestCase,TransactionTestCase
+from django.urls import reverse
 from django.utils import timezone
 from apps.agents.models import AgentRun
 from apps.core.models import Evidence
@@ -85,6 +87,42 @@ class FactoryRFPTests(TestCase):
         self.assertEqual(disposition.kind,'loss_archive');self.assertEqual(disposition.lessons_id,payload['lessons'])
         self.assertEqual(work.status,'verified',work.finding);self.assertGreaterEqual(work.budget_used,spent)
         self.assertEqual(RFPResponse.objects.count(),1);self.assertEqual(PublicationReceipt.objects.count(),1)
+
+    def test_outcome_variants_bound_to_verified_submission_and_optional_followup(self):
+        f = self.data
+        work = helpers.start(f)
+        response, _ = helpers.reviewed_document(f, work)
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        submission = RFPSubmission.objects.get(response=response)
+        self.client.force_login(f['actor'])
+        url = reverse('factory_work_response', args=[work.pk])
+        date_field = 'Next check date (optional)'
+        self.assertContains(self.client.get(url, {'outcome': 'unknown'}), 'Use original verified submission')
+        self.assertContains(self.client.get(url, {'outcome': 'pending'}), date_field)
+        self.assertContains(self.client.get(url, {'outcome': 'lost'}), 'Customer reason and notes')
+        self.assertNotContains(self.client.get(url, {'outcome': 'won'}), date_field)
+        now = timezone.localtime()
+        check_on = now.date() + timedelta(days=3)
+        data = {'action': 'outcome', 'revision': work.revision, 'case_revision': rev(f['case']), 'target': submission.pk,
+                'role': 'Client', 'observed_at': now.isoformat(), 'note': 'Synthetic customer response check',
+                'followup_on': check_on.isoformat(), 'verdict': 'pending'}
+        invalid = self.client.post(url, data)
+        self.assertContains(invalid, 'Choose the evidence for the customer response')
+        self.assertContains(invalid, str(check_on))
+        self.assertFalse(submission.outcomes.exists())
+        result = self.client.post(url, {**data, 'verdict': 'unknown'}, follow=True)
+        self.assertContains(result, 'Customer outcome unconfirmed')
+        self.assertContains(result, 'Next customer check')
+        initial = submission.outcomes.get()
+        self.assertIsNone(initial.evidence_id)
+        self.assertEqual(initial.followup_on, check_on)
+        work.refresh_from_db()
+        result = self.client.post(url, {**data, 'revision': work.revision, 'case_revision': rev(f['case']),
+                                      'evidence': f['evidence']['rfp_outcome'].pk}, follow=True)
+        self.assertContains(result, 'Customer decision pending')
+        self.assertEqual(submission.outcomes.count(), 2)
+        self.assertFalse(RFPDisposition.objects.exists())
 
     def test_unknown_inputs_get_useful_investigation_then_source_owned_correction(self):
         f=self.data;payload=deepcopy(f['payload']);payload['response_evidence']=None;work=helpers.start(f,payload=payload)

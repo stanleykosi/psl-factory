@@ -139,13 +139,22 @@ def project(request, case_id, tab='journey'):
     if tab == 'money':
         from apps.finance.project_money import projection
 
+        if 'finance.read' not in actions:
+            return render(request, 'design/project_money.html', {'case': case, 'tab': tab, 'tabs': navigation,
+                                                                 'access_required': True}, status=403)
         money = projection(request.user, case, request.GET.get('figure', '')[:80])
         return render(request, 'design/project_money.html', {'case': case, 'tab': tab, 'tabs': navigation, 'money': money})
     if tab != 'journey':
         query = request.GET.get('q', '').strip()[:120]
         sections = project_journey.sections(request.user, case, tab, actions, query, request.GET)
+        stages = None
+        if tab == 'milestones' and 'finance.read' in actions:
+            from apps.finance.project_money import projection
+
+            stages = projection(request.user, case)
+            stages['rows'] = [row for row in stages['rows'] if row['contract_stage']]
         return render(request, 'design/project_tab.html', {
-            'case': case, 'tab': tab, 'tabs': navigation, 'panels': sections, 'q': query,
+            'case': case, 'tab': tab, 'tabs': navigation, 'panels': sections, 'q': query, 'stages': stages,
             'change_timeline': project_journey.change_timeline(case, query, request.GET.get('plan-page'))
                 if tab == 'milestones' and 'change.read' in actions else None,
         })

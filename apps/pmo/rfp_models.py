@@ -97,13 +97,13 @@ class RFPOutcome(AppendOnly):
     def __str__(self):return f'Outcome #{self.pk} · {self.result} · submission #{self.submission_id}'
     submission=models.ForeignKey(RFPSubmission,on_delete=models.PROTECT,related_name='outcomes')
     result=models.CharField(max_length=20)
-    observed_at=models.DateTimeField()
+    observed_at=models.DateTimeField()    followup_on=models.DateField(null=True,blank=True)
     role=models.CharField(max_length=50)
     authority=models.JSONField()
-    evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT)
+    evidence=models.ForeignKey('core.Evidence',on_delete=models.PROTECT,null=True,blank=True)
     note=models.TextField()
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
-    created_at=models.DateTimeField(auto_now_add=True)
+    created_at=models.DateTimeField(auto_now_add=True)    class Meta:        constraints = [models.CheckConstraint(condition=models.Q(result='unknown') | models.Q(evidence__isnull=False),                                              name='rfp_asserted_outcome_has_evidence')]
 
 
 class RFPDisposition(AppendOnly):

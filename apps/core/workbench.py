@@ -4,7 +4,7 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.core import signing
 from django.core.exceptions import PermissionDenied,ValidationError
-from django.db.models import Q,F,OuterRef,Subquery
+from django.db.models import Exists,Q,F,OuterRef,Subquery
 from django.db import transaction
 from apps.identity.models import Grant
 from apps.identity.services import visible_cases
@@ -21,12 +21,26 @@ def granted(actor,actions):
     for action in actions:query=query.filter(pk__in=Grant.objects.filter(user=actor,active=True,action=action).values('case_id'))
     return query
 
-def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area=''):
+def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifecycle=''):
     active(actor)
     if not all(isinstance(x,str) for x in [q,tenant,kind,area]) or len(q)>120 or len(tenant)>100 or kind not in ['', 'project','support'] or area not in ['', 'finance'] or type(page_size) is not int or not 1<=page_size<=50:raise ValidationError('Valid workspace search, organization, type, area and page size required')
     filters={'q':q.strip(),'tenant':tenant.strip(),'kind':kind,'area':area};query=granted(actor,['finance.read']) if area=='finance' else visible_cases(actor)
+    if lifecycle not in ['', 'active', 'closed'] or lifecycle and kind != 'project':
+        raise ValidationError('Choose a lifecycle filter for projects')
     if filters['tenant']:query=query.filter(tenant=filters['tenant'])
     if kind:query=query.filter(kind=kind)
+    if kind == 'project':
+        from apps.pmo.models import DeliveryDossier, DeliveryRecord
+
+        closures = DeliveryRecord.objects.filter(dossier_id=OuterRef('pk'), kind='closure')
+        dossiers = DeliveryDossier.objects.filter(case_id=OuterRef('pk')).annotate(closed=Exists(closures))
+        can_read = Grant.objects.filter(case_id=OuterRef('pk'), user=actor, active=True, action='delivery.read')
+        query = query.annotate(project_status_visible=Exists(can_read), has_closed_dossier=Exists(dossiers.filter(closed=True)),
+                               has_open_dossier=Exists(dossiers.filter(closed=False)))
+        closed = Q(has_closed_dossier=True, has_open_dossier=False)
+        if lifecycle:
+            filters['lifecycle'] = lifecycle
+            query = query.filter(project_status_visible=True).filter(closed if lifecycle == 'closed' else ~closed)
     if filters['q']:
         from apps.pmo.engagement_models import ProjectIdentifier,EngagementRecord
         permitted=granted(actor,['engagement.read']).values('pk')

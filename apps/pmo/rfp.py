@@ -1,9 +1,11 @@
 """Source-bound RFP services. A win starts Route A; it never signs a SOW."""
 import json
+from datetime import date
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case, bump, event, add_evidence
+from apps.core.evidence_access import public_evidence
 from apps.identity.services import require
 from apps.policy.services import active_component, reference_values, decision_authority
 from .models import (RFPCase,RFPIntake,RFPAssignment,RFPContribution,RFPResponse,
@@ -167,18 +169,31 @@ def reviewed(v):
     return ids
 
 @transaction.atomic
-def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note_text,expected,selection_context=None):
+def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note_text,expected,selection_context=None,*,followup_on=None):
     from .models import RFPSubmission
     case=lock_case(actor,case_id,'rfp.outcome',expected);r=root(case);ensure_open(r);note(note_text);past(observed_at)
     require(actor,case,'case.read');require(actor,case,'rfp.read')
     s=RFPSubmission.objects.filter(pk=submission_id,response__rfp=r).first()
     if not s or observed_at<s.submitted_at:raise ValidationError('Outcome must follow an actual exact submission')
     if result not in ['won','lost','pending','unknown']:raise ValidationError('Record won, lost, pending or unknown')
-    from .rfp_outcomes import selection_authority
+    from .rfp_outcomes import historical_submission, selection_authority
     auth=authority(actor,case,'outcome',role)
+    if followup_on is not None and (result not in ['pending','unknown'] or type(followup_on) is not date or
+                                    followup_on < timezone.localdate(observed_at)):
+        raise ValidationError('Choose a follow-up date on or after the observation for a pending or unconfirmed bid')
+    evidence = None
+    if evidence_id:
+        evidence = subject(case,evidence_id,'rfp_outcome')
+        if not public_evidence(case.evidence.filter(pk=evidence.pk)).exists():
+            raise ValidationError('Choose available customer outcome evidence')
+    elif result == 'unknown':
+        historical_submission(case,s)
+    else:
+        raise ValidationError('Choose the evidence for the customer response')
     selection=selection_authority(case,s,selection_context)
     if selection:auth['_selection_context']=selection
-    x=RFPOutcome.objects.create(submission=s,result=result,observed_at=observed_at,role=role,authority=auth,evidence=subject(case,evidence_id,'rfp_outcome'),note=note_text,actor=actor)
+    x=RFPOutcome.objects.create(submission=s,result=result,observed_at=observed_at,role=role,authority=auth,
+                               evidence=evidence,note=note_text,actor=actor,followup_on=followup_on)
     event(actor,case,'rfp.outcome_recorded',outcome=x.pk,result=result);bump(case);return x
 
 @transaction.atomic

@@ -3,6 +3,7 @@
 {% block content %}
 <header class="page-heading"><div><a class="back-link" href="{% url 'design_project' case.pk %}">← Project journey</a><h1>Money</h1><p>{{ case|workspace_name }}</p></div></header>
 {% include 'design/project_tabs.html' %}
+{% if access_required %}<section class="card"><h2>Finance access required</h2><p>Ask the workspace administrator for access to this project’s Money tab.</p></section>{% else %}
 <div class="factory-case-layout"><section class="card" aria-label="Contract and invoice amounts">
   <h2>Contract stages and invoices</h2>
   {% if money.limited %}<p role="status">Open the Finance workspace to review a smaller set of records.</p>{% endif %}
@@ -20,7 +21,8 @@
   {% if money.selected.amount is None %}<h2>Why this amount is unknown</h2>{% else %}<h2>Where {{ money.selected.currency }} {{ money.selected.amount|floatformat:'-8' }} comes from</h2>{% endif %}
   <p>{{ money.selected.label }}</p>
   {% if money.selected.missing_reason %}<p>{{ money.selected.missing_reason }}</p>{% endif %}
-  <ul>{% for source in money.selected.sources %}<li><a href="{{ source.url }}">{{ source.label }}</a></li>{% endfor %}</ul>
+  <ul>{% for source in money.selected.sources %}<li><a href="{{ source.url }}">{{ source.label }}</a>{% if source.at %} · <time datetime="{{ source.at|date:'c' }}">{{ source.at|date:'d M Y, H:i T' }}</time>{% endif %}</li>{% endfor %}</ul>
   <a href="{% url 'design_project_tab' case.pk 'money' %}">Close sources</a>
 </aside>{% endif %}</div>
+{% endif %}
 {% endblock %}

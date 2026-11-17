@@ -1,6 +1,7 @@
 """Prepare named synthetic cases for the state acceptance walkthrough."""
 import json
 import os
+from datetime import timedelta
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
@@ -14,12 +15,12 @@ from apps.documents.controlled import review_version
 from apps.documents.models import PublicationJob
 from apps.identity.actions import ACTIONS
 from apps.identity.models import Grant
-from apps.policy.role_assignments import draft as draft_roles
+from apps.policy.role_assignments import draft as draft_roles, draft_delegations
 from apps.policy.services import resolve, transition
 from apps.workflows import factory, factory_minutes
 from apps.workflows.models import FactoryWork
-from tests import document_helpers, planning_helpers, test_commercial_changes
-from tests.billing_helpers import coverage, stage_policy
+from tests import document_helpers, factory_rfp_helpers, planning_helpers, test_commercial_changes
+from tests.billing_helpers import coverage, policy, stage_policy
 from tests.helpers import rev, signed
 from tests.test_change_impacts import ChangeImpactTests
 from tests.test_factory_minutes import FactoryMinutesTests
@@ -35,7 +36,7 @@ class InterruptedMinutesDelivery(InternalPublicationAdapter):
 def prepare(key, operator):
     case, created = Case.objects.get_or_create(tenant='design-state-walkthrough', kind='project', synthetic=True,
                                                title='Browser design states · ' + key)
-    if key == 'delegation':
+    if key in {'delegation', 'delegation-periods', 'delegation-read-only'}:
         if created:
             Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
         second, _ = get_user_model().objects.get_or_create(username='state-check-delegation-recipient')
@@ -45,10 +46,21 @@ def prepare(key, operator):
             proof = add_evidence(operator, case.pk, 'policy_decision', 'Synthetic draft-only verification decision',
                                  'synthetic:state-walkthrough')
         if resolve('D05.role_principal_assignments', case).status != 'ACTIVE':
-            policy = draft_roles(operator, case.pk, [{'role': 'PM', 'user_id': operator.pk},
+            role_policy = draft_roles(operator, case.pk, [{'role': 'PM', 'user_id': operator.pk},
                 {'role': 'PM', 'user_id': second.pk}], proof.pk, timezone.now())
-            transition(operator, policy.pk, 'validated')
-            transition(operator, policy.pk, 'active')
+            transition(operator, role_policy.pk, 'validated')
+            transition(operator, role_policy.pk, 'active')
+        if key == 'delegation-periods' and resolve('D05.delegation_rules', case).status != 'ACTIVE':
+            now = timezone.now()
+            rules = [{'role': 'PM', 'principal_id': operator.pk, 'delegate_id': second.pk,
+                      'valid_from': (now + timedelta(days=start)).isoformat(),
+                      'valid_until': (now + timedelta(days=end)).isoformat()}
+                     for start, end in [(-6, -4), (-2, 2), (4, 6)]]
+            configured = draft_delegations(operator, case.pk, rules, proof.pk, now)
+            transition(operator, configured.pk, 'validated')
+            transition(operator, configured.pk, 'active')
+        if key == 'delegation-read-only' and created:
+            Grant.objects.filter(case=case, user=operator, action='policy.configure').update(active=False)
         return {'case': str(case.pk), 'evidence': proof.pk, 'delegate': second.pk}
     if not created:
         existing = FactoryWork.objects.filter(case=case).first()
@@ -58,10 +70,29 @@ def prepare(key, operator):
         with patch.object(planning_helpers, 'setup_case', return_value=(operator, case)):
             planning = planning_helpers.fixture(configured=True, username='state-assistant-draft')
         return {'case': str(case.pk), 'packet': planning['packet'].pk}
-    if key == 'signed-money':
+    if key in {'signed-money', 'known-money'}:
         agreement = signed(operator, case)['signature']
-        stage_policy(operator, case, coverage(operator, case), agreement)
+        billing = coverage(operator, case)
+        stage_policy(operator, case, billing, agreement)
+        if key == 'known-money':
+            transition(operator, resolve('D12.stage_terms', case).configuration.pk, 'revoked')
+            policy(operator, case, 'D12.stage_terms', [
+                {'coverage_id': billing.pk, 'stage': 'signed_sow', 'amount': '30.00', 'due_date': '2026-11-01'},
+                {'coverage_id': billing.pk, 'stage': 'uat', 'amount': '42.50', 'due_date': '2026-12-02'},
+                {'coverage_id': billing.pk, 'stage': 'completion', 'amount': '63.75', 'due_date': '2026-12-16'},
+            ])
+            policy(operator, case, 'D12.uat_billing_predicate_ref',
+                   {'coverage_id': billing.pk, 'stage': 'uat', 'milestone_name': 'Synthetic client acceptance'})
         return {'case': str(case.pk), 'agreement': agreement.pk}
+    if key in {'bid-loss-walkthrough', 'bid-win-walkthrough'}:
+        with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
+            data = factory_rfp_helpers.configured(reference='RFP-SAMPLE-' + key.upper())
+        work = factory_rfp_helpers.start(data, key=key)
+        response, _ = factory_rfp_helpers.reviewed_document(data, work)
+        factory.run_until_wait(work.pk)
+        submission = response.submissions.get()
+        return {'case': str(case.pk), 'work': work.pk, 'submission': submission.pk,
+                'evidence': data['evidence']['rfp_outcome'].pk}
     users = get_user_model().objects
     create_user = users.create_user
     if key == 'changed-milestone':
@@ -101,14 +132,21 @@ def prepare(key, operator):
     return {'case': str(case.pk), 'work': entry.work.pk}
 
 
-if os.environ.get('RAILWAY_ENVIRONMENT_NAME') != 'design-acceptance':
+if (os.environ.get('RAILWAY_ENVIRONMENT_NAME') != 'design-acceptance' or
+        os.environ.get('RAILWAY_PROJECT_ID') != 'f957481b-c6f7-43af-bc66-449a330a9d53'):
     raise SystemExit('Exact isolated acceptance environment required')
 
 trial = get_user_model().objects.get(username='psl-agent-trial', is_active=True, is_staff=False, is_superuser=False)
-for fixture in ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain'):
+fixtures = ('known-money', 'bid-loss-walkthrough', 'bid-win-walkthrough', 'delegation-periods', 'delegation-read-only') if os.environ.get('PSL_STATE_WALKTHROUGH') == 'money-and-bids' else (
+    'delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
+failed = False
+for fixture in fixtures:
     try:
         result = prepare(fixture, trial)
     except Exception as exc:
+        failed = True
         print(f'PSL_STATE_ERROR={fixture}: {type(exc).__name__}: {str(exc)[:240]}', flush=True)
     else:
         print('PSL_STATE_FIXTURE=' + json.dumps({'fixture': fixture, **result}), flush=True)
+if failed:
+    raise SystemExit(1)

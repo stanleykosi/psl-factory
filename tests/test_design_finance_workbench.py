@@ -11,7 +11,7 @@ from apps.finance.models import ReceivableSnapshot
 from apps.identity.models import Grant
 from apps.policy.services import active_component, transition
 from tests import settlement_helpers as finance
-from tests.billing_helpers import stage_policy
+from tests.billing_helpers import policy, stage_policy
 from tests.helpers import rev, setup_case, signed
 from tests.obligation_helpers import issue_identified
 
@@ -69,7 +69,36 @@ class DesignFinanceWorkbenchTests(TestCase):
         self.assertContains(page, 'Applied receipt tx-cash-1')
         self.assertEqual(self.client.get(url, {'figure': 'invoice-900000000'}).status_code, 404)
         Grant.objects.filter(case=self.case, user=self.actor, action='finance.read').update(active=False)
-        self.assertEqual(self.client.get(url, figure).status_code, 403)
+        denied = self.client.get(url, figure)
+        self.assertContains(denied, 'Finance access required', status_code=403)
+        self.assertNotContains(denied, invoice.reference, status_code=403)
+
+    def test_project_money_reads_populated_current_stage_terms_without_assuming_invoices(self):
+        proof = signed(self.actor, self.case)['signature']
+        stage_policy(self.actor, self.case, self.coverage, proof)
+        rule = active_component('D12.stage_terms', self.case)
+        transition(self.actor, rule.pk, 'revoked')
+        current = policy(self.actor, self.case, 'D12.stage_terms', [
+            {'coverage_id': self.coverage.pk, 'stage': 'uat', 'amount': '42.50', 'due_date': '2026-12-02'},
+            {'coverage_id': self.coverage.pk, 'stage': 'completion', 'amount': '63.75', 'due_date': '2026-12-16'},
+        ])
+        policy(self.actor, self.case, 'D12.uat_billing_predicate_ref', {
+            'coverage_id': self.coverage.pk, 'stage': 'uat', 'milestone_name': 'Verified acceptance milestone',
+        })
+        self.client.force_login(self.actor)
+        url = reverse('design_project_tab', args=[self.case.pk, 'money'])
+        for stage, amount, due_date in [('uat', '42.50', '2026-12-02'), ('completion', '63.75', '2026-12-16')]:
+            page = self.client.get(url, {'figure': stage})
+            self.assertContains(page, f'Due {due_date}')
+            self.assertContains(page, f'Reviewed contract stage terms · version {current.revision}')
+            self.assertEqual(page.context['money']['selected']['amount'], amount)
+            self.assertEqual(page.context['money']['selected']['invoices'], [])
+        milestones = reverse('design_project_tab', args=[self.case.pk, 'milestones'])
+        page = self.client.get(milestones)
+        self.assertContains(page, 'Verified acceptance milestone')
+        self.assertContains(page, 'Completion awaits evidence')
+        Grant.objects.filter(case=self.case, user=self.actor, action='finance.read').update(active=False)
+        self.assertNotContains(self.client.get(milestones), 'Signed billing milestones')
 
     def test_client_details_show_captured_coverage_and_only_verified_invoice_amounts(self):
         self.client.force_login(self.actor)

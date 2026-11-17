@@ -6,11 +6,12 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Exists, OuterRef
 from django.http import Http404
 from django.urls import reverse
+from django.utils.dateparse import parse_datetime
 
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import ReadBudget, ReadLimit, limit_queries
 from apps.identity.services import require
-from apps.pmo.models import Baseline
+from apps.pmo.models import Baseline, Milestone
 from apps.policy.services import reference_values, resolve
 
 from . import cash, corrections
@@ -21,20 +22,33 @@ from .models import BillingCoverage, Invoice, InvoiceIssue
 STAGES = {'signed_sow': 'Signed agreement', 'uat': 'User acceptance testing', 'completion': 'Completion'}
 
 
+def expected_milestone(case, coverage, stage):
+    if stage == 'signed_sow':
+        return None
+    predicate = resolve(f'D12.{stage}_billing_predicate_ref', case)
+    if predicate.status == 'ACTIVE':
+        rule = reference_values(predicate.configuration)[0]
+        if rule['coverage_id'] == coverage.pk:
+            return rule['milestone_name']
+    return None
+
+
 def terms(case):
     contract = resolve('D12.contract_version_ref', case)
     if contract.status != 'ACTIVE':
-        return {}, None, None
+        return {}, None, None, None
     contract_binding = reference_values(contract.configuration)[0]
     baseline = Baseline.objects.filter(case=case, signed_id=contract_binding['signed_evidence_id'],
-                                       signed__sha256=contract_binding['signed_sha256']).first()
+        signed__sha256=contract_binding['signed_sha256'], signed__in=public_evidence(case.evidence.all())
+    ).select_related('signed').first()
     if not baseline:
-        return {}, None, None
+        return {}, None, None, None
     coverage_id = contract_binding['coverage_id']
     stage_policy = resolve('D12.stage_terms', case)
-    values = reference_values(stage_policy.configuration) if stage_policy.status == 'ACTIVE' else []
+    configuration = stage_policy.configuration if stage_policy.status == 'ACTIVE' else None
+    values = reference_values(configuration) if configuration else []
     rows = {item['stage']: item for item in values if item['coverage_id'] == coverage_id}
-    return rows, baseline, coverage_id
+    return rows, baseline, coverage_id, configuration
 
 
 def invoice_rows(actor, case, budget):
@@ -73,15 +87,15 @@ def projection(actor, case, figure=None):
     budget = ReadBudget()
     try:
         with limit_queries(400):
-            records, baseline, scope = terms(case)
+            records, baseline, scope, configuration = terms(case)
             cover = BillingCoverage.objects.filter(case=case, pk=scope).first() if scope else None
             invoices = invoice_rows(actor, case, budget)
-            return build(case, records, baseline, cover, invoices, figure, budget)
+            return build(case, records, baseline, cover, invoices, figure, budget, configuration)
     except ReadLimit:
         return {'rows': [], 'limited': True}
 
 
-def build(case, records, baseline, cover, invoices, figure, budget):
+def build(case, records, baseline, cover, invoices, figure, budget, configuration):
     rows = []
     selected = None
     finance_url = reverse('finance_settlement', args=[case.pk])
@@ -94,7 +108,7 @@ def build(case, records, baseline, cover, invoices, figure, budget):
             grouped.setdefault(prep.kind, []).append(invoice)
 
     def add(key, label, amount, currency, completion, attached, sources, *, due_date=None, contract_stage=False,
-            missing_reason=None):
+            missing_reason=None, expected_name=None):
         nonlocal selected
         lines = []
         for invoice in attached:
@@ -112,7 +126,7 @@ def build(case, records, baseline, cover, invoices, figure, budget):
         item = {'label': label, 'amount': amount, 'currency': currency, 'completion': completion, 'invoices': lines,
                 'due_date': due_date, 'contract_stage': contract_stage,
                 'url': money_url + '?' + urlencode({'figure': key}) if has_figure else None,
-                'sources': sources, 'missing_reason': missing_reason}
+                'sources': sources, 'missing_reason': missing_reason, 'expected_name': expected_name}
         rows.append(item)
         if key == figure and has_figure:
             selected = item
@@ -120,19 +134,28 @@ def build(case, records, baseline, cover, invoices, figure, budget):
     if cover:
         for stage, label in STAGES.items():
             attached = grouped.get(stage, [])
-            completion = next((item.preparation.handoff.milestone for item in attached if item.preparation.handoff_id), None)
-            if completion and not public_evidence(case.evidence.filter(pk=completion.evidence_id)).exists():
-                completion = None
+            expected_name = expected_milestone(case, cover, stage)
+            milestones = Milestone.objects.filter(case=case, evidence__in=public_evidence(case.evidence.all()))
+            completion = milestones.filter(name=expected_name).first() if expected_name else None
+            if not completion:
+                completion = milestones.filter(pk__in=[item.preparation.handoff.milestone_id for item in attached
+                                                       if item.preparation.handoff_id]).order_by('-completed_at', '-pk').first()
             record = records.get(stage, {})
-            sources = [{'label': f'Signed agreement · recorded signature {baseline.signed_id}', 'url': contract_url}]
+            sources = [{'label': f'Signed agreement · recorded signature {baseline.signed_id}', 'url': contract_url,
+                        'at': baseline.signed.created_at}]
             if record:
-                sources.append({'label': 'Reviewed contract stage terms', 'url': reverse('finance_billing', args=[case.pk])})
+                sources.append({'label': f'Reviewed contract stage terms · version {configuration.revision}',
+                                'url': reverse('finance_billing', args=[case.pk]),
+                                'at': parse_datetime(configuration.envelope['effective_from'])})
+            if completion:
+                sources.append({'label': f'Completion proof · {completion.name}', 'url': reverse('case', args=[case.pk]),
+                                'at': completion.completed_at})
             amount = record.get('amount')
             reason = None
             if amount is None:
                 reason = 'The reviewed stage terms do not state an amount.' if record else 'There are no current reviewed terms for this stage.'
             add(stage, label, amount, cover.currency, completion, attached, sources,
-                due_date=record.get('due_date'), contract_stage=True, missing_reason=reason)
+                due_date=record.get('due_date'), contract_stage=True, missing_reason=reason, expected_name=expected_name)
 
     grouped_ids = {item.pk for values in grouped.values() for item in values}
     for invoice in invoices:

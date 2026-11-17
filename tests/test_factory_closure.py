@@ -162,6 +162,9 @@ class FactoryClosureTests(TestCase):
         self.client.force_login(f.actor);url=reverse('factory_detail',args=[f.work.pk]);page=self.client.get(url)
         self.assertContains(page,'Head of PMO closure decision');self.assertContains(page,'PM performance summary, risks and resolutions')
         self.assertNotContains(page,'Continue eligible work');self.assertEqual(page['Cache-Control'],'no-store')
+        projects = reverse('workspace_overview')
+        self.assertIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'active'}).context['cases'])
+        self.assertNotIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'closed'}).context['cases'])
         decision=approve(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'verified',f.work.finding);proof=closure.verify(f.work)
         self.assertTrue(proof['verified']);self.assertEqual(proof['decision'],decision.pk)
@@ -174,6 +177,8 @@ class FactoryClosureTests(TestCase):
         result=closure_requirements(f.d,{k:f.inputs[k] for k in ['retrospective_id','report_evidence_id']})
         self.assertEqual(result['checks'][0]['status'],'closed');self.assertFalse(result['ready_to_prepare'])
         self.assertEqual(result['recorded_closure_id'],proof['closure'])
+        self.assertIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'closed'}).context['cases'])
+        self.assertNotIn(f.case, self.client.get(projects, {'kind': 'project', 'lifecycle': 'active'}).context['cases'])
 
     def test_unknown_intake_and_missing_profile_capture_correct_and_continue_with_same_allowance(self):
         f=setup(known=False,profile=False,base=self.base);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()

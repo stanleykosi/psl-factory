@@ -20,7 +20,7 @@ from . import test_commercial_changes as commercial_helpers
 DEFINITION={'document_type':'rfp_response','required_fields':['executive_summary','scope','requirements_mapping','commercial_terms'],
     'audience_fields':{'client':['executive_summary', 'scope', 'requirements_mapping', 'commercial_terms', 'timeline', 'risks', 'dependencies', 'status']}}
 
-def fixture():
+def fixture(reference='RFP-001'):
     a,c,e,_=commercial_helpers.fixture();commercial_helpers.change_roles(a,c,e['policy_decision'])
     for k in ['rfp_commercial_terms','rfp_intake','rfp_deadline','rfp_response','rfp_outcome','rfp_lessons','qa_estimate','product_input']:
         e[k]=add_evidence(a,c.pk,k,'Synthetic '+k+' source','synthetic:rfp')
@@ -31,7 +31,7 @@ def fixture():
     route={'kind':'rfp_submission','key':'client_bid','method':'internal_recipient_inbox','destination_ref':'synthetic:rfp-inbox','recipient_ids':[a.pk],'sender_roles':['PM']}
     rr=register_reference(a,c.pk,'rfp:route','schema:psl/rfp-submission-route/v1',route,e['policy_decision'].pk)
     activate(a,c,'D11.adapter_configuration_refs',[rr.ref],e['policy_decision'])
-    rfp.intake(a,c.pk,'RFP-001',e['rfp_intake'].pk,timezone.now()-timedelta(hours=1),'not_stated',None,None,'Source explicitly has no deadline',rev(c))
+    rfp.intake(a,c.pk,reference,e['rfp_intake'].pk,timezone.now()-timedelta(hours=1),'not_stated',None,None,'Source explicitly has no deadline',rev(c))
     rfp.assign(a,c.pk,a,'CEO',e['policy_decision'].pk,'Actual assignment evidence',rev(c))
     for team,kind in rfp.TEAMS.items():rfp.contribute(a,c.pk,team,e[kind].pk,rev(c))
     return a,c,e,t,route

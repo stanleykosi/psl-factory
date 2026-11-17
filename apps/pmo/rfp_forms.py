@@ -33,5 +33,8 @@ def forms_for(case,data=None):
         f.fields.update(fields)
         if action=='intake':f.fields['deadline_evidence'].required=False
         if action=='dispose':f.fields['lessons'].required=False
+        if action=='outcome':
+            f.fields['evidence'].required=False
+            f.fields['followup_on']=forms.DateField(required=False, label='Next check date')
         result.append({'action':action,'label':label,'form':f})
     return result
