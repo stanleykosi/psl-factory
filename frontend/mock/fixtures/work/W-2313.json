@@ -1,0 +1,234 @@
+{
+  "id": "W-2313",
+  "title": "Weekly sync · 10 Nov",
+  "line": "Formal minutes and action handoff",
+  "reference": "MIN-0141",
+  "state": "verified",
+  "revision": 8,
+  "stations": [
+    {
+      "name": "Confirm",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "File",
+      "status": "done"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-10T15:20:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-11-10T15:25:00Z"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted the client minutes",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "minutes",
+    "screen": "SCR-28",
+    "view": "internal",
+    "title": "Weekly sync · 10 Nov",
+    "subtitle": "Formal minutes and action handoff · MIN-0141",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "MIN-0141",
+          "label": "Minutes · MIN-0141"
+        }
+      ]
+    },
+    "revision": 8,
+    "status": {
+      "label": "Filed · Internal",
+      "tone": "verified"
+    },
+    "sections": [
+      {
+        "key": "filed",
+        "kind": "text",
+        "items": [
+          {
+            "id": "F-1",
+            "text": "Internal minutes are filed straight away; no review. 2 actions were created on the action list.",
+            "tag": {
+              "label": "Filed",
+              "tone": "verified"
+            }
+          }
+        ]
+      },
+      {
+        "key": "actions",
+        "kind": "table",
+        "title": "Created",
+        "columns": [
+          {
+            "key": "action",
+            "label": "Action",
+            "kind": "text"
+          },
+          {
+            "key": "owner",
+            "label": "Owner",
+            "kind": "text"
+          },
+          {
+            "key": "due",
+            "label": "Due",
+            "kind": "date",
+            "date_format": "day_month"
+          },
+          {
+            "key": "state",
+            "label": "State",
+            "kind": "tag"
+          }
+        ],
+        "items": [
+          {
+            "id": "A-1",
+            "cells": [
+              {
+                "column": "action",
+                "text": "ACT-0461 · Prepare test devices list"
+              },
+              {
+                "column": "owner",
+                "text": "Tunde Bello"
+              },
+              {
+                "column": "due",
+                "date": {
+                  "date": "2026-11-13",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "OPEN",
+                  "tone": "uncertain"
+                }
+              }
+            ]
+          },
+          {
+            "id": "A-2",
+            "values": {
+              "text": "Book go-live rehearsal"
+            },
+            "cells": [
+              {
+                "column": "action",
+                "text": "ACT-0462 · Book go-live rehearsal"
+              },
+              {
+                "column": "owner",
+                "text": "No owner yet"
+              },
+              {
+                "column": "due",
+                "date": {
+                  "unknown": true
+                }
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "OWNER NEEDED",
+                  "tone": "person"
+                }
+              }
+            ],
+            "steps": [
+              "assign_owner"
+            ]
+          }
+        ]
+      }
+    ],
+    "next": [
+      "Owners see their actions in My work."
+    ],
+    "links": [
+      {
+        "key": "open_actions",
+        "label": "Open actions",
+        "target": {
+          "kind": "project_tab",
+          "tab": "actions",
+          "case_id": "C-0211"
+        }
+      }
+    ],
+    "steps": [
+      {
+        "key": "assign_owner",
+        "label": "Assign owner",
+        "emphasis": "secondary",
+        "applies_to": "item",
+        "fields": [
+          {
+            "name": "owner",
+            "label": "Owner",
+            "type": "record",
+            "required": false,
+            "options_source": "line_options",
+            "placeholder": "Choose an owner"
+          }
+        ]
+      }
+    ]
+  }
+}

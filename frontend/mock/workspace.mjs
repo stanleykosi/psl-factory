@@ -174,7 +174,9 @@ function handle({ req, url, raw, cookies, me, work, overrides, operationId }) {
     return { status: 409, body: SCENARIO_BODIES[409] };
   }
 
-  const next = work[`${workId}.next`];
+  // F-28: a step that carries inputs.audience takes <id>.next.<audience> when one exists (internal minutes end filed); else <id>.next.
+  const audience = typeof body.inputs?.audience === 'string' ? work[`${workId}.next.${body.inputs.audience}`] : undefined;
+  const next = audience ?? work[`${workId}.next`];
   const scripted = work[`${workId}.steps`]?.[body.step];
   // A scripted failure that swaps in the next version (a redraft: 409) happens once; the step then succeeds on it.
   const replayed = scripted?.next === true && scripted.status !== 200 && next !== undefined && item.revision === next.revision;

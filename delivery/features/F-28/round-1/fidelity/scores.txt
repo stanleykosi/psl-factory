@@ -1,0 +1,5 @@
+board | width | coverage | visual | pass | waiver
+SCR-28-desktop-internal | 1440 | 63 (100 with exceptions) | 76.9 | no (visual < 90) | requested, D-83 standing waiver, pending design engineer
+SCR-28-mobile-internal | 390 | 40 (100 with exceptions) | 85.8 | no (visual < 90) | requested, D-83 standing waiver, pending design engineer
+SCR-28-desktop-published | 1440 | 63 (100 with exceptions) | 81.5 | no (visual < 90) | requested, D-83 standing waiver, pending design engineer
+SCR-28-mobile-published | 390 | 40 (100 with exceptions) | 89.9 | no (visual < 90) | requested, D-83 standing waiver, pending design engineer

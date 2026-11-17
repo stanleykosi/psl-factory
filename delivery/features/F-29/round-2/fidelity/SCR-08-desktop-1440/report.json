@@ -1,0 +1,1180 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-17T18:51:43.108Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-29/design/canvas/project/SCR-08-desktop.dc.html",
+  "boardName": "SCR-08-desktop.dc.html",
+  "pageUrl": "http://localhost:4851/projects/P-0101/documents/D-2901?v=2",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-29/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 72 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 86.4,
+    "coverageWithExceptions": 100,
+    "visual": 72
+  },
+  "visual": {
+    "score": 72,
+    "allCellsScore": 83.8,
+    "width": 1440,
+    "height": 1000,
+    "boardHeight": 1000,
+    "pageHeight": 1024,
+    "cell": 12,
+    "contentCells": 5849,
+    "mismatchedCells": 1636
+  },
+  "coverage": {
+    "total": 44,
+    "found": 38,
+    "coverage": 86.4,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 80,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 900
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 967
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LAGOON HEALTH / DOCUMENTS / SOW-0198",
+        "pageName": "LAGOON HEALTH / DOCUMENTS / SOW-0198",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "LAGOON HEALTH",
+        "pageName": "LAGOON HEALTH",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 100,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Statement of work · v2",
+        "pageName": "Statement of work · v2",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 128,
+          "w": 505,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 132,
+          "w": 449,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 698,
+          "y": 119,
+          "w": 654,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 698,
+          "y": 123,
+          "w": 654,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 700,
+          "y": 121,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 700,
+          "y": 125,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones 4",
+        "pageName": "Milestones 4",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 785,
+          "y": 121,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 785,
+          "y": 125,
+          "w": 129,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 6",
+        "pageName": "Documents 6",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 915,
+          "y": 121,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 915,
+          "y": 125,
+          "w": 133,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 121,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 125,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers 6",
+        "pageName": "Registers 6",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1124,
+          "y": 121,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 1124,
+          "y": 125,
+          "w": 120,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 9",
+        "pageName": "Actions 9",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1244,
+          "y": 121,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 1244,
+          "y": 125,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AWAITING PMO LEAD REVIEW",
+        "pageName": "AWAITING PMO LEAD REVIEW",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 179,
+          "w": 188,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 191,
+          "w": 188,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v2",
+        "pageName": "v2",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 270,
+          "w": 15,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 287,
+          "w": 15,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TEST TEMPLATE",
+        "pageName": "TEST TEMPLATE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 889,
+          "y": 270,
+          "w": 86,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 889,
+          "y": 288,
+          "w": 86,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "1. Scope",
+        "pageName": "1. Scope",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 315,
+          "w": 865,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 334,
+          "w": 865,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The patient app covers booking, reminders and results for 3 clinics.",
+        "pageName": "The patient app covers booking, reminders and results for 3 clinics.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 338,
+          "w": 865,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 357,
+          "w": 865,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "2. Deliverables",
+        "pageName": "2. Deliverables",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 393,
+          "w": 865,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 413,
+          "w": 865,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Android and iOS apps; staff web console; handover pack.",
+        "pageName": "Android and iOS apps; staff web console; handover pack.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 416,
+          "w": 865,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 436,
+          "w": 865,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "3. Milestones and stages",
+        "pageName": "3. Milestones and stages",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 472,
+          "w": 865,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 491,
+          "w": 865,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "4 stages; amounts from the costing approved 24 Jun.",
+        "pageName": "4 stages; amounts from the costing approved 24 Jun.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 495,
+          "w": 865,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 514,
+          "w": 865,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "4. Assumptions",
+        "pageName": "4. Assumptions",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 550,
+          "w": 865,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 569,
+          "w": 865,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client supplies clinic data by week 2.",
+        "pageName": "Client supplies clinic data by week 2.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 573,
+          "w": 865,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 592,
+          "w": 865,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola: the minutes say \"week 3\". Check which is right.",
+        "pageName": "Tola (agent note) : the minutes say \"week 3\". Check which is right. Minutes MIN-0141",
+        "pageRole": "text",
+        "similarity": 83,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 604,
+          "w": 865,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 623,
+          "w": 865,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "5. Out of scope",
+        "pageName": "5. Out of scope",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 654,
+          "w": 865,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 675,
+          "w": 865,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Insurance claims; lab integrations.",
+        "pageName": "Insurance claims; lab integrations.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 110,
+          "y": 677,
+          "w": 865,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 110,
+          "y": 698,
+          "w": 865,
+          "h": 22
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1019,
+          "y": 258,
+          "w": 333,
+          "h": 642
+        },
+        "pageBox": {
+          "x": 1019,
+          "y": 275,
+          "w": 333,
+          "h": 693
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CHECKS",
+        "pageName": "CHECKS",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1021,
+          "y": 260,
+          "w": 329,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 1021,
+          "y": 277,
+          "w": 329,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "YOUR REVIEW · PMO LEAD",
+        "pageName": "YOUR REVIEW · PMO LEAD",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "bar under it on the page (#C8401C), none on the board"
+        ],
+        "boardBox": {
+          "x": 1021,
+          "y": 573,
+          "w": 329,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1021,
+          "y": 614,
+          "w": 329,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note for the PM (needed to return)",
+        "pageName": "Note for the PM (needed to return)",
+        "pageRole": "textbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1035,
+          "y": 650,
+          "w": 301,
+          "h": 74
+        },
+        "pageBox": {
+          "x": 1035,
+          "y": 698,
+          "w": 301,
+          "h": 88
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Approve v2",
+        "pageName": "Approve v2",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1035,
+          "y": 734,
+          "w": 301,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1035,
+          "y": 796,
+          "w": 301,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Return with note",
+        "pageName": "Return with note",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1035,
+          "y": 794,
+          "w": 301,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1035,
+          "y": 856,
+          "w": 301,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "key": "link: Overview",
+        "container": "navigation",
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 9: the shared frame shows the destinations /me lists for the persona; the acting PM sees no Overview. Frame built as every project page (D-99, D-110).",
+          "approved_by": "design engineer, 17 Nov 2026 — D-111"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "key": "link: Setup",
+        "container": "navigation",
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 9: the shared frame shows the destinations /me lists for the persona; the acting PM sees no Setup.",
+          "approved_by": "design engineer, 17 Nov 2026 — D-111"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kemi Adebayo · PMO Lead",
+        "key": "text: Kemi Adebayo · PMO Lead",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1199,
+          "y": 20,
+          "w": 153,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 9: the frame shows the signed-in persona (the mock's PM, 'Tunde Bello · PM'); the review is drawn as the PMO Lead.",
+          "approved_by": "design engineer, 17 Nov 2026 — D-111"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Drafted by Tola from the planning record and the approved costing. Changes since v1 are 2 sections; the version history keeps v1.",
+        "key": "text: Drafted by Tola from the planning record and the approved costing. Changes since v1 are 2 sections; the version history keeps v1.",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 220,
+          "w": 1264,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 5: the count and 'history keeps v1' are not sent (G-SCR08-4); the page shows the backend's own decision.changes text after the drafted-by line.",
+          "approved_by": "design engineer, 17 Nov 2026 — D-111"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Compare with v1",
+        "key": "link: Compare with v1",
+        "container": "main",
+        "boardBox": {
+          "x": 141,
+          "y": 270,
+          "w": 99,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 5 and 11: version history and compare are G-SCR08-4, not built. The backend's own `decision.changes` text is shown instead.",
+          "approved_by": "design engineer, 17 Nov 2026 — D-111"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approving records your name and time. Sending to the client is a separate step.",
+        "key": "text: Approving records your name and time. Sending to the client is a separate step.",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1035,
+          "y": 854,
+          "w": 301,
+          "h": 30
+        },
+        "exception": {
+          "reason": "Conflicts 13: the page says 'Approving does not send it to the client.'; the separate step is defined by no source.",
+          "approved_by": "design engineer, 17 Nov 2026 — D-111"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Start work\"",
+        "kind": "Link",
+        "name": "Start work",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (75% across), right on the page (87% across)"
+        ]
+      },
+      {
+        "label": "Link \"More ways to start\"",
+        "kind": "Link",
+        "name": "More ways to start",
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (80% across), right on the page (93% across)"
+        ]
+      },
+      {
+        "label": "Text \"LAGOON HEALTH / DOCUMENTS / SOW-0198\"",
+        "kind": "Text",
+        "name": "LAGOON HEALTH / DOCUMENTS / SOW-0198",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Link \"LAGOON HEALTH\"",
+        "kind": "Link",
+        "name": "LAGOON HEALTH",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 100,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 900
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 967
+        },
+        "reasons": [
+          "order: on the board it comes after Heading \"3. Milestones and stages\"; on the page it comes after Text \"4 stages; amounts from the costing approved 24 Jun.\""
+        ]
+      },
+      {
+        "label": "Side panel \"\"",
+        "kind": "Side panel",
+        "name": "",
+        "boardBox": {
+          "x": 1019,
+          "y": 258,
+          "w": 333,
+          "h": 642
+        },
+        "pageBox": {
+          "x": 1019,
+          "y": 275,
+          "w": 333,
+          "h": 693
+        },
+        "reasons": [
+          "order: on the board it comes after Heading \"4. Assumptions\"; on the page it comes after Text \"Client supplies clinic data by week 2.\""
+        ]
+      },
+      {
+        "label": "Text \"YOUR REVIEW · PMO LEAD\"",
+        "kind": "Text",
+        "name": "YOUR REVIEW · PMO LEAD",
+        "boardBox": {
+          "x": 1021,
+          "y": 573,
+          "w": 329,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1021,
+          "y": 614,
+          "w": 329,
+          "h": 43
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Client supplies clinic data by week 2.\"; on the page it comes after Text \"Tola: the minutes say \"week 3\". Check which is right.\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1034,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PM",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Documents",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 234,
+          "w": 1264,
+          "h": 734
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Drafted by Tola from the planning record and the approved costing. Changes since v1: Section 3: stage amounts now follow costing COST-0140 v2; Section 4: assumption about clinic data timing.",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 234,
+          "w": 1264,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-29/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

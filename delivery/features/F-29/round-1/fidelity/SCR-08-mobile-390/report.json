@@ -1,0 +1,829 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-17T18:40:23.886Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-29/design/canvas/project/SCR-08-mobile.dc.html",
+  "boardName": "SCR-08-mobile.dc.html",
+  "pageUrl": "http://localhost:4853/projects/P-0102/documents/D-2901?v=2",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-29/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 69.1 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 91.7,
+    "coverageWithExceptions": 100,
+    "visual": 69.1
+  },
+  "visual": {
+    "score": 69.1,
+    "allCellsScore": 70.4,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1349,
+    "cell": 12,
+    "contentCells": 2241,
+    "mismatchedCells": 693
+  },
+  "coverage": {
+    "total": 24,
+    "found": 22,
+    "coverage": 91.7,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SOW-0198",
+        "pageName": "SOW-0198",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 156,
+          "y": 19,
+          "w": 70,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "SOW · v2",
+        "pageName": "Statement of work · v2",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"SOW · v2\" on the board, \"Statement of work · v2\" on the page",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 26
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 374,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 92
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 110,
+          "w": 84,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 112,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones",
+        "pageName": "Milestones 4",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 102,
+          "y": 110,
+          "w": 103,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 112,
+          "w": 129,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents",
+        "pageName": "Documents 3",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 205,
+          "y": 110,
+          "w": 107,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 233,
+          "y": 112,
+          "w": 133,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 312,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 156,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers",
+        "pageName": "Registers 2",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 387,
+          "y": 110,
+          "w": 93,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 94,
+          "y": 156,
+          "w": 120,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AWAITING PMO LEAD REVIEW",
+        "pageName": "AWAITING PMO LEAD REVIEW",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 168,
+          "w": 188,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 214,
+          "w": 188,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TEST TEMPLATE",
+        "pageName": "TEST TEMPLATE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 201,
+          "w": 107,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 249,
+          "w": 107,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1. Scope",
+        "pageName": "1. Scope",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 246,
+          "w": 60,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 408,
+          "w": 330,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The patient app covers booking, reminders and results for 3 clinics.",
+        "pageName": "The patient app covers booking, reminders and results for 3 clinics.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 266,
+          "w": 295,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 430,
+          "w": 330,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2. Deliverables",
+        "pageName": "2. Deliverables",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 324,
+          "w": 104,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 487,
+          "w": 330,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Android and iOS apps; staff web console; handover pack.",
+        "pageName": "Android and iOS apps; staff web console; handover pack.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 344,
+          "w": 319,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 509,
+          "w": 330,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3. Milestones and stages",
+        "pageName": "3. Milestones and stages",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 402,
+          "w": 171,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 566,
+          "w": 330,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "4 stages; amounts from the costing approved 24 Jun.",
+        "pageName": "4 stages; amounts from the costing approved 24 Jun.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 422,
+          "w": 303,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 588,
+          "w": 330,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "4. Assumptions",
+        "pageName": "4. Assumptions",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 480,
+          "w": 108,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 645,
+          "w": 330,
+          "h": 16
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client supplies clinic data by week 2.",
+        "pageName": "Client supplies clinic data by week 2.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 500,
+          "w": 231,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 667,
+          "w": 330,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola flagged section 4: the minutes say \"week 3\".",
+        "pageName": "Tola flagged section 4: the minutes say \"week 3\". Check which is right.",
+        "pageRole": "text",
+        "similarity": 87,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 543,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 1164,
+          "w": 358,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Return",
+        "pageName": "Return",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 175,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 729,
+          "w": 175,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Approve",
+        "pageName": "Approve",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 199,
+          "y": 776,
+          "w": 175,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 199,
+          "y": 729,
+          "w": 175,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Lagoon Health",
+        "key": "link: ← Lagoon Health",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 114,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: the shared phone bar names the way back 'Back to <project>' (shell, D-99); the visible text is '← <project>'.",
+          "approved_by": "design engineer, 17 Nov 2026 — D-111"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AMOUNTS MATCH COSTING",
+        "key": "text: AMOUNTS MATCH COSTING",
+        "container": "page",
+        "boardBox": {
+          "x": 129,
+          "y": 201,
+          "w": 172,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 7: the phone tag shows the backend's own text for the amounts check (e.g. 'MATCHES COST-0140 V2'), never a sentence built in the browser.",
+          "approved_by": "design engineer, 17 Nov 2026 — D-111"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"SOW-0198\"",
+        "kind": "Text",
+        "name": "SOW-0198",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 156,
+          "y": 19,
+          "w": 70,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (49% across)",
+          "inside the main area on the board, inside the top bar on the page"
+        ]
+      },
+      {
+        "label": "Tabs \"Project\"",
+        "kind": "Tabs",
+        "name": "Project",
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 374,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 92
+        },
+        "reasons": [
+          "order: on the board it comes after Heading \"SOW · v2\"; on the page it comes after Tab \"Documents\""
+        ]
+      },
+      {
+        "label": "Tab \"Money\"",
+        "kind": "Tab",
+        "name": "Money",
+        "boardBox": {
+          "x": 312,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 156,
+          "w": 76,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: right on the board (90% across), left on the page (14% across)"
+        ]
+      },
+      {
+        "label": "Tab \"Registers\"",
+        "kind": "Tab",
+        "name": "Registers",
+        "boardBox": {
+          "x": 387,
+          "y": 110,
+          "w": 93,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 94,
+          "y": 156,
+          "w": 120,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: right on the board (111% across), middle on the page (39% across)"
+        ]
+      },
+      {
+        "label": "Text \"Tola flagged section 4: the minutes say \"week 3\".\"",
+        "kind": "Text",
+        "name": "Tola flagged section 4: the minutes say \"week 3\".",
+        "boardBox": {
+          "x": 16,
+          "y": 543,
+          "w": 358,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 1164,
+          "w": 358,
+          "h": 39
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Client supplies clinic data by week 2.\"; on the page it comes after Link \"Approve\"",
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Link \"Return\"",
+        "kind": "Link",
+        "name": "Return",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 175,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 729,
+          "w": 175,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Link \"Approve\"",
+        "kind": "Link",
+        "name": "Approve",
+        "boardBox": {
+          "x": 199,
+          "y": 776,
+          "w": 175,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 199,
+          "y": 729,
+          "w": 175,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Lagoon Health",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 106,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 4",
+        "container": "tablist",
+        "pageBox": {
+          "x": 214,
+          "y": 156,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Documents",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 249,
+          "w": 358,
+          "h": 1084
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MATCHES COST-0140 V2",
+        "container": "main",
+        "pageBox": {
+          "x": 129,
+          "y": 249,
+          "w": 154,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Drafted by Tola from the planning record and the approved costing. Changes since v1: Section 3: stage amounts now follow costing COST-0140 v2; Section 4: assumption about clinic data timing.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 292,
+          "w": 358,
+          "h": 84
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola (agent note) : the minutes say \"week 3\". Check which is right. Minutes MIN-0141",
+        "container": "main",
+        "pageBox": {
+          "x": 30,
+          "y": 693,
+          "w": 330,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "CHECKS",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 829,
+          "w": 354,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approving records your name and time. Approving does not send it to the client.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 787,
+          "w": 358,
+          "h": 39
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-29/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

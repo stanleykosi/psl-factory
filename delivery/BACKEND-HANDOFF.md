@@ -209,6 +209,17 @@ Screens: SCR-38 (default, changed), SCR-11, SCR-29 (`/projects/{caseId}/mileston
 - **Money rules relied on**: Unknown is never 0; completion, invoice and paid are separate facts; amounts as decimal strings.
 - **Also for F-25** (PMO): `summary.note` for the change sentence; a proposal for an "age does not apply" signal on closed issues; do `summary` counts reflect the `q` search?; what `finance_tracks` means for this person (shown as "Tracked by Finance"); does an absent `paid` mean nothing recorded?; please confirm the two static sentences (the SCR-11 footer rule and the SCR-38 footer); ask design for the other registers' columns; the paid labels are frontend wording for now. Limits: D-PROJECT-TAB-ROWS is proposed, the backend may change or refuse any field, there is no backend yet, and the Documents tab row shape is unsettled.
 
+## Added during F-28: the minutes line, finished (17 Nov)
+
+Screens: SCR-28 filed internal and published (work item `view: "internal"` / `"published"`, fixtures W-2309..W-2314). Contract mock only (D-LINE-WORKSPACE proposed): nothing is sent, filed or created; a real client send is gated by D-ALERT-PROVIDERS; the template is a test template. The frame draws only what the reloaded work item returns and adds no rule.
+
+- **Link kind `project_tab`** (G-SCR28-3): `workspace.links[]` target `{kind: "project_tab", tab, case_id}`; "Open actions" goes to `/projects/{case_id}/actions`. Drawn only for a known tab and a valid case id. `link.action_id` (per-action link) is recorded, not built.
+- **Receipts are per person** (G-SCR25-1): `recipients[].receipt` is the only delivery evidence. Only `received` may read Received. A person on a channel with no `receipt` reads "Unknown". The returned sentence and tag ("delivery confirmed", Delivered) are drawn as returned: the backend must only return a confirmed sentence and a verified tone when every recipient is `received`; the frame does not check.
+- **Created actions table**: columns action, owner, due (date or `{unknown: true}`), state (tag). An action with no owner returns the owner cell "No owner yet" and the tag "OWNER NEEDED" (tone `person`); OPEN is tone `uncertain`. The frame guesses nothing from text.
+- **Audience skips review** (no decision id): internal minutes end filed with no review; which audiences skip it is the backend's.
+- **Open**: G-SCR28-6 (action, decision, meeting records), G-SCR28-7 (actions created at confirm or at approval), where internal minutes are filed, D-RETURN, server-side refusal of a resend while delivery is uncertain (SEC-5-C1), the idempotency promise, and the project tab counts on the tab bar.
+- **Owner assignment** (W-2313 only): an item step `assign_owner` on an OWNER NEEDED action, through E-WORK-STEP and E-LINE-OPTIONS `minutes/owner`. No board draws it; keep or drop.
+
 ## Added during F-30: issue detail (17 Nov)
 
 Screens: SCR-30 (default, overdue, no owner, verified; `/work/W-2411..W-2414`), the issue's work item on the line workspace, contract mock only (D-LINE-WORKSPACE proposed; nothing released). Gap ids G-SCR30-* are in [gaps-a-project-setup.md](backend-handoff/gaps-a-project-setup.md).
