@@ -220,15 +220,24 @@
         "delivery/features/F-23/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:09Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "TECH-1-2",
@@ -243,15 +252,24 @@
         "delivery/features/F-23/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:10Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "TECH-1-3",
@@ -266,15 +284,24 @@
         "delivery/features/F-23/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:10Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "TECH-1-4",
@@ -289,15 +316,24 @@
         "delivery/features/F-23/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:10Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-1-1",
@@ -363,15 +399,24 @@
         "delivery/features/F-23/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:10Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-1-3",
@@ -386,15 +431,24 @@
         "delivery/features/F-23/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:10Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-1-4",
@@ -409,15 +463,24 @@
         "delivery/features/F-23/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:11Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-1-5",
@@ -432,15 +495,24 @@
         "delivery/features/F-23/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:11Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-1-6",
@@ -455,15 +527,24 @@
         "delivery/features/F-23/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:11Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-1-7",
@@ -478,15 +559,24 @@
         "delivery/features/F-23/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:11Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-1-8",
@@ -501,15 +591,24 @@
         "delivery/features/F-23/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:11Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UI-1-1",
@@ -728,15 +827,24 @@
         "delivery/features/F-23/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:12Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UI-1-6",
@@ -751,15 +859,24 @@
         "delivery/features/F-23/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-16T16:26:07Z",
           "head": "d5046515521bca99b4b7de220c4d524838cfff1f"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:12Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "SEC-1-1",
@@ -876,15 +993,24 @@
         "delivery/features/F-23/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-16T18:00:01Z",
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:12Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-2-1",
@@ -899,15 +1025,24 @@
         "delivery/features/F-23/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-16T18:00:01Z",
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:12Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UI-2-1",
@@ -1024,15 +1159,24 @@
         "delivery/features/F-23/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-16T18:00:01Z",
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:12Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "SEC-2-1",
@@ -1047,15 +1191,24 @@
         "delivery/features/F-23/round-2/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-security",
           "at": "2026-11-16T18:00:01Z",
           "head": "0d6dabf7e5d6f6d97e9283ca5da8e22e23016772"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:12Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "TECH-3-1",
@@ -1070,15 +1223,24 @@
         "delivery/features/F-23/round-3/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-17T09:33:18Z",
           "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:12Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "TECH-3-2",
@@ -1093,15 +1255,24 @@
         "delivery/features/F-23/round-3/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-17T09:33:18Z",
           "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:13Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UI-3-1",
@@ -1116,15 +1287,24 @@
         "delivery/features/F-23/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T09:33:18Z",
           "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:13Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UI-3-2",
@@ -1139,15 +1319,24 @@
         "delivery/features/F-23/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T09:33:18Z",
           "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:13Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "SEC-3-1",
@@ -1162,15 +1351,24 @@
         "delivery/features/F-23/round-3/review-security.md"
       ],
       "raised_by": "reviewer-security",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-security",
           "at": "2026-11-17T09:33:18Z",
           "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:13Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "QA-3-1",
@@ -1236,15 +1434,24 @@
         "delivery/features/F-23/round-3/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-17T10:35:17Z",
           "head": "d5f10f5a22b05103700b95c8c05a5cf8cdb212c7"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:13Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "QA-3-3",
@@ -1361,15 +1568,24 @@
         "delivery/features/F-23/round-4/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-17T11:26:38Z",
           "head": "778e868137d79b0b808b55c5c994c7345613d586"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:13Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UX-4-1",
@@ -1384,15 +1600,24 @@
         "delivery/features/F-23/round-4/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-17T11:26:38Z",
           "head": "778e868137d79b0b808b55c5c994c7345613d586"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:13Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "UI-4-1",
@@ -1407,15 +1632,24 @@
         "delivery/features/F-23/round-4/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-17T11:26:38Z",
           "head": "778e868137d79b0b808b55c5c994c7345613d586"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:13Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     },
     {
       "id": "QA-4-1",
@@ -1430,15 +1664,24 @@
         "delivery/features/F-23/round-4/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-17T11:41:41Z",
           "head": "778e868137d79b0b808b55c5c994c7345613d586"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T11:58:14Z",
+          "refs": [],
+          "head": "778e868137d79b0b808b55c5c994c7345613d586",
+          "reason": "non-blocking; fixed in a later round (see round-2..4 Verified lines) or routed to COORDINATOR-HANDOFF.md F-23 follow-ups / BACKEND-HANDOFF.md Added during F-23"
         }
-      ]
+      ],
+      "risk_authority": "coordinator, non-blocking routing under the merge delegation"
     }
   ],
   "prior_review_records": [

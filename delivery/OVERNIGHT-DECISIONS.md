@@ -179,3 +179,6 @@ The SCR-12-mobile waiver (77.8, D-107) also covers: phone cards about 12px talle
 
 ## D-109 · F-27 Setup delegation product acceptance (17 Nov 2026, design engineer: "accept")
 After a demo of the F-27 branch on localhost:3000 (contract mock), the design engineer accepted Setup delegation: no control appears unless the response provides it; only the backend's From/To/Authority values can be sent (the shown From is always sent); the two rule sentences read as drawn; nothing claims a delegation takes effect, moves tasks or grants anything; an unconfirmed add can't create a duplicate; the phone add uses the full-height drawer. Held with PSL: D05, D-ADMIN-AUTHORITY, D-DELEGATION-VIEW.
+
+## D-110 · F-25 project tabs waivers signed (17 Nov 2026, design engineer)
+Signed the 7 visual waivers — SCR-38-desktop 82.4, SCR-38-desktop-changed 79.1, SCR-11-desktop 84.8, SCR-38-mobile 76.7, SCR-38-mobile-changed 80.8, SCR-11-mobile 77.6, SCR-29-mobile 84.3 (SCR-29-desktop passes at 90.4) — covering the D-104 calls (Mark complete and Filter left out, the Changes column, the phone Paid line, "As of", invoice text until a status label), the shared project header and route line; and the three priority-marker exceptions ("frame item").
