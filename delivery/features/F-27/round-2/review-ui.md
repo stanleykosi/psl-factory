@@ -1,9 +1,15 @@
 VERDICT: PASS
-COMMIT: 34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3
+COMMIT: 43a3d5fcad8e0072a85bcab2625a446b88d037e6
 REVIEWER: reviewer-ui
 AUTHORITY: delivery UI review
 
-## Summary
+## Re-confirmed on the synced head (43a3d5fc)
+- `git diff --name-only 34c38e4e 43a3d5fc -- frontend` lists 26 files, all from the F-26 Money tab: `features/projects/` (MoneyTab, moneyModel, useMoney, money.css, ProjectJourney), `mock/money.mjs`, `mock/projects.mjs`, money/report fixtures and tests. Nothing under `features/setup`, `app/setup`, `shell`, `components` or `styles`, and no delegation mock or fixture file, is in the diff.
+- `mock/server.mjs` gains only an import and one route line before the M1 check. That route answers only `E-REPORT` and `E-PROJECT-TAB` with tab `money` (`isMoneyRequest`, `money.mjs:41-43`), so E-DELEGATIONS/E-DELEGATION routing is unchanged.
+- `money.css` is imported only by `MoneyTab.tsx`, and every selector in it is a `money` class, so no rule reaches the Setup page.
+- Neither delegation board can change from 34c38e4e. The round-2 fidelity results (desktop 84.0 under the D-107 waiver, phone 98.6) and this PASS stand. I did not re-run fidelity or start a server.
+
+## Summary (review at 34c38e4e)
 - All three round-1 UI findings are fixed. The phone sheet keeps Add and Cancel in the Drawer's sticky footer. The phone bar uses the bundle's `psl-actionbar` with a token `calc`. The panel-head colour difference is now a signed exception.
 - The 11 exceptions and the desktop visual waiver at 84.0 in `fidelity-exceptions.json` match D-107 item for item: the 10 frame/form differences, the ink panel head, the waiver's reasons, and the full-height Drawer.
 - Fidelity (the builder's single run with fonts loaded, `round-2/fidelity/scores.txt`): desktop is 100% after exceptions at visual 84.0, which equals the signed waiver. Phone is 100% after exceptions at visual 98.6 and passes. Both page.png files are byte-identical to round 1, so the round-2 code changed nothing on either board. The desktop mismatch count is the same (524 cells, page height 967). I did not use the font-less run (81.1) in `fonts-unreachable/`; the board was drawn with fallback fonts in that run.

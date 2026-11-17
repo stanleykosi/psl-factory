@@ -1,13 +1,23 @@
 VERDICT: PASS
-COMMIT: 34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3
+COMMIT: 43a3d5fcad8e0072a85bcab2625a446b88d037e6
 REVIEWER: qa
 AUTHORITY: delivery integrated QA
 
 ## Summary
-- I ran a production build of this head (`next start -p 4808`, built by the e2e run with `API_ORIGIN=http://127.0.0.1:4807`) against the contract mock (`MOCK_PORT=4807 node mock/server.mjs`). A Playwright session named `f-27-qa` drove 39 journeys at 1440 and 390 across the scenarios default, empty, readonly, forbidden, many, authority and single, and the save outcomes invalid, stale, uncertain and uncertain_written. All 39 passed. I also called the endpoints directly with curl.
+- Merged head 43a3d5fc (the dlv-00 merge that brings in F-26): I checked it and carried my verdict forward (see "Merged head" below). The journeys below were run on 34c38e4e, and the merge changes none of their code.
+- I ran a production build of 34c38e4e (`next start -p 4808`, built by the e2e run with `API_ORIGIN=http://127.0.0.1:4807`) against the contract mock (`MOCK_PORT=4807 node mock/server.mjs`). A Playwright session named `f-27-qa` drove 39 journeys at 1440 and 390 across the scenarios default, empty, readonly, forbidden, many, authority and single, and the save outcomes invalid, stale, uncertain and uncertain_written. All 39 passed. I also called the endpoints directly with curl.
 - e2e `E2E_PORT=4808 MOCK_PORT=4807 npx playwright test e2e/setup-delegation.spec.ts e2e/setup.spec.ts`: **26 passed (2.5m)**, exit 0. Focused vitest `npx vitest run tests/setup-delegation.test.tsx tests/setup-delegation-mock.test.ts tests/mock-contract.test.ts`: **3 files, 322 tests passed**.
 - `bash delivery/checks.sh` did **not** pass in my runs, and the cause was machine load, not this head. Django check, lint and typecheck passed both times, and both runs stopped at vitest. Run 1: 16 files failed, 69 passed (85); 6 tests failed, 1325 passed, 540 skipped (1871). Run 2: 17 files failed, 68 passed (85); 21 failed, 1357 passed, 493 skipped (1871). Every failure was "Hook timed out in 10000ms", "Test timed out in 30000ms" or a loading spinner still showing when the wait ran out. Parallel vitest runs from other worktrees (for example f-25) pushed the load average to 111 in run 1 and 585 in run 2. The build step did not run because the script stops at the first failure. The recorded gate on this head is `round-2/checks.md` GATE: PASS (1871 passed). I re-ran once, as instructed, and did not try a third time.
 - What remains unproved: no backend exists. Every result is against the contract mock, which is a proposal (D-DELEGATION-VIEW, G-SCR13A-1/-2/-4, `can_add`). Real per-record authority, tenant isolation, D05 delegation effects and the authority ceiling are the backend's and PSL's to build and prove. I faked 401, 403 and 404 on the PUT, a 5xx on the re-read, `can_add:false` and a missing `revision` with Playwright `page.route`, because the mock has no switch for them. Each such journey is marked "injected" below.
+
+## Merged head 43a3d5fc (checked by reading the diff and the logs; not re-driven)
+- `git merge-base --is-ancestor 34c38e4e 43a3d5fc`: yes, 34c38e4e is an ancestor. `git diff --stat 34c38e4e 43a3d5fc` limited to the F-27 and shared paths shows one change only: 3 added lines in `frontend/mock/server.mjs`. The paths were `features/setup`, `app/setup`, `mock/delegations.mjs` and its fixtures, `mock/proposals/setup.json`, `components`, `shell`, the package files, and the delegation tests and e2e.
+- The 3 lines import money.mjs and route `isMoneyRequest` before the M1 check. `isMoneyRequest` matches only `E-REPORT` and the `money` tab of `E-PROJECT-TAB`, so E-DELEGATIONS and E-DELEGATION go through the same CSRF, persona and delegations.mjs path as before. In `tests/mock-contract.test.ts`, the 501 probe moves from E-REPORT to E-PAYROLL-MATCH; the delegation cases are untouched.
+- The coordinator's logs:
+  - `round-2/merge-checks.log`: Django check with no issues; Test Files 88 passed (88); Tests 1947 passed (1947); the build completed (22/22 static pages).
+  - `round-2/merge-e2e.log`: 49 passed (4.3m) across setup-delegation (9), setup (17), setup-templates (11) and money (12).
+  - The logs do not print the commit they ran on. I accept the coordinator's statement that they were run on 43a3d5fc.
+- Judgement: this is enough. No F-27 code changed, the one shared change is fenced off from delegation, and a full gate plus the e2e passed at normal load. That also settles my earlier note that the gate needed a quiet re-run. The 39 journeys on 34c38e4e carry forward unchanged. I did not re-drive them on the merged head.
 
 ## Journeys (all on head 34c38e4e; evidence from `qa-run2.log` in my scratch folder)
 - J1 pass | default @1440: one GET; the rows are exactly the mock's items ("Kemi Adebayo · PMO Lead → Femi Ade · PMO Lead, 18–25 Nov 2026, Annual leave, Upcoming"; Ada → Chika, Ended).
@@ -58,6 +68,6 @@ None.
 - UI-1-2 | verified | J12/J17 @390: Add delegation, Cancel and Start again work from the sheet footer. The layout itself is UI's lens.
 
 ## Notes
-- checks.sh: as in the Summary, my two runs failed only on timeouts under load averages of 111 and 585. The F-27 suites pass in isolation (322). The coordinator may want to re-run the gate when the machine is quiet; nothing in this head's diff explains the failures. They also hit unrelated suites (work-item-board, decide-board, assistant, alerts-mock and others).
+- checks.sh: closed by the merged-head gate (1947 passed at normal load, above). Before that, my two runs on 34c38e4e failed only on timeouts under load averages of 111 and 585. The F-27 suites pass in isolation (322). The coordinator may want to re-run the gate when the machine is quiet; nothing in this head's diff explains the failures. They also hit unrelated suites (work-item-board, decide-board, assistant, alerts-mock and others).
 - Carried from TECH review: the spec's Contract line "from_person_id sent only when From came from from_options[] with two or more choices" is now also met for a single option (SEC-1-1). The backend handoff should record the new rule.
 - Housekeeping: I stopped mock PID 22440 (4807) and app PID 22497 (4808) after checking that both ran from the f-27 worktree's `frontend`. `frontend/test-results` is deleted and the worktree is clean at 34c38e4e. Scripts and logs are in `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/984b2492-735a-4d33-833d-007cd38fd896/scratchpad/f27-qa/` (`qa.mjs`, `qa-run2.log`, `e2e.log`, `checks.log`, `checks2.log`).

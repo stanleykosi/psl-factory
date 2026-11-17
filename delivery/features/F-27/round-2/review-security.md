@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3
+COMMIT: 43a3d5fcad8e0072a85bcab2625a446b88d037e6
 REVIEWER: reviewer-security
 AUTHORITY: delivery security review
 
@@ -24,3 +24,4 @@ None.
   - `STALE_UNREAD` and the notice when the list moved claim no effect beyond what was returned.
 - The round-1 notes still stand. The backend message on a 403/404 PUT is shown as is. D05, D-ADMIN-AUTHORITY and G-SCR13A-1/-5 are backend or PSL decisions. This screen is not a security control.
 - Evidence: I read the code and did not run anything. The tests cited are the builder's runs (322 vitest, 26 e2e).
+- Merged head 43a3d5fc, checked on 17 Nov. `git diff 34c38e4e..43a3d5fc` changes no delegation file: there is no diff under `features/setup/**`, `useDelegation*`, `mock/delegations.mjs` or the delegation fixtures, and none under `src/api/**`, `src/components/**`, `src/shell/**` or the package files. The only shared file touched is `frontend/mock/server.mjs`. There F-26 adds `isMoneyRequest`, which routes only the money tab of E-PROJECT-TAB and E-REPORT, before the M-1 list. E-DELEGATIONS and E-DELEGATION still go through the persona choice and the CSRF check (`server.mjs:265-270`) before `delegations.mjs`. `mock-contract.test.ts` only swaps its 501 example to E-PAYROLL-MATCH. The verdict stands. I did not open the coordinator's merge-checks.log or merge-e2e.log.

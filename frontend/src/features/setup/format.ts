@@ -79,3 +79,28 @@ export function groupButtonLabel(groupLabel: string): string {
   const word = first === first.toUpperCase() && /[A-Z]/.test(first) ? first : first.toLowerCase();
   return `Set ${[word, ...rest].join(' ')} rules`;
 }
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/** A contract date (YYYY-MM-DD, a calendar day: no time zone applies) as its parts, or null when malformed. */
+function dayParts(value: string): { day: string; month: string; year: string } | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  const month = match ? MONTHS[Number(match[2]) - 1] : undefined;
+  return match && month ? { day: match[3], month, year: match[1] } : null;
+}
+
+/** "18 Nov 2026"; a malformed value is shown as sent. */
+export function boardDate(value: string): string {
+  const p = dayParts(value);
+  return p ? `${p.day} ${p.month} ${p.year}` : value;
+}
+
+/** "18–25 Nov 2026", "28 Nov – 03 Dec 2026", "28 Dec 2026 – 03 Jan 2027", as the delegation boards write them. */
+export function dateRange(starts: string, ends: string): string {
+  const a = dayParts(starts);
+  const b = dayParts(ends);
+  if (!a || !b) return `${boardDate(starts)} – ${boardDate(ends)}`;
+  if (a.year !== b.year) return `${a.day} ${a.month} ${a.year} – ${b.day} ${b.month} ${b.year}`;
+  if (a.month !== b.month) return `${a.day} ${a.month} – ${b.day} ${b.month} ${b.year}`;
+  return `${a.day}–${b.day} ${b.month} ${b.year}`;
+}

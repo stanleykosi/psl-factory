@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3
+COMMIT: 43a3d5fcad8e0072a85bcab2625a446b88d037e6
 BUILDER: builder
 LANE: full
 
@@ -11,6 +11,7 @@ LANE: full
 - All 11 exceptions and the SCR-13-desktop-delegation visual waiver at 84.0 are marked approved by "design engineer, 16 Nov 2026 — D-107". The new panel-head colour-meaning entry is among them (UI-1-1).
 
 ## Changes
+- Base merge 2 (coordinator): dlv-00, including F-26 Money, merged at 43a3d5fc. It auto-merged `mock/server.mjs` and `mock-contract.test.ts`, and I checked both: the delegation import, both ids in `M1_OPERATIONS`, `resetDelegations()`, the route, and the mock-contract body, persona and stripper entries are all intact. No F-27 feature, mock or test file changed. On this head `checks.sh` exits 0 (1947 tests), and the setup-delegation, setup, setup-templates and money e2e give 49 passed (`round-2/merge-checks.log`, `merge-e2e.log`). The round-2 evidence below was taken at 34c38e4e.
 - Base merge: `origin/dlv-00-delivery-setup` merged at 2d2b1946 (delivery records only; no frontend change).
 - `frontend/src/features/setup/DelegationForm.tsx`:
   - `from_person_id = fromPerson.person_id` whenever From comes from `from_options[]`.

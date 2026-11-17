@@ -3,7 +3,18 @@ import { api, call } from '@/api/client';
 import { ApiError, errorFromResponse, networkError } from '@/api/errors';
 import type { operations } from '@/api/schema';
 
-import type { EvidenceBody, EvidenceResult, RulesPage, SaveBody, SaveBodyV4, SaveResult } from './contract-proposal';
+import type {
+  DelegationBody,
+  DelegationBodyV7,
+  DelegationResult,
+  DelegationsPage,
+  EvidenceBody,
+  EvidenceResult,
+  RulesPage,
+  SaveBody,
+  SaveBodyV4,
+  SaveResult,
+} from './contract-proposal';
 
 export type RulesArea = 'finance' | 'delivery';
 
@@ -48,6 +59,29 @@ export async function uploadTemplateVersion(templateId: string, body: TemplateUp
     throw error instanceof ApiError ? error : networkError();
   }
   if (result.response.ok) return result.data as TemplateUploadResult;
+  const error: UploadError = errorFromResponse(result.response.status, result.error);
+  const fields = (result.error as { fields?: unknown } | undefined)?.fields;
+  if (error.kind === 'invalid' && Array.isArray(fields)) {
+    error.fields = fields.filter((f): f is FieldProblem => typeof f?.name === 'string' && typeof f?.message === 'string');
+  }
+  throw error;
+}
+
+/** One page of E-DELEGATIONS with the overlay fields; `limit` is not sent (the board draws no rows-per-page). */
+export async function readDelegations(cursor?: string): Promise<DelegationsPage> {
+  const query = cursor ? { cursor } : {};
+  return (await call(api.GET('/api/v1/setup/delegations', { params: { query } }))) as DelegationsPage;
+}
+
+/** E-DELEGATION with the overlay body. Not sent through `call`, so a 422 keeps its fields[]. */
+export async function addDelegation(body: DelegationBody): Promise<DelegationResult> {
+  let result;
+  try {
+    result = await api.PUT('/api/v1/setup/delegation', { body: body as DelegationBodyV7 });
+  } catch (error) {
+    throw error instanceof ApiError ? error : networkError();
+  }
+  if (result.response.ok) return result.data as DelegationResult;
   const error: UploadError = errorFromResponse(result.response.status, result.error);
   const fields = (result.error as { fields?: unknown } | undefined)?.fields;
   if (error.kind === 'invalid' && Array.isArray(fields)) {
