@@ -77,3 +77,9 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 ### Process lesson (17 Nov)
 - Several features running full test suites at once drove load past 500 and made untouched tests time out. Run full checks one at a time; the coordinator re-runs them quietly before each merge. Merge dlv-00 into a branch before the final reviews, not after. Write the backend-handoff section during the build, not after PMO asks.
 - F-23 also routed (non-blocking, many fixed in later rounds): TECH-1-1..1-4, UX-1-2..1-8, UI-1-5/1-6, TECH-2-2, UX-2-1, UI-2-3, SEC-2-1, TECH-3-1/3-2, UI-3-1/3-2, SEC-3-1, TECH-4-1 — see each round's reviews; contract items are in BACKEND-HANDOFF "Added during F-23".
+
+## Sixth session (16–17 Nov 2026): six features merged
+- Merged to dlv-00 and main: F-22 weekly returned/received (PR #46), F-24 assistant part 1 (#48), F-26 Money tab (#50), F-27 Setup delegation (#52), F-23 minutes part 1 (#54), F-25 project tabs (#56); main synced after each (#47, #49, #51, #53, #55, #57). No worktrees open; disk 18 GB free.
+- Decisions D-96..D-110 in OVERNIGHT-DECISIONS.md (pause lifted; conflicts, waivers and product acceptances for each feature).
+- Next candidates (deps now met): minutes part 2 (SCR-28 internal, published), assistant "can't" (SCR-05), document review (SCR-08), mark milestone complete (SCR-19, needs FE-M2A-PROOF), issue detail (SCR-30), engagement/planning (SCR-41/42), the delivery line screens SCR-43..51, the Finance workspaces SCR-53..58, leadership report (SCR-52). Held by PSL: SCR-17, 20, 21, 27, 31, 39 and payroll (09, 18, 37, 59).
+- How to run: ≤3 builds at once; one full test suite at a time (load >30 makes untouched tests time out); merge dlv-00 into a branch before the final reviews; write the backend-handoff section during the build; re-pin reviews after any head change.
