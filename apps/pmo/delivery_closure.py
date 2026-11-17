@@ -187,9 +187,20 @@ def archive_artifacts(actor,case_id,dossier_id,inventory,evidence_id,note,expect
 
 
 @observed_fact
-def current_archive(d):
+def archive_index(d):
     r=latest(d,'archive');require(r.actor,d.case,'delivery.manage')
     if r.snapshot!=archive_inputs(d,r.data['inventory']):raise ValidationError('Archive source/policy changed; append a fresh inventory')
+    return r
+
+
+def current_archive(d):
+    r = archive_index(d)
+    from .models import ArchiveCopyPlan
+    plan = ArchiveCopyPlan.objects.filter(archive__dossier=d).select_related('work__case', 'actor').order_by('-pk').first()
+    if plan:
+        from .archive_transfer import projection
+        if plan.archive_id != r.pk or not projection(plan.actor, plan.work)['verified']:
+            raise ValidationError('Confirm every reserved archive file before Support handover or closure.')
     return r
 
 
@@ -197,9 +208,14 @@ def current_archive(d):
 def handover_inputs(d,data):
     archive=current_archive(d)
     if set(data)!={'support_document','escalation_document'}:raise ValidationError('Support and escalation source documents required')
-    return {'archive_id':archive.pk,'acceptance_id':accepted_go_live(d).pk,
+    result = {'archive_id':archive.pk,'acceptance_id':accepted_go_live(d).pk,
         'support_document':subject(d.case,data['support_document'],'support_document').pk,
         'escalation_document':subject(d.case,data['escalation_document'],'escalation_document').pk}
+    from .models import ArchiveCopyPlan
+    plan = ArchiveCopyPlan.objects.filter(archive=archive).order_by('-pk').first()
+    if plan:
+        result['file_archive'] = {'plan_id': plan.pk, 'sha256': plan.sha256}
+    return result
 
 
 @transaction.atomic

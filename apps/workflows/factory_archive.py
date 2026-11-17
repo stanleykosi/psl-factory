@@ -147,11 +147,17 @@ def snapshot(work,value,reader=None):
     old=assessed(work)
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],
         'native':native,'checks':observed,'operator':owner,'current_archive':index.pk if index else None,'assessed':old.pk if old else None}
+    from apps.pmo.archive_transfer import projection as file_projection
+    files = file_projection(actor, work)
+    if files['plan']:
+        state['file_archive'] = {'plan_id': files['plan'].pk, 'sha256': files['plan'].sha256, 'verified': files['verified']}
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],[]
 
 
 def eligible(work,value,state,latest,missing,stale,tasks,jobs):
+    if state.get('file_archive') and not state['file_archive']['verified']:
+        return [], 'Confirm the original file receipts and retry only files found missing.'
     if not Activity.objects.filter(work=work,key=investigation_key(work,state),status='succeeded').exists():return ['ACT04'],'Investigate final-document evidence and declared archive inventory'
     if missing or stale:return [],'Current required archive evidence is missing or stale: '+', '.join(missing+stale)
     if state['checks']['storage']['status']=='held':return ['ACT10'],'Resolve the reviewed storage and inventory rule'
@@ -185,9 +191,17 @@ def verify(work,actor=None):
     d,data,_=source(work,actor);row=assessed(work);current=closure.current_archive(d)
     if not row or row.pk!=current.pk or row.data['inventory']!=data['inventory']:raise ValidationError('Exact current source-bound native archive index required')
     if row.snapshot['physical_purge_performed'] is not False:raise ValidationError('The archive index cannot claim a physical purge')
-    return {'head':work.source_head_id,'dossier':d.pk,'archive':row.pk,'verified':True,'verification_scope':'synthetic_native_archive_index',
+    result = {'head':work.source_head_id,'dossier':d.pk,'archive':row.pk,'verified':True,'verification_scope':'synthetic_native_archive_index',
         'external_bytes_verified':False,'external_authenticity_verified':False,'physical_purge_performed':False,
         'support_handover_received':False,'closure_approved':False,'financial_release_granted':False,'deployment_authorized':False}
+    from apps.pmo.archive_transfer import projection as file_projection
+    files = file_projection(actor or work.execution_actor, work)
+    if files['plan']:
+        if not files['verified']:
+            raise ValidationError('Confirm every selected archive file before completing the archive work.')
+        result.update(file_archive=files['plan'].pk, file_manifest_sha256=files['plan'].sha256,
+                      verification_scope='project_file_archive_byte_readback', external_bytes_verified=True)
+    return result
 
 
 @transaction.atomic
@@ -285,5 +299,6 @@ def projection(actor,work):
 
 def attempt_projection(attempt):
     allowed={'head','dossier','archive','operator','created','checks','source_refs','configuration_available','verified','verification_scope',
+        'file_archive','file_manifest_sha256',
         'external_bytes_verified','external_authenticity_verified','physical_purge_performed','support_handover_received','closure_approved','financial_release_granted','deployment_authorized'}
     return {k:v for k,v in attempt.result.items() if k in allowed}

@@ -58,6 +58,8 @@ from .factory_validators import HYPERCARE_COMPONENT as FACTORY_HYPERCARE,HYPERCA
 SCHEMAS[FACTORY_HYPERCARE]=(FACTORY_HYPERCARE_SCHEMA,FACTORY_HYPERCARE_VALUE)
 from .factory_validators import ARCHIVE_COMPONENT as FACTORY_ARCHIVE,ARCHIVE_SCHEMA as FACTORY_ARCHIVE_SCHEMA,ARCHIVE_VALUE as FACTORY_ARCHIVE_VALUE
 SCHEMAS[FACTORY_ARCHIVE]=(FACTORY_ARCHIVE_SCHEMA,FACTORY_ARCHIVE_VALUE)
+from .archive_transfer_validators import COMPONENT as ARCHIVE_TRANSFER, SCHEMA as ARCHIVE_TRANSFER_SCHEMA, VALUE as ARCHIVE_TRANSFER_VALUE
+SCHEMAS[ARCHIVE_TRANSFER] = (ARCHIVE_TRANSFER_SCHEMA, ARCHIVE_TRANSFER_VALUE)
 from .factory_validators import HANDOVER_COMPONENT as FACTORY_HANDOVER,HANDOVER_SCHEMA as FACTORY_HANDOVER_SCHEMA,HANDOVER_VALUE as FACTORY_HANDOVER_VALUE
 SCHEMAS[FACTORY_HANDOVER]=(FACTORY_HANDOVER_SCHEMA,FACTORY_HANDOVER_VALUE)
 from .factory_validators import CLOSURE_COMPONENT as FACTORY_CLOSURE,CLOSURE_SCHEMA as FACTORY_CLOSURE_SCHEMA,CLOSURE_VALUE as FACTORY_CLOSURE_VALUE
@@ -118,6 +120,9 @@ from .reminder_validators import COMPONENT as REMINDER, SCHEMA as REMINDER_SCHEM
 SCHEMAS[REMINDER]=(REMINDER_SCHEMA,REMINDER_VALUE)
 
 def validate_reference(component,target,case,runtime=False):
+    if component == ARCHIVE_TRANSFER:
+        from .archive_transfer_validators import validate_reference as validate_archive_transfer
+        return validate_archive_transfer(target, case)
     if component==FACTORY_FORECAST:return validate_forecast_factory(component,target,case,runtime)
     if component==RFP_OUTCOME:return validate_rfp_outcome(component,target,case,runtime)
     if component==FACTORY_RFP:return validate_factory_rfp(component,target,case,runtime)

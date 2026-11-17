@@ -71,6 +71,32 @@ def prepare(key, operator):
         existing = FactoryWork.objects.filter(case=case).first()
         return {'case': str(case.pk), 'work': existing.pk if existing else None}
     Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
+    if key in {'archive-file-receipts', 'archive-file-uncertain', 'archive-file-missing'}:
+        from tests import test_delivery
+        from tests.test_project_archive_files import configured, reserve, LostCopyResponse, MissingCopyResponse
+        from apps.pmo.archive_transfer import run_once
+        from apps.pmo.models import ArchiveCopyJob
+
+        users = get_user_model().objects
+        create_user = users.create_user
+        with (
+            patch.object(test_delivery, 'setup_case', return_value=(operator, case)),
+            patch.object(users, 'create_user', side_effect=lambda username, **values:
+                         create_user(username='state-' + key + '-' + username, **values)),
+        ):
+            data = configured()
+            plan = reserve(data)
+            jobs = list(ArchiveCopyJob.objects.filter(file__plan=plan).order_by('pk'))
+            for index, job in enumerate(jobs):
+                adapter = None
+                if index == 0 and key == 'archive-file-uncertain':
+                    adapter = LostCopyResponse()
+                if index == 0 and key == 'archive-file-missing':
+                    adapter = MissingCopyResponse()
+                run_once(job.pk, adapter=adapter)
+            factory.run_until_wait(data.work.pk)
+        return {'case': str(case.pk), 'work': data.work.pk, 'plan': plan.pk,
+                'jobs': [job.pk for job in jobs], 'proof': data.e['policy_decision'].pk}
     if key in {'handover-review', 'handover-receipt', 'archive-inventory'}:
         from tests import test_delivery, test_factory_archive, test_factory_handover
 
@@ -346,6 +372,8 @@ elif workflow == 'go-live-response-states':
     fixtures = ('go-live-client-changes','go-live-client-decline','go-live-client-rules','go-live-client-correction')
 elif workflow == 'delivery-recipient-states':
     fixtures = ('handover-review', 'handover-receipt', 'archive-inventory')
+elif workflow == 'archive-file-states':
+    fixtures = ('archive-file-receipts', 'archive-file-uncertain', 'archive-file-missing')
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

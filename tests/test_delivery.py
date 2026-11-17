@@ -78,7 +78,9 @@ class DeliveryFixture:
     def publish(self,v):
         if v.audience=='client':
             request_review(self.actor,self.case.pk,v.pk,rev(self.case));review_version(self.actor,self.case.pk,v.pk,'approve','Exact client projection checked',rev(self.case))
-        reserve_publication(self.actor,self.case.pk,v.pk,rev(self.case));assert run_publication_once()
+        publication = reserve_publication(self.actor,self.case.pk,v.pk,rev(self.case))
+        job = PublicationJob.objects.get(publication=publication)
+        assert run_publication_once(case_id=self.case.pk, job_id=job.pk)
         return PublicationReceipt.objects.get(publication__version=v)
 
     def accepted(self):

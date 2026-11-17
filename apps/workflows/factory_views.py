@@ -548,6 +548,14 @@ def _presentation(actor,work,*,focus=None):
                 needs_me=panel['can_accept'],department_wait=panel['can_accept'])
         elif panel['publication'] and not panel['acceptance'] and not work.cancel_requested:
             row.update(state='Awaiting client document delivery',needs_me=False,department_wait=False)
+        responses = panel['client_responses']['items']
+        if any(reply['outcome'] == 'declined' for reply in responses):
+            row.update(state='Client declined go-live', can_advance=False, department_wait=False,
+                       needs_me=permitted(actor, work, 'delivery.manage'))
+        elif panel['document'] and any(reply['outcome'] == 'changes_requested' and
+                reply['version_id'] == panel['document'].pk for reply in responses):
+            row.update(state='Client requested changes', department_wait=False,
+                       needs_me=panel['can_prepare_reply_successor'] or permitted(actor, work, 'policy.configure'))
         if any(j.status in ['unknown','leased'] and (j.status=='unknown' or j.lease_until and j.lease_until<=timezone.now()) for j in panel['jobs']):
             row.update(state='Document delivery uncertain',next_action='Reconcile the original go-live delivery before further work',can_advance=False,
                 can_reconcile=controlled and not (work.lease_until and work.lease_until>timezone.now()))

@@ -1,5 +1,21 @@
 {
   "design_consolidation_20261116": {
+    "archive_file_receipts_20261117": {
+      "status": "diagnosing_test_errors",
+      "runtime_package": 68,
+      "web": "49e3ff16-5de0-447d-b73b-c233dea3352a",
+      "worker": "d835fa55-44e4-42cc-97c8-7c66b92cf708",
+      "runtime_tests": {"deployment": "7dd2b3c6-d8be-4edd-9c3e-640255765c33", "passed": 16, "seconds": 899.166, "fixture_exit": 1},
+      "archive_check": {"deployment": "3e2f7b04-ad90-4d0f-a694-0ec8c1c0fa0a", "migration": "pmo.0059 passed on test database", "errors_observed": 5, "complete": false},
+      "diagnostic_package": 70,
+      "implemented_pending_verification": ["Typed archive store and operator rule", "Durable per-file conditional copies and byte-readback receipts", "Original receipt lookup and missing-file-only retries", "Reviewed upload attachment binding", "Human selection and rule-drafting forms", "Background worker and native downstream gate"],
+      "pending": ["Diagnose and correct archive reservation failure", "Full archive PostgreSQL suite", "Exact helper fixture recheck", "Go-live heading refinement", "Remaining browser journeys"],
+      "states_with_browser_observations": 185,
+      "observed_states_with_open_checks": 184,
+      "states_without_direct_browser_observation": 77,
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
     "client_reply_final_controls_20261117": {
       "status": "verification_in_progress",
       "package": 68,

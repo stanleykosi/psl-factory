@@ -1,5 +1,15 @@
 # Actual test execution ledger
 
+## Sixteen-test runtime checkpoint and archive diagnostic · 17 November 2026
+
+Package 68 run `7dd2b3c6-d8be-4edd-9c3e-640255765c33` passed all sixteen PostgreSQL tests in 899.166 seconds. Django and migration drift checks passed. Its go-live fixture lookups succeeded. The subsequent three recipient/archive seeds failed with missing PublicationReceipt because `DeliveryFixture.publish` selected a global pending job. Changed the helper to the exact reserved job and case. Overall fixture/acceptance exit was 1. Stopped automatic retries. The passed application source, excluding test runners, was hash-compared and deployed as web `49e3ff16` and worker `d835fa55`. Web startup reported no pending migrations.
+
+Package 69 run `3e2f7b04-ad90-4d0f-a694-0ec8c1c0fa0a` applied `pmo.0059` on isolated PostgreSQL, with Django and drift checks passed. Five new archive tests errored. The draft-rule test and existing inventory-successor test passed before the run was stopped for a targeted fail-fast diagnostic. There is no final suite result. Package 70 runs one failing archive case to expose its traceback promptly. Root code also corrects the browser-observed heading that incorrectly described an already delivered but declined report as awaiting delivery. These later changes are unverified.
+
+Two local pure archive checks ran in 0.013 seconds. The schema test passed. The private adapter test errored because local development lacks botocore. Railway installs boto3 from the existing deployment requirements. No local database result is claimed. The archive's provider verification remains synthetic/mock until the hosted tests pass.
+
+Browser work 79 selected incident source 1383, requested a controlled successor, saw version 2 include the fallback contact and client request, and recorded a fresh approval. At phone width the document measured 360 CSS pixels with equal scroll width. Work 80 logged issue 9 under an accountable owner, rejected a review while it was open, recorded Medium severity and owner acknowledgement, resolved with source 1404 and reviewed proof 1405 into distinct dossier 23. Its original acceptance remained held. Work 75 withheld the owner update after current access withdrawal. Remaining receipt/signature and fresh-candidate browser steps are open.
+
 ## Passed client-reply core and follow-up verification · 17 November 2026
 
 Package 67 deployment `48b95351-5e77-48a6-a07e-9aaaf6d122ad` passed all nine PostgreSQL tests in 977.592 seconds. Django checks and migration drift passed. The runner applied `pmo.0057` and `0058` to the isolated preview and prepared all four client-response examples, with fixture and acceptance exit markers 0. Works 79–82 use receipts 42–45 and reports 59–62. Both actual decline recovery through fresh native release gates and the existing distinct-authority acceptance path passed. These results supersede package 66's fixture error.

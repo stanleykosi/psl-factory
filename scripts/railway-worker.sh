@@ -8,6 +8,7 @@ done
 while true; do
     python manage.py work_outbox --limit 20
     python manage.py work_publications --limit 20
+    python manage.py work_archive_files --limit 10
     python manage.py work_invoices --limit 20
     python manage.py work_payment_reminders
     python manage.py work_rfp_followup

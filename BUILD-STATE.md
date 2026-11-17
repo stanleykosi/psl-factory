@@ -1,5 +1,13 @@
 # PSL operations factory build state
 
+## Hosted response controls and archive file work · 17 November 2026
+
+Package 68 passed all sixteen PostgreSQL tests in 899.166 seconds. Web `49e3ff16-5de0-447d-b73b-c233dea3352a` and matching worker `d835fa55-44e4-42cc-97c8-7c66b92cf708` deploy that checked application source. Runtime hashes matched. Its four go-live fixtures were retained. Three new handover/archive fixtures failed because the test helper selected a global publication job. The helper now targets its exact case and reserved job. This fixture repair is under recheck.
+
+The browser requested report version 2 in work 79 from corrected source 1383 and approved its fresh human review. Work 80 refused a premature fix handoff, then linked issue 9, recorded assessment, acknowledgement and resolution with fix 1404, and recorded the reviewed handoff to distinct candidate dossier 23. The old release remains declined. Work 75 retains the current-owner access hold. Four more states now have direct observations, bringing the ledger to 185 with partials and 77 unseen.
+
+New file archive code includes a typed store/operator rule, private-store conditional copies and exact byte readback, durable per-file jobs, original-receipt lookup, missing-file-only retry, attachment handling, UI, background worker and native downstream gates. It remains unverified. Package 69 applied migration `pmo.0059` successfully but encountered five archive test errors. Stopped that incomplete run for a fail-fast single-case diagnostic in package 70. The runtime remains 68. A browser-detected go-live heading correction is also awaiting this later verification. HOD decisions remain deferred.
+
 ## Verified reply core and final control checks · 17 November 2026
 
 Package 67 passed nine PostgreSQL tests in 977.592 seconds and prepared works 79–82 after applying `pmo.0057` and `0058` in the isolated preview. Actual client changes, report version 2 with fresh review and receipt, declined release recovery, immutable correction, missing handling policy, HTTP permissions and competing response writes passed. Final metadata privacy, exact candidate-origin, typed-time and Waiting on others refinements are under package 68 verification. The hosted runtime remains checked package 65 until these pass. Browser acceptance and the remaining 81 unseen states remain open. The archive design also requires per-file external-store reconciliation, beyond the current local evidence-index behavior. HOD rule values remain deferred.

@@ -297,6 +297,8 @@ class GoLiveReplyTests(TestCase):
         self.assertEqual(recorded.actor_id,f.actor.pk)
         self.assertEqual(recorded.receipt_id,f.receipt.pk)
         self.assertContains(self.client.get(url),'Prepare next report with the agent')
+        page = self.client.get(reverse('factory_detail', args=[f.work.pk]))
+        self.assertEqual(page.context['row']['state'], 'Client requested changes')
         self.assertEqual(self.client.post(url,{**data,'revision':f.work.revision}).status_code,200)
         self.assertEqual(GoLiveClientReply.objects.count(),1)
         self.assertContains(self.client.post(reverse('factory_invoice_recovery',args=[f.work.pk]),data),'available action')

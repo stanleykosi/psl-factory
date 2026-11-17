@@ -208,3 +208,4 @@ from .signature_models import CommercialSignaturePacket, CommercialSignatureUse,
 from .progress_models import DeliveryProgressSource, DeliveryProgressObservation, DeliveryProgressCorrelation
 from .planning_input_models import PlanningDepartmentInput
 from .go_live_reply_models import GoLiveClientReply, GoLiveReplyIssue, GoLiveRemediation
+from .archive_transfer_models import ArchiveCopyPlan, ArchiveCopyFile, ArchiveCopyJob, ArchiveCopyAttempt, ArchiveCopyReceipt, SyntheticArchiveObject

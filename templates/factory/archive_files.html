@@ -1,0 +1,37 @@
+{% load studio_ui %}
+<section class="card">
+  <h2>Archived files</h2>
+  {% if file_archive.plan %}
+    <p>{{ file_archive.confirmed }} of {{ file_archive.total }} files have matching store receipts.</p>
+    {% if file_archive.verified %}<p>The selected file bytes were read back and matched their recorded hashes.</p>{% endif %}
+    {% if file_archive.finding %}<p role="status">{{ file_archive.finding }}</p>{% endif %}
+    <div class="table-scroll"><table>
+      <thead><tr><th>File</th><th>Store confirmation</th><th>Next action</th></tr></thead>
+      <tbody>{% for file in file_archive.files %}<tr>
+        <td>{{ file.display_name }}</td><td>{{ file.job.status|readable }}{% if file.job.finding %}<p>{{ file.job.finding }}</p>{% endif %}</td>
+        <td>{% if file.can_lookup or file.can_retry %}<form method="post">
+          {% csrf_token %}<input type="hidden" name="revision" value="{{ row.work.revision }}">
+          <input type="hidden" name="job" value="{{ file.job.pk }}"><input type="hidden" name="job_revision" value="{{ file.job.revision }}">
+          {% if file.can_lookup %}<button name="action" value="archive_file_lookup">Check original file</button>{% endif %}
+          {% if file.can_retry %}<button name="action" value="archive_file_retry">Retry missing file</button>{% endif %}
+        </form>{% elif file.job.status == 'confirmed' %}Receipt recorded{% else %}Awaiting archive worker{% endif %}</td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+    <details><summary>Archive receipt references</summary><p>Archive plan {{ file_archive.plan.pk }} · {{ file_archive.plan.created_at }} · {{ file_archive.plan.sha256 }}</p></details>
+  {% else %}<p>File copying needs a reviewed store and a designated archive operator. The project index below records the selected source documents.</p>{% endif %}
+  {% if archive_selection_form %}<details><summary>Choose documents and copy their files</summary>
+    <p>Include the project archive inventory. Attachments belonging to the selected reviewed sources are included. Received files keep their original receipts.</p>
+    {% if archive_selection_form.limited %}<p>This view includes the required inventory and up to 500 source choices.</p>{% endif %}
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="archive_files">
+      <input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
+      {{ archive_selection_form.as_p }}<button>Prepare file archive</button>
+    </form>
+  </details>{% endif %}
+  {% if archive_file_rules_form %}<details><summary>Prepare archive store rules for owner review</summary>
+    <p>Use the recorded owner decision. Saving creates a draft for review.</p>
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="archive_file_rules">
+      <input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
+      {{ archive_file_rules_form.as_p }}<button>Save archive rule draft</button>
+    </form>
+  </details>{% endif %}
+</section>

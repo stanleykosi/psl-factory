@@ -73,10 +73,43 @@ def detail(request,work):
     panel=archive.projection(request.user,work)
     form=InventoryForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct_inventory' else None,
         inventory=panel['data']['inventory'])
+    from apps.pmo import archive_transfer
+    from apps.pmo.archive_transfer_forms import panels as file_panels
+    selection_form, file_rules_form = file_panels(request.user, work, panel,
+        request.POST if request.method == 'POST' else None, request.POST.get('action'))
     if request.method=='POST':
         try:
             action=request.POST.get('action');revision=int(request.POST.get('revision','0'))
-            if action=='correct_inventory':
+            if action == 'archive_files':
+                if selection_form is None:
+                    from django.core.exceptions import PermissionDenied
+                    raise PermissionDenied('Current file archive authority is required.')
+                if not selection_form.is_valid():
+                    raise ValidationError('Review the selected archive documents.')
+                archive_transfer.reserve(request.user, work.pk, revision, int(request.POST.get('case_revision', '0')),
+                    [int(pk) for pk in selection_form.cleaned_data['sources']])
+            elif action == 'archive_file_rules':
+                from apps.core.services import lock_case
+                from django.db import transaction
+                if file_rules_form is None or not file_rules_form.is_valid():
+                    raise ValidationError('Complete the reviewed archive store and operator choices.')
+                with transaction.atomic():
+                    current_case = lock_case(request.user, work.case_id, 'policy.configure', int(request.POST.get('case_revision', '0')))
+                    file_rules_form.save(request.user, current_case)
+            elif action in ['archive_file_lookup', 'archive_file_retry']:
+                from apps.identity.services import require
+                from apps.pmo.models import ArchiveCopyJob
+                require(request.user, work.case, 'factory.read')
+                job = ArchiveCopyJob.objects.filter(pk=int(request.POST.get('job', '0')), file__plan__work=work).first()
+                if not job:
+                    raise ValidationError('Choose this work item original file attempt.')
+                expected = int(request.POST.get('job_revision', '0'))
+                if action == 'archive_file_lookup':
+                    archive_transfer.access(request.user, work.case)
+                    archive_transfer.run_once(job.pk, actor=request.user, lookup_only=True, expected=expected)
+                else:
+                    archive_transfer.retry_missing(request.user, job.pk, expected)
+            elif action=='correct_inventory':
                 if not form.is_valid():raise ValidationError('Review the declared inventory choices')
                 archive.correct(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),form.inventory(),request.POST.get('reason',''))
             elif action=='advance':factory.advance(request.user,work.pk,revision)
@@ -90,9 +123,11 @@ def detail(request,work):
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc))
         work.refresh_from_db()
     row=presentation(request.user,work);activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
+    files = archive_transfer.projection(request.user, work)
     for activity in activities:
         activity.title={'ACT03':'Plan next permitted work','ACT04':'Investigate final evidence','ACT08':'Prepare the archive index','ACT10':'Resolve rules and operator','ACT13':'Verify the archive index'}.get(activity.kind,'Review permitted work')
         for attempt in activity.attempts.all():attempt.display_result=archive.attempt_projection(attempt)
     response=render(request,'factory/archive_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'activities':activities,
-        'inventory_form':form,'can_configure':permitted(request.user,work,'policy.configure')})
+        'inventory_form':form,'file_archive': files, 'archive_selection_form': selection_form,
+        'archive_file_rules_form': file_rules_form, 'can_configure':permitted(request.user,work,'policy.configure')})
     response['Cache-Control']='no-store';return response

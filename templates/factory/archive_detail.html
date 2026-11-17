@@ -3,6 +3,7 @@
 <div class="page-heading"><div><p class="eyebrow">PROJECT ARTIFACT ARCHIVE</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div></div>
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small><time>{{ row.work.updated_at|date:'d M Y, H:i:s T' }}</time></div></div>
 <div class="factory-case-layout"><div>
+{% include 'factory/archive_files.html' %}
 <section class="card"><h2>Project archive</h2><p>{{ row.archive.dossier.candidate.reference }}</p>
 {% if row.work.status == 'verified' and not row.readiness_changed %}<p>The current archive index matches the declared inventory, Engineering final-document evidence and reviewed storage rules. Support handover and closure remain separate work.</p>{% elif row.readiness_changed %}<p>The earlier index remains in history. Review the changed inventory, storage rule or authority.</p>{% endif %}
 {% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}
