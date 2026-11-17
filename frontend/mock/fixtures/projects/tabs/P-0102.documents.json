@@ -1,0 +1,67 @@
+{
+  "as_of": "2026-11-17T10:00:00Z",
+  "documents": [
+    {
+      "document_id": "D-2901",
+      "title": "Statement of work",
+      "kind": "SOW",
+      "version": "2",
+      "status": "Awaiting PMO Lead review",
+      "updated_at": "2026-11-16T15:20:00Z",
+      "test_template": true,
+      "work_id": "W-2901",
+      "sample": true
+    },
+    {
+      "document_id": "D-2902",
+      "title": "Costing COST-0140",
+      "kind": "Costing",
+      "version": "2",
+      "status": "Approved",
+      "updated_at": "2026-06-24T09:00:00Z",
+      "sample": true
+    },
+    {
+      "document_id": "D-2904",
+      "title": "Weekly sync minutes",
+      "kind": "Minutes",
+      "version": "1",
+      "status": "Drafted",
+      "updated_at": "2026-11-10T15:20:00Z",
+      "test_template": true,
+      "sample": true
+    }
+  ],
+  "items": [
+    {
+      "document_id": "D-2901",
+      "title": "Statement of work",
+      "kind": "SOW",
+      "version": "2",
+      "status": "Awaiting PMO Lead review",
+      "updated_at": "2026-11-16T15:20:00Z",
+      "test_template": true,
+      "work_id": "W-2901",
+      "sample": true
+    },
+    {
+      "document_id": "D-2902",
+      "title": "Costing COST-0140",
+      "kind": "Costing",
+      "version": "2",
+      "status": "Approved",
+      "updated_at": "2026-06-24T09:00:00Z",
+      "sample": true
+    },
+    {
+      "document_id": "D-2904",
+      "title": "Weekly sync minutes",
+      "kind": "Minutes",
+      "version": "1",
+      "status": "Drafted",
+      "updated_at": "2026-11-10T15:20:00Z",
+      "test_template": true,
+      "sample": true
+    }
+  ]
+}

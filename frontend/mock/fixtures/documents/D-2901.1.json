@@ -1,0 +1,72 @@
+{
+  "document_id": "D-2901",
+  "version": "1",
+  "title": "Statement of work",
+  "status": "Replaced by v2",
+  "template": "Statement of work · test template v1",
+  "body_url": "https://files.example.test/sow-d-2901-v1.pdf",
+  "test_template": true,
+  "case_id": "P-0102",
+  "project_title": "Lagoon Health",
+  "reference": "SOW-0198",
+  "drafted_by": {
+    "agent": "tola",
+    "from": [
+      "the planning record",
+      "the approved costing"
+    ]
+  },
+  "sections": [
+    {
+      "key": "scope",
+      "heading": "Scope",
+      "text": "The patient app covers booking, reminders and results for 3 clinics."
+    },
+    {
+      "key": "deliverables",
+      "heading": "Deliverables",
+      "text": "Android and iOS apps; staff web console; handover pack."
+    },
+    {
+      "key": "milestones",
+      "heading": "Milestones and stages",
+      "text": "4 stages; amounts from the costing approved 24 Jun."
+    },
+    {
+      "key": "assumptions",
+      "heading": "Assumptions",
+      "text": "Client supplies clinic data by week 3."
+    },
+    {
+      "key": "out_of_scope",
+      "heading": "Out of scope",
+      "text": "Insurance claims; lab integrations."
+    }
+  ],
+  "checks": [
+    {
+      "key": "template",
+      "label": "Uses the current template",
+      "status": "done",
+      "detail": "TEST TEMPLATE v1 · until PSL supplies the real one"
+    },
+    {
+      "key": "amounts",
+      "label": "Amounts match approved costing",
+      "status": "held",
+      "detail": "Waiting for the costing approval"
+    },
+    {
+      "key": "sections",
+      "label": "Every section filled",
+      "status": "done",
+      "detail": "5 of 5"
+    }
+  ],
+  "audience": {
+    "label": "Client · Lagoon Health"
+  },
+  "review": {
+    "role_label": "PMO Lead"
+  }
+}

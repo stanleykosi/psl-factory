@@ -46,7 +46,7 @@ vi.mock('next/navigation', () => ({
   },
 }));
 
-type Tab = 'milestones' | 'registers' | 'actions';
+type Tab = 'milestones' | 'documents' | 'registers' | 'actions';
 const me = (persona: string) => JSON.parse(readFileSync(join(__dirname, `../mock/fixtures/me.${persona}.json`), 'utf8'));
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -437,15 +437,24 @@ describe('access and errors (all tabs)', () => {
     expect(rowsOf()).toEqual(pm);
   });
 
-  it('documents keeps its coming-next panel', async () => {
-    const result = render(
-      <AppShell>
-        <ProjectJourneyPage caseId="P-0101" tab="documents" />
-      </AppShell>,
-    );
-    await until(() => expect(screen.getByRole('heading', { level: 2, name: 'Documents come next' })).toBeTruthy());
-    expect(tabCalls()).toHaveLength(0);
-    result.unmount();
+  it('documents lists the project\u2019s documents; only a row with a work_id opens its review', async () => {
+    await open('P-0102', 'documents');
+    const rows = within(screen.getByRole('table', { name: 'Documents' })).getAllByRole('row').slice(1);
+    expect(rows).toHaveLength(3);
+    const link = within(rows[0]).getByRole('link', { name: 'Statement of work' });
+    expect(link.getAttribute('href')).toBe('/projects/P-0102/documents/D-2901?v=2');
+    expect(rows[0].textContent).toContain('v2');
+    expect(rows[0].textContent).toContain('Awaiting PMO Lead review');
+    expect(rows[0].textContent).toContain('TEST TEMPLATE');
+    expect(within(rows[1]).queryByRole('link')).toBeNull();
+    expect(rows[1].textContent).toContain('Costing COST-0140');
+    expect(rows[2].textContent).toContain('Weekly sync minutes');
+    expect(tabCalls().map((u) => u.pathname)).toEqual(['/api/v1/projects/P-0102/documents']);
+  });
+
+  it('documents of a project with none says so', async () => {
+    await open('P-0101', 'documents');
+    expect(screen.getByRole('heading', { level: 2, name: 'No documents on this project yet.' })).toBeTruthy();
   });
 });
 
