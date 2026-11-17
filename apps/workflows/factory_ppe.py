@@ -71,13 +71,20 @@ def report(work,actor):
     r,data=source(work,actor);w=schedule(work)
     result={'register':r.pk,'schedule':w.pk if w else None,'stage':'source_review','finding':'','ledger':data['ledger_id'],'ledger_posted':False,'full_owner_oracle_acceptance':'unresolved'}
     try:
+        prior = ppe.latest(r, 'register')
+        if prior and prior.verdict in ('return', 'reject'):
+            return dict(result, stage='returned', finding='Select a corrected version of the asset register for Finance review.')
         ppe.approved(r,'register')
-        if r.result['date_basis_ambiguous']:ppe.approved(r,'basis')
+        if r.result['date_basis_ambiguous']:
+            result['stage']='basis_review';ppe.approved(r,'basis')
         result['stage']='calculation'
         if not w:return result
         ppe.current(w)
         if w.payload!={'register_id':r.pk,'prior_id':data['prior_id']} or w.parent_id!=data['ledger_id']:raise ValidationError('Exact selected register, prior and accounting note required')
         if w.result['status']!='ready':raise ValidationError(w.result['findings'])
+        prior = ppe.latest(w, 'schedule')
+        if prior and prior.verdict in ('return', 'reject'):
+            return dict(result, stage='returned', finding='Correct the asset inputs and prepare a new version for Finance review.')
         result['stage']='output_review';ppe.approved(w,'schedule')
         result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
@@ -152,6 +159,9 @@ def correct(actor,work_id,expected,case_expected,register_id,prior_id,ledger_id,
     if data==new:
         current=schedule(w)
         if not current:raise ValidationError('Provide changed native source selection')
+        previous = ppe.latest(current, 'schedule')
+        if previous and previous.verdict in ('return', 'reject'):
+            raise ValidationError('Select corrected asset inputs before rebuilding the returned schedule')
         try:source(w,actor);ppe.current(current);ppe.approved(current,'schedule')
         except (ValidationError,PermissionDenied):pass
         else:raise ValidationError('Current reviewed output requires a genuine source change')
@@ -183,6 +193,8 @@ def projection(actor,work):
         for target,purpose in candidates:
             try:ppe.current(target)
             except (ValidationError,PermissionDenied):continue
+            prior = ppe.latest(target, purpose)
+            if purpose!='basis' and prior and prior.verdict in ('return','reject'):continue
             try:ppe.approved(target,purpose)
             except (ValidationError,PermissionDenied):
                 pending_reviews.append({'target':target.pk,'purpose':purpose})

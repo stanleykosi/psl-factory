@@ -81,6 +81,30 @@ class InvoiceRecoveryRealClockTests(TransactionTestCase):
 
 
 class InvoiceRecoveryTransactionTests(TransactionTestCase):
+    def test_batch_checks_unconfirmed_factory_invoice_once_and_processes_other_work(self):
+        from tests.obligation_helpers import factory_approve_identified
+
+        original = fixture(username='unconfirmed-original')
+        later = fixture(username='later-independent')
+        for run in (original, later):
+            factory.run_until_wait(run['work'].pk)
+            factory_approve_identified(run)
+            factory.run_once(run['work'].pk)
+        missing = InvoiceJob.objects.get(invoice__case=original['case'], kind='issue')
+        later_job = InvoiceJob.objects.get(invoice__case=later['case'], kind='issue')
+        with tempfile.TemporaryDirectory() as directory:
+            invoice_delivery.run_once(MockFactoryInvoiceAdapter(directory, uncertain_lookup=True), job_id=missing.pk)
+        missing.refresh_from_db()
+        self.assertEqual(missing.status, 'unknown')
+        attempts = missing.attempts
+        self.assertEqual(invoice_delivery.run_batch(20), 2)
+        missing.refresh_from_db()
+        later_job.refresh_from_db()
+        self.assertEqual((missing.status, missing.attempts), ('unknown', attempts + 1))
+        self.assertEqual(later_job.status, 'confirmed')
+        self.assertFalse(InvoiceIssue.objects.filter(invoice=missing.invoice).exists())
+        self.assertTrue(InvoiceIssue.objects.filter(job=later_job).exists())
+
     def test_accepted_lost_response_is_reconciled_before_changed_terms_can_replace_invoice(self):
         from .obligation_helpers import factory_approve_identified
         self.assertEqual(connection.vendor,'postgresql');f=fixture();w=f['work'];factory.run_until_wait(w.pk);factory_approve_identified(f)

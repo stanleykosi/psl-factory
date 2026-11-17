@@ -19,9 +19,10 @@ def policy(f,key,value):
  a,c=f['actor'],f['case'];p=draft_schedule_policy(a,c.pk,key,value,f['e']['policy_decision'].pk,timezone.now()-timedelta(seconds=1));transition(a,p.pk,'validated');transition(a,p.pk,'active');return p
 def evidence(f,kind,body='Synthetic schedule evidence'):
  return add_evidence(f['actor'],f['case'].pk,kind,body,'synthetic:schedules')
-def fixture(username='human',reviewer_username='schedule-reviewer',recipient_username='finance-reader'):
- a,c,e,base,configs,source,t,recipient=finance_fixture(username=username,recipient_username=recipient_username);reviewer=get_user_model().objects.create_user(username=reviewer_username)
- for action in ACTIONS:Grant.objects.create(case=c,user=reviewer,action=action)
+def fixture(username='human',reviewer_username='schedule-reviewer',recipient_username='finance-reader',reviewer=None):
+ a,c,e,base,configs,source,t,recipient=finance_fixture(username=username,recipient_username=recipient_username)
+ reviewer=reviewer or get_user_model().objects.create_user(username=reviewer_username)
+ for action in ACTIONS:Grant.objects.get_or_create(case=c,user=reviewer,action=action)
  role=register_reference(a,c.pk,'schedule-reviewer-role','schema:psl/role-assignment/v1',{'role':'Finance','user_id':reviewer.pk},e['policy_decision'].pk)
  activate(a,c,'D05.role_principal_assignments',['finance:human',role.ref],e['policy_decision'])
  analysis.review(a,c.pk,'source',source.pk,'Finance','approve',e['finance_review'].pk,'Current source after explicit reviewer appointment',rev(c))

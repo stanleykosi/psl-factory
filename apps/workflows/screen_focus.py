@@ -16,6 +16,19 @@ SCREENS = {
         'decision': ('claim', 'decide'),
         'recovery': ('reconcile', 'recheck', 'cancel'),
     },
+    'finance-schedules/v1': {
+        'decision': ('review',),
+        'recovery': ('advance', 'resume', 'cancel', 'restart', 'correct', 'export', 'adopt_profile'),
+    },
+    'finance-ppe/v1': {
+        'decision': ('review',),
+        'recovery': ('advance', 'resume', 'cancel', 'restart', 'correct', 'adopt_profile'),
+    },
+    'finance-forecast/v1': {
+        'decision': ('review', 'priority', 'group_review'),
+        'response': ('support', 'actual', 'verify', 'match', 'unmatch'),
+        'recovery': ('advance', 'correct', 'restart', 'cancel', 'resume', 'reconcile', 'operate_delivery', 'adopt_profile'),
+    },
     'pmo-emergency/v1': {
         'decision': ('review', 'preauthorization_decision', 'authorize', 'record_review', 'retrospective_decision'),
         'response': ('capture_outcome',),

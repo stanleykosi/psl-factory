@@ -157,17 +157,73 @@ def planning_inputs(d):
 
 
 @transaction.atomic
-def decide_planning(actor,case_id,dossier_id,verdict,evidence_id,note,expected):
+def decide_planning(actor,case_id,dossier_id,verdict,evidence_id,note,expected,*,issue_id=None):
     case=lock_case(actor,case_id,'delivery.planning_decide',expected);d=dossier_for(case,dossier_id);ensure_open(d);note_required(note)
     if verdict not in ['approve','return','reject']:raise ValidationError('Choose an explicit planning verdict')
     authority=decision_authority(actor,case,'PMO Lead',verdict)
-    return record(actor,case,d,'planning_decision',subject(case,evidence_id),{'verdict':verdict,'authority':authority,'note':note},planning_inputs(d))
+    inputs = planning_inputs(d)
+    prior = latest(d, 'planning_decision', False)
+    remedy = planning_remedy(d, prior, inputs, actor=actor)
+    data = {'verdict': verdict, 'authority': authority, 'note': note}
+    if issue_id is not None:
+        if verdict not in ('return', 'reject'):
+            raise ValidationError('Link a blocking issue when returning or rejecting delivery.')
+        require(actor, case, 'issue.read')
+        issue = planning_issue(d, issue_id)
+        if issue.current.status in ('Resolved', 'Closed'):
+            raise ValidationError('Choose an issue that still needs work.')
+        data['blocking_issue'] = {'issue': issue.pk, 'state': issue.current_id}
+    if remedy and verdict == 'approve':
+        data['issue_remedy'] = remedy
+    return record(actor,case,d,'planning_decision',subject(case,evidence_id),data,inputs,parent=prior)
+
+
+def planning_issue(d, issue_id):
+    from .issue_access import state_public
+    from .models import Issue
+
+    if type(issue_id) is not int or issue_id < 1:
+        raise ValidationError('Choose a current issue from this project.')
+    issue = Issue.objects.filter(case=d.case, pk=issue_id).select_related('case', 'current').first()
+    if not issue or not issue.current or not state_public(issue.current):
+        raise ValidationError('Choose a current issue from this project.')
+    return issue
+
+
+def planning_remedy(d, prior, inputs, *, actor=None):
+    """An unchanged packet cannot replace a negative decision by replay."""
+    if not prior or prior.data.get('verdict') not in ('return', 'reject'):
+        return None
+    blocking = prior.data.get('blocking_issue')
+    if blocking:
+        if actor is not None:
+            require(actor, d.case, 'issue.read')
+        issue = planning_issue(d, blocking['issue'])
+        current = issue.current
+        if (current.pk == blocking['state'] or current.status not in ('Resolved', 'Closed') or not current.fix_id):
+            raise ValidationError('Record the fix for the linked issue before requesting another decision.')
+        return {'issue': issue.pk, 'state': current.pk, 'fix': current.fix_id}
+    previous = prior.snapshot
+    old_sources = previous.get('sources', {})
+    pairs = [(old_sources.get(kind, [None])[0], pin[0]) for kind, pin in inputs['sources'].items()]
+    source_ids = {pk for pair in pairs for pk in pair if pk is not None}
+    source_facts = {pk: (sha, payload) for pk, sha, payload in d.sources.filter(pk__in=source_ids)
+                    .values_list('pk', 'evidence__sha256', 'payload')}
+    if any(old in source_facts and new in source_facts and source_facts[old] != source_facts[new]
+           for old, new in pairs):
+        return None
+    raise ValidationError('Record and verify corrected Planning evidence before requesting another decision.')
 
 
 def approved_plan(d):
     r=latest(d,'planning_decision');require(r.actor,d.case,'delivery.planning_decide')
     if r.data['verdict']!='approve' or r.data['authority']!=decision_authority(r.actor,d.case,'PMO Lead') or r.snapshot!=planning_inputs(d):
         raise ValidationError('Current exact Planning exit approval required')
+    remedy = r.data.get('issue_remedy')
+    if remedy:
+        current = planning_issue(d, remedy['issue']).current
+        if current.status not in ('Resolved', 'Closed') or current.fix_id != remedy['fix']:
+            raise ValidationError('The issue fix used for the Planning approval needs review.')
     return r
 
 

@@ -89,6 +89,11 @@ def report(work,actor):
         if not w:return result
         result['stage']='rebuild';match(work,w,data,e,parent,body)
         if w.result['status']!='ready':result['stage']='source_correction';raise ValidationError(w.result['findings'])
+        latest_review = w.reviews.order_by('-pk').first()
+        if latest_review and latest_review.verdict in ('return', 'reject', 'revoke'):
+            if latest_review.verdict == 'revoke':
+                return dict(result, stage='withdrawn', finding='Finance must review whether to restore the approval of this exact version.')
+            return dict(result, stage='returned', finding='Correct the source and prepare a new version for Finance review.')
         result['stage']='output_review';native.approved(w)
         result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
@@ -193,7 +198,7 @@ def projection(actor,work):
         if work.status=='verified':verify(work,actor)
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified'
     pending_reviews=[];names=[];can_review=False
-    if s and n.get('stage')=='output_review' and not work.cancel_requested:
+    if s and n.get('stage') in ('output_review', 'withdrawn') and s.result['status']=='ready' and not work.cancel_requested:
         pending_reviews=[s.pk]
         for user in __import__('django.contrib.auth',fromlist=['get_user_model']).get_user_model().objects.filter(is_active=True,grant__case=work.case,grant__action='schedules.review',grant__active=True).distinct():
             try:native.authority(user,s)

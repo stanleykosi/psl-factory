@@ -217,10 +217,12 @@ def review(actor,case_id,work_id,verdict,evidence_id,note,expected=None):
  c=locked(actor,case_id,'schedules.review',expected);w=exact(c,work_id)
  if verdict not in ['approve','return','reject','revoke']:raise ValidationError('Typed human verdict required')
  analysis.note(note);auth=authority(actor,w)
+ prior=w.reviews.order_by('-pk').first()
  if verdict=='approve':
   current(w)
+  if prior and prior.verdict in ('return','reject'):raise ValidationError('Prepare a corrected schedule version for another Finance decision')
   if w.result['status']!='ready':raise ValidationError('Resolve dependent work holds before approval')
- if verdict=='revoke' and (not w.reviews.exists() or w.reviews.order_by('-pk').first().verdict!='approve'):raise ValidationError('Prior approval required for revocation')
+ if verdict=='revoke' and (not prior or prior.verdict!='approve'):raise ValidationError('Prior approval required for revocation')
  r=ScheduleReview.objects.create(work=w,verdict=verdict,authority=auth,snapshot=w.snapshot,evidence=subject(c,evidence_id,'finance_review'),note=note,actor=actor)
  event(actor,c,'finance.schedule_reviewed',work=w.pk,review=r.pk,verdict=verdict);bump(c);return r
 

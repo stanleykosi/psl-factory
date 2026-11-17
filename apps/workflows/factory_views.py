@@ -297,6 +297,19 @@ def _presentation(actor,work,*,focus=None):
             if prerequisite:row.update(blocker=prerequisite['summary'],next_action=prerequisite['summary'])
         if work.status=='verified':row.update(next_action='Inspect the release readiness record and source approvals')
         if row['delivery']['can_decide']:row.update(needs_me=True,next_action='Review this exact Planning exit',owner=actor.get_full_name() or actor.username,department_wait=True)
+        elif row['delivery']['returned'] and row['delivery']['remedy_finding'] and not work.cancel_requested:
+            issue = row['delivery']['return_issue']
+            state = 'Delivery returned' if row['delivery']['returned'].data['verdict']=='return' else 'Delivery rejected'
+            finding = row['delivery']['remedy_finding']
+            row.update(state=state, next_action=finding, blocker=finding, department_wait=False, can_advance=False,
+                       owner=(issue.current.owner.get_full_name() or issue.current.owner.username) if issue else 'Unassigned',
+                       needs_me=bool(issue and issue.current.owner_id==actor.pk))
+        elif (row['delivery']['intake_current'] and not work.cancel_requested
+                and work.status not in ('verified','cancelled','followup_needed','configuration_needed')
+                and not row['delivery']['planning_owner_names'] and row['delivery']['checks']['planning_sources']['status']=='ready'
+                and row['delivery']['checks']['planning_decision']['status']=='held'):
+            row.update(state='Planning approver needed', owner='Unassigned',
+                       next_action='Review the current Planning approval assignment.', department_wait=False)
         if row['delivery']['readiness_changed']:
             row.update(state='Prior release evidence needs review',next_action='Review changed native delivery sources or authority',readiness_changed=True,
                 can_reassess=permitted(actor,work,'factory.manage'),needs_me=permitted(actor,work,'factory.manage'))
@@ -434,7 +447,11 @@ def _presentation(actor,work,*,focus=None):
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if panel['pending_reviews']:
             row.update(state='Awaiting native Finance review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
-        if panel['readiness_changed']:row['state']='Reviewed income detail or schedule inventory needs revalidation'
+        if panel['native'].get('stage')=='returned':
+            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'), can_advance=False)
+        elif panel['native'].get('stage')=='withdrawn':
+            row.update(state='Approval withdrawn', can_advance=False)
+        elif panel['readiness_changed']:row['state']='Reviewed income detail or schedule inventory needs revalidation'
     if work.definition=='finance-ppe/v1':
         from .factory_ppe import projection
         row['ppe']=projection(actor,work);panel=row['ppe']
@@ -442,15 +459,24 @@ def _presentation(actor,work,*,focus=None):
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if panel['pending_reviews']:
             row.update(state='Awaiting native Finance review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
-        if panel['readiness_changed']:row['state']='Reviewed asset schedule needs revalidation'
+        stage=panel['native'].get('stage')
+        if stage=='returned':
+            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'), can_advance=False)
+        elif panel['readiness_changed']:row['state']='Reviewed asset schedule needs revalidation'
+        elif panel['pending_reviews']:
+            row['state']={'source_review':'Awaiting asset register review','basis_review':'Awaiting reporting dates review',
+                          'output_review':'Awaiting asset schedule review'}.get(stage,row['state'])
     if work.definition=='finance-forecast/v1':
         from .factory_forecast import projection
         row['forecast']=projection(actor,work);panel=row['forecast'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options']) and panel['intake_current']
-        row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
+        uncertain=any(d.uncertain_job(j) for j in panel['jobs'])
+        row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and uncertain
         if panel['review_roles']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username,state='Awaiting native forecast review')
         if panel['readiness_changed']:row['state']='Recorded forecast evidence changed'
+        if uncertain:
+            row.update(state='Delivery uncertain',next_action='Look up the original forecast delivery',can_advance=False)
     if work.definition=='pmo-escalation/v1':
         from .factory_escalation import projection
         row['escalation']=projection(actor,work);panel=row['escalation'];row['jobs']=panel['jobs']
@@ -809,13 +835,13 @@ def detail(request,work_id,focus=None):
         return detail(request,work)
     if work.definition=='finance-schedules/v1':
         from .factory_schedules_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='finance-ppe/v1':
         from .factory_ppe_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='finance-forecast/v1':
         from .factory_forecast_views import detail as forecast_detail
-        return forecast_detail(request,work)
+        return forecast_detail(request,work,focus)
     if work.definition=='finance-bu/v1':
         from .factory_bu_views import detail as bu_detail
         return bu_detail(request,work)
@@ -888,7 +914,8 @@ def detail(request,work_id,focus=None):
             elif operation=='delivery_decision':
                 if work.definition!='delivery-release/v1':raise ValidationError('Delivery work required')
                 from .factory_delivery import decide
-                decide(request.user,work.pk,revision,request.POST.get('verdict'),int(request.POST.get('evidence','0')),request.POST.get('note',''),int(request.POST.get('case_revision','0')),request.POST.get('packet',''))
+                decide(request.user,work.pk,revision,request.POST.get('verdict'),int(request.POST.get('evidence','0')),request.POST.get('note',''),int(request.POST.get('case_revision','0')),request.POST.get('packet',''),
+                       issue_id=int(request.POST['blocking_issue']) if request.POST.get('blocking_issue') else None)
             elif operation=='hypercare_observation':
                 if work.definition!='delivery-hypercare/v1':raise ValidationError('Release follow-up work required')
                 from .factory_hypercare import observe
@@ -955,6 +982,14 @@ def detail(request,work_id,focus=None):
     proofs=public_evidence(Evidence.objects.filter(case=work.case,kind='invoice_review'))
     job_ids=[j.pk for j in row['jobs']]
     history=Audit.objects.filter(case=work.case,action__startswith='invoice.effect_',data__job__in=job_ids).order_by('pk')
+    if job_ids and work.definition == 'pmo-finance/v1':
+        from apps.finance.models import InvoiceDelivery, InvoiceIssue
+        receipts = {job_id: receipt_id for model in (InvoiceIssue, InvoiceDelivery)
+                    for job_id, receipt_id in model.objects.filter(invoice__case=work.case, job_id__in=job_ids)
+                    .values_list('job_id', 'pk')}
+        for job in row['jobs']:
+            job.receipt_id = receipts.get(job.pk)
+            job.needs_lookup = d.uncertain_job(job)
     if work.definition=='planning/v1':
         from apps.pmo import planning
         row['planning']=planning.report(request.user,work.case_id)

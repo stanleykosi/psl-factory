@@ -78,6 +78,39 @@ class FactorySchedulesTests(TestCase):
         url=reverse('factory_detail',args=[self.work.pk]);secure=Client(enforce_csrf_checks=True);secure.force_login(f['reviewer']);self.assertEqual(secure.post(url,{'action':'review'}).status_code,403)
         self.client.force_login(f['reviewer']);response=self.client.post(url,{'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),'target':s.pk,'verdict':'approve','evidence':f['e']['finance_review'].pk,'note':'Exact synthetic human review through primary console'})
         self.assertEqual(response.status_code,302);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+    def test_focused_schedule_return_correction_and_withdrawal_keep_exact_versions(self):
+        from django.urls import reverse
+
+        f=self.f;self.start();self.advance();original=flow.schedule(self.work)
+        decision=reverse('factory_invoice_decision', args=[self.work.pk])
+        recovery=reverse('factory_invoice_recovery', args=[self.work.pk])
+        self.client.force_login(f['reviewer'])
+        self.assertContains(self.client.get(decision), 'Approve exact schedule')
+        response=self.client.post(decision, {'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),
+            'target':original.pk,'verdict':'return','evidence':f['e']['finance_review'].pk,'note':'Correct the source breakdown'})
+        self.assertRedirects(response, decision, fetch_redirect_response=False)
+        page=self.client.get(decision)
+        self.assertContains(page, 'Returned for correction')
+        self.assertNotContains(page, 'Approve exact schedule')
+        with self.assertRaisesMessage(ValidationError, 'Prepare a corrected schedule version'):
+            review(f,original)
+        self.client.force_login(f['actor'])
+        fixed=copy.deepcopy(self.payload);fixed['rows']=[row(f,'corrected','-1000')]
+        response=self.client.post(recovery, {'action':'correct','revision':self.work.revision,'case_revision':rev(f['case']),
+            'kind':'income','parent_id':f['parent'].pk,'evidence_id':f['e']['income_detail'].pk,
+            'payload':json.dumps(fixed),'reason':'Reviewed corrected income detail'})
+        self.assertRedirects(response, recovery, fetch_redirect_response=False)
+        self.advance();successor=flow.schedule(self.work)
+        self.assertNotEqual(successor.pk, original.pk)
+        review(f,successor);self.advance()
+        self.assertEqual(self.work.status, 'verified')
+        review(f,successor,'revoke')
+        self.client.force_login(f['reviewer'])
+        page=self.client.get(decision)
+        self.assertContains(page, 'Approval withdrawn')
+        self.assertContains(page, 'Restore exact approval')
+        self.assertNotContains(page, 'Approve exact schedule')
+        self.assertEqual(original.reviews.get().verdict, 'return')
     def test_af13_grant_withdrawal_invalidates_native_and_sql_without_private_report_grant(self):
         f=self.f;self.start(inventory=True,accepted=True);self.advance();s=flow.schedule(self.work);review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         Grant.objects.filter(case=f['case'],user=f['reviewer'],action='validation.accept').update(active=False)

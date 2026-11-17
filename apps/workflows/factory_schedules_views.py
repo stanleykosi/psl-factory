@@ -11,6 +11,7 @@ from apps.core.workbench import granted
 from apps.finance import schedules
 from apps.finance.models import ScheduleWork,FinanceRun
 from . import factory,factory_schedules as domain
+from .factory_progress import set_progress
 from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
@@ -54,8 +55,13 @@ def create(request):
 
 @never_cache
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
-    from .factory_views import presentation,permitted
+def detail(request,work,focus=None):
+    from .factory_views import QUEUES, presentation,permitted
+    from .screen_focus import require_action
+    queue = request.GET.get('queue', 'needs_me')
+    if queue not in QUEUES:
+        queue = 'needs_me'
+    query = request.GET.get('q', '')[:120]
     schedules.readable(request.user,work.case);data,e,parent,body=domain.source(work,request.user,False)
     initial=dict(data)
     if not permitted(request.user,work,'schedules.report'):initial['payload']=None
@@ -65,7 +71,8 @@ def detail(request,work):
             p=request.POST;a=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
             allowed={'advance':set(),'resume':set(),'cancel':set(),'restart':{'reason'},'correct':{'kind','parent_id','evidence_id','payload','reason'},'review':{'target','verdict','evidence','note'},'export':{'target','kind','evidence'},'adopt_profile':{'configuration','reason'}}
             if a not in allowed or set(p)-allowed[a]-{'action','revision','case_revision','csrfmiddlewaretoken'}:raise ValidationError('Choose an exact typed schedule command')
-            if a=='advance':factory.advance(request.user,work.pk,revision)
+            require_action(work, focus, a)
+            if a=='advance':set_progress(request.user,work.pk,revision,True)
             elif a in ['resume','cancel']:factory.manage(request.user,work.pk,revision,a)
             elif a=='correct':
                 if not form.is_valid():raise ValidationError('Choose exact native sources')
@@ -76,9 +83,23 @@ def detail(request,work):
             elif a=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             messages.success(request,'Native schedule work updated');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work);s=row['schedules']['schedule'];reviews=[]
-    if s and not work.cancel_requested and work.status not in ['cancelled','followup_needed']:
+    row=presentation(request.user,work);panel=row['schedules'];s=panel['schedule'];reviews=[]
+    latest = s.reviews.select_related('actor').order_by('-pk').first() if s else None
+    if s and focus != 'recovery' and not work.cancel_requested and work.status not in ['cancelled','followup_needed']:
         try:schedules.authority(request.user,s)
         except (ValidationError,PermissionDenied):pass
-        else:reviews.append({'target':s.pk})
-    return render(request,'factory/schedules_detail.html',{'row':row,'case':work.case,'inputs_form':form,'reviews':reviews,'review_evidence':Evidence.objects.filter(case=work.case,kind='finance_review').order_by('-pk'),'adjustment_evidence':Evidence.objects.filter(case=work.case,kind='finance_adjustment').order_by('-pk'),'can_export':s is not None and s.kind=='income' and permitted(request.user,work,'schedules.adjust') and permitted(request.user,work,'finance.adjust'),'activities':work.activities.order_by('pk'),'can_correct':permitted(request.user,work,'factory.manage') and not work.cancel_requested and (work.request['kind']!='income' or permitted(request.user,work,'schedules.report')),'can_restart':work.status=='cancelled' and permitted(request.user,work,'factory.manage'),'can_configure':permitted(request.user,work,'policy.configure')})
+        else:
+            stage = panel['native'].get('stage')
+            verdicts = ('revoke',) if latest and latest.verdict=='approve' else ()
+            if not verdicts and stage=='output_review' and s.result['status']=='ready':
+                verdicts=('approve','return','reject')
+            elif stage=='withdrawn':
+                verdicts=('approve',)
+            if verdicts:reviews.append({'target':s.pk,'verdicts':verdicts})
+    return render(request,'factory/schedules_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
+        'inputs_form':form,'reviews':reviews,'latest_review':latest,'review_evidence':Evidence.objects.filter(case=work.case,kind='finance_review').order_by('-pk'),
+        'adjustment_evidence':Evidence.objects.filter(case=work.case,kind='finance_adjustment').order_by('-pk'),
+        'can_export':focus!='decision' and s is not None and s.kind=='income' and panel['native'].get('stage')=='complete' and permitted(request.user,work,'schedules.adjust') and permitted(request.user,work,'finance.adjust'),
+        'activities':work.activities.order_by('pk') if not focus else (),
+        'can_correct':focus!='decision' and permitted(request.user,work,'factory.manage') and not work.cancel_requested and (work.request['kind']!='income' or permitted(request.user,work,'schedules.report')),
+        'can_restart':focus!='decision' and work.status=='cancelled' and permitted(request.user,work,'factory.manage'),'can_configure':permitted(request.user,work,'policy.configure')})

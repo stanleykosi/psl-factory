@@ -198,9 +198,12 @@ def review(a,case_id,work_id,purpose,verdict,evidence_id,note,expected=None):
  c=locked(a,case_id,'ppe.review',expected);w=exact(c,work_id);analysis.note(note)
  if purpose not in (['register','basis'] if w.kind=='ppe_register' else ['schedule']) or verdict not in ['approve','return','reject','revoke']:raise ValidationError('Exact typed PPE purpose/verdict required')
  auth=authority(a,w,purpose);e=subject(c,evidence_id,'ppe_basis_explanation' if purpose=='basis' else 'finance_review')
+ prior=latest(w,purpose)
  if verdict=='approve':
   current(w)
+  if prior and prior.verdict in ('return','reject') and (purpose!='basis' or prior.evidence.sha256==e.sha256):
+   raise ValidationError('Record corrected asset evidence before a fresh Finance decision')
   if purpose=='schedule' and (w.result['status']!='ready' or calculate(c,w.payload,w.snapshot,w.parent)!=w.result):raise ValidationError('Current reconciled PPE schedule required')
- if verdict=='revoke' and (not latest(w,purpose) or latest(w,purpose).verdict!='approve'):raise ValidationError('A prior approval must exist to revoke')
+ if verdict=='revoke' and (not prior or prior.verdict!='approve'):raise ValidationError('A prior approval must exist to revoke')
  result=ScheduleReview.objects.create(work=w,verdict=verdict,authority=auth,snapshot=w.snapshot,evidence=e,note=note,actor=a)
  event(a,c,'finance.ppe_review',work=w.pk,purpose=purpose,review=result.pk,verdict=verdict);bump(c);return result

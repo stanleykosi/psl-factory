@@ -52,6 +52,36 @@ class FactoryPPETests(TestCase):
         with self.assertRaises(ValidationError):review(f,new)
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
         self.assertTrue(ScheduleWork.objects.filter(pk=old.pk).exists())
+    def test_focused_asset_schedule_return_requires_a_new_exact_version(self):
+        from django.urls import reverse
+
+        f=self.f;self.start();self.advance();original=flow.schedule(self.work)
+        self.client.force_login(f['reviewer'])
+        decision=reverse('factory_invoice_decision',args=[self.work.pk])
+        recovery=reverse('factory_invoice_recovery',args=[self.work.pk])
+        self.assertContains(self.client.get(decision),'Calculated schedule decision')
+        response=self.client.post(decision,{'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),
+            'target':original.pk,'purpose':'schedule','verdict':'return','evidence':f['e']['finance_review'].pk,
+            'note':'Reconcile the opening asset evidence'})
+        self.assertRedirects(response,decision,fetch_redirect_response=False)
+        page=self.client.get(decision)
+        self.assertContains(page,'Returned for correction')
+        self.assertNotContains(page,'Approve exact schedule')
+        with self.assertRaisesMessage(ValidationError,'Record corrected asset evidence'):
+            review(f,original)
+        self.client.force_login(f['actor'])
+        self.assertContains(self.client.get(recovery),'Select corrected sources and rebuild')
+        body=copy.deepcopy(f['ppe']['body'])
+        from tests.schedule_helpers import evidence
+        body['opening_evidence_id']=evidence(f,'ppe_opening','Synthetic corrected opening reference').pk
+        register=capture(f,body);review(f,register,'register')
+        response=self.client.post(recovery,{'action':'correct','revision':self.work.revision,'case_revision':rev(f['case']),
+            'register_id':register.pk,'ledger_id':f['parent'].pk,'reason':'Use the corrected register version'})
+        self.assertRedirects(response,recovery,fetch_redirect_response=False)
+        self.advance();successor=flow.schedule(self.work)
+        self.assertNotEqual(successor.pk,original.pk)
+        review(f,successor);self.advance();self.assertEqual(self.work.status,'verified')
+        self.assertEqual(original.reviews.get().verdict,'return')
     def test_access_csrf_forgery_cancellation_and_no_automatic_restart(self):
         f=self.f;self.start();self.client.force_login(f['actor']);url='/work/'+str(self.work.pk)+'/'
         response=self.client.post(url,{'action':'advance','revision':self.work.revision,'approved_by':'Finance'});self.assertContains(response,'exact typed PPE command');self.assertIsNone(flow.schedule(self.work))

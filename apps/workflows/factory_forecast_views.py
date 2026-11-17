@@ -9,6 +9,7 @@ from apps.core.models import Case, Evidence
 from apps.core.workbench import granted
 from apps.documents.models import Template
 from apps.finance.models import ForecastScenario
+from apps.finance import group_forecast
 from apps.finance.forecast_forms import commands
 from . import factory, factory_forecast as service
 from .factory_progress_views import StartWithBackground, start_work
@@ -67,8 +68,13 @@ def create(request):
 
 
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
-    from .factory_views import presentation,permitted
+def detail(request,work,focus=None):
+    from .factory_views import QUEUES,presentation,permitted
+    from .screen_focus import SCREENS,require_action
+    from .factory_progress import set_progress
+    queue=request.GET.get('queue','needs_me')
+    if queue not in QUEUES:queue='needs_me'
+    query=request.GET.get('q','')[:120]
     scenario,selected=service.source(work,request.user,False)
     inputs=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,scenario_reference=scenario.reference,initial=selected)
     human_actions={'support','actual','verify','match','unmatch','review','priority','group_review'}
@@ -85,7 +91,8 @@ def detail(request,work):
     if request.method=='POST':
         try:
             p=request.POST;action=p.get('action');revision=int(p.get('work_revision',p.get('revision','0')));case_revision=int(p.get('case_revision',p.get('revision','0')))
-            if action=='advance':factory.advance(request.user,work.pk,revision)
+            require_action(work,focus,action)
+            if action=='advance':set_progress(request.user,work.pk,revision,True)
             elif action=='correct':
                 if not inputs.is_valid():raise ValidationError('Choose exact scenario, horizon and complete source inventory')
                 service.correct(request.user,work.pk,revision,case_revision,inputs.selection(),p.get('reason',''))
@@ -105,7 +112,27 @@ def detail(request,work):
             messages.success(request,'Forecast action recorded');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work)
-    return render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'inputs_form':inputs,'commands':forms_list,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure')})
+    if focus:
+        forms_list=[entry for entry in forms_list if entry['action'] in SCREENS[work.definition][focus]]
+        if focus=='decision':
+            forms_list=[entry for entry in forms_list if
+                        (entry['action']!='review' or row['forecast']['review_roles']) and
+                        (entry['action']!='group_review' or row['forecast']['group_disclosure'])]
+    group_table=None
+    binding=row['forecast']['document']
+    if binding and binding.version.audience=='group' and focus in (None,'decision'):
+        try:
+            projected=group_forecast.check_content(binding)
+        except ValidationError:
+            forms_list=[entry for entry in forms_list if entry['action']!='group_review']
+        else:
+            headers=binding.snapshot['projection']['fields']
+            group_table={'headers':headers,'rows':[[item[name] for name in headers] for item in projected['rows']],
+                         'metadata':projected['metadata']}
+    return render(request,'factory/forecast_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
+        'group_table':group_table,
+        'inputs_form':inputs,'commands':forms_list,'activities':work.activities.prefetch_related('attempts').order_by('pk') if not focus else (),
+        'can_configure':permitted(request.user,work,'policy.configure')})
 
 
 from .factory_views import ProfileForm

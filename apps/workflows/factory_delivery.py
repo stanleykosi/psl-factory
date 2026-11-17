@@ -213,7 +213,25 @@ def projection(actor,work):
     try:delivery.dossier_for(work.case,d.pk)
     except (ValidationError,PermissionDenied) as exc:current=False;observed['baseline']=held('baseline',exc)
     authorities={}
-    if current and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and observed['planning_sources']['status']=='ready' and observed['planning_decision']['status']=='held':
+    prior = delivery.latest(d, 'planning_decision', False)
+    returned = prior if prior and prior.data['verdict'] in ('return', 'reject') else None
+    remedy_finding = ''
+    return_issue = None
+    return_issues = []
+    if returned:
+        try:
+            if returned.data.get('blocking_issue'):
+                require(actor, work.case, 'issue.read')
+                return_issue = delivery.planning_issue(d, returned.data['blocking_issue']['issue'])
+            if observed['planning_sources']['status'] == 'ready':
+                delivery.planning_remedy(d, returned, observed['planning_sources']['inputs'], actor=actor)
+            else:
+                remedy_finding = 'Verify the current Planning prerequisites before requesting another decision.'
+        except PermissionDenied:
+            remedy_finding = 'The linked issue needs review by someone with project issue access.'
+        except ValidationError as exc:
+            remedy_finding = exc.messages[0]
+    if current and not remedy_finding and not work.cancel_requested and work.status not in ['verified','cancelled','followup_needed'] and observed['planning_sources']['status']=='ready' and observed['planning_decision']['status']=='held':
         try:
             require(actor,work.case,'delivery.planning_decide')
             for verdict in ['approve','return','reject']:
@@ -221,7 +239,18 @@ def projection(actor,work):
                 except (ValidationError,PermissionDenied):pass
         except (ValidationError,PermissionDenied):pass
     can_decide=bool(authorities)
-    packet=digest({'inputs':observed['planning_sources']['inputs'],'authorities':authorities}) if can_decide else None
+    packet=digest({'inputs':observed['planning_sources']['inputs'],'authorities':authorities,
+                   'previous_decision': prior.pk if prior else None}) if can_decide else None
+    if 'return' in authorities or 'reject' in authorities:
+        from apps.pmo.issue_access import state_public
+        from apps.pmo.models import Issue
+        try:
+            require(actor, work.case, 'issue.read')
+            candidates = Issue.objects.filter(case=work.case, current__status__in=('Open', 'In Progress'))
+            return_issues = [issue for issue in candidates.select_related('case', 'current').order_by('-pk')[:40]
+                             if state_public(issue.current)]
+        except PermissionDenied:
+            pass
     changed=False
     if work.status=='verified':
         try:verify(work,actor=actor)
@@ -246,11 +275,12 @@ def projection(actor,work):
     return {'dossier':d,'checks':observed,'can_decide':can_decide,'ready':prepared(work),'readiness_changed':changed,
         'can_reaffirm':instruction_packet is not None,'intake_current':current,'intake_authority_current':author_current,
         'planning_owner_names':owner_names,'public_sources':sources,'source_coverage':coverage,'decision_packet':packet,'allowed_verdicts':list(authorities),
+        'last_decision':prior,'returned':returned,'remedy_finding':remedy_finding,'return_issue':return_issue,'return_issues':return_issues,
         'progress_tracking':optional_report(actor,d),'phase_evidence':phase_projection(actor,work.case_id,d.pk),
         'decision_evidence':list(public_evidence(Evidence.objects.filter(case=work.case))) if can_decide else []}
 
 @transaction.atomic
-def decide(actor,work_id,expected,verdict,evidence_id,note,case_expected,packet_sha256):
+def decide(actor,work_id,expected,verdict,evidence_id,note,case_expected,packet_sha256,*,issue_id=None):
     from .factory import access
     work=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
     access(actor,work.case,envelope=DEFINITION)
@@ -260,7 +290,7 @@ def decide(actor,work_id,expected,verdict,evidence_id,note,case_expected,packet_
     work.case=case;panel=projection(actor,work)
     if work.revision!=expected or verdict not in panel['allowed_verdicts'] or not packet_sha256 or packet_sha256!=panel['decision_packet']:raise ValidationError('STALE_VERSION: current exact Planning exit sources and authority required')
     if not public_evidence(Evidence.objects.filter(case=case,pk=evidence_id)).exists():raise ValidationError('Choose an available public delivery decision source')
-    result=delivery.decide_planning(actor,case.pk,work.request['dossier'],verdict,evidence_id,note,case.revision)
+    result=delivery.decide_planning(actor,case.pk,work.request['dossier'],verdict,evidence_id,note,case.revision,issue_id=issue_id)
     work.revision+=1;work.status='ready';work.finding='';work.save();return result
 
 @transaction.atomic

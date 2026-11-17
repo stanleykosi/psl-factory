@@ -43,7 +43,8 @@ def workbench(request,case_id):
                 elif kind.startswith('hypercare_'):payload={'observed_at':p['observed_at'],'confirmed':optional_bool(p['confirmed']),'metrics':json.loads(p['metrics'])}
                 capture_source(request.user,case.pk,d,kind,p['external_ref'],evidence,payload,expected)
             elif action=='verify':verify_source(request.user,case.pk,int(p['source']),expected)
-            elif action=='plan':decide_planning(request.user,case.pk,d,p['verdict'],evidence,note,expected)
+            elif action=='plan':decide_planning(request.user,case.pk,d,p['verdict'],evidence,note,expected,
+                issue_id=int(p['blocking_issue']) if p.get('blocking_issue') else None)
             elif action=='progress':record_progress(request.user,case.pk,d,p['kind'],evidence,note,expected,int(p['meeting']) if p.get('meeting') else None)
             elif action=='request':record_release_request(request.user,case.pk,d,p['external_ref'],evidence,note,expected)
             elif action=='ready':prepare_readiness(request.user,case.pk,d,expected)

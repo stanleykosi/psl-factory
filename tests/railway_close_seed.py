@@ -26,6 +26,7 @@ from tests import test_factory_go_live as go_live
 from tests.factory_accounting_helpers import configured
 from tests.helpers import rev
 from tests.test_factory_escalation import FactoryEscalationTests
+from tests.test_factory_forecast import PublicationTimeoutBeforeAcceptance
 from tests.test_factory_leadership import FactoryLeadershipTests
 
 
@@ -39,15 +40,16 @@ def exact_publish(fixture, version):
     return PublicationReceipt.objects.get(publication=publication)
 
 
-def unclear_delivery(work):
+def unclear_delivery(work, adapter=None):
+    adapter = adapter or PublicationTimeoutAfterAccept()
     for _ in range(24):
         job = PublicationJob.objects.filter(publication__factory_work=work).first()
         if job and job.status == 'pending':
-            run_publication_once(PublicationTimeoutAfterAccept(), job_id=job.pk)
+            run_publication_once(adapter, job_id=job.pk)
             job.refresh_from_db()
         if job and job.status == 'unknown':
-            return PublicationReceipt.objects.get(publication=job.publication)
-        if not factory.run_once(work.pk, adapter=PublicationTimeoutAfterAccept()):
+            return PublicationReceipt.objects.filter(publication=job.publication).first()
+        if not factory.run_once(work.pk, adapter=adapter):
             break
     raise RuntimeError('Fixture did not preserve an uncertain original delivery')
 
@@ -67,6 +69,127 @@ def release_work(recovery):
     return f.work, {'evidence': f.e['plan'].pk, 'dossier': f.d.pk}
 
 
+def release_return_work(_recovery):
+    f, issue, fix = release.return_fixture()
+    return f.work, {'evidence': f.e['plan'].pk, 'dossier': f.d.pk, 'issue': issue.issue_id, 'fix': fix.pk}
+
+
+def release_owner_work(_recovery):
+    work, details = release_work(False)
+    Grant.objects.filter(case=work.case, user=work.actor, action='delivery.planning_decide').update(active=False)
+    return work, details
+
+
+@transaction.atomic
+def supply_returned_release_prerequisites():
+    from apps.workflows.models import FactoryWork
+
+    work = FactoryWork.objects.get(case__tenant='design-browser-close-release-return-state', case__synthetic=True,
+                                   actor__username='psl-agent-trial', definition='delivery-release/v1')
+    f = test_delivery.DeliveryFixture()
+    f.actor, f.case = work.actor, work.case
+    f.d = delivery.dossier_for(f.case, work.request['dossier'])
+    f.candidate = f.d.candidate
+    f.e = {'requirements': f.candidate.requirements}
+    approval = delivery.approved_plan(f.d)
+    if not approval.data.get('issue_remedy'):
+        raise RuntimeError('Expected the native approval after the sample issue fix')
+    if not delivery.latest(f.d, 'glpi_request', False):
+        meeting = test_delivery.record_meeting(f.actor,f.case.pk,'BROWSER-RETURN-KICKOFF','kickoff',timezone.now(),
+            'Kickoff after the reviewed sample fix','Synthetic source-owned kickoff evidence',[f.actor.pk],[],
+            f.e['requirements'].pk,rev(f.case))
+        delivery.record_progress(f.actor,f.case.pk,f.d.pk,'kickoff',meeting.evidence_id,'Actual synthetic kickoff',rev(f.case),meeting.pk)
+        f.gates(delivery.UPSTREAM_GATES)
+        reference = 'SYNTHETIC-GLPI-RETURN-READY'
+        delivery.record_release_request(f.actor,f.case.pk,f.d.pk,reference,f.e['requirements'].pk,
+                                        'Independent synthetic release request',rev(f.case))
+        f.gates(delivery.GLPI_GATES, reference)
+    print('PSL_CLOSE_FIXTURE=' + json.dumps({'key': 'release-return-prerequisites', 'work': work.pk,
+                                           'approval': approval.pk}), flush=True)
+
+
+def invoice_reconciliation_work(_recovery):
+    from apps.finance import invoice_delivery
+    from apps.finance.models import InvoiceJob
+    from tests import factory_helpers
+    from tests.obligation_helpers import factory_approve_identified
+
+    f = factory_helpers.fixture()
+    work = f['work']
+    factory.run_until_wait(work.pk)
+    factory_approve_identified(f)
+    factory.run_once(work.pk)
+    job = InvoiceJob.objects.get(invoice__case=f['case'], kind='issue')
+    pk, fence = invoice_delivery.claim(case_id=f['case'].pk, job_id=job.pk)
+    invoice_delivery.finish(pk, fence, 'unknown', 'Synthetic provider response unavailable')
+    factory.run_until_wait(work.pk)
+    return work, {'job': job.pk, 'invoice': job.invoice_id}
+
+
+def schedule_review_work(_recovery):
+    from tests import schedule_helpers, test_factory_schedules
+
+    operator, case = finance_analysis_helpers.setup_case()
+    preparer = get_user_model().objects.create_user(username='schedule-preparer')
+    Grant.objects.bulk_create([Grant(case=case, user=preparer, action=action) for action in dict.fromkeys(ACTIONS)])
+    with patch.object(finance_analysis_helpers, 'setup_case', return_value=(preparer, case)):
+        data = schedule_helpers.fixture(reviewer=operator)
+    scenario = test_factory_schedules.FactorySchedulesTests()
+    with patch.object(test_factory_schedules, 'fixture', return_value=data):
+        scenario.setUp()
+    scenario.payload['rows'] = [schedule_helpers.row(data, 'supplement', '20', 'additive',
+                                                     lines=[{'account': 'sales', 'amount': '20'}])]
+    work = scenario.start()
+    scenario.advance()
+    return work, {'evidence': data['e']['finance_review'].pk, 'adjustment_evidence': data['e']['finance_adjustment'].pk}
+
+
+def asset_review_work(_recovery):
+    import copy
+    from datetime import date, timedelta
+    from tests import ppe_helpers, test_factory_ppe
+
+    operator, case = finance_analysis_helpers.setup_case()
+    preparer = get_user_model().objects.create_user(username='asset-preparer')
+    Grant.objects.bulk_create([Grant(case=case, user=preparer, action=action) for action in dict.fromkeys(ACTIONS)])
+    with patch.object(finance_analysis_helpers, 'setup_case', return_value=(preparer, case)):
+        data = ppe_helpers.fixture(reviewer=operator)
+    body = copy.deepcopy(data['ppe']['body'])
+    body['label_as_of'] = (date.fromisoformat(body['period_end']) + timedelta(days=1)).isoformat()
+    data['register'] = ppe_helpers.capture(data, body)
+    scenario = test_factory_ppe.FactoryPPETests()
+    with patch.object(test_factory_ppe, 'fixture', return_value=data):
+        scenario.setUp()
+    work = scenario.start()
+    scenario.advance()
+    return work, {'evidence': data['e']['finance_review'].pk, 'basis': data['e']['ppe_basis_explanation'].pk,
+                  'register': data['register'].pk}
+
+
+@transaction.atomic
+def supply_asset_correction():
+    import copy
+    from apps.core.services import add_evidence
+    from apps.finance import ppe
+    from apps.workflows import factory_ppe
+    from apps.workflows.models import FactoryWork
+
+    work = FactoryWork.objects.get(case__tenant='design-browser-close-asset-state-review', case__synthetic=True,
+                                   definition=factory_ppe.DEFINITION)
+    source, _ = factory_ppe.source(work, work.actor, False)
+    original = factory_ppe.schedule(work)
+    if original is None or ppe.latest(original, 'schedule').verdict!='return':
+        raise RuntimeError('Expected a reviewed sample asset return in the browser')
+    corrected = copy.deepcopy(source.payload)
+    opening = add_evidence(work.actor,work.case_id,'ppe_opening','Synthetic corrected asset opening source supplied by the preparer.',
+                           'synthetic:browser-asset-opening-correction')
+    corrected['opening_evidence_id'] = opening.pk
+    supplied = add_evidence(work.actor,work.case_id,'ppe_register',json.dumps(corrected), 'synthetic:browser-asset-register-correction')
+    replacement = ppe.capture(work.actor,work.case_id,source.reference,supplied.pk,rev(work.case))
+    print('PSL_CLOSE_FIXTURE=' + json.dumps({'key':'asset-source-correction','work':work.pk,'register':replacement.pk,
+                                           'opening':opening.pk}), flush=True)
+
+
 def go_live_work(recovery):
     f = go_live.setup()
     factory.run_until_wait(f.work.pk)
@@ -78,6 +201,57 @@ def go_live_work(recovery):
         client = f.evidence('signature', 'Synthetic supplied client sign-off for the exact go-live report')
         facts = {'receipt': receipt.pk, 'pm': pm.pk, 'client': client.pk, 'attestation': f.attestation(receipt, pm, client)}
     return f.work, facts
+
+
+def forecast_work(group, recovery=None):
+    from apps.workflows import factory_forecast
+    from tests import forecast_helpers
+    from tests.billing_helpers import evidence
+    from tests.test_factory_forecast import ForecastFactoryTests
+    from tests.test_factory_group_forecast import GroupForecastFactoryTests
+
+    actor, case = document_helpers.setup_case()
+    with patch.object(forecast_helpers, 'setup_case', return_value=(actor, case)):
+        fixture = GroupForecastFactoryTests() if group else ForecastFactoryTests()
+        fixture.setUp()
+        work = fixture.start()
+        fixture.advance()
+    if group:
+        return work, {'recipient':fixture.reader.username,'version':factory_forecast.document(work).version_id}
+    proof = evidence(actor, case, 'forecast_review', 'Synthetic Finance review of the exact selected forecast.')
+    run = factory_forecast.calculation(work, actor)
+    facts = {'evidence':proof.pk,'run':run.pk}
+    if recovery:
+        factory_forecast.human_action(actor,work.pk,work.revision,rev(case),fixture.scenario.pk,'review',
+                                      {'run':run,'role':'Finance','verdict':'approve','evidence':proof,
+                                       'reason':'Synthetic exact reviewed forecast before unclear delivery'})
+        receipt = unclear_delivery(work,recovery)
+        facts['receipt'] = receipt.pk if receipt else None
+        facts['job'] = PublicationJob.objects.get(publication__factory_work=work).pk
+    return work, facts
+
+
+def forecast_recovery_work(recovery):
+    adapter = PublicationTimeoutAfterAccept() if recovery else PublicationTimeoutBeforeAcceptance()
+    return forecast_work(False, adapter)
+
+
+@transaction.atomic
+def supply_forecast_actuals():
+    from tests.billing_helpers import evidence
+    from apps.workflows import factory_forecast
+    from apps.workflows.models import FactoryWork
+
+    work = FactoryWork.objects.get(case__tenant='design-browser-close-forecast-management-review', case__synthetic=True,
+                                   definition=factory_forecast.DEFINITION, status='verified')
+    value = {'entity':'synthetic-company','account':'account-1','currency':'NGN','basis':'gross_cash',
+             'source':'supplied-source','transaction':'BROWSER-FORECAST-ACTUAL','direction':'inflow',
+             'amount':'15','occurred_on':timezone.localdate().isoformat()}
+    statement = evidence(work.actor,work.case,'forecast_actual',json.dumps(value))
+    verification = evidence(work.actor,work.case,'forecast_actual_verification',json.dumps(value))
+    match = evidence(work.actor,work.case,'forecast_match','Synthetic source linking the bank entry to receipt-1.')
+    print('PSL_CLOSE_FIXTURE=' + json.dumps({'key':'forecast-supplied-actual','work':work.pk,'scenario':factory_forecast.source(work,work.actor)[0].pk,
+                                           'statement':statement.pk,'verification':verification.pk,'match':match.pk}), flush=True)
 
 
 def closure_work(recovery):
@@ -138,6 +312,7 @@ def accounting_work(recovery):
 
 @transaction.atomic
 def seed(key, setup, recovery):
+    from tests import factory_helpers
     title = 'Browser acceptance ' + key.replace('-', ' ')
     case, created = Case.objects.get_or_create(tenant='design-browser-close-' + key, kind='project', title=title, synthetic=True)
     if not created:
@@ -149,6 +324,7 @@ def seed(key, setup, recovery):
     with (
         patch.object(document_helpers, 'setup_case', return_value=(operator, case)),
         patch.object(finance_analysis_helpers, 'setup_case', return_value=(operator, case)),
+        patch.object(factory_helpers, 'setup_case', return_value=(operator, case)),
         patch.object(test_delivery, 'setup_case', return_value=(operator, case)),
         patch.object(test_delivery, 'run_once', side_effect=lambda: run_once(case_id=case.pk)),
         patch.object(test_delivery.DeliveryFixture, 'publish', exact_publish),
@@ -178,6 +354,31 @@ elif selected == 'review-states':
                 ('leadership-state-review', leadership_work, False),
                 ('accounts-state-review', accounting_work, False)]
     selected = None
+elif selected == 'release-return-state':
+    fixtures = [('release-return-state', release_return_work, False)]
+elif selected == 'invoice-reconciliation-state':
+    fixtures = [('invoice-reconciliation-state', invoice_reconciliation_work, False)]
+elif selected == 'finance-state-review':
+    supply_returned_release_prerequisites()
+    fixtures = [('invoice-reconciliation-state', invoice_reconciliation_work, False),
+                ('schedule-state-review', schedule_review_work, False)]
+    selected = None
+elif selected == 'asset-state-review':
+    fixtures = [('asset-state-review', asset_review_work, False), ('release-owner-state', release_owner_work, False)]
+    selected = None
+elif selected == 'asset-source-correction':
+    supply_asset_correction()
+    fixtures = []
+elif selected == 'forecast-states':
+    fixtures = [('forecast-management-review', forecast_work, False), ('forecast-group-review', forecast_work, True),
+                ('forecast-original-delivery', forecast_recovery_work, True)]
+    selected = None
+elif selected == 'forecast-supplied-actual':
+    supply_forecast_actuals()
+    fixtures = [('forecast-missing-receipt', forecast_recovery_work, False)]
+    selected = None
+elif selected == 'forecast-lookup-only':
+    fixtures = [('forecast-lookup-only', forecast_recovery_work, False)]
 for key, build, recovery in fixtures:
     if selected and selected != key:
         continue

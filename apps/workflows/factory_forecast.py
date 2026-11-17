@@ -391,7 +391,7 @@ def projection(actor, work):
         job.receipts=list(PublicationReceipt.objects.filter(publication=job.publication).order_by('pk'))
         try:
             require(actor,work.case,'document.operate')
-            job.can_operate=not (work.lease_until and work.lease_until>timezone.now()) and not job.receipts and (job.status in ['pending','unknown','held'] or job.status=='leased' and job.lease_until and job.lease_until<=timezone.now())
+            job.can_operate=not (work.lease_until and work.lease_until>timezone.now()) and not job.receipts and job.status in ['pending','held']
             job.can_retry=job.can_operate and not work.cancel_requested and job.status=='held'
         except PermissionDenied:pass
     review_roles=[]
@@ -433,7 +433,7 @@ def reconcile(actor,work_id,expected,adapter=None):
         job=PublicationJob.objects.filter(publication__factory_work=w).filter(Q(status='unknown')|Q(status='leased',lease_until__lte=timezone.now())).order_by('pk').first()
         if not job:raise ValidationError('No original uncertain forecast delivery needs reconciliation')
         event(actor,w.case,'factory.reconciliation_requested',work=w.pk,publication_job=job.pk)
-    run_publication_once(adapter,case_id=w.case_id,job_id=job.pk)
+    run_publication_once(adapter,case_id=w.case_id,job_id=job.pk,lookup_only=True)
     with transaction.atomic():
         w=Work.objects.select_for_update().get(pk=work_id);job.refresh_from_db()
         w.status=cancellation_status(w) if w.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'blocked' if job.status=='held' else 'ready'

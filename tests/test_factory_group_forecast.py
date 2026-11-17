@@ -78,11 +78,17 @@ class GroupForecastFactoryTests(TestCase):
     def test_primary_work_console_exact_group_review_and_readonly_get(self):
         self.start();self.advance();self.client.force_login(self.a)
         before=(FactoryAttempt.objects.count(),ForecastBinding.objects.count(),self.w.revision,rev(self.c))
-        url=reverse('factory_detail',args=[self.w.pk]);response=self.client.get(url)
+        url=reverse('factory_invoice_decision',args=[self.w.pk]);response=self.client.get(url)
         self.assertEqual(response.status_code,200);self.assertContains(response,'Separate group disclosure report')
         self.assertContains(response,'Decide exact group disclosure and recipients')
         self.assertContains(response,'Exact group disclosure decision');self.assertContains(response,self.reader.username)
+        self.assertContains(response,'Selected forecast rows')
+        self.assertContains(response,'<td>50</td>',html=True)
+        self.assertNotContains(response,'7391')
         self.assertContains(response,service.document(self.w).version.payload_sha256)
+        actuals=self.client.get(reverse('factory_work_response',args=[self.w.pk]))
+        self.assertNotContains(actuals,'Exact group disclosure decision')
+        self.assertNotContains(actuals,self.reader.username)
         self.w.refresh_from_db();self.assertEqual(before,(FactoryAttempt.objects.count(),ForecastBinding.objects.count(),self.w.revision,rev(self.c)))
         b=service.document(self.w)
         response=self.client.post(url,{'action':'group_review','revision':rev(self.c),'work_revision':self.w.revision,

@@ -11,6 +11,7 @@ from apps.core.workbench import granted
 from apps.finance import ppe
 from apps.finance.models import ScheduleWork,FinanceRun
 from . import factory,factory_ppe as domain
+from .factory_progress import set_progress
 from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
@@ -51,8 +52,12 @@ def create(request):
 
 @never_cache
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
-    from .factory_views import presentation,permitted
+def detail(request,work,focus=None):
+    from .factory_views import QUEUES, presentation,permitted
+    from .screen_focus import require_action
+    queue=request.GET.get('queue','needs_me')
+    if queue not in QUEUES:queue='needs_me'
+    query=request.GET.get('q','')[:120]
     ppe.readable(request.user,work.case);r,data=domain.source(work,request.user,False)
     form=InputsForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct' else None,initial=data)
     if request.method=='POST':
@@ -60,7 +65,8 @@ def detail(request,work):
             p=request.POST;a=p.get('action');revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
             allowed={'advance':set(),'resume':set(),'cancel':set(),'restart':{'reason'},'correct':{'register_id','prior_id','ledger_id','reason'},'review':{'target','purpose','verdict','evidence','note'},'adopt_profile':{'configuration','reason'}}
             if a not in allowed or set(p)-allowed[a]-{'action','revision','case_revision','csrfmiddlewaretoken'}:raise ValidationError('Choose an exact typed PPE command')
-            if a=='advance':factory.advance(request.user,work.pk,revision)
+            require_action(work, focus, a)
+            if a=='advance':set_progress(request.user,work.pk,revision,True)
             elif a in ['resume','cancel']:factory.manage(request.user,work.pk,revision,a)
             elif a=='correct':
                 if not form.is_valid():raise ValidationError('Choose exact native sources')
@@ -70,12 +76,29 @@ def detail(request,work):
             elif a=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             messages.success(request,'Native PPE work updated');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work);s=row['ppe']['schedule'];reviews=[]
-    candidates=[] if work.cancel_requested or work.status in ['cancelled','followup_needed'] else [(r,['register','basis'] if r.result['date_basis_ambiguous'] else ['register']),(s,['schedule'])]
+    row=presentation(request.user,work);s=row['ppe']['schedule'];reviews=[];decisions=[]
+    candidates=[(r,['register','basis'] if r.result['date_basis_ambiguous'] else ['register']),(s,['schedule'])]
     for target,purposes in candidates:
         if not target:continue
         for purpose in purposes:
+            title={'register':'Asset register','basis':'Reporting dates','schedule':'Calculated schedule'}[purpose]
+            prior=ppe.latest(target,purpose)
+            if prior:decisions.append({'title':title,'decision':prior})
+            if focus=='recovery' or work.cancel_requested or work.status in ['cancelled','followup_needed']:continue
             try:ppe.authority(request.user,target,purpose)
             except (ValidationError,PermissionDenied):continue
-            reviews.append({'target':target.pk,'purpose':purpose})
-    return render(request,'factory/ppe_detail.html',{'row':row,'case':work.case,'inputs_form':form,'reviews':reviews,'review_evidence':Evidence.objects.filter(case=work.case,kind__in=['finance_review','ppe_basis_explanation']).order_by('-pk'),'activities':work.activities.order_by('pk'),'can_correct':permitted(request.user,work,'factory.manage') and not work.cancel_requested,'can_restart':work.status=='cancelled' and permitted(request.user,work,'factory.manage'),'can_configure':permitted(request.user,work,'policy.configure')})
+            if prior and prior.verdict=='approve':verdicts=('revoke',)
+            elif prior and prior.verdict in ('return','reject') and purpose!='basis':continue
+            else:
+                try:ppe.current(target)
+                except (ValidationError,PermissionDenied):continue
+                if purpose=='basis' and not any(item['purpose']=='basis' for item in row['ppe']['pending_reviews']):continue
+                verdicts=('return','reject') if purpose=='schedule' and target.result['status']!='ready' else ('approve','return','reject')
+            kind='ppe_basis_explanation' if purpose=='basis' else 'finance_review'
+            reviews.append({'target':target.pk,'purpose':purpose,'title':title,'verdicts':verdicts,
+                            'evidence':Evidence.objects.filter(case=work.case,kind=kind).order_by('-pk')})
+    return render(request,'factory/ppe_detail.html',{'row':row,'case':work.case,'focus':focus,'queue':queue,'q':query,
+        'inputs_form':form,'reviews':reviews,'decisions':decisions,'activities':work.activities.order_by('pk') if not focus else (),
+        'can_correct':focus!='decision' and permitted(request.user,work,'factory.manage') and not work.cancel_requested,
+        'can_restart':focus!='decision' and work.status=='cancelled' and permitted(request.user,work,'factory.manage'),
+        'can_configure':permitted(request.user,work,'policy.configure')})
