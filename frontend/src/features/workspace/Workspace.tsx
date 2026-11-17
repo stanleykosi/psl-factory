@@ -239,6 +239,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         submitLabel={failed ? 'Try again' : undefined}
         initial={row ? itemValues(row) : undefined}
         consequence={<Consequence step={open.step} />}
+        summary={issueLine(workspace)}
         onSubmit={(request) => {
           const itemIds = open.items ? liveIds(open.step, open.items.section) : open.itemIds;
           // everything was unticked while the form was open: nothing to send

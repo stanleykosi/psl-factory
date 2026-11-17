@@ -140,12 +140,18 @@ for (const [label, viewport] of [
       expect((await log()).assignments.filter((a) => a.written)).toHaveLength(1);
     });
 
-    test('an unknown issue is the same not-open view with no name', async ({ page }) => {
-      await page.goto('/work/W-2499');
-      await expect(page.getByText('Loading…')).toHaveCount(0);
-      await expect(page.getByText('Login fails on older Android phones')).toHaveCount(0);
-      await expectNoAxeViolations(page);
-    });
+    for (const status of ['403', '404']) {
+      test(`a ${status} on the item read is the same not-open view with no name`, async ({ page }) => {
+        // the scenario header answers the item read only; the mock serves a fixture for any unknown id
+        await page.route(/\/api\/v1\/work\/W-2411$/, (route) => route.continue({ headers: { ...route.request().headers(), 'x-mock-scenario': status } }));
+        await page.goto('/work/W-2411');
+        await expect(page.getByText('Loading…')).toHaveCount(0);
+        await expect(page.getByText("You can’t open this work item", { exact: false })).toBeVisible();
+        await expect(page.getByText('Login fails on older Android phones')).toHaveCount(0);
+        await expect(page.getByText('ISS-0233')).toHaveCount(0);
+        await expectNoAxeViolations(page);
+      });
+    }
 
     if (!phone) {
       test('the register row opens the issue, and its project tabs link to their pages', async ({ page }) => {

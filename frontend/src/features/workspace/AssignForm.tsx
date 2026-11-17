@@ -56,7 +56,7 @@ export function AssignForm({ assign, pending, submitLabel, onSubmit, onClose }: 
 
   const options = assign.candidates.map((c) => {
     const kind = assignCandidateKind(c);
-    const words = [c.role, c.hint, kind === 'team' || kind === 'outside_party' ? ASSIGN_TEXT.kind[kind] : undefined].filter(Boolean);
+    const words = [c.role, c.hint, kind === 'team' || kind === 'outside_party' ? (ASSIGN_TEXT.kind[kind] === c.role ? undefined : ASSIGN_TEXT.kind[kind]) : undefined].filter(Boolean);
     return { value: c.person_id, label: c.name, hint: words.length > 0 ? words.join(' · ') : undefined };
   });
   const noteRequired = assign.note_required === true;

@@ -243,6 +243,25 @@ describe('post an owner update (AC 8, 12, 13)', () => {
     expect(screen.getByText('Owner update · recorded by PM')).toBeTruthy();
   });
 
+  it('an empty submit shows the messages, a top summary and focus on the first control; nothing is sent', async () => {
+    await open(item('W-2411'));
+    await press('Post update');
+    await act(async () => {
+      fireEvent.click(submitButton());
+    });
+    expect(screen.getByText('2 things to fix')).toBeTruthy();
+    await waitFor(() => expect(document.activeElement?.getAttribute('role')).toBe('radio'));
+    expect(posts('/steps')).toHaveLength(0);
+    cleanupView();
+    await open(item('W-2412'));
+    await press('Record a reply');
+    await act(async () => {
+      fireEvent.click(submitButton());
+    });
+    expect(screen.getByText('1 thing to fix')).toBeTruthy();
+    await waitFor(() => expect(document.activeElement?.tagName).toBe('TEXTAREA'));
+  });
+
   it('a 500 never says done; Try again repeats the same key', async () => {
     await open(item('W-2411'));
     await press('Post update');
@@ -273,7 +292,7 @@ describe('post an owner update (AC 8, 12, 13)', () => {
     await act(async () => {
       fireEvent.click(ws().getAllByRole('button').find((b) => (b as HTMLButtonElement).type === 'submit')!);
     });
-    expect(await screen.findByText('Say what changed.')).toBeTruthy();
+    expect((await screen.findAllByText('Say what changed.')).length).toBeGreaterThan(0);
     expect((ws().getByLabelText('Update') as HTMLTextAreaElement).value).toBe('Words');
   });
 
@@ -312,7 +331,7 @@ describe('record a reply and raise an escalation (AC 9, 10)', () => {
       fireEvent.click(submitButton());
     });
     expect(posts('/steps')).toHaveLength(0);
-    expect(ws().getByText('Add reply to continue.')).toBeTruthy();
+    expect(ws().getAllByText('Add reply to continue.').length).toBeGreaterThan(0);
     type('Reply', 'Engineering is looking at it today.');
     writes = [json(200, { work_id: 'W-2412', state: 'processing', revision: 4, outcome: 'done', message: 'Done: reply recorded.' })];
     await act(async () => {
@@ -369,7 +388,7 @@ describe('set an owner (AC 11 to 14)', () => {
       expect.stringContaining('Lagoon Health support'),
     ]);
     expect(options[1].textContent).toContain('recorded by PM');
-    expect(options[1].textContent).toContain('Team');
+    expect(options[1].textContent).not.toMatch(/Team.*Team/);
     fireEvent.click(options[1]);
     writes = [json(200, { work_id: 'W-2413', state: 'processing', revision: 3, assigned_to: 'Engineering' })];
     const submit = ws().getAllByRole('button', { name: 'Set owner' }).find((b) => (b as HTMLButtonElement).type === 'submit')!;
