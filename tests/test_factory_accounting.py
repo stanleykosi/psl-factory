@@ -41,7 +41,15 @@ class AccountingRecoveryTests(TestCase):
         work.refresh_from_db();old_head=work.source_head_id;original=work.request.copy();spent=work.budget_used;limit=work.budget_limit
         factory.run_until_wait(work.pk);work.refresh_from_db()
         self.assertEqual(work.status,'followup_needed');self.assertFalse(Publication.objects.filter(factory_work=work).exists())
-        accounting.recheck(a,work.pk,work.revision,source.pk,[],'Explicitly reassessed unchanged source and supplemental inventory')
+        self.client.force_login(a)
+        recovery = reverse('factory_invoice_recovery', args=[work.pk])
+        page = self.client.get(recovery)
+        self.assertContains(page, 'Recheck corrected accounting inputs')
+        self.assertContains(page, f'value="{source.pk}" selected')
+        self.assertNotContains(self.client.get(reverse('factory_invoice_decision', args=[work.pk])), 'Record reviewed inputs')
+        response = self.client.post(recovery, {'action': 'recheck', 'revision': work.revision,
+            'source': source.pk, 'adjustments': '', 'reason': 'Explicitly reassessed unchanged source and supplemental inventory'})
+        self.assertRedirects(response, recovery+'?queue=needs_me&q=', fetch_redirect_response=False)
         work.refresh_from_db();self.assertNotEqual(work.source_head_id,old_head);self.assertEqual(work.request,original)
         self.assertEqual((work.budget_used,work.budget_limit),(spent,limit))
         factory.run_until_wait(work.pk)

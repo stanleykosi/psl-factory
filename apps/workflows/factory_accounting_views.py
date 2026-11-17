@@ -186,10 +186,19 @@ def _presentation(actor,work):
             if proposal['enabled']:adoption={'id':resolved.configuration.pk,'revision':resolved.configuration.revision,'effective_allowance':min(work.budget_limit,proposal['max_tokens'])}
     blocker=finding or work.finding
     if blocker.startswith('['):blocker='Review the recorded exception and current settings before continuing.'
-    return {'work':work,'state':status,'next_action':next_action,'owner':owner,'needs_me':bool(actionable) or can_advance,
+    can_reassess = (permitted('factory.execute') and permitted('finance.source') and not work.cancel_requested
+                    and work.status not in ('cancelled', 'waiting_effect')
+                    and not (work.lease_until and work.lease_until > timezone.now())
+                    and not service.PublicationJob.objects.filter(publication__factory_work=work,
+                        status__in=('pending', 'unknown', 'leased', 'held')).exists())
+    source_followup = work.status == 'followup_needed' and not work.cancel_requested
+    if source_followup:
+        next_action = ('Review the returned report and recheck the source records' if can_reassess
+                       else 'Wait for a source owner to check the returned report')
+    return {'work':work,'state':status,'next_action':next_action,'owner':owner,'needs_me':bool(actionable) or can_advance or (source_followup and can_reassess),
         'department_wait':bool(actionable),'tasks':tasks,'jobs':[],'can_advance':can_advance,'can_cancel':permitted('factory.manage') and work.status not in ['verified','cancelled','followup_needed'],
         'can_reconcile':permitted('factory.execute') and permitted('document.publish') and (execution_owner and actor.pk==execution_owner.pk or permitted('factory.manage')) and service.PublicationJob.objects.filter(publication__factory_work=work).filter(service.Q(status='unknown')|service.Q(status='leased',lease_until__lte=timezone.now())).exists() and not (work.lease_until and work.lease_until>timezone.now()),
-        'can_reassess':permitted('factory.execute') and permitted('finance.source') and not work.cancel_requested,
+        'can_reassess':can_reassess,
         'readiness_changed':changed,'blocker':blocker,'profile_available':value is not None,'adoption':adoption,
         'coordination_needed':current and not planning_ready and execution_owner is not None,'execution_owner_needed':current and execution_owner is None,'can_configure_coordination':permitted('policy.configure'),
         'accounting':{'state':observed,'formula':formula,'value':value},'evidence_as_of':work.updated_at}
@@ -229,6 +238,12 @@ def detail(request,work,focus=None):
             messages.error(request,'; '.join(exc.messages) if isinstance(exc,ValidationError) else 'Complete the requested fields using current records.');return redirect(url)
     row=presentation(request.user,work)
     source_choices=FinanceSource.objects.filter(case=work.case,batch_id=work.request['batch'],entity=work.request['entity']).order_by('-pk')
+    current_inputs = {}
+    if row['can_reassess'] and focus != 'decision':
+        try:
+            current_inputs = service.inputs(work)
+        except ValidationError:
+            row['can_reassess'] = False
     observed=row['accounting']['state'] or {}
     receipt_ids=[pk for pk,_ in observed.get('receipts',[])]
     receipts=PublicationReceipt.objects.filter(publication__version__document__case=work.case).filter(
@@ -240,6 +255,8 @@ def detail(request,work,focus=None):
         receipt.current_recipient_name=(receipt.recipient.get_full_name() or receipt.recipient.username) if receipt.recipient.is_active and Grant.objects.filter(case=work.case,user=receipt.recipient,active=True,action='finance.read').exists() else 'Historical recipient'
     response=render(request,'factory/accounting_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,
         'review_evidence':public_evidence(work.case.evidence.filter(kind='finance_review')).order_by('-pk'),
-        'sources':source_choices,'receipts':receipts,'activities':activities,
+        'sources':source_choices,'current_source':current_inputs.get('source'),
+        'current_adjustments':', '.join(map(str, current_inputs.get('adjustment_ids', []))),
+        'receipts':receipts,'activities':activities,
         'intake_provenance':intake.provenance(request.user,work) if not focus else None,'focus':focus})
     response['Cache-Control']='no-store';return response

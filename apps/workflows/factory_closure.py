@@ -73,6 +73,12 @@ def capture(actor,case,d,inputs,action):
     event(actor,case,action,evidence_id=e.pk,sha256=e.sha256);return e
 
 
+class ExistingClosureWork(ValidationError):
+    def __init__(self, work_id):
+        self.work_id = work_id
+        super().__init__('Review changed inputs or restart in the existing closure work.')
+
+
 @transaction.atomic
 def start(actor,case_id,key,dossier_id,inputs,reference,expected=None):
     from .factory import access
@@ -85,7 +91,8 @@ def start(actor,case_id,key,dossier_id,inputs,reference,expected=None):
     old=Work.objects.filter(case=case).filter(Q(key=key)|Q(definition=DEFINITION,business_key=business)).first()
     if old:
         if old.actor_id!=actor.pk or old.definition!=DEFINITION or old.key==key and old.request_hash!=sha:raise ValidationError('IDEMPOTENCY_CONFLICT: changed closure intent')
-        if source(old)[1]['inputs']!=inputs:raise ValidationError('Review changed inputs in the existing closure work')
+        if old.cancel_requested or source(old)[1]['inputs']!=inputs:
+            raise ExistingClosureWork(old.pk)
         return old
     delivery.ensure_open(d)
     w=Work.objects.create(case=case,actor=actor,key=key,definition=DEFINITION,request=payload,request_hash=sha,business_key=business,

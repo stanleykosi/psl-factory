@@ -51,6 +51,12 @@ def create(request):
                 if v['definition']!=closure.DEFINITION:raise ValidationError('Choose registered closure work')
                 return start_work(request, lambda: closure.start(request.user, v['case'].pk, v['key'], v['dossier'].pk,
                                   inputs.inputs(), v['reference'], v['revision']), v['background'])
+            except closure.ExistingClosureWork as exc:
+                from .factory_views import visible
+                if visible(request.user, work_id=exc.work_id).exists():
+                    messages.info(request, closure.finding(exc))
+                    return redirect('factory_invoice_recovery', work_id=exc.work_id)
+                form.add_error(None, closure.finding(exc))
             except ValidationError as exc:form.add_error(None,closure.finding(exc))
     return render(request,'factory/closure_start.html',{'case':form.selected,'form':form,'inputs_form':inputs})
 

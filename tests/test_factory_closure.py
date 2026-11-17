@@ -31,6 +31,13 @@ class FactoryClosureDistinctAuthorityTests(TestCase):
         f.work.refresh_from_db()
         self.client.force_login(f.actor)
         url = reverse('factory_invoice_recovery', args=[f.work.pk])
+        attempt = self.client.post(reverse('factory_create'), {
+            'definition': closure.DEFINITION, 'case': str(f.case.pk), 'dossier': f.d.pk,
+            'key': 'CLOSURE-REOPEN-FROM-READINESS', 'reference': 'Synthetic readiness restarts existing work',
+            'revision': rev(f.case), **f.inputs,
+        })
+        self.assertRedirects(attempt, url, fetch_redirect_response=False)
+        self.assertEqual(FactoryWork.objects.filter(case=f.case, definition=closure.DEFINITION).count(), 1)
         self.assertRedirects(self.client.post(url, {'action': 'restart', 'revision': f.work.revision,
                               'case_revision': rev(f.case), 'reason': 'Synthetic fresh closure instruction'}), url)
         f.work.refresh_from_db()

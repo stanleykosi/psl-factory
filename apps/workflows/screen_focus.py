@@ -14,7 +14,7 @@ SCREENS = {
     },
     'finance-accounts/v1': {
         'decision': ('claim', 'decide'),
-        'recovery': ('reconcile', 'cancel'),
+        'recovery': ('reconcile', 'recheck', 'cancel'),
     },
     'pmo-emergency/v1': {
         'decision': ('review', 'preauthorization_decision', 'authorize', 'record_review', 'retrospective_decision'),
