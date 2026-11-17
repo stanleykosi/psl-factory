@@ -76,3 +76,4 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 - TECH-2-2 (task-card hiding rule is general), TECH-3-1/3-2 (warn_lines guard and ordering), UI-3-1.
 ### Process lesson (17 Nov)
 - Several features running full test suites at once drove load past 500 and made untouched tests time out. Run full checks one at a time; the coordinator re-runs them quietly before each merge. Merge dlv-00 into a branch before the final reviews, not after. Write the backend-handoff section during the build, not after PMO asks.
+- F-23 also routed (non-blocking, many fixed in later rounds): TECH-1-1..1-4, UX-1-2..1-8, UI-1-5/1-6, TECH-2-2, UX-2-1, UI-2-3, SEC-2-1, TECH-3-1/3-2, UI-3-1/3-2, SEC-3-1, TECH-4-1 — see each round's reviews; contract items are in BACKEND-HANDOFF "Added during F-23".

@@ -13,22 +13,13 @@ import type { WorkItem } from '@/api/types';
 
 import { DecidePanel } from './DecidePanel';
 import { AgentNote, ApprovalChain, DecideHeader, DecisionRows, DecisionTrail, MiniLine, stationEyebrow } from './DecisionContent';
-import { CannotActView, cannotActCopy, DoneView, NotOpenState, StaleView } from './DecideStates';
+import { CannotActView, cannotActCopy, DoneView, NotOpenState, StaleView, UncertainNotice } from './DecideStates';
 import { findDecisionTask } from './format';
 import { decidePresentationOf, queueText } from './presentation';
 import { useDecision } from './useDecision';
 
 import '@/features/work-item/work-item.css';
 import './decide.css';
-
-/* A warning Callout has no live role (D-92), so these notices sit in an alert: they answer the person's press. */
-function UncertainNotice() {
-  return (
-    <div role="alert">
-      <Callout kind="warning">We couldn&rsquo;t confirm your decision. We&rsquo;ve reloaded this item so you can see whether it was recorded.</Callout>
-    </div>
-  );
-}
 
 /** The decide had an uncertain effect and the reload failed: say so plainly; Try again only reads the item. */
 function UnconfirmedNotice({ checking, onRecheck }: { checking: boolean; onRecheck: () => void }) {

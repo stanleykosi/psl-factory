@@ -157,28 +157,38 @@ type FormProps = {
   off: boolean;
   /** Text after the submit button's label while the step can't be pressed again (Try again on a network failure). */
   submitLabel?: string;
+  /** The row's current values (item-scope steps), by field name; they win over the descriptor's `value`. */
+  initial?: Record<string, unknown>;
   onSubmit: (request: Pick<StepBody, 'inputs' | 'evidence_ids' | 'note' | 'case_revision'>) => Promise<SubmitResult>;
   onClose: () => void;
   onAccessError: (error: ApiError) => void;
   consequence?: React.ReactNode;
 };
 
-export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending, off, submitLabel, onSubmit, onClose, onAccessError, consequence }: FormProps) {
+export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending, off, submitLabel, initial, onSubmit, onClose, onAccessError, consequence }: FormProps) {
   const fields = step.fields ?? [];
   const headId = useId();
   const heading = useRef<HTMLHeadingElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  // A text or long text field opens with the words the descriptor carries (a saved draft); the person edits from there.
+  // A text or long text field opens with the words the descriptor carries (a saved draft); the person edits from there. A choice opens on the option the descriptor names.
   // A records field opens with its saved records, when the descriptor carries them as a list of {value, label} (PROPOSAL, BACKEND-HANDOFF 2).
   const [values, setValues] = useState<Record<string, unknown>>(() => {
     const opened: Record<string, unknown> = {};
     for (const f of fields) {
       if (f.restricted || f.value === undefined) continue;
       if (f.type === 'text' || f.type === 'long_text') opened[f.name] = f.value;
+      else if (f.type === 'choice' && f.options?.some((o) => o.value === f.value)) opened[f.name] = f.value;
       else if (f.type === 'records') {
         const saved = (Array.isArray(f.value) ? (f.value as unknown[]) : []).filter((o): o is LineOption => typeof o === 'object' && o !== null && typeof (o as LineOption).value === 'string' && typeof (o as LineOption).label === 'string');
         if (saved.length > 0) opened[f.name] = saved;
       }
+    }
+    // the row being edited: its current text, record (owner) and date
+    for (const f of fields) {
+      const v = initial?.[f.name];
+      if (f.restricted || v === undefined) continue;
+      if ((f.type === 'text' || f.type === 'long_text' || f.type === 'date') && typeof v === 'string') opened[f.name] = v;
+      else if (f.type === 'record' && typeof v === 'object' && v !== null && typeof (v as LineOption).value === 'string' && typeof (v as LineOption).label === 'string') opened[f.name] = v;
     }
     return opened;
   });

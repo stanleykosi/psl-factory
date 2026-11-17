@@ -54,6 +54,17 @@ export function StepControl({ workId, step, off, pending, none, onPress, control
     );
   }
   if (step.task_id) {
+    // INV-RESEND: a decision link follows the page lock. While a write is in flight, after an uncertain send or after
+    // a failed refresh it is an unavailable control with no href, so nothing can be approved again from here.
+    if (off) {
+      return (
+        <span className="ws-control">
+          <Button kind={stepKind(step)} aria-disabled="true" aria-describedby={describedBy} ref={controlRef}>
+            {step.label}
+          </Button>
+        </span>
+      );
+    }
     // A decision is taken on the decision page (claim and decide there); this sends nothing.
     const href = `/work/${encodeURIComponent(workId)}/decide?task=${encodeURIComponent(step.task_id)}`;
     return (

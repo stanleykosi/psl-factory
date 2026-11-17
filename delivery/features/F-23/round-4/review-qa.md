@@ -1,10 +1,11 @@
 VERDICT: PASS
-COMMIT: 778e868137d79b0b808b55c5c994c7345613d586
+COMMIT: 81e06419df1929371e460af6cd2f2adb13192903
 REVIEWER: qa
 AUTHORITY: delivery integrated QA
 
 ## Summary
-- **What I ran:** the production build (`next start` :4763) against the contract mock (:4764), in browser context `F-23-qa`. This head is the round-4 fix plus the dlv-00 merge with F-26.
+- **Current head: 81e06419.** It is 778e8681 plus a dlv-00 merge bringing F-27 (delegation). Everything below was first checked on 778e8681. On 81e06419, the "Head 81e06419" section re-checks QA-3-1 live and re-runs the full smoke, all passing. The verdict stands.
+- **What I ran:** the production build (`next start` :4763) against the contract mock (:4764), in browser context `F-23-qa`. First on 778e8681 (the round-4 fix plus the dlv-00 merge with F-26), then again on 81e06419.
 - **QA-3-1 is fixed live.** After an uncertain approve on W-2305, the decision page is titled "Minutes v1: result not confirmed", with "NOT CONFIRMED" above it and the uncertain notice in an alert. It has no approved banner, no "Next step", no Paid line and no "Your decision was recorded". This holds at 1440, 390 and 320.
 - **A normal approve (W-2304) is unchanged.** It still shows the green "Minutes v1 is approved".
 - **The round-3 journey smoke** (19 runs plus 12 access checks) all pass on this head.
@@ -26,6 +27,24 @@ AUTHORITY: delivery integrated QA
 - QA-3-4 | verified | The test title at `tests/minutes.test.tsx:326` now says a blank is refused before any request and typed text reaches the 422. Live, W-2306 behaves that way:
   - A blank Add sends 0 requests and shows "Add action to continue.".
   - Typed text gets the 422 "Write the action in words." under Action, and the next press uses a new key.
+
+## Head 81e06419 (dlv-00 merge with F-27)
+- **What the merge changes.** It adds F-27 files only: setup delegation, `mock/delegations.mjs`, delegation fixtures and tests, and one line removed from `e2e/setup.spec.ts`. The one shared file is `mock/server.mjs`, where the conflict was resolved as the union:
+  - It adds the delegation import, routes and reset, `'E-DELEGATIONS'` and `'E-DELEGATION'` in `M1_OPERATIONS`, and an `admin` persona.
+  - `E-DOCUMENT` and the minutes and workspace handling are unchanged.
+  - `mock-contract.test.ts` only adds delegation entries.
+  - No file under `features/workspace`, `features/decide`, `features/work-item` or the W-23xx fixtures changed.
+- **Evidence I accept** (coordinator, normal load):
+  - `round-4/merge2-checks.log`: vitest 90/90 files, 2017/2017 tests.
+  - `round-4/merge2-e2e.log`: 122 passed — decide 21, minutes 26, money 12, setup-delegation 9, setup 17, workspace 37.
+  - The merged run has no weekly specs, but the merge touches no shared workspace or decide code. My 68/68 weekly and minutes run on 778e8681 still covers them.
+- **What I re-ran myself.** I rebuilt (`next build` with `API_ORIGIN=http://127.0.0.1:4764`, exit 0), started mock :4764 (PID 61003) and next :4763 (PID 61005), and checked live against the merged mock:
+  - **QA-3-1, W-2305 at 1440, 390 and 320:** h1 "Minutes v1: result not confirmed", 1 alert, 0 success elements, no Next step, no Paid line, 1 `/decision`, no sideways scroll.
+  - **Normal approve, W-2304 at 1440 and 390:** still "Minutes v1 is approved".
+  - **Round-3 journeys (`qa.mjs`):** 19/19 pass.
+  - **Access checks (`nx.mjs`):** 12/12 with no leak.
+  - **E-DOCUMENT D-2304 v1:** still answers.
+  - **Clean-up:** servers stopped by PID, ports 4763 to 4765 free, `test-results` deleted, no code changed.
 
 ## Smoke of the round-3 journeys (scratch `qa.mjs`, `nx.mjs`): 19/19 runs pass, 12/12 access checks pass
 - **J1/J2 at 1440 and 390:** W-2301 starts with 5/5 boxes ticked. Unticking D-2 and A-3 and confirming sent one POST with `item_ids:["D-1","A-1","A-2"]`, `inputs:{audience:"client"}`, revision 4, CSRF and a UUID key. The mock counted one send.

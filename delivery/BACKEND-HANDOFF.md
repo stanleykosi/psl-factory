@@ -176,3 +176,20 @@ Screen: SCR-13 delegation (`/setup/delegation`), on the contract mock (`frontend
 - **The two board sentences** ("Only people who already hold the same role are listed", "Delegating can't give anyone authority they don't already have") are shown as drawn (D-103). The backend must enforce both.
 - **Mock question** (F-27 TECH-1-1): in the readonly scenario the mock refuses with 422 before its "no `can_add` → 403" check. Which should the real API return?
 - **Open**: project-scoped delegation; what happens to claimed tasks when a delegation ends; optional `delegate_hint`/`note`.
+
+## Added during F-23: the minutes line (17 Nov)
+
+Screens: SCR-28 default, suggesting, drafted, review (work item line workspace, fixtures W-2301..W-2308). Contract mock only (D-LINE-WORKSPACE proposed); the template is a test template; a real client send is gated by D-ALERT-PROVIDERS; idempotency and the no-resend lock are proved on the mock only. Gap ids G-SCR28-* are in [gaps-c-client-lines.md](backend-handoff/gaps-c-client-lines.md).
+
+- **Pre-ticked suggestions** (`steps[].items_default: "checked"`): Tola's suggested decisions and actions arrive ticked; one Confirm sends `item_ids` for exactly the set shown (kept decisions and remaining actions), with `expected_revision` and an idempotency key. Nothing suggested becomes a decision or action until confirmed.
+- **Item steps send their item** (`item_ids: [id]` on every line's item-scope step, e.g. Edit/Remove). Each line's handler must accept or ignore it.
+- **Edit prefill** (`items[].values`): the row's current text, owner and due, so Edit opens with them; a field the PM clears is left out of the request.
+- **Board date format** (`columns[].date_format: "day_month"`): "13 Nov" in the Due column; an unknown due is `{unknown: true}` (amber Unknown), never a date or blank.
+- **Toned agent-note lines** (`agent_note.warn_lines: [indexes]`): lines that ask the PM to act show as an amber warning (D-105). Flags by index; nothing matches on words.
+- **Links from a workspace** (`workspace.links[]`, `link.action_id`): "Ask Tola", "Open the minutes".
+- **Document read** (E-DOCUMENT): `test_template: true` shows a "Test template" tag.
+- **Meeting, action and decision records**: their own records with ids, owners, due, status (priority 10).
+- **Owner options per work item**: E-LINE-OPTIONS needs `work_id` (priority 8); options may carry a `hint` with `recorded_by_pm` / `outside_party`.
+- **Approve and Return** go through the decision page (claim; Return needs a note). After an uncertain approve, the page shows "result not confirmed" and the work item offers only reconcile (QA-3-1); please define the reconcile reply (W-2305).
+- **Open**: G-SCR28-5 (audience change after drafting), G-SCR28-7 (when actions are created), G-SCR28-8 (recipients from client records), G-SCR28-9 (meeting notes are untrusted input), D-RETURN.
+- **Wording asks**: the shared decision copy "Paid is tracked separately by Finance" shows on minutes approves (QA-3-2); "Approve and send" on the work page vs "Approve v1" on the decision page (UX-1-3).
