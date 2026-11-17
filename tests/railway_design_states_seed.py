@@ -16,6 +16,7 @@ from apps.documents.models import PublicationJob
 from apps.finance import invoice_delivery
 from apps.identity.actions import ACTIONS
 from apps.identity.models import Grant
+from apps.pmo import rfp_portal, rfp_pricing
 from apps.policy.role_assignments import draft as draft_roles, draft_delegations
 from apps.policy.services import resolve, transition
 from apps.workflows import factory, factory_minutes
@@ -78,6 +79,20 @@ def prepare(key, operator):
         with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
             _, _, evidence, _, _ = test_rfp.fixture(record_intake=False)
         return {'case': str(case.pk), 'intake_source': evidence['rfp_intake'].pk}
+    if key == 'portal-pricing':
+        with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
+            data = factory_rfp_helpers.configured(reference='RFP-SAMPLE-PORTAL-PRICING',portal=True)
+        terms = add_evidence(operator, case.pk, 'rfp_commercial_terms', json.dumps({
+            'schema':rfp_pricing.QUOTE,'terms':'Synthetic reviewed portal bid','amount':'100.00',
+            'currency':'NGN','basis':'whole_contract'}), 'synthetic:portal-reviewed-quote')
+        data['payload']['public_terms'] = terms.pk
+        work = factory_rfp_helpers.start(data,key=key)
+        _, version = factory_rfp_helpers.reviewed_document(data,work)
+        proof = add_evidence(operator,case.pk,'rfp_portal_receipt',json.dumps({
+            'schema':rfp_portal.SCHEMA,'version':version.pk,'sha256':version.payload_sha256,
+            'destination':data['route']['destination_ref'],'reference':'PORTAL-ACCEPTANCE-01',
+            'received_at':timezone.now().isoformat()}),'synthetic:exact-portal-receipt')
+        return {'case':str(case.pk),'work':work.pk,'version':version.pk,'evidence':proof.pk}
     if key == 'corrected-money':
         run_invoice = invoice_delivery.run_once
         with (
@@ -130,7 +145,7 @@ def prepare(key, operator):
             entry.setUp()
         entry.approved_report()
         return {'case': str(case.pk), 'work': None}
-    is_minutes = key in {'minutes', 'outward-minutes', 'minutes-uncertain'}
+    is_minutes = key in {'minutes', 'outward-minutes', 'minutes-uncertain', 'minutes-selected'}
     entry = FactoryMinutesTests() if is_minutes else FactoryReportingTests()
     with (
         patch.object(document_helpers, 'setup_case', return_value=(operator, case)),
@@ -138,7 +153,7 @@ def prepare(key, operator):
     ):
         entry.setUp()
     if is_minutes:
-        outward = key != 'minutes'
+        outward = key not in {'minutes', 'minutes-selected'}
         entry.start(outward=outward)
         entry.advance()
         if outward:
@@ -171,6 +186,8 @@ if workflow == 'money-and-bids':
     fixtures = ('known-money', 'bid-loss-walkthrough', 'bid-win-walkthrough', 'delegation-periods', 'delegation-read-only')
 elif workflow == 'award-and-money-access':
     fixtures = ('bid-award-walkthrough', 'money-read-only', 'bid-intake-walkthrough', 'corrected-money')
+elif workflow == 'portal-and-followup':
+    fixtures = ('portal-pricing', 'minutes-selected')
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

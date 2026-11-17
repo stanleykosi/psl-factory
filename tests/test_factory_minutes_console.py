@@ -76,6 +76,22 @@ class FactoryMinutesConsoleTests(TestCase):
         self.assertContains(response,'Confirm delivery plan');self.assertContains(response,'<h3>',count=len(flow.document(self.work).version.payload['sections']))
         self.assertNotContains(response,'&#x27;evidence_ids&#x27;');self.assertNotContains(response,'&#x27;heading&#x27;');self.assertEqual(item.current.status,'open')
 
+    def test_selected_suggestions_are_copied_together_without_confirmation(self):
+        self.start();self.advance();page=self.page()
+        data=self.browser_payload(page)
+        data.update(action='use_selected',selected_suggestions=['decisions-0','commitments-0'])
+        before=self.business_rows()
+        copied=self.post(data)
+        self.assertEqual(copied.context['decision_forms'].total_form_count(),2)
+        self.assertEqual(copied.context['commitment_forms'].total_form_count(),2)
+        self.assertEqual(self.business_rows(),before)
+        draft=self.browser_payload(copied)
+        draft.update(action='use_selected',selected_suggestions=['decisions-0','commitments-0'])
+        self.assertEqual(self.post(draft).context['decision_forms'].total_form_count(),2)
+        draft['selected_suggestions']=['decisions-99']
+        self.assertContains(self.post(draft),'Choose distinct suggestions from the current meeting notes.')
+        self.assertEqual(self.business_rows(),before)
+
     def test_unknown_commitment_fields_are_explicit(self):
         self.start();response=self.page();data=self.new_payload(response);data['commitments-0-owner']='';data['commitments-0-due_at']=''
         self.assertEqual(self.post(data).status_code,302);state=ActionItem.objects.get().current

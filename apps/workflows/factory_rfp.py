@@ -273,6 +273,9 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if not publication and not document_observed(work,version):return ['ACT09'],'Link the exact existing native response document and its review'
     try:validate_review(work.case,version)
     except (ValidationError,PermissionDenied):return [],'Waiting for final review of this exact client response'
+    binding=RFPDocumentBinding.objects.get(version=version)
+    if binding.snapshot['route']['method']=='manual_client_portal':
+        return [],'Record the original receipt from the configured client portal'
     if not publication:
         if value['executor_id'] is None:return [],'Configure the response publisher before submitting the reviewed response'
         from django.contrib.auth import get_user_model
@@ -350,19 +353,20 @@ def verify(work):
     if disposition.snapshot.get('outcome')!=disposition.outcome_id or disposition.snapshot.get('case')!=str(work.case_id) or disposition.snapshot.get('sources')!=row.snapshot or disposition.snapshot.get('commercial_sources')!=row.commercial.sources:raise ValidationError('Exact historical winning or lost response requirements required')
     from apps.pmo.rfp_outcomes import historical_submission
     historical_submission(work.case,submission)
-    publication=Publication.objects.filter(version=version).first()
-    if not publication or publication.job.status!='confirmed':raise ValidationError('Confirmed exact response publication required')
-    receipts=list(PublicationReceipt.objects.filter(publication=publication).order_by('pk'))
-    if not receipts or [r.pk for r in receipts]!=submission.receipt_ids or {r.recipient_id for r in receipts}!=set(publication.recipient_ids) or any(r.payload!=version.payload or r.payload_sha256!=version.payload_sha256 for r in receipts):raise ValidationError('All exact native recipient receipts required')
+    portal=getattr(submission,'portal_receipt',None)
+    publication=None if portal else Publication.objects.filter(version=version).first()
+    if not portal and (not publication or publication.job.status!='confirmed'):
+        raise ValidationError('Confirmed exact response publication required')
     if disposition.kind not in ['route_a','loss_archive'] or disposition.kind=='loss_archive' and not disposition.lessons_id:raise ValidationError('Actual project route or evidenced loss archive required')
     if disposition.outcome.result!=('won' if disposition.kind=='route_a' else 'lost') or disposition.snapshot.get('route')!=('A' if disposition.kind=='route_a' else None):raise ValidationError('Actual customer outcome and disposition route must agree')
     if disposition.kind=='loss_archive' and disposition.lessons_id!=inputs(work)['lessons']:raise ValidationError('Exact declared loss lessons required')
-    if publication.factory_work_id is not None:
+    if publication and publication.factory_work_id is not None:
         if publication.factory_work_id!=work.pk:raise ValidationError('Another production work owns this response receipt')
         origin=json.loads(publication.factory_source.body)
         if origin.get('rfp')!=root.pk:raise ValidationError('Published response belongs to another RFP instruction scope')
-    return {'verified':True,'head':work.source_head_id,'response':row.pk,'document_version':version.pk,'publication':publication.pk,
-        'submission':submission.pk,'outcome':disposition.outcome_id,'disposition':disposition.pk,'receipt_ids':[r.pk for r in receipts],
+    transport={'portal_receipt':portal.pk} if portal else {'publication':publication.pk}
+    return {'verified':True,'head':work.source_head_id,'response':row.pk,'document_version':version.pk,**transport,
+        'submission':submission.pk,'outcome':disposition.outcome_id,'disposition':disposition.pk,'receipt_ids':submission.receipt_ids,
         'kind':disposition.kind,'signed_baseline_imported':False,'verification_scope':'historically_approved_native_submission_current_customer_outcome_and_route'}
 
 def publication_scope(actor,case,version,work_id):

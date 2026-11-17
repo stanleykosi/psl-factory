@@ -46,8 +46,24 @@ def _historical_submission(case,submission):
         raise ValidationError('Same-workspace historical RFP sources required')
     if version.audience!='client' or version.template.definition.get('internal_review_required',True) is not True:
         raise ValidationError('Historical client response and final review required')
+    from .rfp_portal import METHOD, proof
+    route=snapshot['route']
     publication=Publication.objects.select_related('review').filter(version=version).first()
-    if not publication or not publication.review_id or publication.review.version_id!=version.pk or publication.review.verdict!='approve' or publication.review.payload_sha256!=version.payload_sha256 or publication.review.created_at>publication.created_at:
+    portal=None
+    if route['method']==METHOD:
+        from .models import RFPPortalReceipt
+        portal=RFPPortalReceipt.objects.select_related('review','evidence').filter(submission=submission).first()
+        if (publication or not portal or portal.evidence.case_id!=case.pk or portal.evidence.kind!='rfp_portal_receipt' or
+                portal.actor_id!=submission.actor_id or submission.receipt_ids!=[] or route['recipient_ids']!=[] or
+                proof(portal.evidence,version,route)!=(portal.reference,submission.submitted_at) or
+                portal.created_at<submission.submitted_at):
+            raise ValidationError('Exact independent client portal receipt evidence required')
+        review=portal.review
+        approved_at=submission.submitted_at
+    else:
+        review=publication.review if publication else None
+        approved_at=publication.created_at if publication else None
+    if not review or review.version_id!=version.pk or review.verdict!='approve' or review.payload_sha256!=version.payload_sha256 or review.created_at>approved_at:
         raise ValidationError('Exact historical final client-document approval required')
     if version.payload_sha256!=digest(version.payload) or version.payload!=project_payload(version.payload['title'],version.template.definition,version.audience,version.fields):
         raise ValidationError('Historical outward payload and projection hash differ')
@@ -76,19 +92,21 @@ def _historical_submission(case,submission):
     if not required.issubset(set(source_ids)):raise ValidationError('Historical client document lacks reviewed response source references')
     review_ids=exact_ids(snapshot['reviews'],2,'response review')
     for pk,role in zip(review_ids,REVIEW_ROLES):
-        review=RFPReview.objects.filter(pk=pk,response=response,role=role,verdict='approve',created_at__lte=publication.created_at).first()
-        last=RFPReview.objects.filter(response=response,role=role,created_at__lte=publication.created_at).order_by('-pk').first()
+        review=RFPReview.objects.filter(pk=pk,response=response,role=role,verdict='approve',created_at__lte=approved_at).first()
+        last=RFPReview.objects.filter(response=response,role=role,created_at__lte=approved_at).order_by('-pk').first()
         if not review or not last or last.pk!=pk:raise ValidationError('Exact approved response reviews at submission required')
-    if RFPReview.objects.filter(response=response,verdict__in=['return','reject'],created_at__lte=publication.created_at).exists():
+    if RFPReview.objects.filter(response=response,verdict__in=['return','reject'],created_at__lte=approved_at).exists():
         raise ValidationError('Returned response was not an approved historical submission')
     decision_ids=exact_ids(snapshot['costing_decisions'],3,'ordered costing decision')
     if decision_ids!=sorted(decision_ids):raise ValidationError('Historical costing decisions must preserve the prescribed sequence')
     for pk,role in zip(decision_ids,['PM','Head of PMO','CEO']):
-        decision=CommercialDecision.objects.filter(pk=pk,revision=response.commercial,role=role,verdict='approve',created_at__lte=publication.created_at).first()
-        last=CommercialDecision.objects.filter(revision=response.commercial,role=role,created_at__lte=publication.created_at).order_by('-pk').first()
+        decision=CommercialDecision.objects.filter(pk=pk,revision=response.commercial,role=role,verdict='approve',created_at__lte=approved_at).first()
+        last=CommercialDecision.objects.filter(revision=response.commercial,role=role,created_at__lte=approved_at).order_by('-pk').first()
         if not decision or not last or last.pk!=pk:raise ValidationError('Exact approved commercial decisions at submission required')
-    if CommercialDecision.objects.filter(revision=response.commercial,verdict__in=['return','reject','withdraw'],created_at__lte=publication.created_at).exists():
+    if CommercialDecision.objects.filter(revision=response.commercial,verdict__in=['return','reject','withdraw'],created_at__lte=approved_at).exists():
         raise ValidationError('Closed costing proposal was not an approved historical submission')
+    if portal:
+        return response
     route=snapshot['route'];recipients=route.get('recipient_ids',[]) if isinstance(route,dict) else []
     exact_ids(recipients,len(recipients),'recipient')
     receipts=list(PublicationReceipt.objects.filter(publication=publication).order_by('pk'))

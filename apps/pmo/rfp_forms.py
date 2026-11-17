@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from apps.core.evidence_access import public_evidence
 from apps.documents.models import Template
 from apps.policy.document_validators import ROLES
 from .models import RFPResponse,RFPSubmission,RFPOutcome,RFPDocumentBinding
@@ -23,6 +24,8 @@ def forms_for(case,data=None):
         'review':('Record response review',{'response':response(),'role':choices(REVIEW_ROLES),'verdict':choices(['approve','return','reject']),'evidence':evidence(),'note':text()}),
         'draft':('Prepare controlled submission',{'response':response(),'template':forms.ModelChoiceField(Template.objects.filter(case=case,definition__document_type__in=['rfp_response','project_artifact'])),'route_key':forms.CharField(max_length=40)}),
         'capture':('Record actual submission receipts',{'version':forms.ModelChoiceField(RFPDocumentBinding.objects.filter(response__rfp__case=case),label='Controlled response binding')}),
+        'portal':('Record original client portal receipt',{'version':forms.ModelChoiceField(RFPDocumentBinding.objects.filter(response__rfp__case=case,snapshot__route__method='manual_client_portal'),label='Approved portal pack'),
+            'evidence':forms.ModelChoiceField(public_evidence(case.evidence.filter(kind='rfp_portal_receipt')),label='Exact portal receipt evidence'), 'note':text()}),
         'outcome':('Record relationship-owner outcome',{'submission':forms.ModelChoiceField(RFPSubmission.objects.filter(response__rfp__case=case)),'result':choices(['unknown','pending','won','lost']),'observed_at':forms.DateTimeField(),'role':choices(ROLES),'evidence':evidence(['rfp_outcome']),'note':text()}),
         'dispose':('Convert win or archive loss',{'outcome':forms.ModelChoiceField(RFPOutcome.objects.filter(submission__response__rfp__case=case)),'lessons':evidence(['rfp_lessons'])}),
         'policy':('Save RFP policy draft',{'component':choices(['D05.decision_action_matrix','D11.adapter_configuration_refs']),'content':forms.JSONField(widget=forms.Textarea(attrs={'rows':5})),'evidence':evidence(['policy_decision']),'effective_from':forms.DateTimeField()}),

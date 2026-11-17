@@ -1,7 +1,7 @@
 {% extends 'base.html' %}{% load studio_ui %}
 {% block title %}Delegation · PSL Factory{% endblock %}
 {% block content %}
-<header class="page-heading"><div><a class="back-link" href="{% url 'policy' case.pk %}">← Workspace settings</a><h1>Delegation</h1><p>{{ case|workspace_name }}</p></div></header>
+<header class="page-heading"><div><a class="back-link" href="{% url 'workspace_settings' case.pk %}">← Workspace settings</a><h1>Delegation</h1><p>{{ case|workspace_name }}</p></div></header>
 <div class="factory-case-layout delegation-layout"><section class="card">
   <h2>Recorded delegations</h2>
   {% if saved %}<p role="status">Your submission was recorded as delegation draft version {{ saved.revision }}.</p>{% endif %}

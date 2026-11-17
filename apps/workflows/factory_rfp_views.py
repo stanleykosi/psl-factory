@@ -391,6 +391,22 @@ def detail(request,work,focus=None):
             elif action=='reconcile':runtime.reconcile(request.user,work.pk,revision)
             elif action=='cancel':runtime.manage(request.user,work.pk,revision,'cancel')
             elif action=='adopt_profile':runtime.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
+            elif action=='portal_receipt':
+                from apps.pmo.rfp_portal import record
+                binding=service.review_document(work)
+                if binding is None or binding.pk!=int(request.POST.get('target','0')):
+                    raise ValidationError('Choose the exact approved client pack.')
+                record(request.user,work.case_id,binding.pk,int(request.POST.get('evidence','0')),
+                       request.POST.get('note',''),int(request.POST.get('case_revision','0')))
+            elif action in ['followup_draft','followup_review']:
+                from apps.pmo import rfp_followup
+                outcome_id=int(request.POST.get('target','0'))
+                expected=int(request.POST.get('case_revision','0'))
+                if action=='followup_draft':
+                    rfp_followup.draft(request.user,work.case_id,outcome_id,expected)
+                else:
+                    rfp_followup.review(request.user,work.case_id,outcome_id,int(request.POST.get('run','0')),
+                        request.POST.get('text',''),int(request.POST.get('reviewed','0')),expected)
             elif action in ['response','commercial','document','outcome']:
                 observed=None;selection_context=None;followup_on=None
                 if action=='outcome':
@@ -441,7 +457,15 @@ def detail(request,work,focus=None):
     outcome_links = [{'key': key, 'label': label, 'url': request.path + '?' + urlencode(dict(navigation, outcome=key)) + '#customer-outcome'}
                      for key, label in OUTCOME_CHOICES.items()]
     selected = chosen or (submission_page.object_list[0] if submission_page.paginator.count == 1 else None)
+    from apps.pmo.rfp_pricing import comparison
+    from apps.pmo.rfp_followup import panel as followup_panel
+    portal_pack=RFPDocumentBinding.objects.filter(version=document,snapshot__route__method='manual_client_portal').first() if document else None
     return response(request,'factory/rfp_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'source_form':source,'mappings':mappings,
+        'award_comparison':comparison(work.case,row['rfp']['outcome']),
+        'followup':followup_panel(request.user,work.case,row['rfp']['outcome']) if focus in [None,'response'] else None,
+        'portal_receipt':getattr(row['rfp']['submission'],'portal_receipt',None),
+        'portal_pack':portal_pack if not row['rfp']['submission'] and allowed(request.user,work.case,'rfp.submit') and allowed(request.user,work.case,'document.read') else None,
+        'portal_evidence':evidence.filter(kind='rfp_portal_receipt'),
         'review_evidence':evidence,'outcome_evidence':evidence.filter(kind='rfp_outcome'),'receipts':receipts,'activities':activities,
         'submission_selector':field.widget.render('target',selected.pk if selected else None,attrs={'required':True}),
         'submission_page':submission_page,'submission_pager':pager,'focus':focus,'outcome_variant':outcome_variant,

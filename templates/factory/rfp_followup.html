@@ -1,0 +1,15 @@
+{% if followup %}<section class="card" aria-label="Customer follow-up"><h2>Customer follow-up</h2>
+<p>Submission {{ followup.outcome.submission_id }}{% if followup.outcome.followup_on %} · Check again {{ followup.outcome.followup_on|date:'j M Y' }}{% endif %}.</p>
+<form method="post">{% csrf_token %}
+  <input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
+  <input type="hidden" name="target" value="{{ followup.outcome.pk }}">
+  {% if followup.run %}
+    <input type="hidden" name="run" value="{{ followup.run.pk }}"><input type="hidden" name="reviewed" value="{{ followup.reviewed.pk|default:'0' }}">
+    <label>Follow-up wording<textarea name="text" required maxlength="4000" rows="5">{{ followup.text }}</textarea></label>
+    {% if followup.reviewed %}<p role="status">Reviewed wording saved. Customer delivery needs its own authorized route and receipt.</p>{% endif %}
+    <button name="action" value="followup_review">Save reviewed wording</button>
+  {% else %}
+    <p>Prepare a draft from the verified submission for the project manager to check.</p>
+    <button name="action" value="followup_draft">Prepare a follow-up draft</button>
+  {% endif %}
+</form></section>{% endif %}

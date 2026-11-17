@@ -10,6 +10,7 @@ from .models import RFPDocumentBinding,RFPSubmission
 from .rfp import current_response,reviewed,public_terms_for
 from .commercial import valid_approvals
 from .services import subject
+from .rfp_pricing import quote_text
 
 def inputs(v,key,*,dispatch=False):
     case=v.rfp.case;current_response(case,v.pk)
@@ -47,7 +48,7 @@ def draft(actor,case_id,response_id,template_id,route_key,expected):
     fields={'executive_summary':{'text':'RFP '+v.rfp.reference+' response '+str(v.number),'evidence_ids':[e.pk]},
         'scope':{'text':e.body,'evidence_ids':[e.pk]},
         mapping:{'text':'\n'.join(row['key']+': '+row['disposition']+' — '+row['response'] for row in v.matrix),'evidence_ids':sorted(set(row['evidence_id'] for row in v.matrix))},
-        terms:{'text':public_terms.body+'\nTimeline: '+plan.body,'evidence_ids':[public_terms.pk,plan.pk]}}
+        terms:{'text':quote_text(public_terms)+'\nTimeline: '+plan.body,'evidence_ids':[public_terms.pk,plan.pk]}}
     from apps.documents.pmo_sections import complete_native_client_sections
     fields['timeline'] = {'text': plan.body, 'evidence_ids': [plan.pk]}
     fields = complete_native_client_sections(fields, 'client', [e.pk])
@@ -65,6 +66,8 @@ def binding_findings(b):
 def dispatch_requirements(version):
     """Deadline checks hold new transmission, not preparation, human review or receipt lookup."""
     binding=RFPDocumentBinding.objects.filter(version=version).select_related('response__rfp__case').first()
+    if binding and binding.snapshot['route']['method']=='manual_client_portal':
+        raise ValidationError('This response uses manual client portal submission. Record the original portal receipt.')
     if binding and binding.snapshot!=inputs(binding.response,binding.snapshot['route']['key'],dispatch=True):
         raise ValidationError('Review the current RFP submission sources and destination before sending')
 
@@ -78,6 +81,8 @@ def capture_submission(actor,case_id,version_id,expected):
     case=lock_case(actor,case_id,'rfp.submit',expected)
     b=RFPDocumentBinding.objects.filter(version_id=version_id,response__rfp__case=case).first()
     if not b:raise ValidationError('Select this case exact RFP response document')
+    if b.snapshot['route']['method']=='manual_client_portal':
+        raise ValidationError('Record the original client portal receipt for this response.')
     old=RFPSubmission.objects.filter(version_id=version_id).first()
     if old:return old
     from adapters.rfp import LocalRFPAdapter

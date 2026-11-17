@@ -15,7 +15,7 @@ from apps.pmo.meetings import meeting_actions
 from apps.documents.controlled import review_version
 from . import factory,factory_minutes as domain
 from .factory_progress_views import StartWithBackground, start_work
-from .factory_minutes_forms import capture_forms,command_keys,payload
+from .factory_minutes_forms import apply_suggestions,capture_forms,command_keys,payload,suggestion_rows
 
 class InputsForm(forms.Form):
     audience=forms.ChoiceField(choices=[('internal','Internal repository only'),('client','Client, with separately authorized publication')])
@@ -74,18 +74,24 @@ def detail(request,work,focus=None):
     correction=dict(data,meeting_version_id=m.current_id if m else None)
     inputs=InputsForm(work.case,p if request.method=='POST' and a=='correct' else None,initial=correction)
     predecessor=MeetingVersion.objects.select_related('meeting').filter(pk=data['meeting_version_id'],meeting__case=work.case).first() if data['meeting_version_id'] else None
-    capture=a in ['confirm','add_decision','add_commitment']
+    suggestions=suggestion_rows(r,note.pk)
+    capture=a in ['confirm','add_decision','add_commitment','use_selected']
     form,decisions,commitments=capture_forms(work,data,r,p if request.method=='POST' and capture else None,predecessor)
     if request.method=='POST':
         try:
             require_action(work,focus,a)
             revision=int(p.get('revision','0'));case_revision=int(p.get('case_revision','0'))
             allowed={'advance':set(),'reconcile':set(),'operate':{'job','operation','reason'},'resume':set(),'cancel':set(),'restart':{'reason'},'correct':set(inputs.fields)|{'reason'},'confirm':command_keys(form,decisions,commitments),'add_decision':command_keys(form,decisions,commitments),'add_commitment':command_keys(form,decisions,commitments),'review':{'version','verdict','note'}}
+            allowed['use_selected']=allowed['confirm']
             if a not in allowed or set(p)-allowed[a]-{'action','revision','case_revision','csrfmiddlewaretoken'}:raise ValidationError('Choose an exact typed minutes command')
             if capture:
                 if revision!=work.revision or case_revision!=work.case.revision or int(p.get('source_head_id','0'))!=work.source_head_id or (int(p['predecessor_id']) if p.get('predecessor_id') else None)!=data['meeting_version_id'] or (int(p['extraction_id']) if p.get('extraction_id') else None)!=(r.pk if r else None):raise ValidationError('Refresh the exact selected meeting source and extraction before confirming.')
-                if any(len(p.getlist(k))!=1 for k in p if k not in ['participants','existing_actions']):raise ValidationError('Submit each typed field once.')
-            if a in ['add_decision','add_commitment']:
+                if any(len(p.getlist(k))!=1 for k in p if k not in ['participants','existing_actions','selected_suggestions']):raise ValidationError('Submit each typed field once.')
+            if a=='use_selected':
+                if not permitted(request.user,work,'meeting.record') or work.cancel_requested or domain.confirmation(work):
+                    raise ValidationError('Open a current meeting confirmation before using an agent suggestion.')
+                form,decisions,commitments=capture_forms(work,data,r,apply_suggestions(p,suggestions),predecessor)
+            elif a in ['add_decision','add_commitment']:
                 prefix='decisions' if a=='add_decision' else 'commitments'
                 total=int(p.get(prefix+'-TOTAL_FORMS','-1'))
                 if not 0<=total<50:raise ValidationError('Up to 50 rows are available. Remove or edit an existing row.')
@@ -119,12 +125,12 @@ def detail(request,work,focus=None):
                     w=domain.human_work(request.user,work.pk,revision,case_revision);b=domain.current_document(w,request.user)
                     if int(p.get('version','0'))!=b.version_id or b.version.audience!='client':raise ValidationError('Review exact outward minutes only')
                     review_version(request.user,w.case_id,b.version_id,p.get('verdict',''),p.get('note',''),case_revision)
-            if a not in ['add_decision','add_commitment']:
+            if a not in ['add_decision','add_commitment','use_selected']:
                 messages.success(request,'Minutes work updated');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work);panel=row['minutes'];b=panel['document']
     delivery=domain.delivery_readback(work,request.user) if b and focus in [None,'recovery'] else []
-    return render(request,'factory/minutes_detail.html',{'row':row,'case':work.case,'source':note,'focus':focus,'delivery':delivery,'inputs_form':inputs,'confirm_form':form,'decision_forms':decisions,'commitment_forms':commitments,'can_confirm':focus in [None,'response'] and not panel['confirmation'] and permitted(request.user,work,'meeting.record') and not work.cancel_requested,'can_correct':focus in [None,'recovery'] and permitted(request.user,work,'factory.manage') and not work.cancel_requested,'can_review':focus in [None,'decision'] and panel['can_review'],'can_operate':focus in [None,'recovery'] and permitted(request.user,work,'document.operate'),'activities':work.activities.order_by('pk') if not focus else [],'can_restart':focus in [None,'recovery'] and work.status=='cancelled' and permitted(request.user,work,'factory.manage')})
+    return render(request,'factory/minutes_detail.html',{'row':row,'case':work.case,'source':note,'focus':focus,'delivery':delivery,'inputs_form':inputs,'confirm_form':form,'decision_forms':decisions,'commitment_forms':commitments,'suggestions':suggestions,'can_confirm':focus in [None,'response'] and not panel['confirmation'] and permitted(request.user,work,'meeting.record') and not work.cancel_requested,'can_correct':focus in [None,'recovery'] and permitted(request.user,work,'factory.manage') and not work.cancel_requested,'can_review':focus in [None,'decision'] and panel['can_review'],'can_operate':focus in [None,'recovery'] and permitted(request.user,work,'document.operate'),'activities':work.activities.order_by('pk') if not focus else [],'can_restart':focus in [None,'recovery'] and work.status=='cancelled' and permitted(request.user,work,'factory.manage')})
 
 from .factory_views import ProfileForm
 class MinutesProfileForm(ProfileForm):

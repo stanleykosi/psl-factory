@@ -1,13 +1,14 @@
 """Project views over existing records. Native screens own edits and decisions."""
 from django.core.paginator import Paginator
-from django.db.models import F, Q
+from django.db.models import F, OuterRef, Q, Subquery
 from django.http import Http404
 from django.urls import reverse
 
 from apps.core.evidence_access import public_evidence
 from apps.core.read_budget import ReadLimit, limit_queries
 from apps.pmo.change_impacts import timeline_rows
-from apps.pmo.models import ActionItem, ChangeExecutionEvent, ChangeRequest, EmergencyProfile, Issue, Milestone, RFPCase
+from apps.pmo.models import (ActionItem, ChangeExecutionEvent, ChangeRequest, EmergencyProfile, EscalationDecision,
+                             EscalationRequest, Issue, Milestone, RFPCase)
 
 
 TABS = (
@@ -80,6 +81,16 @@ def sections(actor, case, tab, grants, query='', pages=None):
                 Q(reference__icontains=query) | Q(current__title__icontains=query)).select_related('current').order_by('-pk')
             result.append(section('Issues', 'Open issues', 'issues', issues, lambda issue: {
                 'title': issue.reference, 'state': issue.current.status.replace('_', ' ').capitalize(), 'detail': issue.current.title}))
+            decision = EscalationDecision.objects.filter(request=OuterRef('pk')).order_by('-pk').values('verdict')[:1]
+            escalations = EscalationRequest.objects.filter(
+                profile__state__issue__case=case, profile__state__issue__reference__icontains=query,
+                evidence__in=public_evidence(case.evidence.all()),
+            ).select_related('profile__state__issue').annotate(last_verdict=Subquery(decision)).order_by('-pk')
+            result.append(section('Escalations', 'Open escalations', 'escalations', escalations, lambda item: {
+                'title': item.profile.state.issue.reference,
+                'state': f'Decision recorded · {item.last_verdict.replace("_", " ")}' if item.last_verdict else 'Awaiting decision',
+                'at': item.created_at,
+            }))
         if 'change.read' in grants:
             changes = ChangeRequest.objects.filter(case=case, current__isnull=False).filter(
                 Q(reference__icontains=query) | Q(current__module__icontains=query)).select_related('current').order_by('-pk')

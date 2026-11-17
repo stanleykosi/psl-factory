@@ -1,0 +1,10 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}{{ title }} · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'case' case.pk %}">← {{ case|workspace_name }}</a><h1>{{ title }}</h1></div></header>
+<nav class="actions" aria-label="Workspace settings">{% for key,label in navigation %}<a class="button secondary" href="?area={{ key }}"{% if key == area %} aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}<a class="button secondary" href="{% url 'design_delegation' case.pk %}">Delegation</a></nav>
+{% if area == 'payroll' %}<section class="card"><h2>Field access</h2><p>Payroll field visibility is awaiting an owner decision. Payroll inputs stay in the restricted workspace and access continues to follow the active payroll controls.</p></section>
+{% else %}<section class="card"><h2>Effective rules</h2><div class="table-wrap detail-table"><table><thead><tr><th scope="col">Rule</th><th scope="col">Status</th></tr></thead><tbody>
+{% for rule in items %}<tr><th scope="row">{{ rule.label }}</th><td data-label="Status">{% if rule.revision %}Active · revision {{ rule.revision }}{% elif rule.status == 'MISSING' %}Not set{% else %}{{ rule.status|readable }}{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{% if can_configure %}<p><a href="{% url 'policy' case.pk %}">Review rule versions and configuration</a></p>{% else %}<p>View access only.</p>{% endif %}</section>{% endif %}
+{% endblock %}

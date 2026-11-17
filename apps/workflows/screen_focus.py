@@ -9,7 +9,7 @@ SCREENS = {
     },
     'rfp-response/v1': {
         'decision': ('response', 'commercial', 'document'),
-        'response': ('outcome',),
+        'response': ('outcome','portal_receipt','followup_draft','followup_review'),
         'recovery': ('reconcile', 'cancel'),
     },
     'finance-accounts/v1': {
@@ -55,7 +55,7 @@ SCREENS = {
     },
     'pmo-minutes/v1': {
         'decision': ('review',),
-        'response': ('confirm', 'add_decision', 'add_commitment'),
+        'response': ('confirm', 'add_decision', 'add_commitment', 'use_selected'),
         'recovery': ('reconcile', 'operate', 'advance', 'resume', 'cancel', 'restart', 'correct'),
     },
     'pmo-leadership-report/v1': {

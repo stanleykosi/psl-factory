@@ -15,7 +15,8 @@ from .workbench import work
 
 
 def items(actor):
-    rows = []
+    from apps.pmo.rfp_followup import reminders
+    rows = list(reminders(actor))
     for item in work(actor, limit=8)['rows']:
         # Incumbent or fixed-charge settlement applies a further domain check.
         if item['kind'] == 'initiated_finance_intent':

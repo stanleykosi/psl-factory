@@ -7,7 +7,7 @@ from apps.identity.services import require
 from apps.policy.change_drafts import draft_standard_policy
 from apps.agents.rfp import investigate_rfp
 from apps.agents.models import AgentRun
-from . import rfp,rfp_documents
+from . import rfp,rfp_documents,rfp_portal
 from .models import RFPCase,RFPResponse,RFPSubmission,RFPOutcome,RFPDisposition
 from .rfp_forms import forms_for
 
@@ -26,6 +26,7 @@ def workbench(request,case_id):
             elif action=='review':rfp.review(a,c,d['response'].pk,d['role'],d['verdict'],d['evidence'].pk,d['note'],v)
             elif action=='draft':rfp_documents.draft(a,c,d['response'].pk,d['template'].pk,d['route_key'],v)
             elif action=='capture':rfp_documents.capture_submission(a,c,d['version'].version_id,v)
+            elif action=='portal':rfp_portal.record(a,c,d['version'].version_id,d['evidence'].pk,d['note'],v)
             elif action=='outcome':rfp.outcome(a,c,d['submission'].pk,d['result'],d['observed_at'],d['role'],
                 d['evidence'].pk if d['evidence'] else None,d['note'],v,followup_on=d['followup_on'],
                 award_amount=d['award_amount'] or None,award_currency=d['award_currency'] or None)
@@ -36,5 +37,5 @@ def workbench(request,case_id):
         except (ValidationError,ValueError,KeyError) as exc:messages.error(request,str(exc));case.refresh_from_db()
     r=RFPCase.objects.filter(case=case).first()
     return render(request,'pmo/rfp.html',{'case':case,'rfp':r,'commands':forms,'responses':RFPResponse.objects.filter(rfp=r).order_by('-pk'),
-        'submissions':RFPSubmission.objects.filter(response__rfp=r),'outcomes':RFPOutcome.objects.filter(submission__response__rfp=r),
+        'submissions':RFPSubmission.objects.filter(response__rfp=r).select_related('portal_receipt'),'outcomes':RFPOutcome.objects.filter(submission__response__rfp=r),
         'disposition':RFPDisposition.objects.filter(rfp=r).first(),'runs':AgentRun.objects.filter(case=case,provider='deterministic-rfp-investigation-v1').order_by('-pk')[:5]})

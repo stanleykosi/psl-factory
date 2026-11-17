@@ -120,6 +120,8 @@ def prepare_response(actor,case_id,evidence_id,matrix,sources,expected,public_te
     if a.pm_id!=actor.pk:raise PermissionDenied('Only the assigned PM prepares this response')
     e=subject(case,evidence_id,'rfp_response')
     public_terms=subject(case,public_terms_id,'rfp_commercial_terms')
+    from .rfp_pricing import QUOTE, read
+    read(public_terms, QUOTE)
     if not isinstance(sources,dict) or set(sources)!={'requirements','plan','costing'}:raise ValidationError('Select exact requirements, plan and costing sources')
     for kind,pk in sources.items():
         if type(pk) is not int or pk<1:raise ValidationError('Commercial source IDs must be positive integers')
@@ -199,6 +201,8 @@ def outcome(actor,case_id,submission_id,result,observed_at,role,evidence_id,note
         historical_submission(case,s)
     else:
         raise ValidationError('Choose the evidence for the customer response')
+    from .rfp_pricing import verify_award
+    verify_award(evidence, s, result, amount, currency)
     selection=selection_authority(case,s,selection_context)
     if selection:auth['_selection_context']=selection
     x=RFPOutcome.objects.create(submission=s,result=result,observed_at=observed_at,role=role,authority=auth,

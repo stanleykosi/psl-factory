@@ -91,7 +91,7 @@ def workspace_sections(case,actions,can_manage_access=False):
         ('documents','Documents and reviews','document.read'),('validation','Readiness reviews','validation.read'),('migration_readiness','Migration planning','migration.read'),
         ('approvals','Department approvals','approval.read')]),
         ('Workspace settings','People, business rules and connected services.',[
-        ('policy','Business rules','policy.read'),('project_view_configuration','Sharing and audiences','policy.read'),('integration_readiness','Connections','integration.read'),
+        ('workspace_settings','Roles and operating rules','policy.read'),('policy','Business rules','policy.read'),('project_view_configuration','Sharing and audiences','policy.read'),('integration_readiness','Connections','integration.read'),
         ('operations','Business continuity','ops.read'),('private_evidence','Restricted documents','agent.data.read')])]
     sections=[]
     for title,description,items in specs:
