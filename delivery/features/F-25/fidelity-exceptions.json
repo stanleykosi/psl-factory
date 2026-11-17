@@ -1,0 +1,212 @@
+{
+  "exceptions": [
+    {
+      "role": "link",
+      "name": "Mark milestone 3 complete",
+      "category": "no field",
+      "reason": "Conflicts 1: no field says which milestone may be completed or by whom (G-SCR38-2, G-SCR19-2); SCR-19 is FE-MILESTONE-COMPLETE. Not drawn.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "button",
+      "name": "Filter",
+      "category": "no field",
+      "reason": "Conflicts 2: E-PROJECT-TAB has only register, q, cursor and limit (G-SCR11-1, G-SCR29-1). Search only; Filter not drawn (SCR-11 and SCR-29, desktop and phone).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "INV-0412 · awaiting Finance decision",
+      "category": "no field",
+      "reason": "Conflicts 3: the row carries invoice.state, not human status text (G-SCR38-1). The cell reads 'INV-0412 · Waiting' from the shared state words until invoice.status_label exists.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Done 11 Nov",
+      "category": "no field",
+      "reason": "Conflicts 4: the changed board drops the proof text; the page keeps the same completion text as the default board ('Done 11 Nov · client UAT sign-off').",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Not yet",
+      "category": "no field",
+      "reason": "Conflicts 4: the changed board drops the amount note; the page keeps the default completion text ('Not yet · amount set at go-live').",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "category": "frame item",
+      "reason": "Conflicts 4: Hypercare's amount is the shared amber Unknown tag, drawn in a four-column changed table that the page does not use (it keeps INVOICE and PAID).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "CR-0031 added work to milestone 3. The original ₦4,250,000.00 stands; the change's amount is Unknown until a SOW amendment with it is signed, and it isn't guessed.",
+      "category": "no field",
+      "reason": "Conflicts 5: the frontend does not compose when an amount becomes known; needs a backend note (G-SCR38-3 changes[].amount_note, summary.note).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "REGISTERS · LAGOON HEALTH",
+      "category": "frame item",
+      "reason": "Conflicts 9: the F-07 project header (breadcrumb, project title) stays on every tab.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "—",
+      "category": "no field",
+      "reason": "Conflicts 11: a closed issue has no age_seconds; the page reads absent age as Unknown (INV-UNKNOWN) until the backend sends an age-does-not-apply signal.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Actions come from confirmed minutes. Changing an owner or due date is recorded with your name.",
+      "category": "no field",
+      "reason": "Conflicts 12: no edit exists (G-SCR29-2). The page keeps 'Actions come from confirmed minutes.' and leaves out the second sentence.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "link",
+      "name": "← Project",
+      "category": "frame item",
+      "reason": "Conflicts 16 (and 6): phone back link and title wording belong to the shared frame, which shows 'Back to Projects'; the changed phone board's different frame is not copied.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "link",
+      "name": "← Projects",
+      "category": "frame item",
+      "reason": "Conflicts 16: phone back link wording belongs to the shared frame ('Back to Projects').",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "■■■",
+      "category": "sample data",
+      "reason": "Shared PriorityTag draws the marker inside one tag ('■■■ High', marker aria-hidden); the board lists the marker as separate text. The tag itself matches.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "■■□",
+      "category": "sample data",
+      "reason": "Shared PriorityTag draws the marker inside one tag; see '■■■'.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "■□□",
+      "category": "sample data",
+      "reason": "Shared PriorityTag draws the marker inside one tag; see '■■■'.",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ],
+  "extras_not_gating": [
+    {
+      "conflict": 4,
+      "what": "INVOICE and PAID columns stay on the changed milestones table (board drops them)",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "conflict": 6,
+      "what": "Changed phone board: page keeps header, tab bar and the default card list; milestone 3's card carries a 'CHANGED · CR-0031' tag",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "conflict": 7,
+      "what": "Phone milestone cards show a Paid line",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "conflict": 8,
+      "what": "Titles, invoice and change references are links only when the row has a work_id",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "conflict": 9,
+      "what": "F-07 project header (breadcrumb) on the Registers tab",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "conflict": 10,
+      "what": "Register tabs (Issues, Changes, Emergencies, RFPs) on the phone Registers tab",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "conflict": 13,
+      "what": "SCR-38 static sentence also shows in the changed state",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "conflict": 14,
+      "what": "'As of 12 Nov 16:40' line under each table",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "conflict": 15,
+      "what": "Nine actions shown where SCR-29 draws seven (phone five)",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "conflict": 16,
+      "what": "Top bar, Alerts bell, signed-in name and role, + Start, PM/route line position, tab counts on phone",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-38-desktop",
+      "width": 1440,
+      "visual": 73.1,
+      "reason": "Frame and layout: PM/route line sits under the tab bar, not above; the page title is 36px; the table column widths follow the page's own table; the omitted Mark complete button leaves the board's lower area empty (Conflicts 1, 16).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-38-desktop-changed",
+      "width": 1440,
+      "visual": 73,
+      "reason": "As SCR-38-desktop, plus the page keeps INVOICE and PAID columns (Conflicts 4).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-11-desktop",
+      "width": 1440,
+      "visual": 84.6,
+      "reason": "The board's eyebrow and h1 are replaced by the F-07 project header; Filter not drawn; the PM line differs (Conflicts 2, 9, 16).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-38-mobile",
+      "width": 390,
+      "visual": 80.8,
+      "reason": "Phone frame (full project title, 'Back to Projects', bell) and the extra Paid line and As-of line; Mark complete not drawn (Conflicts 1, 7, 14, 16).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-38-mobile-changed",
+      "width": 390,
+      "visual": 83.1,
+      "reason": "The board draws a different page (no tab bar); the page keeps the default phone list with a CHANGED tag (Conflicts 6).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-11-mobile",
+      "width": 390,
+      "visual": 77.7,
+      "reason": "Phone frame, register tab strip and the F-07 header instead of 'Issues · 3'; Filter not drawn (Conflicts 2, 9, 10, 16).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-29-mobile",
+      "width": 390,
+      "visual": 76.8,
+      "reason": "Phone frame (full project title, 'Back to Projects', bell), nine cards where five are drawn, Filter not drawn (Conflicts 2, 15, 16).",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ]
+}

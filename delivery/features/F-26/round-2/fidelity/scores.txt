@@ -1,0 +1,3 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-12-desktop	1440	87.8	100	85.7	False
+SCR-12-mobile	390	63.6	100	77.8	False
