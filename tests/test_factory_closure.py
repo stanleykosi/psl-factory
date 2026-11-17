@@ -271,6 +271,12 @@ class FactoryClosureTests(TestCase):
         self.assertNotEqual(first.pk,second.pk)
         closure.review(f.actor,f.work.pk,f.work.revision,rev(f.case),second.pk,'approve','Exact corrected quality document reviewed')
         closure.decide(f.actor,f.work.pk,f.work.revision,rev(f.case),second.pk,'return',f.e['requirements'].pk,'Actual Head of PMO return under configured action authority')
+        decision_page = self.client.get(reverse('factory_invoice_decision', args=[f.work.pk]))
+        self.assertContains(decision_page, 'Closure returned')
+        self.assertContains(decision_page, 'Review source changes')
+        self.assertNotContains(decision_page, 'Approve exact closure report')
+        with self.assertRaisesMessage(ValidationError, 'Record corrected source'):
+            approve(f)
         closure.decide(f.actor,f.work.pk,f.work.revision,rev(f.case),second.pk,'reject',f.e['requirements'].pk,'Actual Head of PMO rejection retained independently')
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='closure').exists())
         report=f.evidence('closure_report','Synthetic final report after Head return and rejection')
@@ -280,6 +286,10 @@ class FactoryClosureTests(TestCase):
         approve(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='closure').count(),1);self.assertEqual(f.work.budget_limit,20000)
         self.assertTrue(HumanTask.objects.filter(version=first,status='returned').exists())
+        history = self.client.get(reverse('factory_invoice_recovery', args=[f.work.pk]))
+        self.assertContains(history, 'Earlier closure decisions')
+        self.assertContains(history, 'Actual Head of PMO return under configured action authority')
+        self.assertContains(history, 'Actual Head of PMO rejection retained independently')
 
     def test_revoked_finaliser_during_plan_cannot_record_closure_and_fresh_authority_recovers(self):
         f=setup(base=self.base);factory.run_until_wait(f.work.pk);approve(f)

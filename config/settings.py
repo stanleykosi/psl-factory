@@ -48,6 +48,8 @@ if RAILWAY_DOMAIN:
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+from .contact_runtime import load as load_contact_runtime
+CONTACT_DELIVERY = load_contact_runtime()
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG

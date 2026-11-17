@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}Account recovery · PSL Factory{% endblock %}
+{% block content %}
+<div class="factory-login">
+  <div class="factory-login-brand"><strong>PSL Factory</strong></div>
+  <section class="factory-login-form">
+    {% if sent %}
+      <h1>Check your email</h1>
+      <p role="status">If your email is registered for recovery, a reset link is on its way. The link works for 30 minutes.</p>
+    {% elif complete %}
+      <h1>Password reset</h1><p>Sign in with your new password.</p>
+    {% elif invalid %}
+      <h1>This link has expired</h1><p>Request a new link to reset your password.</p>
+      <p><a href="{% url 'password_reset' %}">Request a new link</a></p>
+    {% elif code %}
+      <h1>Open your reset link</h1><p>Enter the recovery code from the end of the link in your email.</p>
+      <form method="post" id="recovery-code-form">{% csrf_token %}{{ code.as_p }}<button class="button primary">Continue</button></form>
+      <script defer src="{% static 'recovery-link.js' %}"></script>
+    {% elif new_password %}
+      <h1>Choose a new password</h1>
+      <p>Use at least 12 characters and a password you don’t use elsewhere.</p>
+      <form method="post">{% csrf_token %}{{ new_password.as_p }}<button class="button primary">Save new password</button></form>
+    {% else %}
+      <h1>Reset your password</h1>
+      <p>Enter your work email. If it’s registered for recovery, we’ll send a reset link that works for 30 minutes.</p>
+      <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary">Send reset link</button></form>
+    {% endif %}
+    <p><a href="{% url 'login' %}">Back to sign in</a></p>
+  </section>
+</div>
+{% endblock %}

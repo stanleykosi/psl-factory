@@ -2,7 +2,7 @@ from apps.core.evidence_access import public_evidence,restricted
 import uuid
 from django.conf import settings
 from django.db import models
-from .alert_models import AlertPreference, AlertRead
+from .alert_models import AccountDelivery, AlertPreference, AlertRead, RecoveryAttempt, SampleAccountInbox
 
 
 class Case(models.Model):

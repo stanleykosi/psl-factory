@@ -42,7 +42,7 @@ class DesignAlertTests(TestCase):
     def test_preferences_save_and_protect_later_edit(self):
         self.client.force_login(self.actor)
         url = reverse('design_alert_preferences')
-        self.assertContains(self.client.get(url), 'delivery setup is pending')
+        self.assertContains(self.client.get(url), 'Waiting for a verified email address')
         self.assertRedirects(self.client.post(url, {'revision': 1, 'email_requested': 'on'}), url,
                              fetch_redirect_response=False)
         self.assertContains(self.client.post(url, {'revision': 1, 'whatsapp_requested': 'on'}), 'Preferences changed')

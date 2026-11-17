@@ -339,6 +339,10 @@ def decide_closure(actor,case_id,version_id,verdict,evidence_id,note,expected):
     authority=decision_authority(actor,case,'Head of PMO',verdict)
     from apps.documents.controlled import current_version
     current_version(case,version_id)
+    prior = latest(d, 'closure_decision', False)
+    if (verdict == 'approve' and prior and prior.data['version_id'] == version_id
+            and prior.data['verdict'] in ('return', 'reject')):
+        raise ValidationError('Record corrected source and review the new closure report before approval.')
     return record(actor,case,d,'closure_decision',subject(case,evidence_id),{'verdict':verdict,'authority':authority,'note':note,'version_id':version_id},binding.snapshot)
 
 

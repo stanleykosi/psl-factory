@@ -20,7 +20,8 @@ from apps.finance import ledger_views,ledger_agent_views
 from apps.finance import ppe_views
 from apps.finance import schedule_views
 from apps.finance import bu_views
-from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from django.urls import path
 from .health import health
 from apps.agents import upload_views
 from apps.policy import delegation_views
@@ -33,6 +34,7 @@ from apps.finance import recognition_views
 from apps.finance import payment_views
 from apps.core import views
 from apps.core import design_views
+from apps.core import recovery_views as account_recovery_views
 from apps.agents import assistant_views
 from apps.baas import views as baas_views, partner_views
 from apps.documents import views as document_views
@@ -68,7 +70,14 @@ urlpatterns = [
     path('cases/<uuid:case_id>/escalations/',escalation_views.workbench,name='escalations'),
     path('cases/<uuid:case_id>/documents/',document_views.workbench,name='documents'),
     path('accounts/login/', design_views.FactoryLogin.as_view(), name='login'),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/password_reset/', account_recovery_views.recover, name='password_reset'),
+    path('accounts/password_reset/done/', account_recovery_views.sent, name='factory_recovery_sent'),
+    path('accounts/recovery/choose/', account_recovery_views.confirm, name='factory_recovery_confirm'),
+    path('accounts/recovery/complete/', account_recovery_views.complete, name='factory_recovery_complete'),
+    path('accounts/recovery/link/', account_recovery_views.redeem, name='factory_recovery_token'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('accounts/password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
+    path('accounts/password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
     path('', views.home, name='home'), path('coverage/', views.coverage, name='coverage'),
     path('cases/<uuid:case_id>/', views.case_detail, name='case'),
     path('cases/<uuid:case_id>/policy/', views.policy_workbench, name='policy'),
@@ -178,4 +187,5 @@ urlpatterns += [path('cases/<uuid:case_id>/documents/review/<int:version_id>/', 
 urlpatterns += [path('notifications/', alerts_views.index, name='design_alerts'),
                 path('notifications/preview/', alerts_views.preview, name='design_alert_preview'),
                 path('notifications/read/', alerts_views.mark_read, name='design_alert_read'),
-                path('settings/alerts/', alerts_views.preferences, name='design_alert_preferences')]
+                path('settings/alerts/', alerts_views.preferences, name='design_alert_preferences'),
+                path('settings/alerts/sample-mailbox/', alerts_views.sample_mailbox, name='design_sample_mailbox')]

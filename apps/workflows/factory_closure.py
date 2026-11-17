@@ -337,6 +337,9 @@ def projection(actor,work,*,include_execution=True):
         try:verify(work,actor=actor)
         except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
     pending_review=bool(v and HumanTask.objects.filter(version=v,status='open').exists())
+    last_decision=delivery.latest(d,'closure_decision',False)
+    if last_decision and (not v or last_decision.data['version_id']!=v.pk):last_decision=None
+    needs_correction=bool(last_decision and last_decision.data['verdict'] in ('return','reject'))
     reviewer_names=[u.get_full_name() or u.username for u in owners(work.case,'PMO Lead','document.review_controlled')] if pending_review else []
     decision_names=[u.get_full_name() or u.username for u in owners(work.case,'Head of PMO','delivery.closure_decide')]
     can_review=can_correct=can_restart=can_settle=False;verdicts=[];review_verdicts=[]
@@ -356,6 +359,7 @@ def projection(actor,work,*,include_execution=True):
                 else:
                     validate_review(work.case,v);require(actor,work.case,'delivery.closure_decide')
                     for verdict in ['approve','return','reject']:
+                        if needs_correction and verdict=='approve':continue
                         try:decision_authority(actor,work.case,'Head of PMO',verdict);verdicts.append(verdict)
                         except (ValidationError,PermissionDenied):pass
             except (ValidationError,PermissionDenied) as exc:issue=finding(exc)
@@ -370,10 +374,8 @@ def projection(actor,work,*,include_execution=True):
         try:
             _,value=profile(work);state,*args=snapshot(work,value);next_options,next_action=eligible(work,value,state,*args)
         except (ValidationError,PermissionDenied):pass
-    last_decision=delivery.latest(d,'closure_decision',False)
-    if last_decision and (not v or last_decision.data['version_id']!=v.pk):last_decision=None
     return {'dossier':d,'data':data,'report':report,'document':v,'decision':last_decision,'closure':closed,'finding':issue,
-        'intake_current':intake_current,'readiness_changed':changed,'pending_review':pending_review,
+        'intake_current':intake_current,'readiness_changed':changed,'pending_review':pending_review,'needs_correction':needs_correction,
         'reviewer_names':reviewer_names,'decision_names':decision_names,'can_review':can_review,'review_verdicts':review_verdicts,'verdicts':verdicts,
         'can_correct':can_correct,'can_restart':can_restart,'can_settle':can_settle,'next_options':next_options,'next_action':next_action}
 

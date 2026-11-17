@@ -389,6 +389,17 @@ def _presentation(actor,work,*,focus=None):
         if panel['pending_review']:
             row.update(state='Awaiting document review',owner=', '.join(panel['reviewer_names']) or 'Unassigned',department_wait=panel['can_review'],needs_me=panel['can_review'])
         elif panel['closure'] and work.status!='verified':row.update(state='Closure recorded; verification pending',next_action='Verify the exact recorded closure and prescribed decision')
+        elif panel['needs_correction'] and not panel['closure']:
+            verdict = panel['decision'].data['verdict']
+            row.update(state='Closure returned' if verdict=='return' else 'Closure rejected',
+                       next_action='Record corrected source and prepare a new closure report',
+                       owner='Unassigned',
+                       needs_me=panel['can_correct'],department_wait=False,can_advance=False)
+        elif not panel['closure'] and not panel['report']['ready_to_prepare']:
+            missing = next(check for check in panel['report']['checks'] if check['status'] != 'current')
+            row.update(state='Closure evidence needed', next_action=missing['summary'],
+                       blocker=panel['finding'] or missing['summary'],
+                       needs_me=panel['can_correct'], department_wait=False)
         elif panel['document'] and panel['report']['ready_to_prepare'] and not (panel['decision'] and panel['decision'].data['verdict']=='approve'):
             row.update(state='Awaiting closure decision',owner=', '.join(panel['decision_names']) or 'Unassigned',department_wait=bool(panel['verdicts']),needs_me=bool(panel['verdicts']))
         if work.status=='verified':row.update(next_action='Inspect the recorded closure, exact report and prescribed decision')
@@ -405,6 +416,8 @@ def _presentation(actor,work,*,focus=None):
             row.update(state='Confirm actual meeting record',needs_me=permitted(actor,work,'meeting.record'),department_wait=permitted(actor,work,'meeting.record'))
         if panel['native']['stage']=='publication':
             row.update(state='Awaiting exact outward review or delivery',owner=', '.join(panel['reviewer_names']) or 'Unassigned',needs_me=panel['can_review'],department_wait=panel['can_review'])
+        if any(d.uncertain_job(job) for job in panel['jobs']):
+            row.update(state='Delivery uncertain',next_action='Check the original recipient delivery',can_advance=False)
         if panel['readiness_changed']:row.update(state='Current meeting or action changes need new minutes',needs_me=permitted(actor,work,'factory.manage'),can_reassess=permitted(actor,work,'factory.manage'),can_advance=False)
     if work.definition=='finance-ledger/v1':
         from .factory_ledger import projection

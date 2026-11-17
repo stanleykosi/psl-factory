@@ -90,6 +90,15 @@ def closure_work(recovery):
     return f.work, {'evidence': f.e['requirements'].pk}
 
 
+def closure_alternative(blocked):
+    f = closure.setup(known=not blocked)
+    if not blocked:
+        document_helpers.artifact(f.actor, f.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                                  {'rules': [{'role': 'Head of PMO', 'actions': ['return']}]}, f.e['policy_decision'])
+    factory.run_until_wait(f.work.pk)
+    return f.work, {'evidence': f.e['requirements'].pk}
+
+
 def escalation_work(recovery):
     fixture = FactoryEscalationTests()
     fixture.setUp()
@@ -150,19 +159,31 @@ def seed(key, setup, recovery):
     return {'work': work.pk, 'case': str(case.pk), 'status': work.status, **facts}
 
 
-if os.environ.get('RAILWAY_ENVIRONMENT_NAME') != 'design-acceptance':
+if (os.environ.get('RAILWAY_ENVIRONMENT_NAME') != 'design-acceptance'
+        or os.environ.get('RAILWAY_PROJECT_ID') != 'f957481b-c6f7-43af-bc66-449a330a9d53'):
     raise SystemExit('Exact isolated acceptance environment required')
 
-for name, build in [('release', release_work), ('go-live', go_live_work), ('closure', closure_work),
-                    ('escalation', escalation_work), ('leadership', leadership_work), ('accounts', accounting_work)]:
-    for recovery in (False, True):
-        key = name + ('-recovery' if recovery else '-decision')
-        selected = os.environ.get('PSL_CLOSE_FIXTURE_ONLY')
-        if selected and selected != key:
-            continue
-        try:
-            result = seed(key, build, recovery)
-        except Exception as exc:
-            print('PSL_CLOSE_FIXTURE_ERROR=' + json.dumps({'key': key, 'type': type(exc).__name__, 'reason': str(exc)[:300]}), flush=True)
-        else:
-            print('PSL_CLOSE_FIXTURE=' + json.dumps({'key': key, **result}), flush=True)
+fixtures = [
+    (name + ('-recovery' if recovery else '-decision'), build, recovery)
+    for name, build in [('release', release_work), ('go-live', go_live_work), ('closure', closure_work),
+                        ('escalation', escalation_work), ('leadership', leadership_work), ('accounts', accounting_work)]
+    for recovery in (False, True)
+]
+selected = os.environ.get('PSL_CLOSE_FIXTURE_ONLY')
+if selected == 'closure-states':
+    fixtures = [('closure-return', closure_alternative, False), ('closure-blocked', closure_alternative, True)]
+    selected = None
+elif selected == 'review-states':
+    fixtures = [('escalation-state-review', escalation_work, False),
+                ('leadership-state-review', leadership_work, False),
+                ('accounts-state-review', accounting_work, False)]
+    selected = None
+for key, build, recovery in fixtures:
+    if selected and selected != key:
+        continue
+    try:
+        result = seed(key, build, recovery)
+    except Exception as exc:
+        print('PSL_CLOSE_FIXTURE_ERROR=' + json.dumps({'key': key, 'type': type(exc).__name__, 'reason': str(exc)[:300]}), flush=True)
+    else:
+        print('PSL_CLOSE_FIXTURE=' + json.dumps({'key': key, **result}), flush=True)
