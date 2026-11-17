@@ -31,7 +31,7 @@ from . import factory as d
 from .factory_progress_views import StartWithBackground, start_work, started
 from .factory_definitions import DEFINITIONS,definition
 
-QUEUES={'needs_me':'Needs my attention','mine':'Started by me','active':'Active work','decisions':'Decisions','exceptions':'Exceptions','unassigned':'Unassigned','verified':'Verified outcomes'}
+QUEUES={'needs_me':'Needs my attention','waiting':'Waiting on others','mine':'Started by me','active':'Active work','decisions':'Decisions','exceptions':'Exceptions','unassigned':'Unassigned','verified':'Verified outcomes'}
 
 # Discovery only: native forms and services still validate the exact project/action.
 INTAKES=(
@@ -601,6 +601,7 @@ def index(request):
     elif queue=='exceptions':query=query.filter(status__in=['blocked','owner_needed','configuration_needed','waiting_effect','followup_needed','ready','waiting'])|query.filter(invoice__invoicejob__status='unknown')|query.filter(definition__in=['pmo-issues/v1','finance-ledger/v1','finance-bu/v1','engagement/v1','pmo-minutes/v1','pmo-escalation/v1','pmo-weekly-report/v1','pmo-leadership-report/v1','finance-schedules/v1','finance-ppe/v1','finance-forecast/v1','finance-payroll/v1','pmo-emergency/v1','pmo-change/v1','rfp-response/v1','planning/v1','commercial/v1','delivery-release/v1','delivery-hypercare/v1','delivery-archive/v1','delivery-handover/v1','delivery-closure/v1','delivery-go-live/v1','finance-accounts/v1'],status='verified')
     elif queue=='needs_me':query=query.exclude(status='cancelled').exclude(status='verified',definition='pmo-finance/v1')
     elif queue=='mine':query=query.filter(actor=request.user)
+    elif queue=='waiting':query=query.filter(status__in=['waiting','waiting_effect'])
     else:query=query.exclude(status__in=['verified','cancelled'])
     candidates=Paginator(query.distinct().order_by('-updated_at','-pk'), 8).get_page(request.GET.get('page'))
     items=[];deferred=[];evaluated=0;deadline=monotonic()+9
@@ -616,6 +617,7 @@ def index(request):
         if queue=='exceptions' and work.status=='verified' and not row.get('readiness_changed'):continue
         if queue=='exceptions' and work.status in ['ready','waiting'] and not (row.get('review_needs_update') or row.get('adoption') or row.get('coordination_needed') or row.get('execution_owner_needed') or row.get('source_instruction_needed') or row.get('source_followup_needed') or row.get('operation_followup_needed') or row.get('outcome_selection_needed') or row.get('held_publication_needs_operator') or any(d.uncertain_job(j) for j in row['jobs']) or row['state']=='Execution rules need review'):continue
         if queue=='needs_me' and not row['needs_me']:continue
+        if queue=='waiting' and row['needs_me']:continue
         if queue=='decisions' and (row.get('review_needs_update') or row.get('review_ready') or not (row.get('department_wait') or any(t.status=='open' and t.kind=='factory_review' for t in row['tasks']))):continue
         if queue=='unassigned' and row['owner']!='Unassigned':continue
         items.append(row)

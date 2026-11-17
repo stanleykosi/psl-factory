@@ -1,5 +1,9 @@
 # PSL operations factory build state
 
+## Verified reply core and final control checks · 17 November 2026
+
+Package 67 passed nine PostgreSQL tests in 977.592 seconds and prepared works 79–82 after applying `pmo.0057` and `0058` in the isolated preview. Actual client changes, report version 2 with fresh review and receipt, declined release recovery, immutable correction, missing handling policy, HTTP permissions and competing response writes passed. Final metadata privacy, exact candidate-origin, typed-time and Waiting on others refinements are under package 68 verification. The hosted runtime remains checked package 65 until these pass. Browser acceptance and the remaining 81 unseen states remain open. The archive design also requires per-file external-store reconciliation, beyond the current local evidence-index behavior. HOD rule values remain deferred.
+
 ## Client reply and release recovery verification · 17 November 2026
 
 Implemented client reply facts, report version 2 through fresh review and receipt, decline-to-issue handling, correction controls and a reviewed fix handoff to a distinct release candidate. Typed owner-rule drafting preserves other connection configuration. Native readiness enforces the recorded decline origin, current review and native resolution provenance. The hosted app remains verified package 65 while these changes are checked. Package 66 passed eight of nine PostgreSQL tests with one fixture reference error. The corrected package 67 is running. Browser acceptance and deployment are pending. The milestone remains open with 181 observed states and 81 unseen states. HOD policy values stay deferred.

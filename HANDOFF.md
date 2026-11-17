@@ -1,5 +1,18 @@
 # PSL operations factory cloud handoff
 
+## Client-reply core passed, final controls running · 17 November 2026
+
+Package 67 run `48b95351` passed all nine PostgreSQL tests in 977.592 seconds and all four guarded fixtures, exit 0. Preview migrations `pmo.0057` and `0058` are applied. New browser work IDs are 79 changes, 80 decline, 81 missing rules and 82 correction. Their cases, exact documents and receipts are in the test log and fixture script output. Live web and worker remain package 65 pending final refinements. Package 68 deployment `7dd2b3c6-d8be-4edd-9c3e-640255765c33` adds source-private metadata/form redaction, exact decline-origin review, typed time validation and the Waiting on others queue. Its runner includes connected handover and archive regressions, followed by `delivery-recipient-states` fixtures. Read the final result before deploying the exact 68 source. The Codex browser is signed in on emergency work 3 with no unsaved form input. That old example has a recorded actual outcome but no prior authorization. Preserve its exception history.
+
+| Work | Case | Report / receipt | Revised incident / fix / correction / policy proof |
+| --- | --- | --- | --- |
+| 79 | `52eeb6d2-8b3c-4187-80c6-ce5732d03adb` | 59 / 42 | 1383 / 1384 / 1385 / 1374 |
+| 80 | `c38e7436-36d7-45bc-b8c9-9136e5aef46b` | 60 / 43 | 1403 / 1404 / 1405 / 1394 |
+| 81 | `4b82e156-5273-4ed5-90ba-cd3cba2a18a6` | 61 / 44 | 1423 / 1424 / 1425 / 1414 |
+| 82 | `e3d48e25-67ab-4581-b9d0-7ae373d855b7` | 62 / 45 | 1443 / 1444 / 1445 / 1434 |
+
+Continue all remaining state work after the response journeys. A concrete newly identified gap is design `SCR-47-uncertain` requiring per-file archive-store receipt lookup and missing-file-only retry. The current archive factory verifies an immutable local evidence index and explicitly does not verify external bytes. Build the governed byte-transfer adapter and recovery path without treating the index as copied files. HOD values remain deferred. All 262 are still open as a milestone.
+
 ## Client reply verification in progress · 17 November 2026
 
 Uncommitted client-response implementation adds evidenced change requests, report version successors, declines linked to native owned issues, reviewed fix handoffs to distinct release candidates, correction controls and draft-only typed rules. Migrations `pmo.0057` and `0058` preserve immutable histories and bind candidate origins. Native readiness checks the current issue-fix review before a declined successor can proceed. These are engineering provisions. HOD values remain deferred.

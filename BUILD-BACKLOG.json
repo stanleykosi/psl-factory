@@ -1,5 +1,17 @@
 {
   "design_consolidation_20261116": {
+    "client_reply_final_controls_20261117": {
+      "status": "verification_in_progress",
+      "package": 68,
+      "deployment": "7dd2b3c6-d8be-4edd-9c3e-640255765c33",
+      "core_passed": {"deployment": "48b95351-5e77-48a6-a07e-9aaaf6d122ad", "passed": 9, "seconds": 977.592, "fixtures": "passed"},
+      "implemented": ["Private response source suppression in metadata and form defaults", "Exact candidate decline-origin review", "Typed supplied response time validation", "Waiting on others view"],
+      "local_validator_tests": {"passed": 2, "seconds": 0.005, "database": "not_used"},
+      "pending": ["Package 68 PostgreSQL run", "Exact-package deployment", "Client-response and recipient browser journeys", "Per-file archive-store confirmation and missing-file retry", "Remaining design state checks"],
+      "states_with_browser_observations": 181,
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
     "go_live_client_replies_20261117": {
       "status": "verification_in_progress",
       "environment": "design-acceptance",

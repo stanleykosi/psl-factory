@@ -175,6 +175,8 @@ def log_problem(actor, case_id, reply_id, owner_id, title, next_action, note, ex
     old = GoLiveReplyIssue.objects.filter(reply=reply).first()
     if old:
         require(actor, case, 'issue.read')
+        if existing_issue_id is not None and existing_issue_id != old.issue_id:
+            raise ValidationError('This response already has a linked issue. Review that issue before changing the relation.')
         return old
     require(actor, case, 'issue.manage')
     previous=GoLiveReplyIssue.objects.filter(reply__receipt_id=reply.receipt_id).order_by('-pk').first()
@@ -237,6 +239,8 @@ def remediate(actor, case_id, reply_id, previous_id, destination_id, role, evide
     destination = delivery.dossier_for(case, destination_id)
     if destination.pk == reply.dossier_id or destination.candidate_id == reply.dossier.candidate_id:
         raise ValidationError('Choose a distinct release candidate with its own native gates.')
+    if not destination.declined_reply_id or head(destination.declined_reply).pk != reply.pk:
+        raise ValidationError('Choose the new candidate recorded against this exact client decline.')
     delivery.ensure_open(destination)
     if delivery.latest(destination, 'release_outcome', False):
         raise ValidationError('Choose a candidate awaiting its new release gates and actual release.')
@@ -300,7 +304,8 @@ def projection(actor, dossier):
     allowed=set(public_evidence(dossier.case.evidence.filter(pk__in=[row.evidence_id for row in rows])).values_list('pk',flat=True))
     items=[]
     for reply in rows:
-        items.append({'id':reply.pk,'outcome':reply.outcome,'number':reply.number,'party':reply.party,
+        items.append({'id':reply.pk,'outcome':reply.outcome,'number':reply.number,
+            'party':reply.party if reply.evidence_id in allowed else 'Restricted response source',
             'responded_at':reply.responded_at.isoformat(),'channel':reply.channel,
             'note':reply.note if reply.evidence_id in allowed else None,'source_available':reply.evidence_id in allowed,
             'evidence_id':reply.evidence_id,'receipt_id':reply.receipt_id,'version_id':reply.receipt.publication.version_id,

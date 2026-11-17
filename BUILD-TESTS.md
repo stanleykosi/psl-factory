@@ -1,5 +1,11 @@
 # Actual test execution ledger
 
+## Passed client-reply core and follow-up verification · 17 November 2026
+
+Package 67 deployment `48b95351-5e77-48a6-a07e-9aaaf6d122ad` passed all nine PostgreSQL tests in 977.592 seconds. Django checks and migration drift passed. The runner applied `pmo.0057` and `0058` to the isolated preview and prepared all four client-response examples, with fixture and acceptance exit markers 0. Works 79–82 use receipts 42–45 and reports 59–62. Both actual decline recovery through fresh native release gates and the existing distinct-authority acceptance path passed. These results supersede package 66's fixture error.
+
+Later source refinements add current private-source redaction in metadata and prefilled forms, exact decline-origin validation when reviewing a candidate, typed-time validation and the Waiting on others queue. Two pure validator tests passed locally in 0.005 seconds without database access. Package 68 runs the PostgreSQL privacy, queue, go-live, handover and archive regression checks and then prepares three additional recipient/archive examples. This later source still awaits its final hosted result. Live web and worker remain package 65.
+
 ## Client replies and native release recovery · 17 November 2026
 
 Package 66 deployment `2fbb35b0-4ace-4851-9adf-a56bf98d065f` ran nine PostgreSQL tests in 321.212 seconds. Eight passed and the decline recovery test errored when its fixture reused the original KICKOFF meeting reference. The native duplicate guard correctly refused it. Fixed the fixture to use distinct kickoff and GLPI request references for the new candidate. Package 67 deployment `48b95351-5e77-48a6-a07e-9aaaf6d122ad` is running the corrected suite, including native readiness enforcement, response concurrency, HTTP permissions, exact receipts, immutable corrections, missing handling rules and legacy go-live behavior. Its final result, migrations, fixtures and browser paths remain pending. No current go-live deployment claim follows from the earlier eight passing cases.

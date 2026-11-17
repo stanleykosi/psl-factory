@@ -4,7 +4,7 @@ from pathlib import Path
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import DatabaseError, transaction
-from django.test import TestCase, TransactionTestCase
+from django.test import SimpleTestCase, TestCase, TransactionTestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -22,6 +22,36 @@ from .test_factory_go_live import setup, review, accept
 
 
 RULES=json.loads(Path('fixtures/go-live-client-replies.json').read_text())['rules']
+
+
+class GoLiveReplyValidatorTests(SimpleTestCase):
+    def test_owner_choices_are_typed_and_required(self):
+        from types import SimpleNamespace
+        from apps.policy.go_live_reply_validators import SCHEMA, validate_reference
+
+        case = SimpleNamespace(kind='project')
+        target = SimpleNamespace(schema_ref=SCHEMA, content=copy.deepcopy(RULES))
+        self.assertEqual(validate_reference(target, case), RULES)
+        invalid = [
+            {'allow_recorder_correction': 'yes'},
+            {'recording_roles': []},
+            {'channels': ['unreviewed-provider']},
+            {'decline_handling': 'assume_accepted'},
+            {'issue_states_for_new_release': ['Open']},
+        ]
+        for changes in invalid:
+            with self.subTest(changes=changes), self.assertRaises(ValidationError):
+                target.content = {**copy.deepcopy(RULES), **changes}
+                validate_reference(target, case)
+
+    def test_supplied_reply_requires_actual_typed_time_and_attestation(self):
+        from adapters.go_live_replies import SuppliedGoLiveReplyAdapter
+
+        for value in [None, '2026-11-17', timezone.now().replace(tzinfo=None)]:
+            with self.subTest(value=value), self.assertRaises(ValidationError):
+                SuppliedGoLiveReplyAdapter.validate('Sample client', value, 'email', 'Supplied request.', True)
+        with self.assertRaises(ValidationError):
+            SuppliedGoLiveReplyAdapter.validate('Sample client', timezone.now(), 'email', 'Supplied request.', 'yes')
 
 
 def configure(f, **changes):
@@ -152,6 +182,13 @@ class GoLiveReplyTests(TestCase):
         fix=f.evidence('resolution','Synthetic fix and regression evidence for the reported integration failure.')
         state=issues.update_issue(f.actor,f.case.pk,issue.pk,state.pk,'resolve',fix.pk,
             'Synthetic owner records the actual fix evidence.',rev(f.case),fix_id=fix.pk)
+        from apps.pmo.gates import register_candidate
+        unrelated = register_candidate(f.actor, f.case.pk, 'UNRELATED-CANDIDATE', f.e['requirements'].pk, rev(f.case))
+        unrelated_dossier = delivery.open_dossier(f.actor, f.case.pk, unrelated.pk, proof.pk,
+            'Independent candidate without the client-decline origin.', rev(f.case))
+        with self.assertRaisesMessage(ValidationError, 'exact client decline'):
+            go_live_replies.remediate(f.actor, f.case.pk, response.pk, None, unrelated_dossier.pk,
+                'PMO Lead', proof.pk, 'An unrelated candidate cannot receive this fix handoff.', rev(f.case))
         f.work.refresh_from_db()
         self.assertRedirects(self.client.post(url,{'action':'client_decline_handoff','revision':f.work.revision,
             'case_revision':rev(f.case),'reply_id':response.pk,'destination_id':successor.pk,'role':'PMO Lead',
@@ -215,6 +252,28 @@ class GoLiveReplyTests(TestCase):
         f.work.refresh_from_db()
         self.assertEqual(f.work.status,'verified',f.work.finding)
         self.assertEqual(GoLiveClientReply.objects.count(),2)
+
+    def test_restricted_source_is_hidden_from_response_metadata_and_prefilled_forms(self):
+        from apps.finance.models import ForecastScenario
+
+        f = delivered(self.base)
+        response = reply(f, 'declined')
+        ForecastScenario.objects.create(
+            case=f.case, reference='SYNTHETIC-PRIVATE-RESPONSE', number=1,
+            evidence=response.evidence, payload={'items': []},
+            reason='Synthetic source now bound to restricted Finance evidence.', actor=f.actor,
+        )
+        state = go_live_replies.projection(f.actor, f.d)
+        self.assertFalse(state['items'][0]['source_available'])
+        self.assertEqual(state['items'][0]['party'], 'Restricted response source')
+        self.assertIsNone(state['items'][0]['note'])
+        self.client.force_login(f.actor)
+        page = self.client.get(reverse('factory_work_response', args=[f.work.pk]))
+        self.assertEqual(page.status_code, 200)
+        self.assertNotContains(page, response.party)
+        self.assertNotContains(page, response.note)
+        with self.assertRaises(ValidationError):
+            go_live_replies.effect(f.d, {key:f.inputs[key] for key in go_live.KINDS})
 
     def test_http_roles_exact_receipts_draft_rules_and_unavailable_actions(self):
         f=delivered(self.base)

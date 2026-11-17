@@ -138,6 +138,7 @@ def panels(actor,work,state,data=None,action=None):
     except PermissionDenied:
         may_record=False
     rows=go_live_replies.current_heads(state['dossier'])
+    visible_sources={item['id'] for item in response['items'] if item['source_available']}
     by_receipt={reply.receipt_id:reply for reply in rows}
     if may_record and not state['previous_acceptance'] and not work.cancel_requested:
         roles=current_roles(actor,case,value['recording_roles'] if value else ['PM'])
@@ -153,7 +154,8 @@ def panels(actor,work,state,data=None,action=None):
             if not value['allow_recorder_correction'] and reply.actor_id==actor.pk:continue
             bound=action=='client_reply' and str(reply.receipt_id)==data.get('receipt_id') and data.get('outcome')=='withdrawn'
             form=ReplyForm(data if bound else None,roles=roles,correction=True,
-                initial={'receipt_id':reply.receipt_id,'previous_id':reply.pk,'party':reply.party,'channel':reply.channel},
+                initial={'receipt_id':reply.receipt_id,'previous_id':reply.pk,
+                         'party':reply.party if reply.pk in visible_sources else '', 'channel':reply.channel},
                 auto_id='reply_correction_'+str(reply.pk)+'_%s')
             result['corrections'].append({'reply':reply,'form':form})
     linked={link.reply_id for link in response['issues']}
@@ -163,7 +165,8 @@ def panels(actor,work,state,data=None,action=None):
             require(actor,case,'issue.manage')
             if reply.pk not in linked:
                 form=ProblemForm(actor,case,data if action=='client_decline_issue' and str(reply.pk)==data.get('reply_id') else None,
-                    initial={'reply_id':reply.pk,'title':'Client declined go-live','note':reply.note},auto_id='decline_issue_'+str(reply.pk)+'_%s')
+                    initial={'reply_id':reply.pk,'title':'Client declined go-live',
+                             'note':reply.note if reply.pk in visible_sources else ''},auto_id='decline_issue_'+str(reply.pk)+'_%s')
                 result['problems'].append({'reply':reply,'form':form})
         except PermissionDenied:
             pass

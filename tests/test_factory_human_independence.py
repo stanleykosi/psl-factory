@@ -50,6 +50,29 @@ class IndependentInvoiceReviewTests(TestCase):
         with self.assertRaises(ValidationError):factory.claim_task(f['actor'],self.task.pk,self.task.revision)
         self.assertFalse(InvoiceReview.objects.exists());self.assertFalse(InvoiceJob.objects.exists())
 
+    def test_waiting_on_others_uses_current_native_work_and_viewer_authority(self):
+        from django.contrib.auth import get_user_model
+
+        f = self.data
+        reader = get_user_model().objects.create_user(username='synthetic-waiting-reader')
+        Grant.objects.bulk_create([
+            Grant(case=f['case'], user=reader, action=action)
+            for action in ['case.read', 'factory.read', 'finance.read']
+        ])
+        self.client.force_login(reader)
+        page = self.client.get(reverse('home'), {'queue': 'waiting'})
+        self.assertEqual(page.status_code, 200)
+        self.assertEqual([row['work'].pk for row in page.context['rows']], [f['work'].pk])
+        self.assertFalse(page.context['rows'][0]['needs_me'])
+        self.assertContains(page, 'Waiting on others')
+        self.client.force_login(f['actor'])
+        page = self.client.get(reverse('home'), {'queue': 'waiting'})
+        self.assertEqual(page.context['rows'], [])
+        self.client.force_login(reader)
+        Grant.objects.filter(case=f['case'], user=reader, action='factory.read').update(active=False)
+        page = self.client.get(reverse('home'), {'queue': 'waiting'})
+        self.assertEqual(page.context['rows'], [])
+
 
 class IndependentInformationTests(TestCase):
     def test_requested_information_can_be_supplied_with_planning_withdrawn(self):
