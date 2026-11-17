@@ -1,0 +1,22 @@
+{
+  "items": [],
+  "as_of": "2026-11-12T15:40:00Z",
+  "money": [
+    {
+      "position": 1,
+      "stage": "Stage 1 · Atlas claims build",
+      "amount": {
+        "amount": "7100000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "invoice_status": "Verified 01 Nov",
+      "paid": {
+        "status": "paid"
+      }
+    }
+  ],
+  "summary": {
+    "report_id": "R-0107"
+  }
+}

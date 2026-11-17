@@ -1,0 +1,26 @@
+VERDICT: PASS
+COMMIT: 34c38e4e3da89ce7b0aa08d62d2ef23c6434b6b3
+REVIEWER: reviewer-technical
+AUTHORITY: delivery technical review
+
+## Summary
+- I reviewed the frontend diff `ab5a4f0f..34c38e4e` (8 files, +178/−41): the From/To fixes, the 409 message when the re-read fails, the 422 labels, the phone flow after an unconfirmed write, the sheet footer and the action-bar tokens.
+- TECH-1-2 and TECH-1-3 are fixed and tested. TECH-1-1 is carried forward unchanged as a backend question. It is non-blocking and only affects the mock.
+- From and To now match what the screen shows. A From taken from `from_options[]` (one option or a chosen one) is always sent as `from_person_id`. When delegates are paired, To lists exactly the options paired with the From shown, or only the unpaired ones when From is the caller. The mock applies the same rule. Every value sent still comes from the backend's lists.
+- The guarantees reviewed in round 1 hold: one PUT per press, CSRF, `expected_revision` as read, no duplicate after an unconfirmed write, and add controls only when `can_add` is true. Closing the sheet when the list moved does not reopen a path to Add: `blocked` lives in the view, so the reopened sheet still holds Add until "Start again".
+- I found no new blocking issues.
+
+## Findings
+- TECH-1-1 | non-blocking | low | backend | Carried forward unchanged, as build.md states. The mock's "no `can_add` → 403" step (`frontend/mock/delegations.mjs`, the `data.can_add !== true` line after the 409 check) still cannot be reached with the spec's fixtures. Impact assessment: round 2 touched no code that this step depends on. It is mock-only, and the real order (should a view-only caller get a 403 before the 422/409 checks?) is a question for the backend developer, listed in build.md. Fix: unchanged. Answer the question when the backend is built, or add a test-only fixture.
+
+## Verified
+- TECH-1-2 | verified | `DelegationForm.tsx`: `paired` no longer requires a From list. `toOptions` keeps exactly `for_person_id === fromPerson?.person_id`, so it holds only the unpaired options when From is "You", and To waits only when two or more From options are offered and none is chosen. The mock's `delegatesFor` now uses the same exact match: it drops its `for_person_id === undefined ||` exception. New tests: the component test "pairing keys without a From list" (To lists only Chika; the body has no `from_person_id`); the `authority` component test (one From shown, To lists only Femi, Chika is not offered); and the mock test "an absent from_person_id is the caller…" (Femi refused for the caller, Chika accepted and recorded `is_you`; with Kemi named, Chika is refused and Femi accepted).
+- TECH-1-3 | verified | `DelegationView.tsx`, the `rejected` case: a 409 whose re-read returns an `ApiError` shows `STALE_UNREAD` ("…we couldn’t reload the list. Reload the page before adding again."). The test "409 whose re-read fails does not say the list was reloaded" checks that this text appears and `STALE_TEXT` does not. 403/404 still show the backend message.
+
+## Notes
+- SEC-1-1 changes one line of the spec's Contract. `from_person_id` was to be "sent only when From came from from_options[] with two or more choices", and it is now also sent for a single option. That is the safer reading, because the request names the delegator on screen, and the `single` scenario (no `from_options`) still sends none, as AC 6 requires. The coordinator may want the spec line or build.md to record this deviation explicitly for the backend developer.
+- The changed assertions in existing tests come from that semantic change. The mock's `noFrom` now expects `delegate` instead of `from_person_id`, and the `authority` body now includes `from_person_id`. The 422 text changed to the new labels. None of these weakens a check: each now asserts the new, stricter behaviour.
+- `invalidMessage` uses the backend's own message whenever a 422 names a field the form lacks. A backend-only field name is therefore never shown as a raw key, and the backend's wording is not lost.
+- Phone sheet: the buttons go to the `Drawer` footer through a render prop, inside the same `DelegationForm` instance, so entries, errors and the busy state stay shared with the fields. `settle()` closes the sheet only in the "changed" branch. In the "not added" branch the sheet stays open with its entries, and in the "locked" state "Try again" stays in the sheet.
+- Tokens: `.psl-actionbar` (bundle: 12/16/18 padding, 2px rule, `--surface`) replaces the local padding and border. The bottom room is `calc(var(--space-3) + var(--control-lg) + var(--space-18px) + var(--rule-strong))`, which works out to the 82px used in round 1. All four tokens exist in `src/styles/tokens.css`, and the diff adds no raw colour.
+- Read-only review: I ran nothing. `round-2/checks.md` covers the gate on this head.

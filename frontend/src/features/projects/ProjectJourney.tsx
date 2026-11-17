@@ -29,6 +29,7 @@ import {
   type JourneyView,
   type ProjectTab,
 } from './model';
+import { MoneyTab } from './MoneyTab';
 import { ProjectNoAccess } from './ProjectStates';
 import { ProjectTabContent } from './ProjectTabContent';
 import { PANEL_ID, ProjectTabs } from './ProjectTabs';
@@ -201,6 +202,8 @@ function ProjectView({ journey, base, tab }: { journey: JourneyView; base: strin
           <JourneyTab journey={journey} />
         ) : hasTabContent(tab) ? (
           <ProjectTabContent caseId={journey.case_id} journey={journey} base={base} tab={tab} />
+        ) : tab === 'money' ? (
+          <MoneyTab caseId={journey.case_id} base={base} />
         ) : (
           <ComingNext tab={tab} base={base} />
         )}

@@ -1,0 +1,1181 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-17T08:34:56.996Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-13-desktop-delegation.dc.html",
+  "boardName": "SCR-13-desktop-delegation.dc.html",
+  "pageUrl": "http://localhost:4803/frozen/default-1440.html",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-27/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 81.1 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 83.3,
+    "coverageWithExceptions": 100,
+    "visual": 81.1
+  },
+  "visual": {
+    "score": 81.1,
+    "allCellsScore": 93.1,
+    "width": 1440,
+    "height": 900,
+    "boardHeight": 900,
+    "pageHeight": 967,
+    "cell": 12,
+    "contentCells": 3263,
+    "mismatchedCells": 618
+  },
+  "coverage": {
+    "total": 48,
+    "found": 40,
+    "coverage": 83.3,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 18,
+          "w": 122,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 234,
+          "y": 1,
+          "w": 83,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 1,
+          "w": 81,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 397,
+          "y": 1,
+          "w": 88,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 485,
+          "y": 1,
+          "w": 87,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 572,
+          "y": 1,
+          "w": 67,
+          "h": 54
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 66,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 788
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 910
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SETUP",
+        "pageName": "SETUP",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Roles, rules and delegation",
+        "pageName": "Roles, rules and delegation",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 118,
+          "w": 1264,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 1264,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Setup",
+        "pageName": "Setup",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 175,
+          "w": 782,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 177,
+          "w": 717,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Roles 2",
+        "pageName": "Roles",
+        "pageRole": "tab",
+        "similarity": 89,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 177,
+          "w": 96,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 179,
+          "w": 70,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Rules 8",
+        "pageName": "Rules",
+        "pageRole": "tab",
+        "similarity": 89,
+        "looks": [],
+        "boardBox": {
+          "x": 186,
+          "y": 177,
+          "w": 96,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 160,
+          "y": 179,
+          "w": 70,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Costing rule",
+        "pageName": "Costing rule",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 283,
+          "y": 177,
+          "w": 114,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 229,
+          "y": 179,
+          "w": 111,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Delegation",
+        "pageName": "Delegation",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 396,
+          "y": 177,
+          "w": 105,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 340,
+          "y": 179,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Payroll visibility",
+        "pageName": "Payroll visibility",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 502,
+          "y": 177,
+          "w": 136,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 443,
+          "y": 179,
+          "w": 135,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Staff accounts",
+        "pageName": "Staff accounts",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 638,
+          "y": 177,
+          "w": 130,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 578,
+          "y": 179,
+          "w": 126,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Templates",
+        "pageName": "Templates",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 768,
+          "y": 177,
+          "w": 102,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 704,
+          "y": 179,
+          "w": 101,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "Delegations",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 245,
+          "w": 918,
+          "h": 119
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 247,
+          "w": 918,
+          "h": 120
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "FROM",
+        "pageName": "FROM",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 245,
+          "w": 244,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 247,
+          "w": 244,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "TO",
+        "pageName": "TO",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 334,
+          "y": 245,
+          "w": 231,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 334,
+          "y": 247,
+          "w": 229,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "DATES",
+        "pageName": "DATES",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 565,
+          "y": 245,
+          "w": 170,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 564,
+          "y": 247,
+          "w": 170,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "REASON",
+        "pageName": "REASON",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 735,
+          "y": 245,
+          "w": 135,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 733,
+          "y": 247,
+          "w": 138,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATE",
+        "pageName": "STATE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 870,
+          "y": 245,
+          "w": 138,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 871,
+          "y": 247,
+          "w": 137,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kemi Adebayo · PMO Lead",
+        "pageName": "Kemi Adebayo · PMO Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 279,
+          "w": 244,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 283,
+          "w": 244,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Femi Ade · PMO Lead",
+        "pageName": "Femi Ade · PMO Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 334,
+          "y": 279,
+          "w": 231,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 334,
+          "y": 283,
+          "w": 229,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "18–25 Nov 2026",
+        "pageName": "18–25 Nov 2026",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 565,
+          "y": 279,
+          "w": 170,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 564,
+          "y": 283,
+          "w": 170,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Annual leave",
+        "pageName": "Annual leave",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 735,
+          "y": 279,
+          "w": 135,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 733,
+          "y": 283,
+          "w": 138,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "pageName": "Ada Okafor · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 321,
+          "w": 244,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 324,
+          "w": 244,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chika Obi · Finance Lead",
+        "pageName": "Chika Obi · Finance Lead",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 334,
+          "y": 321,
+          "w": 231,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 334,
+          "y": 324,
+          "w": 229,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "02–04 Nov 2026",
+        "pageName": "02–04 Nov 2026",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 565,
+          "y": 321,
+          "w": 170,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 564,
+          "y": 324,
+          "w": 170,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Conference",
+        "pageName": "Conference",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 735,
+          "y": 321,
+          "w": 135,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 733,
+          "y": 324,
+          "w": 138,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Add a delegation",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1032,
+          "y": 243,
+          "w": 320,
+          "h": 545
+        },
+        "pageBox": {
+          "x": 1032,
+          "y": 245,
+          "w": 320,
+          "h": 642
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ADD A DELEGATION",
+        "pageName": "ADD A DELEGATION",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "background #2459D6 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 1034,
+          "y": 245,
+          "w": 316,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 257,
+          "w": 148,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "From",
+        "pageName": "From",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 295,
+          "w": 288,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 298,
+          "w": 288,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "To",
+        "pageName": "To",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 378,
+          "w": 288,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 378,
+          "w": 288,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Only people who already hold the same role are listed",
+        "pageName": "Only people who already hold the same role are listed",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 455,
+          "w": 288,
+          "h": 32
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 452,
+          "w": 288,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Dates",
+        "pageName": "Dates",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 499,
+          "w": 288,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 500,
+          "w": 37,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Add delegation",
+        "pageName": "Add delegation",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 665,
+          "w": 288,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 764,
+          "w": 288,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Delegating can't give anyone authority they don't already have. Decisions made by the delegate are recorded under their own name.",
+        "pageName": "Delegating can't give anyone authority they don't already have. Decisions made by the delegate are recorded under their own name.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1048,
+          "y": 727,
+          "w": 288,
+          "h": 45
+        },
+        "pageBox": {
+          "x": 1048,
+          "y": 826,
+          "w": 288,
+          "h": 45
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "key": "link: Start work",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1073,
+          "y": 8,
+          "w": 120,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Conflicts 9: Start work belongs to the shell (F-05); the admin persona has no startable lines, so the shell draws none. src/shell is not touched. As F-20 (D-71).",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "key": "link: More ways to start",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1193,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Conflicts 9: as Start work.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Admin · sample",
+        "key": "text: Admin · sample",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1259,
+          "y": 20,
+          "w": 93,
+          "h": 16
+        },
+        "exception": {
+          "reason": "Conflicts 9: the shell prints /me as name · roles (\"Ada Okafor · Admin\"). As F-20 (D-71).",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kemi Adebayo · PMO Lead ▾",
+        "key": "text: Kemi Adebayo · PMO Lead ▾",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 318,
+          "w": 288,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 2: the board draws From as a static box. The page draws the shared Select (D-91), offered only because the read sends two from_options; its accessible name is its label \"From\" and the chosen option shows inside it (the fidelity driver chooses Kemi Adebayo · PMO Lead with the real control). The value is on the page; the tool reads the control by its label.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Femi Ade · PMO Lead ▾",
+        "key": "text: Femi Ade · PMO Lead ▾",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 401,
+          "w": 288,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 3: as From. To is the shared Select listing delegate_options for the chosen From; the driver chooses Femi Ade · PMO Lead, shown inside the control, named \"To\".",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "18 Nov – 25 Nov 2026",
+        "key": "text: 18 Nov – 25 Nov 2026",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 522,
+          "w": 288,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 5: the library has no range picker and E-DELEGATION sends starts and ends apart, so Dates is a fieldset (legend \"Dates\") of two DateFields, Starts 18 Nov 2026 and Ends 25 Nov 2026 as driven. The single range text is not drawn.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Reason",
+        "key": "text: Reason",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 582,
+          "w": 288,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 5 (the library's fields): Reason is the shared TextField, whose label is a <label> element; the tool skips label elements. The word is on the page as the field's visible label.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Annual leave",
+        "key": "text: Annual leave",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 605,
+          "w": 288,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 5 (the library's fields): in the panel the board draws the reason as a static box; the page holds it as the typed value of the Reason TextField (the driver types it). The table row's \"Annual leave\" is matched separately.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-107"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 90,
+          "y": 245,
+          "w": 918,
+          "h": 119
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 247,
+          "w": 918,
+          "h": 120
+        },
+        "reasons": [
+          "inside the table frame on the board, inside a section on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 788
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 910
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"To\"; on the page it comes after Text \"Only people who already hold the same role are listed\""
+        ]
+      },
+      {
+        "label": "Side panel \"\"",
+        "kind": "Side panel",
+        "name": "",
+        "boardBox": {
+          "x": 1032,
+          "y": 243,
+          "w": 320,
+          "h": 545
+        },
+        "pageBox": {
+          "x": 1032,
+          "y": 245,
+          "w": 320,
+          "h": 642
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Only people who already hold the same role are listed\"; on the page it comes after Text \"Dates\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1179,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Admin",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1227,
+          "y": 19,
+          "w": 113,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Section",
+        "role": "region",
+        "name": "Delegations",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 245,
+          "w": 922,
+          "h": 124
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "From",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1048,
+          "y": 322,
+          "w": 288,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "To",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1048,
+          "y": 402,
+          "w": 288,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Reason",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1048,
+          "y": 708,
+          "w": 288,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

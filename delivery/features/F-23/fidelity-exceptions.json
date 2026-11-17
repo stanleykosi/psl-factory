@@ -256,8 +256,8 @@
   "visual_waivers": [
     {
       "board": "SCR-28-desktop",
-      "approved_by": "design engineer, 16 Nov 2026 — D-105",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 69.1 The remainder is the frame's own layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
+      "approved_by": "design engineer, 16 Nov 2026 — D-106",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 65.3 The remainder is the frame's own layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
     },
     {
       "board": "SCR-28-desktop-suggesting",
@@ -276,8 +276,8 @@
     },
     {
       "board": "SCR-28-mobile",
-      "approved_by": "design engineer, 16 Nov 2026 — D-105",
-      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 74.2 The remainder is the frame's own layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
+      "approved_by": "design engineer, 16 Nov 2026 — D-106",
+      "reason": "Line screen under the standing waiver D-83: coverage 100 after exceptions, visual 70.2 The remainder is the frame's own layout (Conflicts 6), the Conflicts 1 to 5 choices (approved D-98) and phone wording the contract has one data set for."
     },
     {
       "board": "SCR-28-mobile-suggesting",
