@@ -1,0 +1,42 @@
+{
+  "items": [
+    {
+      "value": "U-TUNDE",
+      "label": "Tunde Bello",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "U-KEMI",
+      "label": "Kemi Adebayo",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "O-ENG",
+      "label": "Engineering",
+      "hint": "recorded by PM",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    },
+    {
+      "value": "O-LAGOON",
+      "label": "Lagoon Health",
+      "hint": "client",
+      "sample": true,
+      "_personas": [
+        "pm",
+        "ceo"
+      ]
+    }
+  ]
+}

@@ -115,7 +115,7 @@ export function useWorkspaceStep({ id, revision, page, awaitingReconcile }: Args
           setNotice({ kind: 'queued', text: `Waiting: ${result.message ?? STEP_TEXT.queued}` });
         } else {
           // a returned message that doesn't name the step gets the step's name beside it
-          setNotice(result.message ? { kind: 'done', text: result.message, label: result.message.includes(step.label) ? undefined : step.label } : { kind: 'done', text: STEP_TEXT.done(step.label) });
+          setNotice(result.message ? { kind: 'done', text: result.message, label: result.message.includes(step.label) || /^done\b/i.test(result.message) ? undefined : step.label } : { kind: 'done', text: STEP_TEXT.done(step.label) });
         }
         await page.reload();
         return { kind: 'done' };

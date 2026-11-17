@@ -1,0 +1,158 @@
+{
+  "id": "W-2302",
+  "title": "Weekly sync · 10 Nov",
+  "line": "Formal minutes and action handoff",
+  "reference": "MIN-0141",
+  "state": "processing",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Confirm",
+      "status": "current_agent"
+    },
+    {
+      "name": "Draft",
+      "status": "not_started"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Read the meeting notes",
+        "status": "done"
+      },
+      {
+        "text": "Found 2 decisions",
+        "status": "done"
+      },
+      {
+        "text": "Finding actions and owners",
+        "status": "working"
+      },
+      {
+        "text": "Hand them to you to confirm",
+        "status": "next"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "minutes",
+    "screen": "SCR-28",
+    "view": "suggesting",
+    "title": "Weekly sync · 10 Nov",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "MIN-0141",
+          "label": "Minutes · MIN-0141"
+        }
+      ]
+    },
+    "revision": 3,
+    "status": {
+      "label": "Reading the notes",
+      "tone": "agent"
+    },
+    "agent_note": {
+      "agent": "tola",
+      "lines": [
+        "Nothing Tola suggests becomes a decision or an action until you confirm it."
+      ]
+    },
+    "sections": [
+      {
+        "key": "reading",
+        "kind": "checklist",
+        "title": "Reading the meeting notes",
+        "agent": "tola",
+        "note": "PMO agent · step 3 of 4 · Started 10 Nov 15:02",
+        "items": [
+          {
+            "id": "R-1",
+            "text": "Read the meeting notes",
+            "detail": "WEEKLY-SYNC-NOTES-10NOV.DOCX",
+            "status": "done"
+          },
+          {
+            "id": "R-2",
+            "text": "Found 2 decisions",
+            "detail": "14:12 · 14:30",
+            "status": "done"
+          },
+          {
+            "id": "R-3",
+            "text": "Finding actions and owners",
+            "status": "now"
+          },
+          {
+            "id": "R-4",
+            "text": "Hand them to you to confirm",
+            "status": "next"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "key": "ask_tola",
+        "label": "Ask Tola",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ]
+  }
+}

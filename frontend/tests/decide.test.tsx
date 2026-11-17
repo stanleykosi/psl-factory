@@ -205,6 +205,32 @@ describe('claim and decide', () => {
     expect(counts().gets).toBe(2);
   });
 
+  it('QA-3-1: an approve whose work_state is effect_uncertain shows the uncertain notice, no approved banner, no next step and no Paid line', async () => {
+    answers.decide = () => json(200, { task_id: 'T-1201', verdict: 'approve', decided_by: 'Ada Okafor', decided_at: '2026-11-12T09:47:00Z', work_state: 'effect_uncertain' });
+    answers.item = (n) => json(200, item(n === 0 ? 'W-1201' : 'W-1201.approve'));
+    await open();
+    await ready();
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText(/We couldn’t confirm your decision\./);
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Invoice v2: result not confirmed');
+    expect(document.querySelector('.decide-banner--success')).toBeNull();
+    expect(text()).not.toMatch(/is approved|YOU APPROVED|Next step\.|Paid is tracked/);
+    expect(document.querySelector('.decide-next')).toBeNull();
+    expect(screen.getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1201');
+    expect(counts().decides).toHaveLength(1);
+  });
+
+  it('QA-3-1: a reloaded item that carries a reconcile is also not shown as an outcome', async () => {
+    const reloaded = { ...item('W-1201.approve'), reconcile: { outcomes: ['delivered', 'not_delivered', 'unknown'] }, allowed_actions: ['reconcile'] };
+    answers.item = (n) => json(200, n === 0 ? item('W-1201') : reloaded);
+    await open();
+    await ready();
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText(/We couldn’t confirm your decision\./);
+    expect(document.querySelector('.decide-banner--success')).toBeNull();
+    expect(text()).not.toMatch(/is approved|Next step\./);
+  });
+
   it('the done view keeps its header and warns when the reload fails', async () => {
     answers.item = (n) => (n === 0 ? json(200, item('W-1201')) : json(500, { code: 'server_error', message: 'Down.' }));
     await open();

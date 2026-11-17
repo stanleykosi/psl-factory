@@ -165,15 +165,14 @@ describe('scopes (AC 13)', () => {
     expect(posts()[0].body).toMatchObject({ step: 'accept_selected', item_ids: ['R-07', 'R-09'], expected_revision: 7 });
   });
 
-  it('an item step acts on its own item only, with no item_ids', async () => {
+  it('an item step acts on its own item only: item_ids is that one item (F-23: a Remove or Edit must name its row)', async () => {
     await open(item('W-2002'));
     const s08 = within(screen.getByRole('region', { name: 'Review Tola’s suggestion' })).getAllByRole('listitem')[1];
     await act(async () => {
       fireEvent.click(within(s08).getByRole('button', { name: 'Accept answer' }));
     });
     await waitFor(() => expect(posts()).toHaveLength(1));
-    expect(posts()[0].body).not.toHaveProperty('item_ids');
-    expect(posts()[0].body).toMatchObject({ step: 'accept_answer' });
+    expect(posts()[0].body).toMatchObject({ step: 'accept_answer', item_ids: ['S-08'] });
   });
 });
 
