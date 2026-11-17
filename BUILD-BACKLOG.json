@@ -1,5 +1,19 @@
 {
   "design_consolidation_20261116": {
+    "money_delegation_bids_projects_20261117": {
+      "runtime_source": "2255bd74",
+      "environment": "design-acceptance",
+      "web": "9e3fa34d-d7fa-45c0-9a25-1bb4b091982f",
+      "worker": "f70b10db-e1ab-410e-a41b-c50f8028a72f",
+      "states_with_browser_observations": 148,
+      "observed_states_with_open_checks": 147,
+      "states_without_direct_browser_observation": 114,
+      "all_states_accepted": false,
+      "postgresql": {"deployment": "00202026-2b51-466f-a8e0-5596dbf1a90d", "passed": 8, "seconds": 406.018},
+      "completed": ["Known and unknown signed stage sources, dated provenance and Finance read denial", "Delegation validation, exact save and retry readback, sample date periods and view-only variant", "Unconfirmed and pending bid checks, evidenced loss archive and Route A conversion", "Active and closed project filter and signed billing milestone projection"],
+      "next": ["Award amount and governed comparison with exact reviewed pricing", "Client portal original receipt and agent-assisted bid follow-up", "Broader signed milestones, held and revised schedules, project columns and Setup variations", "Remaining direct browser and partial checks in the state ledger"],
+      "owner_policy": "Deferred"
+    },
     "money_unknown_source_20261117": {
       "runtime_source": "dd776492",
       "environment": "design-acceptance",

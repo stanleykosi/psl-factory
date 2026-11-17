@@ -1,5 +1,13 @@
 # PSL operations factory build state
 
+## Money, Delegation, bid outcomes and Projects · 17 November 2026
+
+Source `2255bd74` is on the isolated Railway preview. The web and worker use the new append-only bid outcome fields. From the browser, submission 2 progressed through unconfirmed, pending, and a verified loss archive, with its original receipt retained. Submission 3 led to a verified win and project agreement handoff. Pending and unconfirmed outcomes store an optional next check date. An operator can record no reply against the exact verified original submission.
+
+Money traces populated and unknown contract figures to the signed agreement and current reviewed terms, with separate invoice and applied receipt facts. Projects can filter Active and Closed from native delivery closure records. The Milestones tab shows the exact reviewed billing stage and completion evidence available to the viewer. Delegation shows field errors and a durable acknowledgment for an exact draft save. Its read-only view and sample effective periods were checked in the browser. An initial Django error on the missing save parameter was corrected. All eight focused PostgreSQL tests passed on the subsequent run.
+
+The [state ledger](docs/design/screen-state-acceptance.md) has 148 of 262 direct browser observations. Of those, 147 still list a follow-up check. Another 114 await first observation. Next complete bid award pricing, client portal receipt evidence, the follow-up draft and reminder, and the remaining project and Setup branches. Actual owner assignments, reviewed policy choices and production delivery destinations remain deferred.
+
 The signed-project Money view now opens the source evidence for a known stage with an unknown amount. The browser followed the user acceptance stage to the exact signed agreement and reviewed terms that omit the amount at desktop and phone width. This extended `SCR-12` coverage within the same 138 observed states.
 
 ## Restricted Finance decisions and recovery · 17 November 2026

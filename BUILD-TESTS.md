@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Money, Delegation, bid outcomes and Projects · 17 November 2026
+
+All checks used Railway `design-acceptance`. Deployment `605dd802` ran four focused tests and reported one Django error. Opening Delegation without a save parameter failed. The corrected run `00202026` passed eight tests in 406.018 seconds with exit 0. Django system checks passed, model migration drift was empty and `pmo.0051` applied in the fresh test database. Tests exercised idempotent Delegation save and denied writes, known and missing signed-stage terms, invoice and receipt separation, scoped Finance denial, pending and unconfirmed bids, verified loss and win, and native closure membership in the project filters.
+
+The preview web `9e3fa34d` applied `pmo.0051`. Worker `f70b10db` reached the new loss and win dispositions. Fixture run `53f6b89a` created four intended fixtures but could not create the second RFP because both fixtures used the same tenant reference. Seed run `3134d42a` used a separate reference and created work 55 on submission 3. The guarded fixture runner now exits with an error when any named setup fails.
+
+Codex browser results include corrected Delegation draft version 3 and no effective change, read-only Delegation, all three reviewed delegation periods, signed evidence 786 and terms version 2 for Money, the native project filter, and bid works 54 and 55 through verified outcomes. Money and the verified win fit at 375 CSS pixels. The [state ledger](docs/design/screen-state-acceptance.md) identifies the untested branches. Bid delivery used the synthetic internal recipient inbox. No live portal or customer message was exercised.
+
 ## Money source drill-down · 17 November 2026
 
 On Railway `design-acceptance`, PostgreSQL deployment `20dbf0c2` passed both focused tests in 4.184 seconds with exit 0. The signed-stage test exercises exact known, omitted, and absent or revoked terms. The invoice test exercises separate invoice and cash figures, exact receipt source details, invalid figure rejection and Finance access. In the Codex browser, an Unknown amount on the synthetic signed project opened its specific user acceptance source, including signature 383 and the explanation. The report fit at 390 CSS pixels with no page overflow.

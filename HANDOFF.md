@@ -1,5 +1,13 @@
 # PSL operations factory cloud handoff
 
+## Money, Delegation, bid outcomes and Projects · 17 November 2026
+
+Resume the `build/design-consolidation` branch at runtime source `2255bd74`. The isolated Railway `design-acceptance` web is `9e3fa34d-d7fa-45c0-9a25-1bb4b091982f` and the worker is `f70b10db-e1ab-410e-a41b-c50f8028a72f`. Migration `pmo.0051_rfp_outcome_followup` applied to the preview. Deployment `00202026` passed eight PostgreSQL tests, with Django checks and model drift clean. The first run had a corrected missing-parameter error. See BUILD-TESTS.md for both runs and fixture setup results.
+
+The browser tab is open on verified bid work 55, submission 3, award evidence 849 and its Route A agreement link. Work 54 retained submission 2 through unconfirmed, pending, and the final archived loss with lessons. The known Money project is `cb9f7f5b-7749-4e2e-9c53-b00e0bb87408`, with signed evidence 786 and reviewed terms version 2. Delegation draft version 3 is in `cc801eb2-357e-449b-bee2-300229c037f4`. The separate named sample workspaces `delegation-periods` and `delegation-read-only` show date coverage and the disabled editing path. The guarded fixtures are in `tests/railway_design_states_seed.py`.
+
+The [262-state ledger](docs/design/screen-state-acceptance.md) now records 148 first observations, including partial checks. There are 114 states still to observe. Next implement exact award amount and currency with evidence, compare against the submitted approved pricing only where its recorded basis and currency permit, and build the reviewed client portal receipt and bid follow-up branches. Continue with document and project variants and the open role, failure and device checks. Preserve all original receipts and the native handoffs. Keep Heads of Department policy decisions, real people assignments, approved destinations and real providers deferred. GitHub `main` was observed at `16568bf5`. Continue on the build branch.
+
 ## Money source drill-down · 17 November 2026
 
 The current web source is `dd776492` on Railway `design-acceptance` deployment `97ee2d0c`. The worker is `3ca41f0e`. The Codex browser is open on the synthetic signed Money project `168355e5-2d68-487a-ab7c-e42199e1af36`, with the user acceptance figure selected. It shows the signed evidence 383 and the reason the amount is unknown. PostgreSQL run `20dbf0c2` passed both tests for missing or revoked terms, exact figures, cash lineage and access. The next Money checks include populated user acceptance and completion terms and the latest access and source-list branches.
