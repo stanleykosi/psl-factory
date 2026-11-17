@@ -100,6 +100,11 @@ describe('internal from data (AC 4)', () => {
     expect(first.getByText('OPEN')).toBeTruthy();
     expect(rowOf('ACT-0452 · Book go-live rehearsal').getByText('Ada Okoye · Lagoon Health')).toBeTruthy();
     expect(ws().getByRole('link', { name: 'Open actions' }).getAttribute('href')).toBe('/projects/C-0211/actions');
+    // UI-1-1: the project_tab link is the outlined button-link, still a link
+    expect(ws().getByRole('link', { name: 'Open actions' }).className).toContain('psl-btn--secondary');
+    // UI-1-2: every cell carries its column label for the phone stack
+    expect(wsEl().querySelector('table')!.className).toContain('ws-table--stack');
+    expect([...wsEl().querySelectorAll('tbody tr:first-child td')].map((td) => td.getAttribute('data-label'))).toEqual(['Action', 'Owner', 'Due', 'State']);
     expect(ws().queryAllByRole('button')).toEqual([]);
     expect(sent.filter((r) => r.method === 'POST')).toHaveLength(0);
   });

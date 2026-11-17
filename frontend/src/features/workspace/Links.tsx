@@ -91,8 +91,12 @@ export function WorkspaceLinks({ links, page }: { links: WorkspaceLink[]; page?:
     <div className="ws-links">
       <div className="ws-links__row">
         {links.map((link) =>
-          link.kind === 'assistant' || link.kind === 'project_tab' ? (
-            <Link key={link.key} href={link.kind === 'assistant' ? '/assistant' : link.href}>
+          link.kind === 'assistant' ? (
+            <Link key={link.key} href="/assistant">
+              {link.label}
+            </Link>
+          ) : link.kind === 'project_tab' ? (
+            <Link key={link.key} className="psl-btn psl-btn--secondary" href={link.href}>
               {link.label}
             </Link>
           ) : (

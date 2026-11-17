@@ -197,10 +197,10 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
   const stepCol = controls?.item !== undefined && section.items.some((i) => hasNode(controls.item?.(section, i)));
   const span = columns.length + (selectable ? 1 : 0) + (stepCol ? 1 : 0);
   return (
-    // The frame scrolls sideways on phones, so it takes focus for keyboard scrolling (WCAG 2.1.1).
+    // A table with a state tag column stacks its cells on phones (labelled); any other scrolls sideways there, so it takes focus for keyboard scrolling (WCAG 2.1.1).
     // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
     <div className="psl-tablewrap ws-tablewrap" tabIndex={0} role="region" aria-label={section.title ? `Table: ${section.title}` : 'Table'}>
-      <table className="psl-table ws-table">
+      <table className={`psl-table ws-table${columns.some((c) => c.kind === 'tag') ? ' ws-table--stack' : ''}`}>
         <thead>
           <tr>
             {selectable && (
@@ -235,7 +235,7 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
                 <tr>
                   {selectable && <td className="psl-check-cell">{controls?.select?.(section, item)}</td>}
                   {columns.map((c) => (
-                    <td key={c.key} className={c.kind === 'money' || c.kind === 'integer' ? 'num' : c.kind === 'reference' ? 'psl-mono' : undefined}>
+                    <td key={c.key} data-label={c.label} className={c.kind === 'money' || c.kind === 'integer' ? 'num' : c.kind === 'reference' ? 'psl-mono' : undefined}>
                       <CellValue cell={item.cells?.find((cell) => cell.column === c.key)} column={c} />
                     </td>
                   ))}

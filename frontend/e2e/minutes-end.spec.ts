@@ -65,6 +65,11 @@ for (const width of WIDTHS) {
         expect(outline).not.toMatch(/^none(none)?$/);
       }
       if (width === 390) {
+        // UI-1-2: the actions table shows every cell, no sideways scroll inside its frame, DUE and STATE labelled
+        const frame = page.locator('.ws .ws-tablewrap').first();
+        expect(await frame.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+        const labels = await page.locator('.ws .ws-table--stack tbody tr:first-child td').evaluateAll((tds) => tds.map((td) => getComputedStyle(td, '::before').content));
+        expect(labels.slice(0, 4)).toEqual(['"Action"', '"Owner"', '"Due"', '"State"']);
         for (const control of await page.locator('.ws button:visible, .ws .ws-links a').all()) {
           const box = (await control.boundingBox())!;
           expect(box.height, await control.innerText()).toBeGreaterThanOrEqual(44);
