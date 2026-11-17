@@ -89,21 +89,21 @@
       "name": "■■■",
       "category": "frame item",
       "reason": "Shared PriorityTag (D-91) draws the marker inside one tag ('■■■ High', marker aria-hidden); the board lists the marker as separate text. The tag itself matches.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     },
     {
       "role": "text",
       "name": "■■□",
       "category": "frame item",
       "reason": "Shared PriorityTag (D-91) draws the marker inside one tag; see '■■■'.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     },
     {
       "role": "text",
       "name": "■□□",
       "category": "frame item",
       "reason": "Shared PriorityTag (D-91) draws the marker inside one tag; see '■■■'.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     }
   ],
   "extras_not_gating": [
@@ -164,49 +164,49 @@
       "width": 1440,
       "visual": 82.4,
       "reason": "Measured 82.4 with board fonts loaded (route line height from the hint-line token). Covers Mark milestone 3 complete not drawn (Conflicts 1); the PM/route line under the tab bar, which moves the tab band 32 px (16); the 'As of 12 Nov 16:40' line (14); 'INV-0412 · Waiting' and 'INV-0398 · Verified' in place of the board's status text (3); invoice references as links (8); Unknown as the amber tag (README); and the shared F-07 frame (36px title, Alerts bell, 'Tunde Bello · PM', '+ Start work' position; D-89). Column positions match the board.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     },
     {
       "board": "SCR-38-desktop-changed",
       "width": 1440,
       "visual": 79.1,
       "reason": "Measured 79.1 with board fonts loaded (route line height from the hint-line token). Covers everything listed for SCR-38-desktop, plus INVOICE and PAID kept with CHANGES as a sixth column (4); the default completion text kept ('Done 27 Oct · proof', 'Not yet · amount set at go-live') (4); the change-amount wording composed only from returned values, with Unknown as a tag, so CONTRACT AMOUNT wraps on Go-live (5); the CR-0031 amber sentence not drawn because no backend note exists (5); and the SOW static sentence shown (13).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     },
     {
       "board": "SCR-11-desktop",
       "width": 1440,
       "visual": 84.8,
       "reason": "Covers the F-07 project header (breadcrumb and 'Lagoon Health · patient app') in place of 'REGISTERS · LAGOON HEALTH' and 'Issues, changes and RFPs' (9); Filter not drawn (2); age 'Unknown' as a tag in place of '—' (11); the issue title as a link (8); As-of (14); references in mono per the README; the shared priority marker style; and the shared frame (16). Measured with board fonts loaded (no font warning in report.json).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     },
     {
       "board": "SCR-38-mobile",
       "width": 390,
       "visual": 76.7,
       "reason": "Covers the shared phone frame ('Back to Projects', Alerts bell, the full project title 'Lagoon Health · patient app' in place of 'Lagoon Health') (16); the extra 'Paid: …' line on every card (7); the sticky 'Mark milestone 3 complete' bar not drawn (1); 'Waiting'/'Verified' state words (3); invoice references as links (8); Unknown as the amber tag; and As-of (14). Card text sizes and spacing match the board.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     },
     {
       "board": "SCR-38-mobile-changed",
       "width": 390,
       "visual": 80.8,
       "reason": "Covers the page keeping the normal phone list, header and tab bar with a 'CHANGED · CR-0031' tag on Go-live, where the board draws a separate 'Milestones' page with one summary card and 'Amount UNKNOWN' (6); plus everything listed for SCR-38-mobile.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     },
     {
       "board": "SCR-11-mobile",
       "width": 390,
       "visual": 77.6,
       "reason": "Covers the shared phone frame and the F-07 header ('Back to Projects', the full project title) in place of '← Project' and h1 'Issues · 3' (9, 16); the register tab strip (Issues/Changes/Emergencies/RFPs) so the other registers can be reached on a phone (10); Filter not drawn (2); the title as a link (8); the shared priority marker; and As-of (14).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     },
     {
       "board": "SCR-29-mobile",
       "width": 390,
       "visual": 84.3,
       "reason": "Covers the shared phone frame (16); nine action cards where the board draws five (15); Filter not drawn (2); the title as a link (8); 'No owner' in signal-ink bold and due 'Unknown' as the amber tag, as on the desktop board and the README; and As-of (14).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer, 17 Nov 2026 — D-110"
     }
   ]
 }
