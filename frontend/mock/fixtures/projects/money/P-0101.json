@@ -1,0 +1,78 @@
+{
+  "items": [],
+  "as_of": "2026-11-12T15:40:00Z",
+  "money": [
+    {
+      "position": 1,
+      "stage": "Stage 1 · kick-off",
+      "amount": {
+        "amount": "3000000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "invoice": {
+        "reference": "INV-0398",
+        "work_id": "W-1713",
+        "state": "verified"
+      },
+      "invoice_status": "Verified 03 Nov",
+      "paid": {
+        "status": "finance_tracks"
+      },
+      "figure_id": "FIG-0101-S1"
+    },
+    {
+      "position": 2,
+      "stage": "Stage 2 · UAT",
+      "amount": {
+        "amount": "4250000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "invoice": {
+        "reference": "INV-0412",
+        "work_id": "W-1001",
+        "state": "waiting"
+      },
+      "invoice_status": "Awaiting Finance decision",
+      "paid": {
+        "status": "not_due"
+      },
+      "figure_id": "FIG-0101-S2"
+    },
+    {
+      "position": 3,
+      "stage": "Stage 3 · go-live",
+      "amount": {
+        "amount": "4250000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "invoice": {
+        "reference": "INV-0419",
+        "work_id": "W-1714",
+        "state": "owner_needed"
+      },
+      "invoice_status": "Held · owner needed",
+      "paid": {
+        "status": "not_due"
+      },
+      "figure_id": "FIG-0101-S3"
+    },
+    {
+      "position": 4,
+      "stage": "Stage 4 · hypercare",
+      "amount": {
+        "currency": "NGN",
+        "unknown": true
+      },
+      "amount_note": "Not yet due · amount set at go-live",
+      "paid": {
+        "status": "not_due"
+      }
+    }
+  ],
+  "summary": {
+    "report_id": "R-0101"
+  }
+}

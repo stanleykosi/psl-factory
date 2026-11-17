@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-26",
   "outcome": "A project's Money tab: each contract stage's amount, invoice and paid state as the backend sends them, and where each amount comes from (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "DONE",
   "task_ids": [
     "FE-M3-REPORT"
   ],
@@ -109,25 +109,31 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -139,18 +145,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -167,7 +177,7 @@
         "delivery/features/F-26/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -184,11 +194,25 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "The fix is in `moneyModel.ts:22-84`."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The fix is in `moneyModel.ts:22-84`."
       ]
     },
     {
@@ -204,7 +228,7 @@
         "delivery/features/F-26/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -221,11 +245,25 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "At `MoneyTab.tsx:86-104`, the link depends only on a matched figure, and its content is `<Value>` (the amber Unknown for an unknown amount, never 0 or blank). `anyLinked` was changed to match. The component test \"an Unknown amount whose figure the report has is a link\" asserts the href, the `psl-unknown` text inside the link, `aria-current`, and the exact differ sentence."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "At `MoneyTab.tsx:86-104`, the link depends only on a matched figure, and its content is `<Value>` (the amber Unknown for an unknown amount, never 0 or blank). `anyLinked` was changed to match. The component test \"an Unknown amount whose figure the report has is a link\" asserts the href, the `psl-unknown` text inside the link, `aria-current`, and the exact differ sentence."
       ]
     },
     {
@@ -264,7 +302,7 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -281,11 +319,25 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "In round-2/fidelity/SCR-12-desktop-1440/side-by-side.png, Stage 2's \u20a64,250,000.00 has the same weight as Stages 1 and 3. The rule `.money__amountlink[aria-current=\"true\"] { font-weight: 600; }` is removed (git diff 14c685cf..ac401c09 money.css), and `aria-current` is kept."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "In round-2/fidelity/SCR-12-desktop-1440/side-by-side.png, Stage 2's \u20a64,250,000.00 has the same weight as Stages 1 and 3. The rule `.money__amountlink[aria-current=\"true\"] { font-weight: 600; }` is removed (git diff 14c685cf..ac401c09 money.css), and `aria-current` is kept."
       ]
     },
     {
@@ -301,7 +353,7 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -318,11 +370,25 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "refs": [
+            "In round-2/fidelity/SCR-12-mobile-390/side-by-side.png, Stage 4's \"Unknown\" is mono, regular weight, 16px, amber, as the board draws it. `.money__card .psl-unknown` is `--font-mono` / `--text-amount-size` / 400. The desktop table keeps 600, which matches its board."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "In round-2/fidelity/SCR-12-mobile-390/side-by-side.png, Stage 4's \"Unknown\" is mono, regular weight, 16px, amber, as the board draws it. `.money__card .psl-unknown` is `--font-mono` / `--text-amount-size` / 400. The desktop table keeps 600, which matches its board."
       ]
     },
     {
@@ -338,15 +404,24 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-16T19:01:08Z",
           "head": "14c685cf577c6e9396a2a9c6ace316cc0998b697"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "the remaining visual gap is covered by the signed waiver texts; the UI reviewer verified them in round-2/review-ui.md"
         }
-      ]
+      ],
+      "risk_authority": "design engineer, D-107/D-108 (16-17 Nov 2026): resolved by the signed visual waivers"
     },
     {
       "id": "UI-1-4",
@@ -361,7 +436,7 @@
         "delivery/features/F-26/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -378,11 +453,360 @@
           ],
           "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:38:10Z",
+          "refs": [
+            "The tap areas use `--space-6px`, `--space-3` and `--control-md`, and the amount no longer reaches over the stage name. The resulting card height is waived under UI-2-1."
+          ],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "0b46a01be66ba05a8f70775739ccfd66df8121e9"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The tap areas use `--space-6px`, `--space-3` and `--control-md`, and the amount no longer reaches over the stage name. The resulting card height is waived under UI-2-1."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The money no-access state now uses the spec's Option B, and no design-engineer approval for it is recorded.** `MoneyTab.tsx:268-278,309` shows \"You can't see this project's money.\" instead of `ProjectNoAccess` (the UX-1-2 fix). Spec Conflicts 14 recommended building readiness rule 6 as written, and criterion 20 names `ProjectNoAccess`. D-104 (\"the rest as the spec\") and D-107 do not mention Option B. The no-leak behaviour is unchanged and tested: no stage, amount, report title or server message appears, and the report is not read. Fix: have the design engineer confirm Option B in a D-entry, or note it in build.md as a UX-review change awaiting that sign-off.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T10:44:24Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "resolved by D-108 wording/waiver text"
+        }
+      ],
+      "risk_authority": "design engineer D-108"
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**On phones, a deep link to a figure while the report has failed shows the report error twice.** At `MoneyTab.tsx:343`, a failed report renders `explanation` under the cards. When `?figure=` is set, the BottomSheet (`:345-349`) renders the same `explanation` again, so there are two ErrorStates and two \"Try again\" buttons, one behind the sheet. Both retry the same report read, so nothing is wrong, just repeated. Fix: render the inline copy only when no sheet is open (`report.status === 'error' && selectedId === undefined`), or leave it as is.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "coordinator",
+          "at": "2026-11-17T10:44:23Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "double Try again on phone is repetition only; follow-up"
+        }
+      ],
+      "risk_authority": "coordinator, non-blocking routing"
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "Linked phone cards are about 12\u201314px taller than the board's because of the new tap-area geometry. Cause: `money.css` `.money__card .money__amountlink { padding-top: var(--space-6px); margin: calc(-1 * var(--space-6px)) 0; }` together with `min-height: var(--control-md)`. This leaves about 18px under the amount text before the invoice line, where the board's gap is 6px. Measured: Stage 1 invoice text is 41px below the board in round 2, against about 30px in round 1; Stage 4's card top is about 95px low, against about 53px. The cause is my own UI-1-4 note, not a builder error: two 44px targets cannot fit in the board's 6px-gap card unless one reaches over the stage name or the card grows.",
+      "severity": "scr-12-mobile",
+      "blocking": true,
+      "summary": "Fix, either one: (a) the design engineer adds \"phone cards about 12px taller per linked stage, for the two 44px tap targets (D-92c)\" to the D-107 SCR-12-mobile waiver text, with no code change (my recommendation, since the 77.8 being signed is this exact build); or (b) frontend restores the round-1 geometry using tokens (the amount reaches up over the non-interactive stage name, `calc(var(--space-3) + var(--space-6px) + \u2026)`). I withdraw the \"covers the stage name\" part of UI-1-4. Option (b) needs one more recorded fidelity run and a new score in the waiver. Owner: product (design engineer) for (a), frontend for (b).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T09:38:22Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "the remaining visual gap is covered by the signed waiver texts; the UI reviewer verified them in round-2/review-ui.md"
+        }
+      ],
+      "risk_authority": "design engineer, D-107/D-108 (16-17 Nov 2026): resolved by the signed visual waivers"
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "The D-107 desktop waiver text leaves out two differences it in fact covers. The Chidi card's D-104 sentence \"Ask me about any figure here.\" makes the aside about 20px shorter. The report title sits on the same line as the board's sentence, before it, rather than \"below\" the heading on a line of its own. Both are D-104-approved.",
+      "severity": "scr-12-desktop",
+      "blocking": false,
+      "summary": "Fix: the design engineer may add them to the waiver reason. No code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "ACCEPTED_RISK",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer",
+          "at": "2026-11-17T10:44:24Z",
+          "refs": [],
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+          "reason": "resolved by D-108 wording/waiver text"
+        }
+      ],
+      "risk_authority": "design engineer D-108"
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "An Unknown amount that has a figure is now a link with the amber Unknown as its text (TECH-1-2). On desktop it is amber, semibold and underlined in the link. This is acceptable: amber keeps its \"waiting\" meaning (D-92b) and the underline marks it as a link. No board draws this case.",
+      "severity": "none (p-0102, not on a board)",
+      "blocking": false,
+      "summary": "Fix: none needed; noted for the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`delivery/checks.sh` (gate) | I could not reproduce a whole-suite exit 0. Two full runs failed only on timeouts (10 s hook timeouts in the `*-mock` suites; `waitFor` on \"Loading\u2026\") in files F-26 does not touch, at load averages of 111 to 585 with three features' vitest runs at once. Each failed file passes when re-run, and the builder's run at this head was exit 0 (86 files, 1882 tests). | Fix: run the gate on ac401c09 once the other builds are idle, to confirm exit 0 before merge. No code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:36:33Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`MoneyTab.tsx:343-349` | Confirms TECH-2-2. On a phone, P-0103 `?figure=FIG-0101-S1` shows 2 \"Try again\" buttons: one under the cards and one in the open sheet. Both re-read only E-REPORT. | Fix: as TECH-2-2 (render the inline error only when no sheet is open), or accept.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T10:36:33Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "`delivery/BACKEND-HANDOFF.md:151-163`",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "Closed. The section carries G-SCR12-1..3, `as_of` on E-REPORT figures, `finance_tracks`, who may read the money tab (403 versus 404, a 404 revealing no stage names), the optional report title and eyebrow, and the \"\u2014\" versus Unknown meanings for paid and invoice. Two small slips remain. The route is written `/projects/{id}?tab=money`, but the real route is `/projects/{caseId}/money`. G-SCR12-1 lists `version`, `rule_version` and `case_id` and leaves out `component`, which gaps-a-project-setup.md and the readiness proposal include. | Fix: correct both on the next touch of the handoff. This does not block acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "`feature.json` TECH-2-1",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "The coordinator accepts TECH-2-1 under D-108 (`OVERNIGHT-DECISIONS.md:177-178`). | Fix: record the closure in `feature.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "`feature.json` UI-2-2",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "The two differences it names are in the SCR-12-desktop waiver text, and the coordinator accepts it under D-108. UI-2-3 is only a note for the design engineer. | Fix: record the closure in `feature.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "`MoneyTab.tsx:343-349` (TECH-2-2, QA-2-2)",
+      "severity": "frontend",
+      "blocking": false,
+      "summary": "The double \"Try again\" on a phone deep link with a failed report. Both buttons re-read only E-REPORT. The coordinator accepts it as a follow-up. | Fix: later, render the inline error only when no sheet is open.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-5",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "TECH-1-3 and the F-25 merge",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "`frontend/tests/projects-journey.test.tsx` is a third file shared with F-25. Nothing was loosened. The second feature to merge must repoint or delete the coming-next case and keep both features' cases in `mock-contract.test.ts` and the E-PROJECT-TAB dispatch. | Fix: the coordinator handles it at the F-25 merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-6",
+      "round": 2,
+      "snapshot_ref": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "owner": "QA-2-1",
+      "severity": "pmo",
+      "blocking": false,
+      "summary": "QA could not reproduce a whole-suite exit 0 under heavy load. Each failed file passes when re-run, and the harness gate and the builder's run were exit 0. | Fix: the coordinator re-runs the gate on ac401c09 on an idle machine before merge. This is a pre-merge condition, not a code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-26/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T10:55:44Z",
+          "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76"
+        }
       ]
     }
   ],
@@ -451,9 +875,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -467,14 +891,14 @@
     "task_branch": "fe-m3-report-a-project-s-money-tab-each-contract-stag",
     "head_sha": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-26",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/50",
+    "pr_number": 50,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "b02a167df80d7e617c1876e6096b92af6e478888",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/OVERNIGHT-DECISIONS.md",
@@ -736,9 +1160,20 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'high' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "236 changed files exceed the auto-merge limit of 15",
+      "finding UI-1-3 was accepted as a risk",
+      "finding TECH-2-1 was accepted as a risk",
+      "finding TECH-2-2 was accepted as a risk",
+      "finding UI-2-1 was accepted as a risk",
+      "finding UI-2-2 was accepted as a risk",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -793,6 +1228,62 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-17T08:30:10Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T09:38:22Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T10:36:33Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-17T10:55:45Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-17T10:55:56Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-17T10:58:57Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": "design engineer approved merge of PR #50, 17 Nov"
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-17T10:59:05Z",
+      "round": 2,
+      "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-17T10:59:05Z",
       "round": 2,
       "head": "ac401c09e80d4398acb8101994d6f18b4b0f1d76",
       "reason": null

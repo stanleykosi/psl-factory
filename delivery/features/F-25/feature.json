@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-25",
   "outcome": "A project's Milestones, Registers and Actions tabs show their rows, read-only (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-M3-PROJECT-TABS"
   ],
@@ -101,6 +101,18 @@
       "at": "2026-11-17T08:26:02Z",
       "seconds": 354.5,
       "evidence_ref": "delivery/features/F-25/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T10:43:56Z",
+      "seconds": 426.3,
+      "evidence_ref": "delivery/features/F-25/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -149,8 +161,1012 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "`GET /projects/P-0101/money` is asserted to be 501 through the full mock server. F-26 routes money to `money.mjs` before the M1 check (its server.mjs line ahead of `if (!M1_OPERATIONS...)`), so this assertion fails after the second merge.",
+      "severity": "frontend/tests/mock-project-tabs.test.ts:70",
+      "blocking": false,
+      "summary": "Whoever merges second drops `money` from this assertion and keeps `documents`. Do not restore the 501 in `projectTab()`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`mock-project-tabs.test.ts` no longer asserts that money returns 501; the case is now \"documents answers 501; unknown tab 404\", and the test name matches. The assertion is safe against the F-26 merge, and the `projectTab()` handler is unchanged."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`mock-project-tabs.test.ts` no longer asserts that money returns 501; the case is now \"documents answers 501; unknown tab 404\", and the test name matches. The assertion is safe against the F-26 merge, and the `projectTab()` handler is unchanged."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The test title says \"documents and money keep their coming-next panel\" but it only opens `documents`, so the name over-claims. It is not wrong today. After the F-26 merge, money is no longer coming-next.",
+      "severity": "frontend/tests/project-tabs.test.tsx:426",
+      "blocking": false,
+      "summary": "Rename to \"documents keeps its coming-next panel\" in this round or at merge. This also affects the `projects-journey.test.tsx` row (see the merge list below).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`project-tabs.test.tsx` is renamed \"documents keeps its coming-next panel\", and the body still opens `documents`."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`project-tabs.test.tsx` is renamed \"documents keeps its coming-next panel\", and the body still opens `documents`."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "`ProjectView` and `ProjectPage` gain a `caseId` prop. The spec says \"one import and one branch, nothing else changes\", and `journey.case_id` is already available (F-26 uses it for `MoneyTab`). The extra prop widens the diff in a file both features touch and makes the second merge conflict more likely.",
+      "severity": "frontend/src/features/projects/projectjourney.tsx:187",
+      "blocking": false,
+      "summary": "Pass `journey.case_id` to `ProjectTabContent` and revert the signature change. Optional, because the result is the same.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "The `caseId` prop is gone from `ProjectView` and `ProjectPage`; `ProjectTabContent` gets `journey.case_id`. The `ProjectJourney.tsx` diff against the base is now one import, one `hasTabContent` branch and that prop, which is the same shape F-26 uses."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The `caseId` prop is gone from `ProjectView` and `ProjectPage`; `ProjectTabContent` gets `journey.case_id`. The `ProjectJourney.tsx` diff against the base is now one import, one `hasTabContent` branch and that prop, which is the same shape F-26 uses."
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "On a tab 403/404 the `PmRoute` line (\"PM <name> \u00b7 Route ...\") still draws above the panel that says \"Nothing from it is shown here\". The name comes from E-PROJECT, which the person may already read, so this is not a leak. It is a mixed message, and the PM name appears on the one state where the spec asked for no names.",
+      "severity": "frontend/src/features/projects/projecttabcontent.tsx:21",
+      "blocking": false,
+      "summary": "Either hide `PmRoute` while the tab state is an access error, or accept it and confirm with the security reviewer. The tab state lives inside each tab, so hiding it needs the state lifted or a small context. Likely accept.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "An invoice whose `state` is absent or not in `STATE_TAGS` shows only its reference. That reads as \"no status\" and not as Unknown. It is a fact the data could not supply, so the amber Unknown the spec uses elsewhere would be more honest.",
+      "severity": "frontend/src/features/projects/tabsmodel.ts:`invoiceword` and milestonestab.tsx:`invoicecell`",
+      "blocking": false,
+      "summary": "Draw `<Unknown />` in place of the word when the state is missing or unrecognised. Small change plus one test.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`InvoiceCell` draws `' \u00b7 '` and then the state word or `<Unknown />`, so a missing or unlisted state reads Unknown. The new test covers both an absent state and `state: 'surprise'`, expecting `INV-0398 \u00b7 Unknown` and `INV-0412 \u00b7 Unknown`."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`InvoiceCell` draws `' \u00b7 '` and then the state word or `<Unknown />`, so a missing or unlisted state reads Unknown. The new test covers both an absent state and `state: 'surprise'`, expecting `INV-0398 \u00b7 Unknown` and `INV-0412 \u00b7 Unknown`."
+      ]
+    },
+    {
+      "id": "TECH-1-6",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "`tab: 'milestones'` was added to `PATH_VALUES`. The spec does not list this file, but without it the generic persona and schema loop cannot call E-PROJECT-TAB. The addition is additive, loosens nothing, and is flagged in build.md.",
+      "severity": "frontend/tests/mock-contract.test.ts:39",
+      "blocking": false,
+      "summary": "Accept. When F-26 merges, keep this entry. F-26 edits other lines in this file (E-REPORT becomes E-PAYROLL-MATCH), so a conflict is unlikely.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "An empty tab shows a heading (\"No actions yet\") and then the sentence (\"No actions on this project yet.\"), which says the same thing twice.",
+      "severity": "p-0106 and empty registers, desktop and phone",
+      "blocking": false,
+      "summary": "Keep one of the two, or make the heading a short title that adds something.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`TabEmpty` in `MilestonesTab.tsx`, `RegistersTab.tsx` and `ActionsTab.tsx` renders the sentence once; `project-tabs.test.tsx` \"shows the empty sentence once\" passes per the builder's run."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "`TabEmpty` in `MilestonesTab.tsx`, `RegistersTab.tsx` and `ActionsTab.tsx` renders the sentence once; `project-tabs.test.tsx` \"shows the empty sentence once\" passes per the builder's run."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "Dates read \"04 Nov\" with a leading zero; the board draws \"4 Nov\".",
+      "severity": "actions due column, desktop and phone",
+      "blocking": false,
+      "summary": "Drop the leading zero in the shared day format for this tab (or confirm it is the app's convention).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "A closed issue shows \"Unknown\" under AGE where the board draws \"\u2014\". This is the approved Conflicts 11 exception, but a PM may read it as a data fault.",
+      "severity": "registers, iss-0221 age",
+      "blocking": false,
+      "summary": "Resolve with the backend \"age does not apply\" signal when it exists.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The Milestones column widths follow the cell content, not the board. Page header boxes are 185/199/342/218/316 px; the board draws 164/176/302/338/280 px (report.json, columnheader boxes). The approved shorter invoice text (\"INV-0412 \u00b7 Waiting\") lets the columns re-flow, so every cell from CONTRACT AMOUNT onward sits 20\u201380 px away from where the board draws it (diff.png: whole table red). This is the largest fixable part of the 73.1.",
+      "severity": "scr-38-desktop",
+      "blocking": true,
+      "summary": "Give the milestones table a class with `table-layout: fixed` and percentage widths in `project-tabs.css` that match the board (about 13/14/24/27/22% of the 1260 px frame). This must not affect the Registers or Actions tables.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "round-2 SCR-38-desktop side-by-side.png: header columns start at 92/237/393/661/963 px against the board's 92/237/393/661/961. CSS `.ptabs__ms--5` widths are 13/14/24/27/22%, on a milestones-only class; Registers and Actions tables are untouched. Visual went from 73.1 to 82.4."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "round-2 SCR-38-desktop side-by-side.png: header columns start at 92/237/393/661/963 px against the board's 92/237/393/661/961. CSS `.ptabs__ms--5` widths are 13/14/24/27/22%, on a milestones-only class; Registers and Actions tables are untouched. Visual went from 73.1 to 82.4."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "With the six approved columns (Conflicts 4), rows wrap to two lines: \"2 \u00b7 UAT sign-/off\", \"INV-0398 \u00b7/Verified\", \"Part paid \u00b7 \u20a6500,000.00/owed\", \"CR-0031 \u00b7 SMS/reminders\", \"Done 11 Nov \u00b7 client UAT sign-/off\". Rows are 57 px tall where the board draws 39 px, and the table is 249 px tall against 192 px, so everything below it moves down.",
+      "severity": "scr-38-desktop-changed",
+      "blocking": true,
+      "summary": "Keep each row to one line as the board does: `white-space: nowrap` on MILESTONE, INVOICE, PAID and CHANGES. Let CONTRACT AMOUNT (the wide column on the board, about 650 px) take the remaining width and be the only cell allowed to wrap.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "`.ptabs__table td:first-child { font-weight: 700; }` (`frontend/src/features/projects/project-tabs.css:38`) bolds the whole first cell. ISS-0233/0229/0221 come out bold (report: \"weight 400 on the board, 700 on the page\"). The Actions second line \"From Weekly sync \u00b7 10 Nov\" is also bold, where the board draws it at 12px, muted, weight 400 (visible in side-by-side.png).",
+      "severity": "scr-11-desktop, scr-29-desktop",
+      "blocking": true,
+      "summary": "Bold only the milestone name and the action title (a `<strong>` or a class in those cell renderers) and remove the first-child rule. The issue reference stays mono (README: references in mono) at weight 400.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "the blanket `td:first-child` bold rule is gone. Bold now applies only to `.ptabs__ms td:first-child` and `.ptabs__actions-table td:first-child`, and `.ptabs__hint` is 12px weight 400 muted. In the SCR-11 side-by-side, ISS-0233/0229/0221 are mono at 400. In the SCR-29 side-by-side, \"From Weekly sync \u00b7 10 Nov\" is regular and muted."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "the blanket `td:first-child` bold rule is gone. Bold now applies only to `.ptabs__ms td:first-child` and `.ptabs__actions-table td:first-child`, and `.ptabs__hint` is 12px weight 400 muted. In the SCR-11 side-by-side, ISS-0233/0229/0221 are mono at 400. In the SCR-29 side-by-side, \"From Weekly sync \u00b7 10 Nov\" is regular and muted."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The phone milestone card swaps the board's text sizes. The board draws the \"amount \u00b7 completion\" line at 13px ink and the invoice line at 12px muted (`SCR-38-mobile.dc.html`). The page uses `.ptabs__cardmain` = `--text-small-size` (12px) and `.ptabs__cardhint` = `--text-hint-size` (13px), so the invoice and paid lines are larger than the main line.",
+      "severity": "scr-38-mobile, scr-38-mobile-changed",
+      "blocking": true,
+      "summary": "Set the milestones main line to `--text-hint-size` (13px). Set the invoice and paid lines to `--text-small-size` (12px), muted, using their own class. Registers and Actions cards keep the 13px hint line their boards draw.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`.ptabs__cardmain` is `--text-hint-size` (13px). The new `.ptabs__cardnote` is `--text-small-size` (12px) muted and is used for the invoice and paid lines. Registers and Actions keep `.ptabs__cardhint` at 13px. The SCR-38-mobile side-by-side shows the board's line rhythm (name, main line and invoice line at the board's spacing)."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`.ptabs__cardmain` is `--text-hint-size` (13px). The new `.ptabs__cardnote` is `--text-small-size` (12px) muted and is used for the invoice and paid lines. Registers and Actions keep `.ptabs__cardhint` at 13px. The SCR-38-mobile side-by-side shows the board's line rhythm (name, main line and invoice line at the board's spacing)."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The gap inside each card is `--space-2` (8px); all three phone boards draw `gap: 6px`. On cards with 3 to 4 lines this adds 4\u20136 px per card, and the error builds up down the list (SCR-29-mobile cards are 75\u201388 px tall against the board's 70 px).",
+      "severity": "scr-38-mobile, scr-38-mobile-changed, scr-11-mobile, scr-29-mobile",
+      "blocking": true,
+      "summary": "`.ptabs__card { gap: var(--space-6px); }` (the token exists). Check that the card's 14px base size matches the board's `font-size: 14px`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "`.ptabs__card { gap: var(--space-6px); font-size: var(--text-body-size); }`. SCR-29-mobile cards are 72\u201375 px against the board's 70 px (the \"No owner\" card is taller because of its tag), and visual went from 76.8 to 84.3. The list gap stays 12 px, which matches the boards' column `gap: 12px`. SCR-38-mobile fell from 80.8 to 76.7 even though its card text now matches the board. The cause is the approved extra Paid line: with shorter cards, each following card is offset 22\u201324 px against the board's grid instead of about 30 px. It is not a regression in the code."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`.ptabs__card { gap: var(--space-6px); font-size: var(--text-body-size); }`. SCR-29-mobile cards are 72\u201375 px against the board's 70 px (the \"No owner\" card is taller because of its tag), and visual went from 76.8 to 84.3. The list gap stays 12 px, which matches the boards' column `gap: 12px`. SCR-38-mobile fell from 80.8 to 76.7 even though its card text now matches the board. The cause is the approved extra Paid line: with shorter cards, each following card is offset 22\u201324 px against the board's grid instead of about 30 px. It is not a regression in the code."
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The severity-marker exceptions (\"\u25a0\u25a0\u25a0\", \"\u25a0\u25a0\u25a1\", \"\u25a0\u25a1\u25a1\") are correct in substance. The marker is drawn: it sits inside the shared `PriorityTag` and is marked `aria-hidden`, so the tool cannot read it as separate text. The tag itself matches. But the category \"sample data\" is wrong: nothing here is sample data.",
+      "severity": "scr-11-mobile",
+      "blocking": false,
+      "summary": "Change the category to \"frame item\" (shared component, D-91) and keep \"builder proposal, pending design engineer\" until it is signed. I recommend approving them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T10:43:56Z",
+          "refs": [
+            "b9c62eb0"
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "refs": [
+            "the three marker entries are category \"frame item\", still \"builder proposal, pending design engineer\". I recommend signing them."
+          ],
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "b9c62eb0"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "the three marker entries are category \"frame item\", still \"builder proposal, pending design engineer\". I recommend signing them."
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The biggest gap still left on SCR-38 desktop is the approved route-line position (Conflicts 16, D-104). The line is drawn under the tab bar (y 250) instead of above it (y 176), so the 48 px tab band moves 32 px. The route line is also 21 px tall against the board's 18 px (line height). The line comes from this feature's own `PmRoute` (`ProjectTabContent.tsx`). Moving it into the F-07 header above the tab bar would be a small change to `ProjectView`, but the spec's shared-files rule keeps it out of F-25's lane.",
+      "severity": "scr-38-desktop, scr-38-desktop-changed, scr-29-desktop",
+      "blocking": false,
+      "summary": "No change required this round. Tell the design engineer this is the one lever that would move SCR-38-desktop most towards 90 if they want more than a waiver. Matching the board's line height (18 px) is a fixable detail inside this feature.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The page title is 36px; the boards draw 34px (report \"text size 34px on the board, 36px on the page\"). It comes from the F-07 `PageTitle`, which this feature may not change. The README allows 34px where the board draws it.",
+      "severity": "all desktop boards",
+      "blocking": false,
+      "summary": "Frame follow-up outside F-25; cover it in the waivers.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-9",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "The shared priority marker (`.psl-tag .psl-prio`: 9px, +1px tracking) shows three separate small squares. The boards draw the marker at the tag size with -1px tracking, which reads as a solid bar. This is a shared-component style, not F-25 code.",
+      "severity": "scr-11-desktop, scr-11-mobile",
+      "blocking": false,
+      "summary": "Design-system follow-up; cover it in the SCR-11 waivers.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-10",
+      "round": 1,
+      "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "owner": "Unknown appears as the amber Unknown tag (with background) where the boards draw amber bold text, or plain text on the changed board. On the phone, \"No owner\" is in signal-ink bold, while the phone board draws the line plain and muted. Both follow the README (\"Unknown is the amber Unknown tag\") and the desktop board's \"No owner\". These are consistent across features.",
+      "severity": "scr-29-mobile, scr-38-desktop, scr-29-desktop",
+      "blocking": false,
+      "summary": "Keep as built; list them in the waivers.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T09:33:18Z",
+          "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "Milestone cells other than CONTRACT AMOUNT are now one line with an ellipsis. A long completion text, invoice word or change title is cut on screen, so the full fact is no longer visible. The text stays in the DOM and is read by screen readers, but a sighted user cannot read it. This trades fidelity for completeness.",
+      "severity": "frontend/src/features/projects/project-tabs.css:`.ptabs__ms td:not(:nth-child(2))`",
+      "blocking": false,
+      "summary": "Accept for this round. Give the cells a `title` attribute (or let the cell wrap at phone width), and note it for the UI round.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "`TabEmpty` hard-codes the `psl-empty` markup and an `h3` in place of the shared `EmptyState`. This avoids the repeated sentence the UX review asked to remove. It copies the shared component's markup, and the page's heading levels for the empty state are unchecked.",
+      "severity": "frontend/src/features/projects/tabparts.tsx:`tabempty`",
+      "blocking": false,
+      "summary": "Accept. Better still, give `EmptyState` an optional title-only mode later and use it here.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "The empty sentence is now an `h3` directly under the page `h1` and the table caption level, so the heading outline may skip a level.",
+      "severity": "`tabparts.tsx` `tabempty`",
+      "blocking": false,
+      "summary": "Use the same level as the other panel headings (h2), or a paragraph.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "`project-tabs.css` has `.ptabs__ms td:not(:nth-child(2)) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }`. With the fixed percentage widths, this visually cuts amounts, owed figures, invoice states and proof text whenever the table is narrower than the board. The desktop layout runs from 720 px and the table's minimum width is 880 px. Measured text widths at 14px: \"Part paid \u00b7 \u20a6500,000.00 owed\" is about 190 px, \"INV-0398 \u00b7 Verified\" about 123 px and \"Done 11 Nov \u00b7 client UAT sign-off\" about 207 px. A 22% PAID column has room for that line only when the table is at least about 990 px wide. In the 6-column state, the 13% INVOICE column cuts \"INV-0398 \u00b7 Verified\" whenever the table is under about 1160 px wide. That covers common 1024\u20131280 px laptop windows. A cut-off money or completion fact breaks the \"facts shown separately, never hidden\" rule (INV-FACTS) and the readability bar. The P-0102 edge rows (non-NGN amounts, several changes) are longer still.",
+      "severity": "scr-38-desktop, scr-38-desktop-changed",
+      "blocking": true,
+      "summary": "Remove the nowrap/overflow/ellipsis rule and keep the fixed widths. At 1440 every P-0101 value already fits its column on one line: 6-column room is about 111/224/136/224/174 px against texts of about 99/207/123/190/162 px. So the board still matches at board width, and below it cells wrap instead of being cut. Add a component or e2e check at about 1024 px that the owed amount and invoice state are fully visible.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "The round-2 board render of `SCR-11-desktop.dc.html` differs from round 1 (board.png md5 4a0857ce\u2026 vs ab554d12\u2026), with the h1 and wordmark in a fallback font. The other 7 board renders are byte-identical across rounds. The drop from 84.6 to 82.8 therefore says nothing about the page, whose only change was the 400-weight references and that brings it closer to the board.",
+      "severity": "scr-11-desktop",
+      "blocking": false,
+      "summary": "Re-run SCR-11-desktop alone once its fonts load, and sign the waiver at that number.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "The `visual_waivers` reasons in `fidelity-exceptions.json` are now out of date. For example, SCR-38-desktop still says \"the table column widths follow the page's own table\", which is no longer true.",
+      "severity": "all 7 waived boards",
+      "blocking": false,
+      "summary": "Replace each reason with the waiver text below, and update the scores after the UI-2-1 fix and the SCR-11 re-measure.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-4",
+      "round": 2,
+      "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "owner": "`.ptabs__route { line-height: 18px; }` is a literal pixel value. It passes AC 22, which only greps for colours, but it is the only non-token size in the file.",
+      "severity": "scr-38-desktop, scr-38-desktop-changed, scr-29-desktop",
+      "blocking": false,
+      "summary": "Use a token or a unitless line height (for example 1.3 at the 14px body size) the next time the file is touched.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-25/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T10:47:58Z",
+          "head": "b9c62eb095afab1a2df87f562ffef833678e021c"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-25/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-25/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "b9c62eb095afab1a2df87f562ffef833678e021c",
+          "evidence_refs": [
+            "delivery/features/F-25/round-2/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -173,7 +1189,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "7ec9929619c2138cf814036c65eedc58f05a577a",
     "task_branch": "fe-m3-project-tabs-a-project-s-milestones-registers-and-act",
-    "head_sha": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+    "head_sha": "b9c62eb095afab1a2df87f562ffef833678e021c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-25",
     "pr_url": null,
     "pr_number": null,
@@ -431,7 +1447,7 @@
     }
   },
   "created_at": "2026-11-16T17:39:35Z",
-  "round": 1,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -457,6 +1473,46 @@
       "round": 1,
       "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T09:33:27Z",
+      "round": 1,
+      "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T09:33:27Z",
+      "round": 2,
+      "head": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T10:43:57Z",
+      "round": 2,
+      "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T10:47:59Z",
+      "round": 2,
+      "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T10:48:00Z",
+      "round": 3,
+      "head": "b9c62eb095afab1a2df87f562ffef833678e021c",
+      "reason": null
     }
   ],
   "routing": {
@@ -472,10 +1528,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 2,
-    "verdict": "PASS",
-    "commit": "4686abdab3e88ab0d1a4a6c8f093f7b389dbae2c"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

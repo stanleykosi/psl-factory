@@ -173,3 +173,9 @@ Tola's "needs you" sentence stays amber (D-105) even though it drops SCR-28-desk
 
 ## D-107 · F-26 Money tab waivers; F-27 delegation sign-off (16 Nov 2026, design engineer)
 F-26: visual waivers signed — SCR-12-desktop 85.7 and SCR-12-mobile 77.8 — covering the D-104 choices (project title as heading, report title below, two decimals, Stage 4 note under the amount, phone paid line, "As of" line, underlined links, plain "Tap an amount" text) and the shared F-07 frame/phone bar. F-27: SCR-13-desktop-delegation visual waiver at 84.0 (two date fields, 44px fields vs the board's 48px, the shared Setup frame); the Setup panel heading stays ink (blue means agent work, D-92b; other Setup panels are ink); the phone add form uses the full-height Drawer (D-103's "bottom sheet" meant this); the 10 frame/form differences plus the panel-head entry are signed.
+
+## D-108 · F-26 phone waiver line; Money no-access wording (17 Nov 2026, design engineer)
+The SCR-12-mobile waiver (77.8, D-107) also covers: phone cards about 12px taller per linked stage, for the two 44px tap targets (D-92c). The refused-money panel says "You can't see this project's money." (spec Conflicts 14, Option B), approved.
+
+## D-109 · F-27 Setup delegation product acceptance (17 Nov 2026, design engineer: "accept")
+After a demo of the F-27 branch on localhost:3000 (contract mock), the design engineer accepted Setup delegation: no control appears unless the response provides it; only the backend's From/To/Authority values can be sent (the shown From is always sent); the two rule sentences read as drawn; nothing claims a delegation takes effect, moves tasks or grants anything; an unconfirmed add can't create a duplicate; the phone add uses the full-height drawer. Held with PSL: D05, D-ADMIN-AUTHORITY, D-DELEGATION-VIEW.

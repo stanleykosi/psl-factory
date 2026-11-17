@@ -1,0 +1,27 @@
+{
+  "report_id": "R-0106",
+  "title": "Ojo Foods · billing by contract stage",
+  "agent": "chidi",
+  "figures": [
+    {
+      "id": "FIG-0101-S2",
+      "label": "Ojo secret figure",
+      "value": {
+        "amount": "4250000.00",
+        "currency": "NGN",
+        "unknown": false
+      },
+      "sources": [
+        "SOW-OJO-SECRET"
+      ],
+      "source_details": [
+        {
+          "label": "Ojo secret source",
+          "reference": "SOW-OJO-SECRET",
+          "kind": "document",
+          "document_id": "SOW-OJO"
+        }
+      ]
+    }
+  ]
+}

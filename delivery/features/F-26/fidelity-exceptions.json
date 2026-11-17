@@ -82,12 +82,12 @@
     {
       "board": "SCR-12-desktop",
       "approved_by": "design engineer, 16 Nov 2026 — D-107",
-      "reason": "Visual 85.7 at 100% coverage after exceptions. Covers the D-104 choices (project title as the page heading with the report title below, two-decimal amounts, Stage 4's note under the amount, the added \"As of\" line, underlined invoice links) and the shared F-07 frame. Approved as an exception on this board."
+      "reason": "Visual 85.7 at 100% coverage after exceptions. Covers the D-104 choices (project title as the page heading with the report title below, two-decimal amounts, Stage 4's note under the amount, the added \"As of\" line, underlined invoice links; the shorter Chidi card, \"Ask me about any figure here.\", which makes the side panel about 20px shorter; the report title on the same line as the board's sentence, before it) and the shared F-07 frame (D-104/D-107). Approved as an exception on this board."
     },
     {
       "board": "SCR-12-mobile",
-      "approved_by": "design engineer, 16 Nov 2026 — D-107",
-      "reason": "Visual 77.8 at 100% coverage after exceptions. Covers the D-104 choices (report title below the project title, the phone Paid line, two-decimal amounts, underlined links, plain \"Tap an amount\" text, the added \"As of\" line) and the shared F-07 phone bar. Approved as an exception on this board."
+      "approved_by": "design engineer, 16 Nov 2026 — D-107; design engineer, 17 Nov 2026 — D-108",
+      "reason": "Visual 77.8 at 100% coverage after exceptions. Covers the D-104 choices (report title below the project title, the phone Paid line, two-decimal amounts, underlined links, plain \"Tap an amount\" text, the added \"As of\" line) and the shared F-07 phone bar. Also covers phone cards about 12px taller per linked stage, for the two 44px tap targets (D-92c). Approved as an exception on this board."
     }
   ]
 }
