@@ -2030,3 +2030,11 @@
 {"at":"2026-11-17T11:26:38Z","feature":"F-23","round":4,"kind":"finding","action":"add","finding":"UI-4-1","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
 {"at":"2026-11-17T11:27:06Z","feature":"F-23","round":4,"kind":"finding","action":"verify","finding":"QA-3-1","by":"reviewer-security"}
 {"at":"2026-11-17T11:27:06Z","feature":"F-23","round":4,"kind":"transition","head":"778e868137d7","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-17T11:41:23Z","feature":"F-25","round":3,"kind":"finding","action":"fix","finding":"TECH-2-1","by":"builder"}
+{"at":"2026-11-17T11:41:23Z","feature":"F-25","round":3,"kind":"finding","action":"fix","finding":"UX-2-1","by":"builder"}
+{"at":"2026-11-17T11:41:23Z","feature":"F-25","round":3,"kind":"finding","action":"fix","finding":"UI-2-1","by":"builder"}
+{"at":"2026-11-17T11:41:23Z","feature":"F-25","round":3,"kind":"finding","action":"fix","finding":"UI-2-2","by":"builder"}
+{"at":"2026-11-17T11:41:23Z","feature":"F-25","round":3,"kind":"finding","action":"fix","finding":"UI-2-3","by":"builder"}
+{"at":"2026-11-17T11:41:23Z","feature":"F-25","round":3,"kind":"finding","action":"fix","finding":"UI-2-4","by":"builder"}
+{"at":"2026-11-17T11:41:23Z","feature":"F-25","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":252.9,"commit":"ba04923c108e"}
+{"at":"2026-11-17T11:41:24Z","feature":"F-25","round":3,"kind":"transition","head":"ba04923c108e","from":"IMPLEMENTING","to":"IN_REVIEW"}
