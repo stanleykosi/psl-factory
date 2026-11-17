@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: bde3607cd73fa2c9e106b668a40d44196cd2cb2c
+COMMIT: ba04923c108e0180ffdbd49404afc42fceeb191d
 BUILDER: builder
 LANE: full
 
@@ -52,3 +52,12 @@ The two SCR-38 desktop boards fell by about 4 points against round 2 with the sa
 - UX-2-1: `grep -n "<h2>" frontend/src/features/projects/TabParts.tsx` shows `TabEmpty`; the project-tabs component tests that read the empty sentence pass.
 - UI-2-4: `grep -n "ptabs__route" frontend/src/features/projects/project-tabs.css` shows `line-height: 1.3`.
 - UI-2-2: no report in `round-3/fidelity/` carries a `Fonts:` warning.
+
+## Base merge with F-26
+Merged `origin/dlv-00-delivery-setup` (F-26 Money tab) into the branch (merge commit e5f5dad0, then ba04923c). Textual conflicts and how each was resolved:
+- `frontend/src/features/projects/ProjectJourney.tsx`: one chain in the tab panel, `journey` then `hasTabContent(tab)` (`ProjectTabContent`, F-25) then `tab === 'money'` (`MoneyTab`, F-26) then `ComingNext` (Documents). Both imports kept.
+- `frontend/tests/projects-journey.test.tsx`: three hunks. The `page` and `open` type unions are `'milestones' | 'documents'` (money dropped, as F-26 no longer uses it there); the coming-next `it.each` has the single row `documents` (index 2). The `milestones` type member stays so the 401 case that opens `milestones` still compiles.
+- No textual conflict, merged automatically and checked by hand: `mock/server.mjs` (F-26's `isMoneyRequest` dispatch stays before the `M1_OPERATIONS` check; F-25's `E-PROJECT-TAB` entry, loader exclusion, `projectTab` import and dispatch line are all kept; I only corrected the header comment to say money goes to `money.mjs`), `tests/mock-contract.test.ts` (both features' cases kept, including `tab: 'milestones'` in `PATH_VALUES`), `tests/mock-projects.test.ts` (the 501 case stays on `documents`).
+- Small edits after the merge: `mock/project-tabs.mjs` answers 501 for `documents` only (money never reaches it); `tests/mock-money.test.ts` (F-26's file) expected milestones, registers and actions to answer 501, which is no longer true with F-25 merged, so that case now lists only `documents` and the `P-0109` money case.
+- Fidelity: not re-run. The merge changes no scored board (no change under the three tabs' components, CSS or fixtures; the delivery files and F-26's Money files are the only new content).
+- On the merged head: `bash delivery/checks.sh` first run failed one `setup-rules` timing test (untouched file, machine load near 50); a full `npm test` re-run passed all 89 files and 1950 tests, and lint passes. An earlier merged run failed only `mock-money.test.ts` (fixed above). e2e `project-tabs`, `projects` and `money` specs at 1440 and 390 passed 71 of 71 on the merge commit e5f5dad0 (before the one test-file change in ba04923c).
