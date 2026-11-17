@@ -10,7 +10,6 @@ const MOCK = `http://127.0.0.1:${process.env.MOCK_PORT ?? 3102}`;
 const RESERVED = [
   ['Roles', '/setup/roles'],
   ['Costing rule', '/setup/costing-rule'],
-  ['Delegation', '/setup/delegation'],
   ['Payroll visibility', '/setup/payroll-visibility'],
   ['Staff accounts', '/setup/staff'],
 ] as const;
