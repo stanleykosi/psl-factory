@@ -195,3 +195,22 @@ for (const [label, viewport] of [
     });
   });
 }
+
+// A narrower desktop window: the fixed columns wrap, they never cut a value (INV-FACTS: nothing hidden).
+test.describe('desktop 1024', () => {
+  test.use({ viewport: { width: 1024, height: 800 } });
+  test.beforeEach(async ({ context }) => setCookies(context, { psl_mock_persona: 'pm', psl_mock_milestones: 'changed' }));
+
+  test('milestones: the owed amount, the invoice state and the proof are fully visible', async ({ page }) => {
+    await page.goto('/projects/P-0101/milestones');
+    await loaded(page);
+    for (const text of ['Part paid · ₦500,000.00 owed', 'INV-0398 · Verified', 'Done 11 Nov · client UAT sign-off', 'CR-0031 · SMS reminders']) {
+      await expect(page.getByRole('cell', { name: text })).toBeVisible();
+    }
+    const clipped = await page.locator('table.ptabs__ms td').evaluateAll((cells) =>
+      cells.filter((c) => c.scrollWidth > c.clientWidth + 1 || getComputedStyle(c).textOverflow === 'ellipsis').map((c) => c.textContent),
+    );
+    expect(clipped).toEqual([]);
+    expect(await noHorizontalScroll(page)).toBe(true);
+  });
+});

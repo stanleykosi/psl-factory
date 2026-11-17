@@ -1,16 +1,15 @@
 /* Project tabs (SCR-38 Milestones, SCR-11 Registers, SCR-29 Actions). Token variables only; layout switches at 720px
    (bp-phone). No bundle or shell class is restyled: the ptabs__ classes sit beside them. */
 
-.ptabs__route { margin: 0; line-height: 18px; color: var(--ink-muted); }
+.ptabs__route { margin: 0; line-height: 1.3; color: var(--ink-muted); }
 .ptabs__table .psl-table { min-width: 880px; }
 .ptabs__table td { vertical-align: middle; line-height: normal; }
 .ptabs__block { display: block; }
 .ptabs__hint { font-size: var(--text-small-size); font-weight: 400; color: var(--ink-muted); }
 
-/* SCR-38: the board's column widths (13/14/24/27/22% of the frame); one line per cell except CONTRACT AMOUNT */
+/* SCR-38: the board's column widths (13/14/24/27/22% of the frame); at the board's width every P-0101 value fits on one line; narrower windows wrap, nothing is cut */
 .ptabs__ms { table-layout: fixed; }
 .ptabs__ms td:first-child { font-weight: 700; }
-.ptabs__ms td:not(:nth-child(2)) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ptabs__ms--5 th:nth-child(1) { width: 13%; } .ptabs__ms--5 th:nth-child(2) { width: 14%; } .ptabs__ms--5 th:nth-child(3) { width: 24%; }
 .ptabs__ms--5 th:nth-child(4) { width: 27%; } .ptabs__ms--5 th:nth-child(5) { width: 22%; }
 /* with CHANGES as a sixth column */

@@ -26,7 +26,7 @@ export function tabStateView(state: TabState<ListTab>, { retry, signInPath }: { 
 export function TabEmpty({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
     <div className="psl-empty">
-      <h3>{children}</h3>
+      <h2>{children}</h2>
       {action}
     </div>
   );
