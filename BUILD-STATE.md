@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Portal receipts, award comparison, follow-up and workspace controls · 17 November 2026
+
+Source `db710104` runs in the isolated Railway preview. Work 57 verified a manual client portal receipt against pack 51 and submission 6. The browser compared NGN 100.00 in the reviewed quote with NGN 101.25 in the award on the same declared basis. The assigned project manager edited and saved an internal follow-up and saw its reminder disappear after the newer win. Work 58 verified internal minutes version 52 after selected suggestions were edited and explicitly confirmed, with action 10 linked. Setup reads existing rule status by area and the project register includes authorized escalation history. Two preliminary and four expanded PostgreSQL checks passed.
+
+The browser has now directly observed 163 of 262 states. Of those, 162 list further checks and 99 await their first check. Remaining engineering includes governed customer follow-up delivery and original receipt verification, the remaining Setup and project variants, and the role, failure and device checks in the ledger. Operational policy, destinations and live provider decisions remain deferred.
+
 ## Award pricing capture and Money presentation · 17 November 2026
 
 Source `3267902b` captures optional awarded amount and currency together with the exact source from a won bid. It preserves the reviewed terms and all agreement decisions. In the browser, work 56 retained NGN 101.25 and award evidence 874 through verified Route A. A separate bid moved from received request and team inputs through reviews and controlled version 50 to captured submission 5 and receipt 35. Money showed the verified credit and applied receipt separately and displayed the Finance access hold. Three focused PostgreSQL tests passed.

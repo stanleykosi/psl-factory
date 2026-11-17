@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Portal receipt, quote comparison and workspace controls · 17 November 2026
+
+All runs used Railway `design-acceptance`. Initial deployment `2c1aa1c1` passed two PostgreSQL tests in 141.121 seconds with exit 0. It verified portal capture, refusal of inbox dispatch and wrong pack evidence, native Route A verification and exact award comparison, plus the existing local inbox outcome path.
+
+Expanded deployment `346a86ae` passed four tests in 172.598 seconds with exit 0. Django and migration drift checks passed. The run applied `pmo.0053_rfp_portal_receipt` and `workflows.0088_rfp_portal_verification` to the PostgreSQL test database. It also checked assigned-manager reminder and draft review, retirement after a newer result, selection of minutes suggestions without creating actual decisions or actions, idempotent draft import, invalid selection and read-only Setup behavior. Preview web `2c6c9ccd` applied the migrations. Worker `0814b8ca` runs the same runtime source `db710104`.
+
+Fixture run `615e2c48` prepared the two named sample cases. In the Codex browser, work 57 recorded `PORTAL-ACCEPTANCE-01` against version 51 and evidence 940 and reached verified Route A with submission 6. The browser saved the internal follow-up draft, saw the due alert and verified retirement after the win. The award and reviewed quote remained distinct with evidence 947 and 937. Work 58 copied a selected subset, edited the decision, recorded action 10 and verified internal minutes version 52. Also observed Finance and Delivery Setup, deferred Payroll visibility, view-only access, escalations, template version history, client filtering and billing detail, and the delivery dossier. This run used supplied synthetic portal evidence and no live client delivery.
+
 ## Bid award and Money precision · 17 November 2026
 
 On Railway `design-acceptance`, deployment `4a4114ca` passed three tests in 100.389 seconds with exit 0. Django system checks passed. Migration `pmo.0052_rfp_award_amount` applied in the fresh test database and preview web deployment `f6e8a214`. The expanded bid variant test rejected a missing award currency, award pricing on a loss and a direct invalid database write. It successfully saved and rendered an exact synthetic award. The two Money tests verified populated contract terms, exact source links, issued invoice and receipt separation, and Finance access denial. The worker deployment is `c4e44ae0`.

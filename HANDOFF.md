@@ -1,5 +1,13 @@
 # PSL operations factory cloud handoff
 
+## Portal receipts, award comparison, follow-up and minutes · 17 November 2026
+
+Resume `build/design-consolidation`. Runtime `db710104` is deployed to Railway `design-acceptance` web `2c6c9ccd-7bb4-4e93-af04-3161362bf782` and worker `0814b8ca-7a56-4c70-93e1-543b3ac1324e`. Preview migrations `pmo.0053` and `workflows.0088` applied. Initial run `2c1aa1c1` passed two PostgreSQL tests. Expanded run `346a86ae` passed four. Fixture deployment `615e2c48` created the two exact browser cases.
+
+The in-app browser is open on verified work 57. Portal receipt `PORTAL-ACCEPTANCE-01` uses evidence 940 for controlled version 51 and submission 6. Reviewed quote 937 is NGN 100.00 and award evidence 947 is NGN 101.25 on the same basis. The browser first recorded Unconfirmed, reviewed a follow-up message and read its due reminder. The newer win retired the reminder. Work 58 verified internal minutes 52 from notes 943, with edited decision and action 10 due 24 November. Setup samples use `known-money`, `delegation-periods` and `delegation-read-only`. The escalation project `73c0af77-765b-4e55-b49b-f28f5e808a06` links its exact `ESC-001` record.
+
+The [state ledger](docs/design/screen-state-acceptance.md) now has 163 direct observations. Of those, 162 list further checks, while 99 await first observation. Continue the governed outward follow-up delivery and receipt path, remaining minutes, Setup and project variants, then continue across the role, failure and device matrix. The manual portal uses supplied receipt evidence. Live portal or provider access, approved destinations and department-head policies remain deferred. Keep the application and workers in the named isolated preview.
+
 ## Award pricing capture and latest design review · 17 November 2026
 
 Runtime source `3267902b` is deployed to Railway `design-acceptance` web `f6e8a214-a6b0-4de9-83ba-12a8ffe0e3e4` and worker `c4e44ae0-3b28-43cc-ab6a-78a50c9c6820`. Preview migration `pmo.0052_rfp_award_amount` applied. PostgreSQL run `4a4114ca` passed three focused tests. Awarded amount and currency are recorded together on a won outcome, sourced from the evidence selected for that exact submission. Any comparison still needs an explicit reviewed pricing basis. Money now displays the exact amounts with useful decimal precision.

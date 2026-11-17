@@ -1,5 +1,20 @@
 {
   "design_consolidation_20261116": {
+    "portal_quote_followup_and_setup_20261117": {
+      "runtime_source": "db710104",
+      "environment": "design-acceptance",
+      "web": "2c6c9ccd-7bb4-4e93-af04-3161362bf782",
+      "worker": "0814b8ca-7a56-4c70-93e1-543b3ac1324e",
+      "states_with_browser_observations": 163,
+      "observed_states_with_open_checks": 162,
+      "states_without_direct_browser_observation": 99,
+      "all_states_accepted": false,
+      "postgresql_initial": {"deployment": "2c1aa1c1", "passed": 2, "seconds": 141.121},
+      "postgresql_expanded": {"deployment": "346a86ae", "passed": 4, "seconds": 172.598},
+      "completed": ["Manual portal receipt and exact pack verification through Route A", "Comparable reviewed quote and award with separate provenance", "Assigned project manager follow-up draft review and reminder lifecycle", "Selected minutes suggestions and exact editable confirmation", "Setup rule areas and project escalation register"],
+      "next": ["Controlled outward follow-up delivery and original provider receipt", "Remaining project and Setup branches", "Role, failure and phone checks and unobserved states in the 262-state evidence ledger"],
+      "owner_policy": "Deferred"
+    },
     "award_pricing_and_money_precision_20261117": {
       "runtime_source": "3267902b",
       "design_main_observed": "4e720682",
