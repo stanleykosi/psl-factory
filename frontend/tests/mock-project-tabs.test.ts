@@ -66,8 +66,8 @@ describe('visibility and access', () => {
   });
 
   it('documents answers its rows; an unknown tab 404; a project with no fixtures is empty', async () => {
-    expect((await get('P-0101/documents')).body.documents).toEqual([]);
-    expect(((await get('P-0102/documents')).body.documents as { work_id?: string }[]).map((d) => d.work_id)).toEqual(['W-2901', undefined, undefined]);
+    expect((await get('P-0106/documents')).body.documents).toEqual([]);
+    expect(((await get('P-0101/documents')).body.documents as { work_id?: string }[]).map((d) => d.work_id)).toEqual(['W-2901', ...Array(5).fill(undefined)]);
     expect((await get('P-0101/nonsense')).status).toBe(404);
     const empty = await get('P-0108/actions', { persona: 'finance_lead' });
     expect([empty.status, empty.body.actions]).toEqual([200, []]);

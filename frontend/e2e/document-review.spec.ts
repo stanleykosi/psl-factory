@@ -7,7 +7,7 @@ const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const MOCK = `http://127.0.0.1:${process.env.MOCK_PORT ?? 3102}`;
-const PAGE = '/projects/P-0102/documents/D-2901?v=2';
+const PAGE = '/projects/P-0101/documents/D-2901?v=2';
 
 test.use({ timezoneId: 'Africa/Lagos' });
 
@@ -180,11 +180,11 @@ test.describe('desktop 1440', () => {
   });
 
   test('each version shows its own state; a missing or unreadable version is not found', async ({ page }) => {
-    await open(page, '/projects/P-0102/documents/D-2901?v=1');
+    await open(page, '/projects/P-0101/documents/D-2901?v=1');
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Statement of work · v1');
     await expect(page.getByText('Replaced by v2')).toBeVisible();
     await expect(page.getByRole('button', { name: /Approve|Return/ })).toHaveCount(0);
-    for (const path of ['/projects/P-0102/documents/D-2901', '/projects/P-0102/documents/D-2901?v=latest', '/projects/P-0102/documents/D-2901?v=3']) {
+    for (const path of ['/projects/P-0101/documents/D-2901', '/projects/P-0101/documents/D-2901?v=latest', '/projects/P-0101/documents/D-2901?v=3']) {
       await open(page, path);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('You can’t open this document');
     }
@@ -261,14 +261,14 @@ test.describe('the Documents tab', () => {
   test.use({ viewport: DESKTOP });
 
   test('lists the documents; only a row with a work item opens its review', async ({ page }) => {
-    await page.goto('/projects/P-0102/documents');
+    await page.goto('/projects/P-0101/documents');
     const rows = page.getByRole('table', { name: 'Documents' }).getByRole('row');
-    await expect(rows).toHaveCount(4);
+    await expect(rows).toHaveCount(7);
     await expect(rows.nth(1)).toContainText('Statement of work');
     await expect(rows.nth(1)).toContainText('TEST TEMPLATE');
     await expect(rows.nth(2).getByRole('link')).toHaveCount(0);
     await rows.nth(1).getByRole('link', { name: 'Statement of work' }).click();
-    await expect(page).toHaveURL(/\/projects\/P-0102\/documents\/D-2901\?v=2$/);
+    await expect(page).toHaveURL(/\/projects\/P-0101\/documents\/D-2901\?v=2$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Statement of work · v2');
   });
 });

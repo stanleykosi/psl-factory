@@ -1,7 +1,7 @@
 // SCR-08 document content: the numbered sections with their agent notes, the Checks panel with the audience, the
 // returned banner and the agent's panel. Every value is the response's own; text is rendered as React text, so
 // markup in a section shows as characters.
-import { AGENTS, AgentAvatar, agentKey, Button, Panel, Tag, Unknown, VisuallyHidden } from '@/components';
+import { AGENTS, AgentAvatar, agentKey, Button, Callout, Panel, Tag, Unknown, VisuallyHidden } from '@/components';
 import { When } from '@/features/decide/DecisionContent';
 
 import {
@@ -12,6 +12,7 @@ import {
   notesOf,
   paragraphsOf,
   returnedByText,
+  isLinkUrl,
   textOf,
   type DocReturned,
   type DocSection,
@@ -78,7 +79,7 @@ export function NoText({ doc }: { doc: DocumentView }) {
   return (
     <article className="docrev__doc docrev__notext" aria-label="Document text">
       <p className="docrev__text">The text isn&rsquo;t available here.</p>
-      {textOf(doc.body_url) && (
+      {isLinkUrl(doc.body_url) && (
         <p className="docrev__text">
           <a href={doc.body_url} rel="noopener noreferrer" download>
             Download
@@ -146,35 +147,26 @@ export function ReturnedBanner({ returned, version }: { returned: DocReturned; v
   );
 }
 
-/** The agent's panel on the returned state: the agent's own words from the work item, then the two held buttons. */
+/** The agent's note on the returned state as the compact info strip the boards draw (as the work item's agent note): the
+ *  avatar, the name inline, the agent's own lines, then the held "Ask <agent> to draft" with its reason. */
 export function AgentPanel({ agent, lines, next }: { agent: string; lines: string[]; next: number }) {
   const key = agentKey(agent);
   return (
-    <Panel
-      kind="agent"
-      as="aside"
-      aria-label={`${agentName(agent)}'s note`}
-      className="docrev__agent"
-      head={
-        <span className="docrev__agenthead">
-          {key && <AgentAvatar agent={key} size={32} />}
-          <span>
-            <strong>{agentName(agent)}</strong>
-            {key && ` · ${AGENTS[key].role}`}
-          </span>
+    <Callout kind="info" announce={false} icon={key ? <AgentAvatar agent={key} size={32} /> : false} className="docrev__agent">
+      <span className="docrev__agentbody">
+        <span>
+          <strong>{agentName(agent)}</strong>
+          {key && ` · ${AGENTS[key].role}`}
         </span>
-      }
-    >
-      <div className="docrev__agentbody">
         {lines.map((line, i) => (
-          <p key={i}>{line}</p>
+          <span key={i}>{line}</span>
         ))}
-        <p>
+        <span>
           <Button kind="text" disabled reason="Not available yet">
             Ask {agentName(agent)} to draft v{next}
           </Button>
-        </p>
-      </div>
-    </Panel>
+        </span>
+      </span>
+    </Callout>
   );
 }

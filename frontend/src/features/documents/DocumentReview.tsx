@@ -7,7 +7,7 @@
 // you_can_act is true; /me roles never decide that (INV-ACCESS). Nothing here says the document was sent.
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { Breadcrumb, Button, buttonClass, Callout, Loading, PageTitle, Tag, useIsPhone, type TagTone } from '@/components';
 import { When } from '@/features/decide/DecisionContent';
@@ -58,7 +58,7 @@ function ProjectBar({ caseId }: { caseId: string }) {
 const READ_ONLY = 'This review isn’t open to you here.';
 
 /** What sits where the controls would: the reason there are none, an unconfirmed write, or the approved notice. */
-function ReviewNotice({ doc, review, taskId }: { doc: DocumentView; review: Decision; taskId: string | undefined }) {
+function ReviewNotice({ doc, review, taskId, reread }: { doc: DocumentView; review: Decision; taskId: string | undefined; reread: boolean }) {
   const { view } = review;
   if (view.kind === 'loading') {
     return (
@@ -73,7 +73,18 @@ function ReviewNotice({ doc, review, taskId }: { doc: DocumentView; review: Deci
   }
   if (view.kind === 'done') {
     if (view.result.verdict === 'return') {
-      return doc.returned ? null : (
+      if (doc.returned) return null;
+      // The page shows what the backend returned: still recording until the re-read is back, then its own status.
+      return reread ? (
+        <div role="alert">
+          <Callout kind="warning">
+            We couldn&rsquo;t confirm the return was recorded. The document still reads &ldquo;{doc.status}&rdquo;.{' '}
+            <Button kind="secondary" size="sm" onClick={() => void review.retry()}>
+              Try again
+            </Button>
+          </Callout>
+        </div>
+      ) : (
         <p className="docrev__plain" role="status">
           Recording the return…
         </p>
@@ -156,7 +167,7 @@ function statusTone(doc: DocumentView, canAct: boolean): TagTone {
   return doc.review ? 'waiting' : 'neutral';
 }
 
-function DocumentBody({ doc, review, caseId }: { doc: DocumentView; review: Decision | null; caseId: string | undefined }) {
+function DocumentBody({ doc, review, caseId, reread = false }: { doc: DocumentView; review: Decision | null; caseId: string | undefined; reread?: boolean }) {
   const phone = useIsPhone();
   const sections = sectionsOf(doc);
   const taskId = textOf(doc.review?.task_id);
@@ -198,8 +209,8 @@ function DocumentBody({ doc, review, caseId }: { doc: DocumentView; review: Deci
             {doc.title} · v{version}
           </PageTitle>
           {caseId && <ProjectBar caseId={caseId} />}
-          {textOf(doc.status) ? <Tag tone={statusTone(doc, canAct)} className="docrev__status">{doc.status}</Tag> : null}
         </div>
+        {textOf(doc.status) ? <Tag tone={statusTone(doc, canAct)} className="docrev__status">{doc.status}</Tag> : null}
       </header>
       <div role={caseId ? 'tabpanel' : undefined} id={caseId ? PANEL_ID : undefined} aria-label={caseId ? 'Documents' : undefined} className="docrev__panel">
         {phone && !returned && (
@@ -212,11 +223,13 @@ function DocumentBody({ doc, review, caseId }: { doc: DocumentView; review: Deci
           <>
             <ReturnedBanner returned={returned} version={version} />
             {note && note.lines.length > 0 && <AgentPanel agent={note.agent} lines={note.lines} next={Number(version) + 1} />}
-            <div className="docrev__held">
-              <Button disabled size="lg" reason="Not available yet">
-                Edit as v{Number(version) + 1}
-              </Button>
-            </div>
+            {!phone && (
+              <div className="docrev__held">
+                <Button disabled size="lg" reason="Not available yet">
+                  Edit as v{Number(version) + 1}
+                </Button>
+              </div>
+            )}
           </>
         )}
         {!returned && (drafted || changeItems.length > 0) && (
@@ -227,14 +240,14 @@ function DocumentBody({ doc, review, caseId }: { doc: DocumentView; review: Deci
         )}
         <div className="docrev__board">
           {sections ? <Sections doc={doc} sections={sections} /> : <NoText doc={doc} />}
+          {!returned && phone && flag && (
+            <p className="docrev__flag">
+              {flag.agent} flagged section {flag.number}: {flag.text}
+            </p>
+          )}
           <aside className="docrev__aside">
             {!returned && <ChecksPanel doc={doc} />}
-            {!returned && phone && flag && (
-              <p className="docrev__flag">
-                {flag.agent} flagged section {flag.number}: {flag.text}
-              </p>
-            )}
-            {!returned && review && !showControls && <ReviewNotice doc={doc} review={review} taskId={taskId} />}
+            {!returned && review && !showControls && <ReviewNotice doc={doc} review={review} taskId={taskId} reread={reread} />}
             {!returned && !review && doc.review && <p className="docrev__plain">{READ_ONLY}</p>}
             {review && showControls && task && claim && (
               <ReviewControls
@@ -250,6 +263,13 @@ function DocumentBody({ doc, review, caseId }: { doc: DocumentView; review: Deci
             {review?.uncertain && <UncertainNotice />}
           </aside>
         </div>
+        {returned && phone && (
+          <div className="psl-actionbar docrev__bar">
+            <Button size="xl" block disabled reason="Not available yet">
+              Edit as v{Number(version) + 1}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -261,12 +281,13 @@ function ReviewHost({ doc, workId, refresh, caseId }: { doc: DocumentView; workI
   const review = useDecision(workId, doc.returned ? undefined : textOf(doc.review?.task_id));
   const done = review.view.kind === 'done' ? review.view : null;
   const refreshed = useRef<unknown>(null);
+  const [reread, setReread] = useState(false);
   useEffect(() => {
     if (!done || refreshed.current === done.result) return;
     refreshed.current = done.result;
-    void refresh();
+    void refresh().then(() => setReread(true));
   }, [done, refresh]);
-  return <DocumentBody doc={doc} review={review} caseId={caseId} />;
+  return <DocumentBody doc={doc} review={review} caseId={caseId} reread={reread} />;
 }
 
 function DocumentLoaded({ routeCase, documentId, version }: { routeCase: string; documentId: string; version: string }) {

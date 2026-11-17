@@ -438,22 +438,22 @@ describe('access and errors (all tabs)', () => {
   });
 
   it('documents lists the project\u2019s documents; only a row with a work_id opens its review', async () => {
-    await open('P-0102', 'documents');
+    await open('P-0101', 'documents');
     const rows = within(screen.getByRole('table', { name: 'Documents' })).getAllByRole('row').slice(1);
-    expect(rows).toHaveLength(3);
+    expect(rows).toHaveLength(6);
     const link = within(rows[0]).getByRole('link', { name: 'Statement of work' });
-    expect(link.getAttribute('href')).toBe('/projects/P-0102/documents/D-2901?v=2');
+    expect(link.getAttribute('href')).toBe('/projects/P-0101/documents/D-2901?v=2');
     expect(rows[0].textContent).toContain('v2');
     expect(rows[0].textContent).toContain('Awaiting PMO Lead review');
     expect(rows[0].textContent).toContain('TEST TEMPLATE');
     expect(within(rows[1]).queryByRole('link')).toBeNull();
     expect(rows[1].textContent).toContain('Costing COST-0140');
     expect(rows[2].textContent).toContain('Weekly sync minutes');
-    expect(tabCalls().map((u) => u.pathname)).toEqual(['/api/v1/projects/P-0102/documents']);
+    expect(tabCalls().map((u) => u.pathname)).toEqual(['/api/v1/projects/P-0101/documents']);
   });
 
   it('documents of a project with none says so', async () => {
-    await open('P-0101', 'documents');
+    await open('P-0106', 'documents');
     expect(screen.getByRole('heading', { level: 2, name: 'No documents on this project yet.' })).toBeTruthy();
   });
 });

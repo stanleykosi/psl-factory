@@ -30,6 +30,33 @@
       "updated_at": "2026-11-10T15:20:00Z",
       "test_template": true,
       "sample": true
+    },
+    {
+      "document_id": "D-2905",
+      "title": "Planning record",
+      "kind": "Planning",
+      "version": "3",
+      "status": "Approved",
+      "updated_at": "2026-11-10T15:20:00Z",
+      "sample": true
+    },
+    {
+      "document_id": "D-2906",
+      "title": "Client brief",
+      "kind": "Brief",
+      "version": "1",
+      "status": "Approved",
+      "updated_at": "2026-11-10T15:20:00Z",
+      "sample": true
+    },
+    {
+      "document_id": "D-2907",
+      "title": "Handover plan",
+      "kind": "Plan",
+      "version": "1",
+      "status": "Drafted",
+      "updated_at": "2026-11-10T15:20:00Z",
+      "sample": true
     }
   ],
   "items": [
@@ -61,6 +88,33 @@
       "status": "Drafted",
       "updated_at": "2026-11-10T15:20:00Z",
       "test_template": true,
+      "sample": true
+    },
+    {
+      "document_id": "D-2905",
+      "title": "Planning record",
+      "kind": "Planning",
+      "version": "3",
+      "status": "Approved",
+      "updated_at": "2026-11-10T15:20:00Z",
+      "sample": true
+    },
+    {
+      "document_id": "D-2906",
+      "title": "Client brief",
+      "kind": "Brief",
+      "version": "1",
+      "status": "Approved",
+      "updated_at": "2026-11-10T15:20:00Z",
+      "sample": true
+    },
+    {
+      "document_id": "D-2907",
+      "title": "Handover plan",
+      "kind": "Plan",
+      "version": "1",
+      "status": "Drafted",
+      "updated_at": "2026-11-10T15:20:00Z",
       "sample": true
     }
   ]

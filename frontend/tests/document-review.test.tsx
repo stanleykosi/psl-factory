@@ -15,7 +15,7 @@ configure({ asyncUtilTimeout: 4000 });
 
 const nav = vi.hoisted(() => ({ search: 'v=2' }));
 vi.mock('next/navigation', () => ({
-  usePathname: () => '/projects/P-0102/documents/D-2901',
+  usePathname: () => '/projects/P-0101/documents/D-2901',
   useSearchParams: () => new URLSearchParams(nav.search),
   useRouter: () => ({ replace: vi.fn(), push: vi.fn(), prefetch: vi.fn() }),
 }));
@@ -54,7 +54,7 @@ beforeEach(() => {
       const text = request.method === 'GET' ? '' : await request.clone().text();
       calls.push({ method: request.method, path: url.pathname, body: text ? JSON.parse(text) : undefined });
       if (url.pathname === '/api/v1/me') return json(200, read('me.pm.json'));
-      if (url.pathname === '/api/v1/projects/P-0102') return json(200, read('projects/P-0102.json'));
+      if (url.pathname === '/api/v1/projects/P-0101') return json(200, read('projects/P-0101.json'));
       if (url.pathname.startsWith('/api/v1/documents/')) return next(docAnswers);
       if (url.pathname.endsWith('/claim')) return writes.claim();
       if (url.pathname.endsWith('/decision')) return writes.decide();
@@ -68,7 +68,7 @@ afterEach(() => vi.unstubAllGlobals());
 async function open() {
   render(
     <AppShell>
-      <DocumentReviewPage caseId="P-0102" documentId="D-2901" />
+      <DocumentReviewPage caseId="P-0101" documentId="D-2901" />
     </AppShell>,
   );
 }
@@ -222,6 +222,31 @@ describe('what the page shows of the response', () => {
     expect(screen.getByRole('link', { name: 'Download' }).getAttribute('href')).toBe('https://files.example.test/sow-d-2901-v2.pdf');
   });
 
+  it('a body_url that is not http(s) or relative is not a link', async () => {
+    const doc = { ...docV2(), body_url: 'javascript:alert(1)' };
+    delete doc.sections;
+    docAnswers = [() => json(200, doc)];
+    await open();
+    await heading();
+    expect(screen.getByText('The text isn’t available here.')).toBeTruthy();
+    expect(screen.queryByRole('link', { name: 'Download' })).toBeNull();
+  });
+
+  it('a return the re-read does not show says so instead of recording forever', async () => {
+    await open();
+    const ret = await screen.findByRole('button', { name: 'Return with note' });
+    await waitFor(() => expect((ret as HTMLButtonElement).disabled).toBe(false));
+    fireEvent.change(screen.getByLabelText('Note for the PM (needed to return)'), { target: { value: 'Fix it' } });
+    writes.decide = () => json(200, { task_id: 'T-2901', verdict: 'return', decided_by: 'Tunde Bello', decided_at: '2026-11-17T13:20:00Z', work_state: 'action_needed' });
+    workAnswers = [() => json(200, work('W-2901.return'))];
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Return with note' }));
+    });
+    await screen.findByText(/couldn’t confirm the return was recorded/);
+    expect(screen.queryByText('Recording the return…')).toBeNull();
+    expect(posts('/decision')).toHaveLength(1);
+  });
+
   it('the returned state quotes the note only where it is sent', async () => {
     const returned = { ...docV2(), status: 'Returned to PM', returned: { by: 'Kemi Adebayo', role: 'PMO Lead', at: '2026-11-17T13:20:00Z' } };
     docAnswers = [() => json(200, returned)];
@@ -262,7 +287,7 @@ describe('access, versions and failures', () => {
     docAnswers = [() => json(401, { code: 'not_signed_in', message: 'Sign in.' })];
     await open();
     const link = await screen.findByRole('link', { name: 'Sign in' });
-    expect(link.getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0102%2Fdocuments%2FD-2901%3Fv%3D2');
+    expect(link.getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101%2Fdocuments%2FD-2901%3Fv%3D2');
   });
 
   it.each([[''], ['latest'], ['0'], ['2x']])('a missing or unreadable version (%j) is not found and requests nothing', async (v) => {

@@ -14,6 +14,7 @@ import { useFocusAfterMore } from './useFocusAfterMore';
 import { useProjectTab } from './useProjectTab';
 import { useRef } from 'react';
 
+// useProjectTab needs a view; Documents has no register, search or filter, so this carries nothing the query sends.
 const VIEW = { register: 'issues' } as const;
 
 function Title({ caseId, row }: { caseId: string; row: DocumentRow }) {

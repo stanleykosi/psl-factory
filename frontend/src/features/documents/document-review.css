@@ -7,26 +7,27 @@
 .docrev__header .cmp-page-title { overflow-wrap: anywhere; }
 .docrev__crumb .psl-crumb a { text-decoration: underline; text-underline-offset: 2px; }
 .docrev__titlerow { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-3); }
-.docrev__titlerow .projects__tabs, .docrev__titlerow .docrev__status { align-self: flex-start; flex-wrap: wrap; }
+.docrev__titlerow .projects__tabs { align-self: flex-start; flex-wrap: wrap; }
+.docrev__status { align-self: flex-start; }
 .docrev__panel { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; }
 .docrev__drafted { margin: 0; color: var(--ink-muted); }
 
 /* the document and the checks beside it (wrapping as the board's flex row does) */
 .docrev__board { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
 .docrev__doc { flex: 999 1 640px; min-width: 0; background: var(--surface); border: var(--rule-strong) solid var(--ink); }
-.docrev__aside { flex: 1 1 320px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-4); }
-.docrev__dochead { display: flex; gap: var(--space-4); align-items: center; padding: var(--space-10px) 20px; border-bottom: var(--rule-strong) solid var(--ink); font-size: var(--text-hint-size); }
+.docrev__aside { flex: 1 1 333px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+.docrev__dochead { display: flex; gap: var(--space-4); align-items: center; padding: var(--space-10px) var(--space-20px); border-bottom: var(--rule-strong) solid var(--ink); font-size: var(--text-hint-size); }
 .docrev__testtemplate { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-label-size); color: var(--waiting); }
-.docrev__section { padding: var(--space-4) 20px; border-bottom: var(--rule-thin) solid var(--rule-soft); }
+.docrev__section { padding: var(--space-4) var(--space-20px); border-bottom: var(--rule-thin) solid var(--rule-soft); }
 .docrev__section:last-child { border-bottom: none; }
 .docrev__section.is-changed { background: color-mix(in srgb, var(--waiting-tint) 50%, var(--surface)); }
-.docrev__section h3 { margin: 0 0 var(--space-6px); font-family: var(--font-display); font-size: 16px; line-height: normal; }
+.docrev__section h3 { margin: 0 0 var(--space-6px); font-family: var(--font-display); font-size: var(--text-lead-size); line-height: normal; }
 .docrev__text { margin: 0; line-height: 1.6; overflow-wrap: anywhere; white-space: pre-line; }
 .docrev__text + .docrev__text { margin-top: var(--space-2); }
 .docrev__note { margin: var(--space-2) 0 0; font-size: var(--text-hint-size); color: var(--waiting-ink); overflow-wrap: anywhere; }
 .docrev__cite { color: var(--ink-muted); font-family: var(--font-mono); font-size: var(--text-small-size); }
-.docrev__sectionempty { margin: 0; padding: var(--space-4) 20px; }
-.docrev__notext { padding: var(--space-4) 20px; display: flex; flex-direction: column; gap: var(--space-2); }
+.docrev__sectionempty { margin: 0; padding: var(--space-4) var(--space-20px); }
+.docrev__notext { padding: var(--space-4) var(--space-20px); display: flex; flex-direction: column; gap: var(--space-2); }
 
 /* checks: a header row, then one row per check with its tag */
 .docrev__checks .psl-panel__body { padding: 0; }
@@ -50,11 +51,9 @@
 .docrev__returnedbody { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-10px); }
 .docrev__quote { margin: 0; font-size: var(--text-body-phone-size); overflow-wrap: anywhere; }
 .docrev__rule { margin: 0; color: var(--ink-muted); font-size: var(--text-hint-size); }
-.docrev__agent { padding: 0; }
-.docrev__agenthead { display: inline-flex; align-items: center; gap: var(--space-10px); }
-.docrev__agentbody { display: flex; flex-direction: column; gap: var(--space-2); color: var(--action-ink); line-height: 1.45; }
-.docrev__agentbody p { margin: 0; }
-.docrev__held { max-width: 520px; display: flex; flex-direction: column; }
+.docrev__agent { align-items: center; max-width: none; }
+.docrev__agentbody { display: flex; flex-direction: column; gap: var(--space-1); line-height: 1.45; }
+.docrev__held { align-self: flex-start; }
 
 .docrev__phonetags { display: flex; flex-wrap: wrap; gap: var(--space-6px); }
 .docrev__noaccess { max-width: 720px; }
@@ -66,6 +65,7 @@
   .docrev__titlerow { flex-direction: column; align-items: stretch; }
   .docrev__doc { flex-basis: 100%; }
   .docrev__aside { max-width: none; flex-basis: 100%; }
+  .docrev__flag { flex: 1 1 100%; }
   .docrev__section { padding: var(--space-10px) var(--space-3); }
   .docrev__section h3 { font-size: var(--text-body-phone-size); }
   .docrev__text { font-size: var(--text-body-size); line-height: normal; }

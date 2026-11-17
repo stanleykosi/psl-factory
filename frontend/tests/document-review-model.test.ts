@@ -10,6 +10,7 @@ import {
   draftedByText,
   firstFlag,
   isDocument,
+  isLinkUrl,
   noteProblem,
   paragraphsOf,
   parseVersion,
@@ -37,7 +38,7 @@ describe('checks: the four backend statuses and absent, never a word the backend
 
   it('an unknown amounts check never reads Matches in the tag, and absent checks give no tag', () => {
     const unknown = { ...base, checks: [{ key: 'amounts', label: 'Amounts', status: 'unknown', detail: 'Matches COST-0140 v2' }] } as DocumentView;
-    expect(amountsTag(unknown)).toEqual({ text: 'Unknown', tone: 'neutral' });
+    expect(amountsTag(unknown)).toEqual({ text: 'Amounts: Unknown', tone: 'neutral' });
     expect(amountsTag(base)).toBeUndefined();
     expect(checkStatus({})).toBe('unknown');
   });
@@ -105,4 +106,9 @@ describe('sentences from the response only', () => {
     expect(isDocument(null)).toBe(false);
     expect(isDocument([])).toBe(false);
   });
+});
+
+describe('body_url is a link only for http(s) or a relative path', () => {
+  it.each(['https://files.example.test/a.pdf', 'http://files.example.test/a.pdf', '/files/a.pdf', 'files/a.pdf', 'HTTPS://X.TEST/a'])('%s is a link', (u) => expect(isLinkUrl(u)).toBe(true));
+  it.each(['javascript:alert(1)', ' JavaScript:alert(1)', 'data:text/html,x', 'vbscript:x', '//evil.test/a', '/\\evil.test/a', '\\\\evil.test\\a', 'file:///etc/passwd', 'ftp://x.test/a', '', '   ', null, undefined, 5])('%j is not', (u) => expect(isLinkUrl(u)).toBe(false));
 });

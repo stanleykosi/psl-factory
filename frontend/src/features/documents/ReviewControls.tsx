@@ -6,7 +6,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { Button, Callout, Drawer, Panel, TextArea } from '@/components';
-import { NOTE_MAX, type Verdict } from '@/features/decide/format';
+import type { Verdict } from '@/features/decide/format';
 import type { ClaimState, SubmitState } from '@/features/decide/useDecision';
 
 import { noteProblem } from './documentModel';
@@ -89,7 +89,7 @@ export function ReviewControls({ version, roleLabel, claim, submit, phone, onDec
       ref={ref}
       label={NOTE_LABEL}
       value={note}
-      limit={NOTE_MAX}
+      rows={3}
       error={fieldError}
       onChange={(e) => {
         setNote(e.target.value);

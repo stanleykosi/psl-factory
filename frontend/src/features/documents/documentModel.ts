@@ -80,7 +80,10 @@ export function checkTag(check: DocCheck): { text: string; reason?: string } {
 /** The phone's one tag: the `amounts` check in the same words. Undefined when the response has no such check. */
 export function amountsTag(doc: DocumentView): { text: string; tone: CheckTone } | undefined {
   const check = checksOf(doc).find((c) => c.key === 'amounts');
-  return check ? { text: checkTag(check).text, tone: checkTone(check) } : undefined;
+  if (!check) return undefined;
+  const text = checkTag(check).text;
+  // a held, blocked or unknown amount names what it is about; a done one is the backend's own sentence
+  return { text: checkStatus(check) === 'done' ? text : `Amounts: ${text}`, tone: checkTone(check) };
 }
 
 const AGENT_KEYS = Object.keys(AGENT_NAMES);
@@ -122,3 +125,11 @@ export function noteProblem(verdict: Verdict, note: string): string | null {
 
 export const documentHref = (caseId: string, documentId: string, version: string) =>
   `/projects/${encodeURIComponent(caseId)}/documents/${encodeURIComponent(documentId)}?v=${encodeURIComponent(version)}`;
+
+/** A link target the page may render: http(s) or a relative path. Anything else (javascript:, data:, //host) is not a link. */
+export function isLinkUrl(value: unknown): value is string {
+  if (typeof value !== 'string' || value.trim() === '') return false;
+  const url = value.trim();
+  if (/^https?:\/\//i.test(url)) return true;
+  return url.startsWith('/') ? !url.startsWith('//') && !url.startsWith('/\\') : !/^[a-z][a-z0-9+.-]*:/i.test(url) && !url.startsWith('\\');
+}
