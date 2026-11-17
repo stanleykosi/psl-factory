@@ -1,7 +1,7 @@
 // E-PROJECT-TAB in the contract mock (F-25): the Milestones, Registers and Actions rows of a project, from
 // fixtures/projects/tabs/<case_id>.<tab>.json. Visibility follows fixtures/projects/list.json as E-PROJECT does:
 // P-0099 and a project the persona cannot see answer 404; P-0103 answers 403 for every tab. Documents is
-// not mocked here (501). `register` (Registers only), `q`, `cursor` (o<n>) and `limit` (10, 20, 50) are honoured;
+// not mocked here (501); money goes to money.mjs (F-26). `register` (Registers only), `q`, `cursor` (o<n>) and `limit` (10, 20, 50) are honoured;
 // anything else unreadable answers 404 invalid_query. Cookie psl_mock_milestones=changed serves the milestones file with
 // a change on Go-live. The mock never adds or computes a value: it slices the rows a fixture holds. Sample data only.
 import { readdirSync, readFileSync } from 'node:fs';

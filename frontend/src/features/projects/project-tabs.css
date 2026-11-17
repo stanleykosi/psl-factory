@@ -1,7 +1,7 @@
 /* Project tabs (SCR-38 Milestones, SCR-11 Registers, SCR-29 Actions). Token variables only; layout switches at 720px
    (bp-phone). No bundle or shell class is restyled: the ptabs__ classes sit beside them. */
 
-.ptabs__route { margin: 0; line-height: 1.3; color: var(--ink-muted); }
+.ptabs__route { margin: 0; line-height: var(--text-hint-line); color: var(--ink-muted); }
 .ptabs__table .psl-table { min-width: 880px; }
 .ptabs__table td { vertical-align: middle; line-height: normal; }
 .ptabs__block { display: block; }
@@ -28,7 +28,7 @@
 
 /* phone cards */
 .ptabs__cards { display: flex; flex-direction: column; gap: var(--space-3); }
-.ptabs__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); font-size: var(--text-body-size); border: var(--rule-strong) solid var(--ink); line-height: 1.3; }
+.ptabs__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); font-size: var(--text-body-size); border: var(--rule-strong) solid var(--ink); line-height: var(--text-hint-line); }
 .ptabs__cardmain { font-size: var(--text-hint-size); }
 .ptabs__cardnote { font-size: var(--text-small-size); color: var(--ink-muted); }
 .ptabs__cardhint { font-size: var(--text-hint-size); color: var(--ink-muted); }
