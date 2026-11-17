@@ -31,15 +31,17 @@
     },
     {
       "name": "reviewed",
-      "status": "current"
+      "status": "earned",
+      "at": "2026-11-10T16:05:00Z"
     },
     {
       "name": "approved",
-      "status": "not_yet"
+      "status": "earned",
+      "at": "2026-11-10T16:05:00Z"
     },
     {
       "name": "sent",
-      "status": "not_yet"
+      "status": "unknown"
     },
     {
       "name": "receipt_recorded",

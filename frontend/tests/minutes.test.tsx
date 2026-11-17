@@ -323,7 +323,7 @@ describe('edit, remove, add (AC 10)', () => {
     expect(body).not.toHaveProperty('inputs');
   });
 
-  it('+ Add an action with blank text sends the request, shows the 422 under text, keeps the inputs and uses a new key', async () => {
+  it('+ Add an action: a blank text is refused before any request; a typed one reaches the 422 under text, keeps the inputs and uses a new key', async () => {
     const script = read('work/W-2306.steps.json').add_action;
     stepAnswers = [json(422, script.body), json(422, script.body)];
     await open(item('W-2306'));

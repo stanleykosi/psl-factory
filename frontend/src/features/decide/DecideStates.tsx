@@ -385,6 +385,15 @@ export function StaleView({ replaced, current, agent, onReview }: StaleProps) {
   );
 }
 
+/* A warning Callout has no live role (D-92), so these notices sit in an alert: they answer the person's press. */
+export function UncertainNotice() {
+  return (
+    <div role="alert">
+      <Callout kind="warning">We couldn&rsquo;t confirm your decision. We&rsquo;ve reloaded this item so you can see whether it was recorded.</Callout>
+    </div>
+  );
+}
+
 type DoneProps = {
   id: string;
   item: WorkItem;
@@ -402,7 +411,10 @@ const RECORDED = { eyebrow: 'DECISION RECORDED', heading: (label: string) => `De
 export function DoneView({ id, item, result, label, reloaded, refreshFailed, view }: DoneProps) {
   const known = Object.hasOwn(VERDICT_WORDS, result.verdict);
   const words = known ? VERDICT_WORDS[result.verdict as Verdict] : RECORDED;
-  const approved = known && result.verdict === 'approve';
+  // An effect that could not be confirmed (the decide answered effect_uncertain, or the reloaded item awaits a reconcile) is never shown
+  // as an outcome: no approved banner and no next-step claim, whatever the line.
+  const uncertain = (result as { work_state?: string }).work_state === 'effect_uncertain' || reloaded?.state === 'effect_uncertain' || Boolean(reloaded?.reconcile);
+  const approved = known && result.verdict === 'approve' && !uncertain;
   const next = nextDecision(view);
   const facts = presentationOf(reloaded ?? item);
   // the done boards draw Chidi's thumbs-up pose (public/agents/chidi-done.png); other agents keep their avatar
@@ -420,16 +432,19 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
         banner={approved ? 'success' : 'neutral'}
         eyebrow={
           <>
-            {words.eyebrow} · <time dateTime={result.decided_at}>{formatClock(result.decided_at)}</time>
+            {uncertain ? 'NOT CONFIRMED' : words.eyebrow} · <time dateTime={result.decided_at}>{formatClock(result.decided_at)}</time>
           </>
         }
-        title={words.heading(view?.client ? `${label} for ${view.client}` : label)}
+        title={uncertain ? `${label}: result not confirmed` : words.heading(view?.client ? `${label} for ${view.client}` : label)}
         focusHeading
       />
-      <p className="cmp-sr" role="status">
-        Your decision was recorded.
-      </p>
+      {!uncertain && (
+        <p className="cmp-sr" role="status">
+          Your decision was recorded.
+        </p>
+      )}
       <div className="decide-done">
+        {uncertain && <UncertainNotice />}
         {refreshFailed && (
           <div role="alert">
             <Callout kind="warning">We couldn&rsquo;t refresh this item. Open the work item to see the latest.</Callout>
@@ -437,7 +452,7 @@ export function DoneView({ id, item, result, label, reloaded, refreshFailed, vie
         )}
         {reloaded && <FactsStrip facts={reloaded.facts} details={facts?.facts} tones={facts?.fact_tones} paidNote={false} />}
         <div className="decide-done__row">
-          {reloaded && (
+          {reloaded && !uncertain && (
             <div className={`psl-callout psl-callout--${approved ? 'success' : 'info'} decide-next`}>
               {image && <Image className="decide-next__img" src={image} alt="" width={96} height={136} unoptimized />}
               <p className="decide-plain">

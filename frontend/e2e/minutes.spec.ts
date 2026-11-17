@@ -139,6 +139,9 @@ for (const width of [1440, 390, 320]) {
     await expect(approve).toBeEnabled();
     await approve.click();
     await expect.poll(() => posts('/decision').length).toBe(1);
+    // QA-3-1: the decision page says the result is not confirmed, and claims no approval or next step
+    await expect(page.getByText(/We couldn’t confirm your decision\./)).toBeVisible();
+    await expect(page.getByText(/is approved|YOU APPROVED|Next step\./)).toHaveCount(0);
     await openItem(page, 'W-2305');
     for (const reload of [false, true]) {
       if (reload) {
