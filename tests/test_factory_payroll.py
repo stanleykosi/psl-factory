@@ -1,5 +1,6 @@
 """Native restricted payroll factory integration; requires accepted payroll schema."""
 import json
+from datetime import timedelta
 from pathlib import Path
 from django.test import TestCase
 from django.core.exceptions import PermissionDenied,ValidationError
@@ -11,6 +12,7 @@ from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition
 from apps.finance import payroll as native
 from apps.finance.payroll_models import PayrollPublication,PayrollReportReceipt
+from apps.finance.hrfinance_models import HRHandoffRecord
 from apps.workflows import factory,factory_payroll as payroll
 from apps.workflows.models import FactoryWork,FactoryAttempt
 from tests.payroll_helpers import fixture,approve,capture
@@ -52,6 +54,65 @@ class FactoryPayrollTests(TestCase):
         self.assertEqual(native.read_publication(f['manager'],p.pk)['by_bu'],{'BU-A':'250.00'});self.assertEqual(connection.vendor,'postgresql')
         text=json.dumps(list(FactoryAttempt.objects.filter(activity__work=self.work).values('observation','result')))
         for secret in ['E001','E002','employee_id','effective_from','BASIC']:self.assertNotIn(secret,text)
+    def test_focused_reviews_bind_each_subject_and_publication_has_recipient_status(self):
+        self.start();self.advance();f=self.f
+        url=reverse('factory_invoice_decision',args=[self.work.pk])
+        publication=reverse('factory_work_response',args=[self.work.pk])
+        recovery=reverse('factory_invoice_recovery',args=[self.work.pk])
+        self.client.force_login(f['reviewer'])
+        page=self.client.get(url);self.assertContains(page,'Review payroll input',count=2)
+        self.assertNotContains(page,'Exact subject ID')
+        def approve_on_screen(kind,item):
+            payload={'action':'review','kind':kind,'subject_id':item.pk,'evidence_id':f['e']['payroll_review'].pk,
+                     'verdict':'approve','operation_key':f'http-{kind}-{item.pk}','revision':self.work.revision,
+                     'case_revision':rev(f['case'])}
+            self.assertContains(self.client.post(publication,payload),'Choose an available action on this page.')
+            self.assertEqual(self.client.post(url,payload).status_code,302)
+        for item in f['inputs']:approve_on_screen('input',item)
+        for stage,title in [('combine','Review combined payroll'),('match','Review staff match'),('aggregate','Review payroll totals')]:
+            self.advance();self.assertContains(self.client.get(url),title);approve_on_screen('run',payroll.run(self.work,stage))
+        self.client.force_login(f['preparer']);self.assertContains(self.client.get(publication),'Publish exact reviewed aggregate')
+        self.assertEqual(self.client.post(publication,{'action':'publish','revision':self.work.revision,
+                         'case_revision':rev(f['case'])}).status_code,302)
+        report=payroll.publication(self.work)
+        self.assertContains(self.client.get(recovery),'Waiting for payroll receipts')
+        self.client.force_login(f['manager']);page=self.client.get(recovery)
+        self.assertContains(page,'Acknowledge receipt as myself');self.assertNotContains(page,'Inspect restricted payroll input')
+        self.assertEqual(self.client.get(url).status_code,403)
+        FactoryWork.objects.filter(pk=self.work.pk).update(revision=self.work.revision+1,lease_until=timezone.now()+timedelta(minutes=1))
+        self.assertEqual(self.client.post(recovery,{'action':'receive','revision':self.work.revision,
+                         'case_revision':rev(f['case']),'publication_id':report.pk}).status_code,302)
+        FactoryWork.objects.filter(pk=self.work.pk).update(lease_until=None)
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+    def test_missing_hr_receipt_requires_exact_matcher_and_new_match(self):
+        from unittest.mock import patch
+        from tests import payroll_helpers
+
+        from tests.helpers import setup_case
+        owner,case=setup_case(username='missing-receipt-owner')
+        from django.contrib.auth import get_user_model
+        def principal(role):return get_user_model().objects.create_user(username='missing-receipt-'+role)
+        with patch.object(payroll_helpers,'setup_case',return_value=(owner,case)):
+            f=fixture(principal=principal,preparer_receipt=False)
+        value=json.loads(Path('fixtures/factory-payroll.json').read_text());value.pop('classification')
+        policy=draft_operator_policy(owner,case.pk,'OPS.factory_payroll_execution',value,f['e']['policy_decision'].pk,timezone.now())
+        transition(owner,policy.pk,'validated');transition(owner,policy.pk,'active')
+        self.f=f;self.start()
+        for item in f['inputs']:approve(f,item)
+        self.advance();approve(f,payroll.run(self.work,'combine'));self.advance()
+        held=payroll.run(self.work,'match');self.assertIn('hr_receipt_missing',held.metadata['codes'])
+        url=reverse('factory_invoice_recovery',args=[self.work.pk]);data={'action':'receive_hr','revision':self.work.revision,
+                'case_revision':rev(case),'snapshot_id':f['hr'].pk,'evidence_id':f['e']['hr_disclosure_decision'].pk}
+        self.client.force_login(f['reviewer']);self.assertNotContains(self.client.get(url),'Confirm HR snapshot receipt')
+        self.assertContains(self.client.post(url,data),'The assigned matcher must confirm')
+        self.client.force_login(f['preparer']);self.assertContains(self.client.get(url),'Confirm HR snapshot receipt')
+        self.assertContains(self.client.post(url,{**data,'snapshot_id':999999}),'The assigned matcher must confirm')
+        self.assertEqual(self.client.post(url,data).status_code,302)
+        self.assertTrue(HRHandoffRecord.objects.filter(snapshot=f['hr'],kind='receipt',actor=f['preparer']).exists())
+        payroll.correct(f['preparer'],self.work.pk,self.work.revision,rev(case),f['request'].pk,self.inputs,'Confirmed the assigned matcher receipt')
+        self.advance();approve(f,payroll.run(self.work,'combine'));self.advance()
+        new=payroll.run(self.work,'match');self.assertNotEqual(new.pk,held.pk)
+        self.assertEqual(new.metadata['status'],'complete');self.assertFalse(new.reviews.exists())
     def test_exact_sources_idempotency_and_database_verified_guard(self):
         f=self.f;self.start()
         self.assertEqual(payroll.start(f['preparer'],f['case'].pk,'OTHER',f['request'].pk,self.inputs,'Same native request').pk,self.work.pk)
@@ -95,6 +156,46 @@ class FactoryPayrollTests(TestCase):
         payroll.human_action(f['manager'],self.work.pk,self.work.revision,rev(f['case']),'receive',{'publication_id':p.pk})
         self.work.refresh_from_db();self.assertEqual(self.work.status,'followup_needed')
         self.assertEqual(PayrollReportReceipt.objects.get(publication=p).actor_id,f['manager'].pk)
+    def test_withdrawal_preserves_original_receipt_and_requires_new_reviewed_sources(self):
+        f=self.f;p=self.pipeline();self.work.refresh_from_db()
+        payroll.human_action(f['manager'],self.work.pk,self.work.revision,rev(f['case']),'receive',{'publication_id':p.pk})
+        payroll.cancel(f['preparer'],self.work.pk,self.work.revision);self.work.refresh_from_db()
+        url=reverse('factory_invoice_recovery',args=[self.work.pk])
+        self.client.force_login(f['preparer'])
+        self.assertNotContains(self.client.get(url),'Withdraw original report')
+        with self.assertRaisesMessage(ValidationError,'An independent withdrawal'):
+            payroll.prepare_successor(f['preparer'],self.work.pk,self.work.revision,rev(f['case']),p.pk,
+                                      f['request'].pk,self.inputs,'Attempt before exact withdrawal')
+        self.client.force_login(f['reviewer']);self.assertContains(self.client.get(url),'Withdraw original report')
+        self.assertEqual(self.client.post(url,{'action':'withdraw','revision':self.work.revision,'case_revision':rev(f['case']),
+                         'publication_id':p.pk,'evidence_id':f['e']['payroll_review'].pk,
+                         'reason':'A provider supplied a correction for this period.'}).status_code,302)
+        self.work.refresh_from_db();self.assertTrue(payroll.withdrawal(self.work,p.pk))
+        self.client.force_login(f['manager']);page=self.client.get(url)
+        self.assertContains(page,'Your published payroll report was withdrawn')
+        self.assertNotContains(page,'Acknowledge receipt as myself');self.assertNotContains(page,'Amounts by business unit')
+        with self.assertRaisesMessage(ValidationError,'This published payroll version was withdrawn'):
+            approve(f,p.run,'replay-withdrawn-publication')
+        with self.assertRaisesMessage(ValidationError,'Choose a corrected provider input'):
+            payroll.prepare_successor(f['preparer'],self.work.pk,self.work.revision,rev(f['case']),p.pk,
+                                      f['request'].pk,self.inputs,'Attempt with original sources')
+        replacement=capture(f,0,'publication-correction',source_version='A-v2')
+        corrected=[replacement.pk,f['inputs'][1].pk]
+        self.client.force_login(f['preparer']);self.assertContains(self.client.get(url),'Start corrected run')
+        self.assertEqual(self.client.post(url,{'action':'successor','revision':self.work.revision,'case_revision':rev(f['case']),
+                         'publication_id':p.pk,'request_id':f['request'].pk,'input_ids':corrected,
+                         'hr_snapshot_id':f['hr'].pk,'reason':'The provider supplied a corrected version.'}).status_code,302)
+        self.work.refresh_from_db();self.assertFalse(self.work.cancel_requested)
+        self.assertIsNone(payroll.publication(self.work));self.assertTrue(PayrollReportReceipt.objects.filter(publication=p).exists())
+        self.client.force_login(f['manager']);self.assertContains(self.client.get(url),'Your published payroll report was withdrawn')
+        approve(f,replacement)
+        for stage in ['combine','match','aggregate']:
+            self.advance();approve(f,payroll.run(self.work,stage))
+        self.advance();new=payroll.human_action(f['preparer'],self.work.pk,self.work.revision,rev(f['case']),'publish',{})
+        self.assertGreater(new.version,p.version)
+        payroll.human_action(f['manager'],self.work.pk,self.work.revision,rev(f['case']),'receive',{'publication_id':new.pk})
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.assertEqual(PayrollReportReceipt.objects.filter(publication__in=[p,new]).count(),2)
     def test_returned_work_rebuilds_without_erasing_prior_native_result(self):
         f=self.f;self.start()
         for i in f['inputs']:approve(f,i)

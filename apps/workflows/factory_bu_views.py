@@ -8,11 +8,23 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 from apps.core.models import Case,Evidence
 from apps.core.workbench import granted
-from apps.finance.bu_models import BUWork,BUReceipt
+from apps.finance.bu_models import BUWork, BUReceipt
 from apps.finance.payroll_models import PayrollRun
 from apps.finance.analysis_models import FinanceRun
 from . import factory,factory_bu as bu
 from .factory_progress_views import StartWithBackground, start_work
+from .aggregate_presentation import publication_receipts
+from .screen_focus import require_action
+
+STAGES = {
+    'source_review': 'Source and exception review',
+    'calculate': 'Checking the selected business-unit inputs',
+    'result_review': 'Business-unit totals review',
+    'historical_review': 'Historical treatment review',
+    'disclosure_held': 'Publication held by disclosure rules',
+    'publish': 'Ready for publication',
+    'receipt': 'Waiting for recipient receipts',
+}
 
 class RefField(forms.ModelChoiceField):
     def label_from_instance(self,obj):return f'{getattr(obj,"kind","Native reference")} #{obj.pk}'
@@ -83,40 +95,62 @@ def presentation(actor,work):
     row={'work':work,'title':work.request['reference'],'owner':work.actor.get_full_name() or work.actor.username,'state':work.status,'next_action':'Review BU work','blocker':'','needs_me':False,'can_advance':False,'jobs':[],'tasks':[],'readiness_changed':False,'bu':{}}
     try:p,rules,inputs=bu.source(work,actor,False)
     except (PermissionDenied,ValidationError):
-        report=bu.publication(work);readable=False
+        report=bu.publication(work);value=None
         if report:
-            try:bu.native.read_report(actor,report.pk);readable=True
+            try:value=bu.native.read_report(actor,report.pk)
             except (PermissionDenied,ValidationError):pass
-        if readable:
-            receipt=BUReceipt.objects.filter(report=report,actor=actor).first();row.update(state='Receipt acknowledged' if receipt else 'Aggregate available',next_action='Your receipt is recorded.' if receipt else 'Inspect the aggregate and acknowledge receipt as yourself',needs_me=not bool(receipt));row['bu']={'publication':report.pk,'recipient_only':True,'receipt':receipt};return row
+        if value is not None:
+            receipt=BUReceipt.objects.filter(report=report,actor=actor).first()
+            row.update(state='Receipt acknowledged' if receipt else 'Aggregate available',next_action='Your receipt is recorded.' if receipt else 'Inspect the aggregate and acknowledge receipt as yourself',needs_me=not bool(receipt))
+            row['bu']={'publication':report.pk,'recipient_only':True,'receipt':receipt,
+                       'totals':value['by_bu'],'currency':value['currency'],'period':value['period'],
+                       'verified_at':work.updated_at if receipt and work.status=='verified' else None}
+            return row
         row.update(state='Restricted BU work',next_action='Current source-reader or aggregate-recipient permission required');row['bu']={'restricted':True};return row
     try:state=bu.report(work,actor)
     except (PermissionDenied,ValidationError):state={'stage':'source','finding':'Source or authority changed. Select an exact source-owned replacement.','subjects':[],'result':None}
     row.update(next_action=state.get('finding') or 'Verify exact aggregate and recipient receipts',blocker=state.get('finding',''),readiness_changed=work.status=='verified' and state['stage']!='complete',can_advance=permitted(actor,work,'factory.execute') and work.status not in ['cancelled','verified','followup_needed'])
-    row['bu']={**state,'inputs':inputs,'can_correct':permitted(actor,work,'factory.manage'),'can_review':permitted(actor,work,'bu.review'),'can_publish':permitted(actor,work,'bu.publish')};row['needs_me']=row['can_advance'] or row['bu']['can_review'];return row
+    stage = state['stage']
+    if work.status not in ('cancelled', 'followup_needed'):
+        if state.get('result') and state['result']['status'] == 'held':
+            row['state'] = 'Business-unit totals held'
+        elif work.status != 'verified' or stage != 'complete':
+            row['state'] = STAGES.get(stage, 'Ready for verification' if stage == 'complete' else work.status)
+    row['bu']={**state,'inputs':inputs,'can_correct':permitted(actor,work,'factory.manage'),
+               'can_review':permitted(actor,work,'bu.review') and not work.cancel_requested,
+               'can_publish':stage=='publish' and not work.cancel_requested and permitted(actor,work,'bu.publish')}
+    if row['bu']['can_publish']:
+        try:bu.native.authority(actor,bu.result(work),'publish')
+        except (ValidationError,PermissionDenied):row['bu']['can_publish']=False
+    row['needs_me']=row['can_advance'] or row['bu']['can_review'];return row
 
 @never_cache
 @require_http_methods(['GET','HEAD','POST'])
-def detail(request,work):
-    panel=presentation(request.user,work)['bu'];recipient=panel.get('recipient_only',False)
+def detail(request,work,focus=None):
+    row=presentation(request.user,work);panel=row['bu'];recipient=panel.get('recipient_only',False)
     if panel.get('restricted'):raise PermissionDenied('Current source reader or aggregate recipient required')
+    if recipient and focus in ('decision','response'):raise PermissionDenied('Open your aggregate receipt to continue')
     initial=panel.get('inputs',{}).copy();comparison=initial.pop('comparison',None)
     if comparison:initial.update(comparison_id=comparison['run_id'],metric=comparison['metric'])
-    form=None if recipient else InputsForm(work.case,request.user,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,initial=initial)
+    form=InputsForm(work.case,request.user,request.POST if request.method=='POST' and request.POST.get('action') in ['correct','restart'] else None,initial=initial) if not recipient and panel['can_correct'] and focus in (None,'recovery') else None
     rule_form=None
     from .factory_views import permitted
-    if not recipient and panel['inputs']['mode']=='staff' and permitted(request.user,work,'bu.rule'):
+    if not recipient and focus in (None,'decision') and panel['inputs']['mode']=='staff' and permitted(request.user,work,'bu.rule'):
         try:rule_form=RuleForm(work,request.user,request.POST if request.method=='POST' and request.POST.get('action')=='prepare_rule' else None)
         except (PermissionDenied,ValidationError):pass
     if request.method=='POST':
         try:
             p=request.POST;a=p.get('action');revision=int(p.get('revision','0'));cv=int(p.get('case_revision','0'))
+            require_action(work,focus,a)
             common={'csrfmiddlewaretoken','action','revision','case_revision'};fields=set(form.fields) if form else set()
             allowed={'prepare_rule':set(rule_form.fields) if rule_form else set(),'advance':set(),'cancel':set(),'resume':set(),'correct':fields|{'reason'},'restart':fields|{'reason','instruction_key','configuration_id'},'review':{'work_id','purpose','verdict','operation_key','evidence_id'},'publish':set(),'receive':{'publication_id'}}
             if a not in allowed or set(p)-allowed[a]-common:raise ValidationError('Choose an exact typed BU command')
             if recipient and a!='receive':raise PermissionDenied('Aggregate recipients can only acknowledge their own report')
             notice='Native BU action recorded'
-            if a=='advance':factory.advance(request.user,work.pk,revision)
+            if a=='advance':
+                from .factory_progress import set_progress
+                set_progress(request.user,work.pk,revision,True)
+                notice='Business-unit work queued'
             elif a=='cancel':bu.cancel(request.user,work.pk,revision)
             elif a=='resume':factory.manage(request.user,work.pk,revision,a)
             elif a in ['correct','restart']:
@@ -134,17 +168,36 @@ def detail(request,work):
                 if a=='prepare_rule':notice='Private rule prepared. Select it as an exclusion and obtain its exact human review before calculation.'
                 if a=='receive':notice=f'Your receipt #{result.pk} for aggregate report #{result.report_id} is recorded.'
             messages.success(request,notice);return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work);reviews=[]
-    if not recipient and row['bu']['can_review']:
-        for subject in row['bu'].get('subjects',[]):
+        except (ValidationError,ValueError) as exc:
+            messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
+            row=presentation(request.user,work);panel=row['bu']
+    reviews=[]
+    if not recipient and focus in (None,'decision') and panel['can_review']:
+        for subject in panel.get('subjects',[]):
             w=bu.native.exact(work.case,subject['id'])
             for purpose in [w.kind]+(['historical'] if w.metadata.get('historical') else []):
                 try:bu.native.authority(request.user,w,purpose)
                 except (ValidationError,PermissionDenied):continue
-                reviews.append({'work_id':w.pk,'purpose':purpose})
+                latest=w.reviews.filter(purpose=purpose).order_by('-pk').first()
+                reviews.append({'work_id':w.pk,'purpose':purpose,'version':w.version,'current':latest,
+                                'can_approve':w.metadata['status']=='complete'})
+    publication=None;receipt_rows=None;totals={};scope={};investigation=None
+    if not recipient:
+        if focus in (None,'recovery') and (publication:=bu.publication(work)):
+            receipt_rows=publication_receipts(publication,bu.DISCLOSE,BUReceipt.objects.filter(report=publication))
+        if panel.get('result') and panel['result']['status']=='complete' and focus != 'recovery':
+            result=bu.result(work)
+            totals=result.payload['by_bu'];scope=result.metadata['scope']
+        if not focus:
+            investigation=work.activities.filter(kind='ACT04').order_by('-pk').first()
     from apps.policy.models import Configuration
-    return render(request,'factory/bu_detail.html',{'row':row,'case':work.case,'inputs_form':form,'rule_form':rule_form,'reviews':reviews,'review_key':'review-'+uuid4().hex,'restart_key':'restart-'+uuid4().hex,'profiles':Configuration.objects.filter(case=work.case,component='OPS.factory_bu_execution') if not recipient and row['bu']['can_correct'] else [],'review_evidence':Evidence.objects.filter(case=work.case,kind='bu_review') if reviews else []})
+    return render(request,'factory/bu_detail.html',{'row':row,'case':work.case,'focus':focus,
+        'queue':request.GET.get('queue','needs_me'),'q':request.GET.get('q','')[:120],
+        'inputs_form':form,'rule_form':rule_form,'reviews':reviews,'review_key':'review-'+uuid4().hex,
+        'restart_key':'restart-'+uuid4().hex,'profiles':Configuration.objects.filter(case=work.case,component='OPS.factory_bu_execution') if form and work.status=='cancelled' else [],
+        'review_evidence':Evidence.objects.filter(case=work.case,kind='bu_review') if reviews else [],
+        'publication':publication,'receipt_rows':receipt_rows,'totals':totals,'currency':scope.get('currency'),
+        'period':scope.get('period'),'investigation':investigation})
 
 class RuleForm(forms.Form):
     """Exact private subject choices and explicit weights; no raw decision JSON."""

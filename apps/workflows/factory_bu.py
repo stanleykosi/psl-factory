@@ -45,7 +45,7 @@ def inputs_checked(actor,case,inputs,current=True):
         for pk in inputs['rule_ids']:
             r=native.exact(case,pk)
             if r.kind!='rule' or r.payroll_id!=p.pk:raise ValidationError('Choose exact payroll-bound exception rules')
-            if current:native.current(r)
+            if current:native.current(r,checked_payroll=p)
             rules.append(r)
         scope={k:p.request.metadata[k] for k in ['entity','period','currency']}
         return p,rules,scope,p.request.reference
@@ -69,7 +69,9 @@ def source(work,actor=None,current=True):
     if work.request['mode']!=data['inputs']['mode'] or work.request['source_reference']!=ref or work.request['scope']!=scope:raise ValidationError('BU canonical source identity differs')
     if current:
         for action in ['case.read','bu.read','bu.private.read','evidence.add','factory.start' if audit.action=='factory.bu_intake' else 'factory.manage']:require(e.created_by,work.case,action)
-        if e.created_by_id!=actor.pk:inputs_checked(e.created_by,work.case,data['inputs'])
+        if e.created_by_id!=actor.pk:
+            if data['inputs']['mode']=='staff':payroll.run_reader(e.created_by,p)
+            else:inputs_checked(e.created_by,work.case,data['inputs'])
     return p,rules,data['inputs']
 
 def capture(actor,case,inputs,action):
@@ -137,8 +139,10 @@ def report(work,actor=None,selected=None):
         state['result']={'id':r.pk,'kind':r.kind,'status':r.metadata['status'],'codes':r.metadata['codes']};state['subjects'].append({'id':r.pk,'kind':r.kind})
         state['stage']='result_review';approval=native.review_current(r)
         if r.metadata.get('historical'):state['stage']='historical_review';native.review_current(r,'historical')
-        state['stage']='publish';p=publication(work)
-        if not p:raise ValidationError('Await actual Finance aggregate publication decision')
+        p=publication(work)
+        if not p:
+            state['stage']='disclosure_held';native.disclosure_for(r)
+            state['stage']='publish';raise ValidationError('Await actual Finance aggregate publication decision')
         state['publication']=p.pk;state['stage']='receipt';state['receipt_ids']=list(BUReceipt.objects.filter(report=p).values_list('pk',flat=True))
         _verify_selected(work,actor,r,approval);state['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:state['finding']=finding(exc)
@@ -184,12 +188,15 @@ def act(work,choice,value,latest,missing,tasks,jobs):
 @transaction.atomic
 def human_action(actor,work_id,expected,case_expected,action,values):
     from .factory import access
+    from .factory_progress import wake_waiting
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION);access(actor,w.case,'factory.read',DEFINITION)
-    if type(expected) is not int or expected!=w.revision or w.cancel_requested and action!='receive' or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh BU work')
     if action=='receive':
+        # The exact publication and case revision fence the receipt independently of worker activity.
         p=publication(w)
         if not p or values['publication_id']!=p.pk:raise ValidationError('Choose this work exact aggregate')
-        return native.receive(actor,w.case_id,p.pk,case_expected)
+        receipt=native.receive(actor,w.case_id,p.pk,case_expected);wake_waiting(w.pk)
+        return receipt
+    if type(expected) is not int or expected!=w.revision or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh BU work')
     p,rules,inputs=source(w,actor)
     if action=='prepare_rule':
         if inputs['mode']!='staff':raise ValidationError('Exception rules require the exact payroll mode')
@@ -198,10 +205,12 @@ def human_action(actor,work_id,expected,case_expected,action,values):
     if action=='review':
         subjects=([p] if inputs['mode']=='event' else rules)+([r] if r else [])
         if values['work_id'] not in [x.pk for x in subjects]:raise ValidationError('Review an exact selected native BU subject')
-        return native.review(actor,w.case_id,values['work_id'],values['purpose'],values['verdict'],values['operation_key'],values['evidence_id'],case_expected)
+        decision=native.review(actor,w.case_id,values['work_id'],values['purpose'],values['verdict'],values['operation_key'],values['evidence_id'],case_expected)
+        wake_waiting(w.pk);return decision
     if action=='publish':
         if not r:raise ValidationError('Prepare exact result before publication')
-        return native.publish(actor,w.case_id,r.pk,key(w,'publish'),case_expected)
+        report=native.publish(actor,w.case_id,r.pk,key(w,'publish'),case_expected);wake_waiting(w.pk)
+        return report
     raise ValidationError('Choose an explicit native human action')
 
 @transaction.atomic

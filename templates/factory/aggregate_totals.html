@@ -1,0 +1,8 @@
+{% if totals %}<section class="card">
+  <h2>{{ totals_heading }}</h2>
+  <p>{{ currency }} · {{ period }}</p>
+  <div class="table-wrap"><table><caption>Amounts by business unit</caption>
+    <thead><tr><th scope="col">Business unit</th><th scope="col">Amount ({{ currency }})</th></tr></thead>
+    <tbody>{% for unit, amount in totals.items %}<tr><th scope="row">{{ unit }}</th><td>{{ amount }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>{% endif %}

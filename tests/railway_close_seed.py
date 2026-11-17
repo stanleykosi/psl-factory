@@ -310,6 +310,142 @@ def accounting_work(recovery):
     return work, facts
 
 
+def restricted_finance_fixture(browser_role, *, staff=False, hr_receipt=True):
+    from tests import bu_helpers, payroll_helpers
+
+    operator, case = document_helpers.setup_case()
+    manager = get_user_model().objects
+    owner = manager.create_user(username='example-hr-owner')
+    Grant.objects.bulk_create([Grant(case=case,user=owner,action=action) for action in dict.fromkeys(ACTIONS)])
+
+    def principal(role):
+        return operator if role==browser_role else manager.create_user(username='example-'+role)
+
+    with patch.object(payroll_helpers,'setup_case',return_value=(owner,case)):
+        f=payroll_helpers.fixture(employee_ids=['E900','E002'] if staff else None,
+                                  principal=principal,preparer_receipt=hr_receipt)
+    if staff:
+        from apps.finance import payroll
+        bu_helpers.configure(f)
+        combined=payroll_helpers.combined(f)
+        payroll_helpers.approve(f,combined)
+        match=payroll.match(f['preparer'],case.pk,combined.pk,f['hr'].pk,'sample-bu-payroll-match',rev(case))
+        payroll_helpers.approve(f,match)
+        f['match']=match
+    Grant.objects.get_or_create(case=case,user=f['manager'],action='factory.read')
+    return f
+
+
+def configure_restricted_work(f, name):
+    from apps.policy.operator_drafts import draft_operator_policy
+    from apps.policy.services import transition
+
+    with open('fixtures/factory-'+name+'.json',encoding='utf-8') as stream:
+        value=json.load(stream)
+    value.pop('classification')
+    config=draft_operator_policy(f['owner'],f['case'].pk,'OPS.factory_'+name+'_execution',value,
+                                 f['e']['policy_decision'].pk,timezone.now())
+    transition(f['owner'],config.pk,'validated')
+    transition(f['owner'],config.pk,'active')
+
+
+def business_unit_state(stage):
+    from apps.policy.bu_validators import DISCLOSE
+    from apps.workflows import factory_bu as bu
+    from tests import bu_helpers
+
+    roles={'review':'reviewer','publish':'preparer','receipts':'manager','held':'preparer'}
+    f=restricted_finance_fixture(roles[stage],staff=True)
+    configure_restricted_work(f,'bu')
+    if stage=='held':
+        bu_helpers.policy(f,DISCLOSE,dict(f['bu_config']['disclosure'],minimum_staff=10))
+    rule=bu_helpers.rule(f)
+    inputs={'mode':'staff','payroll_id':f['match'].pk,'source_id':None,'rule_ids':[rule.pk],'comparison':None}
+    work=bu.start(f['preparer'],f['case'].pk,'BROWSER-BU',inputs,'Sample staff cost by business unit',rev(f['case']))
+    facts={'rule':rule.pk,'evidence':f['e']['bu_review'].pk}
+    if stage!='review':
+        bu_helpers.review(f,rule)
+        factory.run_until_wait(work.pk)
+        result=bu.result(work);bu_helpers.review(f,result);facts['result']=result.pk
+    if stage=='receipts':
+        factory.run_until_wait(work.pk);work.refresh_from_db()
+        published=bu.human_action(f['preparer'],work.pk,work.revision,rev(f['case']),'publish',{})
+        facts['publication']=published.pk
+    factory.run_until_wait(work.pk)
+    if stage=='receipts':
+        from apps.workflows.factory_progress import set_progress
+        work.refresh_from_db();set_progress(f['preparer'],work.pk,work.revision,True)
+    return work,facts
+
+
+def payroll_state(stage):
+    from apps.workflows import factory_payroll as payroll
+    from tests.payroll_helpers import approve,capture
+
+    roles={'review':'reviewer','receipt':'manager','publish':'preparer','hr':'preparer','followup':'reviewer'}
+    f=restricted_finance_fixture(roles[stage],hr_receipt=stage!='hr')
+    configure_restricted_work(f,'payroll')
+    inputs={'input_ids':[item.pk for item in f['inputs']],'hr_snapshot_id':f['hr'].pk}
+    work=payroll.start(f['preparer'],f['case'].pk,'BROWSER-PAYROLL',f['request'].pk,inputs,
+                       'Sample payroll review',rev(f['case']))
+    facts={'evidence':f['e']['payroll_review'].pk,'snapshot':f['hr'].pk,'hr_evidence':f['e']['hr_disclosure_decision'].pk}
+    if stage!='review':
+        for item in f['inputs']:approve(f,item)
+        for kind in (['combine'] if stage=='hr' else ['combine','match','aggregate']):
+            factory.run_until_wait(work.pk)
+            approve(f,payroll.run(work,kind))
+    if stage in ('receipt','followup'):
+        factory.run_until_wait(work.pk);work.refresh_from_db()
+        report=payroll.human_action(f['preparer'],work.pk,work.revision,rev(f['case']),'publish',{})
+        facts['publication']=report.pk
+        if stage=='followup':
+            payroll.human_action(f['manager'],work.pk,work.revision,rev(f['case']),'receive',{'publication_id':report.pk})
+            payroll.cancel(f['preparer'],work.pk,work.revision)
+            replacement=capture(f,0,'sample-publication-correction',source_version='A-v2')
+            facts['corrected_inputs']=[replacement.pk,f['inputs'][1].pk]
+            return work,facts
+    factory.run_until_wait(work.pk)
+    if stage=='receipt':
+        from apps.workflows.factory_progress import set_progress
+        work.refresh_from_db();set_progress(f['preparer'],work.pk,work.revision,True)
+    return work,facts
+
+
+def ledger_state(stage):
+    from datetime import timedelta
+    from apps.workflows import factory_ledger as ledger
+    from tests import ledger_helpers
+    from tests.test_factory_ledger import FactoryLedgerTests
+
+    operator,case=document_helpers.setup_case()
+    if stage=='decide':
+        preparer=get_user_model().objects.create_user(username='example-ledger-preparer')
+        Grant.objects.bulk_create([Grant(case=case,user=preparer,action=action) for action in dict.fromkeys(ACTIONS)])
+    else:
+        preparer=operator
+    with patch.object(ledger_helpers,'setup_case',return_value=(preparer,case)):
+        f=ledger_helpers.fixture(reviewer=operator if stage=='decide' else None)
+    example=FactoryLedgerTests();example.fixture_factory=lambda:f;example.setUp()
+    if stage=='duplicate':
+        ledger_helpers.capture(f)
+    work=example.start();example.advance()
+    native=ledger.lineage(work)
+    facts={'review_evidence':f['e'].pk}
+    if native:
+        fields=['provider','realm','entity','source_reference','target_reference','transaction_date',
+                'accounting_period','treatment_evidence_id']
+        value={key:native.payload[key] for key in fields}
+        value.update(state='found',observed_at=(timezone.now()-timedelta(seconds=1)).isoformat(),incumbent_version='sample-read-1')
+        proof=ledger_helpers.evidence(f,'quickbooks_verification',value)
+        facts.update(lineage=native.pk,observation=proof.pk)
+        if stage=='decide':
+            from apps.finance.ledger import verify
+            verify(preparer,case.pk,native.pk,proof.pk,rev(case))
+        fresh=ledger_helpers.evidence(f,'quickbooks_verification',dict(value,incumbent_version='sample-read-2'))
+        facts['fresh_observation']=fresh.pk
+    return work,facts
+
+
 @transaction.atomic
 def seed(key, setup, recovery):
     from tests import factory_helpers
@@ -379,6 +515,15 @@ elif selected == 'forecast-supplied-actual':
     selected = None
 elif selected == 'forecast-lookup-only':
     fixtures = [('forecast-lookup-only', forecast_recovery_work, False)]
+elif selected == 'restricted-finance-states':
+    fixtures = [(prefix+'-'+stage, build, stage)
+                for prefix,build,stages in [('business-units',business_unit_state,['review','publish','receipts','held']),
+                                            ('payroll',payroll_state,['review','hr','publish','receipt']),
+                                            ('ledger',ledger_state,['observe','decide','duplicate'])]
+                for stage in stages]
+    selected = None
+elif selected == 'payroll-publication-followup':
+    fixtures = [('payroll-publication-followup', payroll_state, 'followup')]
 for key, build, recovery in fixtures:
     if selected and selected != key:
         continue

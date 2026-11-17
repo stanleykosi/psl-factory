@@ -29,6 +29,21 @@ SCREENS = {
         'response': ('support', 'actual', 'verify', 'match', 'unmatch'),
         'recovery': ('advance', 'correct', 'restart', 'cancel', 'resume', 'reconcile', 'operate_delivery', 'adopt_profile'),
     },
+    'finance-bu/v1': {
+        'decision': ('prepare_rule', 'review'),
+        'response': ('publish',),
+        'recovery': ('advance', 'cancel', 'resume', 'correct', 'restart', 'receive'),
+    },
+    'finance-payroll/v1': {
+        'decision': ('review',),
+        'response': ('publish',),
+        'recovery': ('advance', 'cancel', 'resume', 'correct', 'restart', 'receive', 'receive_hr', 'withdraw', 'successor'),
+    },
+    'finance-ledger/v1': {
+        'decision': ('review',),
+        'response': ('observe',),
+        'recovery': ('advance', 'cancel', 'resume', 'correct', 'restart', 'recheck', 'adopt_profile'),
+    },
     'pmo-emergency/v1': {
         'decision': ('review', 'preauthorization_decision', 'authorize', 'record_review', 'retrospective_decision'),
         'response': ('capture_outcome',),

@@ -21,6 +21,12 @@ WAIT_INTERVAL = timedelta(seconds=45)
 LEASE = timedelta(minutes=6)
 
 
+def wake_waiting(work_id):
+    """A native decision or receipt can advance an existing authorised request."""
+    FactoryProgress.objects.filter(work_id=work_id, status='waiting').update(
+        available_at=timezone.now(), observation='')
+
+
 @transaction.atomic
 def set_progress(actor, work_id, expected, enabled, *, initial=False):
     # Native intake can hold the case lock while an existing worker owns work.

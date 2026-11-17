@@ -832,7 +832,7 @@ def detail(request,work_id,focus=None):
         return detail(request,work,focus)
     if work.definition=='finance-ledger/v1':
         from .factory_ledger_views import detail
-        return detail(request,work)
+        return detail(request,work,focus)
     if work.definition=='finance-schedules/v1':
         from .factory_schedules_views import detail
         return detail(request,work,focus)
@@ -844,10 +844,10 @@ def detail(request,work_id,focus=None):
         return forecast_detail(request,work,focus)
     if work.definition=='finance-bu/v1':
         from .factory_bu_views import detail as bu_detail
-        return bu_detail(request,work)
+        return bu_detail(request,work,focus)
     if work.definition=='finance-payroll/v1':
         from .factory_payroll_views import detail as payroll_detail
-        return payroll_detail(request,work)
+        return payroll_detail(request,work,focus)
     if work.definition=='pmo-escalation/v1':
         from .factory_escalation_views import detail
         return detail(request,work,focus)

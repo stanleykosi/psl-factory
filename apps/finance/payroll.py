@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.db import transaction
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.utils import timezone
+from apps.core.models import Audit
 from apps.core.services import lock_case,event,bump
 from apps.identity.models import Grant
 from apps.identity.services import require
@@ -43,49 +44,82 @@ def access(q,actor=None,private=False):
  latest_request(q);config=active_component(ACCESS,q.case);v=reference_values(config)[0]
  if v['entity']!=q.metadata['entity'] or v['currency']!=q.metadata['currency'] or not v['from_period']<=q.metadata['period']<=v['to_period'] or set(q.metadata['providers'])!={r['provider'] for r in v['providers']}:raise ValidationError('Payroll request exceeds current source/entity/period/currency contract')
  if private:
-  for k in ['case.read','payroll.read','payroll.private.read']:require(actor,q.case,k)
-  if actor.pk not in v['reader_ids']:raise PermissionDenied('Not a nominated restricted payroll reader')
+  check_reader(actor,q,v)
  return config,v
 
-def input_current(i):
- config,v=access(i.request)
+def check_reader(actor,q,rules):
+ for action in ['case.read','payroll.read','payroll.private.read']:require(actor,q.case,action)
+ if actor.pk not in rules['reader_ids']:raise PermissionDenied('Not a nominated restricted payroll reader')
+
+def check_input(i,q,config,v):
  if config.pk!=i.metadata['access_policy_id']:raise ValidationError('Payroll access contract changed; obtain current source version')
  if not i.metadata['accepted']:raise ValidationError('Rejected input has no readable source rows')
  if timezone.now()>=i.retain_until or (timezone.now()-timestamp(i.metadata['extracted_at'])).total_seconds()>v['max_age_seconds']:raise ValidationError('Payroll input freshness/retained access expired')
- if i.request.inputs.filter(provider=i.provider,metadata__accepted=True,version__gt=i.version).exists():raise ValidationError('Payroll input replaced; rebuild instead of restating history')
+ if q.inputs.filter(provider=i.provider,metadata__accepted=True,version__gt=i.version).exists():raise ValidationError('Payroll input replaced; rebuild instead of restating history')
  owner=next(r for r in v['providers'] if r['provider']==i.provider)
- require(i.actor,i.request.case,'payroll.capture')
- if owner['owner_id']!=i.actor_id or decision_authority(i.actor,i.request.case,owner['owner_role'])!=i.metadata['owner_authority']:raise ValidationError('Payroll source-owner authority changed')
+ require(i.actor,q.case,'payroll.capture')
+ if owner['owner_id']!=i.actor_id or decision_authority(i.actor,q.case,owner['owner_role'])!=i.metadata['owner_authority']:raise ValidationError('Payroll source-owner authority changed')
  return i
 
+def input_current(i):
+ q=i.request
+ return check_input(i,q,*access(q))
+
+def run_lineage(r,q):
+ chain=[]
+ while r:
+  if r.request_id!=q.pk or len(chain)>=len(STAGE_POLICY) or any(parent.pk==r.pk for parent in chain):
+   raise ValidationError('Exact payroll working lineage required')
+  chain.append(r)
+  r=exact(q.case,PayrollRun,r.parent_id) if r.parent_id else None
+ return chain
+
+def check_lineage(q,chain,config,rules):
+ # Validate each committed input and policy pin once within this single precondition check.
+ policies={ACCESS:config.pk}; checked_inputs={}; checked_readers=set();snapshots={}
+ for current in chain:
+  for key,pk in current.metadata['policy_ids'].items():
+   if key not in policies:policies[key]=active_component(key,q.case).pk
+   if policies[key]!=pk:raise ValidationError('Payroll working rule changed')
+  if STAGE_POLICY[current.kind] not in current.metadata['policy_ids'] and resolve(STAGE_POLICY[current.kind],q.case).status=='ACTIVE':raise ValidationError('A working rule is now configured; prepare a new version')
+  if timezone.now()>=current.retain_until:raise ValidationError('Restricted working copy retained access expired')
+  require(current.actor,q.case,'payroll.'+current.kind)
+  if current.actor_id not in checked_readers:
+   check_reader(current.actor,q,rules);checked_readers.add(current.actor_id)
+  for pk in current.metadata.get('input_ids',[]):
+   if pk not in checked_inputs:
+    item=exact(q.case,PayrollInput,pk)
+    if item.request_id!=q.pk:raise ValidationError('Exact payroll input lineage required')
+    checked_inputs[pk]=check_input(item,q,config,rules)
+  if current.hr_snapshot_id:
+   snapshot=hr.exact(q.case,HRReadSnapshot,current.hr_snapshot_id)
+   hr.snapshot_access(current.actor,snapshot)
+   if snapshot.sha256!=current.metadata['hr_sha256']:raise ValidationError('HR source changed')
+   snapshots[current.pk]=snapshot
+ return checked_inputs,snapshots
+
+def check_snapshot_reader(actor,chain,snapshots):
+ for row in chain:
+  if row.pk in snapshots and row.actor_id!=actor.pk:hr.snapshot_access(actor,snapshots[row.pk])
+
 def run_current(r):
- access(r.request)
- for key,pk in r.metadata['policy_ids'].items():
-  if active_component(key,r.request.case).pk!=pk:raise ValidationError('Payroll working rule changed')
- if STAGE_POLICY[r.kind] not in r.metadata['policy_ids'] and resolve(STAGE_POLICY[r.kind],r.request.case).status=='ACTIVE':raise ValidationError('A working rule is now configured; prepare a new version')
- if timezone.now()>=r.retain_until:raise ValidationError('Restricted working copy retained access expired')
- require(r.actor,r.request.case,'payroll.'+r.kind);access(r.request,r.actor,True)
- if r.parent_id:run_current(exact(r.request.case,PayrollRun,r.parent_id))
- for pk in r.metadata.get('input_ids',[]):input_current(exact(r.request.case,PayrollInput,pk))
- if r.hr_snapshot_id:
-  h=hr.exact(r.request.case,HRReadSnapshot,r.hr_snapshot_id)
-  hr.snapshot_access(r.actor,h)
-  if h.sha256!=r.metadata['hr_sha256']:raise ValidationError('HR source changed')
- return r
+ q=r.request;chain=run_lineage(r,q)
+ check_lineage(q,chain,*access(q));return r
 
 @transaction.atomic
 def private_input(actor,case_id,pk):
  c=locked(actor,case_id,'payroll.private.read');i=exact(c,PayrollInput,pk);access(i.request,actor,True);input_current(i);return i.payload
 
 def run_access(actor,r):
- # Pure authority/currentness validation; payload readers retain native locks.
- for action in ['case.read','payroll.read','payroll.private.read']:require(actor,r.request.case,action)
- access(r.request,actor,True);run_current(r)
- cursor=r
- while cursor:
-  if cursor.hr_snapshot_id:hr.snapshot_access(actor,hr.exact(r.request.case,HRReadSnapshot,cursor.hr_snapshot_id))
-  cursor=exact(r.request.case,PayrollRun,cursor.parent_id) if cursor.parent_id else None
- return r
+ q=r.request;config,rules=access(q,actor,True);chain=run_lineage(r,q)
+ _,snapshots=check_lineage(q,chain,config,rules)
+ check_snapshot_reader(actor,chain,snapshots);return r
+
+def run_reader(actor,r):
+ """Additional reader of the exact run that the caller already checked."""
+ q=r.request;access(q,actor,True)
+ for row in run_lineage(r,q):
+  if row.hr_snapshot_id:hr.snapshot_access(actor,hr.exact(q.case,HRReadSnapshot,row.hr_snapshot_id))
 
 @transaction.atomic
 def check_run_access(actor,r):
@@ -212,17 +246,22 @@ def authority(actor,q,purpose,preparer=None):
  return {AUTH:config.pk,**decision_authority(actor,q.case,'Finance')}
 
 def current_review(item):
- r=item.reviews.order_by('-pk').first()
- if not r or r.verdict!='approve' or r.subject_sha256!=item.sha256:raise ValidationError('Current exact payroll review required')
- q=item.request;require(r.actor,q.case,'payroll.review');access(q,r.actor,True)
- if isinstance(item,PayrollRun):run_access(r.actor,item);purpose=item.kind
- else:input_current(item);purpose='input'
- if authority(r.actor,q,purpose,item.actor_id)!=r.authority:raise ValidationError('Payroll review authority changed')
+ first=item.reviews.order_by('-pk').first()
+ if not first or first.verdict!='approve' or first.subject_sha256!=item.sha256:raise ValidationError('Current exact payroll review required')
+ q=item.request;config,rules=access(q)
  if isinstance(item,PayrollRun):
-  if item.parent_id:current_review(exact(q.case,PayrollRun,item.parent_id))
-  else:
-   for pk in item.metadata['input_ids']:current_review(exact(q.case,PayrollInput,pk))
- return r
+  chain=run_lineage(item,q);inputs,snapshots=check_lineage(q,chain,config,rules)
+  subjects=chain+[inputs[pk] for pk in chain[-1].metadata['input_ids']]
+ else:
+  check_input(item,q,config,rules);chain=[];snapshots={};subjects=[item]
+ for index, subject_row in enumerate(subjects):
+  decision=first if index==0 else subject_row.reviews.order_by('-pk').first()
+  if not decision or decision.verdict!='approve' or decision.subject_sha256!=subject_row.sha256:raise ValidationError('Current exact payroll review required')
+  purpose=subject_row.kind if isinstance(subject_row,PayrollRun) else 'input'
+  require(decision.actor,q.case,'payroll.review');check_reader(decision.actor,q,rules)
+  if purpose!='input':check_snapshot_reader(decision.actor,chain[index:],snapshots)
+  if authority(decision.actor,q,purpose,subject_row.actor_id)!=decision.authority:raise ValidationError('Payroll review authority changed')
+ return first
 
 @transaction.atomic
 def review(actor,case_id,kind,subject_id,verdict,operation_key,evidence_id,expected):
@@ -238,6 +277,10 @@ def review(actor,case_id,kind,subject_id,verdict,operation_key,evidence_id,expec
   if kind=='input':input_current(item)
   else:check_run_access(actor,item)
  if verdict=='approve':
+  if kind=='run' and item.kind=='aggregate':
+   published=list(PayrollPublication.objects.filter(run=item).values_list('pk',flat=True))
+   if published and Audit.objects.filter(case=c,action='factory.payroll_publication_withdrawn',data__publication__in=published).exists():
+    raise ValidationError('This published payroll version was withdrawn. Prepare a reviewed successor.')
   if item.metadata['status']!='complete':raise ValidationError('Unresolved payroll source/control/matching/disclosure exceptions prevent approval')
   if kind=='run':
    if item.parent_id:current_review(exact(q.case,PayrollRun,item.parent_id))

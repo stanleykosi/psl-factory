@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.test import TestCase
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import connection,transaction,DatabaseError
+from django.urls import reverse
 from django.utils import timezone
 from apps.identity.models import Grant
 from apps.core.evidence_access import public_evidence,public_agent_runs
@@ -68,6 +69,43 @@ class FactoryLedgerTests(TestCase):
         w,x=self.accepted();f=self.f;capture(f)
         with self.assertRaises(ValidationError):flow.verify(self.work,f['actor'])
         self.assertTrue(flow.projection(f['actor'],self.work)['readiness_changed'])
+    def test_duplicate_factory_source_is_refused_and_can_extend_earlier_lineage(self):
+        f=self.f;earlier=capture(f);self.start();self.advance()
+        self.assertIsNone(flow.lineage(self.work))
+        self.assertEqual(LedgerLineage.objects.filter(case=f['case']).count(),1)
+        self.client.force_login(f['actor'])
+        url=reverse('factory_invoice_recovery',args=[self.work.pk]);page=self.client.get(url)
+        self.assertContains(page,'Source evidence comparison');self.assertContains(page,'Correct the original lineage')
+        self.assertEqual(self.client.post(url,{'action':'correct','revision':self.work.revision,
+                         'case_revision':rev(f['case']),'evidence_id':self.source.pk,'predecessor_id':earlier.pk,
+                         'reason':'The selected evidence is a correction to the original lineage.'}).status_code,302)
+        self.advance();self.assertEqual(flow.lineage(self.work).predecessor_id,earlier.pk)
+    def test_focused_observation_and_rejection_require_fresh_proof(self):
+        self.start();self.advance();f=self.f;w=flow.lineage(self.work)
+        value={k:w.payload[k] for k in ['provider','realm','entity','source_reference','target_reference',
+                                      'transaction_date','accounting_period','treatment_evidence_id']}
+        value.update(state='found',observed_at=(timezone.now()-timedelta(seconds=1)).isoformat(),incumbent_version='sync-1')
+        proof=evidence(f,'quickbooks_verification',value)
+        observe=reverse('factory_work_response',args=[self.work.pk]);decision=reverse('factory_invoice_decision',args=[self.work.pk])
+        command={'action':'observe','revision':self.work.revision,'case_revision':rev(f['case']),
+                 'target':w.pk,'evidence':proof.pk,'outcome':'unknown'}
+        self.client.force_login(f['actor']);self.assertContains(self.client.get(observe),'What you found')
+        self.assertContains(self.client.post(observe,command),'The selected outcome must match the supplied evidence.')
+        self.assertFalse(w.checks.exists())
+        self.assertEqual(self.client.post(observe,{**command,'outcome':'found'}).status_code,302)
+        check=w.checks.get();self.client.force_login(f['reviewer'])
+        self.assertContains(self.client.get(decision),'Independent Finance decision')
+        self.assertEqual(self.client.post(decision,{'action':'review','revision':self.work.revision,
+                         'case_revision':rev(f['case']),'target':check.pk,'evidence':f['e'].pk,
+                         'verdict':'reject','reason':'Sample evidence does not establish the reference.'}).status_code,302)
+        self.assertContains(self.client.get(decision),'Sample evidence does not establish the reference.')
+        self.assertNotContains(self.client.get(decision),'Approve supplied reference')
+        with self.assertRaisesMessage(ValidationError,'Supply fresh evidence'):
+            ledger.review(f['reviewer'],f['case'].pk,check.pk,f['e'].pk,'approve',rev(f['case']))
+        with self.assertRaisesMessage(ValidationError,'Supply fresh evidence'):
+            ledger.verify(f['actor'],f['case'].pk,w.pk,proof.pk,rev(f['case']))
+        fresh=verify(f,w,{'incumbent_version':'sync-2'});review(f,fresh)
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
     def test_cancellation_no_capture_and_unknown_command(self):
         self.start();f=self.f;factory.manage(f['actor'],self.work.pk,self.work.revision,'cancel');self.advance();self.assertEqual(self.work.status,'cancelled');self.assertEqual(LedgerLineage.objects.count(),0)
         with self.assertRaises(ValidationError):flow.command(f['reviewer'],self.work.pk,self.work.revision,rev(f['case']),'review',1,f['e'].pk,'approve')

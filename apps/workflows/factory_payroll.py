@@ -199,23 +199,33 @@ def correct(actor,work_id,expected,case_expected,request_id,inputs,reason):
 @transaction.atomic
 def human_action(actor,work_id,expected,case_expected,action,values):
     from .factory import access
+    from .factory_progress import wake_waiting
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION)
-    if type(expected) is not int or w.revision!=expected or (w.cancel_requested and action!='receive') or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh current payroll work')
     # Recipients need aggregate rights, not raw salary access.
     if action=='receive':
         p=publication(w)
         if not p or values['publication_id']!=p.pk:raise ValidationError('Select this work exact aggregate publication')
-        return native.receive_report(actor,w.case_id,p.pk,case_expected)
+        receipt=native.receive_report(actor,w.case_id,p.pk,case_expected);wake_waiting(w.pk)
+        return receipt
+    if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh current payroll work')
     q,data=source(w,actor)
+    if action=='receive_hr':
+        snapshot_id = data['inputs']['hr_snapshot_id']
+        if not snapshot_id or values['snapshot_id'] != snapshot_id or w.execution_actor.pk != actor.pk:
+            raise ValidationError('The assigned matcher must confirm the exact selected HR snapshot')
+        return hr.receive(actor,w.case_id,snapshot_id,'factory-payroll-hr:'+digest([snapshot_id,actor.pk]),
+                          values['evidence_id'],case_expected)
     if action=='review':
         refs=data['inputs']['input_ids'] if values['kind']=='input' else [r.pk for r in [run(w,s) for s in ['combine','match','aggregate']] if r]
         if values['subject_id'] not in refs:raise ValidationError('Review an exact current work subject')
-        return native.review(actor,w.case_id,values['kind'],values['subject_id'],values['verdict'],values['operation_key'],values['evidence_id'],case_expected)
+        decision=native.review(actor,w.case_id,values['kind'],values['subject_id'],values['verdict'],values['operation_key'],values['evidence_id'],case_expected)
+        wake_waiting(w.pk);return decision
     if action=='publish':
         a=run(w,'aggregate')
         if not a:raise ValidationError('Prepare the exact aggregate before human publication')
-        return native.publish(actor,w.case_id,a.pk,key(w,'publish'),case_expected)
+        report=native.publish(actor,w.case_id,a.pk,key(w,'publish'),case_expected);wake_waiting(w.pk)
+        return report
     raise ValidationError('Choose an explicit native human decision')
 
 @transaction.atomic
@@ -235,6 +245,68 @@ def cancel(actor,work_id,expected):
 def publication_history(work):
     """All native request versions belonging to this canonical payroll work."""
     return PayrollPublication.objects.filter(request__case=work.case,request__reference=work.request['payroll_reference'])
+
+
+def withdrawal(work, publication_id=None):
+    notices=Audit.objects.filter(case=work.case,action='factory.payroll_publication_withdrawn',data__work=work.pk)
+    if publication_id is not None:
+        notices=notices.filter(data__publication=publication_id)
+    return notices.order_by('-pk').first()
+
+
+@transaction.atomic
+def withdraw_publication(actor,work_id,expected,case_expected,publication_id,evidence_id,reason):
+    from .factory import access
+    w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
+    access(actor,w.case,'factory.read',DEFINITION)
+    case=lock_case(actor,w.case_id,'payroll.review',case_expected);w.case=case
+    if w.status!='followup_needed' or w.revision!=expected or w.lease_until and w.lease_until>timezone.now():
+        raise ValidationError('Refresh the stopped payroll work before withdrawing the original report')
+    source(w,actor,False)
+    current=publication(w)
+    if not current or current.pk!=publication_id or withdrawal(w,publication_id):
+        raise ValidationError('Choose the original report awaiting withdrawal')
+    if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:
+        raise ValidationError('Explain the withdrawal without individual payroll details')
+    decision=native.review(actor,case.pk,'run',current.run_id,'revoke',key(w,'withdraw'),evidence_id,case.revision)
+    event(actor,case,'factory.payroll_publication_withdrawn',work=w.pk,publication=current.pk,
+          decision=decision.pk,reason=reason.strip())
+    w.revision+=1;w.save(update_fields=['revision','updated_at'])
+    return decision
+
+
+@transaction.atomic
+def prepare_successor(actor,work_id,expected,case_expected,publication_id,request_id,inputs,reason):
+    from .factory import access
+    from apps.agents.factory_coordinator import pending,has_receipt
+
+    w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
+    access(actor,w.case,'factory.manage',DEFINITION)
+    case=lock_case(actor,w.case_id,'evidence.add',case_expected);w.case=case
+    if w.status!='followup_needed' or w.revision!=expected or w.lease_until and w.lease_until>timezone.now():
+        raise ValidationError('Refresh the stopped payroll work before creating the successor')
+    original=publication(w)
+    notice=withdrawal(w,publication_id)
+    if not original or original.pk!=publication_id or not notice or original.run.reviews.order_by('-pk').values_list('pk',flat=True).first()!=notice.data['decision']:
+        raise ValidationError('An independent withdrawal of the exact published version is required')
+    intent=pending(w)
+    if intent and not has_receipt(intent):
+        raise ValidationError('Reconcile the original planning response before preparing a successor')
+    if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:
+        raise ValidationError('Explain the corrected instruction without individual payroll details')
+    previous,selection=source(w,actor,False)
+    q=native.exact(case,PayrollRequest,request_id)
+    if q.reference!=previous.reference or any(q.metadata[field]!=previous.metadata[field] for field in ('entity','period','currency')):
+        raise ValidationError('Keep the same entity, period and currency for the corrected payroll')
+    input_rows(actor,case,q,inputs)
+    if q.pk==previous.pk and inputs==selection['inputs']:
+        raise ValidationError('Choose a corrected provider input or authorised HR snapshot')
+    old=w.source_head_id
+    w.source_head=capture(actor,case,q,inputs,'factory.payroll_source')
+    w.status='ready';w.cancel_requested=False;w.finding='';w.observation_hash='';w.fence+=1;w.revision+=1;w.save()
+    event(actor,case,'factory.payroll_publication_successor',work=w.pk,publication=original.pk,
+          previous=old,current=w.source_head_id,withdrawal=notice.pk,reason=reason.strip())
+    return w
 
 @transaction.atomic
 def restart(actor,work_id,expected,case_expected,request_id,inputs,configuration_id,instruction_key,reason):
