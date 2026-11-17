@@ -1,15 +1,14 @@
 VERDICT: PASS
-COMMIT: a3f43067bf20e8474e3a6bb54d273597154d6f28
+COMMIT: d5f10f5a22b05103700b95c8c05a5cf8cdb212c7
 REVIEWER: reviewer-ux
 AUTHORITY: delivery UX review
 
 ## Summary
-- Round 3 is display only. No journey, step, form, request or lock changed. I did not re-run the browser; this is a code and build-evidence check.
-- No findings.
+- Since a3f4306 the only frontend change is display: the third sentence of Tola's note ("One action has no owner and its due date is Unknown...") is drawn as an amber warning band under the blue note. The rest of the diff is sign-off records and fidelity evidence.
+- No journey, step, form, request, tick set or lock changed. No findings.
 
-## What I checked
-- Diff 0d6dabf..a3f4306 in `frontend/src`: only `Sections.tsx` (the date cell draws "13 Nov" when the column asks for it, otherwise the full date as before) and `proposals.ts` (a read-only `columnDayMonth` helper). No change to steps, StepForm, the confirm set, ticks, locks, links or routes.
-- Fixtures: W-2301 and W-2306..W-2308 Due cells moved from text to `date` cells (A-3 `unknown: true`, which the frame draws as the amber Unknown, never zero or blank). DRAFTED tag and status tone neutral to `agent` (blue). Step lists, `items[].values` (the Edit prefill I verified in round 2), item_ids and sidecar outcomes are untouched.
-- Unknown stays explicit, which keeps the UX-1 rule that a missing date is never shown as a value.
-- build.md: checks.sh exit 0; minutes, workspace, weekly and weekly-returned-received Playwright suites 105 passed; minutes.test.tsx 43 tests. Fidelity coverage 100 after exceptions; visual 69.1 desktop (the existing one-board exception) and 74.2 phone.
-- Caveat for the coordinator: the DRAFTED tone change could move the drafted and review boards slightly; the colour matches the README rule for agent work. Not a UX issue.
+## What I checked (code and build.md; no browser re-run)
+- `Workspace.tsx` `AgentNote` only splits the note's `lines` into plain lines (blue callout, as before) and `warn_lines` indexes (a `warning` Callout with the warning icon). The wording is unchanged and still read by every reader; the amber lines go into the page as text with a warning icon, so the cue is not colour alone. `announce={false}` keeps it out of the live region, as the blue note was.
+- `proposals.ts` adds a read-only `warnLines` helper. Fixtures W-2301 and W-2306..W-2308 gain `"warn_lines": [2]` and nothing else. No step, item, `values`, ticks, `item_ids` or sidecar changed; the round-2 Edit prefill and the confirm set are untouched.
+- It reads clearly: the one sentence that asks the PM to act is the one that stands out, and it says what happens if they do not (the action shows as "No owner").
+- build.md: the visual score on desktop default falls from 69.1 to 65.3 because the amber line is a full-width band where the board puts it in the right column; coverage stays 100 after exceptions. That is a fidelity matter for the design engineer (Conflicts 6), not a UX flaw, so I do not block on it.

@@ -1,0 +1,4 @@
+FAIL  coverage 94% (47/50; 100% with exceptions)  visual 82.8  missing 3  moved 2  extra 6
+note: Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).
+note: Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues.
+report: /Users/Hunchoo/psl-factory/delivery/features/F-25/round-2/fidelity/SCR-11-desktop-1440/report.html

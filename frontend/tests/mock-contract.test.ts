@@ -238,9 +238,9 @@ describe('mock server matches openapi.json', () => {
   });
 
   it('a non-M-1 operation gets 501 not_mocked', async () => {
-    const result = await request('E-REPORT');
+    const result = await request('E-PAYROLL-MATCH');
     expect(result).toEqual({ status: 501, body: { code: 'not_mocked', message: 'Not available in the mock yet.' } });
-    expectValid('E-REPORT', 501, result.body);
+    expectValid('E-PAYROLL-MATCH', 501, result.body);
   });
 
   it('refuses to start with NODE_ENV=production', () => {

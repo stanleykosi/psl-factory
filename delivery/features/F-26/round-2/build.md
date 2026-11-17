@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 0b46a01be66ba05a8f70775739ccfd66df8121e9
+COMMIT: ac401c09e80d4398acb8101994d6f18b4b0f1d76
 BUILDER: builder
 LANE: full
 
@@ -77,6 +77,7 @@ Not fixed here:
 30–32. [x] Unchanged: no assertion is loosened, and the limits are stated above.
 
 ## Validation
+- Base merge and waivers: origin/dlv-00-delivery-setup was merged at ac401c09 (`git diff --stat 0b46a01b ac401c09 -- frontend` is empty, so the results below, measured at 0b46a01b, hold). The D-107 visual waivers for SCR-12-desktop (85.7) and SCR-12-mobile (77.8) are now in `fidelity-exceptions.json` as `visual_waivers`.
 - `bash /Users/Hunchoo/psl-factory/delivery/checks.sh` (worktree) exits 0: lint, typecheck, vitest **86 files, 1882 tests passed**, and next build.
 - `E2E_PORT=4780 MOCK_PORT=4781 npx playwright test e2e/money.spec.ts e2e/projects.spec.ts` gives **40 passed** (12 money and 28 projects at 1440 and 390, axe WCAG 2.2 AA).
 - Fidelity (`round-2/fidelity/run.sh`, production build `next start -p 4780`, mock 4781, persona finance_lead):
@@ -92,5 +93,7 @@ Not fixed here:
 - TECH-1-3, for the coordinator's merge with F-25: `frontend/tests/projects-journey.test.tsx` is a third shared file. F-26 swapped its coming-next case from `money` to `documents` (index 2). F-25 replaces `documents`, so whichever merges second must point that case at a tab still showing coming-next, or delete it if none is left.
 - The phone visual went from 71.4 to 77.8. The cause is the score's 12px grid, not a closer layout: linked cards are now about 14px taller (UI-1-4), which happens to line up better with the board's cards.
 
+- Exceptions file update (main folder only; the branch is unchanged at ac401c09): the SCR-12-mobile waiver now also covers phone cards about 12px taller per linked stage, for the two 44px tap targets (D-92c), approved under D-108. The SCR-12-desktop waiver now names the shorter Chidi card (side panel about 20px shorter) and the report title on the same line as the board's sentence (UI-2-2, D-104/D-107). D-108 also approves the money no-access line "You can’t see this project’s money." (Conflicts 14, Option B).
+
 ## Blocked
-Not blocked. Open design-engineer decision UI-1-3: per-board waivers for SCR-12-desktop (85.7) and SCR-12-mobile (77.8). Coverage is 100% after exceptions on both. The waiver wording is in round-1/review-ui.md; the phone figure is now 77.8.
+Not blocked. UI-1-3 is resolved by D-107 (both waivers signed and recorded). Previously open: per-board waivers for SCR-12-desktop (85.7) and SCR-12-mobile (77.8). Coverage is 100% after exceptions on both. The waiver wording is in round-1/review-ui.md; the phone figure is now 77.8.

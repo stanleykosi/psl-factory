@@ -1,21 +1,21 @@
 VERDICT: PASS
-COMMIT: a3f43067bf20e8474e3a6bb54d273597154d6f28
+COMMIT: d5f10f5a22b05103700b95c8c05a5cf8cdb212c7
 REVIEWER: reviewer-technical
 AUTHORITY: delivery technical review
 
 ## Summary
-- Reviewed 0d6dabf7..a3f43067 (frontend). The round-3 code change is three source lines in `Sections.tsx` and `proposals.ts`, plus fixtures and tests. The dlv-00 merge touched no frontend source, as the builder states.
-- Date cells are restored as `date` cells. The "13 Nov" form comes from a fixtures-only column option, not from text, so INV-UNKNOWN holds: an unknown date still draws the amber Unknown, never 0 or blank.
-- The `columns[].date_format` proposal is read in one typed reader, validated on its own and stripped in the contract test. It is guarded to W-23xx fixtures.
-- No findings.
+- Reviewed a3f43067..d5f10f5a. The only frontend source changes are `AgentNote` in `Workspace.tsx` and a `warnLines` reader in `proposals.ts`. The second merge of dlv-00 added no frontend change.
+- Tone is chosen by the data (`agent_note.warn_lines`: line indexes), never by matching words. Without the key every line draws in the info note, as before, so F-17/F-21/F-22 notes are unchanged.
+- The proposal is validated and stripped in the contract test and guarded to W-23xx fixtures. The component test covers flagged and unflagged data.
+- Two non-blocking test and edge notes. No blocking findings.
 
 ## Findings
-None.
+- TECH-3-1 | non-blocking | frontend/tests/mock-contract.test.ts:~639 | The W-23xx-only guard for `warn_lines` has no non-vacuous check. The `values` and `date_format` carriers assert `length > 0`, but `warns` does not, so the guard would still pass if no fixture carried the key. | Add `expect(warns.length).toBeGreaterThan(0)`.
+- TECH-3-2 | non-blocking | frontend/src/features/workspace/Workspace.tsx:29-52 | Flagged lines always draw after the plain lines, in a second callout, whatever their index. A `warn_lines` entry of 0 or 1 would reorder the sentences. The agent name is also not repeated if all lines are flagged. Current fixtures use index 2 (the last line), so there is no visible issue. | Document that `warn_lines` should name trailing lines, or keep the original order when the warn lines are not last. Not needed for this release.
 
 ## Verified
-- UI-2-1 (technical side) | verified | `CellValue` passes `short={columnDayMonth(column)}` only for `date` columns. `DateText` shortens only when the date exists and parses (`dateText !== null`). Otherwise it falls back to `Unknown`. Without the option the full date shows, as before, so F-17/F-21/F-22 date cells are unchanged. `formatDayMonth` is the shared component helper, not a local copy.
-- Proposal hygiene | verified | `columnDayMonth` accepts only `"day_month"`. `mock-contract.test.ts` asserts the value and deletes the key before the schema check. `schema.d.ts` and `openapi.json` are untouched.
-- TECH-2-1 | verified | The new test checks both `items[].values` and `columns[].date_format`, requires at least one carrier of each, and limits both to `W-23xx` files. The `links`/`items_default` guard is retained.
-- DRAFTED tone | verified | The change is in fixtures only (tone `agent`). The frame maps the tone through the existing `tagTone`, with no new frame code.
-- Task-card correction | verified | The builder's note that W-2009 (F-17) and W-2208 (F-21) lose their card is accurate for the round-2 rule. Both are behaviour fixtures that keep the `task_id` decision link, and their suites pass in `checks.sh`. TECH-2-2 stays non-blocking.
-- Scope | verified | No change to `src/api`, `architecture`, `design`, `apps` or protected paths in this diff.
+- `warnLines` | verified | Reads only an array of integers. Anything else gives an empty set, so the key reads as "not supplied". An out-of-range index matches no line and is harmless. The reader is the single typed access point.
+- Contract test | verified | The proposal is checked first (array of integers in `0 <= n < lines.length`) and then deleted before the schema check. `schema.d.ts` and `openapi.json` are untouched.
+- Component test | verified | W-2301: the flagged sentence is in `.psl-callout--warning.ws-agentnote` and not in the info callout. After deleting `warn_lines`, no warning callout is drawn.
+- Scope | verified | No change to `src/api`, `architecture`, `design` or `apps`. Exceptions and waiver wording changes (D-105, D-106) are factory records only.
+- Fidelity | noted, not mine | Desktop default 65.3 and phone default 70.2 are recorded with the design engineer's D-105/D-106 waivers. That is a design decision, not a technical finding.

@@ -1,0 +1,8 @@
+SCR-38-desktop 1440 exit=1
+SCR-38-desktop-changed 1440 exit=1
+SCR-11-desktop 1440 exit=1
+SCR-29-desktop 1440 exit=0
+SCR-38-mobile 390 exit=1
+SCR-38-mobile-changed 390 exit=1
+SCR-11-mobile 390 exit=1
+SCR-29-mobile 390 exit=1
