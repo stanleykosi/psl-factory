@@ -1,5 +1,20 @@
 {
   "design_consolidation_20261116": {
+    "state_acceptance_followup_20261117": {
+      "runtime_source": "883992dd",
+      "environment": "design-acceptance",
+      "web": "60d4c0bc",
+      "worker": "7a60892b",
+      "states_with_browser_observations": 73,
+      "states_without_direct_browser_observation": 189,
+      "final_postgresql": {"deployment": "499417c8", "passed": 4, "seconds": 744.886},
+      "all_states_accepted": false,
+      "evidence": "docs/design/screen-state-acceptance.md",
+      "completed": ["Versioned Assistant draft card and safe fallback", "Started by Me and bounded work assessment", "Signed Money terms and narrow missing-term hold", "Exact minutes recipient proof and fair original publication processing", "Structured Go-live signature form and repaired Go-live and accounting recovery reads", "Phone delegation reflow"],
+      "current": ["Finish the partial checks and build missing behavior across the remaining board states"],
+      "next": ["Exercise remaining line-specific intake writes, review and recovery variants with named synthetic fixtures", "Add missing account recovery and notification delivery state paths", "Extend specific Finance, release and delivery states and their mobile and role checks"],
+      "owner_policy": "Deferred"
+    },
     "expanded_state_checkpoint": {
       "design_main": "1671409d",
       "delivery_design": "a85d1d75",

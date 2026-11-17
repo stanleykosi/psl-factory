@@ -6,6 +6,8 @@ The first increment uses one server-rendered shell for native screens, including
 
 The newer GitHub design expands the registered screen IDs into [262 distinct non-concept states](screen-state-inventory.csv). The [current state acceptance ledger](screen-state-acceptance.md) records actual browser outcomes for the latest Assistant, weekly report, minutes, project tab, Money and delegation work. Remaining states still need their own acceptance.
 
+The 17 November Railway increment adds 50 state observations to the ledger, with 73 of 262 states now represented. It includes the Start Work drawer, exact go-live signatures, minutes and standalone document rework, work and delivery status, signed Money figures and the mobile delegation repair. The state ledger identifies where only a form or retained outcome was checked and which workflow branches remain open.
+
 ## Railway browser walkthrough
 
 The named trial account reached the corresponding route or shared workspace for each of the 59 screen IDs. Some visits ended at an expected access hold or an empty state. The interactive runs used separate synthetic workspaces. The remaining board variants and writes are tracked below. See [the test ledger](../../BUILD-TESTS.md) for run IDs and provider boundaries.

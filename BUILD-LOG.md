@@ -1,5 +1,7 @@
 # Build progress log
 
+17 November 2026. Connected inline Assistant drafts, signature forms, exact signed-stage dates, minutes receipt evidence and bounded work filters. Fixed the My Work, Go-live and accounting page timeouts found during the browser walkthrough. Prevented an unresolved publication from taking consecutive slots in a single worker batch. Verified linked action completion through a replacement minutes version, and corrected the delegation phone layout. See the state and test ledgers for exact scenarios.
+
 16 November 2026. Integrated multi-record department Assistant, dated project actions and searchable tabs, invoice and receipt lineage, same-role delegation drafts, source-owned weekly report rework and exact minutes confirmation and publication. Added the 262-state inventory and recorded the observed browser outcomes. See BUILD-TESTS.md for PostgreSQL results and the exact recipient and publication evidence.
 
 16 November 2026. Connected dated receivables and reconciliation to company and project Month-end. Added role-checked links to native Finance close areas. Connected release and closure decisions and recovery, corrected the release approval link, queued long continuation in the worker and reduced repeated closure decision reads. Used native synthetic fixtures to exercise original-receipt recovery for go-live, escalation, leadership and accounting. See BUILD-TESTS.md for deployment and browser results.

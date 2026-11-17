@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Connected state acceptance · 17 November 2026
+
+The isolated Railway build connects the Assistant draft card to saved drafts and exact work items, shows signed stage terms and unknowns in Money, and uses structured signer forms for exact go-live acceptance. My Work now has an actor-scoped Started by Me view, workflow filters and bounded current-state checks. It exposes records that need more checking without including them in the confirmed view. Go-live and accounting recovery reuse read-only evidence within the request. Minutes and weekly reports show exact per-recipient receipts. The publication worker processes each original at most once in a batch.
+
+The Codex browser evidence now covers 73 of 262 distinct states, including partial checks. Newly verified outcomes include weekly work 22 through receipt 17, Assistant draft 1 through work 23, standalone document versions 29 and 30 through return and corrected delivery, work 8 through distinct signature evidence 399 and 400 and verified acceptance, and minutes work 18 through action completion and successor version 28. The [state ledger](docs/design/screen-state-acceptance.md) lists remaining checks by state. The other 189 states await direct browser evidence. Engineering gaps remain alongside additional browser test work. Department-head decisions and external channel configuration stay deferred.
+
 ## Expanded design states · 16–17 November 2026
 
 GitHub `main` at `1671409d` has 262 distinct non-concept states across the registered screen IDs. The isolated Railway checkpoint connects multi-record Assistant answers, weekly report correction and renewed review, formal minutes and linked actions, searchable project tabs, Money figure lineage and typed same-role delegation drafts. Signed agreement amounts, receipt amounts and missing source facts retain their native semantics. The [state acceptance ledger](docs/design/screen-state-acceptance.md) distinguishes observed browser behavior from pending states and device checks.

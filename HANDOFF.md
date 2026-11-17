@@ -1,5 +1,15 @@
 # PSL operations factory cloud handoff
 
+## Connected state acceptance · 17 November 2026
+
+Resume `build/design-consolidation` at runtime source `883992dd` on Railway `design-acceptance`. Web deployment `60d4c0bc` and standard worker deployment `7a60892b` are running. The [262-state inventory](docs/design/screen-state-inventory.csv) and [state ledger](docs/design/screen-state-acceptance.md) contain 73 states with scoped browser evidence, including partial checks, and 189 waiting for a direct check. The earlier 59-screen routing walkthrough stays separate.
+
+Working browser proof includes weekly work 22 through recipient receipt 17, Assistant Planning packet 368 via saved draft 1 to work 23, standalone document 27 with returned version record 29 and confirmed successor 30, minutes work 18 with successor document version 28 after action 7 completed, and go-live work 8 with receipt 18 and distinct signature evidence 399 and 400. Minutes work 24 and job 18 demonstrate an original publication without a receipt. The verified phone layout for delegation keeps both the form and draft 2 onscreen. Native accounting recovery work 15 reread 609.99 and its confirmed recipient receipt after the focused repair. The standard worker processes each original publication at most once per batch.
+
+Final Railway PostgreSQL run `499417c8` passed all four focused scenarios, including the accounting source change and eligibility tests. The test ledger also records the wider earlier run and the two completed worker checks.
+
+Continue with line-specific Start Work writes, role and phone variants, and deeper Finance and delivery state chains. Account recovery and direct email and WhatsApp delivery need engineering and provider-path coverage. Keep live owner decisions, role appointments, contact audiences and external access deferred. Read the state ledger and use named synthetic cases and actual operator writes for each remaining branch.
+
 ## Expanded state consolidation · 16–17 November 2026
 
 Resume on `build/design-consolidation` from runtime source `98c340f1`. The current design sources are GitHub `main` `1671409d`, delivery setup `a85d1d75` and minutes feature `2e5eab9e`. The board inventory and 23 observed states are in [the 262-state inventory](docs/design/screen-state-inventory.csv) and [browser acceptance ledger](docs/design/screen-state-acceptance.md). The prior 59-ID walkthrough reached native routes. Full acceptance across the expanded states and layout fidelity are open. Implementation can continue directly from this build.
