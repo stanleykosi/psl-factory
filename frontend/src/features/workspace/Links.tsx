@@ -1,7 +1,7 @@
 'use client';
 
 // PROPOSAL (D-LINE-WORKSPACE, X-LINKS, contract mock only): the links a workspace supplies (proposals.ts). "assistant"
-// is a link to the assistant page; "document" reads E-DOCUMENT once, on press, and shows the version in a panel. The
+// is a link to the assistant page; "project_tab" (F-28) a link to one of the project's tabs; "document" reads E-DOCUMENT once, on press, and shows the version in a panel. The
 // frame adds no words about the template: "Test template" is drawn only when the document says test_template.
 import { useId, useState } from 'react';
 
@@ -93,6 +93,10 @@ export function WorkspaceLinks({ links, page }: { links: WorkspaceLink[]; page?:
         {links.map((link) =>
           link.kind === 'assistant' ? (
             <Link key={link.key} href="/assistant">
+              {link.label}
+            </Link>
+          ) : link.kind === 'project_tab' ? (
+            <Link key={link.key} className="psl-btn psl-btn--secondary" href={link.href}>
               {link.label}
             </Link>
           ) : (

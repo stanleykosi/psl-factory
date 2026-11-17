@@ -1,0 +1,266 @@
+{
+  "id": "W-2311",
+  "title": "Weekly sync · 10 Nov",
+  "line": "Formal minutes and action handoff",
+  "reference": "MIN-0141",
+  "state": "verified",
+  "revision": 9,
+  "stations": [
+    {
+      "name": "Confirm",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "done"
+    },
+    {
+      "name": "Send",
+      "status": "done"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-10T15:20:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-10T16:05:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-10T16:05:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-10T16:30:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-11-10T16:32:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-11-10T16:32:00Z"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted the client minutes",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "minutes",
+    "screen": "SCR-28",
+    "view": "published",
+    "title": "Weekly sync · 10 Nov",
+    "subtitle": "Formal minutes and action handoff · MIN-0141",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "MIN-0141",
+          "label": "Minutes · MIN-0141"
+        }
+      ]
+    },
+    "revision": 9,
+    "status": {
+      "label": "Published · Received",
+      "tone": "verified"
+    },
+    "sections": [
+      {
+        "key": "published",
+        "kind": "text",
+        "items": [
+          {
+            "id": "P-1",
+            "text": "Minutes v1 approved by Kemi Adebayo and emailed to Lagoon Health on 10 Nov 17:30, delivery confirmed. 3 actions are on the action list.",
+            "tag": {
+              "label": "Delivered",
+              "tone": "verified"
+            }
+          }
+        ]
+      },
+      {
+        "key": "actions",
+        "kind": "table",
+        "title": "Actions created",
+        "columns": [
+          {
+            "key": "action",
+            "label": "Action",
+            "kind": "text"
+          },
+          {
+            "key": "owner",
+            "label": "Owner",
+            "kind": "text"
+          },
+          {
+            "key": "due",
+            "label": "Due",
+            "kind": "date",
+            "date_format": "day_month"
+          },
+          {
+            "key": "state",
+            "label": "State",
+            "kind": "tag"
+          }
+        ],
+        "items": [
+          {
+            "id": "A-1",
+            "cells": [
+              {
+                "column": "action",
+                "text": "Send test accounts for UAT"
+              },
+              {
+                "column": "owner",
+                "text": "Client · Lagoon Health"
+              },
+              {
+                "column": "due",
+                "date": {
+                  "date": "2026-11-13",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "OPEN",
+                  "tone": "uncertain"
+                }
+              }
+            ]
+          },
+          {
+            "id": "A-2",
+            "cells": [
+              {
+                "column": "action",
+                "text": "Finish the Android login fix"
+              },
+              {
+                "column": "owner",
+                "text": "Engineering (recorded by PM)"
+              },
+              {
+                "column": "due",
+                "date": {
+                  "date": "2026-11-15",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "OPEN",
+                  "tone": "uncertain"
+                }
+              }
+            ]
+          },
+          {
+            "id": "A-3",
+            "cells": [
+              {
+                "column": "action",
+                "text": "Assess the SMS reminders change"
+              },
+              {
+                "column": "owner",
+                "text": "No owner yet"
+              },
+              {
+                "column": "due",
+                "date": {
+                  "unknown": true
+                }
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "OWNER NEEDED",
+                  "tone": "person"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "sent_to",
+        "kind": "recipients",
+        "title": "Sent to",
+        "items": [
+          {
+            "id": "R-1",
+            "text": "Ada Okoye · Lagoon Health",
+            "channel": "email",
+            "receipt": "received",
+            "at": "2026-11-10T16:31:00Z"
+          },
+          {
+            "id": "R-2",
+            "text": "Lagoon Health projects inbox",
+            "channel": "email",
+            "receipt": "received",
+            "at": "2026-11-10T16:32:00Z"
+          }
+        ]
+      }
+    ],
+    "next": [
+      "An action with no owner shows in Unassigned for leads. Actions being done is tracked separately."
+    ],
+    "links": [
+      {
+        "key": "open_actions",
+        "label": "Open actions",
+        "target": {
+          "kind": "project_tab",
+          "tab": "actions",
+          "case_id": "C-0211"
+        }
+      }
+    ]
+  }
+}
