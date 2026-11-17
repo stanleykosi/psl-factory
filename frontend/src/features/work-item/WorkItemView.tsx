@@ -126,23 +126,18 @@ function WorkItemHeader({ item, tab, phone, tabs }: HeaderProps) {
  * the crumb line (desktop) or the meta line (phone), and the reference sits at the end of the phone bar and the status tag shares the meta line.
  */
 /**
- * The project tab bar the line boards draw under the title (desktop), from the project the workspace names. Journey is
- * the one built page, so it is the one link; the other tabs are plain text, never a dead link, as on the RFP frame.
+ * The project tab bar the line boards draw under the title (desktop), from the project the workspace names. Every tab
+ * with a page is a link to it (F-30); none is marked current, since the response does not say which tab the item
+ * belongs to and the frontend does not read that from the crumbs.
  */
 function ProjectBar({ caseId }: { caseId: string }) {
   return (
     <nav aria-label="Project" className="psl-tabs work-projecttabs">
-      {PROJECT_TABS.map((t) =>
-        t.key === 'journey' ? (
-          <Link key={t.key} className="psl-tab" href={`/projects/${encodeURIComponent(caseId)}`}>
-            {t.label}
-          </Link>
-        ) : (
-          <span key={t.key} className="psl-tab work-projecttab--plain">
-            {t.label}
-          </span>
-        ),
-      )}
+      {PROJECT_TABS.map((t) => (
+        <Link key={t.key} className="psl-tab" href={`/projects/${encodeURIComponent(caseId)}${t.path}`}>
+          {t.label}
+        </Link>
+      ))}
     </nav>
   );
 }

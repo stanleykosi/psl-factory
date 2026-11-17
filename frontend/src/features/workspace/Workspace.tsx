@@ -7,16 +7,22 @@
 // ReconcilePanel, which the page shows from the re-read item.
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
-import { Button, Callout } from '@/components';
+import Link from 'next/link';
+
+import { Button, buttonClass, Callout, Drawer, useIsPhone } from '@/components';
+import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
 import type { WorkItem } from '@/features/work-item/labels';
 
-import { agentName, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
+import { AssignForm } from './AssignForm';
+import { agentName, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { WorkspaceLinks } from './Links';
-import { itemsDefaultChecked, itemValues, warnLines, workspaceLinks } from './proposals';
+import { itemsDefaultChecked, itemValues, startsLine, warnLines, workspaceLinks } from './proposals';
 import { SectionView, type ItemControls } from './Sections';
 import { StepForm } from './StepForm';
 import { Consequence, StepControl, StepRow } from './Steps';
+import { stepKind } from './StepForm';
 import type { WorkspacePage } from './usePageReload';
+import { ASSIGN_TEXT, useWorkspaceAssign } from './useWorkspaceAssign';
 import { STEP_TEXT, useWorkspaceStep, type Attempt, type StepBody, type SubmitResult } from './useWorkspaceStep';
 
 import './workspace.css';
@@ -88,6 +94,10 @@ const inSide = (item: WorkItem) => (section: Section) =>
 /** `items` is set for an `items` step: its ids are the ones ticked when the form is submitted (all sections, or that one), so the set sent is the set on screen. */
 type Open = { token: string; step: Step; itemIds?: string[]; items?: { section?: string } };
 
+/** The Start work line key of an issue's follow-up (E-LINES); the only name this frame reads for F-30's read-only link and phone Drawer. */
+const ISSUE_LINE = 'issue_followup';
+const ISSUE_TEXT = { register: 'Open the issue register' } as const;
+
 const scope = (step: Step) => step.applies_to ?? 'workspace';
 const needsForm = (step: Step) => (step.fields?.length ?? 0) > 0 || step.confirm !== undefined;
 const itemName = (section: Section, item: Item) => item.text ?? item.label ?? item.cells?.find((c) => c.text)?.text ?? item.id;
@@ -97,6 +107,15 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const byKey = new Map(steps.map((s) => [s.key, s]));
   const flow = useWorkspaceStep({ id, revision: workspace.revision, page, awaitingReconcile: Boolean(item.reconcile) || item.state === 'effect_uncertain' });
   const [open, setOpen] = useState<Open | null>(null);
+  // F-30: "Raise an escalation" opens Start work on the step's line, filled for the person to check; it sends nothing itself.
+  const [starting, setStarting] = useState<{ token: string; line_key: string; intake: Record<string, unknown> } | null>(null);
+  const assign = item.assign;
+  const assignFlow = useWorkspaceAssign({ id, revision: workspace.revision, page });
+  const [assigning, setAssigning] = useState(false);
+  const assignButton = useRef<HTMLButtonElement>(null);
+  const phone = useIsPhone();
+  // F-30 (D-103, D-107): on a phone the issue follow-up's forms open in the full-height Drawer.
+  const inDrawer = phone && workspace.line_key === ISSUE_LINE;
   // The PM's own tick or untick of an `items` target, by section and item id. An item the PM has not touched follows the
   // step's `items_default` (PROPOSAL G-SCR28-1), so an item that arrives with a reload starts as the data says.
   const [choices, setChoices] = useState<Record<string, boolean>>({});
@@ -163,7 +182,25 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     void run({ token, step, itemIds });
   };
 
-  const control = (step: Step, token: string, itemIds?: string[], extra?: { none?: boolean; describedBy?: string; items?: Open['items'] }) => (
+  const control = (step: Step, token: string, itemIds?: string[], extra?: { none?: boolean; describedBy?: string; items?: Open['items'] }) => {
+    const starts = step.disabled_reason || step.task_id ? undefined : startsLine(step);
+    if (starts) {
+      return (
+        <Button
+          key={token}
+          kind={stepKind(step)}
+          aria-haspopup="dialog"
+          aria-describedby={extra?.describedBy}
+          ref={(el) => {
+            controls.current.set(token, el);
+          }}
+          onClick={() => setStarting({ token, ...starts })}
+        >
+          {step.label}
+        </Button>
+      );
+    }
+    return (
     <StepControl
       key={token}
       workId={id}
@@ -177,12 +214,13 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       }}
       onPress={() => press(step, token, itemIds, extra?.items)}
     />
-  );
+    );
+  };
 
   const form = (token: string, row?: Item): ReactNode => {
     if (open?.token !== token) return null;
     const failed = flow.notice?.kind === 'failed' && flow.notice.attempt === token && !flow.notice.sends;
-    return (
+    const shown = (
       <StepForm
         key={token}
         workId={id}
@@ -204,6 +242,53 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         onClose={() => close(token)}
         onAccessError={page.onAccessLost}
       />
+    );
+    return inDrawer ? (
+      <Drawer title={open.step.label} onClose={() => close(token)}>
+        {shown}
+      </Drawer>
+    ) : (
+      shown
+    );
+  };
+
+  const closeAssign = () => {
+    setAssigning(false);
+    requestAnimationFrame(() => assignButton.current?.focus());
+  };
+  const assignOff = assignFlow.pending || flow.pending !== null || flow.allLocked || page.refreshFailed;
+  const assignForm = () => {
+    if (!assigning || !assign || assign.candidates.length === 0) return null;
+    const form = (
+      <AssignForm
+        assign={assign}
+        pending={assignFlow.pending}
+        submitLabel={assignFlow.notice?.kind === 'unconfirmed' ? ASSIGN_TEXT.tryAgain : undefined}
+        onSubmit={async (request) => {
+          if (assignOff) return { kind: 'kept' };
+          const result = await assignFlow.submit(request);
+          if (result.kind === 'done') {
+            setAssigning(false);
+            // the page's own heading takes focus: the button that opened the form is gone with the owner
+            requestAnimationFrame(() => {
+              const heading = document.querySelector<HTMLElement>('h1');
+              if (heading) {
+                heading.tabIndex = -1;
+                heading.focus();
+              }
+            });
+          }
+          return result;
+        }}
+        onClose={closeAssign}
+      />
+    );
+    return inDrawer ? (
+      <Drawer title={ASSIGN_TEXT.open} onClose={closeAssign}>
+        {form}
+      </Drawer>
+    ) : (
+      form
     );
   };
 
@@ -269,7 +354,10 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const said = new Set(workspaceSteps.map((s) => s.consequence));
   const nextLines = (workspace.next ?? []).filter((line) => line.trim() !== '' && !said.has(line));
   const hasNext = (workspace.next ?? []).length > 0;
-  const showPanel = workspaceSteps.length > 0 || nextLines.length > 0;
+  // F-30: a follow-up with nothing to press points at the register, where closing is done; the id is one the response carries.
+  const registerCase = workspace.line_key === ISSUE_LINE && workspaceSteps.length === 0 && assign === undefined ? workspace.context?.project?.case_id : undefined;
+  const readOnlyIssue = registerCase !== undefined;
+  const showPanel = workspaceSteps.length > 0 || nextLines.length > 0 || assign !== undefined || readOnlyIssue;
   const side = workspace.sections.filter(inSide(item));
   const main = workspace.sections.filter((section) => !inSide(item)(section));
   const notice = flow.notice;
@@ -279,6 +367,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         {/* A finished or queued step is told politely; an uncertain send and a changed record answer the press, so each
             is an alert, as on base (a warning Callout has no live role of its own). */}
         <div role="status" aria-live="polite" className="ws-live">
+          {assignFlow.notice?.kind === 'done' && (
+            <Callout kind="success" announce={false}>
+              <span>{assignFlow.notice.text}</span>
+            </Callout>
+          )}
           {(notice?.kind === 'done' || notice?.kind === 'queued') && (
             <Callout kind="success" announce={false}>
               {notice.kind === 'done' && notice.label && <strong>{notice.label} </strong>}
@@ -311,6 +404,21 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
               </Button>
             </Callout>
           </div>
+        )}
+        {assignFlow.notice?.kind === 'stale' && (
+          <div role="alert">
+            <Callout kind="warning" className="ws-notice">
+              {ASSIGN_TEXT.stale(assignFlow.notice.revision)}
+            </Callout>
+          </div>
+        )}
+        {assignFlow.notice?.kind === 'unconfirmed' && (
+          <Callout kind="problem" className="ws-notice">
+            <span className="ws-stack">
+              <strong>{ASSIGN_TEXT.unconfirmedHead}</strong>
+              <span>{ASSIGN_TEXT.unconfirmed}</span>
+            </span>
+          </Callout>
         )}
         {notice?.kind === 'stale' && (
           <div role="alert">
@@ -350,8 +458,9 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       <div className="ws-cols">
         <div className="ws-main">
           {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
+          {workspace.sections.length === 0 && workspaceSteps.length === 0 && assign === undefined && <p className="ws-empty">{WS_TEXT.empty}</p>}
           {main.map((section) => (
-            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
+            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} banner={workspace.status?.tone === 'verified' ? 'success' : 'warning'} />
           ))}
           <WorkspaceLinks links={workspaceLinks(workspace)} page={page} />
         </div>
@@ -378,13 +487,44 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                       return control(s, `ws:${s.key}`, ids, { none: ids.length === 0, describedBy, items: {} });
                     }}
                   </StepRow>
+                  {assign && assign.candidates.length > 0 && (
+                    <Button
+                      ref={assignButton}
+                      kind="primary"
+                      aria-haspopup="dialog"
+                      aria-disabled={assignOff || undefined}
+                      onClick={() => {
+                        if (!assignOff) setAssigning(true);
+                      }}
+                    >
+                      {ASSIGN_TEXT.open}
+                    </Button>
+                  )}
+                  {assign && assign.candidates.length === 0 && <p className="ws-consequence">{ASSIGN_TEXT.noCandidates}</p>}
+                  {registerCase !== undefined && (
+                    <Link className={buttonClass('secondary')} href={`/projects/${encodeURIComponent(registerCase)}/registers`}>
+                      {ISSUE_TEXT.register}
+                    </Link>
+                  )}
                 </div>
               </section>
             )}
             {workspaceSteps.map((s) => form(`ws:${s.key}`))}
+            {assignForm()}
           </aside>
         )}
       </div>
+      {starting && (
+        <StartWorkDrawer
+          entry="default"
+          prefill={{ line_key: starting.line_key, intake: starting.intake }}
+          onClose={() => {
+            const { token } = starting;
+            setStarting(null);
+            requestAnimationFrame(() => controls.current.get(token)?.focus());
+          }}
+        />
+      )}
     </>
   );
 }

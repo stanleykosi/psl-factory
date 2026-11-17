@@ -42,3 +42,18 @@ export function warnLines(note: object): Set<number> {
   const list = (note as { warn_lines?: unknown }).warn_lines;
   return new Set(Array.isArray(list) ? list.filter((n): n is number => Number.isInteger(n)) : []);
 }
+
+/** PROPOSAL (`steps[].starts_line: {line_key, prefill}`, F-30 G-SCR30-1): the step opens Start work on that line, filled for the person to check. Absent or malformed reads as not supplied. */
+export function startsLine(step: Step): { line_key: string; intake: Record<string, unknown> } | undefined {
+  const value = (step as { starts_line?: { line_key?: unknown; prefill?: unknown } }).starts_line;
+  if (typeof value !== 'object' || value === null || !text(value.line_key)) return undefined;
+  const { prefill } = value;
+  if (typeof prefill !== 'object' || prefill === null || Array.isArray(prefill)) return undefined;
+  return { line_key: value.line_key, intake: prefill as Record<string, unknown> };
+}
+
+/** PROPOSAL (`assign.candidates[].kind`, F-30 G-SCR30-3): a candidate who is a team or an outside party, worded as the backend words it. Absent reads as a plain name. */
+export const assignCandidateKind = (candidate: object): 'person' | 'team' | 'outside_party' | undefined => {
+  const kind = (candidate as { kind?: unknown }).kind;
+  return kind === 'person' || kind === 'team' || kind === 'outside_party' ? kind : undefined;
+};

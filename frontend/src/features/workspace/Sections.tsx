@@ -158,7 +158,7 @@ function FactsList({ section }: { section: Section }) {
           ) : (
             <>
               <dt>{item.label ?? item.text}</dt>
-              <dd>{item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? item.value : <Unknown />}</dd>
+              <dd>{item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? item.value : item.severity ? <StatusWord value={item.severity} kind="severity" /> : <Unknown />}</dd>
             </>
           )}
         </div>
@@ -366,7 +366,10 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {(item.agent || item.owner) && <span className="ws-detail">{item.agent ? agentName(item.agent) : item.owner?.name}</span>}
                 <Detail text={item.detail} />
               </span>,
-              item.at ? <time dateTime={item.at}>{formatDayTime(item.at)}</time> : undefined,
+              <>
+                {item.receipt && <StatusWord value={item.receipt} kind="receipt" />}
+                {item.at ? <time dateTime={item.at}>{formatDayTime(item.at)}</time> : <span>{WS_TEXT.timeUnknown}</span>}
+              </>,
             );
           default:
             // `text` and any kind the frame does not know: the words and their cites
@@ -436,7 +439,8 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
   );
 }
 
-export function SectionView({ section, level, controls }: { section: Section; level: 2 | 3; controls?: ItemControls }) {
+/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default. */
+export function SectionView({ section, level, controls, banner = 'warning' }: { section: Section; level: 2 | 3; controls?: ItemControls; banner?: 'warning' | 'success' }) {
   const headId = useId();
   const noteId = useId();
   const Heading = level === 2 ? 'h2' : 'h3';
@@ -445,7 +449,7 @@ export function SectionView({ section, level, controls }: { section: Section; le
   // Conflicts 1: a section with no items and no title but a note is the page's banner: the warning alone, no panel
   if (!restricted && empty && !section.title && section.note) {
     return (
-      <Callout kind="warning" announce={false} className="ws-note">
+      <Callout kind={banner} announce={false} className="ws-note">
         {section.note}
       </Callout>
     );

@@ -241,7 +241,7 @@ describe('Registers (SCR-11)', () => {
     ]);
     expect(text()).toContain('Severity is set by the PM. Closing an issue needs QA and the PM; there is no separate approval.');
     // only a row with a work_id opens its work item
-    expect(screen.getByRole('link', { name: 'Login fails on older Android phones' }).getAttribute('href')).toBe('/work/W-1002');
+    expect(screen.getByRole('link', { name: 'Login fails on older Android phones' }).getAttribute('href')).toBe('/work/W-2411');
     expect(screen.queryByRole('link', { name: 'Report totals round differently' })).toBeNull();
   });
 
