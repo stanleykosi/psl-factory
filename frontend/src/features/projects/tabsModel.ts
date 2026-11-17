@@ -1,4 +1,4 @@
-// Project tabs (SCR-38 Milestones, SCR-11 Registers, SCR-29 Actions): view state, the E-PROJECT-TAB query, response
+// Project tabs (SCR-38 Milestones, SCR-11 Registers, SCR-29 Actions, and the Documents list that opens SCR-08): view state, the E-PROJECT-TAB query, response
 // checks and the display text of each value. Pure functions only. Every value is shown as the response sends it:
 // nothing is totalled, added, sorted or inferred from another fact (INV-UNKNOWN, INV-FACTS).
 import type { operations } from '@/api/schema';
@@ -12,17 +12,18 @@ export type TabResponse = TabOperation['responses'][200]['content']['application
 export type MilestoneRow = NonNullable<TabResponse['milestones']>[number];
 export type RegisterRow = NonNullable<TabResponse['registers']>[number];
 export type ActionRow = NonNullable<TabResponse['actions']>[number];
+export type DocumentRow = NonNullable<TabResponse['documents']>[number];
 export type TabSummary = NonNullable<TabResponse['summary']>;
 export type Amount = MilestoneRow['contract_amount'];
 export type Owner = NonNullable<ActionRow['owner']>;
 export type Paid = NonNullable<MilestoneRow['paid']>;
 export type Change = NonNullable<MilestoneRow['changes']>[number];
 export type Register = NonNullable<TabQuery['register']>;
-export type ListTab = 'milestones' | 'registers' | 'actions';
-export type TabRows = { milestones: MilestoneRow[]; registers: RegisterRow[]; actions: ActionRow[] };
+export type ListTab = 'milestones' | 'documents' | 'registers' | 'actions';
+export type TabRows = { milestones: MilestoneRow[]; documents: DocumentRow[]; registers: RegisterRow[]; actions: ActionRow[] };
 
-/** The three tabs this model reads; Documents and Money keep their own panels. */
-export const hasTabContent = (tab: ProjectTab): tab is ListTab => tab === 'milestones' || tab === 'registers' || tab === 'actions';
+/** The tabs this model reads; Money keeps its own panel. */
+export const hasTabContent = (tab: ProjectTab): tab is ListTab => tab === 'milestones' || tab === 'documents' || tab === 'registers' || tab === 'actions';
 
 export const TAB_LIMIT = 20;
 
@@ -65,6 +66,7 @@ const isText = (value: unknown) => typeof value === 'string' && value !== '';
 
 const ROW_CHECKS: Record<ListTab, (row: Record<string, unknown>) => boolean> = {
   milestones: (row) => Number.isInteger(row.position) && isText(row.name) && isObject(row.contract_amount) && isObject(row.completion),
+  documents: (row) => isText(row.document_id) && isText(row.title) && isText(row.version) && isText(row.status),
   registers: (row) => isText(row.reference) && isText(row.title),
   actions: (row) => isText(row.action_id) && isText(row.title) && isText(row.state),
 };
