@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 5df518a70dfc82f804313de77cb95ae51e1b38c3
+COMMIT: 8a307a5e4ff82ec1c78356f3971b0a6490ba10c9
 BUILDER: builder
 LANE: full
 
@@ -69,3 +69,9 @@ Merged `origin/dlv-00-delivery-setup` (F-26 Money tab) into the branch (merge co
 - Checks on this head: `bash delivery/checks.sh` exit 0 (91 files, 2015 tests); e2e `project-tabs`, `projects` and `money` specs: 71 passed, 0 failed (both widths).
 
 Head 5df518a7 is the coordinator's merge of dlv-00 (delivery records and the D-110 signatures only): `git diff --stat 4852fb3a 5df518a7 -- frontend` is empty, so the checks and e2e results above on 4852fb3a stand.
+
+## UI-3-2 fix (head 8a307a5e)
+`.ptabs__card` is back to `line-height: 1.3` (`project-tabs.css:31`); `var(--text-hint-line)` stays on `.ptabs__route` only, so the phone cards are exactly what round 3 measured and no fidelity run was made (the signed D-110 phone waivers stand). On this head: `bash delivery/checks.sh` exit 0 (91 files, 2015 tests); projects and project-tabs e2e 59 passed, 0 failed.
+
+### Verified
+- UI-3-2 | `grep -n "line-height" frontend/src/features/projects/project-tabs.css` shows `1.3` on `.ptabs__card` and the token only on `.ptabs__route`; `git diff 5df518a7 8a307a5e` changes that one declaration.

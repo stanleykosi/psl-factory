@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-23",
   "outcome": "The minutes line: the PM confirms Tola's suggested decisions and actions, and client minutes go to the PMO Lead for review (contract mock only)",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-LINE-MINUTES"
   ],
@@ -148,7 +148,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delivery technical review",
-      "snapshot_ref": "778e868137d79b0b808b55c5c994c7345613d586",
+      "snapshot_ref": "81e06419df1929371e460af6cd2f2adb13192903",
       "evidence_refs": [
         "delivery/features/F-23/round-4/review-technical.md"
       ]
@@ -157,17 +157,19 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "delivery integrated QA",
-      "snapshot_ref": "778e868137d79b0b808b55c5c994c7345613d586",
+      "snapshot_ref": "81e06419df1929371e460af6cd2f2adb13192903",
       "evidence_refs": [
         "delivery/features/F-23/round-4/review-qa.md"
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "81e06419df1929371e460af6cd2f2adb13192903",
+      "evidence_refs": [
+        "delivery/features/F-23/round-4/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -182,7 +184,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delivery UX review",
-      "snapshot_ref": "778e868137d79b0b808b55c5c994c7345613d586",
+      "snapshot_ref": "81e06419df1929371e460af6cd2f2adb13192903",
       "evidence_refs": [
         "delivery/features/F-23/round-4/review-ux.md"
       ]
@@ -191,7 +193,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delivery UI review",
-      "snapshot_ref": "778e868137d79b0b808b55c5c994c7345613d586",
+      "snapshot_ref": "81e06419df1929371e460af6cd2f2adb13192903",
       "evidence_refs": [
         "delivery/features/F-23/round-4/review-ui.md"
       ]
@@ -200,7 +202,7 @@
       "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "delivery security review",
-      "snapshot_ref": "778e868137d79b0b808b55c5c994c7345613d586",
+      "snapshot_ref": "81e06419df1929371e460af6cd2f2adb13192903",
       "evidence_refs": [
         "delivery/features/F-23/round-4/review-security.md"
       ]
@@ -1682,6 +1684,52 @@
         }
       ],
       "risk_authority": "coordinator, non-blocking routing under the merge delegation"
+    },
+    {
+      "id": "PMO-4-2",
+      "round": 4,
+      "snapshot_ref": "81e06419df1929371e460af6cd2f2adb13192903",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`round-3/fidelity/scores.txt` lists 69.1 and 74.2 for the two default boards. The signed 65.3 and 70.2 are in `fidelity-exceptions.json` and the signoff reports. Fix: add the two rows when convenient.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-4/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T12:38:02Z",
+          "head": "81e06419df1929371e460af6cd2f2adb13192903"
+        }
+      ]
+    },
+    {
+      "id": "PMO-4-4",
+      "round": 4,
+      "snapshot_ref": "81e06419df1929371e460af6cd2f2adb13192903",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The drafted and review boards were last scored in round 2. The round-3 DRAFTED tone change and the amber line could move them slightly. Fix: re-score once only if the design engineer asks at product review.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-23/round-4/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T12:38:02Z",
+          "head": "81e06419df1929371e460af6cd2f2adb13192903"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1888,9 +1936,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -1902,16 +1950,16 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "06e64168c3a74edd358fb74b1998203f4b709c95",
     "task_branch": "fe-line-minutes-the-minutes-line-the-pm-confirms-tola-s",
-    "head_sha": "778e868137d79b0b808b55c5c994c7345613d586",
+    "head_sha": "81e06419df1929371e460af6cd2f2adb13192903",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-23",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/54",
+    "pr_number": 54,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "04ccd5e77147202ace40af3b1cb49f779a0ef47b",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/BACKEND-HANDOFF.md",
@@ -2134,7 +2182,14 @@
       "delivery/features/F-23/round-3/review-technical.md",
       "delivery/features/F-23/round-3/review-ui.md",
       "delivery/features/F-23/round-3/review-ux.md",
+      "delivery/features/F-23/round-4/acceptance-pmo.md",
       "delivery/features/F-23/round-4/build.md",
+      "delivery/features/F-23/round-4/checks.md",
+      "delivery/features/F-23/round-4/review-qa.md",
+      "delivery/features/F-23/round-4/review-security.md",
+      "delivery/features/F-23/round-4/review-technical.md",
+      "delivery/features/F-23/round-4/review-ui.md",
+      "delivery/features/F-23/round-4/review-ux.md",
       "delivery/features/F-24/feature.json",
       "delivery/features/F-24/fidelity-exceptions.json",
       "delivery/features/F-24/round-3/acceptance-pmo.md",
@@ -2320,6 +2375,8 @@
       "delivery/features/F-25/round-2/review-technical.md",
       "delivery/features/F-25/round-2/review-ui.md",
       "delivery/features/F-25/round-2/review-ux.md",
+      "delivery/features/F-25/round-3/build.md",
+      "delivery/features/F-25/round-3/checks.md",
       "delivery/features/F-25/round-3/fidelity/SCR-11-desktop-1440.txt",
       "delivery/features/F-25/round-3/fidelity/SCR-11-desktop-1440/board-marked.png",
       "delivery/features/F-25/round-3/fidelity/SCR-11-desktop-1440/board.png",
@@ -2402,6 +2459,9 @@
       "delivery/features/F-25/round-3/fidelity/SCR-38-mobile-changed-390/side-by-side.png",
       "delivery/features/F-25/round-3/fidelity/scores.txt",
       "delivery/features/F-25/round-3/fidelity/summary.txt",
+      "delivery/features/F-25/round-3/review-technical.md",
+      "delivery/features/F-25/round-3/review-ui.md",
+      "delivery/features/F-25/round-3/review-ux.md",
       "delivery/features/F-25/spec.md",
       "delivery/features/F-26/feature.json",
       "delivery/features/F-26/fidelity-exceptions.json",
@@ -2492,6 +2552,7 @@
       "delivery/features/F-27/round-1/review-ui.md",
       "delivery/features/F-27/round-1/review-ux.md",
       "delivery/features/F-27/round-2/acceptance-pmo.md",
+      "delivery/features/F-27/round-2/acceptance-product.md",
       "delivery/features/F-27/round-2/build.md",
       "delivery/features/F-27/round-2/checks.md",
       "delivery/features/F-27/round-2/fidelity/SCR-13-desktop-delegation-1440/board-marked.png",
@@ -2545,7 +2606,12 @@
       "frontend/e2e/assistant.spec.ts",
       "frontend/e2e/minutes.spec.ts",
       "frontend/e2e/money.spec.ts",
+      "frontend/e2e/setup-delegation.spec.ts",
+      "frontend/e2e/setup.spec.ts",
       "frontend/mock/assistant.mjs",
+      "frontend/mock/delegations.mjs",
+      "frontend/mock/fixtures/E-DELEGATION.json",
+      "frontend/mock/fixtures/E-DELEGATIONS.json",
       "frontend/mock/fixtures/E-DOCUMENT.json",
       "frontend/mock/fixtures/assistant/CV-2401.json",
       "frontend/mock/fixtures/assistant/CV-2402.json",
@@ -2556,6 +2622,12 @@
       "frontend/mock/fixtures/assistant/CV-2411.json",
       "frontend/mock/fixtures/assistant/index.json",
       "frontend/mock/fixtures/assistant/mentions.json",
+      "frontend/mock/fixtures/delegations/authority.json",
+      "frontend/mock/fixtures/delegations/default.json",
+      "frontend/mock/fixtures/delegations/empty.json",
+      "frontend/mock/fixtures/delegations/many.json",
+      "frontend/mock/fixtures/delegations/readonly.json",
+      "frontend/mock/fixtures/delegations/single.json",
       "frontend/mock/fixtures/me.admin.json",
       "frontend/mock/fixtures/me.ceo.json",
       "frontend/mock/fixtures/me.finance_lead.json",
@@ -2592,6 +2664,7 @@
       "frontend/mock/fixtures/work/W-2308.json",
       "frontend/mock/money.mjs",
       "frontend/mock/projects.mjs",
+      "frontend/mock/proposals/setup.json",
       "frontend/mock/server.mjs",
       "frontend/mock/start-work.mjs",
       "frontend/public/agents/chidi-idle.png",
@@ -2603,6 +2676,7 @@
       "frontend/src/app/assistant/[conversationId]/page.tsx",
       "frontend/src/app/assistant/layout.tsx",
       "frontend/src/app/assistant/page.tsx",
+      "frontend/src/app/setup/delegation/page.tsx",
       "frontend/src/components/AgentChecklist.tsx",
       "frontend/src/components/Avatar.tsx",
       "frontend/src/components/ChatMessage.tsx",
@@ -2638,6 +2712,14 @@
       "frontend/src/features/projects/money.css",
       "frontend/src/features/projects/moneyModel.ts",
       "frontend/src/features/projects/useMoney.ts",
+      "frontend/src/features/setup/DelegationForm.tsx",
+      "frontend/src/features/setup/DelegationView.tsx",
+      "frontend/src/features/setup/api.ts",
+      "frontend/src/features/setup/contract-proposal.ts",
+      "frontend/src/features/setup/format.ts",
+      "frontend/src/features/setup/setup.css",
+      "frontend/src/features/setup/useDelegationAdd.ts",
+      "frontend/src/features/setup/useDelegations.ts",
       "frontend/src/features/start-work/LineForm.tsx",
       "frontend/src/features/start-work/StartWorkDrawer.tsx",
       "frontend/src/features/start-work/useStartWork.ts",
@@ -2665,6 +2747,8 @@
       "frontend/tests/money-model.test.ts",
       "frontend/tests/money.test.tsx",
       "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/setup-delegation-mock.test.ts",
+      "frontend/tests/setup-delegation.test.tsx",
       "frontend/tests/start-work-prefill.test.tsx",
       "frontend/tests/workspace-step.test.tsx"
     ]
@@ -2690,9 +2774,43 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "789 changed files exceed the auto-merge limit of 15",
+      "finding TECH-1-1 was accepted as a risk",
+      "finding TECH-1-2 was accepted as a risk",
+      "finding TECH-1-3 was accepted as a risk",
+      "finding TECH-1-4 was accepted as a risk",
+      "finding UX-1-2 was accepted as a risk",
+      "finding UX-1-3 was accepted as a risk",
+      "finding UX-1-4 was accepted as a risk",
+      "finding UX-1-5 was accepted as a risk",
+      "finding UX-1-6 was accepted as a risk",
+      "finding UX-1-7 was accepted as a risk",
+      "finding UX-1-8 was accepted as a risk",
+      "finding UI-1-5 was accepted as a risk",
+      "finding UI-1-6 was accepted as a risk",
+      "finding TECH-2-2 was accepted as a risk",
+      "finding UX-2-1 was accepted as a risk",
+      "finding UI-2-3 was accepted as a risk",
+      "finding SEC-2-1 was accepted as a risk",
+      "finding TECH-3-1 was accepted as a risk",
+      "finding TECH-3-2 was accepted as a risk",
+      "finding UI-3-1 was accepted as a risk",
+      "finding UI-3-2 was accepted as a risk",
+      "finding SEC-3-1 was accepted as a risk",
+      "finding QA-3-2 was accepted as a risk",
+      "finding TECH-4-1 was accepted as a risk",
+      "finding UX-4-1 was accepted as a risk",
+      "finding UI-4-1 was accepted as a risk",
+      "finding QA-4-1 was accepted as a risk",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "81e06419df1929371e460af6cd2f2adb13192903",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -2821,6 +2939,46 @@
       "at": "2026-11-17T11:41:41Z",
       "round": 4,
       "head": "778e868137d79b0b808b55c5c994c7345613d586",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-17T12:38:15Z",
+      "round": 4,
+      "head": "81e06419df1929371e460af6cd2f2adb13192903",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-17T12:38:17Z",
+      "round": 4,
+      "head": "81e06419df1929371e460af6cd2f2adb13192903",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-17T12:59:51Z",
+      "round": 4,
+      "head": "81e06419df1929371e460af6cd2f2adb13192903",
+      "reason": "design engineer approved merge of PR #54, 17 Nov"
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-17T13:00:01Z",
+      "round": 4,
+      "head": "81e06419df1929371e460af6cd2f2adb13192903",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-17T13:00:01Z",
+      "round": 4,
+      "head": "81e06419df1929371e460af6cd2f2adb13192903",
       "reason": null
     }
   ],
