@@ -211,16 +211,16 @@ for (const [label, viewport] of [
       await expectNoAxeViolations(page);
     });
 
-    test('project tab: Milestones opens a coming-next panel under the same header', async ({ page }) => {
-      await page.goto('/projects/P-0101/milestones');
+    test('project tab: Documents opens a coming-next panel under the same header', async ({ page }) => {
+      await page.goto('/projects/P-0101/documents');
       await journeyLoaded(page);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
-      await expect(projectTabs(page).nth(1)).toHaveAttribute('aria-selected', 'true');
-      await expect(page.getByRole('heading', { level: 2, name: 'Milestones come next' })).toBeVisible();
+      await expect(projectTabs(page).nth(2)).toHaveAttribute('aria-selected', 'true');
+      await expect(page.getByRole('heading', { level: 2, name: 'Documents come next' })).toBeVisible();
       await expect(lineLinks(page)).toHaveCount(0);
       expect(await page.title()).toBe('Project · PSL Factory');
       expect(await noHorizontalScroll(page)).toBe(true);
-      await shot(page, `project-milestones-${w}`);
+      await shot(page, `project-documents-${w}`);
       await expectNoAxeViolations(page);
       await page.getByRole('link', { name: 'Open the journey' }).click();
       await expect(page).toHaveURL(/\/projects\/P-0101$/);

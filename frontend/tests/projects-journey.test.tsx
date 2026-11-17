@@ -239,7 +239,6 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
 
 describe('tabs other than Journey (contents come with FE-M3-PROJECT-TABS)', () => {
   it.each([
-    ['milestones', 'Milestones come next', 1],
     ['documents', 'Documents come next', 2],
   ] as const)('%s: same header, the tab selected and a coming-next panel instead of the journey', async (tab, heading, index) => {
     await open('P-0101', tab);

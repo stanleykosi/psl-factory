@@ -31,7 +31,9 @@ import {
 } from './model';
 import { MoneyTab } from './MoneyTab';
 import { ProjectNoAccess } from './ProjectStates';
+import { ProjectTabContent } from './ProjectTabContent';
 import { PANEL_ID, ProjectTabs } from './ProjectTabs';
+import { hasTabContent } from './tabsModel';
 import { useProject } from './useProject';
 
 import './projects.css';
@@ -196,7 +198,15 @@ function ProjectView({ journey, base, tab }: { journey: JourneyView; base: strin
       </header>
       <ProjectTabs base={base} current={tab} counts={journey.tab_counts} />
       <div role="tabpanel" id={PANEL_ID} aria-label={PROJECT_TABS.find((t) => t.key === tab)?.label} className="projects__panel">
-        {tab === 'journey' ? <JourneyTab journey={journey} /> : tab === 'money' ? <MoneyTab caseId={journey.case_id} base={base} /> : <ComingNext tab={tab} base={base} />}
+        {tab === 'journey' ? (
+          <JourneyTab journey={journey} />
+        ) : hasTabContent(tab) ? (
+          <ProjectTabContent caseId={journey.case_id} journey={journey} base={base} tab={tab} />
+        ) : tab === 'money' ? (
+          <MoneyTab caseId={journey.case_id} base={base} />
+        ) : (
+          <ComingNext tab={tab} base={base} />
+        )}
       </div>
     </div>
   );
