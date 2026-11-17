@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: ba04923c108e0180ffdbd49404afc42fceeb191d
+COMMIT: 5df518a70dfc82f804313de77cb95ae51e1b38c3
 REVIEWER: reviewer-technical
 AUTHORITY: delivery technical review
 
@@ -10,7 +10,7 @@ AUTHORITY: delivery technical review
 - I did not run the checks. build.md reports `delivery/checks.sh` passing on this head and 71 e2e tests passing on the merge commit.
 
 ## Findings
-- TECH-3-1 | non-blocking | frontend/mock/project-tabs.mjs:1-5 | The header comment still says "Documents and Money are not mocked here (501)". Money is now answered by `money.mjs` before this handler, and `OTHER_TABS` was correctly cut to `['documents']`. | Change the comment to "Documents is not mocked here (501); money goes to money.mjs". Comment only.
+- None open. TECH-3-1 (the stale header comment in `frontend/mock/project-tabs.mjs`) is fixed at 5df518a7.
 
 ## Verified
 - ProjectJourney chain | verified | `ProjectJourney.tsx` is `journey` then `hasTabContent(tab)` (`ProjectTabContent` with `journey.case_id`) then `tab === 'money'` (`MoneyTab`) then `ComingNext`. Both features' imports are kept, and `ProjectView` has no extra prop.
@@ -23,3 +23,11 @@ AUTHORITY: delivery technical review
 
 ## Carried forward
 - TECH-1-4, TECH-1-6 and TECH-2-2 stay accepted. Nothing in the merge changes their impact.
+
+## Update for head 5df518a7 (diff ba04923c..5df518a7)
+- TECH-3-1 | verified | `project-tabs.mjs` header now reads "Documents is not mocked here (501); money goes to money.mjs (F-26)". It is a comment-only change.
+- F-25 code change | verified | `project-tabs.css` only: `.ptabs__route` and `.ptabs__card` line-height use `var(--text-hint-line)`. The token exists in `src/styles/tokens.css:145` (18px). This matches the tokens-only rule, and no other F-25 file changed (components, tabs, hook and tests are untouched).
+- server.mjs after the F-27 merge | verified | `M1_OPERATIONS` has `E-PROJECT-TAB` once and `E-DELEGATIONS`, `E-DELEGATION` added, so both features' entries are kept. F-26's `isMoneyRequest` line still precedes the `M1_OPERATIONS` check. F-25's loader exclusion, `projectTab` import and dispatch are intact. The F-27 import, dispatch line and `resetDelegations()` are additive and do not touch the project-tab path.
+- mock-contract.test.ts | verified | F-27 adds delegation cases (body, persona statuses, contract bodies). `tab: 'milestones'` in `PATH_VALUES` is kept, and nothing of F-25's or F-26's is removed.
+- Everything else in the diff is F-27's Setup delegation code and its tests, outside this feature. I did not review it.
+- Verdict unchanged: PASS. I did not run the checks; I relied on build.md (`delivery/checks.sh` exit 0 with 2015 tests, and 71 of 71 e2e).

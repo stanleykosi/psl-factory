@@ -38,7 +38,7 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 );
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
-const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'milestones' };
+const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'milestones', document_id: 'D-2304', version: '1' };
 const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
@@ -81,8 +81,57 @@ function savedRecordsStripped(body: unknown): unknown {
   }
   return copy;
 }
+// PROPOSAL (D-LINE-WORKSPACE, F-23): `steps[].items_default` ("checked" or absent) and `workspace.links[]`
+// ({key, label, target: {kind: assistant | document, document_id?, version?}}). Each is checked on its own, then removed
+// before the schema check; the generated types and openapi.json do not carry them.
+const linkSchema = {
+  type: 'array',
+  minItems: 1,
+  items: {
+    oneOf: [
+      { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind'], properties: { kind: { const: 'assistant' } } } } },
+      { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'document_id', 'version'], properties: { kind: { const: 'document' }, document_id: { type: 'string', minLength: 1 }, version: { anyOf: [{ type: 'string' }, { type: 'integer' }] } } } } },
+    ],
+  },
+};
+const validLinks = ajv.compile(linkSchema);
+function minutesProposalsStripped(body: unknown): unknown {
+  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { columns?: { date_format?: unknown }[]; items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; items_default?: unknown }[] } };
+  const w = copy.workspace;
+  if (w?.links !== undefined) {
+    expect(validLinks(w.links), ajv.errorsText(validLinks.errors)).toBe(true);
+    delete w.links;
+  }
+  const note = (copy.workspace as { agent_note?: { lines: string[]; warn_lines?: unknown } } | undefined)?.agent_note;
+  if (note?.warn_lines !== undefined) {
+    expect(Array.isArray(note.warn_lines) && note.warn_lines.every((n) => Number.isInteger(n) && n >= 0 && n < note.lines.length)).toBe(true);
+    delete note.warn_lines;
+  }
+  // PROPOSAL (item `values`): each value is a string, or a record {value, label}
+  for (const section of w?.sections ?? []) {
+    for (const column of section.columns ?? []) {
+      if (column.date_format === undefined) continue;
+      expect(column.date_format).toBe('day_month');
+      delete column.date_format;
+    }
+    for (const row of section.items) {
+      if (row.values === undefined) continue;
+      for (const [name, v] of Object.entries(row.values)) {
+        const ok = typeof v === 'string' ? v.trim() !== '' : typeof v === 'object' && v !== null && typeof (v as { value?: unknown }).value === 'string' && typeof (v as { label?: unknown }).label === 'string';
+        expect(ok, `${row.id}.${name}`).toBe(true);
+      }
+      delete row.values;
+    }
+  }
+  for (const step of w?.steps ?? []) {
+    if (step.items_default === undefined) continue;
+    expect(step.items_default, step.key).toBe('checked');
+    delete step.items_default;
+  }
+  return copy;
+}
 const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
-  'E-WORK-ITEM': savedRecordsStripped,
+  'E-WORK-ITEM': minutesProposalsStripped,
   'E-EXCEPTIONS': exceptionsBody,
   'E-MONTH-END': monthEndBody,
   'E-SETUP-RULES': contractRules,
@@ -410,7 +459,7 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
         } else {
           expect(decidePresentation, name).toBeUndefined();
         }
-        expectValid('E-WORK-ITEM', 200, item);
+        expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(item));
         expect(body.sample, name).toBe(true);
       }
     }
@@ -559,5 +608,47 @@ describe('F-22 weekly fixtures (W-2209 to W-2214)', () => {
       expectValid('E-WORK-ITEM', 200, body);
       expect(body.sample, name).toBe(true);
     }
+  });
+});
+
+describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
+  const dir = join(__dirname, '../mock/fixtures/work');
+  const all = readdirSync(dir).filter((name) => /^W-23\d\d(\.[a-z]+)?\.json$/.test(name) && !name.includes('.steps'));
+
+  it('every minutes item and sidecar is schema-valid and marked sample once the two proposal keys are removed', () => {
+    expect(all.filter((name) => /^W-23\d\d\.json$/.test(name))).toHaveLength(8);
+    for (const name of all) {
+      const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
+      expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(body));
+      expect(body.sample, name).toBe(true);
+    }
+  });
+
+  it('the proposal keys exist on their own: items_default only on W-2301, W-2306 and W-2307 confirm steps, links only on the four boards that draw them', () => {
+    const withKey = (key: 'items_default' | 'links') =>
+      readdirSync(dir)
+        .filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name))
+        .filter((name) => (key === 'links' ? 'links' in (JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}) : JSON.stringify(JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}).includes('"items_default"')));
+    expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
+    expect(withKey('links').every((name) => /^W-23/.test(name))).toBe(true);
+    expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
+  });
+
+  it('items[].values, columns[].date_format and agent_note.warn_lines appear only in W-23xx fixtures (TECH-2-1)', () => {
+    type Section = { items?: { values?: unknown }[]; columns?: { date_format?: unknown }[] };
+    const files = readdirSync(dir).filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name));
+    const carrying = (pick: (section: Section) => boolean) =>
+      files.filter((name) => ((JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace?.sections ?? []) as Section[]).some(pick));
+    const values = carrying((sec) => (sec.items ?? []).some((i) => i.values !== undefined));
+    const formats = carrying((sec) => (sec.columns ?? []).some((c) => c.date_format !== undefined));
+    expect(values.length).toBeGreaterThan(0);
+    expect(formats.length).toBeGreaterThan(0);
+    const warns = files.filter((name) => JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace?.agent_note?.warn_lines !== undefined);
+    expect([...values, ...formats, ...warns].every((name) => /^W-23/.test(name))).toBe(true);
+  });
+
+  it('the E-DOCUMENT fixture is a test template for D-2304 version 1', () => {
+    const body = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/E-DOCUMENT.json'), 'utf8'));
+    expect(body).toMatchObject({ document_id: 'D-2304', version: '1', test_template: true });
   });
 });

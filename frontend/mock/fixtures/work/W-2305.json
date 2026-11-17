@@ -1,0 +1,218 @@
+{
+  "id": "W-2305",
+  "title": "Weekly sync · 10 Nov",
+  "line": "Formal minutes and action handoff",
+  "reference": "MIN-0141",
+  "state": "action_needed",
+  "revision": 6,
+  "stations": [
+    {
+      "name": "Confirm",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-10T15:20:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-2305",
+      "kind": "decide",
+      "title": "Review client minutes v1",
+      "required_role": "PMO Lead",
+      "you_can_act": true,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Minutes v1",
+          "number": 1,
+          "drafted_at": "2026-11-10T15:20:00Z"
+        },
+        "basis": "Decisions and actions confirmed by the PM",
+        "recipient": "Ada Okoye · Lagoon Health",
+        "prepared_by": {
+          "name": "Tunde Bello",
+          "role": "PMO",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PMO Lead",
+              "person": "Kemi Adebayo",
+              "status": "current",
+              "is_you": true
+            }
+          ],
+          "your_step": 1,
+          "step_count": 1
+        }
+      }
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted the client minutes",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-0211",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "minutes",
+    "screen": "SCR-28",
+    "view": "review",
+    "context": {
+      "project": {
+        "case_id": "C-0211",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "C-0211",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "MIN-0141",
+          "label": "Minutes · MIN-0141"
+        }
+      ]
+    },
+    "revision": 6,
+    "status": {
+      "label": "Your review",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "summary",
+        "kind": "checklist",
+        "title": "Minutes v1 · for Lagoon Health",
+        "items": [
+          {
+            "id": "S-0",
+            "text": "Minutes v1 · client version",
+            "tag": {
+              "label": "DRAFTED",
+              "tone": "agent"
+            }
+          },
+          {
+            "id": "S-1",
+            "text": "2 decisions · confirmed by you",
+            "tag": {
+              "label": "IN",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "S-2",
+            "text": "3 actions · 1 has no owner yet",
+            "tag": {
+              "label": "IN",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "S-3",
+            "text": "Attendees and notes",
+            "tag": {
+              "label": "ATTACHED",
+              "tone": "neutral"
+            }
+          }
+        ]
+      },
+      {
+        "key": "recipients",
+        "kind": "recipients",
+        "title": "Goes to",
+        "items": [
+          {
+            "id": "RC-1",
+            "text": "Ada Okoye · Lagoon Health",
+            "channel": "email",
+            "receipt": "not_yet"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "key": "open_minutes",
+        "label": "Open the minutes",
+        "target": {
+          "kind": "document",
+          "document_id": "D-2304",
+          "version": 1
+        }
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_send",
+        "label": "Approve and send",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "sends": true,
+        "task_id": "T-2305",
+        "consequence": "Approving sends this exact version to the client. Actions are created whether or not the client reads it."
+      },
+      {
+        "key": "return",
+        "label": "Return with a note",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "task_id": "T-2305"
+      }
+    ]
+  }
+}
