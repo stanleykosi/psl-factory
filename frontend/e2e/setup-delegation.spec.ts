@@ -120,7 +120,7 @@ test.describe('desktop', () => {
     const panel = panelOf(page);
     await fill(panel, page);
     await panel.getByRole('button', { name: 'Add delegation' }).click();
-    await expect(panel.getByText('Check these fields: delegate, ends.')).toBeVisible();
+    await expect(panel.getByText('Check these fields: To, Ends.')).toBeVisible();
     await expect(panel.getByRole('combobox', { name: 'To' })).toBeFocused();
     await expect(panel.getByRole('combobox', { name: 'To' })).toHaveAttribute('aria-invalid', 'true');
     await expect(panel.getByRole('combobox', { name: 'To' })).toHaveAccessibleDescription(/This person can’t take this delegation\./);
@@ -228,7 +228,7 @@ test.describe('phone', () => {
     sheet = page.getByRole('dialog', { name: 'Add a delegation' });
     await fill(sheet, page);
     await sheet.getByRole('button', { name: 'Add delegation' }).click();
-    await expect(sheet.getByText('Check these fields: delegate, ends.')).toBeVisible();
+    await expect(sheet.getByText('Check these fields: To, Ends.')).toBeVisible();
     await expect(sheet.getByRole('combobox', { name: 'To' })).toBeFocused();
     await expectNoAxeViolations(page);
 
@@ -248,7 +248,15 @@ test.describe('phone', () => {
     const sheet = page.getByRole('dialog', { name: 'Add a delegation' });
     await fill(sheet, page);
     await sheet.getByRole('button', { name: 'Add delegation' }).click();
-    await expect(sheet.getByText(CHANGED)).toBeVisible();
+    // The sheet closes so the list can be checked (UX-1-2); the warning shows above the cards.
+    await expect(sheet).toHaveCount(0);
+    await expect(page.locator('.setup-phone').getByText(CHANGED)).toBeVisible();
+    await expect(page.locator('.setup-phone [role="listitem"]')).toHaveCount(3);
+    await expectNoAxeViolations(page);
+    await page.getByRole('button', { name: 'Add delegation' }).click();
+    await expect(sheet.getByRole('button', { name: 'Start again' })).toBeVisible();
+    await expect(sheet.getByRole('button', { name: 'Add delegation' })).toBeDisabled();
+    expect(await noSideScroll(page)).toBe(true);
     await expectNoAxeViolations(page);
     for (const scenario of ['empty', 'readonly', 'forbidden']) {
       await openAs(page, context, { psl_mock_delegations: scenario, psl_mock_delegations_save: '' });

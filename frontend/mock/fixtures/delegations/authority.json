@@ -56,6 +56,11 @@
       "name": "Femi Ade",
       "role": "PMO Lead",
       "for_person_id": "P-KEMI"
+    },
+    {
+      "person_id": "P-CHIKA",
+      "name": "Chika Obi",
+      "role": "Finance Lead"
     }
   ],
   "authorities": [

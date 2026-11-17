@@ -103,6 +103,6 @@
 .setup-main .setup-table--deleg .psl-table th:nth-child(3) { width: 18.5%; }
 .setup-main .setup-table--deleg .psl-table th:nth-child(4), .setup-main .setup-table--deleg .psl-table th:nth-child(5) { width: 15%; }
 .setup-table--deleg td:not(:nth-child(4)) { white-space: nowrap; }
-.setup-deleg__bar { position: fixed; z-index: 1; left: 0; right: 0; bottom: 0; padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); }
-/* room under the last card for the fixed bar (12 + 50 + 18 + the 2px rule) */
-.setup-phone.setup-deleg--bar { padding-bottom: 82px; }
+.setup-deleg__bar { position: fixed; z-index: 1; left: 0; right: 0; bottom: 0; }
+/* room under the last card for the fixed action bar: its padding, the large button and its rule */
+.setup-phone.setup-deleg--bar { padding-bottom: calc(var(--space-3) + var(--control-lg) + var(--space-18px) + var(--rule-strong)); }

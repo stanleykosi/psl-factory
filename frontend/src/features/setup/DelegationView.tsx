@@ -12,9 +12,9 @@ import { ApiError } from '@/api/errors';
 import { Button, Drawer, EmptyState, PageTitle, Panel, Table, Tag, Unknown, VisuallyHidden } from '@/components';
 
 import type { DelegationBody, DelegationRow, DelegationsPage } from './contract-proposal';
-import { CHANGED, DelegationForm, type Blocked, type SendResult, type Summary } from './DelegationForm';
+import { CHANGED, DelegationForm, type Blocked, type FormFrame, type SendResult, type Summary } from './DelegationForm';
 import { boardDate, dateRange } from './format';
-import type { Notice } from './SetRulePanel';
+import { OutcomeNotice, type Notice } from './SetRulePanel';
 import { RulesReadState, SetupFrame, SetupGate, ShowMore, useSetupPhoneBack } from './SetupFrame';
 import { useDelegationAdd } from './useDelegationAdd';
 import { useDelegations } from './useDelegations';
@@ -24,6 +24,7 @@ const CHECKING = 'We couldn’t confirm the delegation. Checking the list…';
 const NOT_ADDED = 'It was not added. You can add it again.';
 const UNCHECKED = 'We couldn’t check whether the delegation was added. Try again to read the list before adding again.';
 const STALE = 'This changed while you were working. The list has been reloaded; check it and add again.';
+const STALE_UNREAD = 'This changed while you were working, and we couldn’t reload the list. Reload the page before adding again.';
 const NOT_REFRESHED = 'The delegation was added. We couldn’t refresh the list.';
 
 type Focus = { kind: 'row'; id: string } | { kind: 'head' };
@@ -110,6 +111,8 @@ function DelegationView() {
     } else {
       setBlocked('changed');
       setNotice({ tone: 'warning', text: CHANGED });
+      // On a phone the sheet covers the list the person now has to check, so it closes and the warning shows above the cards.
+      setSheet(false);
     }
   };
 
@@ -133,7 +136,8 @@ function DelegationView() {
         return { kind: 'clear' };
       }
       case 'rejected':
-        setNotice({ tone: 'problem', text: outcome.error.kind === 'stale' ? STALE : outcome.error.message });
+        if (outcome.error.kind !== 'stale') setNotice({ tone: 'problem', text: outcome.error.message });
+        else setNotice({ tone: 'problem', text: outcome.page instanceof ApiError ? STALE_UNREAD : STALE });
         return { kind: 'keep' };
       case 'invalid':
         return { kind: 'invalid', message: outcome.message, fields: outcome.fields };
@@ -162,7 +166,7 @@ function DelegationView() {
     setNotice(null);
   };
 
-  const form = (onCancel?: () => void) =>
+  const form = (onCancel?: () => void, frame?: FormFrame) =>
     canAdd(page) ? (
       <DelegationForm
         page={page}
@@ -173,6 +177,7 @@ function DelegationView() {
         onStartAgain={startAgain}
         onTryAgain={() => void tryAgain()}
         onCancel={onCancel}
+        frame={frame}
       />
     ) : null;
 
@@ -239,6 +244,8 @@ function DelegationView() {
       <div className={canAdd(page) ? 'setup-page setup-phone setup-deleg--bar' : 'setup-page setup-phone'}>
         <PageTitle phoneSize={22}>Delegation</PageTitle>
         {head}
+        {/* the sheet closed so the list can be checked (UX-1-2); reopening it shows the held form and Start again */}
+        {!sheet && blocked === 'changed' && notice && <OutcomeNotice notice={notice} />}
         {empty ? (
           emptyState
         ) : (
@@ -264,19 +271,26 @@ function DelegationView() {
           </>
         )}
         {canAdd(page) && (
-          <div className="setup-deleg__bar">
+          <div className="psl-actionbar setup-deleg__bar">
             <Button size="lg" block aria-haspopup="dialog" onClick={() => setSheet(true)}>
               Add delegation
             </Button>
           </div>
         )}
         {sheet && canAdd(page) && (
-          // The sheet opens on its form, not on the first text field (Starts), so From and To come first.
-          <Drawer title="Add a delegation" initialFocus={sheetStart} onClose={() => setSheet(false)}>
-            <div ref={sheetStart} tabIndex={-1} className="setup-name">
-              {form(() => setSheet(false))}
-            </div>
-          </Drawer>
+          form(
+            () => setSheet(false),
+            ({ fields, actions, note }) => (
+              // The sheet opens on its form, not on the first text field (Starts), so From and To come first; the buttons
+              // sit in the sheet's footer, which stays while the fields scroll.
+              <Drawer title="Add a delegation" initialFocus={sheetStart} onClose={() => setSheet(false)} footer={actions}>
+                <div ref={sheetStart} tabIndex={-1} className="setup-name setup-deleg__form">
+                  {fields}
+                  {note}
+                </div>
+              </Drawer>
+            ),
+          )
         )}
       </div>
 

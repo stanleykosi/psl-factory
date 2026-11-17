@@ -329,11 +329,13 @@ describe('From, To and Authority (AC 6, 7, 8)', () => {
     expect(puts()[0].body).toEqual({ expected_revision: 1, delegate: 'P-CHIKA', starts: '2026-12-01', ends: '2026-12-03', authority: 'approve_milestones', reason: 'Training' });
   });
 
-  it('authority: the one From is text; Authority is a required Select with no default; rows show the label, else the raw value', async () => {
+  it('authority: the one From is text and is sent as from_person_id (SEC-1-1); To lists only its paired delegate; Authority is a required Select with no default; rows show the label, else the raw value', async () => {
     serveList(fixture('authority'));
     await open();
     expect(panel().queryByRole('combobox', { name: 'From' })).toBeNull();
     expect(panel().getByText('Kemi Adebayo · PMO Lead')).toBeTruthy();
+    // Chika is offered unpaired (the caller's option), so with Kemi shown as From only Femi is listed.
+    expect(optionsOf(panel(), 'To').map(([l]) => l)).toEqual(['Femi Ade · PMO Lead']);
     expect(optionsOf(panel(), 'Authority')).toEqual([
       ['Approve milestones', 'false'],
       ['Approve invoices', 'false'],
@@ -346,7 +348,24 @@ describe('From, To and Authority (AC 6, 7, 8)', () => {
     expect(panel().getByText('Choose an authority.')).toBeTruthy();
     pick(panel(), 'Authority', 'Approve invoices');
     await send();
-    expect(puts()[0].body).toEqual({ expected_revision: 2, delegate: 'P-FEMI', starts: '2026-12-01', ends: '2026-12-03', authority: 'approve_invoices', reason: 'Training' });
+    expect(puts()[0].body).toEqual({ expected_revision: 2, from_person_id: 'P-KEMI', delegate: 'P-FEMI', starts: '2026-12-01', ends: '2026-12-03', authority: 'approve_invoices', reason: 'Training' });
+  });
+
+  it('pairing keys without a From list (SEC-1-2): From reads You and To lists only the unpaired options', async () => {
+    const page = fixture('single');
+    page.delegate_options = [
+      { person_id: 'P-FEMI', name: 'Femi Ade', role: 'PMO Lead', for_person_id: 'P-KEMI' },
+      { person_id: 'P-CHIKA', name: 'Chika Obi', role: 'Finance Lead' },
+    ];
+    serveList(page);
+    await open();
+    expect(panel().getByText('You')).toBeTruthy();
+    expect(combo(panel(), 'To').disabled).toBe(false);
+    expect(optionsOf(panel(), 'To').map(([l]) => l)).toEqual(['Chika Obi · Finance Lead']);
+    fill(panel(), { from: '', to: 'Chika Obi · Finance Lead' });
+    await send();
+    expect(puts()[0].body).not.toHaveProperty('from_person_id');
+    expect(puts()[0].body!.delegate).toBe('P-CHIKA');
   });
 });
 
@@ -448,13 +467,33 @@ describe('outcomes (AC 11 to 15)', () => {
     await open();
     fill();
     await send();
-    await waitFor(() => expect(panel().getByText('Check these fields: delegate, ends.')).toBeTruthy());
+    // The top message names the fields by their visible labels (UX-1-1), in form order.
+    await waitFor(() => expect(panel().getByText('Check these fields: To, Ends.')).toBeTruthy());
+    expect(panel().queryByText(/delegate, ends/)).toBeNull();
     expect(panel().getByText('This person can’t take this delegation.')).toBeTruthy();
     expect(panel().getByText('Choose an end date within the next 90 days.')).toBeTruthy();
     expect(document.activeElement).toBe(combo(panel(), 'To'));
     expect(combo(panel(), 'To').textContent).toContain('Femi Ade · PMO Lead');
     expect((panel().getByLabelText('Reason') as HTMLInputElement).value).toBe('Training');
     expect(lists()).toHaveLength(1);
+  });
+
+  it('422 naming a field the form lacks keeps the backend message', async () => {
+    answers.put = () => json(422, { code: 'invalid', message: 'Something else is wrong.', fields: [{ name: 'expected_revision', message: 'Send the revision.' }] });
+    await open();
+    fill();
+    await send();
+    await waitFor(() => expect(panel().getByText('Something else is wrong.')).toBeTruthy());
+  });
+
+  it('409 whose re-read fails does not say the list was reloaded (TECH-1-3)', async () => {
+    answers.list = (n) => (n === 0 ? json(200, fixture('default')) : json(500, BOOM));
+    answers.put = () => json(409, { code: 'stale_revision', message: 'Changed.' });
+    await open();
+    fill();
+    await send();
+    await waitFor(() => expect(panel().getByText(/we couldn’t reload the list/)).toBeTruthy());
+    expect(panel().queryByText(STALE_TEXT)).toBeNull();
   });
 
   it('409: re-reads, the stale sentence, entries kept, the next press sends the new revision; nothing resends by itself', async () => {
@@ -628,6 +667,38 @@ describe('the phone sheet (AC 17)', () => {
     await send(again as ReturnType<typeof panel>);
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     expect(phone().getAllByRole('listitem')).toHaveLength(3);
+    expect(puts()).toHaveLength(1);
+  });
+
+  it('the sheet keeps Add and Cancel in its footer, outside the scrolling body (UI-1-2)', async () => {
+    await open();
+    fireEvent.click(phone().getByRole('button', { name: 'Add delegation' }));
+    const dialog = screen.getByRole('dialog', { name: 'Add a delegation' });
+    const foot = dialog.querySelector('[class$="__foot"]') as HTMLElement;
+    expect(within(foot).getAllByRole('button').map((b) => b.textContent)).toEqual(['Add delegation', 'Cancel']);
+    expect(within(foot).queryByText(NOTE)).toBeNull();
+    expect(within(dialog).getByText(NOTE)).toBeTruthy();
+  });
+
+  it('uncertain and the list moved: the sheet closes so the list can be checked, the warning shows above the cards, and reopening shows Start again (UX-1-2)', async () => {
+    const l = live(fixture('default'), () => json(500, BOOM));
+    answers.list = l.list;
+    answers.put = l.put;
+    await open();
+    const button = phone().getByRole('button', { name: 'Add delegation' });
+    fireEvent.click(button);
+    const sheet = within(screen.getByRole('dialog', { name: 'Add a delegation' }));
+    fill(sheet as ReturnType<typeof panel>);
+    await send(sheet as ReturnType<typeof panel>);
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(phone().getByText(CHANGED)).toBeTruthy();
+    expect(phone().getAllByRole('listitem')).toHaveLength(3);
+    fireEvent.click(button);
+    const again = within(screen.getByRole('dialog', { name: 'Add a delegation' }));
+    expect((again.getByRole('button', { name: 'Add delegation' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(again.getByRole('button', { name: 'Start again' }));
+    expect((again.getByRole('button', { name: 'Add delegation' }) as HTMLButtonElement).disabled).toBe(false);
+    expect(phone().queryByText(CHANGED)).toBeNull();
     expect(puts()).toHaveLength(1);
   });
 });

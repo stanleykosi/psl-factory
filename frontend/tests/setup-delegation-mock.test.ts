@@ -176,6 +176,18 @@ describe('E-DELEGATION', () => {
     expect(row.authority).toBe('approve_milestones');
   });
 
+  it('an absent from_person_id is the caller even when one From option is offered (SEC-1-1); the named From is recorded as named', async () => {
+    const extra = 'psl_mock_delegations=authority';
+    const base = { expected_revision: 2, starts: '2026-11-20', ends: '2026-11-21', authority: 'approve_invoices' };
+    // Femi is paired with Kemi only, so the caller cannot take him; Chika is unpaired, so the caller can.
+    expect(names(await put({ ...base, delegate: 'P-FEMI' }, { extra }))).toEqual(['delegate']);
+    expect((await put({ ...base, delegate: 'P-CHIKA' }, { extra })).status).toBe(200);
+    expect((await list('', 'admin', extra)).body.items.at(-1)!.from).toEqual({ name: 'Ada Okafor', is_you: true });
+    expect(names(await put({ ...base, expected_revision: 3, from_person_id: 'P-KEMI', delegate: 'P-CHIKA' }, { extra }))).toEqual(['delegate']);
+    expect((await put({ ...base, expected_revision: 3, from_person_id: 'P-KEMI', delegate: 'P-FEMI' }, { extra })).status).toBe(200);
+    expect((await list('', 'admin', extra)).body.items.at(-1)!.from).toEqual({ person_id: 'P-KEMI', name: 'Kemi Adebayo', role: 'PMO Lead' });
+  });
+
   it('422 from the overlay schema: unknown property, bad date, empty value, missing field, idempotency_key, bad JSON', async () => {
     const check = async (body: unknown, expected: string[], raw?: string) => {
       const r = await put(body, { raw });
@@ -203,7 +215,8 @@ describe('E-DELEGATION', () => {
     expect(names(await put({ ...GOOD, from_person_id: 'P-NOBODY', delegate: 'P-NOBODY' }))).toEqual(['from_person_id']);
     const noFrom: Partial<typeof GOOD> = { ...GOOD };
     delete noFrom.from_person_id;
-    expect(names(await put(noFrom))).toEqual(['from_person_id']);
+    // No From named is the caller, who has no paired delegate in default.
+    expect(names(await put(noFrom))).toEqual(['delegate']);
     // Chika is offered only for Ada: the pairing is the backend's key, checked exactly.
     expect(names(await put({ ...GOOD, delegate: 'P-CHIKA', authority: 'nope', expected_revision: 9 }))).toEqual(['delegate']);
     expect(names(await put({ ...GOOD, authority: 'approve_milestones', expected_revision: 9 }))).toEqual(['authority']);

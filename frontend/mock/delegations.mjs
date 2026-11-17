@@ -93,11 +93,12 @@ function schemaProblems(body) {
   return names.map((name) => ({ name, message: FIELD_MESSAGES[name] ?? 'Not part of a delegation.' }));
 }
 
-/** The delegate options open to this From: paired by for_person_id when the data pairs them, else all of them. */
+/** The delegate options open to this From: when the data pairs them (for_person_id), exactly those paired with it, the
+ *  caller (no from_person_id) taking the unpaired ones, as the page lists them; with no pairing, all of them. */
 function delegatesFor(data, fromId) {
   const options = data.delegate_options ?? [];
   if (!options.some((o) => o.for_person_id !== undefined)) return options;
-  return options.filter((o) => o.for_person_id === undefined || o.for_person_id === fromId);
+  return options.filter((o) => o.for_person_id === fromId);
 }
 
 const statusOn = (starts, ends) => (starts > TODAY ? 'scheduled' : ends !== undefined && ends < TODAY ? 'ended' : 'active');
@@ -126,14 +127,11 @@ export function saveDelegation({ raw, persona, cookies }) {
 
   const data = dataOf(scenario);
   const fromOptions = data.from_options ?? [];
+  // An absent from_person_id means the caller (G-SCR13A-1), even when from_options offers someone else.
   let from;
   if (body.from_person_id !== undefined) {
     from = fromOptions.find((o) => o.person_id === body.from_person_id);
     if (!from) return invalid([{ name: 'from_person_id', message: 'Choose who is delegating from the list.' }]);
-  } else if (fromOptions.length === 1) {
-    from = fromOptions[0];
-  } else if (fromOptions.length > 1) {
-    return invalid([{ name: 'from_person_id', message: 'Choose who is delegating.' }]);
   }
   const delegate = delegatesFor(data, from?.person_id).find((o) => o.person_id === body.delegate);
   if (!delegate) return invalid([{ name: 'delegate', message: 'Choose a delegate from the list.' }]);

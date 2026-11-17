@@ -5,7 +5,7 @@
 // from those lists again, so a value that is not listed is never sent. Checks here are format only (chosen, a date,
 // Ends on or after Starts); every other rule is the backend's. Persona and /me roles are never read.
 // The view sends the body and handles the outcome; the form keeps its entries unless told to clear them.
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 
 import { Button, Callout, DateField, Select, TextField } from '@/components';
 
@@ -35,6 +35,27 @@ const EMPTY: Entries = { starts: '', ends: '', reason: '' };
 
 const personLabel = (p: { name: string; role?: string }) => (p.role ? `${p.name} · ${p.role}` : p.name);
 
+/** The visible label of each field a 422 can name, so the top message speaks the form's words, not the body's keys. */
+const FIELD_LABELS: Record<AddField, string> = { from_person_id: 'From', delegate: 'To', authority: 'Authority', starts: 'Starts', ends: 'Ends', reason: 'Reason' };
+const isField = (name: string): name is AddField => (FIELD_ORDER as string[]).includes(name);
+
+/** "Check these fields: To, Ends." from the named fields; the backend's own message when it names none, or one the form lacks. */
+export function invalidMessage(message: string, fields: FieldProblem[]): string {
+  if (fields.length === 0 || !fields.every((f) => isField(f.name))) return message;
+  const labels = FIELD_ORDER.filter((f) => fields.some((p) => p.name === f)).map((f) => FIELD_LABELS[f]);
+  return `Check ${labels.length === 1 ? 'this field' : 'these fields'}: ${labels.join(', ')}.`;
+}
+
+/** Desktop: everything in the panel. Phone: the fields and note in the sheet's body, the buttons in its footer. */
+export type FormFrame = (parts: { fields: ReactNode; actions: ReactNode; note: ReactNode }) => ReactNode;
+const inPanel: FormFrame = ({ fields, actions, note }) => (
+  <div className="setup-deleg__form">
+    {fields}
+    {actions}
+    {note}
+  </div>
+);
+
 type Props = {
   page: DelegationsPage & { revision: number };
   busy: boolean;
@@ -45,9 +66,10 @@ type Props = {
   onTryAgain: () => void;
   /** The phone sheet's Cancel. */
   onCancel?: () => void;
+  frame?: FormFrame;
 };
 
-export function DelegationForm({ page, busy, blocked, notice, onSend, onStartAgain, onTryAgain, onCancel }: Props) {
+export function DelegationForm({ page, busy, blocked, notice, onSend, onStartAgain, onTryAgain, onCancel, frame = inPanel }: Props) {
   const id = useId();
   const [entries, setEntries] = useState<Entries>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<AddField, string>>>({});
@@ -57,10 +79,11 @@ export function DelegationForm({ page, busy, blocked, notice, onSend, onStartAga
   const delegateOptions: DelegateOption[] = page.delegate_options ?? [];
   const authorities = page.authorities ?? [];
   const fromPerson = fromOptions.length === 1 ? fromOptions[0] : fromOptions.find((o) => o.person_id === entries.fromId);
-  // Paired only when the backend pairs them (for_person_id) and offers a From to pair with; an exact key match, no role logic.
-  const paired = fromOptions.length > 0 && delegateOptions.some((o) => o.for_person_id !== undefined);
-  const toOptions = paired ? delegateOptions.filter((o) => fromPerson !== undefined && o.for_person_id === fromPerson.person_id) : delegateOptions;
-  const toWaits = paired && fromPerson === undefined;
+  // When the backend pairs delegates with a From (for_person_id), To lists only those paired with the From shown: an
+  // exact key match, no role logic. With no From list the From is the caller, so only unpaired options remain.
+  const paired = delegateOptions.some((o) => o.for_person_id !== undefined);
+  const toWaits = paired && fromOptions.length > 1 && fromPerson === undefined;
+  const toOptions = !paired ? delegateOptions : toWaits ? [] : delegateOptions.filter((o) => o.for_person_id === fromPerson?.person_id);
   const fieldId = (field: AddField) => `${id}-${field}`;
 
   const change = (patch: Partial<Entries>, ...fields: AddField[]) => {
@@ -95,9 +118,10 @@ export function DelegationForm({ page, busy, blocked, notice, onSend, onStartAga
       return;
     }
 
-    // expected_revision goes as read (0 included); a blank reason is left out; from_person_id only when chosen.
+    // expected_revision goes as read (0 included); a blank reason is left out. from_person_id names whoever From shows from
+    // from_options[] (one option or a chosen one), so the request asks for exactly the delegator on screen (SEC-1-1).
     const body: DelegationBody = { expected_revision: page.revision, delegate: delegate.person_id, starts: entries.starts, ends: entries.ends };
-    if (fromOptions.length > 1 && fromPerson) body.from_person_id = fromPerson.person_id;
+    if (fromPerson) body.from_person_id = fromPerson.person_id;
     if (authority) body.authority = authority.value;
     if (entries.reason.trim() !== '') body.reason = entries.reason.trim();
 
@@ -106,9 +130,9 @@ export function DelegationForm({ page, busy, blocked, notice, onSend, onStartAga
       setEntries(EMPTY);
       setErrors({});
     } else if (result.kind === 'invalid') {
-      setTop(result.message);
+      setTop(invalidMessage(result.message, result.fields));
       const named: Partial<Record<AddField, string>> = {};
-      for (const f of result.fields) if ((FIELD_ORDER as string[]).includes(f.name)) named[f.name as AddField] ??= f.message;
+      for (const f of result.fields) if (isField(f.name)) named[f.name] ??= f.message;
       showProblems(named);
     }
   };
@@ -120,8 +144,8 @@ export function DelegationForm({ page, busy, blocked, notice, onSend, onStartAga
     onStartAgain();
   };
 
-  return (
-    <div className="setup-deleg__form">
+  const fields = (
+    <>
       {notice && <OutcomeNotice notice={notice} />}
       {blocked === 'locked' && (
         <div>
@@ -199,6 +223,10 @@ export function DelegationForm({ page, busy, blocked, notice, onSend, onStartAga
         />
       </fieldset>
       <TextField id={fieldId('reason')} label="Reason" value={entries.reason} error={errors.reason} onChange={(e) => change({ reason: e.target.value }, 'reason')} />
+    </>
+  );
+  const actions = (
+    <>
       <Button size="lg" block busy={busy} busyLabel="Adding…" disabled={blocked !== null} reason={blocked === 'changed' ? HELD : undefined} onClick={() => void submit()}>
         Add delegation
       </Button>
@@ -212,7 +240,7 @@ export function DelegationForm({ page, busy, blocked, notice, onSend, onStartAga
           Cancel
         </Button>
       )}
-      <p className="setup-footnote">{NOTE}</p>
-    </div>
+    </>
   );
+  return frame({ fields, actions, note: <p className="setup-footnote">{NOTE}</p> });
 }
