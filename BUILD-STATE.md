@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Award pricing capture and Money presentation · 17 November 2026
+
+Source `3267902b` captures optional awarded amount and currency together with the exact source from a won bid. It preserves the reviewed terms and all agreement decisions. In the browser, work 56 retained NGN 101.25 and award evidence 874 through verified Route A. A separate bid moved from received request and team inputs through reviews and controlled version 50 to captured submission 5 and receipt 35. Money showed the verified credit and applied receipt separately and displayed the Finance access hold. Three focused PostgreSQL tests passed.
+
+The state ledger has 154 of 262 directly observed states. Of those, 153 have further checks and 108 await their first browser check. Main `4e720682` adds minutes and project tab design reference changes with the same inventory. Next close the governed award comparison, client portal receipt, reviewed follow-up, latest minutes interactions, and the remaining Setup and project branches. Department-head decisions and real delivery destinations remain deferred.
+
 ## Money, Delegation, bid outcomes and Projects · 17 November 2026
 
 Source `2255bd74` is on the isolated Railway preview. The web and worker use the new append-only bid outcome fields. From the browser, submission 2 progressed through unconfirmed, pending, and a verified loss archive, with its original receipt retained. Submission 3 led to a verified win and project agreement handoff. Pending and unconfirmed outcomes store an optional next check date. An operator can record no reply against the exact verified original submission.

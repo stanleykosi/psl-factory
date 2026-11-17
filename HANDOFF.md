@@ -1,5 +1,13 @@
 # PSL operations factory cloud handoff
 
+## Award pricing capture and latest design review · 17 November 2026
+
+Runtime source `3267902b` is deployed to Railway `design-acceptance` web `f6e8a214-a6b0-4de9-83ba-12a8ffe0e3e4` and worker `c4e44ae0-3b28-43cc-ab6a-78a50c9c6820`. Preview migration `pmo.0052_rfp_award_amount` applied. PostgreSQL run `4a4114ca` passed three focused tests. Awarded amount and currency are recorded together on a won outcome, sourced from the evidence selected for that exact submission. Any comparison still needs an explicit reviewed pricing basis. Money now displays the exact amounts with useful decimal precision.
+
+The Codex browser is open on verified priced award work 56. Submission 4 and evidence 874 support NGN 101.25. The fresh sample `BROWSER-BID-INTAKE-001` in case `8254ca17-6a6b-449d-8cc9-f83028920733` has response 5, controlled version 50, submission 5 and receipt 35. The Money correction case is `923e66e7-d95e-48b9-97f7-53512f393453`, invoice 3 with credit 1 and receipt 3. The [state ledger](docs/design/screen-state-acceptance.md) records 154 direct observations, with 153 open partial checks and 108 states awaiting a first check.
+
+GitHub `main` was most recently observed at `4e720682`. Its minutes reference changes use checked suggestions, in-row editing, exact selection and explicit uncertainty. The native browser already showed that uncertain work 24 offers original-receipt lookup and no second review or resend. Continue the open minutes interaction changes alongside the outstanding bid portal, governed follow-up and project variants. Keep operational owner and delivery decisions deferred. The inventory remains 262 state IDs.
+
 ## Money, Delegation, bid outcomes and Projects · 17 November 2026
 
 Resume the `build/design-consolidation` branch at runtime source `2255bd74`. The isolated Railway `design-acceptance` web is `9e3fa34d-d7fa-45c0-9a25-1bb4b091982f` and the worker is `f70b10db-e1ab-410e-a41b-c50f8028a72f`. Migration `pmo.0051_rfp_outcome_followup` applied to the preview. Deployment `00202026` passed eight PostgreSQL tests, with Django checks and model drift clean. The first run had a corrected missing-parameter error. See BUILD-TESTS.md for both runs and fixture setup results.

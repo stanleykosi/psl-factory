@@ -1,5 +1,20 @@
 {
   "design_consolidation_20261116": {
+    "award_pricing_and_money_precision_20261117": {
+      "runtime_source": "3267902b",
+      "design_main_observed": "4e720682",
+      "environment": "design-acceptance",
+      "web": "f6e8a214-a6b0-4de9-83ba-12a8ffe0e3e4",
+      "worker": "c4e44ae0-3b28-43cc-ab6a-78a50c9c6820",
+      "states_with_browser_observations": 154,
+      "observed_states_with_open_checks": 153,
+      "states_without_direct_browser_observation": 108,
+      "all_states_accepted": false,
+      "postgresql": {"deployment": "4a4114ca-176f-413f-8403-135607b74c0c", "passed": 3, "seconds": 100.389},
+      "completed": ["Exact award amount and currency through verified Route A", "Native bid intake, team evidence and reviews through recorded synthetic submission and receipt", "Precise Money figures with browser correction and access scenarios", "Latest minutes and project tabs design changes reviewed"],
+      "next": ["Governed award comparison against comparable reviewed pricing", "Verified portal receipt and customer follow-up", "Remaining project and Setup variants and native minutes selection and editing"],
+      "owner_policy": "Deferred"
+    },
     "money_delegation_bids_projects_20261117": {
       "runtime_source": "2255bd74",
       "environment": "design-acceptance",

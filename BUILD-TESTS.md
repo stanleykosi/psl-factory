@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Bid award and Money precision · 17 November 2026
+
+On Railway `design-acceptance`, deployment `4a4114ca` passed three tests in 100.389 seconds with exit 0. Django system checks passed. Migration `pmo.0052_rfp_award_amount` applied in the fresh test database and preview web deployment `f6e8a214`. The expanded bid variant test rejected a missing award currency, award pricing on a loss and a direct invalid database write. It successfully saved and rendered an exact synthetic award. The two Money tests verified populated contract terms, exact source links, issued invoice and receipt separation, and Finance access denial. The worker deployment is `c4e44ae0`.
+
+In the native browser on the updated preview, the known signed project showed NGN 42.50 and NGN 63.75 without display padding. Work 24 showed uncertain minutes delivery on Decisions and linked to the original receipt lookup. The recovery page showed Awaiting evidence without an approval or a resend action. The new minutes mock does not establish the remaining native row-edit and selection coverage.
+
+Fixture deployment `67b5d8fb` successfully prepared four named synthetic cases. The browser refused an award with no currency, accepted NGN 101.25 with evidence 874 and reached verified Route A in work 56. The corrected Money case showed original NGN 32.25, credit 1, applied NGN 20.00 and outstanding NGN 7.25. The Finance-denied page withheld the table. A new bid was entered and assigned, rejected mismatched team evidence, recorded four separate team inputs, ran investigation 427 and completed both response reviews and three ordered costing approvals. Controlled version 50 passed a separate review, reached the sample inbox and produced captured submission 5 with receipt 35.
+
 ## Money, Delegation, bid outcomes and Projects · 17 November 2026
 
 All checks used Railway `design-acceptance`. Deployment `605dd802` ran four focused tests and reported one Django error. Opening Delegation without a save parameter failed. The corrected run `00202026` passed eight tests in 406.018 seconds with exit 0. Django system checks passed, model migration drift was empty and `pmo.0051` applied in the fresh test database. Tests exercised idempotent Delegation save and denied writes, known and missing signed-stage terms, invoice and receipt separation, scoped Finance denial, pending and unconfirmed bids, verified loss and win, and native closure membership in the project filters.
