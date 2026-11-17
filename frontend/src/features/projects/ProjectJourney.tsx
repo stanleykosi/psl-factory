@@ -184,7 +184,7 @@ function ComingNext({ tab, base }: { tab: ProjectTab; base: string }) {
   );
 }
 
-function ProjectView({ caseId, journey, base, tab }: { caseId: string; journey: JourneyView; base: string; tab: ProjectTab }) {
+function ProjectView({ journey, base, tab }: { journey: JourneyView; base: string; tab: ProjectTab }) {
   return (
     <div className="projects__page">
       <header className="projects__header">
@@ -200,7 +200,7 @@ function ProjectView({ caseId, journey, base, tab }: { caseId: string; journey: 
         {tab === 'journey' ? (
           <JourneyTab journey={journey} />
         ) : hasTabContent(tab) ? (
-          <ProjectTabContent caseId={caseId} journey={journey} base={base} tab={tab} />
+          <ProjectTabContent caseId={journey.case_id} journey={journey} base={base} tab={tab} />
         ) : (
           <ComingNext tab={tab} base={base} />
         )}
@@ -226,7 +226,7 @@ function ProjectPage({ caseId, tab }: { caseId: string; tab: ProjectTab }) {
       />
     );
   }
-  return <ProjectView caseId={caseId} journey={state.journey} base={base} tab={tab} />;
+  return <ProjectView journey={state.journey} base={base} tab={tab} />;
 }
 
 /** /projects/<case_id>[/<tab>]: one project, for anyone whose /me lists Projects. Without it no request is made. */

@@ -5,9 +5,9 @@
 import Link from 'next/link';
 import { useRef } from 'react';
 
-import { EmptyState, Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
+import { Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
 
-import { AmountValue, AsOf, NONE, RowLink, RowsFooter, tabStateView } from './TabParts';
+import { AmountValue, AsOf, NONE, TabEmpty, RowLink, RowsFooter, tabStateView } from './TabParts';
 import {
   completionText,
   hasChanges,
@@ -44,7 +44,8 @@ function InvoiceCell({ invoice }: { invoice: MilestoneRow['invoice'] }) {
   return (
     <>
       <RowLink workId={invoice.work_id}>{invoice.reference}</RowLink>
-      {word && ` · ${word}`}
+      {' · '}
+      {word ?? <Unknown />}
     </>
   );
 }
@@ -108,10 +109,10 @@ function MilestoneCards({ rows }: { rows: MilestoneRow[] }) {
           <span className="ptabs__cardmain">
             <AmountCell row={row} /> · {completionText(row)}
           </span>
-          <span className="ptabs__cardhint">
+          <span className="ptabs__cardnote">
             <InvoiceCell invoice={row.invoice} />
           </span>
-          <span className="ptabs__cardhint">
+          <span className="ptabs__cardnote">
             Paid: <PaidCell paid={row.paid} />
           </span>
           {(row.changes ?? []).map((change, i) => {
@@ -148,11 +149,11 @@ export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: 
     <>
       <div ref={rowsRef} className="ptabs__rows">
         {rows.length === 0 ? (
-          <EmptyState title="No milestones yet">No milestones on this project yet.</EmptyState>
+          <TabEmpty>No milestones on this project yet.</TabEmpty>
         ) : phone ? (
           <MilestoneCards rows={rows} />
         ) : (
-          <Table className="ptabs__table" caption="Milestones" columns={columns(hasChanges(rows))} rows={rows} rowKey={rowKey} empty="No milestones on this project yet." />
+          <Table className="ptabs__table" tableClassName={hasChanges(rows) ? 'ptabs__ms ptabs__ms--6' : 'ptabs__ms ptabs__ms--5'} caption="Milestones" columns={columns(hasChanges(rows))} rows={rows} rowKey={rowKey} empty="No milestones on this project yet." />
         )}
       </div>
       <RowsFooter shown={rows.length} hasMore={Boolean(state.nextCursor)} more={more} onMore={() => void showMore()} />

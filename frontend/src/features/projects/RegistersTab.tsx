@@ -5,11 +5,11 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, EmptyState, ListToolbar, PriorityTag, Table, Tabs, Unknown, useIsPhone, type Column } from '@/components';
+import { Button, ListToolbar, PriorityTag, Table, Tabs, Unknown, useIsPhone, type Column } from '@/components';
 import { SampleLabel } from '@/shell/SampleLabel';
 
 import { PANEL_ID } from './ProjectTabs';
-import { AsOf, NONE, OwnerValue, RowLink, RowsFooter, tabStateView } from './TabParts';
+import { AsOf, NONE, TabEmpty, OwnerValue, RowLink, RowsFooter, tabStateView } from './TabParts';
 import {
   ageText,
   parseTabView,
@@ -110,8 +110,7 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
     body =
       rows.length === 0 ? (
         view.q ? (
-          <EmptyState
-            title={`No ${word} match`}
+          <TabEmpty
             action={
               <Button kind="secondary" onClick={clearSearch}>
                 Clear search
@@ -119,9 +118,9 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
             }
           >
             No {word} match &ldquo;{view.q}&rdquo;.
-          </EmptyState>
+          </TabEmpty>
         ) : (
-          <EmptyState title={`No ${word} yet`}>No {word} on this project yet.</EmptyState>
+          <TabEmpty>No {word} on this project yet.</TabEmpty>
         )
       ) : (
         <>
@@ -129,7 +128,7 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
             {phone ? (
               <RegisterCards rows={rows} />
             ) : (
-              <Table className="ptabs__table" caption={registerOf(view.register).label} columns={columns} rows={rows} rowKey={(row) => `${row.reference}-${row.title}`} empty="" />
+              <Table className="ptabs__table" tableClassName="ptabs__registers-table" caption={registerOf(view.register).label} columns={columns} rows={rows} rowKey={(row) => `${row.reference}-${row.title}`} empty="" />
             )}
           </div>
           <RowsFooter shown={rows.length} hasMore={Boolean(state.nextCursor)} more={more} onMore={() => void showMore()} />

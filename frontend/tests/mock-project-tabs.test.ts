@@ -65,9 +65,8 @@ describe('visibility and access', () => {
     expect((await get('P-0103')).status).toBe(200);
   });
 
-  it('documents and money answer 501; an unknown tab 404; a project with no fixtures is empty', async () => {
+  it('documents answers 501; an unknown tab 404; a project with no fixtures is empty', async () => {
     expect((await get('P-0101/documents')).status).toBe(501);
-    expect((await get('P-0101/money')).status).toBe(501);
     expect((await get('P-0101/nonsense')).status).toBe(404);
     const empty = await get('P-0108/actions', { persona: 'finance_lead' });
     expect([empty.status, empty.body.actions]).toEqual([200, []]);

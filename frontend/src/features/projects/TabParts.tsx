@@ -22,6 +22,16 @@ export function tabStateView(state: TabState<ListTab>, { retry, signInPath }: { 
   return <WorkErrorCard message="We couldn’t load this tab. Your work is safe; nothing was changed." error={error} onRetry={retry} />;
 }
 
+/** One sentence as the heading (no second line repeating it), with an optional action. */
+export function TabEmpty({ children, action }: { children: ReactNode; action?: ReactNode }) {
+  return (
+    <div className="psl-empty">
+      <h3>{children}</h3>
+      {action}
+    </div>
+  );
+}
+
 export function TabNoAccess() {
   return (
     <EmptyState level={2} title="No access to this tab" className="ptabs__noaccess">

@@ -4,9 +4,9 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, EmptyState, ListToolbar, Table, Tag, Unknown, useIsPhone, type Column, type TagTone } from '@/components';
+import { Button, ListToolbar, Table, Tag, Unknown, useIsPhone, type Column, type TagTone } from '@/components';
 
-import { AsOf, OwnerValue, RowLink, RowsFooter, tabStateView } from './TabParts';
+import { AsOf, OwnerValue, TabEmpty, RowLink, RowsFooter, tabStateView } from './TabParts';
 import { actionsSummaryText, dueText, fromText, parseTabView, tabSearch, type ActionRow } from './tabsModel';
 import { useFocusAfterMore } from './useFocusAfterMore';
 import { useProjectTab } from './useProjectTab';
@@ -100,8 +100,7 @@ export function ActionsTab({ caseId, base }: { caseId: string; base: string }) {
     body =
       rows.length === 0 ? (
         view.q ? (
-          <EmptyState
-            title="No actions match"
+          <TabEmpty
             action={
               <Button kind="secondary" onClick={clearSearch}>
                 Clear search
@@ -109,14 +108,14 @@ export function ActionsTab({ caseId, base }: { caseId: string; base: string }) {
             }
           >
             No actions match &ldquo;{view.q}&rdquo;.
-          </EmptyState>
+          </TabEmpty>
         ) : (
-          <EmptyState title="No actions yet">No actions on this project yet.</EmptyState>
+          <TabEmpty>No actions on this project yet.</TabEmpty>
         )
       ) : (
         <>
           <div ref={rowsRef} className="ptabs__rows">
-            {phone ? <ActionCards rows={rows} /> : <Table className="ptabs__table" caption="Actions" columns={columns} rows={rows} rowKey={(row) => row.action_id} empty="" />}
+            {phone ? <ActionCards rows={rows} /> : <Table className="ptabs__table" tableClassName="ptabs__actions-table" caption="Actions" columns={columns} rows={rows} rowKey={(row) => row.action_id} empty="" />}
           </div>
           <RowsFooter shown={rows.length} hasMore={Boolean(state.nextCursor)} more={more} onMore={() => void showMore()} />
           <AsOf value={state.asOf} />

@@ -199,9 +199,23 @@ describe('Milestones (SCR-38)', () => {
     expect(text()).not.toMatch(/₦0(\.00)?(?![\d,])/);
   });
 
-  it('P-0106 shows the empty sentence and no table', async () => {
+  it('an invoice without a state, or with one the contract does not list, reads Unknown, never a blank status', async () => {
+    respond = (url) => {
+      if (!url.pathname.endsWith('/milestones')) return undefined;
+      const body = projectTab({ url, persona, cookies }).body;
+      body.milestones[0].invoice = { reference: 'INV-0398' };
+      body.milestones[1].invoice = { reference: 'INV-0412', state: 'surprise' };
+      return json(200, body);
+    };
+    await open('P-0101', 'milestones');
+    expect(rowsOf()[0][3]).toBe('INV-0398 · Unknown');
+    expect(rowsOf()[1][3]).toBe('INV-0412 · Unknown');
+  });
+
+  it('P-0106 shows the empty sentence once and no table', async () => {
     await open('P-0106', 'milestones');
     expect(text()).toContain('No milestones on this project yet.');
+    expect(text().split('No milestones on this project yet.')).toHaveLength(2);
     expect(document.querySelector('table')).toBeNull();
     expect(text()).not.toContain('As of');
   });
@@ -423,7 +437,7 @@ describe('access and errors (all tabs)', () => {
     expect(rowsOf()).toEqual(pm);
   });
 
-  it('documents and money keep their coming-next panel', async () => {
+  it('documents keeps its coming-next panel', async () => {
     const result = render(
       <AppShell>
         <ProjectJourneyPage caseId="P-0101" tab="documents" />
