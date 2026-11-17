@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## Money source drill-down · 17 November 2026
+
+On Railway `design-acceptance`, PostgreSQL deployment `20dbf0c2` passed both focused tests in 4.184 seconds with exit 0. The signed-stage test exercises exact known, omitted, and absent or revoked terms. The invoice test exercises separate invoice and cash figures, exact receipt source details, invalid figure rejection and Finance access. In the Codex browser, an Unknown amount on the synthetic signed project opened its specific user acceptance source, including signature 383 and the explanation. The report fit at 390 CSS pixels with no page overflow.
+
 ## Restricted Finance decisions and recovery · 17 November 2026
 
 All runs used Railway `design-acceptance` and named synthetic data. The [browser ledger](docs/design/screen-state-acceptance.md) records the exact work and receipts for the 22 covered variants. Payroll, business-unit and incumbent evidence checks used the actual native services, synthetic role configuration and supplied QuickBooks evidence.
@@ -10,7 +14,7 @@ All runs used Railway `design-acceptance` and named synthetic data. The [browser
 | `a678ff21` | Created business-unit browser fixtures 41 and 42, then replaced the slow setup with the optimized source checks. PostgreSQL tests for this deployment did not start. |
 | `f11e48db`, `85599295`, `d937e9c2` | Browser reproduced a decision timeout during repeated payroll validation, a non-transactional lock introduced during the first optimization, a preview blocked by the worker’s case lock, and a stale worker revision preventing receipt. Later previews verified the read-only refactor, the exact approval and the recipient’s write while the worker was active. |
 | `773d6d11` | All seven tests passed in 791.321 seconds with exit 0. Tested restricted staff totals and receipt, small-group hold, separate payroll approvals and receipts, missing assigned-matcher receipt and recomputation, payroll withdrawal through verified successor, ledger duplicate refusal and same-lineage correction, and rejection requiring fresh proof. The diagnostic timer emitted slow-path stack samples before the successful outcome. |
-| `fa70f77f` | Django and migration drift checks passed on the exact deployed package. Three focused PostgreSQL regressions started for receipt concurrency, background wake and continued ledger rejection protection. Final verdict pending. |
+| `fa70f77f` | All three exact-package PostgreSQL regressions passed in 787.289 seconds with exit 0. Verified receipt concurrency while the worker revision and lease were different, wake of an existing authorised background request, and continued ledger rejection protection. Django and migration drift checks passed. |
 
 ## Release and Finance returns, actuals and original receipts · 17 November 2026
 

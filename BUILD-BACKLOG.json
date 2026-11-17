@@ -1,5 +1,15 @@
 {
   "design_consolidation_20261116": {
+    "money_unknown_source_20261117": {
+      "runtime_source": "dd776492",
+      "environment": "design-acceptance",
+      "web": "97ee2d0c",
+      "existing_state": "SCR-12",
+      "postgresql_money": {"deployment": "20dbf0c2", "passed": 2, "seconds": 4.184},
+      "completed": ["Authorized drill-down for unknown signed-stage amount", "Linked exact signed evidence and explicit missing-amount reason verified at desktop and phone width"],
+      "next": ["Browser run with populated user acceptance and completion amounts", "Compare remaining Money access and source detail cases with F-26"],
+      "owner_policy": "Deferred"
+    },
     "restricted_finance_reviews_20261117": {
       "runtime_source": "0be42e66",
       "design_main_observed": "16568bf5",
@@ -11,6 +21,7 @@
       "all_states_accepted": false,
       "evidence": "docs/design/screen-state-acceptance.md",
       "postgresql_focused_finance": {"deployment": "773d6d11", "passed": 7, "seconds": 791.321},
+      "postgresql_exact_finance": {"deployment": "fa70f77f", "passed": 3, "seconds": 787.289},
       "completed": ["Business-unit source and result decisions, disclosure hold, publication and recipient receipt", "Ledger outcome and proof agreement, duplicate refusal, same-lineage correction and independent rejection", "Payroll staged reviews, assigned-matcher receipt, controlled publication and recipient verification", "Independent payroll withdrawal and corrected reviewed successor with retained receipts"],
       "current": ["Finish partial acceptance in the 262-state ledger and verify remaining board variants"],
       "next": ["Reconcile the latest Money and Delegation design changes against their server-rendered views and exact sources", "Exercise RFP outcome states and remaining project variants", "Complete remaining correction, phone and separate-recipient scenarios"],

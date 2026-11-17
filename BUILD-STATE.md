@@ -1,5 +1,7 @@
 # PSL operations factory build state
 
+The signed-project Money view now opens the source evidence for a known stage with an unknown amount. The browser followed the user acceptance stage to the exact signed agreement and reviewed terms that omit the amount at desktop and phone width. This extended `SCR-12` coverage within the same 138 observed states.
+
 ## Restricted Finance decisions and recovery · 17 November 2026
 
 The [262-state ledger](docs/design/screen-state-acceptance.md) now has 138 direct browser observations, including scoped partial checks. This increment added evidence for all 22 registered business-unit, ledger and payroll variants. Another 124 states await a first browser check. The ledger records the open branch, role and phone checks separately.
