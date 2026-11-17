@@ -1,0 +1,141 @@
+{
+ "exceptions": [
+  {
+   "role": "link",
+   "name": "Overview",
+   "category": "frame item",
+   "reason": "Conflicts 9: the shared frame shows the destinations /me lists for the persona; the acting PM sees no Overview. Frame built as every project page (D-99, D-110).",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "role": "link",
+   "name": "Setup",
+   "category": "frame item",
+   "reason": "Conflicts 9: the shared frame shows the destinations /me lists for the persona; the acting PM sees no Setup.",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "role": "text",
+   "name": "Kemi Adebayo · PMO Lead",
+   "category": "frame item",
+   "reason": "Conflicts 9: the frame shows the signed-in persona (the mock's PM, 'Tunde Bello · PM'); the review is drawn as the PMO Lead.",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "role": "link",
+   "name": "Compare with v1",
+   "category": "no field",
+   "reason": "Conflicts 5 and 11: version history and compare are G-SCR08-4, not built. The backend's own `decision.changes` text is shown instead.",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "role": "link",
+   "name": "Compare v1 and v2",
+   "category": "no field",
+   "reason": "Conflicts 11: version history and compare are G-SCR08-4, not built.",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "role": "text",
+   "name": "Approving records your name and time. Sending to the client is a separate step.",
+   "category": "no field",
+   "reason": "Conflicts 13: the page says 'Approving does not send it to the client.'; the separate step is defined by no source.",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "role": "text",
+   "name": "AMOUNTS MATCH COSTING",
+   "category": "no field",
+   "reason": "Conflicts 7: the phone tag shows the backend's own text for the amounts check (e.g. 'MATCHES COST-0140 V2'), never a sentence built in the browser.",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "role": "link",
+   "name": "← Lagoon Health",
+   "category": "frame item",
+   "reason": "Conflicts 9: the shared phone bar names the way back 'Back to <project>' (shell, D-99); the visible text is '← <project>'.",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "role": "text",
+   "name": "Tola · PMO agent I can draft v3 with section 4 fixed.",
+   "category": "no field",
+   "reason": "Conflicts 1 (B): Tola's sentence is shown only as the backend sends it (workspace.agent_note), so the board's shorter sentence is replaced; 'Ask Tola to draft v3' and 'Edit as v3' are drawn disabled with 'Not available yet' (G-SCR08-8).",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "role": "text",
+   "name": "Drafted by Tola from the planning record and the approved costing. Changes since v1 are 2 sections; the version history keeps v1.",
+   "category": "no field",
+   "reason": "Conflicts 5: the count and 'history keeps v1' are not sent (G-SCR08-4); the page shows the backend's own decision.changes text after the drafted-by line.",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  }
+ ],
+ "extras_not_gating": [
+  {
+   "conflict": 2,
+   "what": "The Documents tab list (no board draws it)",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "conflict": 4,
+   "what": "Returned boards show the numbered sections below the banner, the changed marker kept",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "conflict": 1,
+   "what": "Disabled 'Edit as v3' and 'Ask Tola to draft v3' with 'Not available yet'",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "conflict": 7,
+   "what": "Phone shows the Checks list and the Audience row below the sections (undrawn)",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "conflict": 5,
+   "what": "'Changes since <previous label>: …' from the backend's decision.changes replaces the board's count sentence",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "conflict": 12,
+   "what": "'The note isn't shown to you.' when the note is not sent",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  },
+  {
+   "conflict": 14,
+   "what": "Approved callout 'You approved v2 · <name> · <time>. Not sent to the client.' after the re-read (no board)",
+   "approved_by": "design engineer, 17 Nov 2026 — D-111"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-08-desktop",
+   "width": 1440,
+   "visual": 72.0,
+   "reason": "Measured 72.0 in round 2 with board fonts loaded (production build, 1440/390, one run, all fixes applied). Page runs ~100px taller than the board: Changes text from decision.changes, section and note line heights, the aside's 320px (board 333px), the 'Minutes MIN-0141' cite, the shared frame (Alerts bell, 'Tunde Bello · PM', no Overview or Setup; D-89/D-99), project counts 3/4/2/4 against the board's 6/4/6/9 (fixture data).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-08-desktop-returned",
+   "width": 1440,
+   "visual": 79.5,
+   "reason": "Measured 79.5 in round 2 with board fonts loaded (production build, 1440/390, one run, all fixes applied). Sections shown below the banner (Conflicts 4, board draws none), disabled 'Edit as v3' with its reason, the agent panel full width, status tag beside the tab bar, shared frame.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-08-mobile",
+   "width": 390,
+   "visual": 69.1,
+   "reason": "Measured 69.1 in round 2 with board fonts loaded (production build, 1440/390, one run, all fixes applied). Project tab bar wraps to two rows (F-25 tab bar, D-110 waiver), Drafted-by and Changes lines the board does not draw, Checks and Audience list below the sections (Conflicts 7), the shared phone bar. Below the 70 floor: the gap is approved content (two-row tab bar about 45px, Drafted-by line, Checks and Audience below the sections); asks a one-board exception to the floor, as F-23 SCR-28 got.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-08-mobile-returned",
+   "width": 390,
+   "visual": 74.0,
+   "reason": "Measured 74.0 in round 2 with board fonts loaded (production build, 1440/390, one run, all fixes applied). Sections shown below the banner (Conflicts 4), tab bar and Tola's panel with the disabled 'Ask Tola' button, shared phone bar.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  }
+ ]
+}

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-28",
   "outcome": "The minutes line, finished: filed internal minutes and published client minutes show the actions created and who each recipient's delivery receipt says got them (contract mock only)",
-  "state": "READY",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-LINE-MINUTES"
   ],
@@ -73,62 +73,514 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T17:56:39Z",
+      "seconds": 253.2,
+      "evidence_ref": "delivery/features/F-28/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T18:44:05Z",
+      "seconds": 339.8,
+      "evidence_ref": "delivery/features/F-28/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T18:55:00Z",
+      "seconds": 268.2,
+      "evidence_ref": "delivery/features/F-28/round-2/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
+      "status": "passed",
+      "reviewer": "reviewer-technical",
       "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (not client/product acceptance, merge or release)",
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
       "assessment_reason": "delivery/features/F-28/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
+      "status": "passed",
+      "reviewer": "reviewer-ux",
       "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
+      "status": "passed",
+      "reviewer": "reviewer-ui",
       "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
+      "status": "passed",
+      "reviewer": "reviewer-security",
       "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Sections.tsx` recipients row: a channel row with no receipt shows \"Unknown\", but the \"received/uncertain with no time\" check keys on `item.receipt`, so the shape is fine; the `item.tag` path still lets a returned tag stand in for the receipt with no check against `receipt`. This is by spec (Conflicts 2) and is the backend's rule (G-SCR25-1). Record only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`delivery/BACKEND-HANDOFF.md` F-28: the owner-assignment step on W-2313 is not on any board; the handoff flags \"keep or drop\". The design engineer or backend should decide before it becomes contract.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone: \"Open actions\" is a plain underlined text link beside the outlined \"Open the minutes\" button (W-2312, 390), so two links of the same kind look different; the board draws a full-width outlined link. Covered by Conflicts 6 exception; consider matching the button style later.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Finished views still show the frame's journey rows (\"Done: Drafted the client minutes\", step list with \"Review Done\" etc. on internal items it only lists Confirm/Draft/File) and a hidden \"Next step. A person takes the next step on this page.\" line even though nothing is actionable. Frame copy, outside this lane; raise with F-17 owner.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-2312 phone: the reconcile panel sits above the minutes sentence, so the sentence about what was sent appears after the question. Acceptable (lock first); note only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "\"Open actions\" is a plain blue underlined link (weight 400, #2459D6, no border). The board draws an outlined, full-width, weight-600 ink button (tool \"looks\": weight 600 vs 400, colour #1F2427 vs #2459D6, outlined vs none, underline). On W-2312 it sits beside \"Open the minutes\", which is an outlined button, so the same links row mixes two styles. Conflicts 6 (D-111) only excuses the placement and size (links row instead of the Next panel), not the button style. Expected: draw the `project_tab` link with the existing button-link classes the app already uses for navigation (`<Link className=\"psl-btn psl-btn--secondary\">`, as in `src/features/rfp/RfpOutcomeLink.tsx:9` and `src/features/response/ResponseView.tsx:118`). It stays a link for a11y. The `assistant` link stays as it is. Actual: `frontend/src/features/workspace/Links.tsx:94-97` routes `project_tab` through the assistant branch's plain `<Link>`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T18:44:05Z",
+          "refs": [
+            "cc694876c715f0c927f3879491eb9ede706c4f31"
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:57:48Z",
+          "refs": [
+            "\"Open actions\" now renders as `psl-link psl-btn psl-btn--secondary`, weight 600, an outlined button beside \"Open the minutes\". It is still a link and the assistant link is unchanged. Unit test asserts the class."
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc694876c715f0c927f3879491eb9ede706c4f31"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"Open actions\" now renders as `psl-link psl-btn psl-btn--secondary`, weight 600, an outlined button beside \"Open the minutes\". It is still a link and the assistant link is unchanged. Unit test asserts the class."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "At 390 the actions table (W-2310, W-2311, W-2312, W-2314) has `scrollWidth` 560 inside a 322px box (`.ws-table { min-width: 560px }`, `workspace.css:105`). The first view at phone width shows only ACTION and part of OWNER: \"Tunde Bello\" and \"Ada Okoye \u00b7 Lagoon Health\" are cut at the panel edge, and DUE (\"Unknown\") and STATE (OPEN / OWNER NEEDED) are out of view, with nothing on screen to show the table scrolls. D-111 approved Conflicts 4 Option A because \"everything the backend returns is visible \u2026 including OWNER NEEDED\". As built, the key fact on this screen is hidden on phones. W-2313 already gets the stacked phone layout through the `:has(.ws-table__steps)` rule (`workspace.css:153-159`), so the frame can do this. Expected: at phone width the 4-column actions table shows every cell without sideways scrolling. Either stack it like the W-2313 rows, keeping a visible column label for DUE and STATE so a lone \"Unknown\" is not ambiguous, or apply an equivalent rule limited to this table. The F-23 tables must not change, or must be re-proved in the a11y e2e. Actual: see `/private/tmp/claude-501/-Users-Hunchoo--claude-spares-spare-2d2Z3S/0986a60c-391e-48d6-b2da-79de8713a755/scratchpad/shots/W-2311-390.png` and `delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/side-by-side.reviewer-ui.png`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T18:44:05Z",
+          "refs": [
+            "cc694876c715f0c927f3879491eb9ede706c4f31"
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:57:48Z",
+          "refs": [
+            "At 390 the actions table stacks each row, with ACTION, OWNER, DUE and STATE labels on every cell. The frame `scrollWidth` equals `clientWidth` (322), so there is no sideways scroll. OWNER NEEDED and Unknown are visible with their labels. Unit and e2e tests assert the labels and the no-scroll condition."
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc694876c715f0c927f3879491eb9ede706c4f31"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "At 390 the actions table stacks each row, with ACTION, OWNER, DUE and STATE labels on every cell. The frame `scrollWidth` equals `clientWidth` (322), so there is no sideways scroll. OWNER NEEDED and Unknown are visible with their labels. Unit and e2e tests assert the labels and the no-scroll condition."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`fidelity-exceptions.json` has no entry for the gaps the tool reports as \"moved\" or restyled under signed conflicts: \"Open actions\" in the links row (Conflicts 6), the green band drawn as a white panel with a tag (Conflicts 7), Next order and side column (Conflicts 8), and the project tab with no current tab and Projects not marked current in the nav (Conflicts 11). These are outside the pass rule, but the design engineer signs the waivers from this list. Add them with their Conflicts number so the waiver records the whole visible difference.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T18:44:05Z",
+          "refs": [
+            "(factory file, uncommitted)"
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:57:48Z",
+          "refs": [
+            "`fidelity-exceptions.json` now carries entries for the frame items and layout gaps, each citing its Conflicts number. The waiver is still pending the design engineer."
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "(factory file, uncommitted)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`fidelity-exceptions.json` now carries entries for the frame items and layout gaps, each citing its Conflicts number. The waiver is still pending the design engineer."
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The W-2313 mock accepts an assign-owner step with no owner and reports success. The `assign_owner` field is `required: false`, and `W-2313.steps.json` answers every call with 200 \"Done: owner assigned.\". Pressing Assign owner with no owner chosen sent `{\"step\":\"assign_owner\",\"item_ids\":[\"A-2\"],...}` with no `inputs`, and the mock reported success. Expected per criterion 13: the backend refuses a blank owner with a 422. The frontend side is correct: the blank owner is left out, and the 422 path works (forced with `X-Mock-Scenario: 422` at 390: form kept open, \"Tunde Bello\" kept, alert shown). This is a fixture gap, and the step is already flagged keep-or-drop (TECH-1-2). `frontend/mock/fixtures/work/W-2313.steps.json:1`, `frontend/mock/fixtures/work/W-2313.json` (workspace.steps[0].fields[0].required).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T19:08:06Z",
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Design engineer has not signed the three D-83 visual waivers or the exceptions in `delivery/features/F-28/fidelity-exceptions.json` (all \"builder proposal, pending design engineer\"). Acceptance criteria 1 and 2 hold only with these signed. Sign before merge, or record the refusal.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T19:09:06Z",
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UI-1-3 was fixed in a factory file the build marks \"uncommitted\". The file is in the main folder, so keep it with the merge record.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T19:09:06Z",
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical (lead)",
+          "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+          "evidence_refs": [
+            "delivery/features/F-28/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-28/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+          "evidence_refs": [
+            "delivery/features/F-28/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate)",
+          "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+          "evidence_refs": [
+            "delivery/features/F-28/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "reviewer-security",
+          "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+          "evidence_refs": [
+            "delivery/features/F-28/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -148,21 +600,42 @@
   "git": {
     "repository": null,
     "task_id": "FE-LINE-MINUTES",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
-    "pr_url": null,
-    "pr_number": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "8524af3ced023f5a070bb46e5ba3708c9acf53c6",
+    "task_branch": "fe-line-minutes-the-minutes-line-finished-filed-internal",
+    "head_sha": "cc694876c715f0c927f3879491eb9ede706c4f31",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-28",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/58",
+    "pr_number": 58,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/minutes-end.spec.ts",
+      "frontend/mock/fixtures/work/W-2301.next.internal.json",
+      "frontend/mock/fixtures/work/W-2309.approve.json",
+      "frontend/mock/fixtures/work/W-2309.json",
+      "frontend/mock/fixtures/work/W-2310.json",
+      "frontend/mock/fixtures/work/W-2311.json",
+      "frontend/mock/fixtures/work/W-2312.json",
+      "frontend/mock/fixtures/work/W-2313.json",
+      "frontend/mock/fixtures/work/W-2313.steps.json",
+      "frontend/mock/fixtures/work/W-2314.json",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/minutes-end-mock.test.ts",
+      "frontend/tests/minutes-end.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -182,12 +655,21 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-28/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "20 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "cc694876c715f0c927f3879491eb9ede706c4f31",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -195,8 +677,8 @@
     }
   },
   "created_at": "2026-11-17T17:18:00Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 2,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
@@ -204,6 +686,70 @@
       "at": "2026-11-17T17:28:07Z",
       "round": 0,
       "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T17:28:34Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T17:56:48Z",
+      "round": 1,
+      "head": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T18:02:18Z",
+      "round": 1,
+      "head": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T18:02:22Z",
+      "round": 2,
+      "head": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T18:55:10Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T18:57:57Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T19:08:11Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-17T19:09:34Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
       "reason": null
     }
   ],
@@ -221,10 +767,10 @@
     ]
   },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 2,
+    "attempts": 2,
+    "verdict": "PASS",
+    "commit": "cc694876c715f0c927f3879491eb9ede706c4f31"
   },
   "blocked": null
 }
