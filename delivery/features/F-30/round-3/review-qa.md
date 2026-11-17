@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: qa
-COMMIT: 3a2884d4707522db814305db68b78dc6e4fc682a
+COMMIT: 159262446042b5ff19fc5de2a8a089bb654b02fb
 AUTHORITY: integrated QA (frontend against the contract mock)
 
 ## Summary
@@ -20,3 +20,9 @@ None.
 
 ## Notes
 - A server 422 on a step with no named fields (the mock's `{"code":"invalid","message":"Check the highlighted fields and try again."}`) shows the form-level callout with no summary, and focus stays on submit. This is correct, since no field is named. A 422 that does name fields goes through the same `summarise` path. It is covered only by code review, because the mock never names step fields.
+
+## Update for head 15926244 (diff 3a2884d4..15926244)
+- server.mjs and workspace.mjs: merge added F-29's E-DOCUMENT read (falls through to F-23's rule) and F-28's `.next.<audience>` lookup (falls back to `.next`); F-30's E-WORK-ASSIGN, E-PROJECT-TAB and step/sidecar handling are unchanged, with no duplicate or shadowed branches.
+- Sections.tsx and workspace.css: the `ws-table--stack` phone rules apply only to tables with a tag column. F-30's issue fixtures (W-2411 to W-2414) have none, so their tables and timeline are unaffected. The `data-label` attribute and the Unknown receipt fallback only touch F-28 channel items.
+- proposals.ts and mock-contract.test.ts: `project_tab` sits beside F-30's overlay keys and the stripping and link schema agree; project-tabs.test.tsx keeps the F-29 Documents cases and F-30's tab-link cases; BACKEND-HANDOFF.md keeps all sections, with no conflict markers. A targeted vitest run of project-tabs and issue-assign-mock passed (38 of 38); the coordinator's checks (2268 tests) and e2e (115 of 115) cover the rest.
+- Verdict unchanged.

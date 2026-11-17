@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 48752f436c91d0f5f3ae640e7372a5cf7021095d
+COMMIT: 8d72b263470b8c40dfd1e6223d8ce5c486712092
 
 ## Verified
 - TECH-1-1 | verified | `isLinkUrl` (documentModel.ts) gates the Download link in NoText: http(s) or a relative path pass; javascript:, data:, vbscript:, file:, ftp:, `//host`, `/\host`, backslash and empty values do not. Model test covers these cases.
@@ -10,3 +10,9 @@ COMMIT: 48752f436c91d0f5f3ae640e7372a5cf7021095d
 
 ## Findings
 - TECH-2-1 | minor, non-blocking | `isLinkUrl` treats `java\tscript:x` (a tab or newline inside the scheme) as relative, because the scheme regex fails on the tab. Browsers strip tabs and newlines before parsing, so this is a gap in the check. React 19.3.1 also sanitizes javascript: hrefs, so it is not exploitable today. Suggest stripping `/[\u0000- ]/g` before the scheme test and rendering the stripped value.
+
+## Update for head 8d72b263 (diff 48752f43..8d72b263)
+- The merge only brings F-28 (minutes end states): workspace frame files (Links.tsx project_tab link, Sections.tsx, labels.ts RECORD_ID export, proposals.ts, workspace.css stacked-table rules), mock/workspace.mjs (audience-specific `.next` sidecar), new W-2309 to W-2314 fixtures, F-28 tests, and additive notes in delivery/BACKEND-HANDOFF.md (+11 lines).
+- No file F-29 changed was touched: documents feature, DocumentsTab, project-tabs mock, documents.mjs, server.mjs (E-DOCUMENT handling) and F-29 tests are identical to the reviewed head. mock-contract.test.ts was not changed by F-29.
+- Coordinator checks on this head: delivery/checks.sh exit 0 (2226 tests), e2e document-review, minutes-end, minutes and project-tabs 93 of 93 passed.
+- Verdict unchanged.

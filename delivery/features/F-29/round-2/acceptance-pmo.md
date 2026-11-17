@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: pmo-acceptance
-COMMIT: 48752f436c91d0f5f3ae640e7372a5cf7021095d
+COMMIT: 8d72b263470b8c40dfd1e6223d8ce5c486712092
 AUTHORITY: PMO delivery acceptance (delivery only; product acceptance, design-engineer waivers, merge and release keep their own authorities)
 
 ## Summary
@@ -24,3 +24,9 @@ Criteria against `round-2/review-qa.md` on 48752f43 (QA drove the built app, 70 
 - Parent package claims: v7 architecture task has `gate_ids: []`; the handoff says "Contract mock only (nothing released)" and "Approve says Not sent to the client". No claim of backend, release or client-send beyond this slice.
 - TECH-1-1, TECH-1-2, TECH-1-3, UX-1-1 (partial, carried as UX-2-1), UX-1-3, UX-1-4 | verified by the round-2 reviewers and QA.
 - UI-1-1, UI-1-2, UI-1-3, UI-1-4, UI-1-5, UI-1-6, UI-1-7 | VERIFIED in feature.json by reviewer-ui on 48752f43.
+
+## Update for head 8d72b263 (diff 48752f43..8d72b263)
+- The merge only brings F-28 (minutes end states): workspace frame files (Links.tsx project_tab link, Sections.tsx, labels.ts RECORD_ID export, proposals.ts, workspace.css stacked-table rules), mock/workspace.mjs (audience-specific `.next` sidecar), new W-2309 to W-2314 fixtures, F-28 tests, and additive notes in delivery/BACKEND-HANDOFF.md (+11 lines).
+- No file F-29 changed was touched: documents feature, DocumentsTab, project-tabs mock, documents.mjs, server.mjs (E-DOCUMENT handling) and F-29 tests are identical to the reviewed head. mock-contract.test.ts was not changed by F-29.
+- Coordinator checks on this head: delivery/checks.sh exit 0 (2226 tests), e2e document-review, minutes-end, minutes and project-tabs 93 of 93 passed.
+- Verdict unchanged.

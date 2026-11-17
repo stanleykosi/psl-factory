@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: qa
-COMMIT: 48752f436c91d0f5f3ae640e7372a5cf7021095d
+COMMIT: 8d72b263470b8c40dfd1e6223d8ce5c486712092
 AUTHORITY: integrated QA (frontend with the contract mock; no backend lane in this feature)
 
 ## Summary
@@ -44,3 +44,9 @@ AUTHORITY: integrated QA (frontend with the contract mock; no backend lane in th
 
 ## Notes
 - Approve is also blocked while the note field holds more than 2000 characters (`noteProblem` checks length before the verdict), although approve sends no note. This is harmless and arguably safer.
+
+## Update for head 8d72b263 (diff 48752f43..8d72b263)
+- The merge only brings F-28 (minutes end states): workspace frame files (Links.tsx project_tab link, Sections.tsx, labels.ts RECORD_ID export, proposals.ts, workspace.css stacked-table rules), mock/workspace.mjs (audience-specific `.next` sidecar), new W-2309 to W-2314 fixtures, F-28 tests, and additive notes in delivery/BACKEND-HANDOFF.md (+11 lines).
+- No file F-29 changed was touched: documents feature, DocumentsTab, project-tabs mock, documents.mjs, server.mjs (E-DOCUMENT handling) and F-29 tests are identical to the reviewed head. mock-contract.test.ts was not changed by F-29.
+- Coordinator checks on this head: delivery/checks.sh exit 0 (2226 tests), e2e document-review, minutes-end, minutes and project-tabs 93 of 93 passed.
+- Verdict unchanged.

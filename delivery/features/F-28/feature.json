@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-28",
   "outcome": "The minutes line, finished: filed internal minutes and published client minutes show the actions created and who each recipient's delivery receipt says got them (contract mock only)",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-LINE-MINUTES"
   ],
@@ -589,9 +589,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -608,11 +608,11 @@
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/58",
     "pr_number": 58,
     "pr_author": null,
-    "designated_approver": null,
+    "designated_approver": "design engineer (hunchoweb), D-112",
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "062ccd9fe2b58e6e2f82a5850bf6c68348607179",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/BACKEND-HANDOFF.md",
@@ -748,6 +748,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-17T19:09:34Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-17T23:36:54Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-17T23:37:16Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-17T23:37:16Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-17T23:37:17Z",
       "round": 2,
       "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
       "reason": null
