@@ -46,6 +46,15 @@ def factory_background_status(context, work):
 from apps.core.presentation import workspace_name
 register.filter('workspace_name',workspace_name)
 
+
+@register.filter
+def role_name(value):
+    return {'PM': 'Project manager', 'PMO': 'Project management',
+            'PMO Lead': 'Project management lead', 'Head of PMO': 'Head of project management',
+            'CEO': 'Chief executive', 'CTO': 'Chief technology officer',
+            'HR': 'Human resources', 'QA': 'Quality assurance',
+            'BaaS': 'Banking as a service'}.get(value, value)
+
 @register.filter
 def readable(value):return str(value or '').replace('_',' ').replace('.',' · ').strip().capitalize()
 
@@ -71,7 +80,7 @@ def page_name(value):
         'login':'Sign in','planning':'Project planning','costing':'Project costing','finance_analysis':'Financial analysis',
         'finance_settlement':'Invoices and receipts','finance_billing':'Billing','meetings':'Meetings and actions','policy':'Workspace settings',
         'integration_readiness':'Connections','operations':'Business continuity','case_create':'New workspace','coverage':'Process directory','closure_preparation':'Prepare for closure',
-        'design_overview':'Factory overview','design_agents':'Assistant','design_project':'Project journey',
+        'design_overview':'Factory overview','design_agents':'Assistant','design_project':'Project journey','design_setup':'Setup',
         'design_project_tab':'Project journey','design_company_month_end':'Month-end','design_project_action':'Project action',
         'design_clients':'Clients','design_client_project':'Client details','design_document_review':'Document review',
         'design_template_upload':'Upload a template','design_alerts':'Alerts','design_alert_preferences':'Alert preferences',

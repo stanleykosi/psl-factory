@@ -3,8 +3,32 @@
 {% block content %}
 <header class="page-heading"><div><a class="back-link" href="{% url 'case' case.pk %}">← {{ case|workspace_name }}</a><h1>{{ title }}</h1></div></header>
 <nav class="actions" aria-label="Workspace settings">{% for key,label in navigation %}<a class="button secondary" href="?area={{ key }}"{% if key == area %} aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}<a class="button secondary" href="{% url 'design_delegation' case.pk %}">Delegation</a></nav>
-{% if area == 'payroll' %}<section class="card"><h2>Field access</h2><p>Payroll field visibility is awaiting an owner decision. Payroll inputs stay in the restricted workspace and access continues to follow the active payroll controls.</p></section>
-{% else %}<section class="card"><h2>Effective rules</h2><div class="table-wrap detail-table"><table><thead><tr><th scope="col">Rule</th><th scope="col">Status</th></tr></thead><tbody>
+{% if area == 'roles' %}<section class="card"><h2>Current assignments</h2>
+{% if role_hold %}<p role="status">{{ role_hold }}</p>
+{% elif role_rows %}
+<p>Assignments for {{ case|workspace_name }}.</p>
+<div class="table-wrap detail-table"><table><thead><tr><th scope="col">Person</th><th scope="col">Assigned roles</th><th scope="col">Eligibility</th></tr></thead><tbody>
+{% for row in role_rows %}<tr><th scope="row">{% firstof row.person.get_full_name row.person.username %}</th><td data-label="Assigned roles">{% for role in row.roles %}{{ role|role_name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td><td data-label="Eligibility">{% if row.eligible %}Current{% else %}Review needed{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<p>Choose the people and roles through the versioned rule configuration.</p>{% endif %}
+<p class="coverage-note">Checked {{ observed_at|date:'d M Y H:i:s T' }}.</p>
+</section>{% endif %}
+{% if area == 'payroll' %}
+<section class="card"><h2>HR handoff fields</h2>
+{% if disclosure %}
+<p>Current source {{ disclosure.source_view }} · {{ disclosure.from_period }} to {{ disclosure.to_period }}.</p>
+<ul>{% for label in disclosure_fields %}<li>{{ label }}</li>{% endfor %}</ul>
+<p>Recipients, permitted purposes, retention and source authority follow the current disclosure contract.</p>
+{% elif disclosure_hold %}<p role="status">{{ disclosure_hold }}</p>
+{% else %}<p>Choose the HR source, recipients, purpose and retention terms in the rule configuration.</p>{% endif %}
+{% if visibility_draft %}<p role="status">Proposed version {{ visibility_draft.revision }} · {% if visibility_draft.state == 'validated' %}ready for activation{% else %}awaiting review{% endif %}.</p>{% endif %}
+{% if visibility_form %}<details{% if visibility_form.is_bound %} open{% endif %}><summary>Propose field visibility</summary>
+<p>Include the staff reference, business unit and membership dates. Select monthly pay together with its currency when the owner authorises those fields.</p>
+<form method="post">{% csrf_token %}{{ visibility_form.as_p }}<button>Save visibility draft</button></form>
+</details>{% endif %}
+</section>
+{% endif %}
+<section class="card"><h2>Effective rules</h2><div class="table-wrap detail-table"><table><thead><tr><th scope="col">Rule</th><th scope="col">Status</th></tr></thead><tbody>
 {% for rule in items %}<tr><th scope="row">{{ rule.label }}</th><td data-label="Status">{% if rule.revision %}Active · revision {{ rule.revision }}{% elif rule.status == 'MISSING' %}Not set{% else %}{{ rule.status|readable }}{% endif %}</td></tr>{% endfor %}</tbody></table></div>
-{% if can_configure %}<p><a href="{% url 'policy' case.pk %}">Review rule versions and configuration</a></p>{% else %}<p>View access only.</p>{% endif %}</section>{% endif %}
+{% if can_configure %}<p><a href="{% url 'policy' case.pk %}">Review rule versions and configuration</a></p>{% else %}<p>View access only.</p>{% endif %}</section>
 {% endblock %}

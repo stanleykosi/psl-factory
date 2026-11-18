@@ -1,5 +1,7 @@
 # Build progress log
 
+18 November 2026. Built structured existing-contract disclosure fields, required reason/evidence, pending-version feedback, current-source checks and named role summaries. Passed PostgreSQL102/103/104/105 with50/57/62/78 tests. Browser found and verified correction of collapsed validation errors, refused unpaired pay, saved907, validated/activated revision2 and reread its field and superseded904. Hosted matching105 services, phone375/375. Broader fields and focused review remain engineering work. HOD values deferred and full262 incomplete.
+
 18 November 2026. Passed10021 PostgreSQL tests/72.191s and10121tests/16.117s, checks/drift/fixtures/final markerszero. Requirement review now displays its exact authorised source. Added current-permission Setup navigation/list/search/paging with independent management authority. Hosted101 web and browser navigation verified, worker log check pending. Continue the genuine payroll-visibility interface gap, approved answer reuse and team/no-login issue recording. HOD deferred and full262 remains open.
 
 18 November 2026. Passed98 five tests/86.182s and exact runtime startup. Browser confirmed accurate final bid labels and corrected phone overflow. Fixture99 prepared a separate synthetic editable bid; actual Tola drafts supported discard/keep, edited-save/current-next, phone own-answer and accepted-filter checks. Prepared100 source-visible review with current-authority and bounded-query regressions. Ledger201observed/188open/61unseen. Continue remaining genuine functions with HOD deferred.

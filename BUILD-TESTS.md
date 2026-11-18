@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Typed disclosure fields and current named roles · 18 November 2026
+
+Railway102 `3ca721c7-8d7b-4a8b-a6ac-f07d760a3c25` passed50 PostgreSQL tests in76.695 seconds. Browser subsequently found that invalid field errors were collapsed. Corrected103 `b8b44a56-30a4-4773-b219-6e79e5ecb25c` passed57 in81.745 seconds, adding visible retained errors, required reasons and pending-version feedback. Browser verified invalid pay/currency pairing, draft907, separate validation/activation and new active revision2. Original904 remains superseded. Phone375/375 passed.
+
+Railway104 `bb15fa82-5d9a-47e9-bd53-6366e2a80079` passed62 tests in55.140 seconds. A target reader with its own valid local grants loses the shared disclosure form and source details when either original case-read or policy-read permission is withdrawn. The underlying shared configuration stays active for its authorised owner. Direct draft attempts are denied.
+
+Current105 `a6f697b6-a486-4b4a-9bd2-34805156ef91` passed78 in112.464 seconds. Adds named role summaries with one batched name read and current-role/native eligibility regressions. Includes scope concurrency, stale/forged/foreign/CSRF refusals, atomic invalid-draft rollback, competing field proposals, private HR rows and metadata-only agents. All four runs passed checks/drift/fixture and final exit markerszero. Exact1,663 runtimepaths per service matched105, both services started, browser role names and phone375/375 passed. No new migration. Real HR data and owner policy values were unused.
+
 ## Source context and Setup access · 18 November 2026
 
 Package100 `ead27abe-e1cc-4cb1-8187-399327dc9a79` passed21 PostgreSQL tests in72.191s. Source context reuses the bounded current-authorised read and disappears after authority loss. Existing answer/Assistant tests passed. Checks/drift, idempotent fixture99 and final markerszero. Both100services started. Browser source/version, current edited answer and phone375/375 passed.

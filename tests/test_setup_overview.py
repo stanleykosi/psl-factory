@@ -71,7 +71,7 @@ class SetupOverviewTests(TestCase):
         url = reverse('workspace_settings',args=[case.pk])
         self.assertContains(self.client.get(url,{'area':'finance'}),'Stage billing terms')
         self.assertContains(self.client.get(url,{'area':'delivery'}),'Hypercare acceptance')
-        self.assertContains(self.client.get(url,{'area':'payroll'}),'Payroll field visibility is awaiting an owner decision.')
+        self.assertContains(self.client.get(url,{'area':'payroll'}),'Choose the HR source, recipients, purpose and retention terms')
         Grant.objects.filter(case=case,user=actor,action='policy.configure').update(active=False)
         page = self.client.get(url)
         self.assertContains(page,'View access only.')

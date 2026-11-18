@@ -1,5 +1,13 @@
 # PSL operations factory build state
 
+## Current Setup controls · 18 November 2026
+
+Current105 passed78 PostgreSQL tests in112.464 seconds. Earlier102/103/104 passed50/57/62 in76.695/81.745/55.140 seconds. Every run passed checks/drift/fixtures/final markers. Matching105 web/worker started with1,663 runtimepaths per service.
+
+Structured F35 field proposals now retain decision evidence, reason, current base and revision checks. Shared-source reader checks and two-connection edit races passed. Browser refused an unpaired pay field, saved907, validated/activated version2 and reread its new job-role field while retaining superseded904. Named role summaries use one batched principal read. Phone375/375 passed.
+
+Remaining engineering includes a focused review interface, broader design fields outside the existing seven-field disclosure contract, approved answer reuse, team/no-login issue recording and other state-specific functions. Ledger201 observed/188 open/61 unseen. HOD values deferred. Full262 acceptance remains open.
+
 ## Current source review and Setup entry · 18 November 2026
 
 Passed10021 PostgreSQL tests/72.191s and10121tests/16.117s, with checks/drift/fixtures and final markerszero. Hosted101 web started with1,663 matching runtimepaths per service. Browser99 confirmed original source context and phone width375/375. Menu→Setup now lists107 current authorised synthetic workspaces with search/paging. Current authority is filtered before pagination and account management is independent of case creation.

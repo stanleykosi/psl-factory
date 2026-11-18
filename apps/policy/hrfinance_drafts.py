@@ -7,6 +7,38 @@ from .registry import components
 from .services import register_reference,save_draft
 from .hrfinance_validators import SCHEMAS
 
+
+@transaction.atomic
+def draft_disclosure_fields(actor, case_id, base_id, latest_revision, fields, evidence_id,
+                            effective_from, expected, *, reason):
+    """Propose fields against one current disclosure without changing its other terms."""
+    from apps.core.services import bump, event
+    from apps.documents.contracts import validate
+    from apps.identity.services import require
+    from .hrfinance_validators import DISCLOSURE, FIELD_LIST
+    from .models import Configuration
+    from .impact import configuration
+    from .services import active_component, reference_values, validate_envelope
+
+    case = lock_case(actor, case_id, 'policy.configure', expected)
+    require(actor, case, 'case.read')
+    require(actor, case, 'policy.read')
+    current = active_component(DISCLOSURE, case)
+    configuration(actor, case.pk, current.pk)
+    latest = Configuration.objects.filter(case=case, component=DISCLOSURE).order_by('-revision').first()
+    if current.pk != base_id or latest.revision != latest_revision:
+        raise ValidationError('The disclosure changed. Refresh before proposing its fields.')
+    if not isinstance(reason, str) or not reason.strip() or len(reason) > 1000:
+        raise ValidationError('Provide a concise reason for the visibility change.')
+    validate(FIELD_LIST, fields)
+    content = dict(reference_values(current)[0], allowed_fields=fields)
+    draft = draft_hrfinance_policy(actor, case.pk, DISCLOSURE, content, evidence_id, effective_from)
+    validate_envelope(case, draft.envelope)
+    event(actor, case, 'policy.disclosure_fields_proposed', configuration=draft.pk,
+          base=current.pk, reason=reason.strip())
+    bump(case)
+    return draft
+
 @transaction.atomic
 def draft_hrfinance_policy(actor,case_id,component,content,evidence_id,effective_from):
     case=lock_case(actor,case_id,'policy.configure')

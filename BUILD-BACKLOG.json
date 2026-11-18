@@ -1,5 +1,24 @@
 {
   "design_consolidation_20261116": {
+    "setup_disclosure_controls_20261118": {
+      "status": "postgresql_passed_runtime105_browser_checked",
+      "packages": {
+        "102": {"deployment": "3ca721c7-8d7b-4a8b-a6ac-f07d760a3c25", "passed": 50, "seconds": 76.695},
+        "103": {"deployment": "b8b44a56-30a4-4773-b219-6e79e5ecb25c", "passed": 57, "seconds": 81.745},
+        "104": {"deployment": "bb15fa82-5d9a-47e9-bd53-6366e2a80079", "passed": 62, "seconds": 55.140},
+        "105": {"deployment": "a6f697b6-a486-4b4a-9bd2-34805156ef91", "passed": 78, "seconds": 112.464}
+      },
+      "all_final_exits": 0,
+      "runtime_105": {"web": "ab5da070-322c-475d-ba08-966ce9f829b9", "worker": "76358f83-97eb-48a2-b551-922e6778d8d3", "paths_per_service": 1663, "mismatches": 0, "startup": "passed"},
+      "browser": {"case": "880dafcb-15d1-4c7b-ba3b-07bd7886ebf1", "draft": 907, "active_revision": 2, "superseded": 904, "invalid_pairing": "refused", "phone_body_and_viewport": [375,375], "named_roles": "passed"},
+      "current_contract_fields": 7,
+      "next": ["Focused visibility review", "Broader design field contracts", "Approved past-winning-answer reuse", "Team/no-login issue recording", "Remaining state functions and acceptance"],
+      "states_with_browser_observations": 201,
+      "observed_states_with_open_checks": 188,
+      "states_without_direct_browser_observation": 61,
+      "owner_policy": "Deferred",
+      "all_states_accepted": false
+    },
     "source_context_and_setup_20261118": {
       "status": "postgresql_passed_web101_browser_checked",
       "package_100": {"deployment": "ead27abe-e1cc-4cb1-8187-399327dc9a79", "passed": 21, "seconds": 72.191, "final_exit": 0},

@@ -1,5 +1,15 @@
 # PSL operations factory cloud handoff
 
+## Current Setup controls and original-source checks · 18 November 2026
+
+Packages102/103/104/105 passed50/57/62/78 PostgreSQL tests in76.695/81.745/55.140/112.464 seconds. Each passed Django checks, migration drift, idempotent synthetic fixtures and final exit markers. Current105 `a6f697b6-a486-4b4a-9bd2-34805156ef91` covers current named role summaries, one batched name read, original-source reader permission, shared policy lifecycles, native HR authorisation and metadata-only agents, private payroll handling and concurrent proposals. No migration added.
+
+Hosted matching105 web `ab5da070-322c-475d-ba08-966ce9f829b9` and worker `76358f83-97eb-48a2-b551-922e6778d8d3` started. Exact1,663 runtimepaths per service matched. Setup now offers current named role assignments and a structured editor for the existing seven-field F35 disclosure contract. Field changes preserve recipients, purpose, retention and source terms, require decision evidence and a reason, and create a separately reviewed draft. Original source access is checked for shared configurations. Broader design fields outside the existing contract remain engineering work.
+
+Browser on synthetic case`880dafcb-15d1-4c7b-ba3b-07bd7886ebf1` refused monthly pay without currency and kept the active version. Fixed its collapsed validation feedback in103. Browser saved job-role proposal907/version2 with a sample reason, validated and activated it through native policy controls, then reread Job role and active revision2. Original904/version1 is superseded. Original snapshot13 requires fresh native disclosure authority after activation, as verified on PostgreSQL. Phone375/375 and current named roles passed. Screenshots `.runtime/design-acceptance-visibility103-draft.jpg` and`design-acceptance-visibility103-active-phone.jpg` saved. Browser2/tab4 is on this case's Roles and rules at390px, no unsaved edits. Reset viewport before normal navigation.
+
+Next improve focused visibility review so operators can compare and review proposed fields inside Setup, then continue broader field contracts, approved past-winning-answer reuse, team/no-login issue recording and remaining state functions. The generic policy page remains technical. HOD operational values stay deferred. Ledger201 observed/188 with open checks/61 unseen. Full262 remains incomplete. GitHub main was directly checked at`e74e312282372e02c510c08756544af37696f5d8` with no merge or history rewrite.
+
 ## Authorised source review and Setup entry verified · 18 November 2026
 
 Package100 `ead27abe-e1cc-4cb1-8187-399327dc9a79` passed21 PostgreSQL tests in72.191s, checks/drift/fixtures and final markerszero. Web100 `9cd9812e-c5ee-459f-a011-cbbc5364bc87` and worker100 `e2f01ff8-38b2-4ff3-b0e1-3ae5b5dde7e0` started. Browser99 displayed the original requirement source/version beside its reviewed answer, preserving private reasons. Phone body375/viewport375 passed. Screenshot `.runtime/design-acceptance-source100-phone.jpg` saved.
