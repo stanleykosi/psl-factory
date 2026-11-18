@@ -1,5 +1,7 @@
 # Build decisions
 
+18 November 2026. Signing forms preserve explicitly supplied seconds through HTML step1 and normal Django validation. Opening a document form expands its existing native form while preserving its source, revision and CSRF checks. Proposed-example links use the current button layout for readable phone navigation. Browser captures made during viewport settling are excluded from acceptance.
+
 18 November 2026. Reuse checked immutable RFP and commercial facts only inside the existing bounded read-only observation. Complete native approval groups can omit repeated prefix checks in display preparation. Commands obtain fresh checks outside that observation. One authority calculation uses its exact already-validated role assignment for both identity and recorded policy pin. This removes a duplicate resolution while retaining original-source and current-principal validation.
 
 18 November 2026. Compare proposed calculators with independently supplied examples from their exact base rule. Preserve expected values and unknowns. Different proposed inputs display a comparison hold. The comparison grants no approval or revised expectation. Agent metadata receives bounded example identities and match flags under current source access. Reviewer selection remains typed and unset until configured.

@@ -1,5 +1,19 @@
 {
   "design_consolidation_20261116": {
+    "verified_bid_and_remediated_release_20261118": {
+      "status": "runtime96_browser_outcomes_verified_98_followup_pending",
+      "package_96": {"deployment": "21208b73-5147-4a33-863e-778ba24c9785", "passed": 23, "seconds": 57.313, "final_exit": 0, "fixture_exit": 0},
+      "runtime_96": {"web": "a3281ad4-dead-4234-b195-41202fd1ae39", "worker": "fd893460-99b0-47bb-b543-e51f85c53432", "startup": "passed", "paths_per_service": 1662, "mismatches": 0},
+      "browser": {"go_live_work": 98, "go_live_verified_at": "2026-11-18T06:22:32+01:00", "signatures": [1820, 1821], "receipt": 65, "bid_work": 97, "bid_verified_at": "2026-11-18T06:24:19+01:00", "submission": 10, "award": 1822, "award_amount": null},
+      "package_97": {"deployment": "853aab37-21cc-42f3-9315-624bacd0df79", "errors": 1, "not_run": 4, "seconds": 103.732, "final_exit": 1, "cause": "Test used policy_decision instead of rfp_outcome evidence"},
+      "current": ["Verify98 decision wakes and completed presentation", "Retest actual phone overflow correction", "Fresh editable bid discard-dialog check"],
+      "remaining_engineering": ["Reviewed past-answer reuse", "Team/no-login issue recording", "Other actual state functions and acceptance"],
+      "states_with_browser_observations": 201,
+      "observed_states_with_open_checks": 191,
+      "states_without_direct_browser_observation": 61,
+      "owner_policy": "Deferred",
+      "all_states_accepted": false
+    },
     "bounded_bid_review_20261118": {
       "status": "postgresql_passed_runtime91_until96_ui_checks",
       "package_95": {"deployment": "967dae39-429a-4b07-aa62-2cb84c7fd89a", "passed": 94, "seconds": 751.338, "final_exit": 0, "fixture_exit": 0},

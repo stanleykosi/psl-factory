@@ -25,7 +25,8 @@ class SignerForm(forms.Form):
     decision_id = forms.CharField(label='Decision reference', max_length=160)
     decision_version = forms.CharField(label='Decision version', max_length=160)
     signer_reference = forms.CharField(label='Signer reference', max_length=160)
-    signed_at = forms.DateTimeField(label='Signed at', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+    signed_at = forms.DateTimeField(label='Signed at', widget=forms.DateTimeInput(
+        attrs={'type': 'datetime-local', 'step': '1'}))
 
     def declaration(self, evidence):
         return {**self.cleaned_data, 'signed_at': self.cleaned_data['signed_at'].isoformat(),

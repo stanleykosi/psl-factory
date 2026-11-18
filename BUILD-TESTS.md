@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Exact signing and completed browser journeys · 18 November 2026
+
+Package96 `21208b73-5147-4a33-863e-778ba24c9785` passed23tests in57.313s, checks/drift/fixtures and final markerszero. Includes all current workspace template/permissions checks, calculator proposals, distinct go-live attester HTTP authority and exact signing seconds. Actual count23 supersedes planned24. Deployed exact1,662 matching runtimepaths. Web/worker started successfully. Browser Add a document opened its form directly. New signer input rendered step1 and accepted06:05:26WAT, preserving distinct proofs1820/1821 and delivery65. Work98 reached Verified06:22:32WAT. Settled390px/body375 capture saved locally; the first unsettled image is excluded.
+
+Browser bid97 retained its original delivered submission10 at05:39:05WAT. Explicit award1822 was recorded against actual response10 at06:20:07WAT with unknown award values. Worker created native RouteA and Verified outcome06:24:19WAT. No submission retry was needed after the earlier GET timeout.
+
+Package97 `853aab37-21cc-42f3-9315-624bacd0df79` ran one test in103.732s, error on wrong test evidence kind for the outcome. Fourtests and fixtures did not run, finalexitone. Corrected the helper to rfp_outcome evidence for outcome commands. Package98's five-test rerun is pending. Browser96 revealed a genuine requirement-history phone overflow atbody457/viewport375. The98grid/table containment fix and completed-bid labels are pending deployment and browser checks.
+
 ## Bounded bid reads and current authority passed · 18 November 2026
 
 Package95 `967dae39-429a-4b07-aa62-2cb84c7fd89a` passed94 PostgreSQL tests in751.338s. Checks/drift/fixtures and both final markerszero. Final-review GET used852queries/1.341s, within unchanged1,000limit. Read observations leave business rows unchanged, reject commands and end before fresh current source/grant checks. Native bid preparation, exact reviews, won/lost/pending outcomes, uncertain receipts, current permissions and competing workers passed. Policy original-source access, cross-scope classification, revocation serialization, role eligibility and scoped Finance delegation passed, including a real111.359s expiry wait.

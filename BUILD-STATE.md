@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Current verified browser outcomes · 18 November 2026
+
+Hosted96 passed23tests/57.313s, checks/drift/fixtures, matching1,662 runtimepaths and successful startup. Browser corrected-release work98 reached Verified06:22:32WAT with fresh report/review/receipt65 and distinct sample signatures1820/1821. Bid97 reached Verified outcome06:24:19WAT after actual model drafting, human edits and reviews, original submission10 and explicit award1822. Amount/currency stay unknown. Document entry and precise signing seconds now work in the browser.
+
+Pending98 adds immediate bid decision wakes, completed-state labels and fixes a newly observed phone table overflow. Failed97 was an incorrect test evidence kind, oneerror/fournotrun, preserved. Current ledger201observed/191open/61unseen. All262 acceptance, approved past-answer reuse and team/no-login issue recording remain engineering work. HOD values remain deferred.
+
 ## Current bid-read verification passed · 18 November 2026
 
 Package95 passed94 PostgreSQL tests in751.338s, checks/drift/fixtures and both final markerszero. Final bid review now measures852queries/1.341s under the unchanged1,000limit. Full native bid, source/role revocation, scoped policy, concurrency and actual delegation expiry passed. Runtime91 remains hosted while96verifies signer-second input and two browser presentation corrections. Work98 has a freshly reviewed corrected-candidate report and delivery65. Human sample sign-off is pending the seconds-field fix. Ledger201observed/193open/61unseen. HOD values remain deferred.

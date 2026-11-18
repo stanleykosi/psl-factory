@@ -57,6 +57,7 @@ class StudioLayoutTests(TestCase):
 
     def test_restyled_document_capture_keeps_csrf_native_revision_and_exact_source(self):
         client=self.client_for(True);url=reverse('case',args=[self.c.pk]);client.get(url)
+        self.assertContains(client.get(url), 'case-document.js')
         value={'action':'evidence','revision':rev(self.c),'kind':'document','body':'Exact client brief <script>private()</script>','source':'internal:layout-review'}
         self.assertEqual(client.post(url,value).status_code,403)
         response=client.post(url,dict(value,csrfmiddlewaretoken=client.cookies['csrftoken'].value))
