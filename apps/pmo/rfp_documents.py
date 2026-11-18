@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case,event,bump
+from apps.core.read_observation import observed_fact
 from apps.identity.services import require
 from apps.policy.services import active_component,reference_values,decision_authority
 from apps.documents.controlled import create_version
@@ -13,7 +14,12 @@ from .services import subject
 from .rfp_pricing import quote_text
 
 def inputs(v,key,*,dispatch=False):
-    case=v.rfp.case;current_response(case,v.pk)
+    return _inputs(v.rfp,v.pk,key,dispatch=dispatch)
+
+
+@observed_fact
+def _inputs(r,response_id,key,*,dispatch=False):
+    case=r.case;v=current_response(case,response_id)
     public_terms_for(v)
     reviews=reviewed(v);decisions=valid_approvals(v.commercial,['PM','Head of PMO','CEO'])
     c=active_component('D11.adapter_configuration_refs',case)

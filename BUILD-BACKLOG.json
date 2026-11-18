@@ -1,5 +1,17 @@
 {
   "design_consolidation_20261116": {
+    "bounded_bid_review_20261118": {
+      "status": "postgresql_passed_runtime91_until96_ui_checks",
+      "package_95": {"deployment": "967dae39-429a-4b07-aa62-2cb84c7fd89a", "passed": 94, "seconds": 751.338, "final_exit": 0, "fixture_exit": 0},
+      "bid_review_get": {"queries": 852, "limit": 1000, "seconds": 1.341},
+      "retained_failures": {"93": {"deployment": "16a105da-ba28-48e5-87ee-6735f3cb9d07", "queries": 1904, "test_seconds": 67.747}, "94": {"deployment": "8153982e-621b-41a0-a7d2-1087ba365a31", "queries": 1164, "test_seconds": 37.685}, "each": {"failed": 1, "not_run": 54, "final_exit": 1}},
+      "current": ["Verify96 signer/presentation changes and deploy exact stage", "Complete work98 distinct sample sign-off", "Finish bid97 submission and outcome"],
+      "states_with_browser_observations": 201,
+      "observed_states_with_open_checks": 193,
+      "states_without_direct_browser_observation": 61,
+      "owner_policy": "Deferred",
+      "all_states_accepted": false
+    },
     "proposed_examples_20261118": {
       "status": "comparison_passed_bid_read_correction_pending",
       "package_91": {"deployment": "6918342d-9230-4c84-9698-ef8ac49ae78c", "passed": 64, "seconds": 218.411, "final_exit": 0, "fixture_exit": 0},

@@ -1,5 +1,9 @@
 # PSL operations factory build state
 
+## Current bid-read verification passed · 18 November 2026
+
+Package95 passed94 PostgreSQL tests in751.338s, checks/drift/fixtures and both final markerszero. Final bid review now measures852queries/1.341s under the unchanged1,000limit. Full native bid, source/role revocation, scoped policy, concurrency and actual delegation expiry passed. Runtime91 remains hosted while96verifies signer-second input and two browser presentation corrections. Work98 has a freshly reviewed corrected-candidate report and delivery65. Human sample sign-off is pending the seconds-field fix. Ledger201observed/193open/61unseen. HOD values remain deferred.
+
 ## Current comparison and bid performance work · 18 November 2026
 
 Package91 passed64 PostgreSQL tests in218.411s, checks/drift/fixtures. Matching web/worker91 hosted. Browser verified proposed worked-example comparison, supplied expectations, unknowns, rounding and navigation, including settled390px layout. Studio configuration893 produced20.00NGN as calculation2 from project-local inputs and original source7.

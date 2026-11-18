@@ -1,5 +1,7 @@
 # Build decisions
 
+18 November 2026. Reuse checked immutable RFP and commercial facts only inside the existing bounded read-only observation. Complete native approval groups can omit repeated prefix checks in display preparation. Commands obtain fresh checks outside that observation. One authority calculation uses its exact already-validated role assignment for both identity and recorded policy pin. This removes a duplicate resolution while retaining original-source and current-principal validation.
+
 18 November 2026. Compare proposed calculators with independently supplied examples from their exact base rule. Preserve expected values and unknowns. Different proposed inputs display a comparison hold. The comparison grants no approval or revised expectation. Agent metadata receives bounded example identities and match flags under current source access. Reviewer selection remains typed and unset until configured.
 
 18 November 2026. Reuse the existing organization-scoped policy source lifecycle for a studio calculator. New commercial-costing-oracle/v2 pins that exact source and its original rule, independent examples and reviews. Project calculations retain local inputs and reference the original rule. Runtime checks require current original-source access and owner authority, and source revocation holds dependent calculation and evidence use. No implicit tenant fallback or source copying was added. Calculator proposal adoption also rechecks the exact independent reviewer authority during native use.

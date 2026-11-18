@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
 from apps.core.services import lock_case, event, bump
+from apps.core.read_observation import observed_fact
 from apps.documents.controlled import baseline_manifest, create_version
 from apps.documents.models import Template, PublicationReceipt
 from apps.policy.services import decision_authority, active_component, reference_values
@@ -49,6 +50,12 @@ def check_decision(decision):
 
 
 def valid_approvals(revision, roles=ROLES, *, check_authority=True):
+    return _valid_approvals(revision.dossier, revision.pk, roles, check_authority=check_authority)
+
+
+@observed_fact
+def _valid_approvals(dossier, revision_id, roles, *, check_authority=True):
+    revision = CommercialRevision.objects.select_related('dossier__case').get(pk=revision_id, dossier=dossier)
     from .costing import verify_costing
     verify_costing(subject(revision.dossier.case,revision.sources['costing'],'costing'),revision.sources['plan'])
     decisions = latest_decisions(revision)

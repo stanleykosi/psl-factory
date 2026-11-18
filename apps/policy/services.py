@@ -386,7 +386,8 @@ def decision_authority(actor,case,role,action='approve',delegated=False,delegati
     assignment=active_component('D05.role_principal_assignments',case)
     pinned[assignment.component]=assignment.pk
     if not delegated:
-        role_policy(actor,case,role)
+        from .role_assignments import assert_assigned
+        assert_assigned(actor,case,reference_values(assignment),role)
     else:
         delegation=active_component('D05.delegation_rules',case)
         now=timezone.now()

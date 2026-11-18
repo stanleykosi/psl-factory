@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.utils import timezone
 from apps.core.models import Evidence
 from apps.core.evidence_access import public_evidence
+from apps.core.read_observation import observed_fact
 from apps.core.services import lock_case,add_evidence,event
 from apps.identity.services import require
 from apps.identity.models import Grant
@@ -126,6 +127,7 @@ def matching_response(row,value):
 def latest_outcome(work):
     return RFPOutcome.objects.filter(submission__response__rfp=subject(work)).select_related('submission__response__commercial','submission__version').order_by('-pk').first()
 
+@observed_fact
 def response_for(work):
     root=subject(work);value=inputs(work)
     disposition=RFPDisposition.objects.select_related('outcome__submission__response__commercial','outcome__submission__response__rfp').filter(rfp=root).first()
@@ -138,6 +140,7 @@ def response_for(work):
         if matching_response(row,value):return row
     return None
 
+@observed_fact
 def submission_for(work):
     disposition=RFPDisposition.objects.select_related('outcome__submission__version').filter(rfp=subject(work)).first()
     if disposition:return disposition.outcome.submission
@@ -160,6 +163,7 @@ def usable_document(work,binding):
     except (ValidationError,PermissionDenied):return False
     return not rfp_documents.binding_findings(binding)
 
+@observed_fact
 def document_for(work,value):
     row=response_for(work)
     if not row:return None
@@ -168,6 +172,7 @@ def document_for(work,value):
         if usable_document(work,binding):return binding.version
     return None
 
+@observed_fact
 def review_document(work):
     """Select native human review without requiring an active agent coordinator."""
     root=subject(work)

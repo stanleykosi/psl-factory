@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import connection,transaction,DatabaseError,IntegrityError
 from django.test import TestCase,TransactionTestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 from apps.agents.models import AgentRun
@@ -24,6 +25,57 @@ from tests import factory_rfp_helpers as helpers
 class FactoryRFPTests(TestCase):
     @classmethod
     def setUpTestData(cls):cls.data=helpers.configured()
+
+    def test_final_review_page_has_bounded_pure_reads_and_rechecks_source_authority(self):
+        from time import monotonic
+        f = self.data
+        work = helpers.start(f)
+        response, document = helpers.reviewed_document(f, work)
+        self.client.force_login(f['actor'])
+        url = reverse('factory_detail', args=[work.pk])
+        before = (RFPReview.objects.count(), ControlledReview.objects.count(), Publication.objects.count())
+        started = monotonic()
+        with CaptureQueriesContext(connection) as queries:
+            page = self.client.get(url)
+        print(f'PSL_RFP_FINAL_REVIEW_QUERIES={len(queries)} SECONDS={monotonic() - started:.3f}')
+        from collections import Counter
+        import re
+        tables = Counter(match.group(1) for query in queries
+                         if (match := re.search(r'FROM "([^"]+)"', query['sql'])))
+        print(f'PSL_RFP_READ_TABLE_COUNTS={tables.most_common(12)}')
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, document.document.title)
+        self.assertLessEqual(len(queries), 1000)
+        self.assertEqual(before, (RFPReview.objects.count(), ControlledReview.objects.count(), Publication.objects.count()))
+
+        Grant.objects.filter(case=f['case'], user=f['actor'], action='rfp.contribute:Engineering').update(active=False)
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200)
+        self.assertNotContains(page, 'Approve exact Document')
+        with self.assertRaises(PermissionDenied):
+            rfp.current_response(f['case'], response.pk)
+        from apps.documents.controlled import reserve_publication
+        with self.assertRaises((PermissionDenied, ValidationError)):
+            reserve_publication(f['actor'], f['case'].pk, document.pk, rev(f['case']))
+        self.assertFalse(Publication.objects.exists())
+
+    def test_observed_source_checks_cannot_execute_commands_or_survive_the_read_scope(self):
+        from apps.core.read_observation import observation_scope
+        f = self.data
+        work = helpers.start(f)
+        factory.run_until_wait(work.pk)
+        response = factory_rfp.response_for(work)
+        with observation_scope():
+            rfp.current_response(f['case'], response.pk)
+            with CaptureQueriesContext(connection) as queries:
+                rfp.current_response(f['case'], response.pk)
+            self.assertLessEqual(len(queries), 2)
+            with self.assertRaisesMessage(ValidationError, 'Read-only observation'):
+                rfp.review(f['actor'], f['case'].pk, response.pk, 'PMO Lead', 'approve',
+                           f['evidence']['policy_decision'].pk, 'This command must use fresh authority', rev(f['case']))
+        Grant.objects.filter(case=f['case'], user=f['actor'], action='rfp.prepare').update(active=False)
+        with observation_scope(), self.assertRaises(PermissionDenied):
+            rfp.current_response(f['case'], response.pk)
 
     def test_intake_useful_agent_human_reviews_receipt_and_won_route_a(self):
         self.assertEqual(connection.vendor,'postgresql')

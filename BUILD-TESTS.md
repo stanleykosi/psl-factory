@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Bounded bid reads and current authority passed · 18 November 2026
+
+Package95 `967dae39-429a-4b07-aa62-2cb84c7fd89a` passed94 PostgreSQL tests in751.338s. Checks/drift/fixtures and both final markerszero. Final-review GET used852queries/1.341s, within unchanged1,000limit. Read observations leave business rows unchanged, reject commands and end before fresh current source/grant checks. Native bid preparation, exact reviews, won/lost/pending outcomes, uncertain receipts, current permissions and competing workers passed. Policy original-source access, cross-scope classification, revocation serialization, role eligibility and scoped Finance delegation passed, including a real111.359s expiry wait.
+
+Failed93 `16a105da-ba28-48e5-87ee-6735f3cb9d07` measured1,904queries/6.820s and one failed test in67.747s. Failed94 `8153982e-621b-41a0-a7d2-1087ba365a31` measured1,164queries/2.954s and one failed test in37.685s. Each left54tests and fixtures unrun and finalexitone. Consolidated repeated native facts and completed approval checks, then reused the same validated assignment within one authority calculation. All current provenance checks remain.
+
+Browser98 prepared and reviewed the corrected candidate32 report, then delivered receipt65 at06:03:40WAT. Its form rejected signing seconds through the HTML minute step. Corrected step1 is in96, with one local form test passed0.082s and JS syntax passed. Package96 runtime source comparison matched1,662 paths per prepared service. PostgreSQL96 and actual browser sign-off are pending.
+
 ## Proposed examples and bid-page diagnostic · 18 November 2026
 
 Package91 `6918342d-9230-4c84-9698-ef8ac49ae78c` passed64 PostgreSQL tests in218.411s. Django/drift checks, fixtures and both final markers passed. Includes exact oracle/base/proposal hashes, current source access, wrong-set rejection, unknown preservation, input-schema holds and independent expected results. One local template test passed0.022s. Matching deployed runtime covered1,661 paths per service. Browser showed20.00/24.00 against supplied20.00, unknown/unknown and rounding1.01/1.21, plus navigation and settled390px/body375 layout. Studio893/calculation2 established original-source reuse with local inputs1817 and20.00NGN.

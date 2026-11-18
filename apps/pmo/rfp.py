@@ -7,6 +7,7 @@ from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case, bump, event, add_evidence
 from apps.core.evidence_access import public_evidence
+from apps.core.read_observation import observed_fact
 from apps.finance.rules import decimal
 from apps.identity.services import require
 from apps.policy.services import active_component, reference_values, decision_authority
@@ -85,6 +86,7 @@ def contribute(actor,case_id,team,evidence_id,expected):
     x=RFPContribution.objects.create(intake=r.current_intake,team=team,evidence=subject(case,evidence_id,TEAMS[team]),actor=actor)
     event(actor,case,'rfp.input',contribution=x.pk,team=team);bump(case);return x
 
+@observed_fact
 def current_assignment(r):
     case=r.case;i=r.current_intake;a=i.assignments.order_by('-pk').first()
     if not a:raise ValidationError('Assign an accountable PM')
@@ -94,6 +96,7 @@ def current_assignment(r):
     if not authority_matches(a.authority,authority(a.actor,case,'assignment',a.role)):raise ValidationError('Assignment authority changed; reaffirm assignment')
     return a
 
+@observed_fact
 def source_snapshot(r):
     case=r.case;i=r.current_intake;a=current_assignment(r)
     inputs={}
@@ -104,7 +107,12 @@ def source_snapshot(r):
     return {'intake':i.pk,'assignment':a.pk,'assignment_authority':a.authority,'inputs':inputs}
 
 def current_response(case,pk):
-    r=root(case);ensure_open(r)
+    return _current_response(root(case),pk)
+
+
+@observed_fact
+def _current_response(r,pk):
+    case=r.case;ensure_open(r)
     v=RFPResponse.objects.filter(pk=pk,rfp=r).first()
     if not v or r.current_response_id!=v.pk or v.snapshot!=source_snapshot(r):raise ValidationError('RFP source or assignment changed; prepare a current response')
     from .commercial import current_revision,terminal
@@ -163,7 +171,12 @@ def review(actor,case_id,response_id,role,verdict,evidence_id,note_text,expected
     event(actor,case,'rfp.reviewed',review=x.pk,verdict=verdict,role=role);bump(case);return x
 
 def reviewed(v):
-    current_response(v.rfp.case,v.pk);ids=[]
+    return _reviewed(v.rfp,v.pk)
+
+
+@observed_fact
+def _reviewed(r,response_id):
+    v=current_response(r.case,response_id);ids=[]
     for role in REVIEW_ROLES:
         x=v.reviews.filter(role=role).order_by('-pk').first()
         if not x or x.verdict!='approve':raise ValidationError('Current RFP review missing: '+role)

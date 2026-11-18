@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.utils import timezone
 from apps.core.models import Evidence
 from apps.core.services import lock_case
+from apps.core.read_observation import read_observation
 from apps.core.evidence_access import public_evidence
 from apps.core.presentation import workspace_name
 from apps.identity.services import visible_cases,require
@@ -187,7 +188,10 @@ def decision_options(actor,work,current,document,submission):
             except (ValidationError,PermissionDenied):pass
         return options
     if valid:
-        for role in rfp.REVIEW_ROLES:
+        try:rfp.reviewed(current);reviewed=True
+        except (ValidationError,PermissionDenied):reviewed=False
+        outstanding_reviews = [] if reviewed else rfp.REVIEW_ROLES
+        for role in outstanding_reviews:
             last=current.reviews.filter(role=role).order_by('-pk').first()
             choices=verdicts('rfp.review',role)
             if last and last.verdict=='approve':
@@ -196,10 +200,13 @@ def decision_options(actor,work,current,document,submission):
                     if last.authority==decision_authority(last.actor,case,role):continue
                 except (ValidationError,PermissionDenied):pass
             if choices:result.append({'kind':'response','target':current.pk,'role':role,'verdicts':choices,'title':role+' response review'})
-        try:rfp.reviewed(current);reviewed=True
-        except (ValidationError,PermissionDenied):reviewed=False
         if reviewed:
-            for index,role in enumerate(['PM','Head of PMO','CEO']):
+            commercial_roles = ['PM','Head of PMO','CEO']
+            try:
+                commercial.valid_approvals(current.commercial, commercial_roles)
+                commercial_roles = []
+            except (ValidationError,PermissionDenied):pass
+            for index,role in enumerate(commercial_roles):
                 try:commercial.valid_approvals(current.commercial,['PM','Head of PMO','CEO'][:index+1]);continue
                 except (ValidationError,PermissionDenied):pass
                 choices=verdicts('commercial.decide',role)
@@ -225,6 +232,7 @@ def decision_options(actor,work,current,document,submission):
     return result,outcome_roles
 
 
+@read_observation
 def presentation(actor,work,submission_id=None):
     from . import factory_rfp as service
     from .factory_execution import available_actor,can_control
