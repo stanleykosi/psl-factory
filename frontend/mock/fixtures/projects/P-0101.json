@@ -109,5 +109,120 @@
   "agent_summary": {
     "agent": "tola",
     "text": "Lagoon Health is moving. Two things wait on people: the client's UAT response and Finance review of the milestone 2 invoice.\n\nMilestone 3's invoice is held because nobody holds the Finance Lead role for this project."
+  },
+  "delivery": [
+    {
+      "line_key": "delivery_release",
+      "title": "Release gates",
+      "short_title": "Release",
+      "state": "verified",
+      "reference": "REL-0091",
+      "gate": {
+        "label": "Release ready",
+        "tone": "verified"
+      },
+      "at": {
+        "date": "2026-03-25",
+        "unknown": false
+      },
+      "work_id": "W-2503"
+    },
+    {
+      "line_key": "delivery_go_live",
+      "title": "Go-live acceptance",
+      "short_title": "Go-live",
+      "state": "verified",
+      "reference": "GLV-0104",
+      "gate": {
+        "label": "Accepted",
+        "tone": "verified"
+      },
+      "detail": "Signed 02 Apr",
+      "work_id": "W-2510"
+    },
+    {
+      "line_key": "delivery_hypercare",
+      "title": "Hypercare",
+      "short_title": "Hypercare",
+      "state": "processing",
+      "reference": "HYP-0062",
+      "gate": {
+        "label": "Running",
+        "tone": "agent"
+      },
+      "detail": "Day 10 of the window"
+    },
+    {
+      "line_key": "delivery_archive",
+      "title": "Archive",
+      "short_title": "Archive",
+      "state": "verified",
+      "reference": "ARC-0130",
+      "gate": {
+        "label": "Archived and verified",
+        "tone": "verified"
+      },
+      "at": {
+        "date": "2026-04-05",
+        "unknown": false
+      }
+    },
+    {
+      "line_key": "delivery_handover",
+      "title": "Handover to Support",
+      "short_title": "Handover",
+      "state": "waiting",
+      "reference": "HND-0048",
+      "gate": {
+        "label": "Support listed 2 gaps",
+        "tone": "person"
+      },
+      "at": {
+        "date": "2026-04-10",
+        "unknown": false
+      }
+    },
+    {
+      "line_key": "delivery_closure",
+      "title": "Closure",
+      "short_title": "Closure",
+      "state": "waiting",
+      "gate": {
+        "label": "Not yet",
+        "tone": "neutral"
+      },
+      "detail": "Needs hypercare, handover, retrospective"
+    }
+  ],
+  "delivery_agent": {
+    "agent": "tola",
+    "title": "Checked where delivery stands",
+    "status": "done",
+    "finished_at": "2026-04-12T08:00:00Z",
+    "steps": [
+      {
+        "text": "Read the delivery file and every line’s status",
+        "status": "done",
+        "source": "DLV-0052 · 12 APR"
+      },
+      {
+        "text": "Hypercare: 1 open medium issue, no incidents",
+        "status": "done",
+        "source": "ISS-0301"
+      },
+      {
+        "text": "Handover: Support listed 2 gaps",
+        "status": "done",
+        "source": "HND-0048 · 10 APR"
+      },
+      {
+        "text": "Closure can’t start yet",
+        "status": "done",
+        "source": "HYPERCARE · HANDOVER · RETROSPECTIVE"
+      }
+    ]
+  },
+  "delivery_summary": {
+    "note": "Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance’s confirmation."
   }
 }

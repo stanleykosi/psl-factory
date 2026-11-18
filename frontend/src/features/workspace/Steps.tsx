@@ -6,7 +6,9 @@
 import Link from 'next/link';
 import { useId, type ReactNode, type Ref } from 'react';
 
+import type { WorkItem } from '@/api/types';
 import { Button, buttonClass } from '@/components';
+import { cannotActCopy } from '@/features/decide/DecideStates';
 
 import type { Step } from './labels';
 import { stepKind } from './StepForm';
@@ -24,9 +26,14 @@ export function Consequence({ step, id }: { step: Step; id?: string }) {
   );
 }
 
+// Frontend-owned neutral sentence (F-32): a decision step whose task the response does not carry.
+const NO_TASK = 'This decision isn’t open to you here.';
+
 type ControlProps = {
   workId: string;
   step: Step;
+  /** The item's tasks: a decision step is a link only when its task is here with `you_can_act` (F-32). */
+  tasks?: WorkItem['tasks'];
   /** Another write is in flight, the page is locked or the refresh failed: pressing does nothing. */
   off: boolean;
   pending: boolean;
@@ -38,7 +45,7 @@ type ControlProps = {
   label?: string;
 };
 
-export function StepControl({ workId, step, off, pending, none, onPress, controlRef, describedBy, label }: ControlProps) {
+export function StepControl({ workId, step, tasks, off, pending, none, onPress, controlRef, describedBy, label }: ControlProps) {
   const reasonId = useId();
   const text = pending ? `${step.label}…` : (label ?? step.label);
   if (step.disabled_reason) {
@@ -54,6 +61,21 @@ export function StepControl({ workId, step, off, pending, none, onPress, control
     );
   }
   if (step.task_id) {
+    // F-32: authority is the task's `you_can_act` as the backend returned it; a missing task is unavailable too.
+    const task = tasks?.find((t) => t.id === step.task_id);
+    if (!task?.you_can_act) {
+      const reason = task?.decision ? cannotActCopy(task.cannot_act_reason, { ...task, decision: task.decision }).heading : NO_TASK;
+      return (
+        <span className="ws-control">
+          <Button kind={stepKind(step)} aria-disabled="true" aria-describedby={[describedBy, reasonId].filter(Boolean).join(' ')} ref={controlRef}>
+            {step.label}
+          </Button>
+          <span id={reasonId} className="psl-reason">
+            {reason}
+          </span>
+        </span>
+      );
+    }
     // INV-RESEND: a decision link follows the page lock. While a write is in flight, after an uncertain send or after
     // a failed refresh it is an unavailable control with no href, so nothing can be approved again from here.
     if (off) {

@@ -2,6 +2,7 @@
 import type { operations } from '@/api/schema';
 import { formatDayMonth } from '@/components';
 import { AGENT_NAMES, formatAmount } from '@/features/decide/format';
+import { RECORD_ID } from '@/features/workspace/labels';
 
 type ListOperation = operations['E-PROJECTS'];
 export type ProjectsQuery = NonNullable<ListOperation['parameters']['query']>;
@@ -23,13 +24,14 @@ export type FactMoney = NonNullable<JourneyFact['money']>;
 export type ProjectListView = ProjectList;
 export type NextMilestone = NonNullable<ProjectRow['next_milestone']>;
 
-export type ProjectTab = 'journey' | 'milestones' | 'documents' | 'money' | 'registers' | 'actions';
+export type ProjectTab = 'journey' | 'delivery' | 'milestones' | 'documents' | 'money' | 'registers' | 'actions';
 type CountKey = keyof NonNullable<JourneyView['tab_counts']>;
 
 // The project's tabs as drawn on SCR-07, each a link to its own address. Journey is built here; the other tabs'
 // contents belong to FE-M3-PROJECT-TABS. Counts come from tab_counts (v6 proposal); Money has none on the board.
 export const PROJECT_TABS: readonly { key: ProjectTab; label: string; path: string; count?: CountKey }[] = [
   { key: 'journey', label: 'Journey', path: '' },
+  { key: 'delivery', label: 'Delivery', path: '/delivery' },
   { key: 'milestones', label: 'Milestones', path: '/milestones', count: 'milestones' },
   { key: 'documents', label: 'Documents', path: '/documents', count: 'documents' },
   { key: 'money', label: 'Money', path: '/money' },
@@ -163,6 +165,69 @@ export function agentSummaryOf(value: unknown) {
   const agent = value.agent as keyof typeof AGENT_NAMES;
   const paragraphs = (value.text as string).split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
   return { name: AGENT_NAMES[agent], role: AGENT_ROLES[agent] as string | undefined, paragraphs };
+}
+
+// F-32 PROPOSALS on E-PROJECT (mock/proposals/delivery-release.json, contract mock only): the delivery rows' reference, date, detail and
+// short title (G-43-2, G-F32-1), Tola's delivery check (G-43-3) and the line-order sentence (G-43-5). Each reads as "not supplied" when absent or malformed.
+export type DeliveryRow = {
+  key: string;
+  number: string;
+  title: string;
+  shortTitle: string;
+  reference?: string;
+  gate?: { label: string; tone?: string };
+  state?: string;
+  workId?: string;
+  at?: { date?: string; unknown: boolean };
+  detail?: string;
+};
+
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+
+/** The delivery rows in the order returned, numbered by position; a row without a line key and title is not a row. */
+export function deliveryRowsOf(journey: JourneyView): DeliveryRow[] {
+  const list: unknown = journey.delivery;
+  if (!Array.isArray(list)) return [];
+  const rows: DeliveryRow[] = [];
+  for (const raw of list as unknown[]) {
+    if (!isObject(raw) || !isText(raw.line_key) || !isText(raw.title)) continue;
+    const gate = isObject(raw.gate) && isText(raw.gate.label) ? { label: raw.gate.label as string, tone: textOf(raw.gate.tone) } : undefined;
+    const at = isObject(raw.at) ? { date: DATE_ONLY.test(String(raw.at.date)) ? (raw.at.date as string) : undefined, unknown: raw.at.unknown === true } : undefined;
+    rows.push({
+      key: raw.line_key as string,
+      number: String(rows.length + 1).padStart(2, '0'),
+      title: raw.title as string,
+      shortTitle: textOf(raw.short_title) ?? (raw.title as string),
+      reference: textOf(raw.reference),
+      gate,
+      state: textOf(raw.state),
+      workId: isText(raw.work_id) && RECORD_ID.test(raw.work_id as string) ? (raw.work_id as string) : undefined,
+      at: at && (at.date || at.unknown) ? at : undefined,
+      detail: textOf(raw.detail),
+    });
+  }
+  return rows;
+}
+
+export type DeliveryAgent = { agent: keyof typeof AGENT_NAMES; title?: string; status: 'working' | 'done' | 'waiting' | 'stopped'; finishedAt?: string; steps: { text: string; status: string; source?: string; at?: string }[] };
+
+/** G-43-3 `delivery_agent`; undefined (the card falls back to agent_summary) unless agent, status and every step are readable. */
+export function deliveryAgentOf(journey: JourneyView): DeliveryAgent | undefined {
+  const value: unknown = (journey as { delivery_agent?: unknown }).delivery_agent;
+  if (!isObject(value) || !isText(value.agent) || !Object.hasOwn(AGENT_NAMES, value.agent as string)) return undefined;
+  if (!['working', 'done', 'waiting', 'stopped'].includes(value.status as string) || !Array.isArray(value.steps)) return undefined;
+  const steps = [];
+  for (const step of value.steps as unknown[]) {
+    if (!isObject(step) || !isText(step.text) || !isText(step.status)) return undefined;
+    steps.push({ text: step.text as string, status: step.status as string, source: textOf(step.source), at: textOf(step.at) });
+  }
+  return { agent: value.agent as DeliveryAgent['agent'], title: textOf(value.title), status: value.status as DeliveryAgent['status'], finishedAt: textOf(value.finished_at), steps };
+}
+
+/** G-43-5 `delivery_summary.note`: the backend's line-order sentence, drawn only when returned. */
+export function deliveryNoteOf(journey: JourneyView): string | undefined {
+  const value: unknown = (journey as { delivery_summary?: unknown }).delivery_summary;
+  return isObject(value) ? textOf(value.note) : undefined;
 }
 
 /** A 200 body that is not a project list (for example a misrouted response) is treated as a load failure. */

@@ -211,6 +211,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       key={token}
       workId={id}
       step={step}
+      tasks={item.tasks}
       off={off(step)}
       pending={flow.pending === token}
       none={extra?.none}
