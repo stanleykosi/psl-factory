@@ -1,7 +1,7 @@
 {% extends 'base.html' %}{% load studio_ui %}
 {% block title %}Setup · PSL Factory{% endblock %}
 {% block content %}
-<header class="page-heading"><div><h1>Setup</h1><p>Choose a workspace to review its rules or manage staff access.</p></div></header>
+<header class="page-heading"><div><h1>Setup</h1><p>Choose a workspace to review its rules or manage staff access.</p></div><a class="button secondary" href="{% url 'staff_roster' %}">Staff</a></header>
 <form method="get" role="search" class="filter-bar">
   <label>Search workspaces<input type="search" name="q" value="{{ search }}"></label>
   <button>Search</button>

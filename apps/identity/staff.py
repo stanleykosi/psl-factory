@@ -117,11 +117,21 @@ def open_actions(case, person):
         current__status__in=['completed','cancelled']).select_related('current').order_by('pk')
 
 
+def role_context(actor,case):
+    # Account administration cannot bypass a role policy's current source boundary.
+    from apps.policy.role_assignments import report
+    from apps.policy.impact import configuration
+    report_value=report(actor,case.pk)
+    if report_value['status']!='ACTIVE':raise ValidationError('Current project role assignments are required.')
+    config=configuration(actor,case.pk,report_value['configuration'])
+    return config,reference_values(config)
+
+
 @transaction.atomic
 def deactivate(actor, case_id, person_id, replacements, evidence_id, reason, expected):
     case = Case.objects.select_for_update().get(pk=case_id)
-    intake.lock_users({actor.pk, person_id, *replacements.values()})
-    cfg, _ = authority(actor, case, 'allow_deactivation')
+    intake.lock_users({actor.pk, person_id, *(pk for pk in replacements.values() if pk is not None)})
+    cfg, settings = authority(actor, case, 'allow_deactivation')
     _revision(case, expected)
     intake.text(reason, 1000)
     user = get_user_model().objects.filter(pk=person_id).first()
@@ -143,15 +153,20 @@ def deactivate(actor, case_id, person_id, replacements, evidence_id, reason, exp
     if len(items) > 100 or {item.pk for item in items} != set(replacements):
         raise ValidationError('Select a successor for every open project action.')
     if items:
-        values = reference_values(active_component('D05.role_principal_assignments',case))
+        if any(pk is None for pk in replacements.values()) and not (
+                cfg.value['format']=='psl.tenant-access/v3' and settings.get('allow_unassigned_departure') is True):
+            raise ValidationError('An unassigned handover needs explicit current account controls.')
+    if any(pk is not None for pk in replacements.values()):
+        _,values = role_context(actor,case)
         original = eligibility(case, values, user.pk)
-        for item in items:
-            next_id = replacements[item.pk]
+    for item in items:
+        next_id = replacements[item.pk]
+        if next_id is not None:
             proposed = eligibility(case, values, next_id)
             if (next_id == user.pk or not proposed['eligible_role_bundle'] or
                     not set(original['roles']).intersection(proposed['roles'])):
                 raise ValidationError('Each successor needs a current shared role on this workspace.')
-            change_action(actor,case.pk,item.pk,'reassign',evidence_id,reason,None,item.current.number,owner_id=next_id)
+        change_action(actor,case.pk,item.pk,'reassign',evidence_id,reason,None,item.current.number,owner_id=next_id)
     for grant in grants:
         grant.active = False
         grant.save(update_fields=['active'])

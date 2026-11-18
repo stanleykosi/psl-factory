@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
@@ -76,6 +77,6 @@ def show(request, case_id, item_id):
         else:
             messages.success(request, 'Project action updated.')
             return redirect('design_project_action', case.pk, item.pk)
-    history = item.states.select_related('owner').order_by('-number')[:20]
+    history = Paginator(item.states.select_related('owner','actor').order_by('-number'),20).get_page(request.GET.get('page'))
     return render(request, 'design/project_action.html', {'case': case, 'item': item, 'state': state, 'form': form,
                                                          'timing': action_timing(state), 'history': history})

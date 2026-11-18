@@ -166,7 +166,7 @@ class StaffLifecycleTests(TestCase):
         cls.root = users.objects.create_superuser('staff-technical')
         cls.operator = users.objects.create_user('staff-delegate')
         cls.successor = users.objects.create_user('staff-successor')
-        actions = ['case.read','evidence.add','policy.configure','policy.activate','action.manage','action.own']
+        actions = ['case.read','evidence.add','policy.read','policy.configure','policy.activate','action.manage','action.own']
         cls.scope = {'format':'psl.tenant-access/v1','create_cases':True,'manage_access':True,'kinds':['project'],
                      'allowed_actions':actions,'initial_actions':actions,'classification':'synthetic',
                      'staff_lifecycle':{'invite_minutes':30,'allow_invite':True,'allow_deactivation':True}}

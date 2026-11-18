@@ -109,7 +109,7 @@ class RoleGuardTests(TestCase):
 
     def test_typed_delegation_ui_drafts_without_activation_and_boolean_false_binding_is_valid(self):
         f=fixture(own_role=True);a,b,c=f['a'],f['b'],f['c'];client=Client(enforce_csrf_checks=True);client.force_login(a)
-        url=reverse('policy',args=[c.pk]);self.assertContains(client.get(url),'Delegation and delegated role eligibility')
+        url=reverse('policy',args=[c.pk]);self.assertContains(client.get(url),'Open delegations and add a draft')
         self.assertEqual(client.post(url,{}).status_code,403)
         value=deepcopy(f['value']);value['delegate_eligibility']={'roles':f['config']['delegate_combined_roles'],
             'valid_from':(timezone.now()-timedelta(minutes=1)).isoformat(),'valid_until':(timezone.now()+timedelta(minutes=10)).isoformat()}

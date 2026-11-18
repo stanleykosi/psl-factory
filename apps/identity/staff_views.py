@@ -43,7 +43,7 @@ class DepartureForm(forms.Form):
     reason = forms.CharField(max_length=1000, widget=forms.Textarea(attrs={'rows': 4}))
     revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
 
-    def __init__(self, case, items, data=None):
+    def __init__(self, case, items, data=None, *, actor):
         super().__init__(data, initial={'revision': case.revision})
         if items:
             self.fields['evidence'] = forms.ChoiceField(label='Reassignment evidence',
@@ -52,7 +52,7 @@ class DepartureForm(forms.Form):
             from apps.policy.role_assignments import eligibility
             from apps.policy.services import active_component, reference_values
 
-            values = reference_values(active_component('D05.role_principal_assignments', case))
+            _, values = staff.role_context(actor, case)
             original = eligibility(case, values, items[0].current.owner_id)
             owners = Grant.objects.filter(case=case, action='action.own', active=True).values('user_id')
             visible = Grant.objects.filter(case=case, action='case.read', active=True).values('user_id')
@@ -133,8 +133,8 @@ def departure(request, case_id, person_id):
     items = list(staff.open_actions(case, person_id)[:101])
     blocked = None
     try:
-        form = DepartureForm(case, items, request.POST if request.method == 'POST' else None)
-    except ValidationError:
+        form = DepartureForm(case, items, request.POST if request.method == 'POST' else None, actor=request.user)
+    except (ValidationError,PermissionDenied):
         form = None
         blocked = 'Current role assignments are needed to reassign these actions.'
     if form and request.method == 'POST' and form.is_valid():

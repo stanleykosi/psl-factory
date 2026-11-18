@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Deactivate account · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Deactivate {{ person.get_full_name|default:person.username }}?</h1><p>Remove sign-in and workspace access. Past work and decisions stay in the record.</p></div><a class="button secondary" href="{% url 'staff_roster' %}">Back to staff</a></header>
+{% if held %}<section class="card"><h2>Account needs review</h2><p>{{ held }}</p></section>{% endif %}
+{% if form %}<form method="post">{% csrf_token %}{{ form.fingerprint }}{{ form.operation }}{{ form.non_field_errors }}
+  {% for group in form.groups %}<section class="card"><h2>{{ group.case.title }}</h2>
+    <p><a href="{% url 'case_access' group.case.pk %}">Review workspace access</a></p>
+    {% for row in group.rows %}<div class="form-row">{{ row.field.errors }}{{ row.field.label_tag }}{{ row.field }}<p>Current deadline: {{ row.item.current.due_at|date:'d M Y H:i T'|default:'Not established' }}. Existing deadlines and history are retained.</p></div>{% empty %}<p>No open project actions to hand over.</p>{% endfor %}
+    {% if group.evidence %}<p>{{ group.evidence.errors }}{{ group.evidence.label_tag }}{{ group.evidence }}</p>{% endif %}
+  </section>{% endfor %}
+  {% if not held %}<section class="card"><h2>Confirm account departure</h2><p>A blank successor leaves that action marked Owner needed. Work is not completed by deactivating an account.</p>{{ form.reason.as_field_group }}{{ form.confirmed.as_field_group }}<button>Deactivate account</button><a class="button secondary" href="{% url 'staff_roster' %}">Cancel</a></section>{% endif %}
+</form>{% endif %}
+{% endblock %}

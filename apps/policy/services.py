@@ -189,7 +189,7 @@ def validate_envelope(case, envelope, runtime=False, *, budget=None):
             validate_reference(envelope['component_id'],target,case,runtime=runtime)
         elif envelope['component_id'] == 'D05.role_principal_assignments':
             from .role_assignments import validate_reference as validate_role_assignment
-            validate_role_assignment(target,case)
+            validate_role_assignment(target,case,runtime=runtime)
         elif envelope['component_id'] == 'D06.source_schema_ref':
             if target.schema_ref != 'schema:psl/controlled-csv/v1' or target.content != {'columns': ['account', 'amount', 'currency', 'period']}:
                 raise ValidationError('Expected the reviewed controlled CSV schema')

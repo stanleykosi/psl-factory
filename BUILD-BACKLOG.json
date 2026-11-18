@@ -1,14 +1,34 @@
 {
   "design_consolidation_20261116": {
+    "payroll_row_progress_20261118":{
+      "status":"board_and_native_code_reconciled_engineering_remaining",
+      "states":["SCR-09","SCR-09-error","SCR-18","SCR-18-permission"],
+      "source":"design/canvas/finance/project/SCR-09-desktop.dc.html; SCR-18-desktop.dc.html; SCR-18-desktop-permission.dc.html",
+      "existing":"Configured CSV/Excel uploads, exact restricted imports, provider reviews, staff matching, HR corrections and aggregate publication exist. Native payroll.py marks parent working-set holds at match/aggregate, while payroll_math.py already retains row issues and unknowns.",
+      "actual_gap":"The design permits good rows to continue working while problematic rows remain held; the current strict input/parent status gates do not provide this row-level progression and its complete HR/Finance UI coverage.",
+      "proposed_engineering":"Preserve source hashes and forbidden-field rejection, quarantine only allowed row metadata, continue valid draft matching with explicit coverage and unknown held totals, retain source-control and final-publication guards. Build correction successors and HR-only issue detail; Finance receives permitted aggregate coverage, never individual pay.",
+      "owner_decisions":"Actual source layouts, matching/exception rules, disclosure thresholds and operational people remain deferred; no example row counts, salaries or policy values adopted",
+      "all_states_accepted":false
+    },
     "staff_global_design_gap_20261118":{
-      "status":"source_and_native_code_inspected_not_implemented",
+      "status":"pg148_150_152_hosted_browser_account_action_handover_verified_profiles_and_factory_handover_remain",
+      "failed_149":{"deployment":"c500cad5-db9f-449a-a9b2-d2e587b2bd38","passed":39,"failures":1,"not_run":17,"seconds":156.960,"final_exit":1,"reason":"Older role-guard UI heading assertion superseded by current delegation entry; test-only copy assertion corrected"},
+      "failed_147":{"deployment":"8e8a2ed9-f7b5-4494-b1e9-43f8bbe3b1cd","tests_run":0,"setup_errors":1,"seconds":0.265,"final_exit":1,"reason":"Old SQL delegation format guard rejected newv3; added0007 without editing applied0006"},
+      "package_148":{"deployment":"d3bda776-509f-49ec-8a0c-39fc5e480a7a","passed":48,"seconds":92.407,"checks_exit":0,"drift_exit":0,"final_exit":0,"preview_migrated":true,"fixture_succeeded":true,"person":120,"successor":121,"scopes":["f01c74c2-81f7-4be8-b9a5-6aae4c71a243","9ca06486-7269-4c04-8310-da8f27205abe"]},
+      "package_150":{"deployment":"8b887bde-b790-4cb8-9e9f-1b2e2b36eda0","passed":57,"seconds":178.208,"final_exit":0,"preview_migrated":false,"fixtures_run":false},
+      "failed_151":{"deployment":"c608c6c7-9c57-4a33-a053-d43fd9f666d3","passed":0,"errors":1,"not_run":17,"seconds":3.045,"final_exit":1,"reason":"Null-owner default argument in modern current/history display; explicit conditional fixed"},
+      "package_152":{"deployment":"23e2ff09-ed32-40f5-8e33-52b81d9b0bef","passed":18,"seconds":26.056,"final_exit":0,"preview_migrated":false,"fixtures_run":false},
+      "runtime_152":{"web":"d9174754-fbb0-4cdd-8525-3be408c18aa4","worker":"da101d9c-7623-4612-8a8f-2adf57cebb4f","status":"SUCCESS","paths_per_service":1716,"root_paths":1715,"mismatches":0},
+      "implemented":["Scoped paginated roster/search/current status/last sign-in","Version3 nullable account controls/editor and exact complete-scope departure manifest","Native action handover including explicitly allowed unassigned owner; deadlines/history preserved","Current original role-policy source checks for successors","Immutable account event/session fence/queued-delivery hold","Inactive nominee cannot act while remaining project nominations stay usable","Bounded paginated modern action history with prior owner/deadline/actor/evidence"],
+      "browser":{"person":120,"successor":121,"departure_observed":"2026-11-18T21:24:45+01:00","action_11_owner":null,"action_12_owner":121,"both_actions_status":"open","prior_owner_in_history":120,"remaining_role_policies":"active_revision1_successor_current","inactive_access_count":0,"desktop_body_client":[1265,1265],"phone_body_client":[375,375],"viewport_reset":true,"handoff_marked":true},
+      "acceptance":{"observed":207,"observed_with_open_checks":186,"unseen":55,"completed_scoped_journeys":21},
       "states":["SCR-21","SCR-21-deactivate"],
       "source":"design/canvas/project/SCR-21-desktop.dc.html; SCR-21-desktop-deactivate.dc.html",
       "existing":"Native staff invitations and departures use exact workspace technical delegation, single-use invitations, per-project action successors and current role checks",
-      "actual_gaps":["Staff roster across permitted scopes with roles, current account state and last sign-in","Whole-account departure across all permitted project scopes; current service only removes one workspace and disables an admitted account only if it has no other grants","Design's explicit Owner needed path when no successor is chosen; current departure requires all action successors","Role-profile invitations/editing and reactivation with fresh role allocation rather than implied inherited authority"],
+      "actual_gaps":["Current role/profile labels and pending invitations in scoped roster","Configured role-profile invitations/editing and reactivation with fresh role allocation","Connected native starter/recording-responsibility factory work handover and browser recovery variant"],
       "proposed_engineering":"Reuse versioned TenantAuthority/staff lifecycle and native factory recovery; require explicit coverage of all affected scopes, preserve original starters/approvals/records, reconcile unresolved effects before replacement, keep account management separate from business approval authority",
       "owner_decisions":["Who may manage accounts and their delegation scope","Allowed human login roles and role-to-record-action profiles","Any operational reactivation authority"],
-      "next":"Build after won-proposal checkpoint; implement typed policy/validators/UI/fixtures/PostgreSQL and synthetic browser journey, not just another workspace invitation",
+      "next":"Continue named access profiles, pending invitations, fresh-role reactivation and actual native factory handover; preserve human business-role decisions and source permission boundaries",
       "all_states_accepted":false
     },
     "won_planning_sources_20261118":{

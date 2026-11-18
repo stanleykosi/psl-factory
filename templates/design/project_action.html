@@ -2,7 +2,18 @@
 {% block title %}Project action · PSL Factory{% endblock %}
 {% block content %}
 <header class="page-heading"><div><a class="back-link" href="{% url 'design_project_tab' case.pk 'actions' %}">← Project actions</a><h1>{{ state.description }}</h1><p>{{ case|workspace_name }}</p></div></header>
-<div class="factory-case-layout"><section class="card"><h2>Commitment</h2><dl class="decision-facts"><dt>Owner</dt><dd>{{ state.owner.get_full_name|default:state.owner.username|default:'Owner needed' }}</dd><dt>Deadline</dt><dd>{{ state.due_at|date:'d M Y, H:i T'|default:'Unknown' }}</dd><dt>Status</dt><dd>{{ state.status|readable }}{% if timing == 'OVERDUE' %} · Overdue{% endif %}</dd></dl>
-<h2>Recorded changes</h2><ul>{% for entry in history %}<li>Version {{ entry.number }} · {{ entry.status|readable }} · {{ entry.reason }}</li>{% endfor %}</ul></section>
+<div class="factory-case-layout"><section class="card"><h2>Commitment</h2><dl class="decision-facts"><dt>Owner</dt><dd>{% if state.owner_id %}{{ state.owner.get_full_name|default:state.owner.username }}{% else %}Owner needed{% endif %}</dd><dt>Deadline</dt><dd>{{ state.due_at|date:'d M Y, H:i T'|default:'Unknown' }}</dd><dt>Status</dt><dd>{{ state.status|readable }}{% if timing == 'OVERDUE' %} · Overdue{% endif %}</dd></dl>
+<h2>Recorded changes</h2>
+<p>Showing {{ history.start_index }}–{{ history.end_index }} of {{ history.paginator.count }} changes.</p>
+<ul>{% for entry in history %}<li>
+  <strong>Version {{ entry.number }} · {{ entry.status|readable }}</strong>
+  <p>Owner: {% if entry.owner_id %}{{ entry.owner.get_full_name|default:entry.owner.username }}{% else %}Owner needed{% endif %} · Deadline: {{ entry.due_at|date:'d M Y, H:i:s T'|default:'Unknown' }}</p>
+  <p>{{ entry.reason }}</p>
+  <p>Recorded by {{ entry.actor.get_full_name|default:entry.actor.username }} · {{ entry.created_at|date:'d M Y, H:i:s T' }} · Supporting record {{ entry.evidence_id }}</p>
+</li>{% endfor %}</ul>
+<nav aria-label="Action history pages">
+  {% if history.has_previous %}<a class="button secondary" href="?page={{ history.previous_page_number }}">Previous changes</a>{% endif %}
+  {% if history.has_next %}<a class="button secondary" href="?page={{ history.next_page_number }}">Earlier changes</a>{% endif %}
+</nav></section>
 <aside class="card"><h2>Update action</h2>{% if form %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Record change</button></form>{% else %}<p>No change is available for your current role and this action’s state.</p>{% endif %}<p><a href="{% url 'meetings' case.pk %}">Open meetings and deadline controls</a></p></aside></div>
 {% endblock %}

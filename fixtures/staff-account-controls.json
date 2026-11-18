@@ -1,0 +1,13 @@
+{
+  "classification": "synthetic-example-only",
+  "format": "psl.tenant-access/v3",
+  "staff_lifecycle": {
+    "invite_minutes": 30,
+    "allow_invite": true,
+    "allow_deactivation": true,
+    "allow_roster": true,
+    "allow_account_deactivation": null,
+    "allow_unassigned_departure": null
+  },
+  "note": "Account departure and unassigned handover remain undecided. Explicit technical delegation and each record action are still required. This fixture grants nothing."
+}

@@ -9,7 +9,7 @@
 </section>
 <section class="card table-wrap"><h2>Delegation history</h2>
   <table><thead><tr><th>Organization</th><th>Account</th><th>Version</th><th>Access</th><th>Expires</th><th>Reason</th></tr></thead>
-    <tbody>{% for record in history %}<tr><td>{{ record.tenant }}</td><td>{{ record.user_id }}</td><td>{{ record.version }}</td><td>{{ record.enabled|yesno:'Enabled,Disabled' }}</td><td>{{ record.expires_at }}</td><td>{{ record.reason }}</td></tr>{% empty %}<tr><td colspan="6">No delegations recorded.</td></tr>{% endfor %}</tbody>
+    <tbody>{% for record in history %}<tr><td>{{ record.tenant }}</td><td>{{ record.user_id }}</td><td>{{ record.version }}<br><a href="{% url 'staff_account_controls' record.pk %}">Staff account controls</a></td><td>{{ record.enabled|yesno:'Enabled,Disabled' }}</td><td>{{ record.expires_at }}</td><td>{{ record.reason }}</td></tr>{% empty %}<tr><td colspan="6">No delegations recorded.</td></tr>{% endfor %}</tbody>
   </table>
 </section>
 {% endblock %}

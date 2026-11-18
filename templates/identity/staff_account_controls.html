@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Account delegation · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Account delegation</h1><p>{{ configuration.user.get_full_name|default:configuration.user.username }} · {{ configuration.tenant }} · Version {{ configuration.version }}</p></div><a class="button secondary" href="{% url 'tenant_access' %}">Workspace delegation</a></header>
+<section class="card"><h2>Staff account controls</h2><p>Unknown leaves the action unavailable. Saving keeps the existing workspace access limits and expiry; it does not appoint project decision makers.</p><form method="post">{% csrf_token %}{{ form.as_p }}<button>Save a new version</button></form></section>
+<section class="card"><h2>Version history</h2><ul>{% for row in history %}<li><a href="{% url 'staff_account_controls' row.pk %}">Version {{ row.version }}</a> · {{ row.created_at|date:'d M Y H:i T' }} · {{ row.reason }}</li>{% endfor %}</ul></section>
+{% endblock %}

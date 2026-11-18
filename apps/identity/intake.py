@@ -11,7 +11,7 @@ from apps.documents.contracts import validate
 from adapters.forecast import obj,KEY
 from .intake_models import TenantAuthority as Authority,CaseIntake as Intake,AccessChange
 
-SCHEMA=obj({'format':{'enum':['psl.tenant-access/v1','psl.tenant-access/v2']},'create_cases':{'type':'boolean'},'manage_access':{'type':'boolean'},
+SCHEMA=obj({'format':{'enum':['psl.tenant-access/v1','psl.tenant-access/v2','psl.tenant-access/v3']},'create_cases':{'type':'boolean'},'manage_access':{'type':'boolean'},
     'kinds':{'type':'array','uniqueItems':True,'maxItems':2,'items':{'enum':['project','support']}},
     'allowed_actions':{'type':'array','uniqueItems':True,'maxItems':1000,'items':{'type':'string','minLength':1,'maxLength':100}},
     'initial_actions':{'type':'array','uniqueItems':True,'maxItems':1000,'items':{'type':'string','minLength':1,'maxLength':100}},
@@ -21,6 +21,8 @@ SCHEMA['properties']['staff_lifecycle']=obj({
     'allow_invite':{'type':'boolean'},
     'allow_deactivation':{'type':'boolean'},
 })
+for key in ['allow_roster','allow_account_deactivation','allow_unassigned_departure']:
+    SCHEMA['properties']['staff_lifecycle']['properties'][key]={'type':['boolean','null']}
 
 def source_system(action):
     prefix='approval.source.read:'
@@ -36,10 +38,18 @@ def checked(v):
     from apps.identity.actions import ACTIONS
     initial=set(v['initial_actions']);allowed=set(v['allowed_actions']);fixed=set(ACTIONS)
     if not initial<=allowed or not initial<=fixed:raise ValidationError('Initial actions must be fixed registered actions explicitly delegated')
-    if any(action not in fixed and not(v['format']=='psl.tenant-access/v2' and source_system(action)) for action in allowed):raise ValidationError('Only fixed actions or exact v2 approval source-read literals may be delegated; no wildcard')
+    if any(action not in fixed and not(v['format'] in ['psl.tenant-access/v2','psl.tenant-access/v3'] and source_system(action)) for action in allowed):raise ValidationError('Only fixed actions or exact approval source-read literals may be delegated; no wildcard')
     if v['create_cases'] and ('case.read' not in v['initial_actions'] or not v['kinds']):raise ValidationError('Case creation requires an explicit kind and initial case.read')
     if v.get('staff_lifecycle') and (not v['manage_access'] or 'case.read' not in allowed or not v['kinds']):
         raise ValidationError('Staff lifecycle requires explicit workspace access delegation')
+    controls=v.get('staff_lifecycle',{})
+    advanced={'allow_roster','allow_account_deactivation','allow_unassigned_departure'}
+    if advanced.intersection(controls) and v['format']!='psl.tenant-access/v3':
+        raise ValidationError('Account controls require a version3 delegation; legacy authority is unchanged')
+    if controls.get('allow_account_deactivation') and not controls.get('allow_deactivation'):
+        raise ValidationError('Account departure requires explicit workspace departure delegation')
+    if controls.get('allow_unassigned_departure') and not controls.get('allow_account_deactivation'):
+        raise ValidationError('Unassigned departure requires explicit account departure delegation')
 
 def text(v,maximum):
     if not isinstance(v,str) or not v.strip() or v!=v.strip() or len(v)>maximum:raise ValidationError('Provide bounded nonempty text without surrounding whitespace')
