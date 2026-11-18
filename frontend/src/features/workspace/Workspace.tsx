@@ -16,7 +16,7 @@ import { AgentCard, StationTrack } from '@/features/work-item/WorkItemOverview';
 
 import { AssignForm } from './AssignForm';
 import { agentName, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
-import { InlineDecide } from './InlineDecide';
+import { InlineDecide, type DecidedNotice } from './InlineDecide';
 import { WorkspaceLinks } from './Links';
 import { itemsDefaultChecked, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks } from './proposals';
 import { SectionView, type ItemControls } from './Sections';
@@ -181,8 +181,10 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     if (!stepVerdict(s) || !s.task_id) continue;
     decideTasks.set(s.task_id, [...(decideTasks.get(s.task_id) ?? []), s]);
   }
-  const [decided, setDecided] = useState<string | null>(null);
-  const onDecided = useCallback((text: string) => setDecided(text), []);
+  const [decided, setDecided] = useState<DecidedNotice | null>(null);
+  const onDecided = useCallback((notice: DecidedNotice) => setDecided(notice), []);
+  // The decision's notice belongs to the item as re-read after it: it goes when the item moves on or another step is sent.
+  const decidedShown = decided !== null && decided.revision === workspace.revision && flow.pending === null && flow.notice === null ? decided : null;
   const hasDecide = workspaceSteps.length > 0;
   useEffect(() => {
     const bar = decideRef.current;
@@ -425,9 +427,9 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
               <span>{assignFlow.notice.text}</span>
             </Callout>
           )}
-          {decided && (
+          {decidedShown?.settled && (
             <Callout kind="success" announce={false}>
-              <span>{decided}</span>
+              <span>{decidedShown.text}</span>
             </Callout>
           )}
           {(notice?.kind === 'done' || notice?.kind === 'queued') && (
@@ -437,6 +439,13 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             </Callout>
           )}
         </div>
+        {decidedShown && !decidedShown.settled && (
+          <div role="alert">
+            <Callout kind="warning" className="ws-notice">
+              <span>{decidedShown.text}</span>
+            </Callout>
+          </div>
+        )}
         {notice?.kind === 'uncertain' && (
           <div role="alert">
             <Callout kind="warning" className="ws-notice">
@@ -598,7 +607,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
 
 export function Workspace({ id, item, page }: { id: string; item: WorkItem; page?: WorkspacePage }) {
   const workspace = item.workspace;
+  const phone = useIsPhone();
   if (!workspace) return null;
+  // the income line's stations and working agent are drawn here whichever branch draws the sections (WorkItemOverview draws no copy)
+  const income = workspace.line_key === INCOME_LINE;
+  const agentSide = income && item.agent.status === 'working';
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';
@@ -610,6 +623,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
       ) : (
         <div className="ws-cols">
           <div className="ws-main">
+            {income && <LineStations item={item} phone={phone} />}
             {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
             {workspace.sections
               .filter((section) => !inSide(item)(section))
@@ -618,8 +632,9 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
               ))}
             <WorkspaceLinks links={workspaceLinks(workspace)} />
           </div>
-          {workspace.sections.some(inSide(item)) && (
+          {(workspace.sections.some(inSide(item)) || agentSide) && (
             <aside className="ws-side" aria-label="Review and decide">
+              {agentSide && <LineAgent agent={item.agent} />}
               {workspace.sections
                 .filter(inSide(item))
                 .map((section) => (

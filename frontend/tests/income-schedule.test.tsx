@@ -549,3 +549,110 @@ describe('phone (AC 18)', () => {
     expect(document.activeElement?.textContent).toBe('Reject');
   });
 });
+
+describe('round 2: an unsettled effect is never an outcome (TECH-1-1)', () => {
+  const uncertainItem = (): WorkItem => {
+    const body = item('W-2702');
+    return { ...body, state: 'effect_uncertain', revision: 2, tasks: [{ ...body.tasks[0], you_can_act: false, cannot_act_reason: 'already_decided', revision: 2 }], workspace: { ...body.workspace!, revision: 2, steps: [] } };
+  };
+  for (const verdict of ['approve', 'return', 'reject'] as const) {
+    it(`${verdict}: a 200 with work_state effect_uncertain shows "result not confirmed", never the outcome`, async () => {
+      onDecide = (body) => {
+        served = uncertainItem();
+        return json(200, { task_id: 'T-2702', verdict: body.verdict, decided_by: 'Ada Okafor', decided_at: '2026-11-13T14:05:00Z', work_state: 'effect_uncertain' });
+      };
+      await open(item('W-2702'));
+      await ready();
+      if (verdict !== 'approve') fireEvent.change(note(), { target: { value: 'Check row 12.' } });
+      await click(verdict === 'approve' ? 'Approve schedule' : verdict === 'return' ? 'Return with a note' : 'Reject');
+      expect(await screen.findByText('Schedule v1: result not confirmed')).toBeTruthy();
+      expect(screen.getByText('We are checking what happened. Nothing was sent again.')).toBeTruthy();
+      expect(said()).not.toMatch(/is approved|was returned|was rejected|verified/i);
+      expect(document.querySelector('.ws-live .psl-callout--success, .ws-live [class*="success"]')).toBeNull();
+      expect(posts('/decision')).toHaveLength(1);
+    });
+  }
+
+  it('a 200 saying verified whose re-read is effect_uncertain with a reconcile is not confirmed either', async () => {
+    onDecide = (body) => {
+      served = { ...uncertainItem(), reconcile: { question: 'Was it recorded?' } } as unknown as WorkItem;
+      return decided(body.verdict as string);
+    };
+    await open(item('W-2702'));
+    await ready();
+    await click('Approve schedule');
+    expect(await screen.findByText('Schedule v1: result not confirmed')).toBeTruthy();
+    expect(said()).not.toMatch(/is approved|verified/i);
+  });
+});
+
+describe('round 2: the decision notice goes when the item moves on (TECH-1-3)', () => {
+  it('after Return, Correct and resubmit leaves no "was returned" notice', async () => {
+    await open(item('W-2702'));
+    await ready();
+    fireEvent.change(note(), { target: { value: 'Row 12.' } });
+    await click('Return with a note');
+    expect(await screen.findByText('Schedule v1 was returned')).toBeTruthy();
+    await click('Correct and resubmit');
+    fireEvent.click(ws().getByRole('radio', { name: 'Reclassification' }));
+    onStep = () => {
+      served = { ...item('W-2703.next'), id: 'W-2702' };
+      return json(200, { work_id: 'W-2702', state: 'action_needed', revision: 5, outcome: 'done' });
+    };
+    await act(async () => {
+      fireEvent.click(ws().getAllByRole('button').find((b) => (b as HTMLButtonElement).type === 'submit')!);
+    });
+    await waitFor(() => expect(status().textContent).toBe('AWAITING FINANCE DECISION'));
+    expect(screen.queryByText('Schedule v1 was returned')).toBeNull();
+  });
+});
+
+describe('round 2: one page re-read after an uncertain decide (TECH-1-4)', () => {
+  it('a 500 is followed by exactly two reads of the item: the reconcile, then the page', async () => {
+    // the item reads after the decision answer slowly, so a page re-read sent while the reconcile is still reading shows up
+    onDecide = () => {
+      readAnswer = slow as unknown as () => Response;
+      return json(500, { code: 'server_error', message: 'Down.' });
+    };
+    await open(item('W-2702'));
+    await ready();
+    const slow = vi.fn(async () => {
+      await new Promise((r) => setTimeout(r, 80));
+      return json(200, served);
+    });
+    const before = sent.length;
+    await click('Approve schedule');
+    expect(await screen.findByText(/We couldn.t confirm your decision/)).toBeTruthy();
+    await new Promise((r) => setTimeout(r, 400));
+    const reads = sent.slice(before).filter((r) => r.method === 'GET' && r.path === '/api/v1/work/W-2702');
+    expect(reads).toHaveLength(2);
+  });
+});
+
+describe('round 2: the read-only branch keeps the income stations and agent (TECH-1-2)', () => {
+  it('W-2701 without a workspace revision still draws the five stations and Chidi’s card', async () => {
+    const body = item('W-2701');
+    delete (body.workspace as { revision?: number }).revision;
+    await open(body);
+    expect(document.querySelectorAll('.ws-stations .psl-station')).toHaveLength(5);
+    expect(document.querySelector('.ws-lineagent')!.textContent).toContain('WORKING');
+    expect(document.querySelectorAll('section[aria-label="Agent at work"]')).toHaveLength(1);
+    expect(document.querySelectorAll('section[aria-label="Stations"]')).toHaveLength(1);
+  });
+});
+
+describe('round 2: other lines are unchanged by the income-line frame edits (TECH-1-5)', () => {
+  it('W-2304 decided (minutes) still draws its decided-task card and its screen-reader station track', async () => {
+    await open(item('W-2304.approve'));
+    expect(screen.getByText('Only a PMO Lead can decide.')).toBeTruthy();
+    expect(document.querySelector('.cmp-sr section[aria-label="Stations"]')).toBeTruthy();
+    expect(document.querySelector('.ws-stations')).toBeNull();
+  });
+
+  it('W-2411 (issue) keeps its screen-reader station track and agent card, and draws none of the income line’s', async () => {
+    await open(item('W-2411'));
+    expect(document.querySelector('.cmp-sr section[aria-label="Stations"]')).toBeTruthy();
+    expect(document.querySelector('.cmp-sr section[aria-label="Agent at work"]')).toBeTruthy();
+    expect(document.querySelector('.ws-stations, .ws-lineagent, .ws-ministations')).toBeNull();
+  });
+});

@@ -35,6 +35,7 @@ export const DECIDE_TEXT = {
   latest: 'Review the latest',
   unconfirmed: 'We couldn’t confirm whether your decision was recorded, and we couldn’t reload this item to check, so the decision buttons stay off. Try again reloads the item; it doesn’t send your decision again.',
   recorded: (label: string) => `Decision recorded on ${label}`,
+  notConfirmed: (label: string) => `${label}: result not confirmed`,
   cancel: 'Cancel',
   tryAgain: 'Try again',
 } as const;
@@ -49,6 +50,9 @@ function noteProblem(verdict: Verdict, note: string): string | null {
   return null;
 }
 
+/** `settled: false`: the decide answered 200 but its effect is not confirmed; never worded as an outcome. */
+export type DecidedNotice = { text: string; settled: boolean; revision: number | undefined };
+
 type Props = {
   id: string;
   taskId: string;
@@ -57,8 +61,9 @@ type Props = {
   page: WorkspacePage;
   /** Another write is in flight on the page, or its refresh failed: nothing can be pressed. */
   off: boolean;
-  /** The decide answered 200: the page's notice, from the existing VERDICT_WORDS. */
-  onDecided: (text: string) => void;
+  /** The decide answered 200 and the page re-read: the notice (the existing VERDICT_WORDS only when the effect is settled),
+   *  with the workspace revision it belongs to, so it goes once the item moves on. */
+  onDecided: (notice: DecidedNotice) => void;
 };
 
 export function InlineDecide({ id, taskId, steps, page, off, onDecided }: Props) {
@@ -81,19 +86,35 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided }: Props)
     if (lost) page.onAccessLost(lost);
   }, [lost, page]);
 
-  // After a write has settled the page re-reads and draws what the backend says (never a state from the click): a 200
-  // first gives its notice, the backend's verdict echo in the existing words. Each outcome is handled once.
-  const settled = view.kind === 'done' ? view.result : view.kind === 'stale' || view.kind === 'forbidden' || (view.kind === 'item' && review.uncertain) ? view : null;
+  // After a write has settled the page re-reads once and draws what the backend says (never a state from the click). A 200
+  // waits for useDecision's own re-read; an uncertain write waits for its reconcile (the submit is idle again). Each outcome
+  // is handled once.
+  const doneRead = view.kind === 'done' && (view.reloaded !== null || view.refreshFailed);
+  const reconciled = view.kind === 'item' && review.uncertain && submit.status === 'idle';
+  const settled = doneRead ? view.result : view.kind === 'stale' || view.kind === 'forbidden' || reconciled ? view : null;
   const handled = useRef<unknown>(null);
   const { reload } = page;
   useEffect(() => {
     if (!settled || handled.current === settled) return;
     handled.current = settled;
-    if (view.kind === 'done') {
-      const words = VERDICT_WORDS[view.result.verdict as Verdict];
-      onDecided(words ? words.heading(view.label) : DECIDE_TEXT.recorded(view.label));
+    if (view.kind !== 'done') {
+      void reload();
+      return;
     }
-    void reload();
+    // As F-16 DoneView: an effect the backend could not confirm (the decide says effect_uncertain, or the re-read item is
+    // effect_uncertain or awaits a reconcile) is never shown as approved, returned or rejected; the re-read item leads.
+    const { result, reloaded, label } = view;
+    const words = VERDICT_WORDS[result.verdict as Verdict];
+    void reload().then((now) => {
+      const item = now ?? reloaded;
+      const uncertain = result.work_state === 'effect_uncertain' || item?.state === 'effect_uncertain' || Boolean(item?.reconcile);
+      const confirmed = !uncertain && now !== undefined && reloaded !== null;
+      onDecided({
+        text: confirmed ? (words ? words.heading(label) : DECIDE_TEXT.recorded(label)) : DECIDE_TEXT.notConfirmed(label),
+        settled: confirmed,
+        revision: now?.workspace?.revision,
+      });
+    });
   }, [settled, view, onDecided, reload]);
 
   const task = view.kind === 'item' ? findDecisionTask(view.item, taskId) : undefined;
