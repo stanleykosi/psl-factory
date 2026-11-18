@@ -199,7 +199,7 @@ from .approval_models import ApprovalRequest,ApprovalContractReview,ApprovalRout
 
 from .costing_models import CostingRule,CostingOracle,CostingReview,CostingRun,CostingBinding,CostingAF13Binding
 from .costing_proposal_models import CostingProposal, CostingProposalDecision
-from .engagement_models import EngagementRecord,ProjectIdentifier
+from .engagement_models import EngagementRecord,ProjectIdentifier,EngagementDetails,EngagementDetailsBinding
 from .identity_resolution_models import ProjectIdentityDecision
 
 from .issue_models import IssueReferenceContract, IssueReferenceObservation, IssueReferenceRevision

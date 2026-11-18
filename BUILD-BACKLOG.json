@@ -1,5 +1,26 @@
 {
   "design_consolidation_20261116": {
+    "registration_details_20261118": {
+      "status":"pg137_138_140_141_passed_hosted140_browser113_verified_141_deploy_next",
+      "base_checkpoint":"b76cdbef",
+      "process_ids":["P03","P16","P17"],
+      "policy":"D11.project_identifiers/v2; nullable planned_start/client_contact requiredness",
+      "implemented":["Immutable human-attested facts and exact registration binding","Current project-contact revisions and original-owner checks","Bounded metadata selectors including exact legacy selection","Independent facts capture while owner requirements are undecided","Private Planning context; coverage-only agent reports","Current won-proposal manager suggestion, still human confirmed"],
+      "package_137":{"deployment":"e8fa89c0-4345-45bf-890a-b53baad65eb8","passed":55,"seconds":173.916,"final_exit":0,"preview_migrated":true,"fixtures_run":true},
+      "package_138":{"deployment":"ae711299-edfb-45b5-b649-77fd31c35f49","passed":91,"seconds":623.499,"final_exit":0,"preview_migrated":false,"fixtures_run":false},
+      "failed_139":{"deployment":"2a91881d-f395-4863-ab5c-b938b00f65d2","passed":20,"failures":1,"not_run":8,"seconds":107.972,"final_exit":1,"reason":"Synthetic stale legacy-form POST omitted required hidden operation field; no runtime failure, fixture corrected"},
+      "package_140":{"deployment":"aafb59c9-fa7f-4222-99f0-d3fe5655362c","passed":29,"seconds":99.466,"final_exit":0,"preview_migrated":false,"fixtures_run":false},
+      "package_141":{"deployment":"c5c587d5-a4c5-464c-a09f-b9a50cd51cd6","passed":9,"seconds":16.532,"final_exit":0,"preview_migrated":false,"fixtures_run":false},
+      "runtime_preparation":{"stage":"139-web/worker","identical_to_140_runtime":true,"paths_per_service":1702,"mismatches":0,"root_paths_excluding_acceptance_settings":1701,"worker_script_unchanged":true},
+      "migrations":["pmo.0068_engagement_details","pmo.0069_engagement_details_guard"],
+      "fixture":{"case":"140e50b0-1178-489b-8871-2b12343edf86","source":1986,"plan":1987,"proof":1988,"reference":"SAMPLE-ENGAGEMENT-DETAILS","work":null},
+      "runtime_140":{"web":"03e77852-9a18-422b-8a3b-042c324a6d7c","worker":"685076c3-ccb3-4463-b6d6-1e4ef22031cc","status":"SUCCESS","paths_per_service":1702,"mismatches":0},
+      "hosted_new_runtime":true,
+      "browser_new_details":{"work":113,"planning_work":114,"intake_source":1986,"plan":1987,"facts_source":1991,"planned_start":"2027-01-15","contact_revision":2,"observed_verified_at":"2026-11-18T19:03:38+01:00","private_planning_context":"passed","draft_configuration":979,"active_configuration_unchanged":977,"requiredness_in_draft":{"planned_start":null,"client_contact":null},"phone_body_client_widths":[375,375],"reset_default_body_client_widths":[600,600]},
+      "next":["Read141 final for browser-found local-time and heading presentation refinements; promote matching source and read back","Push tested registration checkpoint","Build actual permission-checked won-proposal planning evidence carryover; current ACT07 starts blank inputs","Continue remaining262 states"],
+      "owner_policy":"Deferred; synthetic fixture choices only",
+      "all_states_accepted":false
+    },
     "engagement_candidates_20261118":{
       "status":"pg132_134_135_136_passed_hosted136_browser111_automatic_handoff_verified",
       "base_checkpoint":"b841ee6a",

@@ -3,7 +3,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
@@ -18,22 +18,40 @@ from apps.policy.engagement_validators import SCHEMAS
 from apps.policy.document_validators import ROLES
 from .models import RFPDisposition,DeliveryDossier
 from . import engagement as d
+from . import engagement_forms as ef,engagement_details as ed
 
 @login_required
 def workbench(request,case_id):
     c=accessible_case(request.user,case_id);require(request.user,c,'engagement.read')
     grants=set(Grant.objects.filter(case=c,user=request.user,active=True).values_list('action',flat=True))
-    evidence=lambda:forms.ModelChoiceField(public_evidence(c.evidence.all()).filter(kind__in=['engagement_source','engagement_assignment','engagement_registration','product_input','rfp_outcome','plan']))
+    evidence=lambda:ef.evidence_field(c,request.POST if request.method=='POST' else None)
     role=lambda:forms.ChoiceField(choices=[(r,r) for r in ROLES]);key=lambda:forms.CharField(max_length=100)
     definitions={
-        'capture':('Capture engagement provenance','engagement.capture',{'route':forms.ChoiceField(choices=[(r,r) for r in ['A','B','C']]),'evidence_id':evidence(),'reference':key(),'key':key(),'rfp_disposition':forms.ModelChoiceField(RFPDisposition.objects.filter(rfp__case=c,kind='route_a'),required=False)}),
+        'capture':('Capture engagement provenance','engagement.capture',{'route':forms.ChoiceField(choices=[(r,r) for r in ['A','B','C']]),'evidence_id':evidence(),'reference':key(),'key':key(),'rfp_disposition':forms.ModelChoiceField(ef.bounded(RFPDisposition.objects.filter(rfp__case=c,kind='route_a').defer('snapshot'),request.POST.get('rfp_disposition')),required=False)}),
         'assign':('Record source-owned PM assignment','engagement.assign',{'pm_id':forms.ModelChoiceField(d.pm_candidates(c),label='Appointed project manager'),'role':role(),'evidence_id':evidence(),'key':key()}),
-        'register':('Record formal project identifier during Planning','engagement.register',{'value':forms.CharField(max_length=120),'role':role(),'evidence_id':evidence(),'plan_id':forms.ModelChoiceField(public_evidence(c.evidence.filter(kind='plan'))),'key':key()}),
+        'register':('Register the project during Planning','engagement.register',{'value':forms.CharField(max_length=120),'role':role(),'evidence_id':evidence(),'plan_id':ef.evidence_field(c,request.POST,'plan_id',['plan']),'details_id':ef.details_field(c,request.POST),'key':key()}),
         'export':('Create registration evidence for downstream work','engagement.export',{'key':key()}),
         'link':('Link registration to an existing delivery dossier','engagement.export',{'dossier_id':forms.ModelChoiceField(DeliveryDossier.objects.filter(case=c)),'key':key()}),
         'policy':('Draft assignment or registration criteria','policy.configure',{'component':forms.ChoiceField(choices=[(k,k) for k in SCHEMAS]),'content':forms.JSONField(widget=forms.Textarea),'evidence':forms.ModelChoiceField(c.evidence.filter(kind='policy_decision'))}),
         'investigate':('Investigate identity and planning gaps','agent.engagement',{})}
+    try:carried=d.won_rfp_manager(request.user,c)
+    except (ValidationError,PermissionDenied):carried=None
+    if carried:
+        definitions['assign'][2]['pm_id'].initial=carried['pm_id']
+        definitions['assign'][2]['pm_id'].help_text='Carried from the winning proposal; confirm or choose another currently appointed manager.'
     commands=[]
+    details_form=ef.DetailsForm(c,request.POST if request.method=='POST' and request.POST.get('action')=='details' else None) if 'engagement.capture' in grants else None
+    rules_form=ef.RegistrationRulesForm(c,request.POST if request.method=='POST' and request.POST.get('action')=='registration_rules' else None) if 'policy.configure' in grants else None
+    for action,form in [('details',details_form),('registration_rules',rules_form)]:
+        if form and form.is_bound and form.is_valid():
+            try:
+                if action=='details':
+                    values={k:(v.pk if hasattr(v,'pk') else v) for k,v in form.cleaned_data.items() if k!='operation'}
+                    ed.save(request.user,c.pk,**values)
+                else:draft_operator_policy(request.user,c.pk,'D11.project_identifiers',form.value(),form.cleaned_data['evidence_id'].pk,timezone.now())
+                messages.success(request,'Project details saved.' if action=='details' else 'Registration settings saved as a draft for review.')
+                return redirect('engagement',case_id=c.pk)
+            except ValidationError as exc:form.add_error(None,exc)
     for action,(title,grant,fields) in definitions.items():
         if grant not in grants:continue
         form=type('Engagement'+action,(CommandForm,),fields)(request.POST if request.method=='POST' and request.POST.get('action')==action else None,initial={'action':action,'revision':c.revision},auto_id='id_'+action+'_%s')
@@ -51,5 +69,6 @@ def workbench(request,case_id):
                 messages.success(request,'Engagement evidence recorded; source authority and downstream gates remain separate.')
                 return redirect('engagement',case_id=c.pk)
             except (ValidationError,IntegrityError,get_user_model().DoesNotExist) as exc:form.add_error(None,'Identifier/reference conflict; preserve history and review current source evidence.' if isinstance(exc,IntegrityError) else str(exc))
-    response=render(request,'pmo/engagement.html',{'case':c,'commands':commands,'report':d.report(request.user,c.pk),'schemas':{k:json.dumps(v[1],indent=2) for k,v in SCHEMAS.items()},'records':d.Record.objects.filter(case=c).order_by('-pk')[:100]})
+    response=render(request,'pmo/engagement.html',{'case':c,'commands':commands,'details_form':details_form,'rules_form':rules_form,
+        'report':d.report(request.user,c.pk),'schemas':{k:json.dumps(v[1],indent=2) for k,v in SCHEMAS.items()},'records':d.Record.objects.filter(case=c).order_by('-pk')[:100]})
     response['Cache-Control']='no-store';return response

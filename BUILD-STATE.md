@@ -1,5 +1,15 @@
 # PSL operations factory build state
 
+## Registration facts · current
+
+Hosted140 web03e77852/worker685076c3 SUCCESS. Browser113 completed direct intake→PM confirmation→Planning114→fictional contactv2/source1991→dated facts→formal registration→background Verified, observed19:03:38WAT. Date2027-01-15/contact visible in private Planning. Draft979 keeps both owner-requiredness choicesNone, active977 unchanged. Phone375/375 and reset default600/600 passed.141 checks only the browser-found local-time labels/Planning heading refinement before checkpoint. Actual won-proposal source carryover remains separate code work; full262 not complete.
+
+140 passed29 PostgreSQL tests/99.466seconds, checks/drift/final0, no preview migration/fixtures.139's20PASS/1fixtureFAIL/8notrun was a missing hidden test field, corrected without runtime changes. Both prepared services match1,702 runtimepaths and root1,701; worker script unchanged. New deployments underway, browser acceptance next. A separate actual SCR41 engineering gap remains: ACT07 currently makes blank Planning inputs even for won proposals; carry reviewed, authorised winning evidence forward before claiming that board complete.
+
+138 passed91 PostgreSQL tests/623.499seconds, checks/drift/final0, no preview migration/fixtures.139 is the final focused run for the later stale-source form check, authorised contact-return link and metadata-only reader/query bound; not yet passed or hosted. Existing136 hosting/browser proof remains current.
+
+Checkpointb76cdbef pushed.137 passed55 PostgreSQL tests/173.916seconds; checks/drift/fixtures/final0, additive0068/0069 applied to preview. Typed saved facts, exact registration bindings, nullable v2 settings, forms/native commands and private Planning context implemented;138 tests broader Planning/current winning-proposal suggestion/report privacy. Root's later stale-source hidden-form check still needs139 verification. Hosted136 remains browser-verified; new metadata UI not hosted/accepted yet. Fixture140e50b0/source1986/plan1987/proof1988 is synthetic/source-only.205observed/186open/57unseen/19complete; real owner values deferred. Older pending statements below are historical.
+
 ## Current engagement continuation
 
 Final136 passed9PGtests/10.624seconds; checks/drift/final0, no migration/fixture. Hosted web7065cb26/worker c0660dde SUCCESS with1,695 exact matching paths. Browser111 phone registration progressed automatically to exact Planning112 and Verified (17:30:16 observed).136 readback retained it, removed the empty action panel, moved processing details behind a disclosure and used plain role/source labels. Phone375/375 and desktop1265/1265 passed; screenshots inspected, default viewport restored. Engagement source/records ready for build-branch checkpoint. Registration date/contact capture and won-RFP manager carryover still need code;205observed/186open/57unseen/19scoped complete, HOD values deferred. Older pending messages below are historical.

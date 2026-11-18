@@ -1,6 +1,7 @@
 {% extends 'base.html' %}{% load studio_ui %}
 {% block title %}Client contacts · PSL Factory{% endblock %}
 {% block content %}<header class="page-heading"><div><a class="back-link" href="{% url 'design_clients' %}">← Clients</a><h1>Client contacts</h1><p>{{ case|workspace_name }}</p></div><a href="{% url 'design_project' case.pk %}">Open project</a></header>
+{% if return_work %}<p><a class="back-link" href="{% url 'factory_detail' return_work %}">← Return to project registration</a></p>{% endif %}
 {% if billing or billing_limited %}<section class="card"><h2>Billing coverage</h2>
 {% if billing_limited %}<p>Open the Finance records to review this workspace’s full billing history.</p>{% else %}
 {% if billing.coverage %}<table><thead><tr><th scope="col">Customer</th><th scope="col">Contract</th><th scope="col">Covered period</th><th scope="col">Source coverage</th><th scope="col">Billing contact</th></tr></thead><tbody>

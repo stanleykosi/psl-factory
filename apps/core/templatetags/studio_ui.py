@@ -4,6 +4,19 @@ from decimal import Decimal
 from django import template
 register=template.Library()
 
+
+@register.filter
+def recorded_time(value):
+    """Display a retained aware instant in the operator's configured time zone."""
+    from datetime import datetime
+    from django.utils import timezone
+    from django.utils.dateparse import parse_datetime
+    if isinstance(value,str):
+        try:value=parse_datetime(value)
+        except ValueError:return 'Unknown'
+    if not isinstance(value,datetime) or timezone.is_naive(value):return 'Unknown'
+    return timezone.localtime(value).strftime('%d %b %Y, %H:%M:%S %Z')
+
 @register.inclusion_tag('factory/execution_status.html',takes_context=True)
 def factory_execution_status(context,work):
     from apps.workflows.factory import access

@@ -75,5 +75,7 @@ def workbench(request,case_id):
                 else:getattr(d,action)(request.user,c.pk,**v)
                 return redirect('planning',case_id=c.pk)
             except (ValidationError,PermissionDenied) as exc:form.add_error(None,str(exc))
-    response=render(request,'pmo/planning.html',{'case':c,'commands':forms_out,'ordinary':ordinary,'report':json.dumps(report,indent=2),'input_schema':json.dumps(INPUT,indent=2),'criteria_schema':json.dumps(VALUE,indent=2)})
+    from .engagement_details import planning_context
+    response=render(request,'pmo/planning.html',{'case':c,'commands':forms_out,'ordinary':ordinary,'project_details':planning_context(request.user,c),
+        'report':json.dumps(report,indent=2),'input_schema':json.dumps(INPUT,indent=2),'criteria_schema':json.dumps(VALUE,indent=2)})
     response['Cache-Control']='no-store';return response

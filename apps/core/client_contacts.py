@@ -105,6 +105,15 @@ def index(request):
 def project(request, case_id):
     case = get_object_or_404(visible_cases(request.user), kind='project', pk=case_id)
     actions = {action for _, action in active_case_grants(request.user, [case.pk])}
+    return_work=None
+    try:
+        selected_work=int(request.GET.get('work',''))
+        if 0<selected_work<=9223372036854775807:
+            from apps.workflows.models import FactoryWork
+            from apps.workflows.factory import access
+            access(request.user,case,'factory.read','engagement/v1')
+            return_work=FactoryWork.objects.filter(pk=selected_work,case=case,definition='engagement/v1').values_list('pk',flat=True).first()
+    except (ValueError,PermissionDenied,ValidationError):pass
     selected = request.POST.get('purpose') if request.method == 'POST' else None
     if request.method == 'POST' and (selected not in WRITE or WRITE[selected] not in actions):
         raise PermissionDenied
@@ -130,7 +139,7 @@ def project(request, case_id):
                     form.add_error(None, exc)
                 else:
                     messages.success(request, 'Client contact recorded.')
-                    return redirect('design_client_project', case.pk)
+                    return redirect(request.path+'?work='+str(return_work)) if return_work else redirect('design_client_project', case.pk)
         sections.append({'purpose': purpose, 'label': 'Billing contacts' if purpose == 'billing' else 'Project contact',
                          'entries': entries, 'form': form})
     if not sections:
@@ -150,4 +159,4 @@ def project(request, case_id):
             for cover in billing['coverage']:
                 cover.contact_recorded = cover.customer in contacts
     return render(request, 'design/client_project.html', {'case': case, 'sections': sections, 'billing': billing,
-                                                         'billing_limited': billing_limited})
+                                                         'billing_limited': billing_limited,'return_work':return_work})

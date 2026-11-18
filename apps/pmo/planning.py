@@ -243,6 +243,8 @@ def bridge(a,case_id,readiness_id,dossier_id):
 
 def report(a,case_id):
     c=Case.objects.get(pk=case_id);readable(a,c);out={'process_ids':['P17','P21','P25','P26','P63'],'effect_tools':[],'native_verified':False}
+    from .engagement_details import planning_summary
+    out['project_details']=planning_summary(a,c)
     current=latest(c,'packet');out['current_packet_id']=current.pk if current else None
     try:
         e,v=packet(c);out.update(packet_id=e.pk,packet_sha256=e.sha256,payload=v['payload'])

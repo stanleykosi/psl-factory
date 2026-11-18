@@ -72,7 +72,7 @@ def prepare(key, operator):
         existing = FactoryWork.objects.filter(case=case).first()
         return {'case': str(case.pk), 'work': existing.pk if existing else None}
     Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
-    if key in {'engagement-registration','engagement-background-refresh'}:
+    if key in {'engagement-registration','engagement-background-refresh','engagement-details'}:
         from tests.helpers import roles
         from tests.test_engagement_intake import activate
         from apps.policy.engagement_validators import ASSIGN, REGISTER
@@ -80,7 +80,8 @@ def prepare(key, operator):
         source=add_evidence(operator,case.pk,'engagement_source',
             'SYNTHETIC direct engagement received from a fictional client. Confirm the appointed project manager, then register the supplied identifier during Planning.',
             'synthetic:engagement-browser-source')
-        identifier='SAMPLE-ENGAGEMENT-109' if key=='engagement-registration' else 'SAMPLE-ENGAGEMENT-111'
+        identifier={'engagement-registration':'SAMPLE-ENGAGEMENT-109','engagement-background-refresh':'SAMPLE-ENGAGEMENT-111',
+                    'engagement-details':'SAMPLE-ENGAGEMENT-DETAILS'}[key]
         plan=add_evidence(operator,case.pk,'plan','SYNTHETIC pre-signature plan for '+identifier+'.',
             'synthetic:engagement-browser-plan')
         proof=add_evidence(operator,case.pk,'policy_decision','Synthetic trial nominations and identifier rules only.',
@@ -90,7 +91,9 @@ def prepare(key, operator):
         activate(operator,case,'OPS.factory_engagement_execution',profile,proof)
         rules=json.loads(Path('fixtures/engagement-intake.json').read_text())
         activate(operator,case,ASSIGN,rules['assignment'],proof)
-        activate(operator,case,REGISTER,rules['registration'],proof)
+        registration_rules=rules['registration']
+        if key=='engagement-details':registration_rules={**registration_rules,'required_details':{'planned_start':True,'client_contact':True}}
+        activate(operator,case,REGISTER,registration_rules,proof)
         profile=json.loads(Path('fixtures/factory-planning.json').read_text());profile.pop('classification')
         activate(operator,case,'OPS.factory_planning_execution',profile,proof)
         reader,_=get_user_model().objects.get_or_create(username='state-engagement-project-reader')
@@ -627,6 +630,8 @@ elif workflow == 'engagement-registration':
     fixtures = ('engagement-registration',)
 elif workflow == 'engagement-background-refresh':
     fixtures = ('engagement-background-refresh',)
+elif workflow == 'engagement-details':
+    fixtures = ('engagement-details',)
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

@@ -70,6 +70,26 @@ def pm_candidates(case):
     return get_user_model().objects.filter(pk__in=current,is_active=True,
         grant__case=case,grant__action='engagement.read',grant__active=True).distinct().order_by('username','pk')
 
+
+def won_rfp_manager(actor,case):
+    """A current authorised suggestion, never a new appointment or permission."""
+    from .models import RFPDisposition
+    from .rfp import current_assignment as rfp_assignment
+    from .rfp_outcomes import historical_submission
+    require(actor,case,'engagement.read')
+    source=current_capture(case)
+    if source.data['route']!='A':return None
+    require(actor,case,'rfp.read')
+    disposition=RFPDisposition.objects.select_related('rfp__current_intake','outcome__submission__response').filter(
+        pk=source.data['rfp_disposition'],rfp__case=case,kind='route_a',outcome__result='won').first()
+    if not disposition:raise ValidationError('The winning proposal needs source review.')
+    response=historical_submission(case,disposition.outcome.submission)
+    assignment=rfp_assignment(disposition.rfp)
+    if (disposition.snapshot.get('response')!=response.pk or assignment.pk!=response.assignment_id
+            or not pm_candidates(case).filter(pk=assignment.pm_id).exists()):
+        raise ValidationError('Confirm a currently appointed manager; the winning proposal assignment changed.')
+    return {'pm_id':assignment.pm_id,'assignment':assignment.pk,'disposition':disposition.pk}
+
 @transaction.atomic
 def assign(a,case_id,pm_id,role,evidence_id,key):
     c=scope(a,case_id,'assign');e=proof(c,evidence_id);capture=current_capture(c)
@@ -86,11 +106,13 @@ def current_assignment(c):
     return r
 
 @transaction.atomic
-def register(a,case_id,value,role,evidence_id,plan_id,key):
+def register(a,case_id,value,role,evidence_id,plan_id,key,details_id=None):
     c=scope(a,case_id,'register');e=proof(c,evidence_id);assignment=current_assignment(c)
     plan=public_evidence(c.evidence.all()).filter(pk=plan_id,kind='plan').first()
     if plan is None:raise ValidationError('Planning evidence required for formal project registration; signature is not required')
     cfg,v,owner=authority(a,c,REGISTER,role,'registration');normalized=normalize(value,v)
+    from . import engagement_details as details
+    selected=details.check_registration(c,v,value,plan_id,evidence_id,details_id)
     contract={k:v[k] for k in ['format','case_sensitive','max_length']}
     namespace=Identifier.objects.filter(tenant=c.tenant,namespace=v['namespace']).first()
     if namespace and namespace.rules!=contract:raise ValidationError('Namespace normalization contract conflicts with existing identity history; use a reviewed namespace version')
@@ -98,8 +120,12 @@ def register(a,case_id,value,role,evidence_id,plan_id,key):
     if old and old.case_id!=c.pk:raise ValidationError('Identifier already belongs to another case; resolve the identity conflict explicitly')
     data={'capture':current_capture(c).pk,'assignment':assignment.pk,'namespace':v['namespace'],'value':value,'normalized':normalized,'plan':plan.pk,'plan_sha256':plan.sha256,'policy':cfg.pk,'role':role,'authority':owner,'previous_registration':latest(c,'registration').pk if latest(c,'registration') else None}
     prior=Record.objects.filter(case=c,operation_key=key,kind='registration').first()
-    if prior:data['previous_registration']=prior.data['previous_registration']
+    if prior:
+        data['previous_registration']=prior.data['previous_registration']
+        binding=details.Binding.objects.filter(registration=prior).first()
+        if (binding.details_id if binding else None)!=details_id:raise ValidationError('Registration retry must retain its original project details.')
     r=record(a,c,'registration',key,data,e)
+    if selected and not prior:details.Binding.objects.create(registration=r,details=selected)
     if old is None:Identifier.objects.create(case=c,tenant=c.tenant,namespace=v['namespace'],value=value,normalized=normalized,rules=contract,record=r)
     return r
 
@@ -108,6 +134,8 @@ def current_registration(c):
     if not r or r.data['assignment']!=assignment.pk:raise ValidationError('Current assignment and registration required')
     require(r.actor,c,'engagement.register');cfg,v,owner=authority(r.actor,c,REGISTER,r.data['role'],'registration')
     if cfg.pk!=r.data['policy'] or owner!=r.data['authority']:raise ValidationError('Registration authority changed; reaffirm source registration')
+    from .engagement_details import bound_current
+    bound_current(c,r,v)
     return r
 
 @transaction.atomic

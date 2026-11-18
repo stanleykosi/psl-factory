@@ -19,6 +19,8 @@ def draft_operator_policy(a,case_id,component,content,evidence_id,effective_from
     if component=='OPS.factory_accounting_execution' and isinstance(content,dict) and 'statement_contract_id' in content:schema='schema:psl/factory-accounting-execution/v3'
     if component=='D11.planning_alignment' and isinstance(content,dict) and 'department_inputs' in content:
         schema='schema:psl/planning-alignment/v2'
+    if component=='D11.project_identifiers' and isinstance(content,dict) and 'required_details' in content:
+        schema='schema:psl/project-identifiers/v2'
     if component=='OPS.issue_team_controls' and isinstance(content,dict) and any(
             key in content for key in ['resolution_recorder_roles','acknowledgement_clock']):
         schema='schema:psl/issue-team-controls/v2'

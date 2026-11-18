@@ -1,0 +1,6 @@
+{% load studio_ui %}{% if project_details %}<section class="card"><h2>Project details</h2>
+{% if project_details.changed %}<p>These details need current source review.</p>{% else %}
+<dl><dt>Planned start date</dt><dd>{{ project_details.planned_start|default:'Unknown' }}</dd>
+<dt>Client project contact</dt><dd>{% if project_details.client_contact %}{{ project_details.client_contact.name }}{% if project_details.client_contact.role %} · {{ project_details.client_contact.role }}{% endif %}{% else %}Unknown{% endif %}</dd></dl>
+<p>Recorded {{ project_details.recorded_at|recorded_time }} from the selected supporting document.</p>{% endif %}
+</section>{% endif %}

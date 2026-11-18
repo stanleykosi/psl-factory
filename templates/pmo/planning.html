@@ -1,5 +1,6 @@
 {% extends 'base.html' %}{% block content %}
 <h1>Requirements, alignment and planning sources</h1><p>Capture unknowns before owner configuration or signature. Link two distinct formal alignment sessions and separate Product Owner scope and Engineering Lead estimate source references. This coordinates evidence; connected verification, commercial/signature/Finance and release controls remain separate.</p>
+{% include 'pmo/engagement_details.html' %}
 <p><a href="{% url 'meetings' case.pk %}">Formal meetings and actions</a> · <a href="{% url 'approvals' case.pk %}">Department-owned source requests</a> · <a href="{% url 'delivery' case.pk %}">Delivery planning</a></p>
 {% if ordinary %}
 <section><h2>Capture planning sources and questions</h2>

@@ -255,12 +255,15 @@ def reassess(actor,work_id,expected,reason,capture_id=None):
 @transaction.atomic
 def human(actor,work_id,expected,case_revision,operation,data):
     work=Work.objects.select_for_update().select_related('case').get(pk=work_id,definition=DEFINITION)
-    case=lock_case(actor,work.case_id,'engagement.'+operation,case_revision);readable(actor,case)
+    case=lock_case(actor,work.case_id,'engagement.'+('capture' if operation=='details' else operation),case_revision);readable(actor,case)
     if work.revision!=expected or work.cancel_requested or work.status in ['verified','cancelled','followup_needed']:raise ValidationError('STALE_VERSION: refresh the open engagement work')
     if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: wait for current worker observation')
     capture_current(case,pointer(case,work.source_head).pk)
-    if operation not in ['assign','register']:raise ValidationError('Choose a native human assignment or registration command')
-    result=getattr(engagement,operation)(actor,case.pk,**data)
+    if operation not in ['assign','register','details']:raise ValidationError('Choose a current project decision or details command')
+    if operation=='details':
+        from apps.pmo.engagement_details import save
+        result=save(actor,case.pk,**data)
+    else:result=getattr(engagement,operation)(actor,case.pk,**data)
     if work.status=='waiting':work.status='ready';work.finding=''
     work.revision+=1;work.save()
     event(actor,case,'factory.engagement_human_recorded',work=work.pk,record=result.pk,kind=operation)
