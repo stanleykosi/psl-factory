@@ -68,11 +68,15 @@ export function cardOverdue(row: InvoiceRow): 'none' | 'unknown' | string {
   return text;
 }
 
-/** "<total> INVOICES · Updated <day month time>"; the count only when the backend returns `total` (rows are never counted). */
-export function resultText(body: Pick<InvoiceList, 'total' | 'as_of'>): string {
-  const count = typeof body.total === 'number' && Number.isInteger(body.total) && body.total >= 0 ? `${body.total} ${body.total === 1 ? 'INVOICE' : 'INVOICES'}` : undefined;
-  const updated = formatDayTime(body.as_of) === UNKNOWN ? undefined : `Updated ${formatDayTime(body.as_of)}`;
-  return [count, updated].filter(Boolean).join(' · ');
+/** "4 INVOICES": the count only when the backend returns `total` (rows are never counted). */
+export function countText(total: number | undefined): string {
+  return typeof total === 'number' && Number.isInteger(total) && total >= 0 ? `${total} ${total === 1 ? 'INVOICE' : 'INVOICES'}` : '';
+}
+
+/** "Updated 12 Nov 10:00" (WAT) from the list's `as_of`. */
+export function updatedText(asOf: string): string | undefined {
+  const at = formatDayTime(asOf);
+  return at === UNKNOWN ? undefined : `Updated ${at}`;
 }
 
 /** The State filter's label for a value: the backend's `filters[]` label, else the value as given. */

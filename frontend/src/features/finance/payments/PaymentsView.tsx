@@ -42,7 +42,8 @@ import {
   parseQuery,
   PAYMENTS_PATH,
   querySearch,
-  resultText,
+  countText,
+  updatedText,
   stripText,
   stripValue,
   UNKNOWN,
@@ -68,7 +69,8 @@ function AmountValue({ amount }: { amount: Amount | undefined }) {
       </>
     );
   }
-  return <span className="psl-mono">{text}</span>;
+  // the SCR-20 boards write amounts in the body face, in full
+  return <>{text}</>;
 }
 
 function StateTag({ row }: { row: InvoiceRow }) {
@@ -203,8 +205,8 @@ function Note({ body }: { body: InvoiceList }) {
     <aside className="payments__note" aria-label="Chidi · Finance agent">
       <div className="payments__notehead">
         <AgentAvatar agent="chidi" />
-        <span>
-          <strong>Chidi</strong> <span className="payments__noterole">· Finance agent</span>
+        <span className="payments__notename">
+          Chidi <span className="payments__noterole">· Finance agent</span>
         </span>
       </div>
       <div className="payments__notebody">
@@ -341,12 +343,16 @@ export function PaymentsView() {
   }
 
   const sentence = body ? coverage(body) : undefined;
+  const updated = body ? updatedText(body.as_of) : undefined;
   return (
     <div className="payments">
       <p className="payments__eyebrow">FINANCE / PAYMENTS</p>
-      <PageTitle size={36} phoneSize={26} className="payments__title">
-        {phone ? 'Payments' : 'Payments and follow-up'}
-      </PageTitle>
+      <div className="payments__head">
+        <PageTitle size={36} phoneSize={26}>
+          {phone ? 'Payments' : 'Payments and follow-up'}
+        </PageTitle>
+        {updated && <p className="payments__updated">{updated}</p>}
+      </div>
       {body && <Strip body={body} />}
       {sentence && <p className="payments__coverage">{sentence}</p>}
       <div className="payments__row">
@@ -375,7 +381,7 @@ export function PaymentsView() {
                   onClose={closeFilter}
                 />
               }
-              resultText={body ? resultText(body) : ''}
+              resultText={body ? countText(body.total) : ''}
               chips={query.status ? [{ key: 'status', name: 'State', value: filterLabel(body?.filters, query.status), onRemove: () => navigate({ status: undefined }) }] : []}
               onClearAll={() => navigate({ status: undefined })}
             />

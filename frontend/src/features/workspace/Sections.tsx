@@ -111,7 +111,9 @@ function Attachment({ item }: { item: Item }) {
   if (!file) return null;
   return (
     <span className="ws-attachment">
-      <strong>{file.label}</strong> · Uploaded · {formatSize(file.sizeBytes)}
+      <strong>{file.label}</strong>
+      <span className="cmp-sr"> · </span>
+      <span className="ws-attachment__meta">Uploaded · {formatSize(file.sizeBytes)}</span>
     </span>
   );
 }

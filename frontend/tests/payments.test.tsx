@@ -121,7 +121,8 @@ describe('rows from data (AC 1, 2, 7, 10)', () => {
     expect(cells('INV-0391').slice(1)).toEqual(['Harmattan Bank · M1', '₦6,800,000.00', '₦0.00', '₦6,800,000.00', 'OVERDUE', '21 days']);
     expect(cells('INV-0402').slice(1)).toEqual(['Kora Logistics · M1', '₦4,100,000.00', 'Unknown amount not known', 'Unknown amount not known', 'BANK DATA MISSING', '6 days']);
     expect(cells('INV-0388').slice(1)).toEqual(['Sabi Market · final', '₦2,200,000.00', '₦2,200,000.00', '₦0.00', 'PAID', '—']);
-    expect(screen.getByText('4 INVOICES · Updated 12 Nov 10:00')).toBeTruthy();
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('4 INVOICES');
+    expect(screen.getByText('Updated 12 Nov 10:00')).toBeTruthy();
     // the state's tone is the backend's: PART PAID amber, OVERDUE red, PAID green
     expect(rowOf('INV-0398').getByText('PART PAID').className).toContain('psl-tag--waiting');
     expect(rowOf('INV-0391').getByText('OVERDUE').className).toContain('psl-tag--person');
@@ -235,8 +236,9 @@ describe('the page computes nothing (AC 4, 5, 6, 7)', () => {
     delete body.total;
     serve(body);
     await open();
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('Updated 12 Nov 10:00');
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('');
     expect(screen.queryByText(/INVOICES/)).toBeNull();
+    expect(screen.getByText('Updated 12 Nov 10:00')).toBeTruthy();
   });
 
   it('a PAID row whose amounts say otherwise still reads PAID; a row without status reads Unknown (no state inferred)', async () => {
@@ -386,7 +388,7 @@ describe('search, filter and paging go to the server (AC 8)', () => {
     await waitFor(() => expect(document.activeElement?.textContent).toBe('INV-0402'));
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     // the count stays the backend's total, not the rows shown
-    expect(screen.getByText(/^4 INVOICES/)).toBeTruthy();
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('4 INVOICES');
   });
 
   it('a failed Show more keeps the rows and offers Try again', async () => {
@@ -409,7 +411,7 @@ describe('empty, error and access (AC 11, 21)', () => {
     expect(screen.getByText('No invoices to show yet.')).toBeTruthy();
     for (const label of ['OWED TO PSL', 'OVERDUE', 'RECEIVED THIS MONTH', 'BANK DATA TO']) expect(cellValue(label)).toBe('Unknown');
     expect(document.body.textContent).not.toContain('₦');
-    expect(screen.getByText('0 INVOICES · Updated 12 Nov 10:00')).toBeTruthy();
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('0 INVOICES');
   });
 
   it('a search with no rows shows "No invoices match" and Clear filters re-reads with no query', async () => {
