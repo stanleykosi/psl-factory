@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-44",
   "outcome": null,
-  "state": "PLANNED",
+  "state": "BLOCKED",
   "task_ids": [
     "FE-FIN-BU"
   ],
@@ -138,7 +138,16 @@
   "created_at": "2026-11-18T05:16:06Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "BLOCKED",
+      "at": "2026-11-18T05:32:01Z",
+      "round": 0,
+      "head": null,
+      "reason": "D-PAYROLL-VISIBILITY open: every SCR-57 board is staff cost by business unit from the restricted payroll match; see F-44/readiness.md"
+    }
+  ],
   "routing": null,
   "gate": {
     "round": 0,
@@ -146,5 +155,9 @@
     "verdict": null,
     "commit": null
   },
-  "blocked": null
+  "blocked": {
+    "from": "PLANNED",
+    "reason": "D-PAYROLL-VISIBILITY open: every SCR-57 board is staff cost by business unit from the restricted payroll match; see F-44/readiness.md",
+    "at": "2026-11-18T05:32:01Z"
+  }
 }

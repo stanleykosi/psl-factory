@@ -2604,3 +2604,7 @@
 {"at":"2026-11-18T05:16:06Z","feature":"F-47","round":0,"kind":"created","tasks":["FE-M2A-PROOF"]}
 {"at":"2026-11-18T05:16:06Z","feature":"F-48","round":0,"kind":"created","tasks":["FE-ASSISTANT"]}
 {"at":"2026-11-18T05:30:14Z","feature":"F-46","round":0,"kind":"transition","reason":"Duplicate: FE-ALERTS was delivered by F-12 (PR #18, merge 537607ea); see F-46/readiness.md","from":"PLANNED","to":"BLOCKED"}
+{"at":"2026-11-18T05:31:47Z","feature":"F-47","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-18T05:32:01Z","feature":"F-44","round":0,"kind":"transition","reason":"D-PAYROLL-VISIBILITY open: every SCR-57 board is staff cost by business unit from the restricted payroll match; see F-44/readiness.md","from":"PLANNED","to":"BLOCKED"}
+{"at":"2026-11-18T05:32:36Z","feature":"F-47","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-18T05:32:36Z","feature":"F-47","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
