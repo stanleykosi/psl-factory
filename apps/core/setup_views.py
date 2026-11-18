@@ -1,12 +1,16 @@
 """Workspace setup areas over the existing versioned policy registry."""
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Exists, OuterRef, Q
 from django.http import Http404
 from django.shortcuts import render
+from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_safe
 
 from apps.identity.models import Grant
-from apps.identity.services import require
+from apps.identity.services import require, visible_cases
+from apps.identity.intake import options
 from apps.policy.services import resolve
 
 from .views import accessible_case
@@ -31,6 +35,32 @@ AREAS = {
     )),
     'payroll': ('Payroll visibility', ()),
 }
+
+
+@login_required
+@require_safe
+@never_cache
+def index(request):
+    management = {(row.tenant, row.value['classification'] == 'synthetic'): row
+                  for row in options(request.user, 'manage_access')}
+    rules = Grant.objects.filter(user=request.user, case_id=OuterRef('pk'),
+                                 action='policy.read', active=True)
+    cases = visible_cases(request.user).annotate(can_read_rules=Exists(rules))
+    allowed = Q(can_read_rules=True)
+    for tenant, synthetic in management:
+        allowed |= Q(tenant=tenant, synthetic=synthetic)
+    cases = cases.filter(allowed)
+    search = request.GET.get('q', '').strip()[:120]
+    if search:
+        cases = cases.filter(title__icontains=search)
+    page = Paginator(cases.order_by('title', 'pk'), 25).get_page(request.GET.get('page'))
+    for case in page:
+        authority = management.get((case.tenant, case.synthetic))
+        case.can_manage_accounts = authority is not None
+        case.can_invite_staff = bool(authority and authority.value.get('staff_lifecycle'))
+    return render(request, 'design/setup_index.html', {
+        'workspaces': page, 'search': search, 'observed_at': timezone.now(),
+    })
 
 
 @login_required

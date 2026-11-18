@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Current source review and Setup entry · 18 November 2026
+
+Passed10021 PostgreSQL tests/72.191s and10121tests/16.117s, with checks/drift/fixtures and final markerszero. Hosted101 web started with1,663 matching runtimepaths per service. Browser99 confirmed original source context and phone width375/375. Menu→Setup now lists107 current authorised synthetic workspaces with search/paging. Current authority is filtered before pagination and account management is independent of case creation.
+
+Next replace the payroll visibility holding message using the existing typed disclosure configuration. Past-answer reuse, team/no-login issue recording and remaining state functions still require engineering. Ledger201observed/188open/61unseen. HOD choices deferred and262 acceptance remains open.
+
 ## Current runtime98 and bid edit acceptance · 18 November 2026
 
 Passed98 five PostgreSQL tests/86.182s, current-source/query checks, full decision wake path and pause/final-write races. Hosted matching98services. Browser phone table overflow is corrected375/375 and completed bid labels are accurate. Fresh work99 proved the discard/keep controls, current next-suggestion selection, an edited answer and a phone own-answer save/filter using actual model drafts. Ledger201observed/188open/61unseen.

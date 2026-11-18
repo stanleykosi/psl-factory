@@ -108,10 +108,10 @@ def change_access(actor,case_id,subject_id,action,enabled,reason):
     event(actor,c,'intake.access_changed',change=r.pk,subject=subject.pk,grant_action=action,enabled=enabled,authority=cfg.pk)
     return r
 
-def options(actor):
+def options(actor, purpose='create_cases'):
     tenants=Authority.objects.filter(user=actor).values_list('tenant',flat=True).distinct();rows=[]
     for tenant in tenants:
-        try:rows.append(current(actor,tenant,'create_cases'))
+        try:rows.append(current(actor,tenant,purpose))
         except PermissionDenied:pass
     return rows
 

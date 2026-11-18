@@ -122,10 +122,9 @@ def workbench(request, work_id):
     for row in rows:
         if row['evidence_id'] not in readable_sources:
             try:
-                rfp_answers.source_for(request.user, work, row)
-                readable_sources[row['evidence_id']] = True
+                readable_sources[row['evidence_id']] = rfp_answers.source_for(request.user, work, row)
             except (PermissionDenied, ValidationError):
-                readable_sources[row['evidence_id']] = False
+                readable_sources[row['evidence_id']] = None
     query = request.GET.get('q', '').strip()[:120]
     status_filter = request.GET.get('status', '')
     items = []
@@ -133,6 +132,8 @@ def workbench(request, work_id):
         suggestion = latest.get(row['key'])
         item = {'row': row, 'suggestion': suggestion, 'status': 'Current answer', 'code': 'current',
                 'url': item_url(work.pk, row['key']), 'operation_key': uuid4()}
+        if current_anchors is not None:
+            item['source'] = readable_sources[row['evidence_id']]
         if suggestion:
             previous = reviews.get(suggestion.pk)
             item.update(review=previous, predecessor=previous.pk if previous else 0)

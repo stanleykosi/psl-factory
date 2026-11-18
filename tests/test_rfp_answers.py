@@ -146,6 +146,7 @@ class RFPAnswerTests(TestCase):
         self.assertNotContains(page, 'SAMPLE private reason.')
         self.assertNotContains(page, 'SAMPLE supported answer.')
         self.assertNotContains(page, 'SAMPLE current own answer.')
+        self.assertNotContains(page, 'Requirement source · version')
 
     def test_http_review_replay_filters_and_retained_replacement_fields(self):
         data = self.data
@@ -155,6 +156,8 @@ class RFPAnswerTests(TestCase):
         url = reverse('factory_rfp_answers', args=[data['work'].pk])
         page = self.client.get(url + '?status=suggested')
         self.assertContains(page, 'Suggested by Tola')
+        self.assertContains(page, 'Requirement source · version')
+        self.assertContains(page, data['evidence']['requirements'].body)
         values = dict(decision(suggestion, verdict='replace', note='SAMPLE kept explanation.'),
             action='review', requirement='R1', revision=data['work'].revision, case_revision=rev(data['case']))
         self.assertContains(self.client.post(url, values), 'SAMPLE kept explanation.')

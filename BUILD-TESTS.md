@@ -1,5 +1,11 @@
 # Actual test execution ledger
 
+## Source context and Setup access · 18 November 2026
+
+Package100 `ead27abe-e1cc-4cb1-8187-399327dc9a79` passed21 PostgreSQL tests in72.191s. Source context reuses the bounded current-authorised read and disappears after authority loss. Existing answer/Assistant tests passed. Checks/drift, idempotent fixture99 and final markerszero. Both100services started. Browser source/version, current edited answer and phone375/375 passed.
+
+Package101 `5314ac16-1583-4149-b4ec-c129c1248203` passed21 PostgreSQL tests in16.117s. Includes Setup permission filtering before pagination, manage-only authority, current revocation, read-only GET, normal navigation, native invitation renewal/acceptance/deactivation with reassignment, message receipts and two-connection intake. Checks/drift/fixtures and final markerszero. Exact1,663 runtimepaths per service matched. Web101 startup and browser Menu→Setup passed. Worker101 startup log check remains pending. Local Django check passed. No new migration.
+
 ## Decision wakes and responsive bid acceptance · 18 November 2026
 
 Package98 `d10c60b2-64ba-4851-89bf-fb75a377a9d4` passed5tests in86.182s, checks/drift/fixtures and final markerszero. Current bid page852queries/1.233s. Native response/commercial/final-document/customer decisions woke the same authorised progress request. Pausing through the native control stayed paused after the human decision. Source-arrival and human-pause finalization races passed. Tested source matched1,662 runtimepaths per service and both deployed98services started. Browser97 showed correct final headings and owner. The phone history overflow corrected from457to375 against375viewport, with settled screenshot saved.

@@ -114,6 +114,7 @@ urlpatterns += [path('cases/<uuid:case_id>/pilot/contracts/<int:contract_id>/bin
     path('cases/<uuid:case_id>/pilot/bindings/<int:pk>/',pilot_binding_views.detail,name='pilot_binding')]
 from apps.policy import role_views
 from apps.core import setup_views
+urlpatterns += [path('setup/',setup_views.index,name='design_setup')]
 urlpatterns += [path('cases/<uuid:case_id>/settings/',setup_views.overview,name='workspace_settings')]
 urlpatterns += [path('cases/<uuid:case_id>/policy/role-eligibility/',role_views.guidance,name='role_eligibility_guidance')]
 from apps.workflows import factory_views

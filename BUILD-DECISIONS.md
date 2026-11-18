@@ -1,5 +1,7 @@
 # Build decisions
 
+18 November 2026. Setup is a current-authorised workspace entry point over native rule and account services. Filter rule-read or exact current tenant-management authority before pagination. Management authority remains independent of case-creation authority. Entry links confer no grants and native actions recheck their existing permissions. Reuse typed HR disclosure controls for payroll visibility configuration without supplying owner values.
+
 18 November 2026. Human bid decisions wake the existing authorised background request through the existing race-safe wake mechanism. Preserve paused requests. Verified bid pages show their recorded completed response and delivery. Grid children and answer tables stay within the available phone width. Actual source text shown for answer review must reuse the same bounded, current-authorised source read and disappear when that authority is unavailable.
 
 18 November 2026. Signing forms preserve explicitly supplied seconds through HTML step1 and normal Django validation. Opening a document form expands its existing native form while preserving its source, revision and CSRF checks. Proposed-example links use the current button layout for readable phone navigation. Browser captures made during viewport settling are excluded from acceptance.

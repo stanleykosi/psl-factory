@@ -1,5 +1,13 @@
 # PSL operations factory cloud handoff
 
+## Authorised source review and Setup entry verified · 18 November 2026
+
+Package100 `ead27abe-e1cc-4cb1-8187-399327dc9a79` passed21 PostgreSQL tests in72.191s, checks/drift/fixtures and final markerszero. Web100 `9cd9812e-c5ee-459f-a011-cbbc5364bc87` and worker100 `e2f01ff8-38b2-4ff3-b0e1-3ae5b5dde7e0` started. Browser99 displayed the original requirement source/version beside its reviewed answer, preserving private reasons. Phone body375/viewport375 passed. Screenshot `.runtime/design-acceptance-source100-phone.jpg` saved.
+
+Package101 `5314ac16-1583-4149-b4ec-c129c1248203` passed21 PostgreSQL tests in16.117s, checks/drift/fixtures and final markerszero. Setup filters current rule-read or exact tenant-management authority before pagination, independently of case-creation authority. Revocation, safe GET, native invitations, action reassignment/deactivation, receipts and concurrent intake passed. Matching1,663 runtimepaths per service. Hosted web101 `b77e9cec-4ca3-441a-a860-b803130544e0` started and the browser followed Menu→Setup to107 currently available synthetic workspaces with paging/search. Worker101 `8e61c386-52a8-421e-bbd5-c12be543f0b5` startup awaits its log check. Browser2/tab4 is on Setup, normal viewport, no unsaved edits.
+
+Continue connecting payroll visibility to the existing F35 typed disclosure controls. Its current static holding message leaves a genuine interface gap. Approved past-winning-answer reuse, team/no-login issue recording and remaining state-specific functions still require engineering. HOD values stay deferred. Ledger201observed/188open/61unseen, full262 acceptance remains incomplete. Keep frozen101 separate from subsequent changes.
+
 ## Current runtime98 and editable bid checks · 18 November 2026
 
 Package98 `d10c60b2-64ba-4851-89bf-fb75a377a9d4` passed five tests in86.182s, checks/drift/fixtures and both final markerszero. Final bid page852queries/1.233s. All human response/commercial/document/outcome commands woke the existing background request, a human pause stayed paused, and both final-write races passed. Exact1,662 runtimepaths matched. Hosted web98 `7315db34-eae7-475d-82fa-d3bc729e6fa1` and worker98 `1d489f1c-82fd-480a-b819-3f4043a903bb` started successfully. Browser97 now shows Reviewed response, Delivered client response and No action required. Phone history body375/viewport375 passed after fixing the earlier457px overflow. Local screenshots `.runtime/design-acceptance-bid97-phone.jpg` and`design-acceptance-bid97-verified.jpg` are saved.

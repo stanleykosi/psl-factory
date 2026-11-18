@@ -1,5 +1,18 @@
 {
   "design_consolidation_20261116": {
+    "source_context_and_setup_20261118": {
+      "status": "postgresql_passed_web101_browser_checked",
+      "package_100": {"deployment": "ead27abe-e1cc-4cb1-8187-399327dc9a79", "passed": 21, "seconds": 72.191, "final_exit": 0},
+      "package_101": {"deployment": "5314ac16-1583-4149-b4ec-c129c1248203", "passed": 21, "seconds": 16.117, "final_exit": 0},
+      "runtime_101": {"web": "b77e9cec-4ca3-441a-a860-b803130544e0", "worker": "8e61c386-52a8-421e-bbd5-c12be543f0b5", "paths_per_service": 1663, "mismatches": 0, "web_startup": "passed", "worker_startup": "pending_log_check"},
+      "browser": ["Original requirement source/version beside reviewed answer", "Phone body375/viewport375", "Menu to Setup", "107 current authorised synthetic workspaces"],
+      "next": ["Typed payroll visibility interface", "Reviewed past-winning-answer reuse", "Team/no-login issue recording", "Remaining state functions and acceptance"],
+      "states_with_browser_observations": 201,
+      "observed_states_with_open_checks": 188,
+      "states_without_direct_browser_observation": 61,
+      "owner_policy": "Deferred",
+      "all_states_accepted": false
+    },
     "bid_wakes_and_edit_controls_20261118": {
       "status": "runtime98_passed_source_display100_pending",
       "package_98": {"deployment": "d10c60b2-64ba-4851-89bf-fb75a377a9d4", "passed": 5, "seconds": 86.182, "queries": 852, "query_seconds": 1.233, "final_exit": 0, "fixture_exit": 0},
