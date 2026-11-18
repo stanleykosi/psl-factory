@@ -56,6 +56,15 @@ def workbench(request,case_id):
     for item in items:
         state=item.current
         item.team = team_projection(request.user, item)
+        item.team_replies = []
+        if item.team['mode'] == 'team' and item.team['status'] == 'current':
+            from .issue_teams import validate_reply
+            for reply in item.team['assignment'].replies.select_related('actor','state').order_by('-pk')[:20]:
+                try:
+                    validate_reply(reply, item)
+                except (PermissionDenied,ValidationError):
+                    continue
+                item.team_replies.append(reply)
         item.operations=[]
         if item.team['mode'] != 'team' and state.status in ['Open','In Progress'] and state.owner_id==request.user.pk and state.owner_id in owner_ids and 'issue.work' in permissions:
             if not state.acknowledged_at:

@@ -1,5 +1,28 @@
 {
   "design_consolidation_20261116": {
+    "issue_team_resolution_20261118": {
+      "status": "postgresql_verified_hosted126_browser_closed_and_clock_checked_checkpoint",
+      "process_ids": ["P50", "P51", "P54", "P55"],
+      "policy_interface": "OPS.issue_team_controls/v2; explicit resolution recorder roles and nullable acknowledgement-clock choice",
+      "failed_121": {"deployment":"ffd8ae04-c147-42ce-a76b-0cf9f6665b18","passed":19,"errors":1,"not_run":71,"seconds":39.458,"fixtures_run":false,"final_exit":1,"reason":"Legacy resolution refusal changed exception type; corrected without enabling legacy authority"},
+      "package_122": {"deployment":"fbc29e5e-7229-499d-8fc4-268a6f23b1e3","passed":92,"seconds":156.430,"final_exit":0},
+      "package_123": {"deployment":"3c577b68-23a1-4656-b1a3-307653fc45d1","passed":37,"seconds":44.647,"final_exit":0},
+      "package_124": {"deployment":"79448353-4282-4b6c-bbd1-3298d698759d","passed":10,"seconds":16.353,"final_exit":0,"purpose":"Unchanged123 runtime with fresh closure/overdue fixtures"},
+      "package_125": {"deployment":"446340d8-0ad3-42d7-931d-2c4b03cf06fc","passed":41,"seconds":149.550,"final_exit":0,"purpose":"Reopened acknowledgement clock and concurrent exact resolution"},
+      "package_126": {"deployment":"212b0972-156c-47c5-bea7-4226ce985b03","passed":19,"seconds":23.297,"final_exit":0,"purpose":"Final closed-view controls and current source clock"},
+      "runtime_123": {"web":"9993b122-97cc-48df-a6fd-7ed99b53cc7b","worker":"cd7a0ad1-c8f5-4e89-9aa6-3798a6c79926","paths_per_service":1679,"mismatches":0,"startup":"passed"},
+      "runtime_126": {"web":"b7fd5ca8-b6ec-459a-8118-b189d4c4a8b4","worker":"6504e51f-de55-4801-8797-cb8f8757ff25","paths_per_service":1679,"mismatches":0,"startup":"passed","browser_current_readback":"passed"},
+      "browser": {"case":"f9944492-542e-42bf-a5dc-6b6c7914a05a","work":101,"issue":11,"reply_proof":1887,"fix":1885,"root_cause":1886,"actual_acknowledgement":"2026-11-18T13:11:21+01:00","recorded_acknowledgement":"2026-11-18T13:14:32+01:00","actual_fix_reply":"2026-11-18T13:12:27+01:00","recorded_resolution":"2026-11-18T13:15:15+01:00","critical_without_root_cause":"refused_with_fields_retained","native_issue":"Resolved"},
+      "browser_closed": {"case":"c8c2a580-eedd-48af-92d0-a2b44e04c984","work":102,"issue":12,"proof":1915,"fix":1900,"root_cause":1901,"actual_acknowledgement":"2026-11-18T13:14:21+01:00","recorded_acknowledgement":"2026-11-18T13:21:38+01:00","actual_fix_reply":"2026-11-18T13:15:27+01:00","recorded_resolution":"2026-11-18T13:22:01+01:00","native_issue":"Closed","native_state_revision":6,"browser_principals":1,"browser_roles":["QA","PM"],"distinct_principal_closure":"PostgreSQL passed","phone_body_and_client":[375,375],"desktop_body_and_client":[1265,1265]},
+      "browser_overdue": {"case":"7076b0d2-dc51-4ed5-b657-bc2be798e57e","work":103,"issue":13,"profile":4,"agent_run":699,"clock":"OVERDUE","message_delivery_verified":false},
+      "states_with_browser_observations":203,
+      "observed_states_with_open_checks":185,
+      "completed_scoped_journeys":18,
+      "states_without_direct_browser_observation":59,
+      "next": ["Build reviewed owner reminder dispatch and original receipt recovery", "Approved past-winning-answer reuse and remaining client/Finance/Setup states", "Railway deployment configuration migration before 2026-12-01"],
+      "owner_policy": "Deferred; no operational values installed",
+      "all_states_accepted": false
+    },
     "issue_team_followup_20261118": {
       "status": "postgresql120_passed_hosted120_browser_verified_checkpoint",
       "process_ids": ["P50", "P51", "P54", "P55"],

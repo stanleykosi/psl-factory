@@ -8,9 +8,8 @@ from adapters.issue_team import reply_facts
 from apps.core.services import event, lock_case
 from apps.documents.contracts import digest
 from apps.identity.services import require
-from apps.policy.issue_team_validators import COMPONENT, VALUE
+from apps.policy.issue_team_validators import COMPONENT, validate_value
 from apps.policy.services import active_component, reference_values, role_policy
-from apps.documents.contracts import validate
 
 from . import issues
 from .issue_access import issue_subject, state_public
@@ -25,8 +24,16 @@ def latest(issue):
 def rules(case):
     configuration = active_component(COMPONENT, case)
     value = reference_values(configuration)[0]
-    validate(VALUE, value)
+    validate_value(value, configuration.envelope['value']['schema_ref'])
     return configuration, value
+
+
+def resolution_authority(actor, case, role, value):
+    if role not in value.get('resolution_recorder_roles', []):
+        raise PermissionDenied('A configured resolution recorder must record the team fix.')
+    policy = role_policy(actor, case, role)
+    return {'protocol': 'issue-team-resolution-authority/v1', 'role': role,
+            'policies': {policy.component: policy.pk}}
 
 
 def recorder_authority(actor, case, role, value):
@@ -121,7 +128,8 @@ def assign(actor, case_id, issue_id, state_id, mode, team_key, recorder_id, reco
 
 @transaction.atomic
 def record_reply(actor, case_id, issue_id, state_id, assignment_id, operation_key, operation,
-                 evidence_id, note, next_action, party, channel, responded_at, source_ref, expected):
+                 evidence_id, note, next_action, party, channel, responded_at, source_ref, expected,
+                 *, fix_id=None, root_cause_id=None, resolution_role=None):
     if any(type(value) is not int or value < 1 for value in [issue_id, state_id, assignment_id, evidence_id, expected]):
         raise ValidationError('Use exact current issue and assignment references.')
     case = lock_case(actor, case_id, 'issue.work')
@@ -133,8 +141,23 @@ def record_reply(actor, case_id, issue_id, state_id, assignment_id, operation_ke
     if assignment is None or actor.pk != assignment.recorder_id:
         raise PermissionDenied('The current follow-up coordinator records this team response.')
     value = current(assignment, issue)
-    if operation not in {'acknowledge', 'start', 'progress'}:
+    if operation not in {'acknowledge', 'start', 'progress', 'resolve'}:
         raise ValidationError('Record resolution, severity and closure through their issue-register controls.')
+    authority = assignment.authority
+    resolution = {}
+    if operation == 'resolve':
+        if 'resolution_recorder_roles' not in value:
+            raise ValidationError('Resolution recording needs reviewed team resolution rules.')
+        authority = resolution_authority(actor, case, resolution_role, value)
+        if type(fix_id) is not int or fix_id < 1 or (root_cause_id is not None and
+                (type(root_cause_id) is not int or root_cause_id < 1)):
+            raise ValidationError('Choose the exact documented fix and, when required, its root cause.')
+        issue_subject(case, fix_id, 'resolution')
+        if root_cause_id:
+            issue_subject(case, root_cause_id, 'root_cause')
+        resolution = {'fix': fix_id, 'root_cause': root_cause_id, 'resolution_authority': authority}
+    elif fix_id is not None or root_cause_id is not None or resolution_role is not None:
+        raise ValidationError('Fix evidence and resolution authority belong to the resolution step.')
     proof = issue_subject(case, evidence_id)
     require(proof.created_by, case, 'case.read')
     require(proof.created_by, case, 'evidence.add')
@@ -147,7 +170,7 @@ def record_reply(actor, case_id, issue_id, state_id, assignment_id, operation_ke
         raise ValidationError('Reload the current response form before recording it.') from None
     intent = digest({'issue': issue.pk, 'state': state_id, 'assignment': assignment.pk,
         'actor': actor.pk, 'operation': operation, 'proof': proof.pk, 'note': note,
-        'next_action': next_action, **{**facts, 'responded_at': facts['responded_at'].isoformat()}})
+        'next_action': next_action, **{**facts, 'responded_at': facts['responded_at'].isoformat()}, **resolution})
     old = IssueTeamReply.objects.filter(operation_key=key).first()
     if old:
         if old.assignment_id != assignment.pk or old.intent_sha256 != intent:
@@ -155,10 +178,11 @@ def record_reply(actor, case_id, issue_id, state_id, assignment_id, operation_ke
         return old
     if case.revision != expected or issue.current_id != state_id:
         raise ValidationError('The issue changed. Reload its current response form.')
-    state = issues._update_state(actor, case, issue, operation, proof.pk, note, next_action=next_action)
+    state = issues._update_state(actor, case, issue, operation, proof.pk, note, next_action=next_action,
+                                 fix_id=fix_id, root_cause_id=root_cause_id)
     result = IssueTeamReply.objects.create(assignment=assignment, state=state, operation_key=key,
         intent_sha256=intent, operation=operation, evidence=proof, proof_sha256=proof.sha256,
-        authority=assignment.authority, actor=actor, **facts)
+        authority=authority, actor=actor, **facts)
     event(actor, case, 'issue.team_reply_recorded', reply=result.pk, issue=issue.pk,
           team=assignment.team_key, recorder=actor.pk, source_clock='human_attested')
     return result
@@ -171,9 +195,21 @@ def validate_reply(reply, issue):
     require(proof.created_by, issue.case, 'evidence.add')
     if (reply.actor_id != reply.assignment.recorder_id or reply.state.issue_id != issue.pk or
         reply.state.actor_id != reply.actor_id or reply.state.evidence_id != proof.pk or
-        reply.proof_sha256 != proof.sha256 or reply.authority != reply.assignment.authority):
+        reply.proof_sha256 != proof.sha256):
         raise ValidationError('Review the exact current team response and its human recorder.')
     value = rules(issue.case)[1]
+    authority = reply.assignment.authority
+    if reply.operation == 'resolve':
+        authority = resolution_authority(reply.actor, issue.case, reply.authority.get('role'), value)
+        if reply.state.status != 'Resolved':
+            raise ValidationError('Review the original resolved issue state.')
+        issue_subject(issue.case, reply.state.fix_id, 'resolution')
+        if reply.state.root_cause_id:
+            issue_subject(issue.case, reply.state.root_cause_id, 'root_cause')
+        if reply.state.severity == 'Critical' and not reply.state.root_cause_id:
+            raise ValidationError('Critical resolution needs the documented root cause.')
+    if authority != reply.authority:
+        raise ValidationError('The team response authority changed. Obtain a current review.')
     reply_facts(reply.party, reply.channel, reply.responded_at, reply.source_ref, value['channels'])
     return reply
 
@@ -196,5 +232,49 @@ def projection(actor, issue):
     except (PermissionDenied, ValidationError):
         return result
     result.update(status='current', finding='', channels=value['channels'],
-                  can_record=actor.pk == assignment.recorder_id)
+                  can_record=actor.pk == assignment.recorder_id,
+                  can_resolve=False, resolution_finding='Resolution recorder roles need an owner decision.')
+    if actor.pk == assignment.recorder_id and value.get('resolution_recorder_roles'):
+        for role in value['resolution_recorder_roles']:
+            try:
+                resolution_authority(actor, issue.case, role, value)
+            except (PermissionDenied, ValidationError):
+                continue
+            result.update(can_resolve=issue.current.status in {'Open','In Progress'}, resolution_finding='')
+            break
+    return result
+
+
+def acknowledgement_clock(issue, state=None):
+    """Retain recording time; use source time only under an explicit current rule."""
+    state = state or issue.current
+    result = {'status': 'known', 'at': state.acknowledged_at,
+              'basis': 'recorded_at', 'reply_id': None, 'policies': {}}
+    assignment = latest(issue)
+    if assignment is None or assignment.mode == 'internal':
+        return result
+    result.update(status='unknown', at=None, basis=None,
+                  finding='Choose the external-team acknowledgement clock in its current rules.')
+    if state.pk != issue.current_id:
+        result['finding'] = 'The issue changed. Assess the current source-bound escalation profile.'
+        return result
+    try:
+        value = current(assignment, issue)
+        basis = value.get('acknowledgement_clock')
+        if not basis:
+            return result
+        result['policies'][COMPONENT] = assignment.policy_id
+        reply = assignment.replies.filter(operation='acknowledge',
+            state__acknowledged_at=state.acknowledged_at).select_related('state').first()
+        if reply is None:
+            if issue.current.acknowledged_at:
+                result['finding'] = 'The current team has no source-bound acknowledgement. Review the owner change.'
+                return result
+            result.update(status='known', basis=basis, finding='')
+            return result
+        validate_reply(reply, issue)
+        result.update(status='known', basis=basis, reply_id=reply.pk, finding='',
+                      at=reply.responded_at if basis == 'human_attested_source_time' else reply.state.acknowledged_at)
+    except (PermissionDenied, ValidationError):
+        result['finding'] = 'Review the current team, reply evidence and recorder authority before assessing its clock.'
     return result

@@ -4,6 +4,7 @@ from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case, event, bump
 from apps.identity.models import Grant
+from apps.identity.services import require
 from apps.policy.services import decision_authority
 from apps.documents.contracts import validate
 from .models import Issue, IssueState, IssueClosureEntry
@@ -120,6 +121,10 @@ def close_issue_log(actor,case_id,issue_id,state_id,role,evidence_id,note,expect
     decision_authority(actor,case,role)
     note_required(note)
     if IssueClosureEntry.objects.filter(state=state,role=role).exists():raise ValidationError('This role already updated the closure log for this exact resolution')
+    for entry in state.closure_entries.select_related('actor'):
+        require(entry.actor,case,'issue.close_log')
+        decision_authority(entry.actor,case,entry.role)
+        subject(case,entry.evidence_id)
     result=IssueClosureEntry.objects.create(state=state,role=role,evidence=subject(case,evidence_id),note=note,actor=actor)
     event(actor,case,'issue.closure_log',issue=issue.pk,entry=result.pk,role=role)
     if set(state.closure_entries.values_list('role',flat=True))=={'QA','PM'}:

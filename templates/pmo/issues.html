@@ -8,12 +8,14 @@
 {% endif %}
 {% for i in issues %}<section class="card" id="issue-{{ i.pk }}">
 <h2>{{ i.current.title }}</h2><p>{{ i.current.status }} · {{ i.current.severity|default:'Awaiting severity assessment' }}</p>
-<dl class="workspace-summary"><div><dt>Responsible owner</dt><dd>{{ i.team.label }}</dd></div><div><dt>Next action</dt><dd>{{ i.current.next_action }}</dd></div></dl>
+<dl class="workspace-summary"><div><dt>Responsible owner</dt><dd>{{ i.team.label }}</dd></div><div><dt>Next action</dt><dd>{% if i.current.status == 'Closed' %}No further action{% else %}{{ i.current.next_action }}{% endif %}</dd></div></dl>
 {% if i.team.mode == 'team' %}<p>Follow-up coordinator · {% firstof i.team.assignment.recorder.get_full_name i.team.assignment.recorder.username %}</p>
 {% if i.team.finding %}<p role="status">{{ i.team.finding }}</p>{% endif %}
-<p><a href="{% url 'factory_create' %}?definition=pmo-issues/v1&amp;case={{ case.pk }}&amp;issue={{ i.pk }}">Open issue follow-up</a></p>{% endif %}
-{% if 'issue.manage' in issue_permissions %}<p><a class="button secondary" href="{% url 'issue_team_owner' case.pk i.pk %}">Review issue owner or external team</a></p>{% endif %}
+{% if i.current.status != 'Closed' %}<p><a href="{% url 'factory_create' %}?definition=pmo-issues/v1&amp;case={{ case.pk }}&amp;issue={{ i.pk }}">Open issue follow-up</a></p>{% elif i.team.assignment.auto_work_id %}<p><a href="{% url 'factory_detail' i.team.assignment.auto_work_id %}">View follow-up history</a></p>{% endif %}{% endif %}
+{% if i.team.can_resolve %}<p><a class="button" href="{% url 'issue_team_resolution' case.pk i.pk %}">Record team resolution</a></p>{% endif %}
+{% if 'issue.manage' in issue_permissions and i.current.status != 'Closed' %}<p><a class="button secondary" href="{% url 'issue_team_owner' case.pk i.pk %}">Review issue owner or external team</a></p>{% endif %}
 <p>Acknowledged {{ i.current.acknowledged_at|date:'d M Y, H:i T'|default:'not recorded' }} · Resolved {{ i.current.resolved_at|date:'d M Y, H:i T'|default:'not recorded' }}</p>
+{% if i.team.mode == 'team' %}{% for reply in i.team_replies %}<p>{{ reply.operation|readable }} · {{ reply.party }} · {{ reply.channel|readable }} · actual reply {{ reply.responded_at|date:'d M Y, H:i:s T' }}<br><small>Recorded {{ reply.created_at|date:'d M Y, H:i:s T' }} by {{ reply.actor.username }} · {{ reply.source_ref }}</small></p>{% endfor %}{% endif %}
 {% if i.public_references.held %}<p>{{ i.public_references.held }}</p>{% else %}
 {% for reference in i.public_references.references %}<p>{{ reference.kind|readable }} {{ reference.source_ref }} · {{ reference.availability|readable }} · {{ reference.currentness|readable }}{% if reference.source_identity %}<br>Source · {{ reference.source_identity }}{% endif %}</p>{% empty %}<p>No external records linked.</p>{% endfor %}{% endif %}
 <details><summary>Issue reference</summary><p>{{ i.reference }} · revision {{ i.current.number }}</p></details>
@@ -42,10 +44,10 @@
 {% if i.close_roles %}<form method="post">{% csrf_token %}
 <input type="hidden" name="action" value="close_log"><input type="hidden" name="revision" value="{{ case.revision }}">
 <input type="hidden" name="issue" value="{{ i.pk }}"><input type="hidden" name="state" value="{{ i.current_id }}">
-<label>Closure log role <select name="role">{% for role in i.close_roles %}<option>{{ role }}</option>{% endfor %}</select></label>
+<label>Closure check role <select name="role">{% for role in i.close_roles %}<option value="{{ role }}">{{ role|role_name }}</option>{% endfor %}</select></label>
 <label>Closure evidence ID <input name="evidence" type="number" required></label>
 <label>Closure log note <textarea name="note" required rows="2" maxlength="4000"></textarea></label>
-<button>Update QA / PM closure log</button></form>{% endif %}
+<button>Record closure check</button></form>{% endif %}
 {% if i.current.status == 'Closed' and 'issue.reopen' in issue_permissions %}
 <details><summary>Reopen the issue</summary><p>Use the recorded reopening authority and explain the next action.</p>
 <form method="post">{% csrf_token %}
@@ -59,7 +61,7 @@
 <details><summary>Issue history</summary>{% for s in i.public_history %}
 <p>{{ s.created_at|date:'d M Y, H:i T' }} · {{ s.status }} · {{ s.actor.username }}</p><p>{{ s.note }}</p>
 <small>Revision {{ s.number }} · evidence {{ s.evidence_id }} · fix {{ s.fix_id|default:'Awaiting evidence' }} · root cause {{ s.root_cause_id|default:'Awaiting evidence' }}</small>
-{% for e in s.public_closure_entries %}<p>{{ e.role }} closure log · {{ e.actor.username }} · {{ e.note }}</p>{% endfor %}
+{% for e in s.public_closure_entries %}<p>{{ e.role|role_name }} closure check · {{ e.actor.username }} · {{ e.note }}</p>{% endfor %}
 {% endfor %}</details></section>{% empty %}<p>No owned issue records.</p>{% endfor %}
 {% if 'issue.reference.configure' in issue_permissions %}
 <details><summary>Configure a supplied source read scope</summary>

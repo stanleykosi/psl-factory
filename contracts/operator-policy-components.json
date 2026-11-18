@@ -14,7 +14,7 @@
           "artifact_ref": {"type": "string", "minLength": 1},
           "artifact_version": {"type": "integer", "minimum": 1},
           "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-          "schema_ref": {"const": "schema:psl/issue-team-controls/v1"}
+          "schema_ref": {"enum": ["schema:psl/issue-team-controls/v1", "schema:psl/issue-team-controls/v2"]}
         },
         "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
         "additionalProperties": false

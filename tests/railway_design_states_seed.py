@@ -1,6 +1,7 @@
 """Prepare named synthetic cases for the state acceptance walkthrough."""
 import json
 import os
+from pathlib import Path
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -268,17 +269,51 @@ def prepare(key, operator):
             data=setup(missing=key=='commercial-information')
             factory.run_until_wait(data['work'].pk)
         return {'case':str(case.pk),'work':data['work'].pk,'head':data['head'].pk}
-    if key == 'issue-team-owner':
+    if key in {'issue-team-owner','issue-team-resolution','issue-team-closure','issue-team-overdue'}:
         from tests import test_factory_issues, test_issue_teams
         from apps.pmo import issue_teams
         from apps.workflows import factory_issues, factory_progress
         log_issue = test_factory_issues.log_issue
         with (patch.object(test_factory_issues, 'setup_case', return_value=(operator, case)),
               patch.object(test_factory_issues, 'log_issue', side_effect=lambda actor, case_id, reference, *args:
-                  log_issue(actor, case_id, 'SAMPLE-ISSUE-TEAM', *args))):
+                  log_issue(actor, case_id, 'SAMPLE-'+key.upper(), *args))):
             entry = test_factory_issues.FactoryIssueTests()
             entry.setUp()
         test_issue_teams.configure(entry)
+        if key in {'issue-team-resolution','issue-team-closure','issue-team-overdue'}:
+            from apps.policy.operator_drafts import draft_operator_policy
+            if key == 'issue-team-closure':
+                from apps.policy.services import register_reference
+                from tests.helpers import activate
+                current=resolve('D05.role_principal_assignments',case).configuration
+                quality=register_reference(operator,case.pk,'synthetic:closure-quality-role',
+                    'schema:psl/role-assignment/v1',{'role':'QA','user_id':operator.pk},entry.e['policy_decision'].pk)
+                activate(operator,case,current.component,current.envelope['value']+[quality.ref],entry.e['policy_decision'])
+            value=json.loads(Path('fixtures/issue-team-resolution-controls.json').read_text())['value']
+            rule=draft_operator_policy(operator,case.pk,'OPS.issue_team_controls',value,
+                                       entry.e['policy_decision'].pk,timezone.now())
+            transition(operator,rule.pk,'validated');transition(operator,rule.pk,'active')
+            from apps.pmo.issues import update_issue
+            state=update_issue(operator,case.pk,entry.state.issue_id,entry.state.pk,'manage',
+                entry.e['requirements'].pk,'Synthetic critical severity for fix and root-cause checks',rev(case),severity='Critical')
+            issue_teams.assign(operator,case.pk,entry.state.issue_id,state.pk,'team','sample-engineering',
+                operator.pk,'PM',entry.e['requirements'].pk,'Synthetic Engineering resolution trial',rev(case),
+                work_id=entry.work.pk,source_id=entry.work.source_head_id)
+            factory_issues.sync_owner(entry.work.pk)
+            factory.run_until_wait(entry.work.pk)
+            fix=add_evidence(operator,case.pk,'resolution','Synthetic documented fix for browser closure checks.','synthetic:resolution-fixture')
+            root=add_evidence(operator,case.pk,'root_cause','Synthetic documented root cause for browser closure checks.','synthetic:resolution-fixture')
+            if key == 'issue-team-overdue':
+                from tests.test_escalations import clocks,profile
+                from apps.pmo.escalations import scan_profile
+                from apps.pmo.issue_models import Issue
+                issue=Issue.objects.get(pk=entry.state.issue_id,case=case)
+                clocks(operator,case,entry.e['policy_decision'])
+                impact=profile(operator,case,issue.current,entry.e['requirements'],impact=True,
+                               trigger=timezone.now()-timedelta(hours=49))
+                scan_profile(operator,case.pk,impact.pk)
+            return {'case':str(case.pk),'work':entry.work.pk,'issue':entry.state.issue_id,
+                    'proof':entry.e['requirements'].pk,'fix':fix.pk,'root_cause':root.pk}
         issue_teams.assign(operator, case.pk, entry.state.issue_id, entry.state.pk, 'team', '',
             operator.pk, '', entry.e['requirements'].pk, 'Synthetic external owner awaiting assignment', rev(case),
             work_id=entry.work.pk, source_id=entry.work.source_head_id)
@@ -530,6 +565,10 @@ elif workflow == 'payroll-field-extended':
     fixtures = ('payroll-field-extended',)
 elif workflow == 'issue-team-states':
     fixtures = ('issue-team-owner',)
+elif workflow == 'issue-team-resolution-states':
+    fixtures = ('issue-team-resolution',)
+elif workflow == 'issue-team-closure-states':
+    fixtures = ('issue-team-closure','issue-team-overdue')
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

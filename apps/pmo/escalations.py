@@ -74,7 +74,15 @@ def timing(profile,as_of=None):
         result['gaps'].append('Severity-to-PMO/CTO routing is unknown')
     if 'acknowledgement_hours' in parameters:
         due=anchor+timedelta(hours=parameters['acknowledgement_hours']);result['acknowledgement_due_at']=due.isoformat()
-        result['acknowledgement_status']=('LATE' if s.acknowledged_at>due else 'ON_TIME') if s.acknowledged_at else ('OVERDUE' if now>=due else 'PENDING')
+        from .issue_teams import acknowledgement_clock
+        ack=acknowledgement_clock(s.issue,s)
+        result['acknowledgement_clock']={k:v for k,v in ack.items() if k!='at'}
+        result['acknowledgement_at']=ack['at'].isoformat() if ack['at'] else None
+        result['policies'].update(ack['policies'])
+        if ack['status']=='unknown':
+            result['gaps'].append(ack['finding'])
+        else:
+            result['acknowledgement_status']=('LATE' if ack['at']>due else 'ON_TIME') if ack['at'] else ('OVERDUE' if now>=due else 'PENDING')
     return result
 
 

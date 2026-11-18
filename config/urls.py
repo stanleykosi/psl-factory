@@ -76,6 +76,7 @@ urlpatterns = [
     path('cases/<uuid:case_id>/issues/',issue_views.workbench,name='issues'),
     path('cases/<uuid:case_id>/issues/team-settings/',issue_team_views.configuration,name='issue_team_configuration'),
     path('cases/<uuid:case_id>/issues/<int:issue_id>/owner/',issue_team_views.owner,name='issue_team_owner'),
+    path('cases/<uuid:case_id>/issues/<int:issue_id>/resolution/',issue_team_views.resolution,name='issue_team_resolution'),
     path('cases/<uuid:case_id>/escalations/',escalation_views.workbench,name='escalations'),
     path('cases/<uuid:case_id>/documents/',document_views.workbench,name='documents'),
     path('accounts/login/', design_views.FactoryLogin.as_view(), name='login'),
