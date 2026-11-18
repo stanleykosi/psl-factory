@@ -7,6 +7,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from apps.core.models import Evidence,Audit
+from apps.core.read_observation import read_observation
 from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case,add_evidence,event
 from apps.identity.models import Grant
@@ -172,7 +173,13 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if kind=='ACT09':
         prerequisites(d,data)
         v=document(work)
-        if not v:v=draft_delivery_document(work.execution_actor,case.pk,d.pk,'handover',data['inputs']['template_id'],{k:data['inputs'][k] for k in FIELDS[1:]},case.revision)
+        if not v:
+            prior_id = Attempt.objects.filter(activity__work=work, phase='observed', result__has_key='document_version').exclude(
+                result__head=work.source_head_id).order_by('-pk').values_list('result__document_version', flat=True).first()
+            prior = DeliveryDocumentBinding.objects.filter(version_id=prior_id, dossier=d, purpose='handover',
+                version__document__current_id=prior_id).first() if prior_id else None
+            v=draft_delivery_document(work.execution_actor,case.pk,d.pk,'handover',data['inputs']['template_id'],
+                {k:data['inputs'][k] for k in FIELDS[1:]},case.revision,previous_version_id=prior.version_id if prior else None)
         task=None;waiting=None
         if v.template.definition.get('internal_review_required') is not False and not HumanTask.objects.filter(version=v).exists():
             from apps.documents.controlled import request_review
@@ -222,8 +229,13 @@ def verify(work,actor=None):
     for item in rows:
         r=item['receipt'];ack=item['ack']
         if r.payload!=v.payload or r.payload_sha256!=v.payload_sha256:raise ValidationError('Exact handover receipt payload required')
-        if not ack or ack.actor_id!=r.recipient_id or ack.data['status']!='received' or ack.snapshot!=binding.snapshot:raise ValidationError('Support/Operations must record actual receipt and resolve any handover gaps')
-        for action in ['delivery.support_receive','document.receive:internal']:require(ack.actor,work.case,action)
+        if not ack or ack.data['status']!='received' or ack.snapshot!=binding.snapshot:raise ValidationError('Support/Operations must record actual receipt and resolve any handover gaps')
+        if 'attestation' in ack.data:
+            from apps.pmo.handover_replies import validate_record
+            validate_record(ack, r)
+        else:
+            if ack.actor_id != r.recipient_id:raise ValidationError('The actual handover recipient must match its acknowledgement.')
+            for action in ['delivery.support_receive','document.receive:internal']:require(ack.actor,work.case,action)
         acks.append(ack.pk)
     return {'verified':True,'verification_scope':'synthetic_native_handover_and_actual_recipient_acknowledgement','head':work.source_head_id,
         'document_version':v.pk,'publication':p.pk,'receipt_ids':[x['receipt'].pk for x in rows],'handover_ids':acks,
@@ -268,6 +280,22 @@ def acknowledge(actor,work_id,expected,case_expected,receipt_id,status,evidence_
     v=document(w)
     if not v or not PublicationReceipt.objects.filter(pk=receipt_id,recipient=actor,publication__version=v,publication__factory_work=w,publication__factory_source=w.source_head).exists():raise ValidationError('Select your own exact current handover receipt')
     return closure.acknowledge_handover(actor,w.case_id,w.request['dossier'],receipt_id,status,evidence_id,note,case_expected)
+
+
+@transaction.atomic
+def record_support_reply(actor, work_id, expected, case_expected, receipt_id, **reply):
+    from .factory import access
+    from apps.pmo.handover_replies import record_reply
+
+    work = Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id, definition=DEFINITION)
+    access(actor, work.case, envelope=DEFINITION)
+    if type(expected) is not int or work.revision != expected or work.cancel_requested or work.status in ['cancelled', 'followup_needed']:
+        raise ValidationError('Refresh the current handover before recording this reply.')
+    version = document(work)
+    if not version or not PublicationReceipt.objects.filter(pk=receipt_id, publication__version=version,
+            publication__factory_work=work, publication__factory_source=work.source_head).exists():
+        raise ValidationError('Choose the exact current delivered handover receipt.')
+    return record_reply(actor, work.case_id, work.request['dossier'], receipt_id, expected=case_expected, **reply)
 
 
 @transaction.atomic
@@ -316,6 +344,7 @@ def operate(actor,work_id,expected,case_expected,job_id,action,reason):
     w.observation_hash='';w.revision+=1;w.save();return w
 
 
+@read_observation
 def projection(actor,work):
     from .factory import access
     access(actor,work.case,envelope=DEFINITION);d,data,rows=source(work,actor,current=False);v=document(work);p,receipts=receipt_state(work,v)
@@ -336,6 +365,11 @@ def projection(actor,work):
             try:
                 require(actor,work.case,'delivery.support_receive');require(actor,work.case,'document.receive:internal');current_version(work.case,v.pk);item['can_ack']=True
             except (ValidationError,PermissionDenied):pass
+    from apps.pmo.handover_replies import available_roles
+    reply_roles = available_roles(actor, work.case)
+    for item in receipts:
+        item['can_record_reply'] = bool(reply_roles and not work.cancel_requested and
+            work.status not in ['cancelled', 'followup_needed'])
     can_review=False;review_pending=bool(v and HumanTask.objects.filter(version=v,status='open').exists());review_owners=[]
     if review_pending:
         try:
@@ -383,6 +417,7 @@ def projection(actor,work):
     return {'dossier':d,'data':data,'inputs':[{'kind':k,'evidence':rows.get(data['inputs'][k]),'missing':data['inputs'][k] is None} for k in FIELDS[1:]],
         'document':v,'publication':p,'receipts':receipts,'finding':finding,'readiness_changed':changed,'can_correct':can_correct,
         'can_review':can_review,'review_pending':review_pending,'review_owner_names':review_owners,'pending_owner_names':pending_owners,
+        'reply_roles':reply_roles,
         'publication_current':publication_current,'jobs':jobs}
 
 

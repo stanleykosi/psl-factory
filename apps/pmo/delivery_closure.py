@@ -283,7 +283,12 @@ def received_handover(d):
         receipt=PublicationReceipt.objects.filter(publication=publication,recipient_id=recipient).first()
         ack=d.records.filter(kind='handover',data__receipt_id=receipt.pk if receipt else -1).order_by('-pk').first()
         if not ack or ack.data['status']!='received' or ack.snapshot!=binding.snapshot:raise ValidationError('Support/Operations receipt or gap resolution missing')
-        require(ack.actor,d.case,'delivery.support_receive');require(ack.actor,d.case,'document.receive:internal');acknowledgements.append(ack.pk)
+        if 'attestation' in ack.data:
+            from .handover_replies import validate_record
+            validate_record(ack, receipt)
+        else:
+            require(ack.actor,d.case,'delivery.support_receive');require(ack.actor,d.case,'document.receive:internal')
+        acknowledgements.append(ack.pk)
     if not acknowledgements:raise ValidationError('No Support/Operations destination received the handover')
     return acknowledgements
 

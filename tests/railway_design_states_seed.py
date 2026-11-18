@@ -71,6 +71,28 @@ def prepare(key, operator):
         existing = FactoryWork.objects.filter(case=case).first()
         return {'case': str(case.pk), 'work': existing.pk if existing else None}
     Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
+    if key in {'handover-external-reply', 'handover-reply-rules', 'handover-reply-gaps'}:
+        from tests import test_delivery, test_handover_replies
+        users = get_user_model().objects
+        create_user = users.create_user
+        with (
+            patch.object(test_delivery, 'setup_case', return_value=(operator, case)),
+            patch.object(users, 'create_user', side_effect=lambda username, **values:
+                create_user(username='state-' + key + '-' + username, **values)),
+        ):
+            data = test_handover_replies.prepare()
+            if key != 'handover-reply-rules':
+                test_handover_replies.configure(data)
+            if key == 'handover-reply-gaps':
+                from apps.pmo.handover_replies import record_reply
+                record_reply(operator, case.pk, data.d.pk, test_handover_replies.receipt(data).pk, 'gaps',
+                    data.reply_proof.pk, 'SAMPLE runbook misses the export restart steps.',
+                    'SAMPLE Support lead', 'email', timezone.now(), 'PM', 0, rev(case))
+            revised = add_evidence(operator, case.pk, 'support_document',
+                'SAMPLE revised runbook includes the export restart steps and outage contacts.', 'synthetic:revised-handover')
+        return {'case': str(case.pk), 'work': data.work.pk, 'dossier': data.d.pk,
+            'receipt': test_handover_replies.receipt(data).pk, 'proof': data.reply_proof.pk,
+            'revised_support': revised.pk, 'policy_proof': data.e['policy_decision'].pk}
     if key in {'archive-file-receipts', 'archive-file-uncertain', 'archive-file-missing', 'archive-private-store'}:
         from tests import test_delivery
         from tests.test_project_archive_files import configured, reserve, LostCopyResponse, MissingCopyResponse
@@ -380,6 +402,8 @@ elif workflow == 'archive-file-states':
     fixtures = ('archive-file-receipts', 'archive-file-uncertain', 'archive-file-missing')
 elif workflow == 'archive-private-store':
     fixtures = ('archive-private-store',)
+elif workflow == 'handover-reply-states':
+    fixtures = ('handover-external-reply', 'handover-reply-rules', 'handover-reply-gaps')
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

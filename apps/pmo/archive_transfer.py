@@ -13,6 +13,7 @@ from adapters import case_uploads, project_archive
 from apps.agents.models import CaseUpload, FileDraftReview
 from apps.core.evidence_access import public_evidence
 from apps.core.models import Audit, Evidence
+from apps.core.read_observation import read_observation
 from apps.core.services import bump, event, lock_case
 from apps.documents.contracts import digest, validate
 from apps.identity.models import Grant
@@ -20,6 +21,15 @@ from apps.identity.services import require
 from apps.policy.archive_transfer_validators import COMPONENT, VALUE
 from apps.policy.services import active_component, reference_values
 from .models import ArchiveCopyAttempt, ArchiveCopyFile, ArchiveCopyJob, ArchiveCopyPlan, ArchiveCopyReceipt
+
+FILE_GROUPS = {
+    **dict.fromkeys(['rfp_intake', 'rfp_response', 'rfp_outcome', 'rfp_commercial_terms'], 'Bid records'),
+    **dict.fromkeys(['costing', 'sow', 'signature', 'commercial_terms'], 'Costing and agreements'),
+    **dict.fromkeys(['requirements', 'plan', 'planning_packet', 'technical_document', 'technical_design'], 'Planning'),
+    **dict.fromkeys(['test_results', 'project_artifact', 'support_document', 'escalation_document',
+                    'handover_receipt', 'release', 'go_live_checklist', 'incident_reporting', 'rollback'], 'Delivery and acceptance'),
+    **dict.fromkeys(['meeting', 'meeting_notes', 'minutes', 'status_report', 'weekly_report', 'closure_report'], 'Minutes and reports'),
+}
 
 
 def access(actor, case):
@@ -45,6 +55,7 @@ def rules(case):
     return configuration, value, operator
 
 
+@read_observation
 def native_archive(work, actor):
     from apps.workflows import factory_archive
     from . import delivery_closure
@@ -280,6 +291,7 @@ def retry_missing(actor, job_id, expected):
     return job
 
 
+@read_observation
 def projection(actor, work):
     require(actor, work.case, 'delivery.read')
     plan = work.file_archives.order_by('-pk').first()
@@ -292,7 +304,9 @@ def projection(actor, work):
         return {'plan': None, 'files': [], 'can_operate': can_operate, 'verified': False}
     plan.work = work
     files = list(plan.files.select_related('job').order_by('pk')[:501])
-    visible = set(public_evidence(work.case.evidence.filter(pk__in=[file.evidence_id for file in files])).values_list('pk', flat=True))
+    source_kinds = dict(public_evidence(work.case.evidence.filter(pk__in=[file.evidence_id for file in files])).values_list('pk', 'kind'))
+    visible = set(source_kinds)
+    groups = {}
     for file in files:
         file.plan = plan
         file.display_name = file.name if can_operate and file.evidence_id in visible else 'Project source file'
@@ -300,13 +314,19 @@ def projection(actor, work):
             'missing':'File not found','confirmed':'Archived','held':'Needs review'}[file.job.status]
         file.can_lookup = can_operate and file.evidence_id in visible and file.job.status in ['unknown', 'missing', 'held']
         file.can_retry = False
+        group = FILE_GROUPS.get(source_kinds.get(file.evidence_id), 'Project documents')
+        summary = groups.setdefault(group, {'label': group, 'total': 0, 'confirmed': 0})
+        summary['total'] += 1
+        summary['confirmed'] += file.job.status == 'confirmed'
     confirmed = sum(file.job.status == 'confirmed' for file in files)
     verified = bool(files) and len(files) <= 500 and confirmed == len(files)
     finding = ''
     current_scope = False
     retry_actor_id = None
+    store_label = 'archive store'
     try:
-        plan_rules(plan)
+        plan_value = plan_rules(plan)
+        store_label = 'private file store' if plan_value['adapter'] == 'private_object_store/v1' else 'synthetic acceptance store'
         if len(files) != len(plan.manifest['files']):
             raise ValidationError('The archive file inventory is incomplete.')
         configuration, _, operator = rules(work.case)
@@ -338,4 +358,5 @@ def projection(actor, work):
         file.can_retry = (can_operate and current_scope and retry_actor_id == actor.pk and
                           not work.cancel_requested and file.job.status == 'missing')
     return {'plan': plan, 'files': files, 'confirmed': confirmed, 'total': len(files),
-            'can_operate': can_operate, 'verified': verified, 'finding': finding}
+            'can_operate': can_operate, 'verified': verified, 'finding': finding, 'store_label': store_label,
+            'groups': list(groups.values())}

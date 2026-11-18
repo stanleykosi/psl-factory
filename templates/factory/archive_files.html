@@ -3,8 +3,17 @@
   <h2>Archived files</h2>
   {% if file_archive.plan %}
     <p>{{ file_archive.confirmed }} of {{ file_archive.total }} files have matching store receipts.</p>
-    {% if file_archive.verified %}<p>The selected file bytes were read back and matched their recorded hashes.</p>{% endif %}
+    {% if file_archive.verified %}<p>The selected files were read back from the {{ file_archive.store_label }} and matched their recorded hashes.</p>{% endif %}
     {% if file_archive.finding %}<p role="status">{{ file_archive.finding }}</p>{% endif %}
+    <h3>Archive index</h3>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Documents</th><th>Files</th><th>Store receipts</th></tr></thead>
+      <tbody>{% for group in file_archive.groups %}<tr>
+        <td>{{ group.label }}</td><td>{{ group.total }}</td>
+        <td>{{ group.confirmed }} of {{ group.total }} confirmed</td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+    <details{% if not file_archive.verified %} open{% endif %}><summary>Individual files and recovery</summary>
     <div class="table-scroll"><table>
       <thead><tr><th>File</th><th>Store confirmation</th><th>Next action</th></tr></thead>
       <tbody>{% for file in file_archive.files %}<tr>
@@ -17,6 +26,7 @@
         </form>{% elif file.job.status == 'confirmed' %}Receipt recorded{% else %}Awaiting archive worker{% endif %}</td>
       </tr>{% endfor %}</tbody>
     </table></div>
+    </details>
     <details><summary>Archive receipt references</summary><p>Archive plan {{ file_archive.plan.pk }} · {{ file_archive.plan.created_at }} · {{ file_archive.plan.sha256 }}</p></details>
   {% else %}<p>File copying needs a reviewed store and a designated archive operator. The project index below records the selected source documents.</p>{% endif %}
   {% if archive_selection_form %}<details><summary>Choose documents and copy their files</summary>

@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from apps.core.services import lock_case
+from apps.core.read_observation import read_observation
 from apps.documents.controlled import create_version
 from apps.documents.models import Template
 from apps.policy.services import decision_authority
@@ -65,6 +66,7 @@ def draft_delivery_document(actor,case_id,dossier_id,purpose,template_id,data,ex
     return v
 
 
+@read_observation
 def binding_findings(binding):
     try:
         d=dossier_for(binding.dossier.case,binding.dossier_id)

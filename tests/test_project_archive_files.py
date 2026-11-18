@@ -88,6 +88,11 @@ class ArchiveFileTests(TestCase):
         self.assertTrue(verified['file_bytes_verified'])
         self.assertFalse(verified['external_bytes_verified'])
         self.assertEqual(verified['verification_scope'],'synthetic_project_file_archive_byte_readback')
+        self.client.force_login(f.actor)
+        page = self.client.get(reverse('factory_detail', args=[f.work.pk]))
+        self.assertContains(page, 'Open Support handover')
+        self.assertContains(page, 'synthetic acceptance store')
+        self.assertNotContains(page, 'from the private file store')
         with self.assertRaises(DatabaseError), transaction.atomic():
             plan.files.update(sha256='0' * 64)
         with self.assertRaises(DatabaseError), transaction.atomic():
@@ -170,9 +175,37 @@ class ArchiveFileTests(TestCase):
         with CaptureQueriesContext(connection) as captured:
             state = archive_transfer.projection(f.actor, f.work)
         self.assertEqual(state['total'], 3)
+        self.assertEqual(sum(group['total'] for group in state['groups']), 3)
+        self.assertEqual({group['label'] for group in state['groups']}, {'Planning', 'Delivery and acceptance'})
         plan_reads = [query for query in captured.captured_queries if 'FROM "pmo_archivecopyplan"' in query['sql']]
         self.assertEqual(len(plan_reads), 1)
         self.assertFalse(any('pmo_syntheticarchiveobject' in query['sql'] for query in captured.captured_queries))
+
+    def test_archive_detail_reuses_pure_provenance_reads_and_mutations_recheck_current_authority(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        f = self.f
+        plan = reserve(f)
+        job = plan.files.order_by('pk').first().job
+        archive_transfer.run_once(job.pk, adapter=LostCopyResponse())
+        self.client.force_login(f.actor)
+        url = reverse('factory_detail', args=[f.work.pk])
+        with CaptureQueriesContext(connection) as captured:
+            page = self.client.get(url)
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, 'Check original file')
+        print('PSL_ARCHIVE_DETAIL_QUERIES=' + str(len(captured)), flush=True)
+        self.assertLess(len(captured), 1800)
+        job.refresh_from_db()
+        self.assertRedirects(self.client.post(url, {'action': 'archive_file_lookup', 'job': job.pk,
+            'job_revision': job.revision, 'revision': f.work.revision}), url)
+        self.assertEqual(job.attempts.filter(operation='lookup').count(), 1)
+        Grant.objects.filter(case=f.case, user=f.actor, action='delivery.archive_files').update(active=False)
+        denied = self.client.post(url, {'action': 'archive_file_lookup', 'job': job.pk,
+            'job_revision': job.revision, 'revision': f.work.revision})
+        self.assertEqual(denied.status_code, 403)
+        self.assertEqual(job.attempts.filter(operation='lookup').count(), 1)
 
     def test_actual_reviewed_upload_attachment_is_copied_with_its_source(self):
         f = self.f

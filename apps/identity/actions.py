@@ -30,3 +30,4 @@ ACTIONS += ['finance.draft_generation.dispatch', 'finance.draft_generation.looku
 # Exact human release and confirmation of customer reminders.
 ACTIONS += ['finance.reminder.read','finance.reminder.prepare','finance.reminder.send','finance.reminder.confirm']
 ACTIONS += ['delivery.archive_files']
+ACTIONS += ['delivery.record_support_reply']

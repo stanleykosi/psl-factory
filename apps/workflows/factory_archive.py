@@ -7,6 +7,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from apps.core.models import Evidence,Audit
+from apps.core.read_observation import read_observation
 from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case,add_evidence,event
 from apps.identity.models import Grant
@@ -283,6 +284,7 @@ def restart(actor,work_id,expected,case_expected,reason):
     event(actor,case,'factory.archive_restarted',work=w.pk,previous=previous,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
 
+@read_observation
 def projection(actor,work):
     from .factory import access
     access(actor,work.case,envelope=DEFINITION);d,data,rows=source(work,actor,current=False);observed=checks(d,data)

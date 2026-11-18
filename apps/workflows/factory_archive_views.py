@@ -127,10 +127,21 @@ def detail(request,work):
         work.refresh_from_db()
     row=presentation(request.user,work);activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
     files = archive_transfer.projection(request.user, work)
+    from django.urls import reverse
+    from urllib.parse import urlencode
+    from .models import FactoryWork
+    handover_work = FactoryWork.objects.filter(case=work.case, definition='delivery-handover/v1',
+        request__dossier=row['archive']['dossier'].pk).first()
+    handover_url = reverse('factory_detail', args=[handover_work.pk]) if handover_work else (
+        reverse('factory_create') + '?' + urlencode({'definition':'delivery-handover/v1',
+            'case':str(work.case_id), 'dossier':row['archive']['dossier'].pk}))
     for activity in activities:
         activity.title={'ACT03':'Plan next permitted work','ACT04':'Investigate final evidence','ACT08':'Prepare the archive index','ACT10':'Resolve rules and operator','ACT13':'Verify the archive index'}.get(activity.kind,'Review permitted work')
         for attempt in activity.attempts.all():attempt.display_result=archive.attempt_projection(attempt)
     response=render(request,'factory/archive_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'activities':activities,
+        'handover_url': handover_url,
+        'can_start_handover': work.status=='verified' and not row.get('readiness_changed') and
+            permitted(request.user,work,'factory.start') and permitted(request.user,work,'evidence.add'),
         'inventory_form':form,'file_archive': files, 'archive_selection_form': selection_form,
         'archive_file_rules_form': file_rules_form, 'can_configure':permitted(request.user,work,'policy.configure')})
     response['Cache-Control']='no-store';return response

@@ -17,6 +17,7 @@ from django.utils.dateparse import parse_datetime
 from apps.identity.models import Grant
 from apps.identity.services import visible_cases
 from apps.core.models import Evidence,Case,Audit
+from apps.core.read_observation import read_observation
 from apps.core.evidence_access import public_evidence
 from apps.core.templatetags.studio_ui import readable
 from apps.core.presentation import workspace_name
@@ -126,6 +127,7 @@ def permitted(actor,work,action):
     try:d.access(actor,work.case,action,work.definition);return True
     except PermissionDenied:return False
 
+@read_observation
 def presentation(actor,work,*,focus=None):
     from apps.agents.factory_coordinator import decorate
     return decorate(actor,work,_presentation(actor,work,focus=focus))
@@ -371,7 +373,7 @@ def _presentation(actor,work,*,focus=None):
         from .factory_handover import projection
         row['handover']=projection(actor,work);row['jobs']=row['handover']['jobs']
         pending_ack=[x for x in row['handover']['receipts'] if not x['ack'] or x['ack'].data['status']!='received']
-        own_ack=any(x['can_ack'] for x in pending_ack)
+        own_ack=any(x['can_ack'] or x.get('can_record_reply') for x in pending_ack)
         if row['handover']['finding'] and work.status in ['ready','waiting']:
             row.update(blocker=row['handover']['finding'],next_action=row['handover']['finding'])
             if work.status=='waiting':row['can_advance']=False
@@ -384,6 +386,8 @@ def _presentation(actor,work,*,focus=None):
         if row['handover']['can_review']:
             row.update(needs_me=True,owner=actor.get_full_name() or actor.username,next_action='Review this exact controlled handover document',department_wait=True)
         if own_ack:row.update(needs_me=True,owner=actor.get_full_name() or actor.username,department_wait=True)
+        if any(x.get('can_record_reply') for x in pending_ack):
+            row['next_action']='Record Support’s actual reply with its proof'
         if not row['handover']['publication_current']:
             row.update(owner=(actor.get_full_name() or actor.username) if row['handover']['can_correct'] else 'Unassigned',
                 next_action='Review changed document, recipient or publication policy before a fresh package',needs_me=row['handover']['can_correct'])
@@ -829,6 +833,15 @@ def create(request):
 @login_required
 @require_http_methods(['GET','HEAD','POST'])
 def detail(request,work_id,focus=None):
+    from apps.core.read_observation import observation_scope
+
+    if request.method in ['GET', 'HEAD']:
+        with observation_scope():
+            return _detail(request, work_id, focus)
+    return _detail(request, work_id, focus)
+
+
+def _detail(request,work_id,focus=None):
     from .screen_focus import SCREENS, require_action
 
     work=get_object_or_404(visible(request.user,work_id=work_id))

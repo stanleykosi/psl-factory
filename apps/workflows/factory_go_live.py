@@ -451,6 +451,7 @@ def restart(actor,work_id,expected,case_expected,reason):
     event(actor,case,'factory.go_live_restarted',work=w.pk,previous=old,current=w.source_head_id,reason=reason,spent=w.budget_used);return w
 
 @read_observation
+@read_observation
 def projection(actor,work):
     from .factory import access,profile
     access(actor,work.case,'factory.read',DEFINITION);d,data,_=source(work,actor,current=False);v=document(work);p=publication(work,v)

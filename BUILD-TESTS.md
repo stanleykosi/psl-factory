@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Private store and request regression · 18 November 2026
+
+Package 75 `f7c5b81b-b929-46b7-bc12-932c40d77e94` passed eleven PostgreSQL tests in 287.784 seconds, Django checks and migration drift. Six idempotent sample lookups and the real private-store fixture passed, ending with both final exit markers zero. Work 92, plan 4 and jobs 10–12 have three exact store readback receipts and a verified native output. Synthetic content only. No real customer account was used.
+
+The browser exposed a worker timeout in repeated archive read validation. Package 76 `7e9f3986` passed its new request-bound regression at 571 queries and retained a fresh post-read permission denial before another lookup. Its 37-test suite is still running. Web 76 was deployed after that targeted regression passed. Browser works 90 and 91 subsequently showed all three file receipts and Verified after original lookup and missing-file-only retry respectively. Work 92 showed the private-store result at 1280 and 390 pixel viewports without body overflow. A later handover POST timed out in its unscoped preflight and is corrected in source awaiting package 77.
+
+New Support reply schema and changed templates passed two local database-free tests in 0.080 seconds. A separate local run passed the schema plus two error-page tests in 0.214 seconds. Django check and whitespace checks passed. New external-reply service, concurrency, role/source revocation, native downstream and successor tests are implemented but have not yet run on PostgreSQL. Preserve that distinction.
+
 ## Archive controls and connected UI regression suite · 18 November 2026
 
 Railway package 74 `d8f14e53-9f41-404c-ab43-c90430a14f8c` ran 21 tests on PostgreSQL `test_design_archive_20261117`, all passed in 867.694 seconds. Django checks and migration drift passed. Preview migration `pmo.0059` passed. Four response lookups, three handover/index fixtures and three archive-file fixtures completed, with `PSL_FIXTURE_EXIT=0` and `PSL_ACCEPTANCE_EXIT=0`. The intentional synthetic service-error traceback belongs to the passing secure-500-page test.

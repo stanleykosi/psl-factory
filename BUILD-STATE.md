@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Real archive receipts and connected Support replies · 18 November 2026
+
+Package 75 passed eleven PostgreSQL tests in 287.784 seconds and the actual private-store trial. Work 92 verified three synthetic files by real byte readback. Browser work 90 recovered an original receipt and work 91 completed a missing-file-only retry. The private-store archive fit desktop and phone widths. Package 76's request regression passed at 571 queries, with fresh write-authority checks, and its wider 37-test suite is running. Web 76 is hosted with worker 74. A handover preflight timeout remains under correction in the next source.
+
+Root's next connected increment adds configured human recording of Support replies, exact proof and original delivery binding, current recording-role checks, immutable reply successors, queue attention and fresh controlled handover versions. Draft-only rule UI, source-bound tests and guarded examples are implemented but await package 77 PostgreSQL verification and browser testing. Archive grouping, transport scope labels and the handover link are included. Operational recorder roles/channels stay deferred. All 262-state acceptance remains incomplete.
+
 ## Archive and response PostgreSQL controls passed · 18 November 2026
 
 Package 74 passed 21 PostgreSQL tests in 867.694 seconds, Django checks, migration drift and all ten guarded workflow fixtures. The preview schema includes `pmo.0059`. Verified native file copying and receipts, uncertain-effect lookup, file-only retries, concurrency, current permissions, response corrections, handover, issue controls, stability routing, progress refresh and secure error-page behavior. Archive transport tests used synthetic or mocked storage. Actual private-store verification is pending package 75, alongside final archive UI refinements. Hosted web and worker remain package 68 pending exact-source deployment and browser checks. Keep all 262 states open until their actual remaining journeys pass. HOD selections remain deferred.
