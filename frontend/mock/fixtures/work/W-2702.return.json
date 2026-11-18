@@ -1,0 +1,189 @@
+{
+  "id": "W-2702",
+  "title": "Income detail · October",
+  "line": "Income schedules",
+  "reference": "SCH-0021",
+  "state": "action_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Prepare",
+      "status": "current_person"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    },
+    {
+      "name": "Export (optional)",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-13T14:05:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-2702",
+      "kind": "decide",
+      "title": "Review the income schedule",
+      "required_role": "Schedules reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Schedule v1",
+          "number": 1,
+          "drafted_at": "2026-11-13T11:40:00Z"
+        },
+        "basis": "Approve the income detail for Service revenue, October. You didn't prepare it, so you can review it.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": false,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Schedules reviewer",
+              "status": "approved",
+              "is_you": false,
+              "person": "Ada Okafor",
+              "decided_at": "2026-11-13T14:05:00Z"
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the income detail",
+        "status": "done",
+        "source": "INCOME_DETAIL_OCT.XLSX · 38 ROWS"
+      },
+      {
+        "text": "Checked for income already in the accounts",
+        "status": "done",
+        "source": "2 ROWS MAY BE DUPLICATES"
+      },
+      {
+        "text": "Read the mapping note",
+        "status": "done",
+        "source": "MAPPING RUN MR-0044"
+      },
+      {
+        "text": "Hand to preparation",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-13T10:20:00Z"
+  },
+  "next_step": "The preparer corrects the schedule and sends it back for review.",
+  "sample": true,
+  "workspace": {
+    "line_key": "income_schedules",
+    "screen": "SCR-54",
+    "view": "returned",
+    "status": {
+      "label": "RETURNED · CORRECT AND RESUBMIT",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "returned",
+        "kind": "text",
+        "items": [],
+        "note": "Ada Okafor returned it on 13 Nov: “Row 12 is a reclassification, not a disaggregation.”"
+      }
+    ],
+    "steps": [
+      {
+        "key": "correct_and_resubmit",
+        "label": "Correct and resubmit",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "fields": [
+          {
+            "name": "row_12_relationship",
+            "label": "Row 12 relationship",
+            "type": "choice",
+            "required": true,
+            "options": [
+              {
+                "value": "disaggregation",
+                "label": "Disaggregation"
+              },
+              {
+                "value": "reclassification",
+                "label": "Reclassification"
+              },
+              {
+                "value": "additive",
+                "label": "Additive"
+              }
+            ]
+          }
+        ],
+        "consequence": "What happens next: the schedule is prepared again and goes back to Ada Okafor. The returned version stays in the history."
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "SCH-0021",
+          "label": "SCH-0021"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

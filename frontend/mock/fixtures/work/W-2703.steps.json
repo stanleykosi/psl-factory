@@ -1,0 +1,9 @@
+{
+  "correct_and_resubmit": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "Sent back for review."
+    }
+  }
+}
