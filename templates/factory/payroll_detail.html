@@ -16,6 +16,7 @@
 {% endif %}
 {% else %}
 <p><a href="{% url 'payroll' case.pk %}">Open native payroll source, review and HR-correction tools</a></p>
+{% include 'finance/payroll_working_rows.html' %}
 <section class="card"><h2>Selected payroll sources</h2><p>{{ row.payroll.request }}</p><ul>{% for id in row.payroll.inputs.input_ids %}<li><a href="{% url 'payroll_inspect' case.pk 'input' id %}">Inspect restricted payroll input {{ id }}</a></li>{% endfor %}</ul>
 {% if row.payroll.runs %}<h3>Prepared results</h3><ul>{% for kind, run in row.payroll.runs.items %}<li>{{ kind|readable }} · {{ run.status|readable }} · <a href="{% url 'payroll_inspect' case.pk 'run' run.id %}">Inspect exact working result {{ run.id }}</a></li>{% endfor %}</ul>{% endif %}</section>
 {% if row.payroll.hr_held %}<section class="card"><h2>Staff matching held</h2>

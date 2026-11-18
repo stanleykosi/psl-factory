@@ -13,7 +13,7 @@ from apps.identity.models import Grant
 from apps.documents.contracts import digest,validate
 from apps.finance import payroll as native,hrfinance as hr
 from apps.finance.payroll_models import PayrollRequest,PayrollInput,PayrollRun,PayrollPublication,PayrollReportReceipt
-from apps.finance.hrfinance_models import HRReadSnapshot
+from apps.finance.hrfinance_models import HRReadSnapshot,HRHandoffRecord
 from apps.policy.services import active_component,reference_values
 from apps.policy.payroll_validators import REPORT,ACCESS
 from .models import FactoryWork as Work,FactoryActivity as Activity
@@ -115,13 +115,19 @@ def verify(work,actor=None):
     return {'verified':True,'head':work.source_head_id,'request':q.pk,'run':a.pk,'publication':p.pk,'payload_sha256':digest(expected),'receipt_ids':[r.pk for r in receipts],'private_payloads_in_result':False,'hr_written':False,'ledger_posted':False,'external_authenticity_verified':False}
 
 def report(work,actor=None):
-    actor=actor or work.execution_actor;q,data=source(work,actor);state={'request':q.pk,'inputs':data['inputs'],'stage':'input_review','finding':'','runs':{},'publication':None,'receipt_ids':[]}
+    actor=actor or work.execution_actor;q,data=source(work,actor);state={'request':q.pk,'inputs':data['inputs'],'stage':'input_review','finding':'','runs':{},'working_runs':{},'publication':None,'receipt_ids':[]}
     try:
+        available={}
+        for stage in ['combine','match','aggregate']:
+            r=checked_run(work,stage,q,data)
+            if r:
+                native.run_access(actor,r);available[stage]=r
+                state['working_runs'][stage]={'id':r.pk,'sha256':r.sha256,'status':r.metadata['status'],'codes':r.metadata['codes']}
         for pk in data['inputs']['input_ids']:native.current_review(native.exact(work.case,PayrollInput,pk))
         for stage in ['combine','match','aggregate']:
-            state['stage']=stage;r=checked_run(work,stage,q,data)
+            state['stage']=stage;r=available.get(stage)
             if not r:raise ValidationError('Prepare native '+stage+' working result')
-            native.run_access(actor,r);state['runs'][stage]={'id':r.pk,'sha256':r.sha256,'status':r.metadata['status'],'codes':r.metadata['codes']}
+            state['runs'][stage]=state['working_runs'][stage]
             state['stage']=stage+'_review';native.current_review(r)
         state['stage']='publish';p=publication(work)
         if not p:raise ValidationError('Await actual Finance publication decision')
@@ -210,6 +216,35 @@ def human_action(actor,work_id,expected,case_expected,action,values):
         return receipt
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh current payroll work')
     q,data=source(w,actor)
+    if action=='working':
+        from adapters.payroll import working_command
+        from .factory_execution import require_control
+        from apps.agents.factory_coordinator import pending,has_receipt
+        stage=working_command(values);require_control(actor,w)
+        if w.status=='verified' or publication(w):raise ValidationError('Published work needs its native follow-up before new preparation.')
+        planning=pending(w)
+        if planning and not has_receipt(planning):raise ValidationError('Reconcile the original planning response before preparing another working result.')
+        active_component(native.STAGE_POLICY[stage],w.case)
+        if stage=='combine':
+            inputs=input_rows(actor,w.case,q,data['inputs'])
+            if not any(i.metadata['status']=='held' for i in inputs):raise ValidationError('Use the ordinary reviewed payroll flow for complete inputs.')
+            result=native.combine(actor,w.case_id,q.pk,data['inputs']['input_ids'],key(w,stage),case_expected)
+        else:
+            snapshot_id=data['inputs']['hr_snapshot_id']
+            if not snapshot_id or not HRHandoffRecord.objects.filter(snapshot_id=snapshot_id,actor=actor,kind='receipt').exists():
+                raise ValidationError('Confirm receipt of the exact authorised HR snapshot before draft staff matching or totals.')
+            parent=checked_run(w,'combine' if stage=='match' else 'match',q,data)
+            if not parent or parent.metadata['status']!='held':raise ValidationError('Select the exact held working parent; complete work keeps its ordinary review sequence.')
+            native.run_access(actor,parent)
+            from apps.finance.payroll_working import rows as working_rows
+            if not working_rows(parent.result,parent.kind)['ready']:raise ValidationError('Resolve the held row details before preparing the next working step.')
+            if stage=='match':
+                result=native.match(actor,w.case_id,parent.pk,snapshot_id,key(w,stage),case_expected)
+            else:result=native.aggregate(actor,w.case_id,parent.pk,key(w,stage),case_expected)
+        w.revision+=1;w.save(update_fields=['revision','updated_at'])
+        event(actor,w.case,'factory.payroll_draft_prepared',work=w.pk,run=result.pk,stage=stage,head=w.source_head_id,
+              approval_recorded=False,publication_performed=False)
+        return result
     if action=='receive_hr':
         snapshot_id = data['inputs']['hr_snapshot_id']
         if not snapshot_id or values['snapshot_id'] != snapshot_id or w.execution_actor.pk != actor.pk:

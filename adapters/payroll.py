@@ -8,6 +8,13 @@ from apps.finance.rules import decimal,number
 class PayrollExportError(ValidationError):
  def __init__(self,code):super().__init__('Payroll export rejected: '+code+'; no values retained',code=code)
 
+
+def working_command(value):
+ from adapters.forecast import obj
+ from apps.documents.contracts import validate
+ validate(obj({'stage':{'enum':['combine','match','aggregate']}}),value)
+ return value['stage']
+
 def sum_values(values):
  values=list(values)
  if any(v is None for v in values):return None

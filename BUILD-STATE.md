@@ -4,7 +4,7 @@ Release:108 PMO/Finance IDs; all122 IDs/13families preserved,14 BaaS IDs deferre
 
 ## Verified current implementation
 
-Railway160 source is hosted: web82ed0b0a/workerf1a56efc SUCCESS,1,727 matching runtimepaths/root1,726. PostgreSQL159 passed78tests/102.657s and160 passed79/68.509s; checks/drift/final exits0. Cohorts overlap. Additive identity0010 applied to preview only after160 pass; preserve0006–0010. Prior147/149/151/153–156 failures remain recorded, not retroactively passed.
+Railway163 is hosted: web5c809c80/worker354f458c SUCCESS,1,729 matching runtimepaths/root1,728. Payroll162 passed5PGtests/50.242s,163 passed5/91.204s; checks/drift/final exits0. Broader161 remains interrupted45observedPASS/1FAIL/1inprogress/44notstarted with no final exit, not a passed cohort. Controlled private draft progression, current permissions/concurrency, source-only fixture and primary row/agent presentation are verified. Prior159/160 staff proof and applied identity0006–0010 remain intact; no new migration in163.
 
 Staff now has a scoped paginated/searchable roster, nullable version3 account-control editor and a complete-scope departure review. Native services enforce each current delegation/grant/source, reject stale/concurrent reviews, preserve action ownership/deadline history and allow Owner needed only when explicitly configured. Open execution/decision claims require native handover. Global account history fences old sessions; queued personal delivery holds. An inactive nominee loses their authority while remaining project nominees continue. Fresh inactive nominations still fail validation/activation.
 
@@ -14,14 +14,16 @@ Prior won-proposal→Planning checkpoint38ad2f8c remains verified:115→Planning
 
 ## Current and next
 
+The163 payroll checkpoint is ready to commit/push after6a195328. In-app work117 prepared combine28→match29→aggregate30, preserving one valid row/one unknown hold, exact source links and unavailable publication. Ran metadata-only investigation and verified period/currency/readable questions; phone390 and desktop1280 fit. Individual full correction/publication/receipt and original cancellation paths passed161, whose broad cohort remains incomplete. Whole-export rejection/per-row currency support is still a source-contract gap. Next improve practical upload fields and prove file-error/correction browser paths; preserve all final approval, privacy and publication checks.
+
 Prior pushed checkpointc0bbd0ac contains accepted158 profile/navigation work. This checkpoint adds verified complete-scope reactivation, bounded source-free O01 checks, typed adapter/UI and fresh-session fencing. Browser123 departure→Cancel retained inactive→restoration gave Active/zero access→separate fresh reader allocation passed. Old120 remains inactive and its previous project roles correctly block restoration. No prior grants, project nominations or approvals were restored. Actual operational reactivation authority remains deferred.
 
 This verified checkpoint adds named profiles/configuration/current access editor, exact profile invitations/renewal/single use, bounded current labels and pending rows. Browser121 cancellation/save and ownership-removal hold passed; invitation5→6→recipient setup produced active123/SAMPLE reader/one workspace/zero pending. Fixed and retested phone Menu/Alerts at390 and320 plus desktop1280. Actual operational values remain deferred; no live external delivery or business-role nomination inferred.
 
-262-state task remains active:207 observed,186 with open checks,55 unseen,21 completed scoped journeys. Staff states remain partial because actual factory-work/recording handover and multi-project profile allocation still need engineering; single-project profiles/invitations/reactivation are verified. [Acceptance ledger](docs/design/screen-state-acceptance.md) separates observations from remaining criteria.
+262-state task remains active:208 observed,187 with open checks,54 unseen,21 completed scoped journeys. New SCR18 working progression is observed but its independent HR/permission and source-contract variants remain open. Staff states remain partial because actual factory-work/recording handover and multi-project profile allocation still need engineering; single-project profiles/invitations/reactivation are verified. [Acceptance ledger](docs/design/screen-state-acceptance.md) separates observations from remaining criteria.
 
 - Next: connected native execution/recording handover and recovery; multi/all-project profile allocation. Single-workspace profiles/invitations and controlled fresh-access reactivation are now built and verified.
-- Confirmed Finance gap: valid payroll rows cannot yet continue independently of held rows through the designed HR/aggregate views. Existing intake/matching/correction/publication modules are built; row progression needs controlled integration.
+- Payroll working-row continuation is now verified; practical upload controls, strict malformed-row/per-row currency handling and remaining HR/recipient browser variants remain.
 - Reviewed past-winning answer reuse, ordinary client acceptance/workaround, remaining Finance/Setup/project states and direct device/role/recovery checks remain.
 - Reproducible Railway deployment/IaC migration before1December remains.
 

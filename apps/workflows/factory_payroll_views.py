@@ -4,9 +4,11 @@ from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.shortcuts import render,redirect
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from apps.core.models import Case,Evidence
 from apps.core.workbench import granted
+from apps.identity.services import require
 from apps.finance.payroll_models import PayrollRequest,PayrollInput,PayrollRun
 from apps.finance.hrfinance_models import HRReadSnapshot,HRHandoffRecord
 from . import factory,factory_payroll as payroll
@@ -113,6 +115,46 @@ def presentation(actor,work):
         except (ValidationError,PermissionDenied):row['payroll']['can_publish']=False
     row['needs_me']=row['can_advance'] or row['payroll']['can_review'];return row
 
+def working_next_stage(actor,work,q,data,selected,panel):
+    from .factory_execution import require_control
+    if (work.cancel_requested or work.status in ['verified','cancelled','followup_needed'] or
+            work.lease_until and work.lease_until>timezone.now() or payroll.publication(work)):return None
+    require_control(actor,work)
+    stage=None
+    if selected and selected.metadata['status']=='held' and panel['ready']:
+        stage={'combine':'match','match':'aggregate'}.get(selected.kind)
+    elif not selected:
+        inputs=payroll.input_rows(actor,work.case,q,data['inputs'])
+        if any(row.metadata['status']=='held' for row in inputs):stage='combine'
+    if stage:
+        require(actor,work.case,'payroll.'+stage)
+        payroll.active_component(payroll.native.STAGE_POLICY[stage],work.case)
+        if stage in ['match','aggregate']:
+            snapshot=data['inputs']['hr_snapshot_id']
+            if not snapshot or not HRHandoffRecord.objects.filter(snapshot_id=snapshot,actor=actor,kind='receipt').exists():return None
+    return stage
+
+
+def working_panel(actor,work,request):
+    """Load at most one current, authorised working payload; never an agent context."""
+    from apps.finance.payroll_working import rows
+    try:
+        q,data=payroll.source(work,actor)
+        selected=None
+        for stage in ['aggregate','match','combine']:
+            candidate=payroll.checked_run(work,stage,q,data)
+            if candidate:
+                payroll.native.run_access(actor,candidate);selected=candidate;break
+        panel={'record_id':selected.pk if selected else None,'kind':selected.kind if selected else None,
+               'draft_only':True,'next_stage':None,'currency':q.metadata['currency'],'period':q.metadata['period']}
+        if selected:panel.update(rows(selected.result,selected.kind,page=request.GET.get('working_page'),
+                                      status=request.GET.get('working_status','all')))
+        try:panel['next_stage']=working_next_stage(actor,work,q,data,selected,panel)
+        except (PermissionDenied,ValidationError):panel['continuation_held']=True
+        return panel
+    except (PermissionDenied,ValidationError):return None
+
+
 @require_http_methods(['GET','HEAD','POST'])
 def detail(request,work,focus=None):
     from .factory_views import permitted
@@ -132,14 +174,19 @@ def detail(request,work,focus=None):
             elif action=='correct':
                 if not form or not form.is_valid():raise ValidationError('Choose exact current payroll sources')
                 payroll.correct(request.user,work.pk,revision,case_revision,form.cleaned_data['request_id'].pk,form.inputs(),p.get('reason',''))
-            elif action in ['review','publish','receive','receive_hr']:
+            elif action in ['review','publish','receive','receive_hr','working']:
                 values={}
                 if action=='review':values={'kind':p.get('kind'),'subject_id':int(p.get('subject_id','0')),'verdict':p.get('verdict'),'operation_key':p.get('operation_key',''),'evidence_id':int(p.get('evidence_id','0'))}
                 elif action=='receive':values={'publication_id':int(p.get('publication_id','0'))}
                 elif action=='receive_hr':values={'snapshot_id':int(p.get('snapshot_id','0')),'evidence_id':int(p.get('evidence_id','0'))}
+                elif action=='working':
+                    if set(p)-{'action','revision','case_revision','working_stage','csrfmiddlewaretoken'}:
+                        raise ValidationError('Use the displayed draft preparation step.')
+                    values={'stage':p.get('working_stage')}
                 result=payroll.human_action(request.user,work.pk,revision,case_revision,action,values)
                 if action=='receive':notice=f'Your receipt #{result.pk} for aggregate report #{result.publication_id} is recorded.'
                 elif action=='receive_hr':notice='HR snapshot receipt recorded. Recalculate the selected payroll sources.'
+                elif action=='working':notice='Working draft prepared. Held rows and final review requirements are unchanged.'
             elif action=='restart':
                 if not form or not form.is_valid():raise ValidationError('Select exact current payroll sources')
                 payroll.restart(request.user,work.pk,revision,case_revision,form.cleaned_data['request_id'].pk,form.inputs(),int(p.get('configuration_id','0')),p.get('instruction_key',''),p.get('reason',''))
@@ -204,5 +251,6 @@ def detail(request,work,focus=None):
         'review_evidence':Evidence.objects.filter(case=work.case,kind='payroll_review') if review_targets else [],
         'publication':publication,'receipt_rows':receipt_rows,'totals':totals,
         'withdrawal':withdrawal,'withdrawal_evidence':withdrawal_evidence,'can_start_successor':can_start_successor,
-        'hr_snapshot':hr_snapshot,'hr_received':hr_received,'hr_evidence':hr_evidence})
+        'hr_snapshot':hr_snapshot,'hr_received':hr_received,'hr_evidence':hr_evidence,
+        'working':working_panel(request.user,work,request) if not recipient and focus in (None,'recovery') else None})
     response['Cache-Control']='no-store';return response

@@ -29,11 +29,17 @@
       "all_states_accepted":false
     },
     "payroll_row_progress_20261118":{
-      "status":"board_and_native_code_reconciled_engineering_remaining",
+      "status":"163_pg_hosted_browser_working_rows_verified_source_contract_gap_remains",
       "states":["SCR-09","SCR-09-error","SCR-18","SCR-18-permission"],
       "source":"design/canvas/finance/project/SCR-09-desktop.dc.html; SCR-18-desktop.dc.html; SCR-18-desktop-permission.dc.html",
-      "existing":"Configured CSV/Excel uploads, exact restricted imports, provider reviews, staff matching, HR corrections and aggregate publication exist. Native payroll.py marks parent working-set holds at match/aggregate, while payroll_math.py already retains row issues and unknowns.",
-      "actual_gap":"The design permits good rows to continue working while problematic rows remain held; the current strict input/parent status gates do not provide this row-level progression and its complete HR/Finance UI coverage.",
+      "existing":"Configured CSV/Excel uploads, exact restricted imports, provider reviews, staff matching, HR corrections and aggregate publication exist. Native combine/match/aggregate already retain good rows and propagate parent holds. The former note incorrectly implied that native draft calculations stop.",
+      "actual_gap":"The factory review gate and primary views did not expose controlled draft continuation and private row checks. New typed continuation and bounded25-row source-linked views are under verification. Whole-export adapter rejection/per-row currency layout remains a separate engineering gap; strict forbidden-field rejection and final review/publication remain authoritative.",
+      "verification_161":{"deployment":"1b9313d3-5fde-4250-bdd0-c1071081fee2","state":"interrupted_not_passed","observed_passes":45,"observed_failures":1,"in_progress":1,"not_started":44,"final_exit":null,"preview_changes":false},
+      "verification_162":{"deployment":"21a5b9a5-e556-45da-9ab2-f500103c9175","passed":5,"seconds":50.242,"final_exit":0,"source_only_fixture":true},
+      "verification_163":{"deployment":"574946d3-43ae-4ddf-a99d-b646025a641d","passed":5,"seconds":91.204,"final_exit":0,"preview_changes":false},
+      "runtime_163":{"web":"5c809c80-c64e-45a4-8bb5-5974498e34fb","worker":"354f458c-4e8f-492a-a755-e922ad8f86af","status":"SUCCESS","paths_per_service":1729,"root_paths":1728,"mismatches":0},
+      "browser":{"case":"0e98a416-8549-4fe9-a7d3-e4c35db18dac","work":117,"request":12,"inputs":[25,27],"hr_snapshot":14,"drafts":[28,29,30],"ready_rows":1,"held_rows":1,"publication_offered":false,"original_source_followed":27,"metadata_investigation":true,"period_currency_visible":true,"viewport_reset":true},
+      "current_acceptance":{"observed":208,"observed_with_open_checks":187,"unseen":54,"completed_scoped_journeys":21},
       "proposed_engineering":"Preserve source hashes and forbidden-field rejection, quarantine only allowed row metadata, continue valid draft matching with explicit coverage and unknown held totals, retain source-control and final-publication guards. Build correction successors and HR-only issue detail; Finance receives permitted aggregate coverage, never individual pay.",
       "owner_decisions":"Actual source layouts, matching/exception rules, disclosure thresholds and operational people remain deferred; no example row counts, salaries or policy values adopted",
       "all_states_accepted":false

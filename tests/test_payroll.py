@@ -140,6 +140,7 @@ class PayrollTests(TestCase):
   with patch.object(PayrollInput,'payload',new=property(forbidden)),patch.object(PayrollRun,'result',new=property(forbidden)),patch.object(PayrollPublication,'payload',new=property(forbidden)):
    a=investigate(f['preparer'],f['case'].pk,rev(f['case']));self.assertFalse(a.result['private_payloads_read']);self.assertNotIn('E001',json.dumps(a.result))
    self.client.force_login(f['manager']);response=self.client.get(reverse('payroll',args=[f['case'].pk]));self.assertEqual(response.status_code,200);self.assertNotContains(response,'E001');self.assertNotContains(response,'250.00')
+   self.assertContains(response,'Recorded checks use metadata');self.assertContains(response,'Review questions');self.assertContains(response,'Evidence details')
  def test_no_store_endpoints_check_exact_case_and_reader(self):
   f=self.f;c,m,a,p=pipeline(f);self.client.force_login(f['manager']);report=self.client.get(reverse('payroll_data',args=[f['case'].pk,'report',p.pk]));self.assertEqual(report.status_code,200);self.assertEqual(report['Cache-Control'],'no-store');self.assertEqual(self.client.get(reverse('payroll_data',args=[f['case'].pk,'input',f['inputs'][0].pk])).status_code,403)
   u,c2=setup_case(username='other-case');self.assertEqual(self.client.get(reverse('payroll_data',args=[c2.pk,'report',p.pk])).status_code,404)

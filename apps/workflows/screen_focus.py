@@ -37,7 +37,7 @@ SCREENS = {
     'finance-payroll/v1': {
         'decision': ('review',),
         'response': ('publish',),
-        'recovery': ('advance', 'cancel', 'resume', 'correct', 'restart', 'receive', 'receive_hr', 'withdraw', 'successor'),
+        'recovery': ('advance', 'cancel', 'resume', 'correct', 'restart', 'receive', 'receive_hr', 'withdraw', 'successor', 'working'),
     },
     'finance-ledger/v1': {
         'decision': ('review',),

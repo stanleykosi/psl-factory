@@ -61,8 +61,8 @@ def workbench(request,case_id,focus=None):
    messages.success(request,'Payroll history updated.');return redirect(request.path)
   except (ValidationError,ValueError,TypeError) as exc:
    messages.error(request,'The upload could not be accepted. Check the export format, source layout and extraction details for this provider and period.' if request.POST.get('action')=='capture' else str(exc));return redirect(request.path)
- inputs=list(PayrollInput.objects.defer('payload').filter(request__case=case).order_by('-pk')[:50]) if focus in {None,'inputs'} else []
- run_query=PayrollRun.objects.defer('result').filter(request__case=case)
+ inputs=list(PayrollInput.objects.defer('payload').select_related('request__case').filter(request__case=case).order_by('-pk')[:50]) if focus in {None,'inputs'} else []
+ run_query=PayrollRun.objects.defer('result').select_related('request__case').filter(request__case=case)
  if focus:run_query=run_query.filter(kind__in=kinds)
  runs=list(run_query.order_by('-pk')[:50])
  for i in inputs:
@@ -76,11 +76,24 @@ def workbench(request,case_id,focus=None):
   try:domain.run_current(r);r.current=True
   except (ValidationError,PermissionDenied):r.current=False
  navigation=[(key,label,reverse('design_payroll_'+key,args=[case.pk])) for key,(label,_,_) in SECTIONS.items()]
+ working=None;selected_run=None
+ if focus in ['inputs','matching'] and runs:
+  selected=request.GET.get('worksheet','')
+  selected_run=next((row for row in runs if str(row.pk)==selected),None) if selected else runs[0]
+  if selected_run:
+   try:
+    from .payroll_working import rows
+    value=domain.private_run(request.user,case.pk,selected_run.pk)
+    working=rows(value,selected_run.kind,page=request.GET.get('working_page'),status=request.GET.get('working_status','all'))
+    working.update(record_id=selected_run.pk,selectable_record=True,
+                   currency=selected_run.request.metadata['currency'],period=selected_run.request.metadata['period'])
+   except (PermissionDenied,ValidationError):pass
  response=render(request,'finance/payroll.html',{'case':case,'title':title,'focus':focus,'navigation':navigation,
   'requests':PayrollRequest.objects.filter(case=case).order_by('-pk')[:30],'inputs':inputs,'runs':runs,
   'publications':PayrollPublication.objects.defer('payload').filter(request__case=case).order_by('-pk')[:30] if not focus else [],
   'commands':forms,'policies':[resolve(k,case) for k in SCHEMAS],'schemas':SCHEMAS,'request_schema':domain.REQUEST,
-  'agents':AgentRun.objects.filter(case=case,provider='deterministic-payroll-v1').order_by('-pk')[:5]})
+  'agents':AgentRun.objects.filter(case=case,provider='deterministic-payroll-v1').order_by('-pk')[:5],
+  'working':working,'selected_working_run':selected_run})
  response['Cache-Control']='no-store';return response
 
 @login_required
@@ -99,7 +112,17 @@ def inspect(request,case_id,kind,pk):
  response=data(request,case_id,kind,pk)
  if response.status_code!=200:return response
  import json
- value=json.loads(response.content)['data'];case=accessible_case(request.user,case_id)
- response=render(request,'finance/payroll_inspect.html',{'case':case,'kind':kind,'record_id':pk,'value':value})
+ value=json.loads(response.content)['data'];case=accessible_case(request.user,case_id);working=None
+ if kind!='report':
+  from .payroll_working import rows
+  model=PayrollInput if kind=='input' else PayrollRun
+  subject=model.objects.filter(pk=pk,request__case=case).values('request__metadata',*(['kind'] if kind=='run' else [])).get()
+  try:working=rows(value,'input' if kind=='input' else subject['kind'],
+                   page=request.GET.get('working_page'),status=request.GET.get('working_status','all'))
+  except ValidationError:return JsonResponse({'status':'held','reason':'Choose a bounded payroll row view.'},status=400)
+  working.update(record_id=pk,currency=subject['request__metadata']['currency'],period=subject['request__metadata']['period'])
+ controls={key:item for key,item in value.items() if key not in ['rows','issues']}
+ response=render(request,'finance/payroll_inspect.html',{'case':case,'kind':kind,'record_id':pk,'value':value,
+                 'working':working,'working_controls':controls})
  response['Cache-Control']='no-store'
  return response

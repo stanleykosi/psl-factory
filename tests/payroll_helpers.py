@@ -17,8 +17,8 @@ from .hrfinance_helpers import policy as hr_policy
 def policy(f,key,value):
  r=draft_payroll_policy(f['owner'],f['case'].pk,key,value,f['e']['policy_decision'].pk,timezone.now()-timedelta(seconds=1));transition(f['owner'],r.pk,'validated');transition(f['owner'],r.pk,'active');return r
 
-def fixture(employee_ids=None, *, principal=None, payroll_layouts=None, preparer_receipt=True):
- owner,c=setup_case(username='payroll-owner');people={}
+def fixture(employee_ids=None, *, principal=None, payroll_layouts=None, preparer_receipt=True,context=None):
+ owner,c=context if context is not None else setup_case(username='payroll-owner');people={}
  for name in ['preparer','reviewer','manager']:
   u=principal(name) if principal else get_user_model().objects.create_user(username='payroll-'+name,password='test-only')
   actions=ACTIONS if name!='manager' else ['case.read','payroll.read','payroll.report.read','payroll.report.receive']
@@ -28,7 +28,7 @@ def fixture(employee_ids=None, *, principal=None, payroll_layouts=None, preparer
  for k in ['policy_decision','payroll_need','payroll_source_contract','payroll_review','hr_finance_need','hr_contract_source','hr_disclosure_decision','hr_correction_request']:
   e[k]=add_evidence(owner,c.pk,k,'Synthetic '+k+' metadata only; no payroll/staff source rows','synthetic:payroll')
  refs=[]
- for u,role in [(owner,'HR'),(people['preparer'],'Finance'),(people['reviewer'],'Finance')]:refs.append(register_reference(owner,c.pk,'payroll-role:'+str(u.pk),'schema:psl/role-assignment/v1',{'user_id':u.pk,'role':role},e['policy_decision'].pk).ref)
+ for u,role in [(owner,'HR'),(people['preparer'],'Finance'),(people['reviewer'],'Finance')]:refs.append(register_reference(owner,c.pk,'payroll-role:'+str(u.pk)+':'+role,'schema:psl/role-assignment/v1',{'user_id':u.pk,'role':role},e['policy_decision'].pk).ref)
  activate(owner,c,'D05.role_principal_assignments',refs,e['policy_decision'])
  cfg=json.loads((Path(__file__).resolve().parent.parent/'fixtures/payroll.json').read_text(encoding='utf-8'))
  if payroll_layouts:
