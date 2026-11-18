@@ -1,0 +1,511 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T02:29:37.354Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-41-mobile.dc.html",
+  "boardName": "SCR-41-mobile.dc.html",
+  "pageUrl": "http://localhost:4861/work/W-2601",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-31/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 79.2 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 60,
+    "coverageWithExceptions": 100,
+    "visual": 79.2
+  },
+  "visual": {
+    "score": 79.2,
+    "allCellsScore": 79.3,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 2437,
+    "cell": 12,
+    "contentCells": 2190,
+    "mismatchedCells": 456
+  },
+  "coverage": {
+    "total": 10,
+    "found": 6,
+    "coverage": 60,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "EN-0042",
+        "pageName": "EN-0042",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 231,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 182,
+          "y": 0,
+          "w": 50,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Engagement EN-0042",
+        "pageName": "Ojo Foods · engagement EN-0042",
+        "pageRole": "heading",
+        "similarity": 84,
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Planning packet",
+        "pageName": "PLANNING PACKET",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "capitals on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 145,
+          "w": 330,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 1246,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM",
+        "pageName": "PM",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 359,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 1704,
+          "w": 326,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Confirm PM",
+        "pageName": "Confirm PM",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #2459D6 on the board, #22764A on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 1987,
+          "w": 326,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: the engagement keeps the frame's one back link ('Back to Queue').",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ROUTE A · FROM TL-RFP-2026-014",
+        "key": "text: ROUTE A · FROM TL-RFP-2026-014",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 1/15: the sample sits on Ojo Foods (OF-RFP-2026-006); the page draws the subtitle as returned.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello ▾",
+        "key": "text: Tunde Bello ▾",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 384,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 15: the PM chosen is Sola Martins (P-0106's PM), from assign.default_person_id.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Carried over from the RFP",
+        "key": "text: Carried over from the RFP",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 438,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 15: the page draws the returned hint in full ('Carried over from the RFP. Change it only if someone else will run delivery.') and a different PM name.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"EN-0042\"",
+        "kind": "Text",
+        "name": "EN-0042",
+        "boardBox": {
+          "x": 231,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 182,
+          "y": 0,
+          "w": 50,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (66% across), middle on the page (53% across)"
+        ]
+      },
+      {
+        "label": "Text \"PM\"",
+        "kind": "Text",
+        "name": "PM",
+        "boardBox": {
+          "x": 16,
+          "y": 359,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 1704,
+          "w": 326,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Confirm PM\"",
+        "kind": "Link",
+        "name": "Confirm PM",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 1987,
+          "w": 326,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Route A · from won RFP OF-RFP-2026-006",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 129,
+          "w": 232,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION NEEDED",
+        "container": "main",
+        "pageBox": {
+          "x": 261,
+          "y": 127,
+          "w": 113,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 157,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 16,
+          "y": 157,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1595,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "DECIDE",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 1667,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Form",
+        "role": "form",
+        "name": "Decide",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 1704,
+          "w": 326,
+          "h": 327
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "PM",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 1731,
+          "w": 326,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Carried over from the RFP. Change it only if someone else will run delivery.",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 1781,
+          "w": 326,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 66,
+          "y": 1834,
+          "w": 61,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 1860,
+          "w": 326,
+          "h": 88
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 305,
+          "y": 1954,
+          "w": 53,
+          "h": 17
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

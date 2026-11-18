@@ -1,0 +1,822 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-47",
+  "outcome": "Start work: add the proof file in the drawer for minutes, a change, an income schedule and a ledger source, uploaded first and sent with the start (contract mock only)",
+  "state": "INTEGRATED_QA",
+  "task_ids": [
+    "FE-M2A-PROOF"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**The four drawers draw their fields from data.** As `pm`, minutes shows Project, Meeting, Audience and Proof, and change shows Project, \"What the client asked for\", Proof, then the help \"Emergency changes for an incident use \"Emergency change\" instead.\" under the Proof box. As `finance_lead`, \"Income detail or schedule inventory\" shows Kind (Income detail / Inventory), Reference, Mapping note and Proof, and \"Record a ledger source\" shows Key, Proof and \"Continues (optional)\" with its help. The buttons read \"Start minutes\", \"Log change\", \"Start schedule\" and \"Record source\". `grep -rn \"SCH-INC\\|QB-JE\\|MR-0044\\|income_detail_oct\\|weekly-sync-notes\" frontend/src` returns nothing. \u2014 verify: `cd frontend && npx vitest run tests/start-work-proof.test.tsx`; drawers at 1440 and 390.",
+    "**Project first.** On minutes and change, before a project is chosen, the Proof box is the disabled box reading \"Choose the project first.\" and no upload can be sent. After choosing Lagoon Health, \"Choose a file\" is enabled. The schedule and ledger drawers show \"Choose a file\" at once. \u2014 verify: component test with a recording `fetch` (zero upload POSTs before the choice).",
+    "**Uploaded only when the backend says so.** Choosing `weekly-sync-notes-17nov.docx` (38,912 bytes) sends one POST `/api/v1/cases/C-0101/evidence` with CSRF and `{kind: \"meeting_notes\", filename, content_base64, case_revision: 6}` (validates against the generated request schema, no extra keys). The card reads \"Uploading\u2026\" until the answer, then \"Uploaded \u00b7 38 KB\". With a test double answering 200 without `evidence_id`, the card reads \"Not uploaded\" and the start sends no proof. \u2014 verify: component tests; e2e request log.",
+    "**Revision chaining.** On the ledger drawer, two uploads in a row send `case_revision` 2 and then 3. The start sends `case_revision: 4` and `intake.proof` = the second id (or, for a test line with `multiple: true`, both ids in upload order). A second file chosen while the first is uploading is not sent until the first answers. \u2014 verify: component test; `tests/start-work-proof-mock.test.ts`.",
+    "**Start lands on the work item.** Each drawer filled as in the Boards table sends exactly one E-WORK-START, and a double press still sends one (PMO-0-2). The page lands on `/work/W-1403`, `/work/W-1405`, `/work/W-4401` or `/work/W-4402`. Uploads made no new idempotency key: the start's key is the one made when the drawer opened. \u2014 verify: component tests; e2e request log.",
+    "**Start is held while proof is unsure.** While an upload is running, and while any card reads \"Not uploaded\", the Start button is disabled and pressing it sends nothing. Removing the failed file, or a successful Try again, enables it. \u2014 verify: component test with a deferred upload response.",
+    "**Removing a file.** \"\u00d7\" on an uploaded card removes the card; the next start does not send that id; no request is sent by the removal; the drawer never shows \"deleted\" or \"removed from the record\". \u2014 verify: component test with a recording `fetch`; `grep -rn \"deleted\" frontend/src/features/start-work` returns nothing.",
+    "**Changing the project clears proof.** On minutes, after uploading to Lagoon Health, choosing another project removes the card and shows \"Proof removed: it was added to the other project. Add it again.\" The next upload goes to the new project's case at that project's revision, and the start sends only proof from the new case. While an upload is running, the Project control is disabled. \u2014 verify: component test (persona `ceo`, two projects).",
+    "**Upload errors.** With the upload answering 403 or 404, the drawer shows \"You can't add proof to this item.\" in both cases, and nothing on the drawer differs between them. 401 shows the signed-out state. A 422 shows the backend message word for word (the mock's `.exe` sample \"EXE files can't be used as proof.\" and a scenario message). A 409 re-reads E-LINE-OPTIONS (project) or E-LINES (fixed), shows \"This item changed. Add the file again.\", keeps every typed value, and the next upload sends the re-read revision. A 500 or network failure shows \"Couldn't upload. Try again.\"; Try again re-reads first, then sends one upload. No upload is ever resent without a press. \u2014 verify: component tests with fake timers (no second POST after 60 s); `tests/start-work-proof-mock.test.ts`.",
+    "**Uncertain upload fixture.** With `psl_mock_start_work=upload_uncertain`, the first upload is stored on the case but answers 500. The card says \"Not uploaded\", never \"Uploaded\". Try again re-reads the revision, gets a second id, and the start sends only that id with its revision; the mock accepts it (201). \u2014 verify: `e2e/start-work-proof.spec.ts` request log; mock test.",
+    "**Start 409 and uncertain start.** A stale 409 on the start keeps every value and every uploaded card, re-reads the revision, and the next press sends the re-read revision with a new key. With `psl_mock_start_work=start_uncertain` the drawer shows \"Check again\" and \"If it started, it will appear in My work.\", never \"started\". Check again sends the identical body and key, and lands on the work item; the mock records one start. \u2014 verify: component tests; e2e request log.",
+    "**Wrong record.** A start carrying an evidence id from another case, another persona or not issued at all answers 422 \"That proof isn't on this record. Add it again.\", shown under the Proof box (not as a separate box). As `finance_lead`, an upload to `C-0102` (a project not served to that persona) answers 404, and the drawer shows the 403/404 sentence. \u2014 verify: `tests/start-work-proof-mock.test.ts`; component test.",
+    "**Access 401/403/404.** Persona `none` gets no lines and no Proof box. An upload or start without the CSRF header answers 403 and the drawer shows its refusal, with no card reading \"Uploaded\". 401 on E-LINES, an upload or the start shows the signed-out state with `next` set to the current page. 403 and 404 on the start read \"You can't start this here.\" \u2014 verify: component tests with a recording `fetch`; mock tests.",
+    "**Plain text, safe links, no client limits.** A file named `<img src=x onerror=alert(1)>.pdf` and a 422 message containing `<b>bold</b>` render as literal text. The drawer has no `<a>` whose `href` comes from an upload or E-LINES value. The file input has no `accept` attribute, and the start-work diff adds no size or type check (`git diff -U0 frontend/src | grep -nE \"PROOF_TYPES|PROOF_MAX_BYTES|accept=|\\.size *[<>]\"` returns nothing). \u2014 verify: component test (`document.querySelector('img')` is null; text present); grep.",
+    "**Unknown never 0; nothing from /me.** A fixed line without `case_revision` stays \"can't start here yet\" and sends nothing. An upload 200 without `case_revision` never makes the start send 0 or blank: it sends the last known revision. No file card ever reads \"0 KB\". The new start-work code reads neither `/me` nor roles (`grep -rn \"useMe\\|/api/v1/me\\|roles\" frontend/src/features/start-work` returns nothing). The same lines file served to `pm`, `ceo` and `finance_lead` draws the same Proof box. \u2014 verify: component tests; grep.",
+    "**Phone.** At 390 each drawer opens in F-05's bottom sheet with the same fields, words and order as desktop. The file card fits without sideways scroll; long file names wrap. The \"\u00d7\" on the uploaded card, \"Choose a file\", Try again, the Start button and every segment and select are at least 44 by 44 px (D-92c). Escape and Cancel close the sheet and return focus. \u2014 verify: e2e at 390 measuring bounding boxes of each control, the \"\u00d7\" included.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 8 boards, on a production build at `--width 1440` and `--width 390`, driven as in the Boards table. Every board's element coverage after approved exceptions is 100%. Visual is at least 90, or a board-level waiver citing D-83 in `fidelity-exceptions.json` with visual at least 70 (lower only with a signed one-board floor exception). Every exception has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number, and none covers a value the data can supply. The UI reviewer's side-by-side reading finds no fixable gap. \u2014 verify: the fidelity command per board; `round-<N>/fidelity/scores.txt`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on the four drawers in these states: empty, uploading, uploaded, failed, project-changed, the 422 under Proof, and \"Check again\". The Proof group is labelled by its field label. The file input is named. Upload problems and the project-changed line are announced (`role=\"status\"` or `alert`). \"Uploading\u2026\" and \"Uploaded\" are text, not colour. Focus is visible. \u2014 verify: `e2e/start-work-proof.spec.ts`.",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in `start-work.css` (44 px via the control-size token), and no local copy of `ProofField`, `useEvidenceUpload` or any `@/components` export (`Button`, `Callout`, `Segmented`, `Select`, `TextField`). \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** In `tests/start-work-proof-mock.test.ts`: the new lines, options and `W-4401`/`W-4402` validate against the generated E-LINES, E-LINE-OPTIONS and E-WORK-ITEM schemas; every upload answer validates against the E-EVIDENCE-UPLOAD 200 schema; uploads to C-SETUP-* and to work-item cases still go to their F-11 and F-09 owners (`tests/setup-rules.test.tsx`, `tests/response-mock.test.ts` unchanged and green); `/me` `startable_lines` equals E-LINES keys for every persona; reset restores revision 6 on C-0101, 3 on C-FIN-SCHEDULES and 2 on C-FIN-LEDGER. \u2014 verify: `cd frontend && npx vitest run tests/start-work-proof-mock.test.ts tests/start-work-mock.test.ts tests/mock-contract.test.ts`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `frontend/src/components/**`, `frontend/src/shell/**`, `frontend/src/features/response/**` other than the one `useEvidenceUpload.ts` guard, `mock/response.mjs`, `mock/evidence.mjs`, `mock/setup.mjs`, any existing fixture other than `lines.finance_lead.json` and `me.finance_lead.json`, `apps/**`, `architecture/**`, `design/**`, `openapi.json` or the protected paths. `server.mjs` changes by the one dispatch branch. Every mock-only field and cookie is listed in build.md. \u2014 verify: `git diff --stat`; `git diff frontend/mock/server.mjs frontend/src/features/response`; build.md.",
+    "**Existing tests green.** `delivery/checks.sh` passes. The tests listed under Context pass, with only the assertions in Conflicts 13 rewritten (each listed in build.md with the old and new expectation). That includes F-09's `tests/response.test.tsx`, `tests/response-mock.test.ts` and `e2e/response.spec.ts`, F-11's Setup proof test, and, when on the base, F-31's engagement-planning upload tests. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** Commands and results, the 8 scores and waivers, every exception with its Conflicts number, every mock-only field and cookie, the three allowed edits outside the lane, the backend items, and the held list from \"What is sent\". \u2014 verify: file content."
+  ],
+  "risk": {
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. The proof is append-only on a case and is chained into the write that creates work and starts agents. Getting the case or revision wrong (project versus fixed back-office case, or a stale revision after an upload) attaches evidence to the wrong record, and that is hard to undo (INV-REVISION, D-START-INTAKE (4)). SURFACES: ui (4 SCR-04 drawer pairs), api (E-EVIDENCE-UPLOAD, E-WORK-START, E-LINES), security (CSRF, case-scoped upload grants, 403 and 404 shown the same, nothing derived from roles), and contract-change (the consumer side of the proposed D-START-INTAKE evidence kind and fixed cases). Payments and payroll are excluded because no money or payroll field is in this slice. PRODUCT-ACCEPTANCE is required because the two Finance back-office drawers and proof upload at start are new to the client."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-47/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T08:14:05Z",
+      "seconds": 205.7,
+      "evidence_ref": "delivery/features/F-47/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T08:46:18Z",
+      "seconds": 393.1,
+      "evidence_ref": "delivery/features/F-47/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-47/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-ui.md"
+      ]
+    },
+    "security": {
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-security.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/start-work/useStartWork.ts:264-280 | `rereadCase` can resolve `undefined` in two cases: the fixed line is gone from E-LINES, or the chosen project is no longer served (the value is then cleared). F-09's hook treats that as \"use the item's revision\". After Try again, `run` still calls `send` with the captured `caseId` and the old revision prop (useEvidenceUpload.ts `revision.current ?? caseRevision`). That sends one upload to a case the drawer has just dropped, even though the uploader is already unmounted. The backend would most likely refuse it, and only a press triggers it. Expected: when there is no case to re-read, throw instead (for example the `not_found` ApiError), so the hook's re-read-failed path stops the upload.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "useStartWork.ts rereadCase throws not_found in all three no-case paths, and the hook's Try again path stops on not_found. Tests \"TECH-1-1: Try again sends nothing once the fixed case\u2026 / the chosen project\u2026\" assert exactly one upload."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "useStartWork.ts rereadCase throws not_found in all three no-case paths, and the hook's Try again path stops on not_found. Tests \"TECH-1-1: Try again sends nothing once the fixed case\u2026 / the chosen project\u2026\" assert exactly one upload."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/mock/server.mjs:264-271, frontend/mock/start-work.mjs:239-247 | The spec routes an upload to start-work only when its `kind` matches a served line's evidence kind *and* the `case_id` is a case that line can start on. `ownsUpload` checks only the kind; the case check comes later, inside `upload()`, as a 404. Nothing collides today: those kinds appear only in start-work fixtures, and F-09/F-11 routing tests pass. But a later F-09 work item that uses `meeting_notes` or `client_request` on its own case would get a 404 from start-work instead of reaching `response.mjs`. Expected: `ownsUpload` also checks `caseBase(...) !== undefined`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "start-work.mjs ownsUpload checks kind and caseBase per line. The routing test covers 9 kind/case/persona combinations. The changed C-FIN-SCHEDULES assertion now expects F-09's 422 with the start-work revision kept at 3, and the other 404s are kept."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "start-work.mjs ownsUpload checks kind and caseBase per line. The routing test covers 9 kind/case/persona combinations. The changed C-FIN-SCHEDULES assertion now expects F-09's 422 with the start-work revision kept at 3, and the other 404s are kept."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/start-work/StartProof.tsx:131-136 | The 422 under Proof gets `id={`${id}-error`}`, but no control or group refers to it, and nothing sets `aria-invalid`. F-05's `IntakeField` links its error through `aria-describedby`. The drawer-level alert still announces the count, so this is minor. Expected: point the Proof group's `aria-describedby` at the error, or leave the id out.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "StartProof.tsx fieldset gets aria-describedby=\"${id}-error\" and aria-invalid only when error is set, and the error span carries that id. The test checks the attribute equals the .psl-error id."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "StartProof.tsx fieldset gets aria-describedby=\"${id}-error\" and aria-invalid only when error is set, and the error span carries that id. The test checks the attribute equals the .psl-error id."
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "delivery/BACKEND-HANDOFF.md | The builder added the F-47 backend section to `delivery/BACKEND-HANDOFF.md`. That file is outside the lane the spec lists, and build.md does not name it among the edits outside the lane. The content is correct and follows earlier features' \"Added during F-xx\" pattern. Expected: list it in build.md, or have the coordinator confirm that this file belongs to every feature.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "round-2/build.md records the round-1 BACKEND-HANDOFF.md edit (c3b03bfb) as an edit outside the lane. This round does not touch it."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "round-2/build.md records the round-1 BACKEND-HANDOFF.md edit (c3b03bfb) as an edit outside the lane. This round does not touch it."
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Upload failures are not announced. Spec criterion 18 requires \"Upload problems ... are announced (`role=\"status\"` or `alert`)\". With a `.exe` upload (422) the sentence \"EXE files can't be used as proof.\" sits in plain spans (SPAN < SPAN < DIV group < FIELDSET), with no `role` or `aria-live`. The only live region that exists at that moment is an empty `alert`. The project-changed line is announced correctly (`role=\"status\"`). A screen-reader user is not told the upload failed. Expected: a live region (the card's reason text or the shared ProofField error) so the failure is read when it appears. Seen on the minutes (pm) and ledger (finance_lead) drawers at 1440. Code: `frontend/src/features/start-work/StartProof.tsx:78` (ProofField is shared from F-09, so the fix may need a start-work wrapper rather than an edit to `features/response`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "StartProof.tsx adds a hidden role=\"alert\" per failed (non-403/404) file. The vitest \"UX-1-1: each upload failure is announced\u2026\" covers a 422 .exe, a 500, a 409 and a 200 without an id, and checks no alert is left after a fix. e2e \"ledger states\" asserts the alert text at 1440 and 390 with axe clean."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "StartProof.tsx adds a hidden role=\"alert\" per failed (non-403/404) file. The vitest \"UX-1-1: each upload failure is announced\u2026\" covers a 422 .exe, a 500, a 409 and a 200 without an id, and checks no alert is left after a fix. e2e \"ledger states\" asserts the alert text at 1440 and 390 with axe clean."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The disabled Start gives no reason. While a file is uploading or failed, the button is simply greyed out and nothing near it says \"remove it or try again first\". The card's \"Not uploaded\" text carries the cause, so this is a clarity issue only. Consider a short line above Start.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop the \u00d7 is 24x24 px. The spec asks for 44 px on phones only, and the phone \u00d7 is 44x44, so this meets the spec. It is small for pointer and touch laptops.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The file input has no accessible name that I could read from `aria-label` or `<label>`. It may be named through `aria-labelledby` on the group; I did not run axe, so criterion 18's \"file input is named\" is unconfirmed. QA's axe run should settle it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Signature needed. All 30 exceptions and the 6 D-83 visual waivers in `delivery/features/F-47/fidelity-exceptions.json` read `approved_by: \"builder proposal, pending design engineer\"`. Under D-114 this round accepts them provisionally. D-83 needs a waiver signed per board before the feature can merge. The items to sign are the waivers for minutes desktop (89.3), change desktop (86.3) and the four phone boards, plus Conflicts 2, 7, 9 and 11.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The saved scores are out of date. `round-1/fidelity/scores.txt` and the two Finance desktop `report.json` files still show 97.4% / pass False, because the \"Done 28\" exception was added after the run. The recomputation is correct, but the next scored run (a fix round, or the merge run) should regenerate them so the files on record match build.md.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "(factory file, no commit)"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "scores.txt was rebuilt from the saved reports and the current exceptions. Coverage and visual per board match report.json, and with-exceptions is 100.0 on all 8 boards. The 6 D-83 waivers match fidelity-exceptions.json visual_waivers."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "(factory file, no commit)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "scores.txt was rebuilt from the saved reports and the current exceptions. Coverage and visual per board match report.json, and with-exceptions is 100.0 on all 8 boards. The 6 D-83 waivers match fidelity-exceptions.json visual_waivers."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Two boards were drawn with fallback fonts. On `SCR-04-desktop-change-1440` and `SCR-04-mobile-schedules-390` the tool warned that Google Fonts could not be reached. The board side was drawn in fallback fonts (the \"PSL FACTORY\" wordmark and the phone title are visibly different), so those two visual scores (86.3, 75.3) are somewhat pessimistic. Both are still above the D-83 floor of 70, so nothing changes. If those two boards are re-run, it should be with network access.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+          "evidence_refs": [
+            "delivery/features/F-47/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-47/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+          "evidence_refs": [
+            "delivery/features/F-47/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+          "evidence_refs": [
+            "delivery/features/F-47/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+          "evidence_refs": [
+            "delivery/features/F-47/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-M2A-PROOF",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "29fff6e553b57ffa9b7d6f95e4a7dce45beee430",
+    "task_branch": "fe-m2a-proof-start-work-proof-upload",
+    "head_sha": "8d7da0c400b19e41356a0230e1328978452bc763",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-47",
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/start-work-proof.spec.ts",
+      "frontend/e2e/start-work.spec.ts",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/start-work/lines.finance_lead.json",
+      "frontend/mock/fixtures/start-work/options/continues.json",
+      "frontend/mock/fixtures/start-work/options/mapping_run.json",
+      "frontend/mock/fixtures/work/W-4401.json",
+      "frontend/mock/fixtures/work/W-4402.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/start-work.mjs",
+      "frontend/src/features/response/useEvidenceUpload.ts",
+      "frontend/src/features/start-work/IntakeField.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/StartProof.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/tests/start-work-intake.test.ts",
+      "frontend/tests/start-work-mock.test.ts",
+      "frontend/tests/start-work-proof-mock.test.ts",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-18T05:16:06Z",
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T05:32:36Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T05:32:36Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T08:14:11Z",
+      "round": 1,
+      "head": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T08:24:27Z",
+      "round": 1,
+      "head": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T08:24:28Z",
+      "round": 2,
+      "head": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T08:46:36Z",
+      "round": 2,
+      "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T08:59:01Z",
+      "round": 2,
+      "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-47/readiness.md",
+      "delivery/features/F-47/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "8d7da0c400b19e41356a0230e1328978452bc763"
+  },
+  "blocked": null
+}

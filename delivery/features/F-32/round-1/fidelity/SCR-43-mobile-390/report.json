@@ -1,0 +1,378 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T00:39:53.227Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-43-mobile.dc.html",
+  "boardName": "SCR-43-mobile.dc.html",
+  "pageUrl": "http://localhost:4871/projects/P-0101/delivery",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-32/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 77.5 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 100,
+    "visual": 77.5
+  },
+  "visual": {
+    "score": 77.5,
+    "allCellsScore": 78,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1699,
+    "cell": 12,
+    "contentCells": 2262,
+    "mismatchedCells": 509
+  },
+  "coverage": {
+    "total": 6,
+    "found": 3,
+    "coverage": 50,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Delivery",
+        "pageName": "Delivery",
+        "pageRole": "tab",
+        "similarity": 100,
+        "note": "a tab on the page, a link on the board",
+        "looks": [
+          "background none on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 110,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Delivery · Tamarind",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Delivery · Tamarind\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 24
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DLV-0052",
+        "key": "text: DLV-0052",
+        "container": "page",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 14: Fixture reference text differs from the board.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DLV-0052 · 3 OF 6 DONE",
+        "key": "text: DLV-0052 · 3 OF 6 DONE",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 14: Fixture reference text differs from the board.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the handover",
+        "key": "link: Open the handover",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Conflicts 11: G-43-4 next_action is not built: next is plain text, and the Next sentence keeps the fixture value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"← Delivery\"",
+        "kind": "Link",
+        "name": "← Delivery",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 110,
+          "w": 86,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Heading \"Delivery · Tamarind\"",
+          "across the page: left on the board (13% across), middle on the page (38% across)",
+          "inside the main area on the board, inside the tabs on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Projects",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "container": "tablist",
+        "pageBox": {
+          "x": 18,
+          "y": 110,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones",
+        "container": "tablist",
+        "pageBox": {
+          "x": 190,
+          "y": 110,
+          "w": 104,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents",
+        "container": "tablist",
+        "pageBox": {
+          "x": 294,
+          "y": 110,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "container": "tablist",
+        "pageBox": {
+          "x": 402,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Delivery",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 168,
+          "w": 358,
+          "h": 1515
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Checked where delivery stands",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1181,
+          "w": 358,
+          "h": 503
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "complementary",
+        "pageBox": {
+          "x": 90,
+          "y": 1252,
+          "w": 156,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cannot approve, send or pay.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 90,
+          "y": 1276,
+          "w": 156,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "container": "complementary",
+        "pageBox": {
+          "x": 293,
+          "y": 1261,
+          "w": 49,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Checked 12 Apr 09:00",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 1587,
+          "w": 326,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 1633,
+          "w": 53,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

@@ -68,3 +68,23 @@ export const assignCandidateKind = (candidate: object): 'person' | 'team' | 'out
   const kind = (candidate as { kind?: unknown }).kind;
   return kind === 'person' || kind === 'team' || kind === 'outside_party' ? kind : undefined;
 };
+
+/** PROPOSAL (`assign.default_person_id` and `assign.default_hint`, F-31 G-41-1): the person the form opens with and the line under the field.
+ *  Read only when the id is one of `assign.candidates`; otherwise nothing is chosen and the form opens on press as in F-30. */
+export function assignDefault(assign: { candidates: { person_id: string }[] }): { personId: string; hint?: string } | undefined {
+  const { default_person_id: personId, default_hint: hint } = assign as { default_person_id?: unknown; default_hint?: unknown };
+  if (!text(personId) || !assign.candidates.some((c) => c.person_id === personId)) return undefined;
+  return { personId, ...(text(hint) ? { hint } : {}) };
+}
+
+/** PROPOSAL (`items[].team_key`, F-31 G-42-2): the team a row's record step is for. Absent reads as no team chosen. */
+export const itemTeamKey = (item: object): string | undefined => {
+  const key = (item as { team_key?: unknown }).team_key;
+  return text(key) ? key : undefined;
+};
+
+/** PROPOSAL (`teams[].disabled_reason`, F-31 G-42-2): why a team is not offered in the department input form. Absent means offered. */
+export const teamDisabled = (team: object): string | undefined => {
+  const reason = (team as { disabled_reason?: unknown }).disabled_reason;
+  return text(reason) ? reason : undefined;
+};

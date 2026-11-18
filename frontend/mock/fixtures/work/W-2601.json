@@ -1,0 +1,324 @@
+{
+  "id": "W-2601",
+  "title": "Ojo Foods · engagement EN-0042",
+  "line": "Engagement",
+  "reference": "EN-0042",
+  "state": "action_needed",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Packet",
+      "status": "done"
+    },
+    {
+      "name": "PM",
+      "status": "current_person"
+    },
+    {
+      "name": "Register",
+      "status": "not_started"
+    },
+    {
+      "name": "Planning",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-12-04T14:09:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Built the planning packet from the award letter",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-2601",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "engagement",
+    "screen": "SCR-41",
+    "view": "default",
+    "title": "Ojo Foods · engagement EN-0042",
+    "subtitle": "Route A · from won RFP OF-RFP-2026-006",
+    "context": {
+      "crumbs": [
+        {
+          "value": "presale",
+          "label": "Pre-sale"
+        },
+        {
+          "value": "engagements",
+          "label": "Engagements"
+        },
+        {
+          "value": "EN-0042",
+          "label": "EN-0042"
+        }
+      ]
+    },
+    "revision": 3,
+    "sections": [
+      {
+        "key": "packet",
+        "kind": "table",
+        "title": "Planning packet · built by Tola",
+        "agent": "tola",
+        "columns": [
+          {
+            "key": "part",
+            "label": "Part",
+            "kind": "text"
+          },
+          {
+            "key": "from",
+            "label": "From",
+            "kind": "text"
+          },
+          {
+            "key": "status",
+            "label": "Status",
+            "kind": "tag"
+          }
+        ],
+        "items": [
+          {
+            "id": "PK-1",
+            "cells": [
+              {
+                "column": "part",
+                "text": "Scope"
+              },
+              {
+                "column": "from",
+                "text": "RFP response v3 · 58 requirements addressed"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "IN",
+                  "tone": "verified"
+                }
+              }
+            ]
+          },
+          {
+            "id": "PK-2",
+            "cells": [
+              {
+                "column": "part",
+                "text": "Price"
+              },
+              {
+                "column": "from",
+                "text": "Costing v2",
+                "money": {
+                  "amount": "40951000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "IN",
+                  "tone": "verified"
+                }
+              }
+            ]
+          },
+          {
+            "id": "PK-3",
+            "cells": [
+              {
+                "column": "part",
+                "text": "Team estimates"
+              },
+              {
+                "column": "from",
+                "text": "Engineering 210 days · Security 18 days"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "IN",
+                  "tone": "verified"
+                }
+              }
+            ]
+          },
+          {
+            "id": "PK-4",
+            "cells": [
+              {
+                "column": "part",
+                "text": "Start date"
+              },
+              {
+                "column": "from",
+                "text": "Not in the award letter"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "UNKNOWN",
+                  "tone": "uncertain"
+                }
+              }
+            ]
+          },
+          {
+            "id": "PK-5",
+            "cells": [
+              {
+                "column": "part",
+                "text": "Client project contact"
+              },
+              {
+                "column": "from",
+                "text": "Award letter names procurement only"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "UNKNOWN",
+                  "tone": "uncertain"
+                }
+              }
+            ]
+          },
+          {
+            "id": "PK-6",
+            "cells": [
+              {
+                "column": "part",
+                "text": "Delivery plan"
+              },
+              {
+                "column": "from",
+                "text": "Needs planning"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "NOT YET",
+                  "tone": "neutral"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "unknowns",
+        "kind": "text",
+        "items": [
+          {
+            "id": "U-1",
+            "text": "Unknowns stay Unknown until someone supplies them; planning will ask for them."
+          }
+        ]
+      },
+      {
+        "key": "packet_work",
+        "kind": "checklist",
+        "title": "Planning packet",
+        "agent": "tola",
+        "items": [
+          {
+            "id": "C-1",
+            "label": "Read the award letter",
+            "status": "done",
+            "detail": "AWARD LETTER · 04 DEC"
+          },
+          {
+            "id": "C-2",
+            "label": "Pulled the approved response and costing",
+            "status": "done",
+            "detail": "RESPONSE V3 · COSTING V2"
+          },
+          {
+            "id": "C-3",
+            "label": "Matched team estimates to the scope",
+            "status": "done",
+            "detail": "ENGINEERING 210D · SECURITY 18D"
+          },
+          {
+            "id": "C-4",
+            "label": "Listed what's still unknown",
+            "status": "done",
+            "detail": "START DATE · CLIENT CONTACT"
+          },
+          {
+            "id": "C-5",
+            "label": "Handed the packet to you",
+            "status": "done"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "key": "ask_tola",
+        "label": "Ask Tola",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ]
+  },
+  "assign": {
+    "role": "PM",
+    "candidates": [
+      {
+        "person_id": "P-0021",
+        "name": "Sola Martins",
+        "role": "Project manager",
+        "hint": "PM on the RFP"
+      },
+      {
+        "person_id": "P-0007",
+        "name": "Tunde Bello",
+        "role": "PM"
+      },
+      {
+        "person_id": "P-0031",
+        "name": "Kunle Ade",
+        "role": "PM"
+      }
+    ],
+    "note_required": false,
+    "default_person_id": "P-0021",
+    "default_hint": "Carried over from the RFP. Change it only if someone else will run delivery."
+  }
+}

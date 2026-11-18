@@ -125,6 +125,30 @@ function minutesProposalsStripped(body: unknown): unknown {
       delete row.values;
     }
   }
+  // PROPOSAL (F-31, mock/proposals/engagement-planning.json): `assign.default_person_id` (one of the candidates) and `default_hint`,
+  // `items[].team_key` and `tasks[].response.teams[].disabled_reason` / `asked_at`; each is checked on its own, then removed.
+  const offered = (copy as { assign?: { candidates: { person_id: string }[]; default_person_id?: unknown; default_hint?: unknown } }).assign;
+  if (offered?.default_person_id !== undefined) {
+    expect(offered.candidates.some((c) => c.person_id === offered.default_person_id)).toBe(true);
+    delete offered.default_person_id;
+  }
+  if (offered?.default_hint !== undefined) {
+    expect(typeof offered.default_hint === 'string' && offered.default_hint !== '').toBe(true);
+    delete offered.default_hint;
+  }
+  for (const section of w?.sections ?? []) {
+    for (const row of section.items as { team_key?: unknown }[]) {
+      if (row.team_key === undefined) continue;
+      expect(typeof row.team_key === 'string' && row.team_key !== '').toBe(true);
+      delete row.team_key;
+    }
+  }
+  for (const task of (copy as { tasks?: { response?: { teams?: { disabled_reason?: unknown; asked_at?: unknown }[] } }[] }).tasks ?? []) {
+    for (const team of task.response?.teams ?? []) {
+      delete team.disabled_reason;
+      delete team.asked_at;
+    }
+  }
   // PROPOSAL (F-30): `steps[].starts_line` {line_key, prefill} and `assign.candidates[].kind`
   const candidates = (copy as { assign?: { candidates: { kind?: unknown }[] } }).assign?.candidates ?? [];
   for (const candidate of candidates) {
@@ -644,8 +668,8 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
         .filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name))
         .filter((name) => (key === 'links' ? 'links' in (JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}) : JSON.stringify(JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}).includes('"items_default"')));
     expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
-    // F-32: the release boards W-2501 and W-2503 carry links too (Ask Tola, Open go-live)
-    expect(withKey('links').every((name) => /^W-2[35]/.test(name))).toBe(true);
+    // F-31 (W-26xx) and F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) carry links too
+    expect(withKey('links').every((name) => /^W-(23|25|26)/.test(name))).toBe(true);
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
   });
 

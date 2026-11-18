@@ -1,0 +1,260 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T01:35:59.078Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-44-mobile.dc.html",
+  "boardName": "SCR-44-mobile.dc.html",
+  "pageUrl": "http://localhost:4871/work/W-2501",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-32/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 80.9 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 60,
+    "coverageWithExceptions": 100,
+    "visual": 80.9
+  },
+  "visual": {
+    "score": 80.9,
+    "allCellsScore": 84.2,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1136,
+    "cell": 12,
+    "contentCells": 1940,
+    "mismatchedCells": 371
+  },
+  "coverage": {
+    "total": 5,
+    "found": 3,
+    "coverage": 60,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REL-0091",
+        "pageName": "REL-0091",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Release gates",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Release gates\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 336,
+          "h": 24
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Delivery",
+        "key": "link: ← Delivery",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: The phone bar keeps the built F-22 frame.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REL-0091 · BUILD 1.0.0",
+        "key": "text: REL-0091 · BUILD 1.0.0",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 7: phone bar and phone wording differ from the desktop wording used at both widths (D-111).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"REL-0091\"",
+        "kind": "Text",
+        "name": "REL-0091",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 105,
+          "w": 84,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RELEASE · WAITING ON PMO LEAD",
+        "container": "main",
+        "pageBox": {
+          "x": 155,
+          "y": 103,
+          "w": 219,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 134,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 16,
+          "y": 134,
+          "w": 42,
+          "h": 24
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

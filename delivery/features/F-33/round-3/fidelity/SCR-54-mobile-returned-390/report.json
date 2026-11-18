@@ -1,0 +1,349 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T02:43:06.011Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-33/design/canvas/finance/project/SCR-54-mobile-returned.dc.html",
+  "boardName": "SCR-54-mobile-returned.dc.html",
+  "pageUrl": "http://localhost:4881/work/W-2703",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-33/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 83 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 71.4,
+    "coverageWithExceptions": 100,
+    "visual": 83
+  },
+  "visual": {
+    "score": 83,
+    "allCellsScore": 83.4,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2298,
+    "mismatchedCells": 390
+  },
+  "coverage": {
+    "total": 7,
+    "found": 5,
+    "coverage": 71.4,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SCH-0021",
+        "pageName": "SCH-0021",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Returned",
+        "pageName": "Income detail · October",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Returned\" on the board, \"Income detail · October\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 286,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "STATION 3 OF 5 · REVIEW",
+        "pageName": "STATION 3 OF 5 · REVIEW",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 118,
+          "w": 358,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 157,
+          "w": 166,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Correct and resubmit",
+        "pageName": "Correct and resubmit",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #C8401C on the board, #22764A on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11: the phone bar's way back is the frame's (\"← Queue\" to My work, F-17/F-22 as built); the board's wording is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "\"Row 12 is a reclassification.\" · Ada Okafor",
+        "key": "text: \"Row 12 is a reclassification.\" · Ada Okafor",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 155,
+          "w": 265,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 10: the phone shows the same returned sentence as desktop, as the backend sends it (\"Ada Okafor returned it on 13 Nov: …\").",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"SCH-0021\"",
+        "kind": "Text",
+        "name": "SCH-0021",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Link \"Correct and resubmit\"",
+        "kind": "Link",
+        "name": "Correct and resubmit",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RETURNED · CORRECT AND RESUBMIT",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 103,
+          "w": 241,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor returned it on 13 Nov: “Row 12 is a reclassification, not a disaggregation.”",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 199,
+          "w": 306,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next: the schedule is prepared again and goes back to Ada Okafor. The returned version stays in the history.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 717,
+          "w": 358,
+          "h": 63
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-33/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
