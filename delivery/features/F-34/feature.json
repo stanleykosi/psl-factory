@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-34",
   "outcome": "Hypercare, part 1: the PM records the release, follows the window and its observations, sees the hold while PSL has not set the criteria, and sees \"qualified\" only when the backend verifies it (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-DELIVERY-HYPERCARE-ARCHIVE"
   ],
@@ -137,11 +137,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "af38b43211249d48e71175aee186838dafb76d42",
+      "evidence_refs": [
+        "delivery/features/F-34/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -958,6 +960,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-18T16:58:41Z",
+      "round": 3,
+      "head": "af38b43211249d48e71175aee186838dafb76d42",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T17:11:27Z",
       "round": 3,
       "head": "af38b43211249d48e71175aee186838dafb76d42",
       "reason": null
