@@ -79,7 +79,11 @@ for (const [label, viewport] of [
       await form.getByLabel(/Released on/).fill('2026-04-01T22:00');
       await form.locator('input[type="file"]').setInputFiles(proof);
       await expect(form.getByText(/release-1.0.0-log.pdf/)).toBeVisible();
-      if (phone) await expectTouchTargets(await form.locator('button:not(.resp-chip__remove), input:not([type="file"])').all());
+      if (phone) {
+        await expectTouchTargets(await form.locator('button, input:not([type="file"])').all());
+        const box = (await form.locator('.resp-chip__remove').boundingBox())!;
+        expect([box.width >= 44, box.height >= 44]).toEqual([true, true]);
+      }
       expect(await noHorizontalScroll(page)).toBe(true);
       await expectNoAxeViolations(page);
       await form.getByRole('button', { name: 'Cancel' }).click();
