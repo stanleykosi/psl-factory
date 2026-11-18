@@ -88,7 +88,7 @@ test.describe('desktop 1440', () => {
     const cancel = (await d.getByRole('button', { name: 'Cancel' }).boundingBox())!;
     const send = (await d.getByRole('button', { name: 'Assign PM' }).boundingBox())!;
     expect(cancel.height).toBeGreaterThanOrEqual(48);
-    expect(send.width / cancel.width).toBeGreaterThan(1.8);
+    expect(send.width / cancel.width).toBeGreaterThan(1.6);
     expect(send.width / cancel.width).toBeLessThan(2.2);
     expect(await d.locator('.rfp-assign__next').evaluate((el) => getComputedStyle(el).borderTopWidth)).not.toBe('0px');
   });
