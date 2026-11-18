@@ -132,8 +132,318 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Desktop NOT ESCALATED (W-3603, and after deciding on W-3602) is laid out badly and differs from SCR-51-desktop-not-escalated. The board has the quote (info tone) on the left and one NEXT panel on the right holding \"Back to the issue\". The build draws a right-hand \"Decide whether to escalate / Only a PMO Lead can decide\" panel on a finished decision, leaves a blank hole in the left column, pushes the quote (warning tone) and a loose \"Back to the issue\" button below it, and butts the NEXT panel against the decide panel with no gap. After a live decide a green \"Escalation ESC-0012 was rejected\" bar also sits flush against the panel. Expected the board layout; the exceptions file covers score gaps, not this. Evidence: round-1 screenshots /private/tmp/claude-501/s/pm-1440-3603.png and d-after.png. Phone is acceptable.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "W-3604 and W-3608 (MESSAGE V1) show \"Nothing here yet.\" above the drafted message, which contradicts it. The board has no such line (empty copy from features/workspace/labels.ts:76 shown with content present).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The success notice after \"Don't escalate\" says \"was rejected\"; the product word is \"not escalated\". Suggest \"Escalation ESC-0012 was not escalated\" style plain wording or drop the notice.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The shared uncertain notice reads \"Nothing was sent again.\" That uses \"sent\" in a feature that promises nothing reaches the client (build.md already flags it). On the phone the Reload button sits inline mid-sentence.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The no-reviewer hold (W-3608) has one visibly unavailable \"Send for review\" button (aria-disabled, described by the reason, no POST on click). This matches spec.md, but if \"no buttons\" was intended it differs.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On the phone decide screen \"Don't escalate\" is not full width like \"Escalate to the client\". The \"Back to the issue\" page (W-3609) shows crumbs ESCALATIONS / ESC-0012 on desktop (mock frame), while the phone bar says ISS-0241.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Extra decide panel on investigating and not escalated. Expected (SCR-51-desktop/mobile-investigating, -not-escalated): no decision panel. Investigating shows the facts and Tola's card side by side; not-escalated shows the quote and the Next panel. Actual: W-3601 and W-3603 draw the shared `TaskPanels` card \"DECIDE WHETHER TO ESCALATE\" with \"Only a PMO Lead can decide.\", Basis, Version and Prepared by, at 1440 and 390. At 1440 it pushes the facts and the card down about 230px. On the closed W-3603 it wrongly suggests a decision is still open. Cause: the decide task has no linked step, and the \"settled\" rule hides decided tasks only on `income_schedules` (frontend/src/features/work-item/WorkItemOverview.tsx:727-728). The tool still scored investigating 90.1. Fix: keep the escalation line's decide task out of `TaskPanels` when the task is `already_decided` or has no steps on the page. Then re-score investigating and not-escalated.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Message v1 reads as empty and as a warning. Expected (SCR-51-desktop-draft, mobile-draft): the MESSAGE V1 panel shows Tola's draft as the message body, in the board's blue outlined box. Actual: the panel says \"Nothing here yet.\" and then draws the message as an amber warning callout with a warning icon, at both widths. Cause: the fixture sends the message as `note` with `items: []` (frontend/mock/fixtures/work/W-3604.json, also W-3604.next.json and W-3602.approve.json), so SectionView draws the empty line and the warning note (frontend/src/features/workspace/Sections.tsx:487, 497-500). Fix in data: send the message as the section's item `text`. Draw the board's box, or list the box styling as an exception for the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The not-escalated sentence uses the warning tone. Expected (SCR-51-desktop/mobile-not-escalated): a blue info callout (info icon) at the top of the main column. Actual: an amber warning callout with a warning icon, below an empty row (the empty row comes from UI-1-1). Cause: `bannerTone` gives every line other than issue and income `warning` (frontend/src/features/workspace/Workspace.tsx:165-172). `Callout` has an `info` kind. Fix: choose the banner tone for the escalation line from the status tone (the F-30/F-33 pattern), or record an exception. Recheck the position once UI-1-1 is fixed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Status tag tones differ from the boards. MESSAGE DRAFTED: blue `agent` on the board, rust `person` on the page. NOT ESCALATED: grey `neutral` on the board, rust on the page (`stopped` maps to `person`, labels.ts:25). The spec's state table chose `person` and `stopped` without a Conflicts item, and no exception lists the difference. Fix: send the board's tones in W-3604/W-3602.approve and W-3603/W-3602.reject, or add exceptions that cite a design-engineer decision. A tag that differs without either is not allowed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Some differences are covered only by the free text of a waiver, or not at all. \"Back to the issue\" sits under the quote in the main column; the board puts it as a full-width button inside the Next panel. The not-escalated waiver cites Conflicts 10 for this, but Conflicts 10 does not cover the link's position. The decide board's \"15 DAYS LATE\" tag (person tone) is drawn as plain text, because the shared facts list has no per-value tag. Neither is in fidelity-exceptions.json or the backend list. Add each as its own exception with a reason (and the facts tag to the backend/component list), so the design engineer signs each one explicitly.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+          "evidence_refs": [
+            "delivery/features/F-39/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-39/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+          "evidence_refs": [
+            "delivery/features/F-39/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+          "evidence_refs": [
+            "delivery/features/F-39/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -225,7 +535,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -243,6 +553,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T19:43:34Z",
+      "round": 1,
+      "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T19:58:28Z",
+      "round": 1,
+      "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T19:58:29Z",
+      "round": 2,
+      "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "reason": null
     }
   ],
   "routing": {
@@ -258,10 +592,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
