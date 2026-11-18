@@ -1,0 +1,8 @@
+{
+  "log_observation": {
+    "status": 200,
+    "body": {
+      "outcome": "done"
+    }
+  }
+}

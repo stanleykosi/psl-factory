@@ -146,6 +146,7 @@
       "short_title": "Hypercare",
       "state": "processing",
       "reference": "HYP-0062",
+      "work_id": "W-3101",
       "gate": {
         "label": "Running",
         "tone": "uncertain"

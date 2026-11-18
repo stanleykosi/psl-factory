@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 66c4dcb800d9b7f6e355e400c7350838724d834b
+COMMIT: 6ecca6b8f550500810019150d75f86ede8b49715
 REVIEWER: design engineer (recorded by the coordinator)
 AUTHORITY: product acceptance, design engineer, 18 Nov 2026 — D-120
 

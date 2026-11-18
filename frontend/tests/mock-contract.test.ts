@@ -85,7 +85,7 @@ function savedRecordsStripped(body: unknown): unknown {
   return copy;
 }
 // PROPOSAL (D-LINE-WORKSPACE, F-23): `steps[].items_default` ("checked" or absent) and `workspace.links[]`
-// ({key, label, target: {kind: assistant | document | project_tab (F-28) | work (F-32), document_id?, version?, tab?, case_id?}}). Each is checked on its own, then removed
+// ({key, label, target: {kind: assistant | document | project_tab (F-28) | work (F-32) | setup_rules (F-34), document_id?, version?, tab?, case_id?}}). Each is checked on its own, then removed
 // before the schema check; the generated types and openapi.json do not carry them.
 const linkSchema = {
   type: 'array',
@@ -95,6 +95,7 @@ const linkSchema = {
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind'], properties: { kind: { const: 'assistant' } } } } },
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'tab', 'case_id'], properties: { kind: { const: 'project_tab' }, tab: { enum: ['journey', 'delivery', 'milestones', 'documents', 'money', 'registers', 'actions'] }, case_id: { type: 'string', pattern: '^[A-Za-z0-9][A-Za-z0-9._-]*$' } } } } },
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'work_id'], properties: { kind: { const: 'work' }, work_id: { type: 'string', pattern: '^[A-Za-z0-9][A-Za-z0-9._-]*$' } } } } },
+      { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'area'], properties: { kind: { const: 'setup_rules' }, area: { enum: ['finance', 'delivery'] } } } } },
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'document_id', 'version'], properties: { kind: { const: 'document' }, document_id: { type: 'string', minLength: 1 }, version: { anyOf: [{ type: 'string' }, { type: 'integer' }] } } } } },
     ],
   },
@@ -695,8 +696,8 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
         .filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name))
         .filter((name) => (key === 'links' ? 'links' in (JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}) : JSON.stringify(JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}).includes('"items_default"')));
     expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
-    // F-31 (W-26xx) and F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) carry links too; F-33's investigating board (W-2701) and F-42's (W-3901) draw Ask Chidi
-    expect(withKey('links').every((name) => /^W-(23|25|26)/.test(name) || name === 'W-2701.json' || name === 'W-3901.json')).toBe(true);
+    // F-31 (W-26xx), F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) and F-34 hypercare (W-31xx) carry links too; F-33's investigating board (W-2701) and F-42's (W-3901) draw Ask Chidi
+    expect(withKey('links').every((name) => /^W-(23|25|26|31)/.test(name) || name === 'W-2701.json' || name === 'W-3901.json')).toBe(true);
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
   });
 
