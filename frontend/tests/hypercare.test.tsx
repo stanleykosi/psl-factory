@@ -133,6 +133,23 @@ describe('four states from the fixture (AC 5)', () => {
     expect(ws().queryByRole('form')).toBeNull();
   });
 
+  it('the criteria show only the returned Met tag, with no second result word (UI-1-1)', async () => {
+    for (const id of ['W-3101', 'W-3104']) {
+      const view = await open(item(id));
+      const rows = [...document.querySelectorAll('.ws-rows--checklist > li')].filter((r) => r.textContent?.includes('Met'));
+      expect(rows).toHaveLength(3);
+      for (const row of rows) expect(row.textContent).not.toContain('Done');
+      view.unmount();
+    }
+  });
+
+  it('W-3104 qualified: the stage strip has no agent still working (UX-1-1)', async () => {
+    const body = item('W-3104');
+    expect(body.stations.map((st) => st.status)).not.toContain('current_agent');
+    await open(body);
+    expect(pageText()).not.toContain('Agent working');
+  });
+
   it('W-3104 qualified: the status, the criteria and the closure link to W-3120', async () => {
     await open(item('W-3104'));
     expect(pageText()).toContain('Hypercare qualified');
@@ -275,6 +292,17 @@ describe('record the release (AC 10, 12, 14)', () => {
     expect(posts()).toHaveLength(0);
     expect(posts('/evidence')).toHaveLength(0);
     expect(form.textContent).toMatch(/Released on/);
+  });
+
+  it('the "add proof" message goes once a file is uploaded (UX-1-2)', async () => {
+    await open(item('W-3102'));
+    await press('Record release');
+    await act(async () => {
+      fireEvent.submit(ws().getByRole('form'));
+    });
+    expect(wsText()).toContain('Add proof to continue');
+    await upload();
+    await waitFor(() => expect(wsText()).not.toContain('Add proof to continue'));
   });
 
   it('uploads the proof with kind deployment_log and the case revision, then sends record_release once and shows the re-read hold', async () => {

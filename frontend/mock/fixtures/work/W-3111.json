@@ -197,7 +197,6 @@
           {
             "id": "C-2",
             "text": "No open high-severity issues",
-            "status": "done",
             "tag": {
               "label": "Met",
               "tone": "verified"
@@ -211,7 +210,6 @@
           {
             "id": "C-4",
             "text": "Medium issues have an owner",
-            "status": "done",
             "tag": {
               "label": "Met",
               "tone": "verified"
