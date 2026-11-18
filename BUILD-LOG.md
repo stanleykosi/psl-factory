@@ -1,5 +1,7 @@
 # Build progress log
 
+18 November 2026. Corrected the Support reply SQL guard with additive migration 0089, preserving exact native delivery and configured recorder authority. Package 79 passed four tests and exposed a stale successor test-helper reference, which was corrected. Package 80 now runs all seventeen selected tests. Added source-safe reply metadata and ready-state handling. Hosted source stays at web 76 and worker 74 pending verification. HOD values and full 262-state acceptance remain open.
+
 18 November 2026. Package 76 passed all 37 PostgreSQL tests in 3647.526 seconds, checks and fixtures. Started frozen Support reply package 77 as `0b0103f2`. Preserved the separate later source-wake race increment for package 78. All 262-state acceptance remains open.
 
 18 November 2026. Browser work 82 completed the reviewed response correction through report version 2, new approval, receipt 55 and actual synthetic PM/client attestation using distinct sources 1657/1658. Verified the unsaved-edit refresh guard. Pushed `f661cbe0`. Fetched later mock design branches, with main and the 262 canvas inventory unchanged. Frozen package 77 contains the Support reply increment. Later root source adds native decision wakes and preserves wakes racing with background finalization, with PostgreSQL checks still pending.

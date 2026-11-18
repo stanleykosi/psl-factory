@@ -1,5 +1,16 @@
 {
   "design_consolidation_20261116": {
+    "support_reply_sql_provenance_20261118": {
+      "status": "verification_running",
+      "migration": "workflows.0089_handover_reply_provenance",
+      "package_77": {"deployment": "0b0103f2-d0ed-45dc-aa6f-98054caac89b", "errors": 1, "seconds": 283.769, "not_run": 15},
+      "package_79": {"deployment": "e7a4bf79-f025-4e42-888c-99e194b636bc", "passed": 4, "failed": 1, "seconds": 208.130, "not_run": 12, "migration": "passed", "correction": "Refresh the test helper after source progression"},
+      "package_80": {"deployment": "94e4f41a-df14-4548-9a0a-61c8e16e85d4", "tests": 17, "status": "running"},
+      "implemented": ["SQL recorded-reply provenance and current authority guard", "Source-safe copied reply metadata", "Fresh reply returns work to ready"],
+      "next": ["Complete package80, deploy its exact runtime and test three browser examples", "Verify separate native wake races", "Build per-requirement bid suggestions and human review", "Continue remaining design states"],
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
     "full_archive_recovery_20261118": {
       "status": "passed",
       "package": 76,

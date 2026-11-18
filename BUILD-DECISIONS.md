@@ -1,5 +1,7 @@
 # Build decisions
 
+18 November 2026. A configured human recorder may capture an evidenced reply from the actual Support recipient. Python services and the database verification guard must validate the same exact publication, receipt, source, recorder role, current grants and immutable predecessor. Copied reply text remains available only while its original proof and owner are authorised. A fresh reply invalidates the prior observed work conclusion and queues native verification. These are engineering controls. Operational recorder roles and permitted channels remain deferred.
+
 18 November 2026. Keep the frozen Support reply stage separate from the later source-wake race changes. Deployment uses the exact tested stage. A passing native recovery suite and a pending new feature suite retain separate evidence records.
 
 18 November 2026. A native human review, acknowledgement or sign-off wakes its existing authorised background request. A running request retains its lease while the source-wake timestamp advances. Finalization compares the claimed timestamp, and a newer wake schedules another observation under the current token/state guard. Human pauses and worker replacements retain control of their request state. This engineering change requires the new PostgreSQL race tests. Newly fetched frontend mock contracts supply design evidence and questions for native mapping.

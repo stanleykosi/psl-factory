@@ -4,6 +4,7 @@ from pathlib import Path
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.test import TestCase, SimpleTestCase, TransactionTestCase
+from django.db import DatabaseError, connection, transaction
 from django.urls import reverse
 from django.utils import timezone
 
@@ -75,6 +76,10 @@ class HandoverReplyTests(TestCase):
         f.work.refresh_from_db()
         self.assertEqual(f.work.status, 'verified', f.work.finding)
         self.assertEqual(handover.verify(f.work)['handover_ids'], [actual.pk])
+        self.client.force_login(f.actor)
+        page = self.client.get(reverse('factory_detail', args=[f.work.pk]))
+        self.assertContains(page, 'SAMPLE Support lead replied by Email')
+        self.assertContains(page, 'Recorded by')
 
     def test_missing_rules_keep_native_delivery_and_only_hold_external_recording(self):
         f = self.f
@@ -100,6 +105,7 @@ class HandoverReplyTests(TestCase):
         handover.correct(f.actor, f.work.pk, f.work.revision, rev(f.case),
             dict(f.inputs, support_document=updated.pk), 'Address the exact evidenced Support gap.')
         factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
         self.assertNotEqual(receipt(f).pk, previous_receipt.pk)
         current_document = handover.document(f.work)
         self.assertEqual(current_document.document_id, previous_document.document_id)
@@ -122,6 +128,11 @@ class HandoverReplyTests(TestCase):
         Grant.objects.filter(case=f.case, user=f.actor, action='evidence.add').update(active=False)
         with self.assertRaises(PermissionDenied):
             handover.verify(f.work)
+        self.client.force_login(f.actor)
+        page = self.client.get(reverse('factory_detail', args=[f.work.pk]))
+        self.assertNotContains(page, 'SAMPLE Support lead replied')
+        self.assertNotContains(page, 'Synthetic Support reply proof reviewed.')
+        self.assertContains(page, 'The recorded reply proof needs authorised review.')
         Grant.objects.filter(case=f.case, user=f.actor, action='evidence.add').update(active=True)
         transition(f.actor, configuration.pk, 'revoked')
         with self.assertRaises(ValidationError):
@@ -140,6 +151,29 @@ class HandoverReplyTests(TestCase):
             with self.subTest(changes=changes), self.assertRaises(ValidationError):
                 self.reply(**changes)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d, kind='handover').exists())
+
+    def test_database_rejects_forged_recorder_facts_and_factory_verification_after_revocation(self):
+        f = self.f
+        configure(f)
+        record = self.reply()
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT psl_handover_recorded_reply(h,%s) FROM pmo_deliveryrecord h WHERE h.id=%s',
+                [receipt(f).pk, record.pk])
+            self.assertTrue(cursor.fetchone()[0])
+        forged = dict(record.data)
+        forged['attestation'] = {**forged['attestation'], 'role': 'Finance', 'predecessor': record.pk}
+        with self.assertRaises(DatabaseError), transaction.atomic():
+            DeliveryRecord.objects.create(dossier=f.d, kind='handover', evidence=f.reply_proof,
+                actor=f.actor, parent=record, data=forged, snapshot=record.snapshot)
+        factory.run_until_wait(f.work.pk)
+        Grant.objects.filter(case=f.case, user=f.actor, action='delivery.record_support_reply').update(active=False)
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT psl_handover_recorded_reply(h,%s) FROM pmo_deliveryrecord h WHERE h.id=%s',
+                [receipt(f).pk, record.pk])
+            self.assertFalse(cursor.fetchone()[0])
+        with self.assertRaises(DatabaseError), transaction.atomic():
+            from apps.workflows.models import FactoryWork
+            FactoryWork.objects.filter(pk=f.work.pk).update(finding='SAMPLE forged verified claim after authority revocation')
 
     def test_rule_ui_saves_draft_and_invalid_reply_keeps_entered_details(self):
         f = self.f

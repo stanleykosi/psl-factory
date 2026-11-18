@@ -107,7 +107,7 @@ def receipt_state(work,version):
     receipts=list(PublicationReceipt.objects.filter(publication=p).order_by('pk')) if p else []
     rows=[]
     for r in receipts:
-        ack=DeliveryRecord.objects.filter(dossier_id=work.request['dossier'],kind='handover',data__receipt_id=r.pk).order_by('-pk').first()
+        ack=DeliveryRecord.objects.select_related('actor').filter(dossier_id=work.request['dossier'],kind='handover',data__receipt_id=r.pk).order_by('-pk').first()
         rows.append({'receipt':r,'ack':ack})
     return p,rows
 
@@ -290,15 +290,25 @@ def record_support_reply(actor, work_id, expected, case_expected, receipt_id, **
     from .factory import access
     from apps.pmo.handover_replies import record_reply
 
+    if any(type(value) is not int or value < 1 for value in [work_id, expected, case_expected, receipt_id]):
+        raise ValidationError('Choose exact current handover and delivery references.')
     work = Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id, definition=DEFINITION)
     access(actor, work.case, envelope=DEFINITION)
     if type(expected) is not int or work.revision != expected or work.cancel_requested or work.status in ['cancelled', 'followup_needed']:
         raise ValidationError('Refresh the current handover before recording this reply.')
+    if work.lease_until and work.lease_until > timezone.now():
+        raise ValidationError('Wait for the current handover step before recording this reply.')
     version = document(work)
     if not version or not PublicationReceipt.objects.filter(pk=receipt_id, publication__version=version,
             publication__factory_work=work, publication__factory_source=work.source_head).exists():
         raise ValidationError('Choose the exact current delivered handover receipt.')
-    return record_reply(actor, work.case_id, work.request['dossier'], receipt_id, expected=case_expected, **reply)
+    recorded = record_reply(actor, work.case_id, work.request['dossier'], receipt_id, expected=case_expected, **reply)
+    work.status = 'ready'
+    work.finding = 'Support reply recorded. Check the current handover receipt and any gaps.'
+    work.observation_hash = ''
+    work.revision += 1
+    work.save(update_fields=['status', 'finding', 'observation_hash', 'revision'])
+    return recorded
 
 
 @transaction.atomic
@@ -371,7 +381,8 @@ def projection(actor,work):
             try:
                 require(actor,work.case,'delivery.support_receive');require(actor,work.case,'document.receive:internal');current_version(work.case,v.pk);item['can_ack']=True
             except (ValidationError,PermissionDenied):pass
-    from apps.pmo.handover_replies import available_roles
+    from apps.pmo.handover_replies import available_roles, decorate_receipts
+    decorate_receipts(work.case, receipts)
     reply_roles = available_roles(actor, work.case)
     for item in receipts:
         item['can_record_reply'] = bool(reply_roles and not work.cancel_requested and

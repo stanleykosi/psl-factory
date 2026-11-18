@@ -2,6 +2,7 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+from django.db.models import Exists, OuterRef
 
 from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case
@@ -133,3 +134,27 @@ def available_roles(actor, case):
         return result
     except (PermissionDenied, ValidationError):
         return []
+
+
+def decorate_receipts(case, receipts):
+    """Load source visibility once and keep copied reply text behind that boundary."""
+    source_ids = [item['ack'].evidence_id for item in receipts if item['ack']]
+    owner = Grant.objects.filter(case=case, user_id=OuterRef('created_by_id'),
+        user__is_active=True, action='evidence.add', active=True)
+    source_access = dict(public_evidence(case.evidence.filter(pk__in=source_ids)).annotate(
+        owner_current=Exists(owner)).values_list('pk', 'owner_current'))
+    for item in receipts:
+        ack = item['ack']
+        attestation = ack.data.get('attestation') if ack else None
+        readable = bool(ack and ack.evidence_id in source_access and
+            (attestation is None or source_access[ack.evidence_id]))
+        item['reply_source_available'] = readable
+        item['reply_note'] = ack.data['note'] if readable else ''
+        item['reply_party'] = attestation.get('party', '') if readable and isinstance(attestation, dict) else ''
+        item['reply_channel'] = attestation.get('channel', '') if item['reply_party'] else ''
+        item['reply_time'] = None
+        if item['reply_party']:
+            try:
+                item['reply_time'] = aware(attestation['responded_at'])
+            except (KeyError, ValidationError):
+                pass

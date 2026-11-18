@@ -1,5 +1,11 @@
 # PSL operations factory cloud handoff
 
+## Support reply database guard and successor verification · 18 November 2026
+
+Continue on `build/design-consolidation`, latest pushed checkpoint `b6f114d3`. Preserve the uncommitted Support reply corrections. Package 77 failed its first test because the existing SQL verification guard required the recorder to be the recipient. New migration `workflows.0089_handover_reply_provenance` validates configured, evidenced human recording, exact delivery and current source authority. Package 79 applied this migration and passed four tests, then failed the successor test because its helper retained an old in-memory work source. The helper now refreshes after progression. Package 80 `94e4f41a-df14-4548-9a0a-61c8e16e85d4` is running all seventeen selected tests. Read its final result before deploying that exact stage. Its runner migrates the preview and prepares the three Support reply fixtures only after tests pass.
+
+The uncommitted correction also redacts copied reply metadata when proof becomes unavailable and returns newly recorded replies to ready work. Web 76 and worker 74 remain hosted. Package 78's later native wake hooks and finalization race protection remain separate and unverified. After 80 passes, refresh 78 with the new migration and Support corrections, then verify and deploy it. All 262-state acceptance remains open at 189 observed, including partials, and 73 unseen. Keep HOD values deferred and continue missing row-level bid answer review and the other actual design gaps.
+
 ## Full archive recovery suite passed · 18 November 2026
 
 Package 76 `7e9f3986-4367-4417-adb2-8ecb21be8509` passed all 37 PostgreSQL tests in 3647.526 seconds. Checks, fixture steps and both final exit markers passed. This includes actual worker exits, retained original receipts, concurrency, exact source and policy successors, revoked actors and the 571-query archive request regression. Runtime web 76 and worker 74 remain active.

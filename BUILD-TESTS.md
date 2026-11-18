@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Support reply guard and corrected successor test · 18 November 2026
+
+Package 77 `0b0103f2` ran one test with one error in 283.769 seconds. Fifteen tests did not run after fail-fast. Python reply verification passed, but the existing database guard rejected a distinct human recorder. Added migration `workflows.0089_handover_reply_provenance`.
+
+Package 79 `e7a4bf79` applied that migration and ran five tests in 208.130 seconds. Four passed, covering distinct recorder through verified native output, permission/policy/source revocation and metadata redaction, forged SQL recorder facts and post-revocation verification rejection, and invalid reply time/channel/type. One failed because the test helper reused its old in-memory work source after correction. Twelve tests did not run. Added the missing model refresh. Neither failed run reached preview migration or fixtures.
+
+Package 80 `94e4f41a-df14-4548-9a0a-61c8e16e85d4` is running seventeen selected tests on PostgreSQL `test_design_archive_20261117`. Django and migration-drift checks passed. No final suite or fixture result is claimed yet. Later source-wake race tests remain separate. Two local schema/template tests passed in 0.087 seconds. Local migration dry-run reported no changes with a database connection timeout warning, so local database validation remains unavailable.
+
 ## Full archive and handover recovery regression · 18 November 2026
 
 Package 76 `7e9f3986-4367-4417-adb2-8ecb21be8509` passed all 37 PostgreSQL tests in 3647.526 seconds on `test_design_archive_20261117`. Django checks, migration drift and fixtures passed. Both final exit markers were zero. Coverage includes actual worker exits before and after committed native effects, original receipt recovery, competing intake forms, current permissions, source and policy changes, preserved lifetime allowance and the archive detail regression measured at 571 queries.

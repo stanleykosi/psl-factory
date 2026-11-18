@@ -1,5 +1,9 @@
 # PSL operations factory build state
 
+## Support reply SQL provenance correction under test · 18 November 2026
+
+Package 77 exposed the older recipient-only SQL guard. Added `workflows.0089` with configured recorder, exact receipt, current authority and source validation. Package 79 migrated successfully and passed four tests before a stale test-helper reference failed the successor assertion. That helper is corrected. Package 80 `94e4f41a` is running seventeen tests, followed by preview migration and guarded fixtures. Reply metadata privacy and ready-work handling are included. Runtime remains web 76 and worker 74. Native wake race tests remain pending separately. The 262-state milestone is incomplete, with 189 observed states and 73 unseen. HOD decisions remain deferred.
+
 ## Archive and handover recovery suite passed · 18 November 2026
 
 All 37 PostgreSQL tests in package 76 passed in 3647.526 seconds, together with checks and fixtures. This covers worker-exit recovery, concurrency, original receipts, permission revocation, source successors and the bounded archive request. The new Support reply path is under package 77 verification in `0b0103f2`. Later source-wake race protection awaits package 78. Runtime web remains 76 with worker 74. The milestone remains 189 observed states, including partials, and 73 unseen. HOD decisions stay deferred.
