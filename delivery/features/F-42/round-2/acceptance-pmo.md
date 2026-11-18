@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: c972854d28b6ec801e9d354f79552b70e1c76e56
+COMMIT: 8d59b2422e06f960853993435c2935b7b9805046
 REVIEWER: pmo-acceptance
 AUTHORITY: delivery PMO acceptance
 
@@ -33,3 +33,11 @@ None open that block. Non-blocking items stay open:
 - Criteria 1, 2, 4, 6, 10 to 15, 17, 19 and 24 | verified | Integrated QA journeys 1 to 14 on 8779c5f3, plus the round-2 gate PASS.
 - Criterion 18 (fidelity) | verified | Coverage is 100% after exceptions on all 8 boards, and every visual score is at least 70. The waivers are unsigned and are a human item.
 - Not proved: nothing ran against a real backend. All evidence is mock behaviour. Separation of duties and the real reviewer policy are untested because the policy keys are NOT SET.
+
+## Update for head 8d59b242 (diff c972854d..8d59b242)
+
+- The head moved only by merging dlv-00 (F-47 Start work proof upload, F-41 payments list and reminder, test fix #65). Frontend diff re-read at Workspace.tsx, Sections.tsx, workspace.css, workspace.mjs, proposals.ts and the mock-contract lists.
+- F-42 decide in place, holds, proof row and money rules are intact; F-41 reminder line, phone Drawer and attachment row and F-33 income line are intact; the proof row and attachment row stay distinct; no assertion was loosened (the only edit is the sample:false case for W-3813).
+- Vitest on asset-schedule, income-schedule, payments, payment-reminder, workspace and mock-contract files: 11 test files passed (586 tests). checks.sh 2655 and e2e 142 passed on this head.
+
+Verdict unchanged.

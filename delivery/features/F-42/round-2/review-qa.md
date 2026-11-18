@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: qa
-COMMIT: 8779c5f30c05ed760fc1cbfe3a2dddf790daca1e
+COMMIT: 8d59b2422e06f960853993435c2935b7b9805046
 AUTHORITY: delivery integrated QA
 
 ## Summary
@@ -144,3 +144,11 @@ Each journey below ran at 1440 and at 390 unless it says otherwise. The mock was
 - UX-1-2 | verified | After "Approve register" on W-3902, the re-read shows "Waiting for someone to explain the 3 unclear in-service dates and attach the proof. The date review starts after that.", with no decide control.
 - UI-1-1 | verified | The W-3903 page text has "asset-dates-explanation.pdf" with "Uploaded · 64 KB", and the file name is not a link. I did not judge the visual style; the UI review covered it. The reading order is noted in QA-2-2.
 - TECH-1-1 | carried | The fixture facts change is confirmed by the technical review. On the W-3911 pages I saw the lifecycle "APPROVED" stay "Not yet".
+
+## Update for head 8d59b242 (diff c972854d..8d59b242)
+
+- The head moved only by merging dlv-00 (F-47 Start work proof upload, F-41 payments list and reminder, test fix #65). Frontend diff re-read at Workspace.tsx, Sections.tsx, workspace.css, workspace.mjs, proposals.ts and the mock-contract lists.
+- F-42 decide in place, holds, proof row and money rules are intact; F-41 reminder line, phone Drawer and attachment row and F-33 income line are intact; the proof row and attachment row stay distinct; no assertion was loosened (the only edit is the sample:false case for W-3813).
+- Vitest on asset-schedule, income-schedule, payments, payment-reminder, workspace and mock-contract files: 11 test files passed (586 tests). checks.sh 2655 and e2e 142 passed on this head.
+
+Verdict unchanged.

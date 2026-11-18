@@ -72,7 +72,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T19:39:23Z",
+      "seconds": 383.2,
+      "evidence_ref": "delivery/features/F-39/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -143,7 +156,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "6f14afbf81207d0c520572ba012a4684f59da2ba",
     "task_branch": "fe-emergency-escalation-escalate-or-not",
-    "head_sha": null,
+    "head_sha": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-39",
     "pr_url": null,
     "pr_number": null,
@@ -154,7 +167,32 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/escalation.spec.ts",
+      "frontend/mock/fixtures/work/W-3601.json",
+      "frontend/mock/fixtures/work/W-3602.approve.json",
+      "frontend/mock/fixtures/work/W-3602.json",
+      "frontend/mock/fixtures/work/W-3602.reject.json",
+      "frontend/mock/fixtures/work/W-3603.json",
+      "frontend/mock/fixtures/work/W-3604.json",
+      "frontend/mock/fixtures/work/W-3604.next.json",
+      "frontend/mock/fixtures/work/W-3604.steps.json",
+      "frontend/mock/fixtures/work/W-3605.json",
+      "frontend/mock/fixtures/work/W-3606.json",
+      "frontend/mock/fixtures/work/W-3607.approve.json",
+      "frontend/mock/fixtures/work/W-3607.json",
+      "frontend/mock/fixtures/work/W-3608.json",
+      "frontend/mock/fixtures/work/W-3609.json",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/tests/escalation-mock.test.ts",
+      "frontend/tests/escalation.test.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -221,9 +259,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
   },
   "blocked": null
 }
