@@ -247,6 +247,8 @@ def reassess(actor,work_id,expected,reason,capture_id=None):
         else:raise ValidationError('The recorded handoff remains current')
     work.status='ready';work.finding='';work.revision+=1;work.save()
     event(actor,case,'factory.engagement_reassessed',work=work.pk,previous=previous.pk,capture=source.pk,reason=reason,spent=work.budget_used)
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
     return work
 
 
@@ -262,6 +264,8 @@ def human(actor,work_id,expected,case_revision,operation,data):
     if work.status=='waiting':work.status='ready';work.finding=''
     work.revision+=1;work.save()
     event(actor,case,'factory.engagement_human_recorded',work=work.pk,record=result.pk,kind=operation)
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
     return result
 
 

@@ -72,6 +72,31 @@ def prepare(key, operator):
         existing = FactoryWork.objects.filter(case=case).first()
         return {'case': str(case.pk), 'work': existing.pk if existing else None}
     Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
+    if key in {'engagement-registration','engagement-background-refresh'}:
+        from tests.helpers import roles
+        from tests.test_engagement_intake import activate
+        from apps.policy.engagement_validators import ASSIGN, REGISTER
+
+        source=add_evidence(operator,case.pk,'engagement_source',
+            'SYNTHETIC direct engagement received from a fictional client. Confirm the appointed project manager, then register the supplied identifier during Planning.',
+            'synthetic:engagement-browser-source')
+        identifier='SAMPLE-ENGAGEMENT-109' if key=='engagement-registration' else 'SAMPLE-ENGAGEMENT-111'
+        plan=add_evidence(operator,case.pk,'plan','SYNTHETIC pre-signature plan for '+identifier+'.',
+            'synthetic:engagement-browser-plan')
+        proof=add_evidence(operator,case.pk,'policy_decision','Synthetic trial nominations and identifier rules only.',
+            'synthetic:engagement-browser-rules')
+        roles(operator,case,proof)
+        profile=json.loads(Path('fixtures/factory-engagement.json').read_text());profile.pop('classification')
+        activate(operator,case,'OPS.factory_engagement_execution',profile,proof)
+        rules=json.loads(Path('fixtures/engagement-intake.json').read_text())
+        activate(operator,case,ASSIGN,rules['assignment'],proof)
+        activate(operator,case,REGISTER,rules['registration'],proof)
+        profile=json.loads(Path('fixtures/factory-planning.json').read_text());profile.pop('classification')
+        activate(operator,case,'OPS.factory_planning_execution',profile,proof)
+        reader,_=get_user_model().objects.get_or_create(username='state-engagement-project-reader')
+        Grant.objects.bulk_create([Grant(case=case,user=reader,action=action) for action in ['case.read','engagement.read']])
+        return {'case':str(case.pk),'source':source.pk,'plan':plan.pk,'proof':proof.pk,
+            'unappointed_reader':reader.pk,'work':None,'expected_identifier':identifier}
     if key in {'payroll-field-setup', 'payroll-field-extended'}:
         from tests import hrfinance_helpers
 
@@ -598,6 +623,10 @@ elif workflow == 'issue-team-closure-states':
     fixtures = ('issue-team-closure','issue-team-overdue')
 elif workflow == 'issue-message-states':
     fixtures = ('issue-message-flow','issue-message-manual','issue-message-recovery','issue-message-absent','issue-message-scheduled')
+elif workflow == 'engagement-registration':
+    fixtures = ('engagement-registration',)
+elif workflow == 'engagement-background-refresh':
+    fixtures = ('engagement-background-refresh',)
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

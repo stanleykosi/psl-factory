@@ -1,5 +1,29 @@
 {
   "design_consolidation_20261116": {
+    "engagement_candidates_20261118":{
+      "status":"pg132_134_135_136_passed_hosted136_browser111_automatic_handoff_verified",
+      "base_checkpoint":"b841ee6a",
+      "deployment":"b0a7f607-73b3-467b-9b76-c06890ed14d3",
+      "package_132":{"passed":37,"seconds":144.618,"final_exit":0,"fixtures_run":true,"migration_run":false},
+      "failed_133":{"deployment":"23564363-c0f5-4d5b-bd08-2b968b38320e","passed":2,"failures":1,"not_run":7,"seconds":7.206,"final_exit":1,"reason":"Obsolete field-label assertion after plain intake wording; corrected"},
+      "package_134":{"deployment":"767eeabe-6340-4668-bbb7-93f45dd1b62e","passed":10,"seconds":8.805,"final_exit":0,"fixtures_run":false,"migration_run":false},
+      "runtime_134":{"web":"b7a4b6b0-6649-4198-a212-aa5c13e8e551","worker":"fb514f5c-42e9-4878-98c1-d3d70f8a5dfd","paths_per_service":1695,"mismatches":0},
+      "browser":{"case":"671bb0a5-9269-43df-86c6-d5cf0dacd92c","source":1976,"plan":1977,"unappointed_reader_excluded":118,"work":109,"identifier":"SAMPLE-ENGAGEMENT-109","same_project_planning_work":110,"observed_verified_at":"2026-11-18T17:06:28+01:00","date_contact_fields_implemented":false,"live_refresh_without_reload":"gap_found"},
+      "package_135":{"deployment":"76a0fe0f-ab7f-4338-a31a-415fb05a7d29","passed":45,"seconds":418.566,"final_exit":0,"migration_run":false,"fixtures_run":true,"purpose":"Native human/reassessment wake-up and explicit pause preservation"},
+      "runtime_135":{"web":"6605c150-e7d6-476f-95b7-14100c1e03ca","worker":"d4f2847e-6036-4a46-82f9-4e839c130753","paths_per_service":1695,"mismatches":0,"status":"SUCCESS"},
+      "package_136":{"deployment":"8670d684-4726-4f8d-8168-a61b445605f2","passed":9,"seconds":10.624,"final_exit":0,"migration_run":false,"fixtures_run":false},
+      "runtime_136":{"web":"7065cb26-d98b-4a1b-aa57-dc4871d983d1","worker":"c0660dde-02b1-493a-965f-248b707db139","paths_per_service":1695,"mismatches":0,"status":"SUCCESS"},
+      "browser_phone":{"case":"4b071249-0378-4a8c-bc80-7332dfd28378","work":111,"source":1981,"plan":1982,"reference":"SAMPLE-ENGAGEMENT-111","intake":"passed","manager_confirmation":"passed","live_watching_after_human":"observed","body_client_widths":[375,375],"drawer_width":359,"planning_work":112,"planning_link_observed_at":"2026-11-18T17:28:22+01:00","verified_observed_at":"2026-11-18T17:30:16+01:00","registration_and_final_readback":"passed_automatic_without_reload","final136_readback":"passed","empty_action_panel":false,"desktop_body_client_widths":[1265,1265]},
+      "states_with_browser_observations":205,
+      "observed_states_with_open_checks":186,
+      "completed_scoped_journeys":19,
+      "states_without_direct_browser_observation":57,
+      "implementation":"Current appointed PM-only candidates in work and legacy forms; native POST authority remains fresh",
+      "migrations":[],
+      "next":["Push tested engagement checkpoint","Build typed/versioned registration start date and client contact with current-source checks and deferred requiredness","Won-RFP manager carryover and remaining source-specific state coverage"],
+      "owner_policy":"Deferred; fixture nominations and namespace are synthetic only",
+      "all_states_accepted":false
+    },
     "issue_messages_20261118": {
       "status":"pg129_130_131_passed_hosted131_browser_owner_message_journey_verified",
       "base_checkpoint":"4acc6f7d",

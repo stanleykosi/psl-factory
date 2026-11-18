@@ -27,7 +27,7 @@ def workbench(request,case_id):
     role=lambda:forms.ChoiceField(choices=[(r,r) for r in ROLES]);key=lambda:forms.CharField(max_length=100)
     definitions={
         'capture':('Capture engagement provenance','engagement.capture',{'route':forms.ChoiceField(choices=[(r,r) for r in ['A','B','C']]),'evidence_id':evidence(),'reference':key(),'key':key(),'rfp_disposition':forms.ModelChoiceField(RFPDisposition.objects.filter(rfp__case=c,kind='route_a'),required=False)}),
-        'assign':('Record source-owned PM assignment','engagement.assign',{'pm_id':forms.ModelChoiceField(get_user_model().objects.filter(is_active=True,grant__case=c,grant__action='engagement.read',grant__active=True).distinct()),'role':role(),'evidence_id':evidence(),'key':key()}),
+        'assign':('Record source-owned PM assignment','engagement.assign',{'pm_id':forms.ModelChoiceField(d.pm_candidates(c),label='Appointed project manager'),'role':role(),'evidence_id':evidence(),'key':key()}),
         'register':('Record formal project identifier during Planning','engagement.register',{'value':forms.CharField(max_length=120),'role':role(),'evidence_id':evidence(),'plan_id':forms.ModelChoiceField(public_evidence(c.evidence.filter(kind='plan'))),'key':key()}),
         'export':('Create registration evidence for downstream work','engagement.export',{'key':key()}),
         'link':('Link registration to an existing delivery dossier','engagement.export',{'dossier_id':forms.ModelChoiceField(DeliveryDossier.objects.filter(case=c)),'key':key()}),

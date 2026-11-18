@@ -1,0 +1,19 @@
+# Main design reconciliation — 18 November 2026
+
+Source inspected: GitHub main `8f347a0a32a24ad3b48fbc6ab2ea351613e1dfa6`, fetched without merging or changing local work. Compared with `e74e3122`. The 1,228 changed paths are frontend, mock and delivery/review material; native application and board paths did not change. The inventory remains 262 states across 59 screen IDs.
+
+The older 15 November overview in `delivery/BACKEND-HANDOFF.md` is not a current implementation count. Its later F28–33 sections describe additional mock interactions. Design acceptance and mock test results are source requirements/evidence for the frontend, not native PostgreSQL, provider or business-policy acceptance. None appoints a real owner or decides a financial rule.
+
+| New handoff detail | Existing native path | Remaining engineering or verification |
+| --- | --- | --- |
+| Minutes: action owners/deadlines, internal filing, per-recipient publication | `factory_minutes`, native meeting/actions and controlled publication | Reconcile source-specific review/audience rules and remaining browser variants; never infer internal review exemption from the mock |
+| Document review: exact version, source sections/checks, return history, editable successors | Native controlled document/version/review, `design_document_review`, agent draft handoffs | Finish broader returned/editable successor and source-check browser coverage; do not carry old approval onto a successor |
+| Issues: no-login teams, actual recorded reply, reviewed reminder receipts, escalation link | Team controls, native reply/resolution/closure, owner-message checkpoint `b841ee6a` | Tested synthetic message/recovery journey complete; real destinations/providers and owner choices deferred |
+| Engagement: confirm the appointed manager, register during Planning, same-project handoff | `engagement` and `factory_engagement` | Correct candidate pickers in work and legacy forms; run PostgreSQL and fresh browser registration. Optional start-date/contact capture requested by the mock remains an engineering item, not an owner appointment |
+| Planning: five departments, fractional/unknown effort, readiness/costing decision | Native department inputs, source observations and reviewed readiness | Five-department collection already observed in77; current overview, fresh-costing and remaining role/device variants stay open |
+| Delivery: source gates, human decision, deterministic readiness, next-work link | Native delivery gates, release work and go-live handoff | Fresh browser branches remain; preserve distinction between a completed agent step and verified release readiness |
+| Income schedules: independent review, return/correction, unknown money, export/withdraw | Native schedules and Finance factory, source-owner correction, export adjustments/review withdrawal | Finish remaining held/source/inventory and independent browser variants. The old mock’s disabled export is not proof native export is missing |
+
+The application remains Django/server-rendered. Proposed `E-*` API shapes and fixture `serve` instructions are not active integration contracts. Reuse native permissions, exact revisions, idempotency, typed policy versions, human decisions and receipt reconciliation; do not replace these with fixture state changes.
+
+Current acceptance counts and exact remaining actions belong to `screen-state-acceptance.md` and BUILD-BACKLOG.json. Historical “running”, “pending” and “not built” statements in earlier notes describe those checkpoints; later verified evidence supersedes them explicitly. HOD values, live accounts and provider access remain separate from unfinished code and browser acceptance.

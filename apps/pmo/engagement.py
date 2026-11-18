@@ -58,6 +58,18 @@ def current_capture(c):
     if not r:raise ValidationError('Capture initial engagement before assignment or registration')
     return r
 
+def pm_candidates(case):
+    """Current appointed candidates only; the assignment command rechecks fresh."""
+    from apps.policy.role_assignments import eligibility
+    try:
+        values=reference_values(active_component('D05.role_principal_assignments',case))
+    except (PermissionDenied,ValidationError):
+        return get_user_model().objects.none()
+    nominated={value['user_id'] for value in values if value['role']=='PM'}
+    current=[pk for pk in nominated if eligibility(case,values,pk)['eligible_role_bundle']]
+    return get_user_model().objects.filter(pk__in=current,is_active=True,
+        grant__case=case,grant__action='engagement.read',grant__active=True).distinct().order_by('username','pk')
+
 @transaction.atomic
 def assign(a,case_id,pm_id,role,evidence_id,key):
     c=scope(a,case_id,'assign');e=proof(c,evidence_id);capture=current_capture(c)
