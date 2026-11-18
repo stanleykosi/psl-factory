@@ -122,6 +122,15 @@ describe('F-35 fixtures', () => {
     for (const title of titles) expect(partial, title).not.toContain(title);
   });
 
+  it('SEC-1-1: W-3210 (3 of 5 projects visible) carries only visible records: Tola’s steps cite 3 projects and no escalation id', () => {
+    const body = readItem('W-3210.json') as unknown as Item & { agent: { steps: { text: string; source?: string }[] } };
+    const agentText = body.agent.steps.map((s) => `${s.text} ${s.source ?? ''}`).join(' ');
+    expect(agentText).toContain('3 PROJECTS');
+    const all = JSON.stringify(body);
+    for (const hidden of ['5 PROJECTS', '41 MEETINGS', '12 ISSUES', '3 MILESTONES', '2 INVOICES']) expect(all, hidden).not.toContain(hidden);
+    expect(all).not.toMatch(/ESC-\d+|\bP-\d{4}\b|"case_id"|"work_id"/);
+  });
+
   it('a receipt the backend is still checking is never received, and only W-3204 says received by every recipient', () => {
     for (const name of names.filter((n) => !n.includes('.steps'))) {
       const body = readItem(name);

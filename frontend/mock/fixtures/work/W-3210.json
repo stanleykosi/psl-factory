@@ -95,19 +95,18 @@
     "status": "done",
     "steps": [
       {
-        "text": "Gathered October's records",
+        "text": "Gathered October's records you can see",
         "status": "done",
-        "source": "5 PROJECTS · 41 MEETINGS · 12 ISSUES"
+        "source": "3 PROJECTS · 24 MEETINGS · 7 ISSUES"
       },
       {
         "text": "Summarised milestones and money",
         "status": "done",
-        "source": "3 MILESTONES COMPLETE · 2 INVOICES VERIFIED"
+        "source": "2 MILESTONES COMPLETE · 1 INVOICE VERIFIED"
       },
       {
         "text": "Drafted the escalations section",
-        "status": "done",
-        "source": "ESC-0011 · ESC-0012"
+        "status": "done"
       }
     ],
     "started_at": "2026-11-01T07:00:00Z"
@@ -137,7 +136,7 @@
           {
             "id": "F-2",
             "label": "Milestones completed",
-            "value": "3"
+            "value": "2"
           },
           {
             "id": "F-3",
@@ -146,7 +145,7 @@
           {
             "id": "F-4",
             "label": "Invoices verified · paid is reported by Finance",
-            "value": "2"
+            "value": "1"
           }
         ]
       }

@@ -247,6 +247,28 @@ describe('the page computes nothing (AC 2 to 4)', () => {
     for (const title of titles) expect(document.body.textContent, title).not.toContain(title);
   });
 
+  it('SEC-1-1: W-3210 shows only the visible projects’ records, in the figures and in Tola’s text; the left-out projects are only a count', async () => {
+    await open(item('W-3210'));
+    const text = document.body.textContent!;
+    // the agent card is drawn (screen-reader copy while Tola is done), so its steps and sources are in the page
+    expect(text).toContain("Gathered October's records you can see");
+    expect(text).toContain('3 PROJECTS · 24 MEETINGS · 7 ISSUES');
+    expect(text).toContain('2 MILESTONES COMPLETE · 1 INVOICE VERIFIED');
+    // nothing from the full report (all five projects): no five-project source, no meeting or issue totals, no escalation id
+    for (const hidden of ['5 PROJECTS', '41 MEETINGS', '12 ISSUES', '3 MILESTONES', '2 INVOICES', 'ESC-0011', 'ESC-0012']) expect(text, hidden).not.toContain(hidden);
+    expect(text).not.toMatch(/ESC-\d+/);
+    // no project of any kind is named or linked: no title, no case id, no link to a project page
+    const projects = (read('projects/list.json') as { rows: { item: { title: string; case_id: string } }[] }).rows.map((r) => r.item);
+    for (const { title, case_id: caseId } of projects) {
+      expect(text, title).not.toContain(title);
+      expect(text, caseId).not.toContain(caseId);
+    }
+    expect(text).not.toMatch(/\bP-\d{4}\b/);
+    expect(document.querySelector('a[href^="/projects/"]')).toBeNull();
+    // the left-out projects appear only as the backend's count
+    expect(text.match(/left out/g)).toHaveLength(1);
+  });
+
   it('every fixture is marked sample because the record says so; a copy with sample false is not', async () => {
     vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
     for (const id of ['W-3201', 'W-3202', 'W-3203', 'W-3204', 'W-3205', 'W-3206', 'W-3207', 'W-3208', 'W-3209', 'W-3210', 'W-3211', 'W-3212']) {
