@@ -278,7 +278,7 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
             {ASSIGN_PM_TEXT.cancel}
           </Button>
         )}
-        <Button type="submit" form={FORM_ID} kind="primary" size={phone ? 'lg' : 'md'} block={phone} busy={busy} busyLabel="Assigning…" aria-disabled={off || undefined}>
+        <Button type="submit" form={FORM_ID} kind="start" size={phone ? 'lg' : 'md'} block={phone} busy={busy} busyLabel="Assigning…" aria-disabled={off || undefined}>
           {label}
         </Button>
       </>
@@ -286,7 +286,7 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
   }
 
   return (
-    <Drawer className="rfp-assign" title={title} eyebrow={phone ? undefined : heading} subline={phone ? heading : undefined} onClose={close} footer={footer}>
+    <Drawer className="rfp-assign" keepTop title={title} eyebrow={phone ? undefined : heading} subline={phone ? heading : undefined} onClose={close} footer={footer}>
       <div className="rfp-assign__body">{body}</div>
     </Drawer>
   );

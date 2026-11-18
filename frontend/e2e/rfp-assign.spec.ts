@@ -175,8 +175,8 @@ test.describe('desktop 1440', () => {
       await dialog(page).getByRole('button', { name: 'Assign PM' }).click();
       await expect(dialog(page).getByText(/We couldn’t confirm the PM was assigned/)).toBeVisible();
     }],
-    ['not open (W-3399)', async (page) => {
-      await openPanel(page, 'W-3399');
+    ['not open (W-1099, the mock’s no-access id)', async (page) => {
+      await openPanel(page, 'W-1099');
       await expect(dialog(page).getByText('You can’t open this item.')).toBeVisible();
     }],
     ['list after success', async (page) => {

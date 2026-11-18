@@ -111,3 +111,4 @@
 .rfp-assign__body { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
 .rfp-assign__next { margin: 0; font-size: var(--text-body-size); }
 .rfp-assign .resp-chip__remove, .rfp-assign .resp-filebtn, .rfp-assign .resp-chip__problem .psl-btn, .rfp-assign .resp-card__text .psl-btn { min-width: var(--control-phone); min-height: var(--control-phone); }
+.rfp-assign .psl-summary a { display: inline-block; padding: var(--space-2) 0; }
