@@ -140,11 +140,7 @@
           },
           {
             "id": "P-4",
-            "text": "Kind regards,\nPSL Product Studio Finance",
-            "attachment": {
-              "label": "INV-0391.pdf",
-              "size_bytes": 86016
-            }
+            "text": "Kind regards,\nPSL Product Studio Finance"
           }
         ]
       },
