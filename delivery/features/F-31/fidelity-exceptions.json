@@ -1,0 +1,377 @@
+{
+ "exceptions": [
+  {
+   "role": "link",
+   "name": "Overview",
+   "category": "frame item",
+   "reason": "Conflicts 15: the shared frame shows the destinations the signed-in persona (pm) has; the board shows a PMO Lead.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Setup",
+   "category": "frame item",
+   "reason": "Conflicts 15: the shared frame shows the destinations the signed-in persona (pm) has; the board shows a PMO Lead.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Kemi Adebayo · PMO Lead",
+   "category": "sample data",
+   "reason": "Conflicts 15: the shell shows the signed-in persona's name (Tunde Bello · PM).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tunde Bello · PMO",
+   "category": "sample data",
+   "reason": "Conflicts 15: the shell shows the signed-in persona's name (Tunde Bello · PM).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "PRE-SALE / ENGAGEMENTS / EN-0042",
+   "category": "frame",
+   "reason": "Conflicts 10: the frame draws the crumbs from context.crumbs as a plain list; the words are the backend's (Ojo Foods for Tamarind Loans, Conflicts 1/15).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "PROJECTS / TAMARIND LOANS / PLANNING · PLN-0031",
+   "category": "frame",
+   "reason": "Conflicts 10: the frame draws the crumbs from context.crumbs as a plain list; the words are the backend's (Ojo Foods for Tamarind Loans, Conflicts 1/15).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "PROJECTS",
+   "category": "frame",
+   "reason": "Conflicts 10: crumbs are plain text in the frame.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tablist",
+   "name": "Project",
+   "category": "frame",
+   "reason": "Conflicts 8: the project bar is a navigation of links, not a tablist, with no counts and none current.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Planning",
+   "category": "frame item",
+   "reason": "Conflicts 8: Planning is not a project tab (G-42-7); the item is reached from the project's line row.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Unknowns stay Unknown until someone supplies them; planning will ask for them.",
+   "category": "component",
+   "reason": "Conflicts 7/11: the returned text section is drawn as its own panel row by the shared text renderer, not a line inside the table panel. The words are from the fixture.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tola · PMO agent · done",
+   "category": "component",
+   "reason": "Conflicts 11: Tola's checklist is the shared workspace checklist (title, 'Tola', rows), not the CMP-09 card.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DONE",
+   "category": "component",
+   "reason": "Conflicts 11: no DONE tag on the checklist card; each row carries its own Done word.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Finished 14:09 Ask Tola",
+   "category": "component",
+   "reason": "Conflicts 11: no 'Finished' line; 'Ask Tola' is a workspace link drawn only when returned.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Finished 08 Dec 11:20 Ask Tola",
+   "category": "component",
+   "reason": "Conflicts 11: no 'Finished' line; 'Ask Tola' is a workspace link drawn only when returned.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "PM FOR THIS ENGAGEMENT",
+   "category": "component",
+   "reason": "D-112: the shared side-panel heading ('Decide') stands in until the backend sends a panel title.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "READINESS",
+   "category": "component",
+   "reason": "D-112: the shared side-panel heading ('Decide') stands in until the backend sends a panel title.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Open question for PSL: the factory asks for a PM again at this step. We pre-fill the RFP's PM so it's one tap, not a second assignment.",
+   "category": "missing",
+   "reason": "Conflicts 6: a designer's note to PSL, not drawn; it stays on the backend question list (G-41-2).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Carried over from the RFP",
+   "category": "sample data",
+   "reason": "Conflicts 15: the page draws the returned hint in full ('Carried over from the RFP. Change it only if someone else will run delivery.') and a different PM name.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tunde Bello ▾",
+   "category": "sample data",
+   "reason": "Conflicts 15: the PM chosen is Sola Martins (P-0106's PM), from assign.default_person_id.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "ROUTE A · FROM TL-RFP-2026-014",
+   "category": "sample data",
+   "reason": "Conflicts 1/15: the sample sits on Ojo Foods (OF-RFP-2026-006); the page draws the subtitle as returned.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Proof",
+   "category": "component",
+   "reason": "Conflicts 13: the proof cite is the backend's evidence cite, drawn as plain text because an evidence id has no app page.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Unknown",
+   "category": "component",
+   "reason": "Conflicts 13: an estimate the response does not give reads Unknown through the shared Unknown value (a chip), never blank.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Engineering now says 230 person-days; the RFP costing used 210. The SOW price can't come from costing v2 as it stands: a new costing version (v3) will be needed and its approvals start again. Open que",
+   "category": "missing",
+   "reason": "Conflicts 6: the finding is drawn as returned; the designer's note to PSL is not (G-42-5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Engineering's estimate changed (230 vs 210 days): a new costing version will be needed.",
+   "category": "frame",
+   "reason": "Conflicts 7: the phone shows the one returned finding, not a shorter second sentence.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "PLANNING",
+   "category": "frame item",
+   "reason": "Conflicts 9: 'PLANNING' is not drawn as a bar title.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "PLN-0031 · 2 OF 5 DEPARTMENTS IN",
+   "category": "frame item",
+   "reason": "Conflicts 9/13: the bar ends with the item's reference; the status tag carries 'PLANNING · 2 OF 5 IN' from the response.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← Engagement",
+   "category": "frame item",
+   "reason": "Conflicts 9: the register form is the shared full-height Drawer with its own Close.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← Planning",
+   "category": "frame item",
+   "reason": "Conflicts 9: the record form is the shared full-height Drawer with its own Close.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← My work",
+   "category": "frame item",
+   "reason": "Conflicts 9: the engagement keeps the frame's one back link ('Back to Queue').",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← Project",
+   "category": "frame item",
+   "reason": "Conflicts 9: one back link in the shell bar ('Back to Project').",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Kick-off plan v1",
+   "category": "sample data",
+   "reason": "Conflicts 15: the uploaded file's own name and size are shown by the shared proof field.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Uploaded · 410 KB",
+   "category": "sample data",
+   "reason": "Conflicts 15: the uploaded file's own name and size are shown by the shared proof field.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "tamarind-kickoff-plan-v1.pdf",
+   "category": "sample data",
+   "reason": "Conflicts 15: the uploaded file's own name and size are shown by the shared proof field.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "qa-plan-tamarind.pdf",
+   "category": "sample data",
+   "reason": "Conflicts 15: the uploaded file's own name and size are shown by the shared proof field.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Uploaded · 210 KB",
+   "category": "sample data",
+   "reason": "Conflicts 15: the uploaded file's own name and size are shown by the shared proof field.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "15 Jan 2027",
+   "category": "component",
+   "reason": "Conflicts 3: the typed date is the value of the shared date field, not a text node.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Ngozi Bello · Head of Lending Operations",
+   "category": "component",
+   "reason": "Conflicts 3: the typed contact is the value of the shared text field, not a text node.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Test plan and QA effort for the loan app",
+   "category": "component",
+   "reason": "Conflicts 4/14: the typed value is the value of F-18's field, not a text node.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "45",
+   "category": "component",
+   "reason": "Conflicts 4/14: the typed estimate is the value of F-18's number field.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "11 Dec 2026, 16:05",
+   "category": "component",
+   "reason": "Conflicts 4/14: F-18's Received field is a native date-time input.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Department (still waiting)",
+   "category": "component",
+   "reason": "Conflicts 14: F-18's own word 'Team' stays in the shared form.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Used for the new costing version.",
+   "category": "component",
+   "reason": "Conflicts 14: F-18's own help ('Needed for the costing sheet.') stays in the shared form.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "TAMARIND LOANS · PLANNING",
+   "category": "sample data",
+   "reason": "Conflicts 15: the Drawer's eyebrow is the project title from the response (Ojo Foods · ordering app).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "×",
+   "category": "component",
+   "reason": "Conflicts 4: the shared Drawer's Close is an icon button named Close.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Cancel",
+   "category": "component",
+   "reason": "Conflicts 4: Cancel is a button in the shared Drawer's footer, not a link.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-41-desktop",
+   "width": 1440,
+   "visual": 81.9,
+   "reason": "Measured 81.9 in round 2. Gaps: Tola's checklist is the shared rows in the main column with no check icons or 'Finished' line (Conflicts 11); the PM form is open in the Decide panel with the shared heading and a Note box (Conflicts 2, 14, D-112); the unknowns line is its own panel; shared frame (Alerts bell, persona name, no Overview/Setup, crumbs list, status tag and History link, D-99/D-112); Ojo Foods sample data; page runs taller than the board. Shared-renderer differences (UI-1-11): section notes are amber callouts where the boards draw plain note text; the estimate finding is a plain row with a COSTING V2 cite where the board draws an amber callout; the status tag tone is the fixture's (UI-1-10, design engineer to choose).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-41-mobile",
+   "width": 390,
+   "visual": 79.2,
+   "reason": "Measured 79.2 in round 2. Gaps: the page keeps desktop's sections in one column (Conflicts 7): packet rows are stacked with labels, and the unknowns line and Tola's checklist are drawn where the board drops them; Confirm PM flows at the end of the page instead of pinned (Conflicts 7); shared phone bar ('Back to Queue', Alerts, Start); title wraps 'EN-0042'; Ojo Foods sample data. Shared-renderer differences (UI-1-11): section notes are amber callouts where the boards draw plain note text; the estimate finding is a plain row with a COSTING V2 cite where the board draws an amber callout; the status tag tone is the fixture's (UI-1-10, design engineer to choose).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-42-desktop",
+   "width": 1440,
+   "visual": 74.3,
+   "reason": "Measured 74.3 in round 2. Gaps: project bar is a row of links with no Planning tab and no counts (Conflicts 8); row actions are the shared outlined item-step Button in an extra column, where the board draws text links in the PROOF column (D-91, component); Tola's checklist is main-column shared rows, not the CMP-09 card (Conflicts 11); Readiness is the shared 'Decide' panel with the reason above the disabled button (D-112); the byline reads 'PM Sola Martins' as plain text, not a tag; shared frame and crumbs (Conflicts 10); page runs about 250px taller. Shared-renderer differences (UI-1-11): section notes are amber callouts where the boards draw plain note text; the estimate finding is a plain row with a COSTING V2 cite where the board draws an amber callout; the status tag tone is the fixture's (UI-1-10, design engineer to choose).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-42-mobile",
+   "width": 390,
+   "visual": 79.5,
+   "reason": "Measured 79.5 in round 2. Gaps: the department table is stacked with labels (Conflicts 7), where the board draws a short list; Tola's checklist and the pinned Readiness bar are added (Conflicts 7, 11); the phone finding is the one returned sentence; project bar links; shared phone bar ('Back to Project', reference at the end, status tag on the meta line, Conflicts 9). Shared-renderer differences (UI-1-11): section notes are amber callouts where the boards draw plain note text; the estimate finding is a plain row with a COSTING V2 cite where the board draws an amber callout; the status tag tone is the fixture's (UI-1-10, design engineer to choose).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-41-desktop-register",
+   "width": 1440,
+   "visual": 80.1,
+   "reason": "Measured 80.1 in round 2 (frozen after the upload finished). Gaps: the form opens in the side column under the shared 'Register engagement' head, where the board draws it in the main column (Conflicts 3); the packet, unknowns line and Tola's checklist stay on the page (the board shows only the form); the proof field is the shared chip with 'Add another file', and a Note-free form with '(optional)' labels; the date field is the shared DateField with a calendar button; PM fact row; shared frame, crumbs list, status tag. Shared-renderer differences (UI-1-11): section notes are amber callouts where the boards draw plain note text; the estimate finding is a plain row with a COSTING V2 cite where the board draws an amber callout; the status tag tone is the fixture's (UI-1-10, design engineer to choose).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-41-mobile-register",
+   "width": 390,
+   "visual": 77.7,
+   "reason": "Measured 77.7 in round 2 (frozen after the upload finished). Gaps: the form is the shared full-height Drawer with its Close button, where the board is its own screen with '← Engagement' (Conflicts 3, 9); the primary sits at the bottom of the sheet with Cancel beside it (AC 15), where the board pins one button; the proof field is the shared chip with 'Add another file'; the page behind the sheet is the stacked engagement page, which the board does not show. Shared-renderer differences (UI-1-11): section notes are amber callouts where the boards draw plain note text; the estimate finding is a plain row with a COSTING V2 cite where the board draws an amber callout; the status tag tone is the fixture's (UI-1-10, design engineer to choose).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-42-desktop-record",
+   "width": 1440,
+   "visual": 85.5,
+   "reason": "Measured 85.5 in round 2 (frozen with the Drawer open and the form filled). Gaps: the page behind the Drawer carries the project bar as links, row actions as outlined Buttons in an extra column, and the shared Decide panel and Tola's checklist (Conflicts 8, 11, D-91); the form keeps F-18's own wording and fields: 'Team' and 'Who gave it', the attestation, Note, a native date-time Received, and Record input pinned in the Drawer body with Cancel in the footer (Conflicts 4, 14); the Drawer eyebrow is the response's project title (Ojo Foods). Shared-renderer differences (UI-1-11): section notes are amber callouts where the boards draw plain note text; the estimate finding is a plain row with a COSTING V2 cite where the board draws an amber callout; the status tag tone is the fixture's (UI-1-10, design engineer to choose).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-42-mobile-record",
+   "width": 390,
+   "visual": 72.2,
+   "reason": "Measured 72.2 in round 2 (frozen with the Drawer open and the form filled). Gaps: the form is the shared full-height Drawer with its Close, where the board is a screen with '← Planning' and 'Record input' (Conflicts 4, 9); the form keeps F-18's wording and extra fields ('Team', 'Who gave it', the attestation, Note, native Received, the 'Needed for the costing sheet' hint, Conflicts 14), so it is longer than the board's; the page behind the sheet is the stacked planning page. Shared-renderer differences (UI-1-11): section notes are amber callouts where the boards draw plain note text; the estimate finding is a plain row with a COSTING V2 cite where the board draws an amber callout; the status tag tone is the fixture's (UI-1-10, design engineer to choose).",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ]
+}

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-33",
   "outcome": "Income detail \u00b7 October: Finance reviews the prepared income schedule, returns it for correction or approves it, in four states (contract mock only)",
-  "state": "PLANNED",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-FIN-SCHEDULES"
   ],
@@ -56,7 +56,13 @@
     ],
     "blocking_decision_ids": [],
     "readiness_checked": true,
-    "explicit_exception": null
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -69,7 +75,32 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T01:58:22Z",
+      "seconds": 212.0,
+      "evidence_ref": "delivery/features/F-33/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T02:25:14Z",
+      "seconds": 279.5,
+      "evidence_ref": "delivery/features/F-33/round-2/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -79,7 +110,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -95,7 +126,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-33/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -123,8 +154,619 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "frontend/src/features/workspace/InlineDecide.tsx:92-95. Problem: on any 200 the panel calls `onDecided(VERDICT_WORDS[verdict].heading(label))`. That shows the success callout \"Schedule v1 is approved\" at once and keeps it after the re-read, without checking `view.result.work_state` or the re-read item. Expected: the same rule as F-16 `DoneView` (`src/features/decide/DecideStates.tsx:414-417`). When `result.work_state === 'effect_uncertain'`, or the re-read item has `state: effect_uncertain` or a `reconcile`, the page never states the outcome. Show neutral or \"not confirmed\" wording (or no notice) and let the re-read item's ReconcilePanel lead. An unknown verdict echo already falls back to `RECORDED`. Actual: an approval over money whose effect the backend could not confirm reads \"is approved\" in a success callout, next to the ReconcilePanel that WorkItemOverview draws from the re-read item. This breaks the \"reconcile uncertain effects\" invariant and the F-16 behaviour the spec says to reuse. Add a component test: the decide answers 200 with `work_state: 'effect_uncertain'`, and the page does not say \"approved\" or \"verified\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:02:32Z",
+          "head": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:25:14Z",
+          "refs": [
+            "9ebc7cbc"
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:34:57Z",
+          "refs": [
+            "`InlineDecide.tsx:107-117` waits for `useDecision`'s own re-read (`reloaded` or `refreshFailed`), runs one page `reload()`, and words the notice as an outcome only when `!uncertain && now !== undefined && reloaded !== null`. `uncertain` uses the same three tests as `DecideStates.tsx` `DoneView`. When the notice is unsettled, `Workspace.tsx:442-448` draws a warning callout in `role=\"alert\"` and no success callout. Tests: approve, return and reject each answer 200 with `work_state: effect_uncertain`. In each, the page shows \"Schedule v1: result not confirmed\" and the item's \"We are checking what happened. Nothing was sent again.\", never \"approved\", \"returned\", \"rejected\" or \"verified\", and sends exactly one decide. A fourth test covers a 200 \"verified\" whose re-read has a `reconcile`. On the round-1 code all four would show the outcome heading at once."
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9ebc7cbc"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`InlineDecide.tsx:107-117` waits for `useDecision`'s own re-read (`reloaded` or `refreshFailed`), runs one page `reload()`, and words the notice as an outcome only when `!uncertain && now !== undefined && reloaded !== null`. `uncertain` uses the same three tests as `DecideStates.tsx` `DoneView`. When the notice is unsettled, `Workspace.tsx:442-448` draws a warning callout in `role=\"alert\"` and no success callout. Tests: approve, return and reject each answer 200 with `work_state: effect_uncertain`. In each, the page shows \"Schedule v1: result not confirmed\" and the item's \"We are checking what happened. Nothing was sent again.\", never \"approved\", \"returned\", \"rejected\" or \"verified\", and sends exactly one decide. A fourth test covers a 200 \"verified\" whose re-read has a `reconcile`. On the round-1 code all four would show the outcome heading at once."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/workspace/Workspace.tsx:613-635 with frontend/src/features/work-item/WorkItemOverview.tsx:705-710. Problem: on the income line (desktop), WorkItemOverview stops drawing the screen-reader station track, and it stops drawing the agent card while the agent is working. It assumes `LineStations` and `LineAgent` draw them visibly, but only the writable `WorkspaceSteps` branch draws them. When `workspace.revision` is absent (the read-only branch of `Workspace`), the stations and the working agent card are not on the page at all. Expected: the read-only branch also draws `LineStations` and `LineAgent` for the income line, or the screen-reader copies stay unless the workspace draws them. Actual: the contract data is dropped in that branch (D-73 says it is never dropped). No current fixture hits this.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:02:32Z",
+          "head": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:25:14Z",
+          "refs": [
+            "9ebc7cbc"
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:34:57Z",
+          "refs": [
+            "`Workspace.tsx:610-640`: in the read-only branch, the income line draws `LineStations`, and `LineAgent` while the agent is working. `useIsPhone` is called before the early return, so the hooks run in a fixed order. Test: W-2701 without a revision draws 5 stations, one \"Stations\" region and one \"Agent at work\" region."
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9ebc7cbc"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`Workspace.tsx:610-640`: in the read-only branch, the income line draws `LineStations`, and `LineAgent` while the agent is working. `useIsPhone` is called before the early return, so the hooks run in a fixed order. Test: W-2701 without a revision draws 5 stations, one \"Stations\" region and one \"Agent at work\" region."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/workspace/Workspace.tsx:184-185, 428-432. Problem: the `decided` notice is page state that is never cleared. After Return, then Correct and resubmit, the success callout \"Schedule v1 was returned\" still shows next to the step's own notice while the item is back in review. Expected: clear it when the next write starts, or when the re-read item no longer carries that task's decision. Actual: it stays until the page remounts.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:02:32Z",
+          "head": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:25:14Z",
+          "refs": [
+            "9ebc7cbc"
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:34:57Z",
+          "refs": [
+            "The notice carries `revision: now?.workspace?.revision` and is shown only while that equals `workspace.revision` and no step is pending or answered. Test: Return, then Correct and resubmit, and \"Schedule v1 was returned\" is gone. On the round-1 code it stayed."
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9ebc7cbc"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The notice carries `revision: now?.workspace?.revision` and is shown only while that equals `workspace.revision` and no step is pending or answered. Test: Return, then Correct and resubmit, and \"Schedule v1 was returned\" is gone. On the round-1 code it stayed."
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/workspace/InlineDecide.tsx:86. Problem: `settled` also matches the pre-reconcile `item` view as soon as `uncertain` turns true. So after a 5xx or network failure the page runs `reload()` twice: once while `useDecision` is still reconciling, and again on the reconciled view. Expected: one page re-read, after the reconcile settles. Actual: one extra GET. Nothing is resent and the order (decide, then GET) holds, so this is not a correctness bug.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:02:32Z",
+          "head": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:25:14Z",
+          "refs": [
+            "9ebc7cbc"
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:34:57Z",
+          "refs": [
+            "`reconciled` needs `submit.status === 'idle'`, which `useDecision` sets only after `await reconcile(...)` (`useDecision.ts:217-218`). The page therefore re-reads once, after the reconcile. `handled` is keyed on the identity of the view object, so the effect runs once. Test with slowed reads: exactly 2 item GETs, where round-1 code made 3."
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9ebc7cbc"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`reconciled` needs `submit.status === 'idle'`, which `useDecision` sets only after `await reconcile(...)` (`useDecision.ts:217-218`). The page therefore re-reads once, after the reconcile. `handled` is keyed on the identity of the view object, so the effect runs once. Test with slowed reads: exactly 2 item GETs, where round-1 code made 3."
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/work-item/WorkItemOverview.tsx:700-726. Problem: the file is outside the listed lane (spec \"Lanes\"). Expected: the coordinator confirms the two edits, which are gated on `income_schedules` and already declared under build.md \"Open\". Actual: the edits are correct and leave other lines unchanged. Recorded for the integration owner only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:02:32Z",
+          "head": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:25:14Z",
+          "refs": [
+            "9ebc7cbc"
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:34:57Z",
+          "refs": [
+            "The coordinator accepted the two `WorkItemOverview.tsx` edits (build.md \"Fixes\"). Both stay gated on `income_schedules`, and this round does not change that file. The new guard tests check W-2304 (minutes): the decided card and screen-reader station track are still drawn, with no `.ws-stations`. They check W-2411 (issue): the screen-reader stations and agent card are kept, and none of the income line's elements are drawn. These tests pass on both the old and the new code, as guards should."
+          ],
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9ebc7cbc"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The coordinator accepted the two `WorkItemOverview.tsx` edits (build.md \"Fixes\"). Both stay gated on `income_schedules`, and this round does not change that file. The new guard tests check W-2304 (minutes): the decided card and screen-reader station track are still drawn, with no `.ws-stations`. They check W-2411 (issue): the screen-reader stations and agent card are kept, and none of the income line's elements are drawn. These tests pass on both the old and the new code, as guards should."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/workspace/Workspace.tsx:187. Problem: `decidedShown` also requires `flow.notice === null`, but `useWorkspaceStep` never clears its notice except when the next step starts. So if a step's done or queued notice is still showing from earlier in the session, a later inline decide shows no notice at all: no outcome and no \"result not confirmed\". Meanwhile the old step notice stays. This is safe: no outcome is ever claimed, and an uncertain re-read still brings up the item's own reconcile or uncertain view. But the person gets no word on the decision. Expected: when a decide starts, clear the step notice (`flow.setNotice(null)`), or compare the two notices by when they happened. Actual: the decision notice is suppressed. This only happens when one person sends a step and then decides on the same page.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "/work/W-2706 (desktop): the hold shows a full-width \"See all exceptions\" button above the stations, so the hold page is not button-free and the control reads oddly. Expected: a hold with no action controls. Actual: one link-button, probably from the shared frame; confirm it is intended or remove it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "/work/W-2702 (desktop): Approve, Return and Reject act on one press with no confirmation and no stated consequence for Reject. Matches the approved F-29-style inline decide, so not blocking. Expected: Reject copy says what it does. Actual: only the Approve line explains \"doesn't post anything\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-54-desktop-returned, SCR-54-mobile-returned | The returned quote \"Ada Okafor returned it on 13 Nov: \u2026\" has the wrong tone.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-54-desktop-investigating, SCR-54-mobile-investigating | The agent card's footer is not in the card.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-54-desktop-review | Type styling in the Decide panel differs from the board in two places:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-4",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-54-desktop-returned, SCR-54-mobile-returned | Some differences on the returned boards come from the shared frame. They are waivable but missing from the waivers, so the design engineer would sign without seeing them. Name each in the two returned waivers:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-5",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "all 8 boards | The \"SAMPLE DATA\" exception cites the wrong authority.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-6",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-54-mobile-* | The four phone waivers share one closing sentence (\"the full returned amount and sentences, and the desktop step labels\"), but it does not fit every board:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-7",
+      "round": 2,
+      "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "all phone boards (frame) | The frame's phone History link measures 42x24, under D-92c's 44 px.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:34:57Z",
+          "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+          "evidence_refs": [
+            "delivery/features/F-33/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-33/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ui": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+          "evidence_refs": [
+            "delivery/features/F-33/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "evidence_refs": [
+            "delivery/features/F-33/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-33/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "evidence_refs": [
+            "delivery/features/F-33/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "evidence_refs": [
+            "delivery/features/F-33/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+          "evidence_refs": [
+            "delivery/features/F-33/round-2/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -144,11 +786,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-FIN-SCHEDULES",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "d9ca6f97f4bca34349115014697714c3ab7aae9b",
+    "task_branch": "fe-fin-schedules-income-detail-review",
+    "head_sha": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-33",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -158,7 +800,35 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/income-schedule.spec.ts",
+      "frontend/mock/fixtures/work/W-2701.json",
+      "frontend/mock/fixtures/work/W-2702.approve.json",
+      "frontend/mock/fixtures/work/W-2702.json",
+      "frontend/mock/fixtures/work/W-2702.reject.json",
+      "frontend/mock/fixtures/work/W-2702.return.json",
+      "frontend/mock/fixtures/work/W-2703.json",
+      "frontend/mock/fixtures/work/W-2703.next.json",
+      "frontend/mock/fixtures/work/W-2703.steps.json",
+      "frontend/mock/fixtures/work/W-2704.json",
+      "frontend/mock/fixtures/work/W-2705.json",
+      "frontend/mock/fixtures/work/W-2706.json",
+      "frontend/mock/fixtures/work/W-2707.json",
+      "frontend/mock/fixtures/work/W-2708.json",
+      "frontend/mock/fixtures/work/W-2709.json",
+      "frontend/mock/fixtures/work/W-2710.json",
+      "frontend/mock/fixtures/work/W-2711.json",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/income-schedule.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -191,9 +861,74 @@
     }
   },
   "created_at": "2026-11-18T00:08:37Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
+  "round": 3,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T00:28:09Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T00:28:09Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T01:58:47Z",
+      "round": 1,
+      "head": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T02:02:32Z",
+      "round": 1,
+      "head": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T02:02:33Z",
+      "round": 2,
+      "head": "552c91602c0dc6e3d1e089517c3cb4bc19e9fcfd",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T02:25:44Z",
+      "round": 2,
+      "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T02:34:57Z",
+      "round": 2,
+      "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T02:34:58Z",
+      "round": 3,
+      "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+      "reason": null
+    }
+  ],
   "routing": {
     "review": {
       "technical": "opus",
@@ -208,7 +943,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 3,
     "attempts": 0,
     "verdict": null,
     "commit": null

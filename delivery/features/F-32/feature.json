@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-32",
   "outcome": "Delivery tab and release gates: a project's six delivery lines, and the release item from waiting on the PMO Lead through their decision to release ready (contract mock only)",
-  "state": "PLANNED",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-DELIVERY-RELEASE"
   ],
@@ -58,7 +58,13 @@
     ],
     "blocking_decision_ids": [],
     "readiness_checked": true,
-    "explicit_exception": null
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -71,21 +77,50 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T01:24:01Z",
+      "seconds": 281.1,
+      "evidence_ref": "delivery/features/F-32/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T02:04:18Z",
+      "seconds": 263.8,
+      "evidence_ref": "delivery/features/F-32/round-2/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "evidence_refs": [
+        "delivery/features/F-32/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "evidence_refs": [
+        "delivery/features/F-32/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -97,36 +132,853 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-32/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "evidence_refs": [
+        "delivery/features/F-32/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "evidence_refs": [
+        "delivery/features/F-32/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "evidence_refs": [
+        "delivery/features/F-32/round-2/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/workspace/Steps.tsx:66 A task that is present but not actionable and has no `decision` shows the generic \"This decision isn't open to you here.\" It drops `cannot_act_reason`, which is the only authority text the response gave. Expected: use the reason where one exists. Actual: the generic sentence. This is not a defect on the current fixtures.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/tests/mock-contract.test.ts:647 The F-23 guard was widened from `/^W-23/` to `/^W-2[35]/`. This is a legitimate follow-on (W-2501 and W-2503 carry links), but it also admits W-24xx and W-25xx files. Expected: `/^W-(23 | 2501 | 2503)/`. Actual: `/^W-2[35]/`, which is slightly broader than needed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "/work/W-2501 at 1440: the \"Planning decision\" task panel sits right-aligned with a large empty area to its left and its bottom edge touches the \"Release gates\" card below. Expected a tidy block; actual a floating panel (shared TaskPanels placement, Conflicts 4, an approved extra). Consider a margin below it or full-width placement.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "W-2501 at 1440: the Planning decision panel now spans the full content width, with a margin before the Release gates card. There is no floating panel or blank left band (screenshot checked)."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-2501 at 1440: the Planning decision panel now spans the full content width, with a margin before the Release gates card. There is no floating panel or blank left band (screenshot checked)."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "/work/W-2501, W-2502, W-2503 at 390: the shared \"History\" link is 24px tall, under the 44px target of D-92c. Pre-existing shared frame (LineHeader), not introduced here; fix when the frame is next touched.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-2502 at both widths: \"Claim it first\" appears as a small grey line under \"Approve for release\" without saying that the claim happens on the next page. Expected a clearer hint (e.g. \"You claim it on the next page\"); actual terse copy. Shared frame wording from the fixture's claim_required.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "W-2502 at 1440 and 390: no \"Claim it first\" text on the page. Approve for release and Return with a note render as clean links with no stray hint."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-2502 at 1440 and 390: no \"Claim it first\" text on the page. Approve for release and Return with a note render as clean links with no stray hint."
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-43-desktop sub-nav: Overview is not shown as the current item, and the strip is the wrong component size. Expected (board): separate 36px items with a 4px gap and Overview filled ink (#1F2427) with white text. Actual: a joined 44px `psl-tabs` strip in which Overview is white. The shared selected style keys on `aria-selected`, but the page sets `aria-current=\"page\"` and adds no matching rule, so on 4873 Overview has background rgb(255,255,255). `setup.css:15-17` already has the token-based rule for `.psl-tab[aria-current=\"page\"]`. Paths: frontend/src/features/projects/DeliveryTab.tsx:30-46 and project-tabs.css:52.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "SCR-43 at 1440: sub-nav items are separate, with Overview filled dark and white text, matching the board (side-by-side.png)."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "SCR-43 at 1440: sub-nav items are separate, with Overview filled dark and white text, matching the board (side-by-side.png)."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-43-desktop and SCR-43-mobile, Tola's check: the component is used wrongly. `AgentCard` sits inside `Panel kind=\"agent\"`. That draws two blue frames, and `components.css:73` turns every step line blue (`--action-ink`), which leaves the dark tick barely visible on the blue box. The card head becomes an uppercase blue Archivo panel title. Expected (board): one agent card. Its head has the avatar, \"Checked where delivery stands\" in sentence-case ink, the \"Tola \u00b7 \u2026\" line and the DONE tag. Step text is ink 14px with white ticks, and \"Checked 12 Apr 09:00\" and \"Ask Tola\" sit on one footer line under a rule. Actual: a nested card with blue body text, and Ask Tola on its own line below. Path: frontend/src/features/projects/DeliveryTab.tsx:98-111.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "SCR-43: one agent card with the sentence-case title, \"Tola \u00b7 PMO agent \u00b7 done\", the DONE tag, ink step text, and \"Checked 12 Apr 09:00\" with Ask Tola on one footer line. Next sits beneath it."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "SCR-43: one agent card with the sentence-case title, \"Tola \u00b7 PMO agent \u00b7 done\", the DONE tag, ink step text, and \"Checked 12 Apr 09:00\" with Ask Tola on one footer line. Next sits beneath it."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-43-desktop and SCR-43-mobile rows: the row styling differs from the board.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "28px bordered number boxes, ink underlined links where the row links, and tighter rows. The rows are still a little taller than the board, which is a taste difference."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "28px bordered number boxes, ink underlined links where the row links, and tighter rows. The rows are still a little taller than the board, which is a taste difference."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-43, Hypercare \"Running\" tag: drawn blue (`tone: \"agent\"`) where the board draws it amber. The tone comes from the fixture, so the data can supply the board's colour, and no exception covers it. Path: frontend/mock/fixtures/projects/P-0101.json, `delivery_hypercare.gate.tone`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "The Hypercare \"RUNNING\" tag is amber on the 1440 page."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The Hypercare \"RUNNING\" tag is amber on the 1440 page."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-44-desktop (W-2501) layout: the \"Planning decision\" task panel fills the frame's aside column on a row of its own. That leaves a blank band about 240px tall, the full width of the main column, to its left. The Release gates and checks panels are then pushed below it at full width. Expected (board): the gates panel starts at the top of the main column with the agent panel beside it. The spec (Conflicts 4) keeps the panel as an extra element but does not approve this gap. Cause: `work-columns` renders an empty `work-column` when the line item's main area is empty (WorkItemOverview.tsx:724-735). Fix: don't render an empty main column (for example, put the task panel in the workspace side column), or take Conflicts 4 Option B with the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "W-2501 at 1440 and 390: no blank band, and the task panel runs full width with a gap below it. W-2901 and W-2411 are unaffected."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2501 at 1440 and 390: no blank band, and the task panel runs full width with a gap below it. W-2901 and W-2411 are unaffected."
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-44-desktop and SCR-44-mobile, \"Planning decision\" gate: the row shows two statuses that disagree. An inline \"WAITING FOR PMO LEAD\" tag and the line \"Held by PMO Lead\" sit on the left, and a right-aligned \"IN PROGRESS\" tag (from `status: \"now\"`) sits on the right. Expected (board): one right-aligned \"WAITING FOR PMO LEAD\" tag, like the other gates. Path: frontend/mock/fixtures/work/W-2501.json, gates item G-3. Fix the fixture or the frame mapping, or record it as an exception for the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "The Planning decision row shows one \"Waiting for PMO Lead\" tag plus \"Held by PMO Lead\". The tag is inline rather than right-aligned (shared checklist row) and is listed in the waiver."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The Planning decision row shows one \"Waiting for PMO Lead\" tag plus \"Held by PMO Lead\". The tag is inline rather than right-aligned (shared checklist row) and is listed in the waiver."
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Restyles that are in neither the spec's Conflicts nor fidelity-exceptions.json. The D-83 waivers say they cover only \"listed Conflicts 5, 6, 7, 9 and 10\" differences, so each needs a fix or a listed exception:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "(d) \"Claim it first\" removed from the fixtures. (a), (b), (c) and (e) are waived as shared frame behaviour, as judged above. This holds only if the design engineer signs each as a listed exception."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "(d) \"Claim it first\" removed from the fixtures. (a), (b), (c) and (e) are waived as shared frame behaviour, as judged above. This holds only if the design engineer signs each as a listed exception."
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Problems in fidelity-exceptions.json:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "The four SCR-43 links and the Next sentence are re-filed as `sample data`. The duplicated \"Conflicts 5:\" prefix is fixed, and the Tola entry now says it covers SCR-44."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The four SCR-43 links and the Next sentence are re-filed as `sample data`. The duplicated \"Conflicts 5:\" prefix is fixed, and the Tola entry now says it covers SCR-44."
+      ]
+    },
+    {
+      "id": "UI-1-9",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-44-desktop-ready and SCR-44-mobile-ready: \"Open go-live\" is a secondary outlined button in the links row. The board has a primary blue button in the Next panel (desktop) or the phone bar. Spec Conflicts 10 records this as `frame layout`, but the exceptions file has no entry for the restyle. Add one so the design engineer signs it with the waiver.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:04:18Z",
+          "refs": [
+            "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:07:59Z",
+          "refs": [
+            "Open go-live is now a `frame layout` exception."
+          ],
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Open go-live is now a `frame layout` exception."
+      ]
+    },
+    {
+      "id": "UI-1-10",
+      "round": 1,
+      "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "All SCR-44 phone boards: the frame's History link is 42x24px at 390, below the 44px target. It comes from the existing F-30 frame, not from this diff; record it for a frame fix.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T01:30:38Z",
+          "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "owner": "frontend/mock/fixtures/work/W-2502.json..W-2507.json",
+      "severity": "info",
+      "blocking": false,
+      "summary": "The fixtures no longer carry `claim_required`, so the \"Claim it first\" hint is not exercised on the release lines. It is a hint only, and the claim still happens on the decide page. Consider one fixture with it set so the hint stays covered. No change is required.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:07:59Z",
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After the approve, the re-read W-2502 (`W-2502.approve.json`, T-2502 `cannot_act_reason: \"already_decided\"`) still shows the \"Planning decision\" panel reading \"Only a PMO Lead can decide.\". That reads as if the decision is still open. The cause is the shared `TaskPanels` (`frontend/src/features/work-item/WorkItemOverview.tsx:497`, unchanged from base), which ignores `cannot_act_reason`. The F-16 page already has the \"This decision has already been made.\" copy (`decide/DecideStates.tsx:41`). This is a frame follow-up and does not affect this feature's acceptance criteria.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T02:37:04Z",
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec lists `src/features/work-item/**` as shared read only, but round 2 edits `WorkItemOverview.tsx` and `work-item.css` (`work-columns--lone`, scoped to `line_key === 'delivery_release'`). This is not in AC-22's forbidden list, and I confirmed W-2901, W-2411 and W-2201 unchanged. It should still be noted for the merge with F-31 and F-33, which render through the same frame.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T02:37:04Z",
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "owner": "backend",
+      "severity": "info",
+      "blocking": false,
+      "summary": "On the mock, a return on T-2502 leaves the item unchanged: `you_can_act: true`, revision 1, and Approve for release is offered again. A second decide would therefore be accepted. This is expected under the spec (the returned board is part 2). A real backend must close or advance the task on return.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-32/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T02:37:04Z",
+          "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+          "evidence_refs": [
+            "delivery/features/F-32/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-32/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+          "evidence_refs": [
+            "delivery/features/F-32/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+          "evidence_refs": [
+            "delivery/features/F-32/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+          "evidence_refs": [
+            "delivery/features/F-32/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -146,11 +998,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-DELIVERY-RELEASE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "d9ca6f97f4bca34349115014697714c3ab7aae9b",
+    "task_branch": "fe-delivery-release-delivery-tab-and-release-gate",
+    "head_sha": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-32",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -160,7 +1012,42 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/delivery-release.spec.ts",
+      "frontend/e2e/issue-detail.spec.ts",
+      "frontend/e2e/projects.spec.ts",
+      "frontend/mock/fixtures/projects/P-0101.json",
+      "frontend/mock/fixtures/work/W-2501.json",
+      "frontend/mock/fixtures/work/W-2502.approve.json",
+      "frontend/mock/fixtures/work/W-2502.json",
+      "frontend/mock/fixtures/work/W-2503.json",
+      "frontend/mock/fixtures/work/W-2504.json",
+      "frontend/mock/fixtures/work/W-2505.json",
+      "frontend/mock/fixtures/work/W-2506.json",
+      "frontend/mock/fixtures/work/W-2507.json",
+      "frontend/mock/fixtures/work/W-2508.json",
+      "frontend/mock/fixtures/work/W-2510.json",
+      "frontend/mock/proposals/delivery-release.json",
+      "frontend/src/features/projects/DeliveryTab.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/model.ts",
+      "frontend/src/features/projects/project-tabs.css",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Steps.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/delivery-release-mock.test.ts",
+      "frontend/tests/issue-detail.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-projects.test.ts",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/release-gates.test.tsx",
+      "frontend/tests/workspace.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -193,9 +1080,74 @@
     }
   },
   "created_at": "2026-11-18T00:08:37Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T00:27:59Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T00:28:00Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T01:24:14Z",
+      "round": 1,
+      "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T01:30:38Z",
+      "round": 1,
+      "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T01:30:39Z",
+      "round": 2,
+      "head": "9f594712fb1c9a7ac4283d41d121707c4f96d45f",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T02:04:35Z",
+      "round": 2,
+      "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T02:07:59Z",
+      "round": 2,
+      "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T02:37:04Z",
+      "round": 2,
+      "head": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b",
+      "reason": null
+    }
+  ],
   "routing": {
     "review": {
       "technical": "sonnet",
@@ -210,10 +1162,10 @@
     ]
   },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b"
   },
   "blocked": null
 }

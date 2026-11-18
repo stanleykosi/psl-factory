@@ -1,0 +1,206 @@
+{
+ "exceptions": [
+  {
+   "role": "text",
+   "name": "FINANCE / SCHEDULES / SCH-0021",
+   "category": "frame",
+   "conflicts": 11,
+   "reason": "Conflicts 11: the frame draws workspace.context.crumbs as a list of plain items (F-17/F-22 frame as built), not one text line; the words come from the crumbs.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← My work",
+   "category": "frame",
+   "conflicts": 11,
+   "reason": "Conflicts 11: the phone bar's way back is the frame's (\"← Queue\" to My work, F-17/F-22 as built); the board's wording is not drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "SAMPLE DATA",
+   "category": "frame",
+   "conflicts": 11,
+   "reason": "Conflicts 11: every fixture is sample: true; the shared SAMPLE DATA tag is drawn only when the build switches it on (NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1, design decision 14 Nov), and the fidelity build is the one named for this run. The component test shows it on all 11 fixtures with the switch on.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Bisi Ade · Finance",
+   "category": "sample data",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the signed-in name comes from /me; the mock's Finance persona is Ada Okafor · Finance Lead on all four boards and no new persona is added.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Investigating income detail",
+   "category": "component",
+   "conflicts": 15,
+   "reason": "Conflicts 15: the agent card is the existing AgentCard drawn from item.agent, which has no title field; the agent's name, steps, sources and WORKING are drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Chidi · Finance agent · step 3 of 4",
+   "category": "component",
+   "conflicts": 15,
+   "reason": "Conflicts 15: the existing AgentCard draws the name, \"Cannot approve, send or pay.\" and \"step n of m\" (from the steps sent) on separate lines; item.agent carries no agent role.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Service revenue, October",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: the basis sentence is tasks[].decision.basis as returned, drawn whole with no bold; the page composes none of it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Note (needed to return, reject or withdraw)",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: the note label names only the verdicts this panel offers that need a note: \"Note (needed to return or reject)\"; withdraw is part 2.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "(needed to return, reject or withdraw)",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: as above: the note label is \"Note (needed to return or reject)\".",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Return",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the phone Decide bar uses the step's own label, \"Return with a note\", as desktop (D-111).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "\"Row 12 is a reclassification.\" · Ada Okafor",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the phone shows the same returned sentence as desktop, as the backend sends it (\"Ada Okafor returned it on 13 Nov: …\").",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "CORRECT AND RESUBMIT",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the correction step sits in the shared side panel headed \"Decide\" and its form opens on press (D-98 (2)); the board draws a panel titled with the step, open.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Row 12 relationship",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the step's form opens on press (D-98 (2)); the field is then the shared Segmented choice, with nothing pre-selected (Conflicts 2).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Reclassification ▾",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the board draws a select with the reviewer's suggestion chosen; the page draws a 3-option choice as the shared Segmented control with nothing chosen (Conflicts 2), on press.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "What happens next:",
+   "category": "component",
+   "conflicts": 14,
+   "reason": "Conflicts 14: the step's consequence is one returned sentence drawn whole (\"What happens next: the schedule is prepared again…\"); the page bolds none of it.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Proposal: every return gives the preparer this task. Today the backend only waits (question for backend).",
+   "category": "component",
+   "conflicts": 6,
+   "reason": "Conflicts 6: a design note about D-RETURN, not words for Finance staff; not drawn and not in the fixture.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Export as an adjustment",
+   "category": "held",
+   "conflicts": 5,
+   "reason": "Conflicts 5: Export as an adjustment is part 2 (G-54-5); the verified fixture sends no export step, so no button is drawn. The Next sentence is shown as returned.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Withdraw approval",
+   "category": "held",
+   "conflicts": 5,
+   "reason": "Conflicts 5: Withdraw approval (verdict revoke) is part 2 (G-54-4); no step is sent, so no button is drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-54-desktop-investigating",
+   "width": 1440,
+   "visual": 87.8,
+   "reason": "D-83: measured 87.8 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the shared station track draws a status line under each name; the agent card is the existing AgentCard (no title, name and limits on their own lines; Conflicts 15).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-54-desktop-review",
+   "width": 1440,
+   "visual": 76.6,
+   "reason": "D-83: measured 76.6 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the shared station track draws a status line under each name (taller row); facts labels are bold in the shared facts list; the basis is unbolded and the note label shorter (Conflicts 7).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-54-desktop-returned",
+   "width": 1440,
+   "visual": 72.9,
+   "reason": "D-83: measured 72.9 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the correction form opens on press in the shared side panel headed Decide, not open in the main column (Conflicts 12); the D-RETURN design note is not drawn (Conflicts 6); the quote banner is the shared warning Callout.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-54-desktop-verified",
+   "width": 1440,
+   "visual": 75.9,
+   "reason": "D-83: measured 75.9 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and Export and Withdraw are held to part 2 (Conflicts 5), so the Next panel is shorter; the shared station track draws a status line under each name.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-54-mobile-investigating",
+   "width": 390,
+   "visual": 84.7,
+   "reason": "D-83: measured 84.7 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the shared station track draws a status line under each name; the agent card is the existing AgentCard (no title, name and limits on their own lines; Conflicts 15). On the phone: the frame's bar and \"← Queue\", the full returned amount and sentences, and the desktop step labels (Conflicts 10, 11).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-54-mobile-review",
+   "width": 390,
+   "visual": 80.5,
+   "reason": "D-83: measured 80.5 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the shared station track draws a status line under each name (taller row); facts labels are bold in the shared facts list; the basis is unbolded and the note label shorter (Conflicts 7). On the phone: the frame's bar and \"← Queue\", the full returned amount and sentences, and the desktop step labels (Conflicts 10, 11).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-54-mobile-returned",
+   "width": 390,
+   "visual": 83.2,
+   "reason": "D-83: measured 83.2 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the correction form opens on press in the shared side panel headed Decide, not open in the main column (Conflicts 12); the D-RETURN design note is not drawn (Conflicts 6); the quote banner is the shared warning Callout. On the phone: the frame's bar and \"← Queue\", the full returned amount and sentences, and the desktop step labels (Conflicts 10, 11).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-54-mobile-verified",
+   "width": 390,
+   "visual": 85.1,
+   "reason": "D-83: measured 85.1 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and Export and Withdraw are held to part 2 (Conflicts 5), so the Next panel is shorter; the shared station track draws a status line under each name. On the phone: the frame's bar and \"← Queue\", the full returned amount and sentences, and the desktop step labels (Conflicts 10, 11).",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ]
+}

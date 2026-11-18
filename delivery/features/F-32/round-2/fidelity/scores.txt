@@ -1,0 +1,9 @@
+board width coverage coverageWithExceptions visual pass waiver
+SCR-43-desktop 1440 64.6 100 77.5 pass D-83 waiver (builder proposal, pending design engineer)
+SCR-43-mobile 390 50 100 78.1 pass D-83 waiver (builder proposal, pending design engineer)
+SCR-44-desktop 1440 56.4 100 84.9 pass D-83 waiver (builder proposal, pending design engineer)
+SCR-44-desktop-decision 1440 53.3 100 77.3 pass D-83 waiver (builder proposal, pending design engineer)
+SCR-44-desktop-ready 1440 64.9 100 76.7 pass D-83 waiver (builder proposal, pending design engineer)
+SCR-44-mobile 390 60 100 80.9 pass D-83 waiver (builder proposal, pending design engineer)
+SCR-44-mobile-decision 390 50 100 77.5 pass D-83 waiver (builder proposal, pending design engineer)
+SCR-44-mobile-ready 390 50 100 82.1 pass D-83 waiver (builder proposal, pending design engineer)

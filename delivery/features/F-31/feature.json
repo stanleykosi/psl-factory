@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-31",
   "outcome": "Engagement and planning, part 1: a won RFP becomes a registered engagement, and the planning page shows what each department owes and records what one sent (contract mock only)",
-  "state": "PLANNED",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-ENGAGEMENT-PLANNING"
   ],
@@ -51,7 +51,13 @@
     ],
     "blocking_decision_ids": [],
     "readiness_checked": true,
-    "explicit_exception": null
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -64,7 +70,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T01:48:55Z",
+      "seconds": 299.1,
+      "evidence_ref": "delivery/features/F-31/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -74,7 +93,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -90,7 +109,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-31/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -111,8 +130,571 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`frontend/src/features/workspace/Workspace.tsx` (`afterRecorded`, around line 300): `setRecorded(RESPONSE_TEXT.done(...))` runs before `await page.reload()`. Expected: spec line 7 and AC 10 say the page never says \"recorded\" until the re-read says so. Actual: the polite notice is built from the 200 and shown while the re-read is still in flight. If the re-read fails (`refreshFailed`), \"Recorded under your name\u2026\" stands without the re-read. Spec line 109 does say to build the notice from the 200's `recorded`, so the spec contradicts itself. Suggested fix: call `setRecorded` after `await page.reload()` returns an item. F-30's assign flow has the same order, so this may be left as is.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/tests/mock-contract.test.ts` (new strip block, `disabled_reason` / `asked_at` loop): the comment says each overlay key \"is checked on its own, then removed\", but `teams[].disabled_reason` and `asked_at` are only deleted, never checked. Expected: type-check them as the other three keys are. Actual: any value passes after the strip. `engagement-planning-mock.test.ts` may cover this. It is not a loosening of an existing check, since these keys are new.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/workspace/useWorkspaceAssign.ts:66`: the notice text switches on the literal `assign.role === 'PM'`. This is a hard-coded role word, but the spec (line 95) says to do exactly this.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/workspace/ResponseDrawer.tsx` (403 effect): any 403 on claim or record closes the Drawer onto the page-level not-open view, even when the re-read still shows the task actionable (for example a policy refusal with a message). This matches AC 13, but the server's message is lost. Note for the backend: a 403 means no access, and a business refusal should be 422.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "/work/W-2603 at 390, Record input after a lost reply (`record-then-fail`, where the 200 is applied then answered 502). Expected: after \"We've reloaded this item so you can see whether it was\", the PM can see the outcome and cannot record the wrong thing. Actual: the full-height drawer covers the table, so nothing shows whether QA was recorded. The re-read had already removed QA, so Team silently switched to Infrastructure while \"Who gave it\" still said \"QA \u00b7 QA lead, PSL\" and the QA file and 45 days stayed in the form. A PM could record QA's input against Infrastructure. Suggested fix: when the re-read removes the chosen team, clear Who gave it, or close the drawer onto the page with the outcome notice. This is F-18's reload behaviour hosted in the new drawer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "/work/W-2603 side panel, disabled \"Prepare readiness\". Expected: a disabled primary button stays legible. Actual: grey text (rgb 74,83,87) on the green fill (rgb 34,118,74) is about 1.5:1, so the label is almost invisible. On phone it is a sticky bar over the table. The reason line below it reads fine. Disabled controls are exempt from WCAG contrast, but \"Who receives this?\" (grey on grey) shows the intended treatment. Use that disabled style.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "/work/W-2601 and W-2602 at 390. Expected: the next action is easy to find. Actual: \"Confirm PM\" and \"Register engagement\" sit at the bottom of a long page, after the packet table and Tola's checklist, with no cue at the top besides the \"Next step\" line. This matches spec Conflicts 7 (same order as desktop), so it is only a note for the frame pass. A sticky action bar, as on W-2603, would help.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "/work/W-2601 to W-2604 at 390, Price row. Expected: \"Costing v2 \u00b7 \u20a640,951,000.00\" reads as one value. Actual: the amount wraps onto its own line, outdented, under the stacked \"FROM\" label (\"Costing v2 \u00b7\" then \"\u20a640,951,000.00\"). It is legible and no data is lost, but it looks broken beside the other rows.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Record drawer (F-18 form, as spec Conflicts 14 allows). \"Received\" is a native date-time field in US order with a 12-hour clock (mm/dd/yyyy, 04:05 pm). A Nigerian PM may mistype the date. Note for the shared form, not this feature.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-42-desktop, SCR-42-mobile: the disabled \"Prepare readiness\" can't be read. Expected: the board's grey disabled button (`--disabled` background, muted ink), like \"Who receives this?\" beside it. Actual: muted ink rgb(74,83,87) on `--verified` green rgb(34,118,74), about 1.6:1. On the phone it is the pinned bottom bar. Cause: `frontend/src/features/workspace/workspace.css:35` (`.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject) { background: var(--verified) }`) overrides the disabled background from `psl-bundle.css:50`. Fix: add `:not([aria-disabled=\"true\"])`. This also clears F-29's disabled \"Ask Tola\" (UX-2-1).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-41-mobile: at 390 the Confirm PM form draws a 2px box with 0 padding inside the Decide panel. \"PM\", the hint and \"Note\" touch the border. Expected: the board's PM field and hint in plain page padding. Actual: `.ws-form--bare` also gets the phone rule `workspace.css:169` (`.ws-form { border: \u2026 }`). Fix: in the phone media block, give `.ws-form--bare` no border or background.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-41-mobile (and W-2602 at 390): in the stacked packet table, the Price FROM cell \"Costing v2 \u00b7 \u20a640,951,000.00\" breaks apart. The amount wraps under the FROM label column (x\u224832 instead of the value column). Expected: one value cell, as on desktop. Actual: `Sections.tsx` CellValue returns a fragment (`{cell.text} \u00b7 <MoneyValue/>`), so its pieces flow as separate items in the stack layout. Fix: wrap the text and the amount in one `<span>`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-42-desktop-record, SCR-42-mobile-record: the record Drawer's layout differs from the board, and the difference is not a D-113 item. Board: one column, with \"Record input\" + \"Cancel\" in the Drawer footer on desktop and a pinned \"Record input\" with no Cancel on the phone (the sheet has its own close). Actual, desktop: F-18's page form is drawn as a boxed panel inside the 500px Drawer, still in its two-column page grid (Proof beside the attestation; Received beside Note). \"Record input\" sits inside the box, with a full-width \"Cancel\" outside it below. Actual, phone (after the post-run edit): a full-width \"Cancel\" sits between the intro callout and the first field. Fix: put the actions in the shared `Drawer`'s `footer` slot (`components/Drawer.tsx:21`) and draw the form one column with no panel box. On the phone, either keep Cancel out (the Drawer has Close) or put it beside the record bar. `ResponseDrawer.tsx:131-163`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-42-mobile-record: D-92c phone targets. Inside the Drawer at 390 the Team segment buttons (QA, Infrastructure) are 40px high, and so is \"Choose a file\". On F-18's own page at 390 the same segments are 44px (`/work/W-2603/respond?task=T-2603`), so the Drawer loses F-18's phone sizing. Expected: at least 44px.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "SCR-41-mobile-register (floor) and SCR-41-desktop-register: the 69.8 is fixable, so a floor exception is not justified yet. Board: one title \"Register engagement\", the fields flush on the sheet, and the primary pinned at the bottom. Actual, phone: the Drawer title \"Register engagement\" is repeated by a \"REGISTER ENGAGEMENT\" panel head, inside a second bordered box. The returned consequence is repeated, and \"Register engagement\" and \"Cancel\" sit inline under the fields. Desktop: the sentence \"Registers the engagement with this plan evidence.\" shows twice (Decide panel and form), and two \"Register engagement\" buttons show at once. Fix: render the step form with no panel box or head in the Drawer (as `AssignForm` got `bare` here), put its actions in the Drawer `footer`, and keep the consequence once. F-30's issue Drawer shares this path, so keep F-30's tests green or scope the change to the Drawer. Then re-measure, and ask the design engineer for a one-board exception only if the board is still under 70.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-41-desktop-register fidelity evidence: the frozen page shows \"kickoff-plan-v1.pdf \u00b7 1 KB \u00b7 Uploading\u2026\". The driver froze it before the upload finished, so the board is scored against an in-progress state, not the filled form the spec names. Expected: `drive-states.mjs` waits until the upload is done (as the 390 run did). The scored run also predates the phone Cancel move. Both need the round-2 run.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Exceptions file: entry 43 (\"TAMARIND LOANS \u00b7 PLANNING\", Drawer eyebrow) excepts a value the response supplies. `context.project.title` and the crumbs are returned, and the shared `Drawer` has an `eyebrow` prop. Expected: draw the eyebrow from returned data (\"Ojo Foods \u00b7 ordering app\" or the crumb), with only the sample-data difference listed. Also fix the file itself: it has 45 entries (build.md says 44). Entry 24 (phone finding sentence) is a Conflicts 7 layout item filed under `sample data`; it should be `frame`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-9",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "SCR-42-desktop, SCR-42-desktop-record: table differences that are neither fixed nor listed. ESTIMATE wraps \"230 person-/days\" and \"20 person-/days\" onto two lines (board: one line). The row actions \"Record input\" and \"Who receives this?\" are outlined 44px `Button`s in an extra unlabelled column (board: text links in the PROOF column), which makes every row taller. Department names are regular weight (board: bold). Expected: keep the estimate on one line (e.g. nowrap on the text cell, or let the action column shrink). Keep the shared item-step Button (D-91) only if it is listed as a `component` exception for the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-10",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "SCR-42 (all four): the status tag \"PLANNING \u00b7 2 OF 5 IN\" is blue (`agent`, as the spec's fixture table says). The board draws it amber, and the item is waiting on departments (D-92b: amber means waiting). It is one fixture tone. Design engineer to choose; not changed without that.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-11",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Shared-renderer differences, used as built, that the waiver text should name: a section `note` is always an amber warning Callout (\"Departments don't log in\u2026\", \"The SOW comes after planning\u2026\"), where the boards draw plain note text. The estimate finding is a plain row with a COSTING V2 cite, where the board draws an amber callout. \"What registering does\" has no check icons. The register form opens in the side column, where the board draws it in the main column. \"Unknown\" is the shared chip.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-12",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`fidelity-exceptions.json` `visual_waivers`: all 8 carry the same paragraph, which cites items that are not on that board (e.g. the project bar and Drawer on SCR-41-desktop). D-83 asks for a waiver per board. Expected: each waiver names its own board's gaps (UI-1-11 items included) and its own score after round 2.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-13",
+      "round": 1,
+      "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-2602 registered state (no board) at 390: the \"Created\" links \"OJO FOODS \u00b7 ORDERING APP\" and \"PLANNING \u00b7 PLN-0031\" are 33px and 15px tall. They are the way forward after registering. Consider making the row the target (D-92c).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T02:16:57Z",
+          "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+          "evidence_refs": [
+            "delivery/features/F-31/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-31/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+          "evidence_refs": [
+            "delivery/features/F-31/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "c5d2515627c96736a1d8884183eb630e29617a0e",
+          "evidence_refs": [
+            "delivery/features/F-31/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -132,11 +714,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-ENGAGEMENT-PLANNING",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "d9ca6f97f4bca34349115014697714c3ab7aae9b",
+    "task_branch": "fe-engagement-planning-register-engagement-and-record-input",
+    "head_sha": "c5d2515627c96736a1d8884183eb630e29617a0e",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-31",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -146,7 +728,37 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/engagement-planning.spec.ts",
+      "frontend/mock/fixtures/projects/P-0106.json",
+      "frontend/mock/fixtures/response/W-2603.recorded.json",
+      "frontend/mock/fixtures/work/W-2601.json",
+      "frontend/mock/fixtures/work/W-2601.next.json",
+      "frontend/mock/fixtures/work/W-2601.steps.json",
+      "frontend/mock/fixtures/work/W-2602.json",
+      "frontend/mock/fixtures/work/W-2602.next.json",
+      "frontend/mock/fixtures/work/W-2602.steps.json",
+      "frontend/mock/fixtures/work/W-2603.json",
+      "frontend/mock/fixtures/work/W-2604.json",
+      "frontend/mock/fixtures/work/W-2604.next.json",
+      "frontend/mock/fixtures/work/W-2604.steps.json",
+      "frontend/mock/proposals/engagement-planning.json",
+      "frontend/mock/response.mjs",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/workspace/AssignForm.tsx",
+      "frontend/src/features/workspace/ResponseDrawer.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/useWorkspaceAssign.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/engagement-planning-mock.test.ts",
+      "frontend/tests/engagement-planning.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -179,9 +791,50 @@
     }
   },
   "created_at": "2026-11-18T00:08:37Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T00:27:51Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T00:27:51Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T01:49:14Z",
+      "round": 1,
+      "head": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T02:16:57Z",
+      "round": 1,
+      "head": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T02:16:57Z",
+      "round": 2,
+      "head": "c5d2515627c96736a1d8884183eb630e29617a0e",
+      "reason": null
+    }
+  ],
   "routing": {
     "review": {
       "technical": "sonnet",
@@ -195,7 +848,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null

@@ -1,0 +1,363 @@
+{
+ "exceptions": [
+  {
+   "role": "text",
+   "name": "Tunde Bello · PMO",
+   "category": "frame item",
+   "reason": "Conflicts 13: Top bar and signed-in name: the mock has no PMO Lead persona, so the board is served to pm; Overview and Setup are not in the pm persona's destinations.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "PROJECTS / TAMARIND LOANS / DELIVERY",
+   "category": "frame item",
+   "reason": "Conflicts 13: The crumb is the shared Breadcrumb or the workspace crumb list; it has no DELIVERY segment on the project page and Tamarind Loans is Lagoon Health in the sample data (Conflicts 14).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DELIVERY · 3 OF 6 DONE",
+   "category": "no field",
+   "reason": "Conflicts 11: G-43-1 delivery_summary {reference, done, total} is not built: the browser never counts rows.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Planning",
+   "category": "frame item",
+   "reason": "Conflicts 8: The Planning tab belongs to SCR-42 and F-31; it is not built here.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tablist",
+   "name": "Delivery lines",
+   "category": "no field",
+   "reason": "Conflicts 5: the sub-nav is built only on the Delivery tab at 1440 as links and plain labels; rows without a work_id are not links (D-104), and the work item and phone boards draw no sub-nav.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Overview",
+   "category": "no field",
+   "reason": "Conflicts 5: the sub-nav is built only on the Delivery tab at 1440 as links and plain labels; rows without a work_id are not links (D-104), and the work item and phone boards draw no sub-nav.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Hypercare",
+   "category": "no field",
+   "reason": "Conflicts 5: the sub-nav is built only on the Delivery tab at 1440 as links and plain labels; rows without a work_id are not links (D-104), and the work item and phone boards draw no sub-nav.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Archive",
+   "category": "no field",
+   "reason": "Conflicts 5: the sub-nav is built only on the Delivery tab at 1440 as links and plain labels; rows without a work_id are not links (D-104), and the work item and phone boards draw no sub-nav.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Handover",
+   "category": "no field",
+   "reason": "Conflicts 5: the sub-nav is built only on the Delivery tab at 1440 as links and plain labels; rows without a work_id are not links (D-104), and the work item and phone boards draw no sub-nav.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Closure",
+   "category": "no field",
+   "reason": "Conflicts 5: the sub-nav is built only on the Delivery tab at 1440 as links and plain labels; rows without a work_id are not links (D-104), and the work item and phone boards draw no sub-nav.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Hypercare",
+   "category": "sample data",
+   "reason": "Conflicts 14 (sample data): no work item exists for this line in the mock, so the fixture sends no work_id and the row is plain text (D-104). The board links each line to a later screen (Hypercare, Archive and Handover belong to other features).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Archive",
+   "category": "sample data",
+   "reason": "Conflicts 14 (sample data): no work item exists for this line in the mock, so the fixture sends no work_id and the row is plain text (D-104). The board links each line to a later screen (Hypercare, Archive and Handover belong to other features).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Handover to Support",
+   "category": "sample data",
+   "reason": "Conflicts 14 (sample data): no work item exists for this line in the mock, so the fixture sends no work_id and the row is plain text (D-104). The board links each line to a later screen (Hypercare, Archive and Handover belong to other features).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Closure",
+   "category": "sample data",
+   "reason": "Conflicts 14 (sample data): no work item exists for this line in the mock, so the fixture sends no work_id and the row is plain text (D-104). The board links each line to a later screen (Hypercare, Archive and Handover belong to other features).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tola · PMO agent · done",
+   "category": "frame item",
+   "reason": "Conflicts 9: on SCR-44 the checks are a checklist section titled from the data with the agent name; the agent role text is not drawn. (On SCR-43 the card now draws \"Tola · PMO agent · done\".)",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Record what Support needs to close the 2 handover gaps.",
+   "category": "sample data",
+   "reason": "Conflicts 14 (sample data): P-0101 `next` is shared with the Journey board and the spec keeps its value; the board sentence is sample text the fixture does not send here.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Open the handover",
+   "category": "no field",
+   "reason": "Conflicts 11: G-43-4 next_action is not built: `next` is plain text, so there is no button.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DLV-0052",
+   "category": "sample data",
+   "reason": "Conflicts 14: Fixture reference text differs from the board.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DLV-0052 · 3 OF 6 DONE",
+   "category": "sample data",
+   "reason": "Conflicts 14: Fixture reference text differs from the board.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "PROJECTS / TAMARIND LOANS / DELIVERY / REL-0091",
+   "category": "frame item",
+   "reason": "Conflicts 13: The crumb is the shared Breadcrumb or the workspace crumb list; it has no DELIVERY segment on the project page and Tamarind Loans is Lagoon Health in the sample data (Conflicts 14).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "PROJECTS",
+   "category": "frame item",
+   "reason": "Conflicts 13: The workspace crumbs are plain items, not links (F-30 frame); no link in the crumb line.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tablist",
+   "name": "Project",
+   "category": "frame item",
+   "reason": "Conflicts 8: The line tab bar is drawn by the work item frame (F-30); none is current.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Release",
+   "category": "no field",
+   "reason": "Conflicts 5: the sub-nav is built only on the Delivery tab at 1440 as links and plain labels; rows without a work_id are not links (D-104), and the work item and phone boards draw no sub-nav.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Go-live",
+   "category": "no field",
+   "reason": "Conflicts 5: the sub-nav is built only on the Delivery tab at 1440 as links and plain labels; rows without a work_id are not links (D-104), and the work item and phone boards draw no sub-nav.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "complementary",
+   "name": "",
+   "category": "frame layout",
+   "reason": "Conflicts 9: Tola's checks are a checklist section in the main column (Conflicts 9), not a side panel.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DONE",
+   "category": "frame layout",
+   "reason": "Conflicts 9: Status tag, \"As of\" wording (agent.finished_at G-44-4 is not built) and Ask Tola sit in the workspace links row or the card.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Finished 23 Mar 10:12 Ask Tola",
+   "category": "frame layout",
+   "reason": "Conflicts 9: Status tag, \"As of\" wording (agent.finished_at G-44-4 is not built) and Ask Tola sit in the workspace links row or the card.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Overview",
+   "category": "frame item",
+   "reason": "Conflicts 13: Top bar and signed-in name: the mock has no PMO Lead persona, so the board is served to pm; Overview and Setup are not in the pm persona's destinations.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Setup",
+   "category": "frame item",
+   "reason": "Conflicts 13: Top bar and signed-in name: the mock has no PMO Lead persona, so the board is served to pm; Overview and Setup are not in the pm persona's destinations.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Kemi Adebayo · PMO Lead",
+   "category": "frame item",
+   "reason": "Conflicts 13: Top bar and signed-in name: the mock has no PMO Lead persona, so the board is served to pm; Overview and Setup are not in the pm persona's destinations.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Finished 23 Mar 10:12",
+   "category": "frame layout",
+   "reason": "Conflicts 9: Status tag, \"As of\" wording (agent.finished_at G-44-4 is not built) and Ask Tola sit in the workspace links row or the card.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DECIDE · PMO LEAD",
+   "category": "frame item",
+   "reason": "Conflicts 10: The in-page Note box is not drawn; the F-16 page has it. The panel title reads Decide (F-17).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Note (needed to return)",
+   "category": "frame item",
+   "reason": "Conflicts 10: The in-page Note box is not drawn; the F-16 page has it. The panel title reads Decide (F-17).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "(needed to return)",
+   "category": "frame item",
+   "reason": "Conflicts 10: The in-page Note box is not drawn; the F-16 page has it. The panel title reads Decide (F-17).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← Delivery",
+   "category": "frame item",
+   "reason": "Conflicts 7: The phone bar keeps the built F-22 frame.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DECIDE",
+   "category": "frame item",
+   "reason": "Conflicts 10: The in-page Note box is not drawn; the F-16 page has it. The panel title reads Decide (F-17).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "REL-0091 · BUILD 1.0.0",
+   "category": "phone wording",
+   "reason": "Conflicts 7: phone bar and phone wording differ from the desktop wording used at both widths (D-111).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Approving doesn't deploy anything.",
+   "category": "phone wording",
+   "reason": "Conflicts 7: phone wording: the desktop sentence \"Approving lets Tola prepare release readiness. It doesn’t deploy anything.\" is used at both widths.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "READY",
+   "category": "phone wording",
+   "reason": "Conflicts 7: phone bar word; the status tag reads \"Release ready\" at both widths.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Verified 25 Mar. Not a deployment.",
+   "category": "phone wording",
+   "reason": "Conflicts 7: phone wording: the desktop sentence is used at both widths.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "complementary",
+   "name": "",
+   "category": "frame layout",
+   "reason": "Conflicts 9: Tola's checks are a checklist section in the main column, not a side panel; the working-agent checklist sits in the side column only while the agent works.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tola · PMO agent · done",
+   "category": "frame item",
+   "reason": "Conflicts 9: on SCR-44 the checks are a checklist section titled from the data with the agent name; the agent role text is not drawn. (On SCR-43 the card now draws \"Tola · PMO agent · done\".)",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Open go-live",
+   "category": "frame layout",
+   "reason": "Conflicts 10: Open go-live is a `work` link in the workspace links row, a secondary button; the board draws a primary blue button in the Next panel (desktop) or the phone bar.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-43-desktop",
+   "width": 1440,
+   "visual": 77.5,
+   "reason": "Measured in round 2 with board fonts loaded. Shared frame and approved conflicts (D-99, D-110, D-113). Remaining gaps: the shared top bar, crumb and PM chip, the Planning tab (F-31), Tamarind Loans as Lagoon Health, the row tag drawn beside its date (spec Contract: tag, then date) where the board puts the date inside the tag, and the phone boards' single-column order (Conflicts 6, 7, 14).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-43-mobile",
+   "width": 390,
+   "visual": 78.1,
+   "reason": "Measured in round 2 with board fonts loaded. Shared frame and approved conflicts (D-99, D-110, D-113). Remaining gaps: the shared top bar, crumb and PM chip, the Planning tab (F-31), Tamarind Loans as Lagoon Health, the row tag drawn beside its date (spec Contract: tag, then date) where the board puts the date inside the tag, and the phone boards' single-column order (Conflicts 6, 7, 14).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-44-desktop",
+   "width": 1440,
+   "visual": 84.9,
+   "reason": "Measured in round 2 with board fonts loaded. Shared frame and approved conflicts (D-99, D-110, D-113). Remaining gaps: the frame (top bar, crumbs, History link, line tab bar, no sub-nav: Conflicts 5, 8, 13), Tola's checks as a checklist section in the main column (Conflicts 9), the gates note drawn as the shared amber note inside the panel where the board has a blue info callout below it (shared Sections frame; G-44-1 notices[] is recorded, not built), the Planning decision tag inline with its held-by line where the board right-aligns one tag (shared checklist row), and the task panel (Conflicts 4).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-44-desktop-decision",
+   "width": 1440,
+   "visual": 77.3,
+   "reason": "Measured in round 2 with board fonts loaded. Shared frame and approved conflicts (D-99, D-110, D-113). Remaining gaps: the frame (Conflicts 5, 8, 13), What you're deciding values as plain text where the board draws toned tags (the shared facts section draws values only), no Note box (Conflicts 10), Tola's checks as a section (Conflicts 9), Open issues shown beside the F-16 words.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-44-desktop-ready",
+   "width": 1440,
+   "visual": 76.7,
+   "reason": "Measured in round 2 with board fonts loaded. Shared frame and approved conflicts (D-99, D-110, D-113). Remaining gaps: the frame (Conflicts 5, 8, 13), the readiness note statuses as grey tags where the board has right-aligned mono words (shared checklist row), Open go-live as a secondary button in the links row where the board has a primary button in the Next panel (Conflicts 10), and the task panel after an approve.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-44-mobile",
+   "width": 390,
+   "visual": 80.9,
+   "reason": "Measured in round 2 with board fonts loaded. Shared frame and approved conflicts (D-99, D-110, D-113). Remaining gaps: the frame and phone bar (Conflicts 7, 13), desktop wording and sections at 390 (Conflicts 6, 7), the shared amber note and inline tag (see SCR-44-desktop).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-44-mobile-decision",
+   "width": 390,
+   "visual": 77.5,
+   "reason": "Measured in round 2 with board fonts loaded. Shared frame and approved conflicts (D-99, D-110, D-113). Remaining gaps: the frame and phone bar (Conflicts 7, 13), Approve and Return side by side at half width where the board stacks them full width (shared F-17 step row at 390), toned facts and the Note box (see desktop decision), all four facts shown (Conflicts 6).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-44-mobile-ready",
+   "width": 390,
+   "visual": 82.1,
+   "reason": "Measured in round 2 with board fonts loaded. Shared frame and approved conflicts (D-99, D-110, D-113). Remaining gaps: the frame and phone bar (Conflicts 7, 13), phone wording (Conflicts 7), grey status tags and the links-row button (see desktop ready).",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ]
+}
