@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-34",
   "outcome": "Hypercare, part 1: the PM records the release, follows the window and its observations, sees the hold while PSL has not set the criteria, and sees \"qualified\" only when the backend verifies it (contract mock only)",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-DELIVERY-HYPERCARE-ARCHIVE"
   ],
@@ -821,9 +821,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -837,14 +837,14 @@
     "task_branch": "fe-delivery-hypercare-archive-hypercare-window",
     "head_sha": "0ce04acb81f47bccea617df483c1691541d99403",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-34",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/69",
+    "pr_number": 69,
     "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "designated_approver": "design engineer (hunchoweb), D-119",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "a84313c7c5a0c00c4f84743bcb070a59a7bcc97f",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/BACKEND-HANDOFF.md",
@@ -1665,9 +1665,15 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "795 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "0ce04acb81f47bccea617df483c1691541d99403",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1772,6 +1778,46 @@
       "at": "2026-11-18T17:11:27Z",
       "round": 3,
       "head": "af38b43211249d48e71175aee186838dafb76d42",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-18T20:18:31Z",
+      "round": 3,
+      "head": "0ce04acb81f47bccea617df483c1691541d99403",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-18T20:19:08Z",
+      "round": 3,
+      "head": "0ce04acb81f47bccea617df483c1691541d99403",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-18T20:19:09Z",
+      "round": 3,
+      "head": "0ce04acb81f47bccea617df483c1691541d99403",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-18T20:19:10Z",
+      "round": 3,
+      "head": "0ce04acb81f47bccea617df483c1691541d99403",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-18T20:19:10Z",
+      "round": 3,
+      "head": "0ce04acb81f47bccea617df483c1691541d99403",
       "reason": null
     }
   ],
