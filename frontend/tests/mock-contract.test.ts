@@ -673,8 +673,8 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
         .filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name))
         .filter((name) => (key === 'links' ? 'links' in (JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}) : JSON.stringify(JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}).includes('"items_default"')));
     expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
-    // F-31 (W-26xx) and F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) carry links too; F-33's investigating board (W-2701) draws Ask Chidi
-    expect(withKey('links').every((name) => /^W-(23|25|26)/.test(name) || name === 'W-2701.json')).toBe(true);
+    // F-31 (W-26xx) and F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) carry links too; F-33's investigating board (W-2701) and F-42's (W-3901) draw Ask Chidi
+    expect(withKey('links').every((name) => /^W-(23|25|26)/.test(name) || name === 'W-2701.json' || name === 'W-3901.json')).toBe(true);
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
   });
 
@@ -719,5 +719,21 @@ describe('F-28 minutes end-state fixtures (W-2309 to W-2314)', () => {
     expect(carrying.sort()).toEqual(['W-2309.approve.json', 'W-2310.json', 'W-2311.json', 'W-2312.json', 'W-2313.json', 'W-2301.next.internal.json'].sort());
     expect(validLinks([{ key: 'k', label: 'Open', target: { kind: 'project_tab', tab: 'nowhere', case_id: 'C-0211' } }])).toBe(false);
     expect(validLinks([{ key: 'k', label: 'Open', target: { kind: 'project_tab', tab: 'actions', case_id: '../x' } }])).toBe(false);
+  });
+});
+
+describe('F-42 fixed asset schedule fixtures (W-3901 to W-3912)', () => {
+  const dir = join(__dirname, '../mock/fixtures/work');
+  const names = readdirSync(dir).filter((name) => /^W-39\d\d(\.[a-z]+)?\.json$/.test(name));
+
+  it('every item and decide sidecar is schema-valid and marked sample once steps[].verdict is removed', () => {
+    expect(names.filter((name) => /^W-\d+\.json$/.test(name))).toHaveLength(12);
+    expect(names).toHaveLength(21);
+    for (const name of names) {
+      const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
+      expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(body));
+      expect(body.sample, name).toBe(true);
+      expect(body.workspace.line_key, name).toBe('fixed_assets');
+    }
   });
 });
