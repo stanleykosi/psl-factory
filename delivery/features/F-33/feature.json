@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-33",
   "outcome": "Income detail \u00b7 October: Finance reviews the prepared income schedule, returns it for correction or approves it, in four states (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-FIN-SCHEDULES"
   ],
@@ -99,22 +99,38 @@
       "at": "2026-11-18T02:25:14Z",
       "seconds": 279.5,
       "evidence_ref": "delivery/features/F-33/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T03:04:40Z",
+      "seconds": 290.2,
+      "evidence_ref": "delivery/features/F-33/round-3/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "evidence_refs": [
+        "delivery/features/F-33/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "evidence_refs": [
+        "delivery/features/F-33/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -133,25 +149,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "evidence_refs": [
+        "delivery/features/F-33/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "evidence_refs": [
+        "delivery/features/F-33/round-3/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "evidence_refs": [
+        "delivery/features/F-33/round-3/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -423,14 +445,50 @@
         "delivery/features/F-33/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-18T02:34:57Z",
           "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T03:04:40Z",
+          "refs": [
+            "d20fd9b2"
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T03:09:06Z",
+          "refs": [
+            "`InlineDecide.tsx` `send` returns early when `!ready",
+            "",
+            "busy",
+            "",
+            "off`, so only a decide that is actually sent calls `onDeciding()`, and it does so before `review.decide`. `Workspace.tsx` `onDeciding` runs `flow.setNotice(null)` and `setDecided(null)`, with stable `useCallback` deps. `decidedShown` keeps its `flow.notice === null` guard, which no longer suppresses the decision notice, because the decide clears it. If the decide fails (409/403), only the earlier notices are cleared. The panel's own error still shows, and no outcome is claimed. Two tests cover this: a step's done notice followed by Approve shows \"Schedule v1 is approved\" and the step notice is gone, and the same sequence on W-2712 shows \"Schedule v1: result not confirmed\" with no outcome words."
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d20fd9b2"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`InlineDecide.tsx` `send` returns early when `!ready",
+        "",
+        "busy",
+        "",
+        "off`, so only a decide that is actually sent calls `onDeciding()`, and it does so before `review.decide`. `Workspace.tsx` `onDeciding` runs `flow.setNotice(null)` and `setDecided(null)`, with stable `useCallback` deps. `decidedShown` keeps its `flow.notice === null` guard, which no longer suppresses the decision notice, because the decide clears it. If the decide fails (409/403), only the earlier notices are cleared. The panel's own error still shows, and no outcome is claimed. Two tests cover this: a step's done notice followed by Approve shows \"Schedule v1 is approved\" and the step notice is gone, and the same sequence on W-2712 shows \"Schedule v1: result not confirmed\" with no outcome words."
       ]
     },
     {
@@ -469,14 +527,42 @@
         "delivery/features/F-33/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-18T02:34:57Z",
           "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T03:04:40Z",
+          "refs": [
+            "0d01b4b6"
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T03:09:06Z",
+          "refs": [
+            "W-2702 and W-2712 panels at 1440 say \"Rejecting stops this schedule: it isn't used for October's accounts.\" beside the Approve line \"Approving doesn't post anything...\". The Reject consequence is real returned text, matching the build."
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "0d01b4b6"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-2702 and W-2712 panels at 1440 say \"Rejecting stops this schedule: it isn't used for October's accounts.\" beside the Approve line \"Approving doesn't post anything...\". The Reject consequence is real returned text, matching the build."
       ]
     },
     {
@@ -492,14 +578,42 @@
         "delivery/features/F-33/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:34:57Z",
           "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T03:04:40Z",
+          "refs": [
+            "d20fd9b2"
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:09:06Z",
+          "refs": [
+            "W-2703 draws `psl-callout--problem` (signal tint and ink) for the returned quote at 1440 and 390, matching the board. The tone comes from a stopped station or a stopped or uncertain status tone, never from the words. Other lines are unchanged (see Summary)."
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d20fd9b2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2703 draws `psl-callout--problem` (signal tint and ink) for the returned quote at 1440 and 390, matching the board. The tone comes from a stopped station or a stopped or uncertain status tone, never from the words. Other lines are unchanged (see Summary)."
       ]
     },
     {
@@ -515,14 +629,42 @@
         "delivery/features/F-33/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:34:57Z",
           "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T03:04:40Z",
+          "refs": [
+            "d20fd9b2"
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:09:06Z",
+          "refs": [
+            "\"Started 11:20\" and \"Ask Chidi\" now sit in the card's own footer row, as the boards draw them. There is one Ask Chidi link, 57x20 at 1440 and 57x44 at 390."
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d20fd9b2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"Started 11:20\" and \"Ask Chidi\" now sit in the card's own footer row, as the boards draw them. There is one Ask Chidi link, 57x20 at 1440 and 57x44 at 390."
       ]
     },
     {
@@ -538,14 +680,42 @@
         "delivery/features/F-33/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:34:57Z",
           "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T03:04:40Z",
+          "refs": [
+            "d20fd9b2"
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:09:06Z",
+          "refs": [
+            "W-2702 draws \"Note\" bold and \"(needed to return or reject)\" regular muted, as the board does (the wording is Conflicts 7). The approve consequence is small and muted like the board. The added Reject line \"Rejecting stops this schedule...\" is backend-sent text, an extra the waiver names."
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d20fd9b2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2702 draws \"Note\" bold and \"(needed to return or reject)\" regular muted, as the board does (the wording is Conflicts 7). The approve consequence is small and muted like the board. The added Reject line \"Rejecting stops this schedule...\" is backend-sent text, an extra the waiver names."
       ]
     },
     {
@@ -584,14 +754,42 @@
         "delivery/features/F-33/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:34:57Z",
           "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T03:04:40Z",
+          "refs": [
+            "(factory file)"
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:09:06Z",
+          "refs": [
+            "The SAMPLE DATA exception cites the 14 Nov 2026 decision (c), restated in D-92."
+          ],
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "(factory file)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The SAMPLE DATA exception cites the 14 Nov 2026 decision (c), restated in D-92."
       ]
     },
     {
@@ -637,6 +835,29 @@
           "by": "reviewer-ui",
           "at": "2026-11-18T02:34:57Z",
           "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The test double is a decide that answers 200 while the re-read still serves the review state.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-33/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T03:34:57Z",
+          "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb"
         }
       ]
     }
@@ -789,7 +1010,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "d9ca6f97f4bca34349115014697714c3ab7aae9b",
     "task_branch": "fe-fin-schedules-income-detail-review",
-    "head_sha": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
+    "head_sha": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-33",
     "pr_url": null,
     "pr_number": null,
@@ -819,6 +1040,10 @@
       "frontend/mock/fixtures/work/W-2709.json",
       "frontend/mock/fixtures/work/W-2710.json",
       "frontend/mock/fixtures/work/W-2711.json",
+      "frontend/mock/fixtures/work/W-2712.approve.json",
+      "frontend/mock/fixtures/work/W-2712.json",
+      "frontend/mock/fixtures/work/W-2712.reject.json",
+      "frontend/mock/fixtures/work/W-2712.return.json",
       "frontend/src/features/work-item/WorkItemOverview.tsx",
       "frontend/src/features/workspace/InlineDecide.tsx",
       "frontend/src/features/workspace/Sections.tsx",
@@ -927,6 +1152,30 @@
       "round": 3,
       "head": "9ebc7cbc98a2cedb7345180e50c1489ca0930d19",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T03:04:51Z",
+      "round": 3,
+      "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T03:09:06Z",
+      "round": 3,
+      "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T03:34:57Z",
+      "round": 3,
+      "head": "d20fd9b2ccee7be267936cc2758358989ecdedbb",
+      "reason": null
     }
   ],
   "routing": {
@@ -944,9 +1193,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "d20fd9b2ccee7be267936cc2758358989ecdedbb"
   },
   "blocked": null
 }

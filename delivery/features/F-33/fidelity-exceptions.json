@@ -20,9 +20,10 @@
    "role": "text",
    "name": "SAMPLE DATA",
    "category": "frame",
-   "conflicts": 11,
-   "reason": "Conflicts 11: every fixture is sample: true; the shared SAMPLE DATA tag is drawn only when the build switches it on (NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1, design decision 14 Nov), and the fidelity build is the one named for this run. The component test shows it on all 11 fixtures with the switch on.",
-   "approved_by": "builder proposal, pending design engineer"
+   "conflicts": null,
+   "reason": "Design decision 14 Nov 2026 (c), restated in D-92: the visible SAMPLE DATA tag is off in team builds. Every fixture is sample: true, and the shared tag shows when the build sets NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1 (component test on all fixtures). Not a spec Conflicts item.",
+   "approved_by": "builder proposal, pending design engineer",
+   "authority": "design decision 14 Nov 2026 (c), restated in D-92"
   },
   {
    "role": "text",
@@ -149,57 +150,57 @@
   {
    "board": "SCR-54-desktop-investigating",
    "width": 1440,
-   "visual": 87.8,
-   "reason": "D-83: measured 87.8 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the shared station track draws a status line under each name; the agent card is the existing AgentCard (no title, name and limits on their own lines; Conflicts 15).",
+   "visual": 88.1,
+   "reason": "D-83: measured 88.1 in round 3 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with Overview, Setup and alerts, the name's position, crumbs as a list, the History link, the page width; spec item 11); the joined station strip with a status line under each name and 15px names (shared StationTrack; spec item 11); the AgentCard head with no title and the name and limits on their own lines, \"step 4 of 4\" from the steps sent (Conflicts 15); \"2\" plus a separate CHIDI CHECKING tag, as the fixture sends them. The card footer (Started 11:20, Ask Chidi) now matches (UI-2-2).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-54-desktop-review",
    "width": 1440,
-   "visual": 76.6,
-   "reason": "D-83: measured 76.6 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the shared station track draws a status line under each name (taller row); facts labels are bold in the shared facts list; the basis is unbolded and the note label shorter (Conflicts 7).",
+   "visual": 76.9,
+   "reason": "D-83: measured 76.9 in round 3 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with Overview, Setup and alerts, the name's position, crumbs as a list, the History link, the page width; spec item 11); the joined station strip with a status line under each name and 15px names (shared StationTrack; spec item 11); the shared facts list with bold labels and taller rows; the basis drawn whole without bold (Conflicts 7); the note field 88px high (shared TextArea) instead of 66px; the Reject consequence line the backend now sends (UX-2-2). Note label and consequences now match (UI-2-3).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-54-desktop-returned",
    "width": 1440,
-   "visual": 72.9,
-   "reason": "D-83: measured 72.9 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the correction form opens on press in the shared side panel headed Decide, not open in the main column (Conflicts 12); the D-RETURN design note is not drawn (Conflicts 6); the quote banner is the shared warning Callout.",
+   "visual": 73.3,
+   "reason": "D-83: measured 73.3 in round 3 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with Overview, Setup and alerts, the name's position, crumbs as a list, the History link, the page width; spec item 11); the correction form opening on press in the side panel headed Decide instead of open in the main column (Conflicts 12, D-98 (2)); \"Correct and resubmit\" green (the F-22 rule that a Decide panel's primary is green, workspace.css) where the board draws signal orange; the stopped Review station plain white with red words inside the joined strip (work-item.css) where the board draws a dashed signal box; the D-RETURN design note not drawn (Conflicts 6). The quote is now the problem callout (UI-2-1).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-54-desktop-verified",
    "width": 1440,
-   "visual": 75.9,
-   "reason": "D-83: measured 75.9 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and Export and Withdraw are held to part 2 (Conflicts 5), so the Next panel is shorter; the shared station track draws a status line under each name.",
+   "visual": 76.1,
+   "reason": "D-83: measured 76.1 in round 3 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with Overview, Setup and alerts, the name's position, crumbs as a list, the History link, the page width; spec item 11); the joined station strip with a status line under each name and 15px names (shared StationTrack; spec item 11), which moves the Verified section down 39px; Export as an adjustment and Withdraw approval held to part 2 (Conflicts 5), so the Next panel is shorter.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-54-mobile-investigating",
    "width": 390,
-   "visual": 84.7,
-   "reason": "D-83: measured 84.7 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the shared station track draws a status line under each name; the agent card is the existing AgentCard (no title, name and limits on their own lines; Conflicts 15). On the phone: the frame's bar and \"← Queue\", the full returned amount and sentences, and the desktop step labels (Conflicts 10, 11).",
+   "visual": 84.5,
+   "reason": "D-83: measured 84.5 in round 3 on a production build. Remaining gaps: the frame's phone bar and \"← Queue\" (spec item 11); the work item title instead of \"Chidi investigating\" (Conflicts 9); the extra \"Income detail · 38 rows\" figures the phone board omits (Conflicts 10); the AgentCard head (Conflicts 15). The card footer now matches (UI-2-2).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-54-mobile-review",
    "width": 390,
-   "visual": 80.5,
-   "reason": "D-83: measured 80.5 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the shared station track draws a status line under each name (taller row); facts labels are bold in the shared facts list; the basis is unbolded and the note label shorter (Conflicts 7). On the phone: the frame's bar and \"← Queue\", the full returned amount and sentences, and the desktop step labels (Conflicts 10, 11).",
+   "visual": 80.9,
+   "reason": "D-83: measured 80.9 in round 3 on a production build. Remaining gaps: the frame's phone bar and \"← Queue\" (spec item 11); the title instead of \"Review schedule\" (Conflicts 9); \"₦12,400,000.00\" as returned instead of \"₦12.4M\" (Conflicts 3: no rounding in the browser); the extra fact rows, the basis and the consequences (Conflicts 10); \"Return with a note\" instead of \"Return\" in the pinned bar (Conflicts 10).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-54-mobile-returned",
    "width": 390,
-   "visual": 83.2,
-   "reason": "D-83: measured 83.2 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and the correction form opens on press in the shared side panel headed Decide, not open in the main column (Conflicts 12); the D-RETURN design note is not drawn (Conflicts 6); the quote banner is the shared warning Callout. On the phone: the frame's bar and \"← Queue\", the full returned amount and sentences, and the desktop step labels (Conflicts 10, 11).",
+   "visual": 83.0,
+   "reason": "D-83: measured 83 in round 3 on a production build. Remaining gaps: the frame's phone bar and \"← Queue\" (spec item 11); the title instead of \"Returned\" (Conflicts 9); the full returned sentence instead of the shorter quote (Conflicts 10); the consequence above the pinned button and the button green (F-22 Decide panel rule) where the board draws orange; the mini bar's stopped segment outlined (shared MiniStationBar, design system) where the board fills it. The quote is now the problem callout (UI-2-1).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-54-mobile-verified",
    "width": 390,
    "visual": 85.1,
-   "reason": "D-83: measured 85.1 in round 1 on a production build. Covers the shared F-17/F-22 frame (top bar, crumbs, history link, page width; Conflicts 11) and Export and Withdraw are held to part 2 (Conflicts 5), so the Next panel is shorter; the shared station track draws a status line under each name. On the phone: the frame's bar and \"← Queue\", the full returned amount and sentences, and the desktop step labels (Conflicts 10, 11).",
+   "reason": "D-83: measured 85.1 in round 3 on a production build. Remaining gaps: the frame's phone bar and \"← Queue\" (spec item 11); the title instead of \"Verified\" (Conflicts 9); the extra \"Verification scope\" row and the Next panel (Conflicts 10); Export held to part 2 (Conflicts 5).",
    "approved_by": "builder proposal, pending design engineer"
   }
  ]

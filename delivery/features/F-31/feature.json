@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-31",
   "outcome": "Engagement and planning, part 1: a won RFP becomes a registered engagement, and the planning page shows what each department owes and records what one sent (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-ENGAGEMENT-PLANNING"
   ],
@@ -82,15 +82,29 @@
       "at": "2026-11-18T01:48:55Z",
       "seconds": 299.1,
       "evidence_ref": "delivery/features/F-31/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "83747e368e5af5b4680839ede43bd485d8744414",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T02:58:41Z",
+      "seconds": 272.9,
+      "evidence_ref": "delivery/features/F-31/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -116,18 +130,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -144,14 +162,42 @@
         "delivery/features/F-31/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "Workspace.tsx `afterRecorded`: `const item = await page.reload(); if (item) setRecorded(...)`. A failed re-read leaves no notice (new unit test). The 47 tests in `engagement-planning.test.tsx` pass when I run them."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Workspace.tsx `afterRecorded`: `const item = await page.reload(); if (item) setRecorded(...)`. A failed re-read leaves no notice (new unit test). The 47 tests in `engagement-planning.test.tsx` pass when I run them."
       ]
     },
     {
@@ -236,14 +282,42 @@
         "delivery/features/F-31/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "`record-then-fail` at 390 and 1440: Drawer closes, page says \"QA is no longer waiting. We've reloaded this item so you can see whether it was recorded.\", QA row reads IN \u00b7 11 DEC. No \"Recorded under your name\" notice in this path."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "`record-then-fail` at 390 and 1440: Drawer closes, page says \"QA is no longer waiting. We've reloaded this item so you can see whether it was recorded.\", QA row reads IN \u00b7 11 DEC. No \"Recorded under your name\" notice in this path."
       ]
     },
     {
@@ -351,14 +425,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "W-2603 at 1440 and 390: \"Prepare readiness\" is `aria-disabled`, background rgb(201,205,199) (the disabled grey) and ink rgb(74,83,87). It is no longer green on grey."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2603 at 1440 and 390: \"Prepare readiness\" is `aria-disabled`, background rgb(201,205,199) (the disabled grey) and ink rgb(74,83,87). It is no longer green on grey."
       ]
     },
     {
@@ -374,14 +476,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "W-2601 at 390: `.ws-form--bare` computes border 0px and padding 0px. The PM field sits in the panel's own padding."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2601 at 390: `.ws-form--bare` computes border 0px and padding 0px. The PM field sits in the panel's own padding."
       ]
     },
     {
@@ -397,14 +527,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "W-2602 at 390: \"Costing v2 \u00b7 \u20a640,951,000.00\" is one value cell in the value column, not split under the FROM label."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2602 at 390: \"Costing v2 \u00b7 \u20a640,951,000.00\" is one value cell in the value column, not split under the FROM label."
       ]
     },
     {
@@ -420,14 +578,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "W-2603 Drawer at 1440 and 390: one column, no page box, the pinned Record input bar is in the Drawer, Cancel is in the Drawer footer on desktop, and there is no Cancel on the phone (see the ruling in Summary). Escape closes the Drawer. The one remaining difference from the board (Record input above the footer rule rather than beside Cancel) is named in the SCR-42-desktop-record waiver."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2603 Drawer at 1440 and 390: one column, no page box, the pinned Record input bar is in the Drawer, Cancel is in the Drawer footer on desktop, and there is no Cancel on the phone (see the ruling in Summary). Escape closes the Drawer. The one remaining difference from the board (Record input above the footer rule rather than beside Cancel) is named in the SCR-42-desktop-record waiver."
       ]
     },
     {
@@ -443,14 +629,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "Drawer at 390: Team segments 48px, \"Choose a file\" 48px, selects and inputs 44px, Record input 50px."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Drawer at 390: Team segments 48px, \"Choose a file\" 48px, selects and inputs 44px, Record input 50px."
       ]
     },
     {
@@ -466,14 +680,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "W-2602 register Drawer at 1440 and 390: the sentence \"Registers the engagement with this plan evidence.\" shows once and one \"Register engagement\" button is visible (50px). The phone sheet shows one title and flush fields with the actions at the foot. SCR-41-mobile-register rose from 69.8 to 77.7, so no floor exception."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2602 register Drawer at 1440 and 390: the sentence \"Registers the engagement with this plan evidence.\" shows once and one \"Register engagement\" button is visible (50px). The phone sheet shows one title and flush fields with the actions at the foot. SCR-41-mobile-register rose from 69.8 to 77.7, so no floor exception."
       ]
     },
     {
@@ -489,14 +731,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "`round-2/fidelity/drive-states.mjs` waits for upload end; the register side-by-sides show the uploaded file chip and not \"Uploading\u2026\"."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`round-2/fidelity/drive-states.mjs` waits for upload end; the register side-by-sides show the uploaded file chip and not \"Uploading\u2026\"."
       ]
     },
     {
@@ -512,14 +782,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "Drawer eyebrow reads \"Ojo Foods \u00b7 ordering app\" from the response. The exceptions file has 45 entries, entry 43 is a project-name `sample data` item, and entry 24 is category `frame`."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Drawer eyebrow reads \"Ojo Foods \u00b7 ordering app\" from the response. The exceptions file has 45 entries, entry 43 is a project-name `sample data` item, and entry 24 is category `frame`."
       ]
     },
     {
@@ -535,14 +833,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "W-2603: department names weight 600. Estimates read \"230 person-days\" and \"20 person-days\" on one line in the record side-by-side at 1440. The row actions stay outlined Buttons in an extra column and are named in the SCR-42 waivers as a D-91 component item for the design engineer."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-2603: department names weight 600. Estimates read \"230 person-days\" and \"20 person-days\" on one line in the record side-by-side at 1440. The row actions stay outlined Buttons in an extra column and are named in the SCR-42 waivers as a D-91 component item for the design engineer."
       ]
     },
     {
@@ -581,14 +907,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "Each waiver now names section-note callouts, the plain-row estimate finding and the status tag tone."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Each waiver now names section-note callouts, the plain-row estimate finding and the status tag tone."
       ]
     },
     {
@@ -604,14 +958,42 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T03:13:29Z",
+          "refs": [
+            "`visual_waivers` has 8 entries, one per board, each with its own round-2 score and its own gaps."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`visual_waivers` has 8 entries, one per board, each with its own round-2 score and its own gaps."
       ]
     },
     {
@@ -627,13 +1009,96 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-18T02:16:57Z",
           "head": "c5d2515627c96736a1d8884183eb630e29617a0e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T02:58:41Z",
+          "refs": [
+            "83747e3"
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "83747e3"
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Spec AC15 says \"Escape and Cancel close it\" on a phone. The phone record Drawer now has no Cancel button (`showCancel` is false when `phone`). The sheet's own Close and Escape both close it and return focus to the button, and the e2e checks this with Close. This follows the board, which draws one button. The spec wording should be amended, or the design engineer should confirm. The \"Register engagement\" form on the phone still has its own actions, so this affects only the record Drawer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T03:13:29Z",
+          "head": "83747e368e5af5b4680839ede43bd485d8744414"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`workspace.css` rules `.cmp-panel .ws-form`, `.ws-form__head` (visually hidden) and sticky `.ws-form__actions` apply to any `.ws-form` inside any Drawer or sheet, not only F-31's. Today `StepForm` (the Register form) is the only `.ws-form` that renders inside a `.cmp-panel`, so no other line changes. If a later feature puts a boxed `ws-form` in a Drawer, this will restyle it. Scoping to `.ws[data-line=\"engagement\"]` would be safer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T03:13:29Z",
+          "head": "83747e368e5af5b4680839ede43bd485d8744414"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone Drawers differ: the Register engagement Drawer at 390 still shows a \"Cancel\" button beside the primary one, while the Record input Drawer has only Close. Both exits work. Consider one rule for both when the frame is next touched.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T03:13:29Z",
+          "head": "83747e368e5af5b4680839ede43bd485d8744414"
         }
       ]
     }
@@ -717,7 +1182,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "d9ca6f97f4bca34349115014697714c3ab7aae9b",
     "task_branch": "fe-engagement-planning-register-engagement-and-record-input",
-    "head_sha": "c5d2515627c96736a1d8884183eb630e29617a0e",
+    "head_sha": "83747e368e5af5b4680839ede43bd485d8744414",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-31",
     "pr_url": null,
     "pr_number": null,
@@ -833,6 +1298,22 @@
       "round": 2,
       "head": "c5d2515627c96736a1d8884183eb630e29617a0e",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T02:58:53Z",
+      "round": 2,
+      "head": "83747e368e5af5b4680839ede43bd485d8744414",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T03:13:29Z",
+      "round": 2,
+      "head": "83747e368e5af5b4680839ede43bd485d8744414",
+      "reason": null
     }
   ],
   "routing": {
@@ -849,9 +1330,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "83747e368e5af5b4680839ede43bd485d8744414"
   },
   "blocked": null
 }
