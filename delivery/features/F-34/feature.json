@@ -8,7 +8,7 @@
   "task_ids": [
     "FE-DELIVERY-HYPERCARE-ARCHIVE"
   ],
-  "operation_ids": [],
+  "operation_ids": ["E-WORK-ITEM", "E-WORK-STEP", "E-PROJECT", "E-EVIDENCE-UPLOAD"],
   "acceptance_criteria": [
     "**Scores.** One fidelity run per round covers all 8 boards in the Boards table.",
     "**Driven state is the real UI.** `drive-states.mjs` resets the mock (`POST /__mock/reset`) and uses the real controls: press, type and upload. Its only DOM edits are the freeze. It does not submit the record. \u2014 verify: the script and `frozen/*.html`; `GET /__mock/workspace-log` is empty after the drive.",
