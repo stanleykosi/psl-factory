@@ -127,6 +127,10 @@ describe('four states from data (AC 1, 8)', () => {
     expect(card.textContent).toContain('Started 11:20');
     expect(card.querySelector('.psl-agent')).toBeTruthy();
     expect(ws().getByRole('link', { name: 'Ask Chidi' }).getAttribute('href')).toBe('/assistant');
+    // UI-2-2: the started time and Ask Chidi are the card's own footer row
+    const foot = card.querySelector('.psl-agent__foot')!;
+    expect(foot.textContent).toBe('Started 11:20Ask Chidi');
+    expect(ws().getAllByRole('link', { name: 'Ask Chidi' })).toHaveLength(1);
     expect(buttons()).toEqual([]);
     expect(document.querySelector('.ws-idecide')).toBeNull();
     expect(document.querySelectorAll('.ws-stations .psl-station')).toHaveLength(5);
@@ -654,5 +658,101 @@ describe('round 2: other lines are unchanged by the income-line frame edits (TEC
     expect(document.querySelector('.cmp-sr section[aria-label="Stations"]')).toBeTruthy();
     expect(document.querySelector('.cmp-sr section[aria-label="Agent at work"]')).toBeTruthy();
     expect(document.querySelector('.ws-stations, .ws-lineagent, .ws-ministations')).toBeNull();
+  });
+});
+
+describe('round 3: banner tone, panel type, notices and the uncertain fixture', () => {
+  const banner = () => [...document.querySelectorAll('.ws-note.psl-callout')].map((el) => [...el.classList].find((c) => c.startsWith('psl-callout--')));
+
+  it('UI-2-1: the returned and rejected quotes are the problem callout, from the stopped station and status tone', async () => {
+    await open(item('W-2703'));
+    expect(banner()).toEqual(['psl-callout--problem']);
+    cleanup();
+    await open(item('W-2702.reject'));
+    expect(banner()).toEqual(['psl-callout--problem']);
+    cleanup();
+    await open(item('W-2704'));
+    expect(banner()).toEqual([]);
+  });
+
+  it('UI-2-1: every other line keeps its banner exactly as before (weekly W-2209, issue W-2412 and W-2414, minutes W-2304, document review W-2901)', async () => {
+    for (const [id, expected] of [
+      ['W-2209', ['psl-callout--warning']],
+      ['W-2412', ['psl-callout--problem']],
+      ['W-2414', ['psl-callout--success']],
+      ['W-2304', []],
+      ['W-2901', []],
+    ] as const) {
+      who = id === 'W-2209' ? 'pm' : id.startsWith('W-24') || id === 'W-2304' || id === 'W-2901' ? 'pm' : who;
+      await open(item(id));
+      expect(banner(), id).toEqual(expected);
+      cleanup();
+    }
+  });
+
+  it('UI-2-3: the note label is "Note" with the muted parenthetical; the consequences are the panel’s small print', async () => {
+    await open(item('W-2702'));
+    await ready();
+    const label = document.querySelector('.ws-idecide .psl-label')!;
+    expect(label.textContent).toBe('Note (needed to return or reject)');
+    expect(label.querySelector('.psl-opt')!.textContent).toBe('(needed to return or reject)');
+    const after = [...document.querySelectorAll('.ws-idecide__after .ws-consequence')].map((p) => p.textContent);
+    expect(after).toEqual(["Approving doesn't post anything. Exporting it as an accounting adjustment is a separate step with its own approval.", "Rejecting stops this schedule: it isn't used for October's accounts."]);
+  });
+
+  it('UX-2-2: the Reject consequence is the step’s returned text; a step without one draws none', async () => {
+    const body = item('W-2702');
+    delete body.workspace!.steps![2].consequence;
+    await open(body);
+    await ready();
+    expect([...document.querySelectorAll('.ws-idecide__after .ws-consequence')]).toHaveLength(1);
+    expect(screen.queryByText(/Rejecting stops this schedule/)).toBeNull();
+  });
+
+  it('TECH-2-1: a decide after a step’s done notice shows its own outcome', async () => {
+    const body = item('W-2702');
+    body.workspace!.steps = [...body.workspace!.steps!, { key: 'refresh_figures', label: 'Refresh figures', emphasis: 'secondary', applies_to: 'workspace' }];
+    onStep = () => json(200, { work_id: 'W-2702', state: 'action_needed', revision: 1, outcome: 'done', message: 'Figures refreshed.' });
+    await open(body);
+    await ready();
+    await click('Refresh figures');
+    expect(await screen.findByText('Figures refreshed.')).toBeTruthy();
+    await click('Approve schedule');
+    expect(await screen.findByText('Schedule v1 is approved')).toBeTruthy();
+    expect(screen.queryByText('Figures refreshed.')).toBeNull();
+  });
+
+  it('TECH-2-1: a decide after a step notice whose effect is unsettled shows "result not confirmed"', async () => {
+    const body = item('W-2712');
+    body.workspace!.steps = [...body.workspace!.steps!, { key: 'refresh_figures', label: 'Refresh figures', emphasis: 'secondary', applies_to: 'workspace' }];
+    onStep = () => json(200, { work_id: 'W-2712', state: 'action_needed', revision: 1, outcome: 'done', message: 'Figures refreshed.' });
+    onDecide = (b) => {
+      served = item(`W-2712.${b.verdict as string}`);
+      return json(200, { task_id: 'T-2712', verdict: b.verdict, decided_by: 'Ada Okafor', decided_at: '2026-11-13T14:05:00Z', work_state: served.state });
+    };
+    await open(body);
+    await ready();
+    await click('Refresh figures');
+    expect(await screen.findByText('Figures refreshed.')).toBeTruthy();
+    await click('Approve schedule');
+    expect(await screen.findByText('Schedule v1: result not confirmed')).toBeTruthy();
+    expect(said()).not.toMatch(/is approved|verified/i);
+  });
+
+  it('W-2712 sidecars: approve, return and reject each come back effect_uncertain and are never worded as an outcome', async () => {
+    for (const verdict of ['approve', 'return', 'reject'] as const) {
+      onDecide = (b) => {
+        served = item(`W-2712.${b.verdict as string}`);
+        return json(200, { task_id: 'T-2712', verdict: b.verdict, decided_by: 'Ada Okafor', decided_at: '2026-11-13T14:05:00Z', work_state: served.state });
+      };
+      await open(item('W-2712'));
+      await ready();
+      if (verdict !== 'approve') fireEvent.change(note(), { target: { value: 'Check row 12.' } });
+      await click(verdict === 'approve' ? 'Approve schedule' : verdict === 'return' ? 'Return with a note' : 'Reject');
+      expect(await screen.findByText('Schedule v1: result not confirmed'), verdict).toBeTruthy();
+      expect(status().textContent).toBe('DECISION NOT CONFIRMED');
+      expect(said(), verdict).not.toMatch(/is approved|was returned|was rejected|verified/i);
+      cleanup();
+    }
   });
 });

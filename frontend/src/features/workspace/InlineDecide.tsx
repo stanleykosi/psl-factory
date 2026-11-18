@@ -23,7 +23,8 @@ import { STEP_TEXT } from './useWorkspaceStep';
 /** Frontend wording (spec Conflicts 7): the note label names only the verdicts this panel offers that need one. */
 export const DECIDE_TEXT = {
   head: (role: string) => `Decide · ${role}`,
-  note: (verdicts: Verdict[]) => `Note (needed to ${verdicts.filter((v) => v !== 'approve').map((v) => (v === 'return' ? 'return' : 'reject')).join(' or ')})`,
+  note: 'Note',
+  needed: (verdicts: Verdict[]) => `(needed to ${verdicts.filter((v) => v !== 'approve').map((v) => (v === 'return' ? 'return' : 'reject')).join(' or ')})`,
   noteMissing: (verdict: Verdict) => (verdict === 'reject' ? 'Add a note to reject it.' : 'Add a note to return it.'),
   noteLong: `Keep the note to ${NOTE_MAX} characters or fewer.`,
   loading: 'Loading the review…',
@@ -64,9 +65,11 @@ type Props = {
   /** The decide answered 200 and the page re-read: the notice (the existing VERDICT_WORDS only when the effect is settled),
    *  with the workspace revision it belongs to, so it goes once the item moves on. */
   onDecided: (notice: DecidedNotice) => void;
+  /** A decide is about to be sent: the page clears its earlier notices so this one's outcome is the one shown. */
+  onDeciding: () => void;
 };
 
-export function InlineDecide({ id, taskId, steps, page, off, onDecided }: Props) {
+export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDeciding }: Props) {
   const review = useDecision(id, taskId);
   const { view, claim, submit } = review;
   const phone = useIsPhone();
@@ -149,6 +152,7 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided }: Props)
 
   const send = async (verdict: Verdict) => {
     if (!ready || busy || off) return;
+    onDeciding();
     await review.decide(verdict, verdict === 'approve' ? '' : note.trim());
   };
 
@@ -179,7 +183,11 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided }: Props)
   const noteField = (ref: typeof noteRef) => (
     <TextArea
       ref={ref}
-      label={DECIDE_TEXT.note(offered.map((o) => o.verdict))}
+      label={
+        <>
+          {DECIDE_TEXT.note} <span className="psl-opt">{DECIDE_TEXT.needed(offered.map((o) => o.verdict))}</span>
+        </>
+      }
       value={note}
       rows={3}
       error={fieldError}
@@ -297,7 +305,14 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided }: Props)
   }
 
   const basis = task.decision.basis;
-  const consequences = offered.map(({ step }) => <Consequence key={step.key} step={step} />);
+  // the steps' consequences close the panel as its small print (muted, hint size), as the board draws them
+  const consequences = (
+    <div className="ws-idecide__after">
+      {offered.map(({ step }) => (
+        <Consequence key={step.key} step={step} />
+      ))}
+    </div>
+  );
   if (phone) {
     return (
       <>

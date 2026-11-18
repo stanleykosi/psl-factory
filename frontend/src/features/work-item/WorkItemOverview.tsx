@@ -113,7 +113,8 @@ function AgentSteps({ steps }: { steps: NonNullable<WorkItem['agent']['steps']> 
   );
 }
 
-export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
+/** `foot`: CMP-09's footer row inside the card (the income schedule line puts the started time and Ask Chidi there, F-33). */
+export function AgentCard({ agent, foot }: { agent: WorkItem['agent']; foot?: ReactNode }) {
   if (agent.status === 'none') {
     return (
       <section className="work-agent work-agent--none" aria-label="Agent at work">
@@ -143,6 +144,7 @@ export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
         </Tag>
       </div>
       {steps.length > 0 && <AgentSteps steps={steps} />}
+      {foot && <div className="psl-agent__foot">{foot}</div>}
     </section>
   );
 }

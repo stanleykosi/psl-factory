@@ -77,9 +77,9 @@ async function getItem(id: string) {
 }
 
 describe('F-33 fixtures', () => {
-  it('eleven items and their sidecars are schema-valid once the overlay is stripped, and every one is sample', () => {
-    expect(names.filter((name) => /^W-27\d\d\.json$/.test(name))).toHaveLength(11);
-    expect(names.filter((name) => !/^W-27\d\d\.json$/.test(name)).sort()).toEqual(['W-2702.approve.json', 'W-2702.reject.json', 'W-2702.return.json', 'W-2703.next.json', 'W-2703.steps.json']);
+  it('twelve items and their sidecars are schema-valid once the overlay is stripped, and every one is sample', () => {
+    expect(names.filter((name) => /^W-27\d\d\.json$/.test(name))).toHaveLength(12);
+    expect(names.filter((name) => !/^W-27\d\d\.json$/.test(name)).sort()).toEqual(['W-2702.approve.json', 'W-2702.reject.json', 'W-2702.return.json', 'W-2703.next.json', 'W-2703.steps.json', 'W-2712.approve.json', 'W-2712.reject.json', 'W-2712.return.json']);
     for (const name of names.filter((n) => !n.includes('.steps'))) {
       const body = readItem(name);
       expectValid('E-WORK-ITEM', 200, stripped(body));
@@ -157,5 +157,14 @@ describe('F-33 claim, decide and step on the mock', () => {
     expect(now.tasks[0]).toMatchObject({ you_can_act: false, cannot_act_reason: 'prepared_by_you' });
     await fetch(`${base}/__mock/reset`, { method: 'POST' });
     expect((await getItem('W-2703')).workspace.status.label).toBe('RETURNED · CORRECT AND RESUBMIT');
+  });
+
+  it('W-2712: a decide answers 200 with work_state effect_uncertain and the re-read is effect_uncertain (QA in a browser)', async () => {
+    for (const [verdict, note] of [['approve', undefined], ['return', 'Row 12.'], ['reject', 'No.']] as const) {
+      await fetch(`${base}/__mock/reset`, { method: 'POST' });
+      const result = await task('decision', 'T-2712', { verdict, expected_revision: 1, ...(note ? { note } : {}) });
+      expect(result, verdict).toMatchObject({ status: 200, body: { verdict, work_state: 'effect_uncertain' } });
+      expect((await getItem('W-2712')).state).toBe('effect_uncertain');
+    }
   });
 });
