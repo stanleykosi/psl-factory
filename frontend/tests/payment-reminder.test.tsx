@@ -104,6 +104,8 @@ describe('the draft from data (AC 12, 13, 14)', () => {
     for (const p of ['Dear Harmattan Bank Finance team,', 'Our records show invoice INV-0391 for ₦6,800,000.00 (Milestone 1, mobile onboarding) was due on 22 Oct', 'If you\'ve already paid, please send the payment reference', 'Kind regards,']) expect(text, p).toContain(p);
     expect(wsEl().querySelector('.ws-attachment')!.textContent).toBe('INV-0391.pdf · Uploaded · 84 KB');
     expect(wsEl().querySelector('.ws-attachment a')).toBeNull();
+    // UI-2-2: the board's dashed box with the paperclip, never a link
+    expect(wsEl().querySelector('.ws-attachment svg.psl-icon')).not.toBeNull();
     expect(ws().getByRole('heading', { name: 'This invoice' })).toBeTruthy();
     expect([fact('Amount'), fact('Due'), fact('Overdue by'), fact('Reminders sent'), fact('Last payment')]).toEqual(['₦6,800,000.00', '22 Oct 2026', '21 days', 'None yet', 'None']);
     expect(ws().getByText('After you send it, I\'ll check it was delivered.')).toBeTruthy();
@@ -219,6 +221,8 @@ describe('an uncertain send is never sent again by the page (AC 16, INV-RESEND)'
     fireEvent.click(button('Send reminder'));
     await screen.findByText('Delivery to Harmattan Bank couldn’t be confirmed.');
     await waitFor(() => expect(statusTag()).toBe('DELIVERY UNCERTAIN'));
+    // UX-2-1: the re-read's subtitle no longer says nothing is sent until Send is pressed
+    expect(document.body.textContent).not.toContain('Nothing is sent until you press Send.');
     const delivery = within(ws().getByRole('heading', { name: 'Delivery' }).closest('section') as HTMLElement);
     expect(delivery.getAllByText('Uncertain')).toHaveLength(2);
     expect(lockedAll()).toBe(true);
@@ -297,9 +301,12 @@ describe('edit makes a new version; Send follows it (AC 17)', () => {
     expect(subject.value).toBe('Reminder: invoice INV-0391 is 21 days overdue');
     expect(message.value.split('\n\n')).toHaveLength(4);
     expect(message.value.startsWith('Dear Harmattan Bank Finance team,')).toBe(true);
+    // UX-2-3: the submit button carries the step's returned submit label
+    expect(form.queryByRole('button', { name: 'Edit' })).toBeNull();
+    expect(form.getByRole('button', { name: 'Save draft' })).toBeTruthy();
 
     fireEvent.change(message, { target: { value: '' } });
-    fireEvent.click(form.getByRole('button', { name: 'Edit' }));
+    fireEvent.click(form.getByRole('button', { name: 'Save draft' }));
     await waitFor(() => expect(message.getAttribute('aria-invalid')).toBe('true'));
     await waitFor(() => expect(document.activeElement).toBe(message));
     const describedBy = message.getAttribute('aria-describedby')!.split(' ').map((id) => document.getElementById(id)?.textContent ?? '');
@@ -308,7 +315,7 @@ describe('edit makes a new version; Send follows it (AC 17)', () => {
 
     fireEvent.change(message, { target: { value: 'Dear team,\n\nPlease pay INV-0391.' } });
     fireEvent.change(subject, { target: { value: 'Reminder: INV-0391' } });
-    fireEvent.click(form.getByRole('button', { name: 'Edit' }));
+    fireEvent.click(form.getByRole('button', { name: 'Save draft' }));
     await waitFor(() => expect(ws().getByText('Draft v2')).toBeTruthy());
     expect(posts()).toHaveLength(1);
     expect(posts()[0].body).toMatchObject({ expected_revision: 1, step: 'edit_draft', inputs: { subject: 'Reminder: INV-0391', message: 'Dear team,\n\nPlease pay INV-0391.' } });
@@ -337,7 +344,7 @@ describe('edit makes a new version; Send follows it (AC 17)', () => {
     const form = within(await screen.findByRole('form', { name: 'Edit' }));
     const message = form.getByRole('textbox', { name: /Message/ }) as HTMLTextAreaElement;
     fireEvent.change(message, { target: { value: 'Please pay.' } });
-    fireEvent.click(form.getByRole('button', { name: 'Edit' }));
+    fireEvent.click(form.getByRole('button', { name: 'Save draft' }));
     await screen.findByText('The message must name the invoice reference.');
     expect(message.value).toBe('Please pay.');
     expect(message.getAttribute('aria-invalid')).toBe('true');

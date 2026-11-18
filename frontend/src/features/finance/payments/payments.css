@@ -63,4 +63,6 @@
   .payments__coverage { order: 3; }
   .payments__main > :not(.payments__toolbar) { order: 4; }
   .payments__note { order: 5; max-width: none; flex-basis: auto; }
+  /* a standalone link on a phone: a 44px target, its look unchanged (D-92c) */
+  .payments__notebody a { display: inline-flex; align-items: center; min-height: var(--control-md); }
 }

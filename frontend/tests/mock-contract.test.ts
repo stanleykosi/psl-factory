@@ -167,6 +167,12 @@ function minutesProposalsStripped(body: unknown): unknown {
     delete candidate.kind;
   }
   for (const step of w?.steps ?? []) {
+    // PROPOSAL (F-41 UX-2-3): `steps[].submit_label`, the words on a step form's submit button
+    const submit = (step as { submit_label?: unknown }).submit_label;
+    if (submit !== undefined) {
+      expect(typeof submit === 'string' && submit.trim() !== '', step.key).toBe(true);
+      delete (step as { submit_label?: unknown }).submit_label;
+    }
     if (step.starts_line !== undefined) {
       const { line_key: line, prefill } = step.starts_line as { line_key?: unknown; prefill?: unknown };
       expect(typeof line === 'string' && line !== '' && typeof prefill === 'object' && prefill !== null, step.key).toBe(true);

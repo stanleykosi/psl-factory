@@ -73,7 +73,7 @@
       "label": "DELIVERY UNCERTAIN",
       "tone": "uncertain"
     },
-    "subtitle": "Chidi drafted this from the invoice and the SOW payment terms. Nothing is sent until you press Send.",
+    "subtitle": "Delivery of this reminder couldn't be confirmed. Nothing is sent again until a person confirms what happened.",
     "version": {
       "label": "Draft v1",
       "number": 1
@@ -215,6 +215,7 @@
         "key": "edit_draft",
         "label": "Edit",
         "emphasis": "secondary",
+        "submit_label": "Save draft",
         "fields": [
           {
             "name": "subject",

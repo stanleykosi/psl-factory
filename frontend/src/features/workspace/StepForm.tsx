@@ -17,6 +17,7 @@ import { api, call } from '@/api/client';
 import { Button, Callout, MoneyField as MoneyInput, ValidationSummary, type ButtonKind, type FieldProblem } from '@/components';
 
 import type { Step } from './labels';
+import { stepSubmitLabel } from './proposals';
 import type { StepBody, SubmitResult } from './useWorkspaceStep';
 
 import '@/features/response/response.css';
@@ -345,7 +346,7 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
         {step.confirm && <p className="ws-confirm">{step.confirm}</p>}
         <div className="ws-form__actions">
           <Button type="submit" kind={step.emphasis === 'danger' ? 'reject' : 'primary'} busy={pending} busyLabel={`${step.label}…`} aria-disabled={pending || off || undefined}>
-            {submitLabel ?? step.label}
+            {submitLabel ?? stepSubmitLabel(step) ?? step.label}
           </Button>
           <Button kind="secondary" onClick={onClose}>
             {FORM_TEXT.cancel}

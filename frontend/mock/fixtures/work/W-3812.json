@@ -188,6 +188,7 @@
         "key": "edit_draft",
         "label": "Edit",
         "emphasis": "secondary",
+        "submit_label": "Save draft",
         "fields": [
           {
             "name": "subject",

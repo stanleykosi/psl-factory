@@ -81,7 +81,7 @@ const ITEM_STATES: [string, (page: Page) => Promise<unknown>][] = [
       await page.getByRole('button', { name: 'Edit', exact: true }).click();
       const form = page.getByRole('form', { name: 'Edit' });
       await form.getByRole('textbox', { name: /Message/ }).fill('');
-      await form.getByRole('button', { name: 'Edit', exact: true }).click();
+      await form.getByRole('button', { name: 'Save draft', exact: true }).click();
       await expect(form.getByRole('textbox', { name: /Message/ })).toHaveAttribute('aria-invalid', 'true');
     },
   ],
@@ -149,6 +149,8 @@ for (const [label, viewport] of [
       await expect(page.getByText('₦7,300,000.00 + Unknown')).toBeVisible();
       await expect(page.getByRole('button', { name: 'Remove State filter' })).toBeVisible();
       await expect(page.getByText(/Record a payment/)).toHaveCount(0);
+      // UI-2-1: the note's standalone link is a 44px target on a phone
+      if (phone) expect((await page.getByRole('link', { name: 'Open the reminder draft' }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
       await expect(page.getByText(/7\.3M/)).toHaveCount(0);
       expect(invoiceReads()).toHaveLength(1);
       expect(invoiceReads()[0].url.searchParams.get('status')).toBe('issued');
@@ -219,7 +221,7 @@ test.describe('requests (desktop)', () => {
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
     const form = page.getByRole('form', { name: 'Edit' });
     await form.getByRole('textbox', { name: /Subject/ }).fill('Reminder: INV-0391');
-    await form.getByRole('button', { name: 'Edit', exact: true }).click();
+    await form.getByRole('button', { name: 'Save draft', exact: true }).click();
     await expect(page.getByText('Draft v2')).toBeVisible();
     await page.getByRole('button', { name: 'Send reminder' }).dblclick();
     await expect(page.getByText('SENT · CHECKING DELIVERY').first()).toBeVisible();

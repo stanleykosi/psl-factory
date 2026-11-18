@@ -107,3 +107,10 @@ export function stepVerdict(step: Step): Verdict | null | undefined {
   const value = (step as { verdict?: unknown }).verdict;
   return value === 'approve' || value === 'return' || value === 'reject' ? value : null;
 }
+
+/** PROPOSAL (`steps[].submit_label`, F-41 UX-2-3): the words on a step form's submit button ("Save draft") when they differ from the
+ *  step's own label ("Edit"). Absent reads as the step label, as before. */
+export function stepSubmitLabel(step: object): string | undefined {
+  const value = (step as { submit_label?: unknown }).submit_label;
+  return text(value) ? value : undefined;
+}

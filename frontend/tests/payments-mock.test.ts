@@ -55,7 +55,12 @@ const key = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0'
 
 /** PROPOSAL G-SCR32-3 `attachment` is checked on its own, then removed before the schema check. */
 function attachmentStripped(body: Record<string, unknown>) {
-  const copy = structuredClone(body) as { workspace?: { sections: { items: { attachment?: unknown }[] }[] } };
+  const copy = structuredClone(body) as { workspace?: { sections: { items: { attachment?: unknown }[] }[]; steps?: { submit_label?: unknown }[] } };
+  // PROPOSAL (UX-2-3) `steps[].submit_label` is removed the same way
+  for (const step of copy.workspace?.steps ?? []) {
+    if (step.submit_label !== undefined) expect(typeof step.submit_label).toBe('string');
+    delete step.submit_label;
+  }
   for (const section of copy.workspace?.sections ?? []) {
     for (const item of section.items) {
       if (item.attachment === undefined) continue;

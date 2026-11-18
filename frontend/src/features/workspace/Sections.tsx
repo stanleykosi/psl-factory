@@ -6,7 +6,7 @@
 import Link from 'next/link';
 import { Fragment, useId, type ReactNode } from 'react';
 
-import { Button, Callout, formatDayMonth, formatDayTime, formatSize, Tag, Unknown as UnknownValue } from '@/components';
+import { Button, Callout, formatDayMonth, formatDayTime, formatSize, Icon, Tag, Unknown as UnknownValue } from '@/components';
 import { isAppPath } from '@/features/work-item/presentation';
 
 import { columnDayMonth, itemAttachment } from './proposals';
@@ -111,9 +111,12 @@ function Attachment({ item }: { item: Item }) {
   if (!file) return null;
   return (
     <span className="ws-attachment">
-      <strong>{file.label}</strong>
-      <span className="cmp-sr"> · </span>
-      <span className="ws-attachment__meta">Uploaded · {formatSize(file.sizeBytes)}</span>
+      <Icon name="clip" />
+      <span>
+        <strong>{file.label}</strong>
+        <span className="cmp-sr"> · </span>
+        <span className="ws-attachment__meta">Uploaded · {formatSize(file.sizeBytes)}</span>
+      </span>
     </span>
   );
 }

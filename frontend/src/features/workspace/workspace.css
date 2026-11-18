@@ -71,8 +71,9 @@
 .ws-empty, .ws-restricted { margin: 0; line-height: 1.5; }
 .ws-empty, .ws-restricted { color: var(--ink-muted); }
 .ws-detail { font-size: var(--text-hint-size); color: var(--ink-muted); }
-/* PROPOSAL (F-41 G-SCR32-3): the file that goes with a message, as the SCR-32 board draws it; text only */
-.ws-attachment { align-self: flex-start; margin-top: var(--space-2); padding: var(--space-10px) var(--space-3); background: var(--action-tint); color: var(--action-ink); }
+/* PROPOSAL (F-41 G-SCR32-3): the file that goes with a message, as the SCR-32 board draws it (dashed box, paperclip); text only, never a link.
+   Drawn only for an item that carries `attachment`; today that is the payment reminder alone. */
+.ws-attachment { display: flex; align-items: center; gap: var(--space-10px); margin-top: var(--space-2); padding: var(--space-10px) var(--space-3); border: var(--rule-strong) dashed var(--ink); background: var(--surface); color: var(--ink); }
 .ws-attachment__meta { display: block; font-size: var(--text-small-size); color: var(--ink-muted); }
 
 /* rows */
