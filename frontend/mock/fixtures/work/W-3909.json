@@ -39,7 +39,8 @@
     },
     {
       "name": "reviewed",
-      "status": "not_yet"
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
     },
     {
       "name": "approved",

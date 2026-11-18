@@ -16,7 +16,7 @@
     },
     {
       "name": "Date review (if unclear)",
-      "status": "current_person"
+      "status": "waiting"
     },
     {
       "name": "Calculate",
@@ -123,7 +123,7 @@
     ],
     "started_at": "2026-11-13T09:05:00Z"
   },
-  "next_step": "The 3 unclear in-service dates are explained and the proof attached; the date review starts then.",
+  "next_step": "Waiting for someone to explain the 3 unclear in-service dates and attach the proof. The date review starts after that.",
   "sample": true,
   "workspace": {
     "line_key": "fixed_assets",
@@ -223,7 +223,7 @@
       }
     ],
     "next": [
-      "The 3 unclear in-service dates are explained and the proof attached. The date review starts then."
+      "Waiting for someone to explain the 3 unclear in-service dates and attach the proof. The date review starts after that."
     ],
     "context": {
       "crumbs": [

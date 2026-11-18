@@ -155,6 +155,11 @@ describe('four states from data (AC 1, 8)', () => {
     expect(proof.textContent).toContain('asset-dates-explanation.pdf');
     expect(proof.textContent).toContain('Uploaded · 64 KB');
     expect(within(proof).queryByRole('link')).toBeNull();
+    // UI-1-1: the file name as returned (its own case) comes first in the row, the detail under it
+    const row = proof.querySelector('.ws-row')!;
+    expect(row.querySelector('.ws-row__end')!.textContent).toBe('asset-dates-explanation.pdf');
+    expect(row.querySelector('.ws-row__main')!.textContent).toBe('Uploaded · 64 KB');
+    expect(readFileSync(join(__dirname, '../src/features/workspace/workspace.css'), 'utf8')).toMatch(/\.ws\[data-line="fixed_assets"\] \.ws-rows--text \.ws-cite[^{]*\{[^}]*text-transform: none/);
     const panel = await ws().findByRole('region', { name: 'Decide · PPE reviewer' });
     expect(within(panel).getByText('Approve the explained dates. Depreciation starts from these dates.')).toBeTruthy();
     await ready('Approve dates');
@@ -282,6 +287,23 @@ describe('the holds and who may act (AC 6, 7, 12)', () => {
     });
   }
 
+  it('UX-1-1: no hold or uncertain state on this line draws the "See all exceptions" button; another line still does', async () => {
+    for (const id of ['W-3907', 'W-3908', 'W-3909', 'W-3911.approve']) {
+      await open(item(id));
+      expect(screen.queryByRole('link', { name: 'See all exceptions' }), id).toBeNull();
+      cleanup();
+    }
+    await open(item('W-2706'));
+    expect(screen.getAllByRole('link', { name: 'See all exceptions' }).length).toBeGreaterThan(0);
+  });
+
+  it('TECH-1-1: after both reviews the lifecycle facts stay drafted and reviewed', () => {
+    for (const id of ['W-3903.approve', 'W-3904', 'W-3909']) {
+      const facts = Object.fromEntries(item(id).facts.map((f) => [f.name, f.status]));
+      expect(facts, id).toMatchObject({ drafted: 'earned', reviewed: 'earned' });
+    }
+  });
+
   it('W-3909 stops at Calculate: station 4 stopped, no Calculation facts', async () => {
     await open(item('W-3909'));
     const stations = [...document.querySelectorAll('.ws-stations .psl-station')];
@@ -355,7 +377,8 @@ describe('approve, return and reject (AC 9 to 11)', () => {
     expect(decideRequest(decision.body)).toBe(true);
     expect(decision.csrf).toBe('mock-csrf-finance_lead');
     expect(await screen.findByText('October register is approved')).toBeTruthy();
-    expect(ws().getByText('The 3 unclear in-service dates are explained and the proof attached. The date review starts then.')).toBeTruthy();
+    expect(ws().getByText('Waiting for someone to explain the 3 unclear in-service dates and attach the proof. The date review starts after that.')).toBeTruthy();
+    expect(document.body.textContent).not.toMatch(/dates are explained/);
     // no date-review panel and no control on the waiting state
     expect(document.querySelector('.ws-idecide')).toBeNull();
     expect(buttons()).toEqual([]);
