@@ -359,7 +359,11 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 <span>{item.label ?? item.text}</span>
                 <Detail text={item.detail} />
               </span>,
-              item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? <span className="ws-value">{item.value}</span> : <Unknown />,
+              <>
+                {item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? <span className="ws-value">{item.value}</span> : <Unknown />}
+                {/* F-33: the tag the backend sends with a figure ("CHIDI CHECKING") is drawn beside its value */}
+                {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}
+              </>,
             );
           case 'timeline':
             return row(

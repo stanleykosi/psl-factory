@@ -5,18 +5,20 @@
 // Nothing here reads /me or decides who may act; the backend composes every section and step. Steps write through
 // E-WORK-STEP (useWorkspaceStep); a decision step links to the decision page; a reconcile goes to the existing
 // ReconcilePanel, which the page shows from the re-read item.
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 import Link from 'next/link';
 
-import { Button, buttonClass, Callout, Drawer, useIsPhone } from '@/components';
+import { Button, buttonClass, Callout, Drawer, formatClock, MiniStationBar, useIsPhone, type StationStatus } from '@/components';
 import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
-import type { WorkItem } from '@/features/work-item/labels';
+import { currentStationIndex, STATIONS, type WorkItem } from '@/features/work-item/labels';
+import { AgentCard, StationTrack } from '@/features/work-item/WorkItemOverview';
 
 import { AssignForm } from './AssignForm';
 import { agentName, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
+import { InlineDecide, type DecidedNotice } from './InlineDecide';
 import { WorkspaceLinks } from './Links';
-import { assignDefault, itemsDefaultChecked, itemTeamKey, itemValues, startsLine, warnLines, workspaceLinks } from './proposals';
+import { assignDefault, itemsDefaultChecked, itemTeamKey, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks, type WorkspaceLink } from './proposals';
 import type { Recorded } from '@/features/response/contract';
 
 import { RESPONSE_TEXT, ResponseDrawer, responseTaskFor } from './ResponseDrawer';
@@ -104,10 +106,64 @@ const ISSUE_LINE = 'issue_followup';
 /** F-31: the engagement's register form opens in the phone Drawer too (the SCR-41 phone register board is its own screen). */
 const ENGAGEMENT_LINE = 'engagement';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
+/** F-33: the income schedule boards draw the stations in the main column and the working agent's card beside it. */
+const INCOME_LINE = 'income_schedules';
 
-/** The lead banner's tone follows the status tone the response sends (never the words); only the issue follow-up reads it (F-30). */
-const bannerTone = (workspace: WorkspaceData): 'warning' | 'success' | 'problem' =>
-  workspace.line_key !== ISSUE_LINE ? (workspace.status?.tone === 'verified' ? 'success' : 'warning') : workspace.status?.tone === 'verified' ? 'success' : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain' ? 'problem' : 'warning';
+/** The stations as the income schedule boards draw them: a row of boxes on desktop, the small bar and its words on a phone
+ *  (where the page keeps the full track for screen readers, WorkItemOverview). */
+function LineStations({ item, phone }: { item: WorkItem; phone: boolean }) {
+  const { stations } = item;
+  if (stations.length === 0) return null;
+  if (!phone) {
+    return (
+      <div className="ws-stations">
+        <StationTrack stations={stations} state={item.state} quiet />
+      </div>
+    );
+  }
+  const current = currentStationIndex(stations);
+  const at = current >= 0 ? current : stations.findLastIndex((s) => s.status !== 'not_started');
+  const shown = stations[Math.max(at, 0)];
+  return <MiniStationBar className="ws-ministations" stations={stations.map((s) => STATIONS[s.status].modifier as StationStatus)} text={`Station ${Math.max(at, 0) + 1} of ${stations.length} · ${shown.name}`} />;
+}
+
+/** The working agent's card beside the sections (WorkItemOverview then draws no copy of its own), with the card's own footer
+ *  row: when it started and the workspace's assistant link ("Ask Chidi"), as CMP-09 draws them. */
+function LineAgent({ agent, ask }: { agent: WorkItem['agent']; ask?: WorkspaceLink }) {
+  const foot =
+    agent.started_at || ask ? (
+      <>
+        <span>{agent.started_at && <>Started <time dateTime={agent.started_at}>{formatClock(agent.started_at)}</time></>}</span>
+        {ask && (
+          <Link className="psl-link ws-asklink" href="/assistant">
+            {ask.label}
+          </Link>
+        )}
+      </>
+    ) : undefined;
+  return (
+    <div className="ws-lineagent">
+      <AgentCard agent={agent} foot={foot} />
+    </div>
+  );
+}
+
+/** On the income line the working agent's card carries the assistant link; the other links stay where they are. */
+const splitAsk = (links: WorkspaceLink[], inCard: boolean) => {
+  const ask = inCard ? links.find((l) => l.kind === 'assistant') : undefined;
+  return { ask, rest: ask ? links.filter((l) => l !== ask) : links };
+};
+
+/** The lead banner's tone follows the data (never the words): the issue follow-up reads the status tone (F-30); the income
+ *  schedule line reads a stopped station too, as a returned or rejected schedule has (F-33). Every other line is unchanged. */
+const bannerTone = (workspace: WorkspaceData, item: WorkItem): 'warning' | 'success' | 'problem' =>
+  workspace.line_key === INCOME_LINE
+    ? workspace.status?.tone === 'verified'
+      ? 'success'
+      : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain' || item.stations.some((s) => s.status === 'stopped')
+        ? 'problem'
+        : 'warning'
+    : workspace.line_key !== ISSUE_LINE ? (workspace.status?.tone === 'verified' ? 'success' : 'warning') : workspace.status?.tone === 'verified' ? 'success' : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain' ? 'problem' : 'warning';
 
 const scope = (step: Step) => step.applies_to ?? 'workspace';
 const needsForm = (step: Step) => (step.fields?.length ?? 0) > 0 || step.confirm !== undefined;
@@ -126,7 +182,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const assignButton = useRef<HTMLButtonElement>(null);
   const phone = useIsPhone();
   // F-30 (D-103, D-107): on a phone the issue follow-up's forms open in the full-height Drawer.
-  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE);
+  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || workspace.line_key === INCOME_LINE);
+  const incomeLine = workspace.line_key === INCOME_LINE;
   // F-31: a department's "Record input" opens F-18's team-input form in the Drawer; `recording` names the pressed row's button.
   const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);
   const [recorded, setRecorded] = useState<string | null>(null);
@@ -150,7 +207,25 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const itemsSteps = steps.filter((s) => scope(s) === 'items');
   // an `items` step whose targets sit in more than one section is one control in the workspace row, over the ticks in all of them
   const cross = new Set(itemsSteps.filter((s) => workspace.sections.filter((sec) => !sec.restricted && sec.items.some((it) => it.steps?.includes(s.key))).length > 1).map((s) => s.key));
-  const workspaceSteps = steps.filter((s) => scope(s) === 'workspace' || cross.has(s.key));
+  const allWorkspaceSteps = steps.filter((s) => scope(s) === 'workspace' || cross.has(s.key));
+  // F-33: a decision step with a verdict the page offers is decided in place (InlineDecide), one panel per task; one
+  // with a verdict it does not offer is not drawn; one with no verdict stays the link to the decision page.
+  const workspaceSteps = allWorkspaceSteps.filter((s) => stepVerdict(s) === undefined);
+  const decideTasks = new Map<string, Step[]>();
+  for (const s of allWorkspaceSteps) {
+    if (!stepVerdict(s) || !s.task_id) continue;
+    decideTasks.set(s.task_id, [...(decideTasks.get(s.task_id) ?? []), s]);
+  }
+  const [decided, setDecided] = useState<DecidedNotice | null>(null);
+  const onDecided = useCallback((notice: DecidedNotice) => setDecided(notice), []);
+  // TECH-2-1: a decide starting clears the last step's notice and the last decision's, so its own outcome always shows
+  const { setNotice } = flow;
+  const onDeciding = useCallback(() => {
+    setNotice(null);
+    setDecided(null);
+  }, [setNotice]);
+  // The decision's notice belongs to the item as re-read after it: it goes when the item moves on or another step is sent.
+  const decidedShown = decided !== null && decided.revision === workspace.revision && flow.pending === null && flow.notice === null ? decided : null;
   const hasDecide = workspaceSteps.length > 0;
   useEffect(() => {
     const bar = decideRef.current;
@@ -435,7 +510,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   }
 
   // Conflicts 4: when the backend returns `next` lines the panel is "Next" and carries them; lines a step already says are not repeated.
-  const said = new Set(workspaceSteps.map((s) => s.consequence));
+  const said = new Set(allWorkspaceSteps.map((s) => s.consequence));
   const nextLines = (workspace.next ?? []).filter((line) => line.trim() !== '' && !said.has(line));
   const hasNext = (workspace.next ?? []).length > 0;
   // F-30: a follow-up with nothing to press points at the register, where closing is done; the id is one the response carries.
@@ -446,6 +521,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const side = workspace.sections.filter(inSide(item));
   const main = workspace.sections.filter((section) => !inSide(item)(section) && !strip.includes(section));
   const sideNote = issueLine(workspace) && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
+  const agentSide = incomeLine && item.agent.status === 'working';
   const notice = flow.notice;
   return (
     <>
@@ -473,6 +549,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
               <span>{assignFlow.notice.text}</span>
             </Callout>
           )}
+          {decidedShown?.settled && (
+            <Callout kind="success" announce={false}>
+              <span>{decidedShown.text}</span>
+            </Callout>
+          )}
           {(notice?.kind === 'done' || notice?.kind === 'queued') && (
             <Callout kind="success" announce={false}>
               {notice.kind === 'done' && notice.label && <strong>{notice.label} </strong>}
@@ -480,6 +561,13 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             </Callout>
           )}
         </div>
+        {decidedShown && !decidedShown.settled && (
+          <div role="alert">
+            <Callout kind="warning" className="ws-notice">
+              <span>{decidedShown.text}</span>
+            </Callout>
+          </div>
+        )}
         {notice?.kind === 'uncertain' && (
           <div role="alert">
             <Callout kind="warning" className="ws-notice">
@@ -561,17 +649,22 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       ))}
       <div className="ws-cols">
         <div className="ws-main">
+          {incomeLine && <LineStations item={item} phone={phone} />}
           {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
           {workspace.sections.length === 0 && workspaceSteps.length === 0 && assign === undefined && <p className="ws-empty">{WS_TEXT.empty}</p>}
           {main.map((section) => (
-            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} banner={bannerTone(workspace)} />
+            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} banner={bannerTone(workspace, item)} />
           ))}
-          <WorkspaceLinks links={workspaceLinks(workspace)} page={page} />
+          <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} page={page} />
         </div>
-        {(side.length > 0 || showPanel || sideNote) && (
+        {(side.length > 0 || showPanel || sideNote || decideTasks.size > 0 || agentSide) && (
           <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
             {side.map((section) => (
               <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
+            ))}
+            {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} />}
+            {[...decideTasks].map(([taskId, taskSteps]) => (
+              <InlineDecide key={taskId} id={id} taskId={taskId} steps={taskSteps} page={page} off={flow.pending !== null || flow.allLocked || page.refreshFailed} onDecided={onDecided} onDeciding={onDeciding} />
             ))}
             {showPanel && (
               <section ref={decideRef} className={`psl-panel ${hasNext ? 'ws-decide--next' : 'psl-panel--decide'} ws-decide${workspaceSteps.length === 0 && (preset || !(assign && assign.candidates.length > 0)) ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
@@ -650,7 +743,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
 
 export function Workspace({ id, item, page }: { id: string; item: WorkItem; page?: WorkspacePage }) {
   const workspace = item.workspace;
+  const phone = useIsPhone();
   if (!workspace) return null;
+  // the income line's stations and working agent are drawn here whichever branch draws the sections (WorkItemOverview draws no copy)
+  const income = workspace.line_key === INCOME_LINE;
+  const agentSide = income && item.agent.status === 'working';
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';
@@ -662,16 +759,18 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
       ) : (
         <div className="ws-cols">
           <div className="ws-main">
+            {income && <LineStations item={item} phone={phone} />}
             {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
             {workspace.sections
               .filter((section) => !inSide(item)(section))
               .map((section) => (
                 <SectionView key={section.key} section={section} level={titled ? 3 : 2} />
               ))}
-            <WorkspaceLinks links={workspaceLinks(workspace)} />
+            <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} />
           </div>
-          {workspace.sections.some(inSide(item)) && (
+          {(workspace.sections.some(inSide(item)) || agentSide) && (
             <aside className="ws-side" aria-label="Review and decide">
+              {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} />}
               {workspace.sections
                 .filter(inSide(item))
                 .map((section) => (

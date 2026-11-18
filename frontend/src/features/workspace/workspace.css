@@ -250,3 +250,21 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 }
 /* QA-2-1: the uploaded file chip's remove button is a 44px target inside a Drawer (F-18's own page is unchanged) */
 .cmp-panel .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }
+
+/* F-33: the income schedule boards: the stations in the main column, the working agent's card beside the sections,
+   and the decision steps decided in place (InlineDecide) in the side column */
+.ws-lineagent { display: flex; flex-direction: column; gap: var(--space-2); }
+.ws-lineagent .ws-detail { margin: 0; }
+.ws-ministations .psl-mini__text { font-family: var(--font-mono); font-size: var(--text-small-size); text-transform: uppercase; color: var(--ink-muted); }
+.ws-idecide__buttons { display: flex; flex-direction: column; gap: var(--space-2); }
+.ws-idecide__words { display: flex; flex-direction: column; gap: var(--space-2); }
+.ws-idecide__loading { align-self: flex-start; }
+.ws-idecide__after { display: flex; flex-direction: column; gap: var(--space-1); }
+.ws-idecide__after .ws-consequence { font-size: var(--text-hint-size); color: var(--ink-muted); }
+.ws-lineagent .psl-agent__foot .psl-link { font-weight: 600; white-space: nowrap; }
+@media (max-width: 719.98px) {
+  .ws-ministations { flex-direction: column; align-items: flex-start; }
+  .ws-idecide__buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ws-idecide__buttons > :first-child { grid-column: 1 / -1; }
+  .ws-lineagent .psl-agent__foot .psl-link { display: inline-flex; align-items: center; min-height: var(--control-md); }
+}
