@@ -157,15 +157,15 @@ for (const [label, viewport, phone] of [
       await expectNoAxeViolations(page);
     });
 
-    test('each of the 8 drawers shows its board title, fields and start label; Proof is drawn but disabled', async ({ page, context }) => {
+    test('each of the 8 drawers shows its board title, fields and start label; Proof waits for the project', async ({ page, context }) => {
       await openMyWork(page, context, 'pm');
       for (const [line, title, labels, start] of LINES) {
         await openLine(page, phone, line, title);
-        // the shared TextArea draws its own field wrapper, so its label sits one level down
-        const fieldLabels = await dialog(page).locator('[data-field] > .psl-label, [data-field] > .psl-field > .psl-label').allTextContents();
+        // the shared TextArea draws its own field wrapper, so its label sits one level down; so does the Proof group's
+        const fieldLabels = await dialog(page).locator('[data-field] > .psl-label, [data-field] > .psl-field > .psl-label, [data-field] > .resp-field > .psl-label').allTextContents();
         expect(fieldLabels, title).toEqual(labels);
         await expect(dialog(page).getByRole('button', { name: start })).toBeVisible();
-        await expect(dialog(page).getByText('Proof upload comes next')).toHaveCount(labels.includes('Proof') ? 1 : 0);
+        await expect(dialog(page).getByText('Choose the project first.')).toHaveCount(labels.includes('Proof') ? 1 : 0);
         await expect(dialog(page).getByRole('button', { name: 'Cancel' })).toHaveCount(phone || line.startsWith('Invoice') ? 0 : 1);
         // Two-option choices fill the field's width.
         for (const seg of await dialog(page).locator('.psl-seg').all()) {
