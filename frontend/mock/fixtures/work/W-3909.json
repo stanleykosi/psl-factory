@@ -1,0 +1,211 @@
+{
+  "id": "W-3909",
+  "title": "Fixed asset schedule · October",
+  "line": "Fixed asset schedule",
+  "reference": "PPE-0006",
+  "state": "setup_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Register review",
+      "status": "done"
+    },
+    {
+      "name": "Date review (if unclear)",
+      "status": "done"
+    },
+    {
+      "name": "Calculate",
+      "status": "stopped"
+    },
+    {
+      "name": "Schedule review",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3936",
+      "kind": "decide",
+      "title": "Review the asset register",
+      "required_role": "PPE reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "October register",
+          "number": 1,
+          "drafted_at": "2026-11-13T11:40:00Z"
+        },
+        "basis": "Approve the October register as the source for the schedule.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": false,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PPE reviewer",
+              "status": "approved",
+              "is_you": false,
+              "person": "Ada Okafor",
+              "decided_at": "2026-11-13T14:05:00Z"
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    },
+    {
+      "id": "T-3937",
+      "kind": "decide",
+      "title": "Review the in-service dates",
+      "required_role": "PPE reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "October in-service dates",
+          "number": 1,
+          "drafted_at": "2026-11-13T11:40:00Z"
+        },
+        "basis": "Approve the explained dates. Depreciation starts from these dates.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": false,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PPE reviewer",
+              "status": "approved",
+              "is_you": false,
+              "person": "Ada Okafor",
+              "decided_at": "2026-11-13T14:05:00Z"
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the asset register",
+        "status": "done",
+        "source": "PPE_REGISTER_OCT.XLSX · 64 ASSETS"
+      },
+      {
+        "text": "Compared with September's schedule",
+        "status": "done",
+        "source": "PPE-0005"
+      },
+      {
+        "text": "Found 3 assets with unclear in-service dates",
+        "status": "done",
+        "source": "VALUES NOT READ"
+      },
+      {
+        "text": "Hand to register review",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-13T09:05:00Z"
+  },
+  "next_step": "An admin sets the calculation rules in Setup. The calculation starts then.",
+  "sample": true,
+  "workspace": {
+    "line_key": "fixed_assets",
+    "screen": "SCR-55",
+    "view": "setup_needed",
+    "status": {
+      "label": "SETUP NEEDED",
+      "tone": "stopped"
+    },
+    "sections": [
+      {
+        "key": "held",
+        "kind": "facts",
+        "title": "Why it's held",
+        "items": [
+          {
+            "id": "H-1",
+            "label": "Calculation rules",
+            "value": "NOT SET",
+            "tag": {
+              "label": "NOT SET",
+              "tone": "stopped"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "An admin sets Calculation rules in Setup · Finance rules. The calculation starts then."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "PPE-0006",
+          "label": "ASSETS · PPE-0006"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

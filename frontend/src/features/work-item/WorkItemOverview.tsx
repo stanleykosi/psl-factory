@@ -12,6 +12,7 @@ import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, DisclosureLink
 import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
+import { scheduleLine } from '@/features/workspace/labels';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
 import { Workspace } from '@/features/workspace/Workspace';
 import { RfpOutcomeLink } from '@/features/rfp';
@@ -699,22 +700,23 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   // D-73: the line boards draw the workspace straight under the title. The facts, stations, agent card and next step
   // stay in the page for screen readers only (the contract data is never dropped), the way the state boards do.
   if (item.workspace) {
-    // F-33: the income schedule boards draw the station row (desktop) and the working agent's card in the workspace itself
-    const income = item.workspace.line_key === 'income_schedules';
+    // F-33, F-42: the schedule boards draw the station row (desktop) and the working agent's card in the workspace itself
+    const schedule = scheduleLine(item.workspace.line_key);
     before = (
       <div className="cmp-sr">
         <FactsStrip facts={item.facts} paidNote={false} />
-        {!(income && !phone) && <StationTrack stations={item.stations} state={item.state} />}
+        {!(schedule && !phone) && <StationTrack stations={item.stations} state={item.state} />}
       </div>
     );
     main = (
       <div className="cmp-sr">
-        {!(income && agent.status === 'working') && <AgentCard agent={item.agent} />}
+        {!(schedule && agent.status === 'working') && <AgentCard agent={item.agent} />}
         <NextStep item={item} quiet />
       </div>
     );
-    // F-30: the issue follow-up boards draw no exceptions button above the workspace
-    after = hasExceptionsLink(item) && item.workspace.line_key !== 'issue_followup' ? (
+    // F-30: the issue follow-up boards draw no exceptions button above the workspace; F-42: nor do the fixed asset boards,
+    // whose holds are a status, a reason and a Next sentence with no button (the button also sat on the phone station bar)
+    after = hasExceptionsLink(item) && item.workspace.line_key !== 'issue_followup' && item.workspace.line_key !== 'fixed_assets' ? (
       <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
         See all exceptions
       </Link>
@@ -723,8 +725,8 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
 
   // A task the workspace's own steps already link to is decided from that link: no second card for it (F-23).
   const linked = new Set((item.workspace?.steps ?? []).map((step) => step.task_id).filter(Boolean));
-  // F-33: on the income schedule line a decided task has nothing left to open; the workspace shows what it became.
-  const settled = (task: WorkItem['tasks'][number]) => item.workspace?.line_key === 'income_schedules' && task.cannot_act_reason === 'already_decided';
+  // F-33, F-42: on a schedule line a decided task has nothing left to open; the workspace shows what it became.
+  const settled = (task: WorkItem['tasks'][number]) => scheduleLine(item.workspace?.line_key) && task.cannot_act_reason === 'already_decided';
   const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task));
 
   return (

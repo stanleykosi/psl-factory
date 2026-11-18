@@ -15,7 +15,7 @@ import { currentStationIndex, STATIONS, type WorkItem } from '@/features/work-it
 import { AgentCard, StationTrack } from '@/features/work-item/WorkItemOverview';
 
 import { AssignForm } from './AssignForm';
-import { agentName, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
+import { agentName, scheduleLine, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { InlineDecide, type DecidedNotice } from './InlineDecide';
 import { WorkspaceLinks } from './Links';
 import { assignDefault, itemsDefaultChecked, itemTeamKey, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks, type WorkspaceLink } from './proposals';
@@ -106,12 +106,10 @@ const ISSUE_LINE = 'issue_followup';
 /** F-31: the engagement's register form opens in the phone Drawer too (the SCR-41 phone register board is its own screen). */
 const ENGAGEMENT_LINE = 'engagement';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
-/** F-33: the income schedule boards draw the stations in the main column and the working agent's card beside it. */
-const INCOME_LINE = 'income_schedules';
 /** F-41: the payment reminder's line key (SCR-32); read only to open its Edit form in the phone Drawer. */
 const REMINDER_LINE = 'payment_reminder';
 
-/** The stations as the income schedule boards draw them: a row of boxes on desktop, the small bar and its words on a phone
+/** The stations as the schedule boards (income F-33, fixed assets F-42) draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
 function LineStations({ item, phone }: { item: WorkItem; phone: boolean }) {
   const { stations } = item;
@@ -150,16 +148,16 @@ function LineAgent({ agent, ask }: { agent: WorkItem['agent']; ask?: WorkspaceLi
   );
 }
 
-/** On the income line the working agent's card carries the assistant link; the other links stay where they are. */
+/** On a schedule line the working agent's card carries the assistant link; the other links stay where they are. */
 const splitAsk = (links: WorkspaceLink[], inCard: boolean) => {
   const ask = inCard ? links.find((l) => l.kind === 'assistant') : undefined;
   return { ask, rest: ask ? links.filter((l) => l !== ask) : links };
 };
 
-/** The lead banner's tone follows the data (never the words): the issue follow-up reads the status tone (F-30); the income
- *  schedule line reads a stopped station too, as a returned or rejected schedule has (F-33). Every other line is unchanged. */
+/** The lead banner's tone follows the data (never the words): the issue follow-up reads the status tone (F-30); a schedule
+ *  line reads a stopped station too, as a returned or rejected schedule has (F-33, F-42). Every other line is unchanged. */
 const bannerTone = (workspace: WorkspaceData, item: WorkItem): 'warning' | 'success' | 'problem' =>
-  workspace.line_key === INCOME_LINE
+  scheduleLine(workspace.line_key)
     ? workspace.status?.tone === 'verified'
       ? 'success'
       : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain' || item.stations.some((s) => s.status === 'stopped')
@@ -183,9 +181,9 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const [assigning, setAssigning] = useState(false);
   const assignButton = useRef<HTMLButtonElement>(null);
   const phone = useIsPhone();
-  // F-30 (D-103, D-107), F-31, F-33, F-41: on a phone these lines' forms open in the full-height Drawer.
-  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || workspace.line_key === INCOME_LINE || workspace.line_key === REMINDER_LINE);
-  const incomeLine = workspace.line_key === INCOME_LINE;
+  // F-30 (D-103, D-107), F-31, F-33, F-41, F-42: on a phone these lines' forms open in the full-height Drawer.
+  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE);
+  const schedule = scheduleLine(workspace.line_key);
   // F-31: a department's "Record input" opens F-18's team-input form in the Drawer; `recording` names the pressed row's button.
   const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);
   const [recorded, setRecorded] = useState<string | null>(null);
@@ -523,7 +521,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const side = workspace.sections.filter(inSide(item));
   const main = workspace.sections.filter((section) => !inSide(item)(section) && !strip.includes(section));
   const sideNote = issueLine(workspace) && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
-  const agentSide = incomeLine && item.agent.status === 'working';
+  const agentSide = schedule && item.agent.status === 'working';
   const notice = flow.notice;
   return (
     <>
@@ -651,7 +649,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       ))}
       <div className="ws-cols">
         <div className="ws-main">
-          {incomeLine && <LineStations item={item} phone={phone} />}
+          {schedule && <LineStations item={item} phone={phone} />}
           {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
           {workspace.sections.length === 0 && workspaceSteps.length === 0 && assign === undefined && <p className="ws-empty">{WS_TEXT.empty}</p>}
           {main.map((section) => (
@@ -747,9 +745,9 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   const workspace = item.workspace;
   const phone = useIsPhone();
   if (!workspace) return null;
-  // the income line's stations and working agent are drawn here whichever branch draws the sections (WorkItemOverview draws no copy)
-  const income = workspace.line_key === INCOME_LINE;
-  const agentSide = income && item.agent.status === 'working';
+  // a schedule line's stations and working agent are drawn here whichever branch draws the sections (WorkItemOverview draws no copy)
+  const schedule = scheduleLine(workspace.line_key);
+  const agentSide = schedule && item.agent.status === 'working';
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';
@@ -761,7 +759,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
       ) : (
         <div className="ws-cols">
           <div className="ws-main">
-            {income && <LineStations item={item} phone={phone} />}
+            {schedule && <LineStations item={item} phone={phone} />}
             {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
             {workspace.sections
               .filter((section) => !inSide(item)(section))
