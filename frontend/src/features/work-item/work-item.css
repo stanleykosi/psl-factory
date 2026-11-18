@@ -83,7 +83,10 @@
   .work-columns { grid-template-columns: minmax(0, 1fr) 324px; }
   .work-board .work-columns { grid-template-columns: minmax(0, 1fr) 324px; gap: var(--space-22px); }
   .work-columns--history { grid-template-columns: minmax(0, 1fr) 300px; gap: var(--space-22px); }
+  .work-columns--lone, .work-board .work-columns--lone { grid-template-columns: minmax(0, 1fr); gap: 0; }
 }
+.work-columns--lone > .work-column:first-child { display: contents; }
+.work-columns--lone > .work-aside { margin-bottom: var(--space-5); }
 
 /* mascots */
 .work-mascot { width: 36px; height: 36px; flex: none; border-radius: var(--radius-round); object-fit: cover; background: var(--mascot-chidi-tint); }

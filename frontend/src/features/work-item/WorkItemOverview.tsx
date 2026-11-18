@@ -730,7 +730,8 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   return (
     <div className={layout ? `work-overview work-board work-state--${item.state}${layout === LAYOUTS.issue ? ' work-board--issue' : ''} work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : `work-overview${item.workspace ? ' work-overview--line' : ''}`}>
       {before}
-      <div className="work-columns">
+      {/* F-32: a release item's workspace draws no main column (only screen-reader text), so its task panel takes the full width instead of floating right beside a blank column */}
+      <div className={item.workspace?.line_key === 'delivery_release' && shownTasks.length > 0 ? 'work-columns work-columns--lone' : 'work-columns'}>
         <div className="work-column">{main}</div>
         <div className="work-column work-aside">
           <ReconcilePanel id={id} item={asResponseItem(item)} />

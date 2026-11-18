@@ -1,0 +1,9 @@
+{
+  "register_engagement": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "Engagement EN-0042 registered."
+    }
+  }
+}

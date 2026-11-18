@@ -18,7 +18,10 @@ import { AssignForm } from './AssignForm';
 import { agentName, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { InlineDecide, type DecidedNotice } from './InlineDecide';
 import { WorkspaceLinks } from './Links';
-import { itemsDefaultChecked, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks, type WorkspaceLink } from './proposals';
+import { assignDefault, itemsDefaultChecked, itemTeamKey, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks, type WorkspaceLink } from './proposals';
+import type { Recorded } from '@/features/response/contract';
+
+import { RESPONSE_TEXT, ResponseDrawer, responseTaskFor } from './ResponseDrawer';
 import { SectionView, type ItemControls } from './Sections';
 import { StepForm } from './StepForm';
 import { Consequence, StepControl, StepRow } from './Steps';
@@ -100,6 +103,8 @@ type Open = { token: string; step: Step; itemIds?: string[]; items?: { section?:
 
 /** The Start work line key of an issue's follow-up (E-LINES); the only name this frame reads for F-30's read-only link and phone Drawer. */
 const ISSUE_LINE = 'issue_followup';
+/** F-31: the engagement's register form opens in the phone Drawer too (the SCR-41 phone register board is its own screen). */
+const ENGAGEMENT_LINE = 'engagement';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
 /** F-33: the income schedule boards draw the stations in the main column and the working agent's card beside it. */
 const INCOME_LINE = 'income_schedules';
@@ -172,13 +177,19 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   // F-30: "Raise an escalation" opens Start work on the step's line, filled for the person to check; it sends nothing itself.
   const [starting, setStarting] = useState<{ token: string; line_key: string; intake: Record<string, unknown> } | null>(null);
   const assign = item.assign;
-  const assignFlow = useWorkspaceAssign({ id, revision: workspace.revision, page });
+  const assignFlow = useWorkspaceAssign({ id, revision: workspace.revision, page, role: assign?.role });
   const [assigning, setAssigning] = useState(false);
   const assignButton = useRef<HTMLButtonElement>(null);
   const phone = useIsPhone();
   // F-30 (D-103, D-107): on a phone the issue follow-up's forms open in the full-height Drawer.
-  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === INCOME_LINE);
+  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || workspace.line_key === INCOME_LINE);
   const incomeLine = workspace.line_key === INCOME_LINE;
+  // F-31: a department's "Record input" opens F-18's team-input form in the Drawer; `recording` names the pressed row's button.
+  const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);
+  const [recorded, setRecorded] = useState<string | null>(null);
+  const [teamGone, setTeamGone] = useState<string | null>(null);
+  // QA-2-5: the write answered 200 but the re-read failed: say it was sent, never that it is recorded
+  const [sentNote, setSentNote] = useState(false);
   // The PM's own tick or untick of an `items` target, by section and item id. An item the PM has not touched follows the
   // step's `items_default` (PROPOSAL G-SCR28-1), so an item that arrives with a reload starts as the data says.
   const [choices, setChoices] = useState<Record<string, boolean>>({});
@@ -263,7 +274,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     void run({ token, step, itemIds });
   };
 
-  const control = (step: Step, token: string, itemIds?: string[], extra?: { none?: boolean; describedBy?: string; items?: Open['items'] }) => {
+  const control = (step: Step, token: string, itemIds?: string[], extra?: { none?: boolean; describedBy?: string; items?: Open['items']; row?: Item }) => {
     const starts = step.disabled_reason || step.task_id ? undefined : startsLine(step);
     if (starts) {
       return (
@@ -281,11 +292,39 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         </Button>
       );
     }
+    // F-31: a step that names a team-input response task in this item opens the form in the Drawer (the task must be one this person can act on)
+    const responseTask = step.task_id && !step.disabled_reason ? responseTaskFor(item, step.task_id) : undefined;
+    if (responseTask) {
+      if (!responseTask.open) return null;
+      const taskId = step.task_id!;
+      return (
+        <Button
+          key={token}
+          kind={stepKind(step)}
+          aria-haspopup="dialog"
+          aria-disabled={off(step) || undefined}
+          aria-describedby={extra?.describedBy}
+          ref={(el) => {
+            controls.current.set(token, el);
+          }}
+          onClick={(event) => {
+            if (off(step)) return;
+            setRecorded(null);
+            setTeamGone(null);
+            setSentNote(false);
+            setRecording({ token, taskId, teamKey: extra?.row ? itemTeamKey(extra.row) : undefined, heading: event.currentTarget.closest('section')?.querySelector<HTMLElement>('h2, h3') ?? null });
+          }}
+        >
+          {step.label}
+        </Button>
+      );
+    }
     return (
     <StepControl
       key={token}
       workId={id}
       step={step}
+      tasks={item.tasks}
       off={off(step)}
       pending={flow.pending === token}
       none={extra?.none}
@@ -334,17 +373,55 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     );
   };
 
+  const closeRecording = () => {
+    const token = recording?.token;
+    setRecording(null);
+    requestAnimationFrame(() => (token ? controls.current.get(token) : null)?.focus());
+  };
+  // 200: the drawer is gone, the item is re-read (the row's new state comes only from that), and focus goes to the table's heading
+  const afterRecorded = async (result: Recorded | undefined) => {
+    const heading = recording?.heading;
+    setRecording(null);
+    // the notice waits for the re-read (TECH-1-1): nothing says "recorded" until the item itself has been read again
+    const item = await page.reload();
+    if (item) setRecorded(RESPONSE_TEXT.done(result?.summary, result?.at));
+    else setSentNote(true);
+    requestAnimationFrame(() => {
+      if (!heading) return;
+      heading.tabIndex = -1;
+      heading.focus();
+    });
+  };
+
+  // UX-1-1: the re-read no longer lists the chosen team; the page shows where things stand
+  const afterTeamGone = (name: string) => {
+    const heading = recording?.heading;
+    setRecording(null);
+    setTeamGone(name);
+    void page.reload().then(() =>
+      requestAnimationFrame(() => {
+        if (!heading) return;
+        heading.tabIndex = -1;
+        heading.focus();
+      }),
+    );
+  };
+
   const closeAssign = () => {
     setAssigning(false);
     requestAnimationFrame(() => assignButton.current?.focus());
   };
   const assignOff = assignFlow.pending || flow.pending !== null || flow.allLocked || page.refreshFailed;
-  const assignForm = () => {
-    if (!assigning || !assign || assign.candidates.length === 0) return null;
+  // F-31: with a default among the candidates the form is drawn open inside the side panel (the engagement's "Confirm PM")
+  const preset = assign && assign.candidates.length > 0 ? assignDefault(assign) : undefined;
+  const assignForm = (inPanel: boolean, labelledBy?: string) => {
+    if (!assign || assign.candidates.length === 0 || (inPanel ? !preset : !assigning || preset)) return null;
     const form = (
       <AssignForm
         assign={assign}
         pending={assignFlow.pending}
+        preset={preset}
+        labelledBy={inPanel ? labelledBy : undefined}
         submitLabel={assignFlow.notice?.kind === 'unconfirmed' ? ASSIGN_TEXT.tryAgain : undefined}
         onSubmit={async (request) => {
           if (assignOff) return { kind: 'kept' };
@@ -362,10 +439,10 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           }
           return result;
         }}
-        onClose={closeAssign}
+        onClose={inPanel ? undefined : closeAssign}
       />
     );
-    return inDrawer ? (
+    return inPanel ? form : inDrawer ? (
       <Drawer title={ASSIGN_TEXT.open} onClose={closeAssign}>
         {form}
       </Drawer>
@@ -386,7 +463,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     item: (section, it) => {
       const own = (it.steps ?? []).map((k) => byKey.get(k)).filter((s): s is Step => s !== undefined && scope(s) === 'item');
       // an item step names its item: the backend can't know which row "Remove" or "Edit" was pressed on otherwise
-      return own.length > 0 ? own.map((s) => control(s, `item:${section.key}:${it.id}:${s.key}`, [it.id])) : null;
+      return own.length > 0 ? own.map((s) => control(s, `item:${section.key}:${it.id}:${s.key}`, [it.id], { row: it })) : null;
     },
     after: (section, it) => {
       const own = (it.steps ?? []).map((k) => byKey.get(k)).filter((s): s is Step => s !== undefined && scope(s) === 'item');
@@ -452,6 +529,21 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         {/* A finished or queued step is told politely; an uncertain send and a changed record answer the press, so each
             is an alert, as on base (a warning Callout has no live role of its own). */}
         <div role="status" aria-live="polite" className="ws-live">
+          {recorded && (
+            <Callout kind="success" announce={false}>
+              <span>{recorded}</span>
+            </Callout>
+          )}
+          {sentNote && (
+            <Callout kind="warning" announce={false}>
+              <span>{RESPONSE_TEXT.sentNoRefresh}</span>
+            </Callout>
+          )}
+          {teamGone && (
+            <Callout kind="warning" announce={false}>
+              <span>{RESPONSE_TEXT.teamGone(teamGone)}</span>
+            </Callout>
+          )}
           {assignFlow.notice?.kind === 'done' && (
             <Callout kind="success" announce={false}>
               <span>{assignFlow.notice.text}</span>
@@ -512,8 +604,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         {assignFlow.notice?.kind === 'unconfirmed' && (
           <Callout kind="problem" className="ws-notice">
             <span className="ws-stack">
-              <strong>{ASSIGN_TEXT.unconfirmedHead}</strong>
-              <span>{ASSIGN_TEXT.unconfirmed}</span>
+              <strong>{assign?.role === 'PM' ? ASSIGN_TEXT.pmUnconfirmedHead : ASSIGN_TEXT.unconfirmedHead}</strong>
+              <span>{assign?.role === 'PM' ? ASSIGN_TEXT.pmUnconfirmed : ASSIGN_TEXT.unconfirmed}</span>
             </span>
           </Callout>
         )}
@@ -575,7 +667,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
               <InlineDecide key={taskId} id={id} taskId={taskId} steps={taskSteps} page={page} off={flow.pending !== null || flow.allLocked || page.refreshFailed} onDecided={onDecided} onDeciding={onDeciding} />
             ))}
             {showPanel && (
-              <section ref={decideRef} className={`psl-panel ${hasNext ? 'ws-decide--next' : 'psl-panel--decide'} ws-decide${workspaceSteps.length === 0 && !(assign && assign.candidates.length > 0) ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
+              <section ref={decideRef} className={`psl-panel ${hasNext ? 'ws-decide--next' : 'psl-panel--decide'} ws-decide${workspaceSteps.length === 0 && (preset || !(assign && assign.candidates.length > 0)) ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
                 <h2 id={`${decideId}-head`} className={`psl-panel__head ${hasNext ? '' : 'psl-panel__head--decide '}ws-decide__head`}>
                   {hasNext ? STEP_TEXT.next : STEP_TEXT.decide}
                 </h2>
@@ -592,7 +684,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
                       return control(s, `ws:${s.key}`, ids, { none: ids.length === 0, describedBy, items: {} });
                     }}
                   </StepRow>
-                  {assign && assign.candidates.length > 0 && (
+                  {assignForm(true, `${decideId}-head`)}
+                  {assign && assign.candidates.length > 0 && !preset && (
                     <Button
                       ref={assignButton}
                       kind="primary"
@@ -615,11 +708,24 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
               </section>
             )}
             {workspaceSteps.map((s) => form(`ws:${s.key}`))}
-            {assignForm()}
+            {assignForm(false)}
             {sideNote && <AgentNote note={workspace.agent_note!} />}
           </aside>
         )}
       </div>
+      {recording && (
+        <ResponseDrawer
+          workId={id}
+          taskId={recording.taskId}
+          title={item.tasks.find((t) => t.id === recording.taskId)?.title ?? 'Record input'}
+          teamKey={recording.teamKey}
+          eyebrow={workspace.context?.project?.title}
+          onTeamGone={afterTeamGone}
+          onClose={closeRecording}
+          onRecorded={(result) => void afterRecorded(result)}
+          onAccessLost={page.onAccessLost}
+        />
+      )}
       {starting && (
         <StartWorkDrawer
           entry="default"

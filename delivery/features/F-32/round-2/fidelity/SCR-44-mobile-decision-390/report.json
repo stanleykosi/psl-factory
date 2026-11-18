@@ -1,0 +1,371 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T01:36:11.802Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-44-mobile-decision.dc.html",
+  "boardName": "SCR-44-mobile-decision.dc.html",
+  "pageUrl": "http://localhost:4871/work/W-2502",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-32/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 77.5 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 100,
+    "visual": 77.5
+  },
+  "visual": {
+    "score": 77.5,
+    "allCellsScore": 79,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2188,
+    "mismatchedCells": 493
+  },
+  "coverage": {
+    "total": 8,
+    "found": 4,
+    "coverage": 50,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Approve for release?",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Approve for release?\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 336,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Approve for release",
+        "pageName": "Approve for release",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 718,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 175,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Return with a note",
+        "pageName": "Return with a note",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 199,
+          "y": 786,
+          "w": 175,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Delivery",
+        "key": "link: ← Delivery",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: The phone bar keeps the built F-22 frame.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECIDE",
+        "key": "text: DECIDE",
+        "container": "page",
+        "boardBox": {
+          "x": 238,
+          "y": 21,
+          "w": 43,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 10: The in-page Note box is not drawn; the F-16 page has it. The panel title reads Decide (F-17).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REL-0091 · BUILD 1.0.0",
+        "key": "text: REL-0091 · BUILD 1.0.0",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 7: phone bar and phone wording differ from the desktop wording used at both widths (D-111).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approving doesn't deploy anything.",
+        "key": "text: Approving doesn't deploy anything.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 253,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 7: phone wording: the desktop sentence \"Approving lets Tola prepare release readiness. It doesn’t deploy anything.\" is used at both widths.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Approve for release\"",
+        "kind": "Link",
+        "name": "Approve for release",
+        "boardBox": {
+          "x": 16,
+          "y": 718,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 175,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Link \"Return with a note\"",
+        "kind": "Link",
+        "name": "Return with a note",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 199,
+          "y": 786,
+          "w": 175,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REL-0091",
+        "container": "main",
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 106,
+          "w": 84,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "YOUR DECISION",
+        "container": "main",
+        "pageBox": {
+          "x": 160,
+          "y": 103,
+          "w": 112,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approving lets Tola prepare release readiness. It doesn’t deploy anything.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 738,
+          "w": 358,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

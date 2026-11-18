@@ -11,10 +11,11 @@ import type { Step, Workspace } from './labels';
 export const itemsDefaultChecked = (step: Step): boolean => (step as { items_default?: unknown }).items_default === 'checked';
 
 /** X-LINKS (G-SCR28-3) `workspace.links[]`: only the kinds the frame draws; any other kind is not drawn. `project_tab` (F-28) is a
- *  link to one of the project's tabs, drawn only for a known tab and a valid case id. */
+ *  link to one of the project's tabs, drawn only for a known tab and a valid case id. `work` (F-32, G-44-2) is a link to another work item, drawn only for a valid work id. */
 export type WorkspaceLink =
   | { key: string; label: string; kind: 'assistant' }
   | { key: string; label: string; kind: 'project_tab'; href: string }
+  | { key: string; label: string; kind: 'work'; href: string }
   | { key: string; label: string; kind: 'document'; documentId: string; version: string };
 
 const text = (value: unknown): value is string => typeof value === 'string' && value.trim() !== '';
@@ -23,14 +24,16 @@ export function workspaceLinks(workspace: Workspace): WorkspaceLink[] {
   const list = (workspace as { links?: unknown }).links;
   if (!Array.isArray(list)) return [];
   const links: WorkspaceLink[] = [];
-  for (const entry of list as { key?: unknown; label?: unknown; target?: { kind?: unknown; document_id?: unknown; version?: unknown; tab?: unknown; case_id?: unknown } }[]) {
+  for (const entry of list as { key?: unknown; label?: unknown; target?: { kind?: unknown; document_id?: unknown; version?: unknown; tab?: unknown; case_id?: unknown; work_id?: unknown } }[]) {
     if (!text(entry?.key) || !text(entry.label) || typeof entry.target !== 'object' || entry.target === null) continue;
     const { key, label } = entry;
-    const { kind, document_id: documentId, version, tab, case_id: caseId } = entry.target;
+    const { kind, document_id: documentId, version, tab, case_id: caseId, work_id: workId } = entry.target;
     if (kind === 'assistant') links.push({ key, label, kind });
     else if (kind === 'project_tab') {
       const found = PROJECT_TABS.find((t) => t.key === tab);
       if (found && text(caseId) && RECORD_ID.test(caseId)) links.push({ key, label, kind, href: `/projects/${caseId}${found.path}` });
+    } else if (kind === 'work') {
+      if (text(workId) && RECORD_ID.test(workId)) links.push({ key, label, kind, href: `/work/${workId}` });
     } else if (kind === 'document' && text(documentId) && (text(version) || typeof version === 'number')) links.push({ key, label, kind, documentId, version: String(version) });
   }
   return links;
@@ -65,6 +68,26 @@ export function startsLine(step: Step): { line_key: string; intake: Record<strin
 export const assignCandidateKind = (candidate: object): 'person' | 'team' | 'outside_party' | undefined => {
   const kind = (candidate as { kind?: unknown }).kind;
   return kind === 'person' || kind === 'team' || kind === 'outside_party' ? kind : undefined;
+};
+
+/** PROPOSAL (`assign.default_person_id` and `assign.default_hint`, F-31 G-41-1): the person the form opens with and the line under the field.
+ *  Read only when the id is one of `assign.candidates`; otherwise nothing is chosen and the form opens on press as in F-30. */
+export function assignDefault(assign: { candidates: { person_id: string }[] }): { personId: string; hint?: string } | undefined {
+  const { default_person_id: personId, default_hint: hint } = assign as { default_person_id?: unknown; default_hint?: unknown };
+  if (!text(personId) || !assign.candidates.some((c) => c.person_id === personId)) return undefined;
+  return { personId, ...(text(hint) ? { hint } : {}) };
+}
+
+/** PROPOSAL (`items[].team_key`, F-31 G-42-2): the team a row's record step is for. Absent reads as no team chosen. */
+export const itemTeamKey = (item: object): string | undefined => {
+  const key = (item as { team_key?: unknown }).team_key;
+  return text(key) ? key : undefined;
+};
+
+/** PROPOSAL (`teams[].disabled_reason`, F-31 G-42-2): why a team is not offered in the department input form. Absent means offered. */
+export const teamDisabled = (team: object): string | undefined => {
+  const reason = (team as { disabled_reason?: unknown }).disabled_reason;
+  return text(reason) ? reason : undefined;
 };
 
 /** PROPOSAL (`steps[].verdict`, F-33 G-C-1): a decision step's verdict, decided in place through E-TASK-CLAIM and E-TASK-DECIDE.

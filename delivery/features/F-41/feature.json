@@ -1,0 +1,245 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-41",
+  "outcome": "Payments and follow-up: Finance sees what each invoice was billed, received and still owes, and sends Chidi's drafted reminder for an overdue invoice (contract mock only)",
+  "state": "IMPLEMENTING",
+  "task_ids": [
+    "FE-PAYMENTS"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Rows from data.** `/finance/payments` shows the four `board` rows in returned order with reference, WORK, INVOICED, RECEIVED, STILL OWED, STATE and OVERDUE BY as sent; \"4 INVOICES\" from `total`; no board value is in `src` (`grep -rn \"Harmattan\\|Lagoon Health\\|INV-0391\\|PART PAID\\|BANK DATA MISSING\\|7,300,000\\|7300000\" frontend/src` returns nothing). \u2014 verify: `cd frontend && npx vitest run tests/payments.test.tsx`; page at 1440 and 390.",
+    "**Amounts are the backend's decimal strings.** INV-0391 RECEIVED reads \"\u20a60.00\" and INV-0388 STILL OWED \"\u20a60.00\" (known zeros, as sent); changing a fixture amount to `\"500000.10\"` shows \"\u20a6500,000.10\" exactly at 1440 and 390; no amount is shortened (\"\u20a67.3M\" absent). \u2014 verify: component tests on modified copies at both widths.",
+    "**Unknown is never 0, blank or a dash.** INV-0402 RECEIVED and STILL OWED read \"Unknown\" (amber, with \"amount not known\" spoken); in the `unknown` variant every unknown amount, every overdue cell and every strip cell read \"Unknown\" and the page contains no \"\u20a60.00\", no empty cell and no \"\u2014\" in their place. \u2014 verify: component test on the `unknown` variant.",
+    "**The page computes nothing.** Changing INV-0398's `received` leaves its STILL OWED and the strip unchanged; changing a row's `due.date` leaves OVERDUE BY unchanged; removing `total` removes the count (it is not \"4\"); changing `totals_detail.owed.known` changes only the OWED cell; no new file under `frontend/src/features/finance/payments/` uses `parseFloat`, `Number(` on an amount, `.reduce(`, `compactAmount`, `Date.now()`/`new Date()` arithmetic on a due date, or arithmetic on an amount or count. \u2014 verify: component tests on modified copies; `git diff -U0 frontend/src | grep -nE \"parseFloat|\\.reduce\\(|compactAmount|Date\\.now\"` returns nothing in the new files.",
+    "**\"+ Unknown\" only as returned.** `board` shows OWED \"\u20a67,300,000.00 + Unknown\", OVERDUE \"\u20a66,800,000.00\", RECEIVED THIS MONTH \"\u20a64,700,000.00\", BANK DATA TO \"10 Nov\" and the coverage sentence; setting `owed.has_unknown: false` removes \"+ Unknown\"; the `contract` variant shows OWED \"Unknown\" (from `totals.owed`), OVERDUE, RECEIVED THIS MONTH and BANK DATA TO \"Unknown\", no coverage sentence, and WORK \"<client> \u00b7 <project title>\". \u2014 verify: component tests on `board`, a modified copy and `contract`.",
+    "**Overdue by from the backend only (D-94).** \"9 days\", \"21 days\", \"6 days\" from `overdue.days`; INV-0388 \"\u2014\" from `overdue {unknown: false}`; a row with no `overdue` and a row with `overdue {unknown: true}` both read \"Unknown\"; the phone card line reads \"INV-0398 \u00b7 overdue 9 days\" and a card with no days shows no overdue words of its own. \u2014 verify: component tests.",
+    "**Invoices, receipts and allocations stay separate; no debt is erased.** INVOICED, RECEIVED and STILL OWED are three cells from three fields; STATE is `status.label` with its tone (changing a PAID row's amounts leaves \"PAID\"; removing `status` shows \"Unknown\"); the page shows no \"Record a payment received\" button, no receipt or allocation input, no short-payment link, and no \"settled\", \"written off\", \"cleared\" or \"balance\" wording (`grep -rniE \"written off|write off|settled|cleared|balance\" frontend/src/features/finance/payments` returns nothing). \u2014 verify: component test; grep.",
+    "**Search, filter and paging go to the server.** Typing \"Harm\" sends one E-INVOICES request with `q=Harm` after the pause (none for one character); choosing Issued in the filter panel sends `status=issued` and writes it into the address; the chip \"State \u00b7 Issued\" with \u00d7 and Clear all clear it and re-read; a reload of `/finance/payments?status=issued` sends the same query; no row is hidden or kept by the browser (a fixture whose rows do not match `q` still shows them all); on `paged`, Show more sends `cursor=<next_cursor>`, appends the next rows and moves focus to the first new one; a failed Show more keeps the rows with Try again. \u2014 verify: component tests with a recording `fetch`; e2e request log.",
+    "**Chidi's note leads to the reminder.** The note draws Chidi's three lines as agent text with \"Open the reminder draft\" linking to `/work/W-3801`; without `work_id` no link is drawn; without `agent_note` no note is drawn and nothing else stands in. \u2014 verify: component tests; link href.",
+    "**Sample-marked.** Sample rows show the shared \"SAMPLE DATA\" label; a copy with `sample: false` does not. \u2014 verify: component test.",
+    "**Empty and error.** `empty` shows \"No invoices to show yet.\" with no strip figures invented; a search with no rows shows \"No invoices match\" with Clear filters; `error` shows the problem card and Try again sends one new read. \u2014 verify: component tests; e2e with `psl_mock_invoices=error`.",
+    "**The draft from data.** `/work/W-3801` shows the crumbs, title, subtitle, To / Copy / Subject, the four message paragraphs, \"INV-0391.pdf \u00b7 Uploaded \u00b7 84 KB\", the \"This invoice\" facts (Amount \"\u20a66,800,000.00\", Due, Overdue by \"21 days\", Reminders sent \"None yet\", Last payment \"None\") and Chidi's one line, all from the fixture; no \"7 days\" anywhere (`grep -rn \"7 days\\|second reminder\" frontend/src` returns nothing); W-3812 shows no attachment line. \u2014 verify: `cd frontend && npx vitest run tests/payment-reminder.test.tsx`; pages at 1440 and 390.",
+    "**Unknown facts.** W-3810 shows Amount, Overdue by and Last payment as \"Unknown\", never \"None\", \"\u20a60.00\" or blank. \u2014 verify: component test.",
+    "**Agent work is not a send.** Chidi's lines render in the agent style; nothing on W-3801 says sent, delivered or verified; the page sends no request on load (zero POSTs before a press). \u2014 verify: component test with a recording `fetch`; e2e request log.",
+    "**Send.** Pressing \"Send reminder\" on W-3801 sends exactly one POST `/api/v1/work/W-3801/steps` with `X-CSRFToken`, `{expected_revision: 1, step: \"send_reminder\", inputs: {}, idempotency_key: <UUID>}` (valid against the generated request schema, no extra keys); a double press sends one; the page says nothing about sending until the re-read, then shows \"SENT \u00b7 CHECKING DELIVERY\" and each recipient with \"Not yet\"; W-3802 shows \"Delivered\" for each recipient only from `receipt: received`. With the step answering 200 and the re-read still serving the draft (test double), the page does not say \"Sent\". \u2014 verify: component tests; e2e request log.",
+    "**Uncertain send: no resend.** W-3803: the 200 `effect_uncertain` re-reads first, shows the uncertain notice and each recipient \"Uncertain\", turns every step off and offers reconcile only; W-3804: a 500 on send re-reads, shows the uncertain item and sends nothing again; a routed network abort and a 60 s timeout (fake timers) do the same with one POST; W-3805 opened fresh (the reload case) has Send off and reconcile offered; W-3806 shows \"Someone with reconcile access needs to confirm what happened first.\" and no reconcile control; on each, the workspace log shows one send per key and no second `send_reminder`. Reconcile on W-3803 sends one E-WORK-ACTION with the chosen outcome and the re-read decides the view. \u2014 verify: component tests with fake timers; e2e with a routed abort; `GET /__mock/workspace-log` in `tests/payments-mock.test.ts`.",
+    "**Edit makes a new version; Send follows it.** On W-3801, Edit opens the form with Subject and Message filled from the step values; clearing Message and saving sends nothing and shows the field message, announced, with focus on it; saving sends one `edit_draft` with `{subject, message}`; the re-read shows \"Draft v2\" and a following Send carries `expected_revision: 2`; W-3811's 422 shows the message under Message with the text kept. \u2014 verify: component tests; e2e request log.",
+    "**Stale.** W-3807's 409 shows the stale sentence and the re-read \"Draft v2\", keeps Send available only for a new press, and sends nothing by itself. \u2014 verify: component test with a recording `fetch`.",
+    "**Not now.** Pressing \"Not now\" sends one `set_aside` and the re-read shows \"SET ASIDE\" and \"Nothing was sent. The draft is kept.\"; no send request is made. \u2014 verify: component test; e2e request log.",
+    "**Controls only from the response.** W-3808 draws Send off with its `disabled_reason` and sends nothing when pressed; W-3809 draws no Send, Edit or Not now; the same pages for personas `finance_lead`, `ceo` and `pm` draw the same controls; the new and changed files do not read `/me` (`grep -rn \"useMe\\|/api/v1/me\" frontend/src/features/finance/payments frontend/src/features/workspace/proposals.ts` returns nothing). \u2014 verify: component tests with three personas and a recording `fetch`.",
+    "**401, 403, 404.** On the list and the reminder: 401 \u2192 signed-out with `next=/finance/payments` or `next=/work/W-3801`; 403 and 404 render the same not-open view with no client, invoice, amount, recipient or count; personas `pm` and `none` on the list get that view with no further call; a 401 on a write goes to signed-out without a second write. \u2014 verify: component tests with a recording `fetch`; `tests/payments-mock.test.ts` for the mock's 403 per persona.",
+    "**Phone.** At 390 the list is the strip, the toolbar and one card per returned row (PAID included); the reminder is one column with the same sections and full message, and the pinned phone bar carries the returned steps; the Edit form opens in the full-height `Drawer`, Escape and Cancel close it and return focus; no sideways scroll; every button, link, chip, tab and card link is at least 44 by 44 px (D-92c; links inside sentences exempt, D-95). \u2014 verify: e2e at 390 measuring bounding boxes.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 4 boards on a production build at `--width 1440` and `--width 390` (SCR-20 at `/finance/payments?status=issued`, SCR-32 at `/work/W-3801`, after `POST /__mock/reset`); every board's element coverage after approved exceptions is 100%; visual is at least 90, or a board-level waiver citing D-83 signed in `fidelity-exceptions.json` with visual at least 70 (lower only with a signed one-board floor exception); every exception has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number; none covers a value the data can supply (an amount, a name, a date, a tag, a count, a sentence). The UI reviewer's side-by-side reading finds no fixable gap. \u2014 verify: the fidelity command per board; `round-<N>/fidelity/scores.txt`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on the list (`board`, `unknown`, `empty`, the open filter panel, the not-open view) and on W-3801, the open Edit form with its error, W-3801 sent, W-3803 uncertain and W-3808; the table has a caption and column headers; \"Unknown\" and every state are words, not colour only; every field labelled; errors announced; visible focus. \u2014 verify: `e2e/payments.spec.ts`.",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in `payments.css` or `workspace.css`, and no local copy of a component `@/components` exports (`ListToolbar`, `FilterPanel`, `SearchField`, `Table`, `Tag`, `Money`, `Unknown`, `AgentAvatar`, `EmptyState`, `ShowMore`, `Callout`, `Button`, `Drawer`). \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `tests/payments-mock.test.ts`: every invoices variant validates against the generated E-INVOICES 200 schema after `contractBody`; `pm` and `none` get 403; `q` and `status` narrow rows on the server; `paged` returns `next_cursor` then the rest; every new work fixture and sidecar validates against E-WORK-ITEM with `attachment` stripped; `send_reminder` on W-3801 serves `W-3801.next.send_reminder.json`, `edit_draft` the Draft v2 sidecar, `set_aside` the set-aside sidecar; a repeated key is a replay with no second send; W-3803 reconcile serves the outcome file; reset clears. \u2014 verify: `cd frontend && npx vitest run tests/payments.test.tsx tests/payment-reminder.test.tsx tests/payments-mock.test.ts tests/mock-contract.test.ts`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `frontend/src/shell/**`, `frontend/src/components/**`, `frontend/src/features/work-item/**`, `frontend/src/features/decide/**`, `frontend/mock/response.mjs`, any existing fixture, `apps/**`, `architecture/**`, `design/**` or the protected paths; `server.mjs` and `workspace.mjs` changes are additive only (existing ids answer as before); every overlay field is listed as a contract proposal in build.md. \u2014 verify: `git diff --stat`; `git diff frontend/mock/server.mjs frontend/mock/workspace.mjs`; build.md.",
+    "**Existing tests green.** `delivery/checks.sh` passes, and the tests listed under Context pass unchanged, including the F-22 `W-2008` reconcile, the F-28 audience sidecars and the month-end and clients pages. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** Commands and results, the 4 scores and any waivers, every exception with its Conflicts number, every proposal and backend item, and the held list from \"What is sent\". \u2014 verify: file content."
+  ],
+  "risk": {
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. This is a money screen. A mistake here (an unknown shown as 0, an owed amount or total computed in the browser, a paid state inferred from amounts) breaks the product's core invariants (AGENTS.md; INV-UNKNOWN and INV-FACTS on E-INVOICES, model.json:17745-17768). SCR-32 also sends an email to a client, which cannot be undone. It is contained because the list is read-only, the receipt write and short-payment decision are excluded (D-RECEIPT-ALLOCATION, D-DECISION-VARIANTS, D14 UNCONFIGURED), and the send reuses the proven F-17/F-22 uncertain-send lock on the mock. SURFACES: - ui: 4 boards. - api: E-INVOICES, E-WORK-ITEM, E-WORK-STEP, E-WORK-ACTION. - security: a client-bound send with CSRF, revision, idempotency and no resend. - external-messaging: the reminder to the client's billing contact. - contract-change: G-SCR20-1 to -7, G-SCR32-1/-3/-4, D-RECEIVABLES-VIEW and D-LINE-WORKSPACE `proposed`. - product-decision: the unset reminder interval, and who may send reminders and copy the PM. PRODUCT-ACCEPTANCE is required. Finance's receivables view and client reminder flow are new to the client, and they involve money and client messaging."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-41/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-41/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-PAYMENTS",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "b16a284a1fe4114c0fc578204fedc5bc9e2ed3df",
+    "task_branch": "fe-payments-payments-list-and-reminder",
+    "head_sha": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-41",
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": null
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-18T05:16:05Z",
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T08:14:50Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T08:14:50Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-41/readiness.md",
+      "delivery/features/F-41/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 1,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}

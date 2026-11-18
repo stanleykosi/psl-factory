@@ -1,0 +1,1374 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T01:05:04.305Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-41-desktop.dc.html",
+  "boardName": "SCR-41-desktop.dc.html",
+  "pageUrl": "http://localhost:4861/work/W-2601",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-31/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 82.2 is below 90.",
+    "11 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 77.3,
+    "coverageWithExceptions": 100,
+    "visual": 82.2
+  },
+  "visual": {
+    "score": 82.2,
+    "allCellsScore": 87.5,
+    "width": 1440,
+    "height": 974,
+    "boardHeight": 974,
+    "pageHeight": 1158,
+    "cell": 12,
+    "contentCells": 6928,
+    "mismatchedCells": 1232
+  },
+  "coverage": {
+    "total": 44,
+    "found": 34,
+    "coverage": 77.3,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 516,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 918
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1101
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Tamarind Loans · engagement EN-0042",
+        "pageName": "Ojo Foods · engagement EN-0042",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Tamarind Loans · engagement EN-0042\" on the board, \"Ojo Foods · engagement EN-0042\" on the page",
+        "looks": [
+          "text size 32px on the board, 35px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 651,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Route A · from won RFP TL-RFP-2026-014",
+        "pageName": "Route A · from won RFP OF-RFP-2026-006",
+        "pageRole": "text",
+        "similarity": 89,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 1264,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 270,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PLANNING PACKET · BUILT BY TOLA",
+        "pageName": "PLANNING PACKET · BUILT BY TOLA",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 214,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 219,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 267,
+          "w": 866,
+          "h": 288
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 308,
+          "w": 866,
+          "h": 301
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "PART",
+        "pageName": "PART",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 267,
+          "w": 240,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 308,
+          "w": 240,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "FROM",
+        "pageName": "FROM",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 346,
+          "y": 267,
+          "w": 470,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 346,
+          "y": 308,
+          "w": 470,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATUS",
+        "pageName": "STATUS",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 815,
+          "y": 267,
+          "w": 156,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 815,
+          "y": 308,
+          "w": 156,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Scope",
+        "pageName": "Scope",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 302,
+          "w": 240,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 346,
+          "w": 240,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RFP response v3 · 58 requirements addressed",
+        "pageName": "RFP response v3 · 58 requirements addressed",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 346,
+          "y": 302,
+          "w": 470,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 346,
+          "y": 346,
+          "w": 470,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Price",
+        "pageName": "Price",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 344,
+          "w": 240,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 390,
+          "w": 240,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Costing v2 · ₦40,951,000.00",
+        "pageName": "Costing v2 · ₦40,951,000.00",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 346,
+          "y": 344,
+          "w": 470,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 346,
+          "y": 390,
+          "w": 470,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Team estimates",
+        "pageName": "Team estimates",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 386,
+          "w": 240,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 434,
+          "w": 240,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engineering 210 days · Security 18 days",
+        "pageName": "Engineering 210 days · Security 18 days",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 346,
+          "y": 386,
+          "w": 470,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 346,
+          "y": 434,
+          "w": 470,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Start date",
+        "pageName": "Start date",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 428,
+          "w": 240,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 477,
+          "w": 240,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not in the award letter",
+        "pageName": "Not in the award letter",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 346,
+          "y": 428,
+          "w": 470,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 346,
+          "y": 477,
+          "w": 470,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client project contact",
+        "pageName": "Client project contact",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 470,
+          "w": 240,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 521,
+          "w": 240,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Award letter names procurement only",
+        "pageName": "Award letter names procurement only",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 346,
+          "y": 470,
+          "w": 470,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 346,
+          "y": 521,
+          "w": 470,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Delivery plan",
+        "pageName": "Delivery plan",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 512,
+          "w": 240,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 565,
+          "w": 240,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Needs planning",
+        "pageName": "Needs planning",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 346,
+          "y": 512,
+          "w": 470,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 346,
+          "y": 565,
+          "w": 470,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Review and decide",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 212,
+          "w": 340,
+          "h": 706
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 217,
+          "w": 340,
+          "h": 408
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Planning packet",
+        "pageName": "PLANNING PACKET",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "capitals on the page, not on the board",
+          "bar under it on the page (#1F2427), none on the board"
+        ],
+        "boardBox": {
+          "x": 1070,
+          "y": 224,
+          "w": 127,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 729,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "pageName": "Ask Tola",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "weight 600 on the board, 400 on the page"
+        ],
+        "boardBox": {
+          "x": 1285,
+          "y": 517,
+          "w": 51,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 1046,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM",
+        "pageName": "PM",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 612,
+          "w": 308,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 276,
+          "w": 308,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello ▾",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 80,
+        "looks": [
+          "text colour #1F2427 on the board, #C8CDD0 on the page",
+          "background #FFFFFF on the board, none on the page",
+          "coloured bar under it on the board (#1F2427), none on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 636,
+          "w": 308,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Carried over from the RFP. Change it only if someone else will run delivery.",
+        "pageName": "Carried over from the RFP. Change it only if someone else will run delivery.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 690,
+          "w": 308,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 353,
+          "w": 308,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Confirm PM",
+        "pageName": "Confirm PM",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #2459D6 on the board, #22764A on the page"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 736,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 559,
+          "w": 308,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "key": "link: Overview",
+        "container": "navigation",
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 15: the shared frame shows the destinations the signed-in persona (pm) has; the board shows a PMO Lead.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "key": "link: Setup",
+        "container": "navigation",
+        "boardBox": {
+          "x": 602,
+          "y": 1,
+          "w": 65,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 15: the shared frame shows the destinations the signed-in persona (pm) has; the board shows a PMO Lead.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kemi Adebayo · PMO Lead",
+        "key": "text: Kemi Adebayo · PMO Lead",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1199,
+          "y": 20,
+          "w": 153,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 15: the shell shows the signed-in persona's name (Tunde Bello · PM).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PRE-SALE / ENGAGEMENTS / EN-0042",
+        "key": "text: PRE-SALE / ENGAGEMENTS / EN-0042",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 10: the frame draws the crumbs from context.crumbs as a plain list; the words are the backend's (Ojo Foods for Tamarind Loans, Conflicts 1/15).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknowns stay Unknown until someone supplies them; planning will ask for them.",
+        "key": "text: Unknowns stay Unknown until someone supplies them; planning will ask for them.",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 569,
+          "w": 870,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 7/11: the returned text section is drawn as its own panel row by the shared text renderer, not a line inside the table panel. The words are from the fixture.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent · done",
+        "key": "text: Tola · PMO agent · done",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1070,
+          "y": 242,
+          "w": 127,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 11: Tola's checklist is the shared workspace checklist (title, 'Tola', rows), not the CMP-09 card.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1287,
+          "y": 230,
+          "w": 49,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 11: no DONE tag on the checklist card; each row carries its own Done word.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finished 14:09 Ask Tola",
+        "key": "text: Finished 14:09 Ask Tola",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1014,
+          "y": 507,
+          "w": 336,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 11: no 'Finished' line; 'Ask Tola' is a workspace link drawn only when returned.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM FOR THIS ENGAGEMENT",
+        "key": "text: PM FOR THIS ENGAGEMENT",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1014,
+          "y": 561,
+          "w": 336,
+          "h": 37
+        },
+        "exception": {
+          "reason": "D-112: the shared side-panel heading ('Decide') stands in until the backend sends a panel title.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Open question for PSL: the factory asks for a PM again at this step. We pre-fill the RFP's PM so it's one tap, not a second assignment.",
+        "key": "text: Open question for PSL: the factory asks for a PM again at this step. We pre-fill the RFP's PM so it's one tap, not a second assignment.",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1068,
+          "y": 808,
+          "w": 256,
+          "h": 84
+        },
+        "exception": {
+          "reason": "Conflicts 6: a designer's note to PSL, not drawn; it stays on the backend question list (G-41-2).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Start work\"",
+        "kind": "Link",
+        "name": "Start work",
+        "boardBox": {
+          "x": 1015,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (75% across), right on the page (87% across)"
+        ]
+      },
+      {
+        "label": "Link \"More ways to start\"",
+        "kind": "Link",
+        "name": "More ways to start",
+        "boardBox": {
+          "x": 1133,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        },
+        "reasons": [
+          "across the page: right on the board (80% across), right on the page (93% across)"
+        ]
+      },
+      {
+        "label": "Text \"Planning packet\"",
+        "kind": "Text",
+        "name": "Planning packet",
+        "boardBox": {
+          "x": 1070,
+          "y": 224,
+          "w": 127,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 729,
+          "w": 898,
+          "h": 43
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"PLANNING PACKET · BUILT BY TOLA\"; on the page it comes after Main area \"\"",
+          "across the page: right on the board (79% across), middle on the page (37% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 106,
+          "y": 267,
+          "w": 866,
+          "h": 288
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 308,
+          "w": 866,
+          "h": 301
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Engineering 210 days · Security 18 days\"; on the page it comes after Side panel \"\"",
+          "inside the table frame on the board, inside a section on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 918
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1101
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Award letter names procurement only\"; on the page it comes after Link \"Confirm PM\""
+        ]
+      },
+      {
+        "label": "Link \"Ask Tola\"",
+        "kind": "Link",
+        "name": "Ask Tola",
+        "boardBox": {
+          "x": 1285,
+          "y": 517,
+          "w": 51,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 1046,
+          "w": 53,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Needs planning\"; on the page it comes after Text \"Planning packet\"",
+          "across the page: right on the board (91% across), left on the page (8% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Side panel \"\"",
+        "kind": "Side panel",
+        "name": "",
+        "boardBox": {
+          "x": 1012,
+          "y": 212,
+          "w": 340,
+          "h": 706
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 217,
+          "w": 340,
+          "h": 408
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Ask Tola\"; on the page it comes after Text \"Costing v2 · ₦40,951,000.00\""
+        ]
+      },
+      {
+        "label": "Text \"PM\"",
+        "kind": "Text",
+        "name": "PM",
+        "boardBox": {
+          "x": 1028,
+          "y": 612,
+          "w": 308,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 276,
+          "w": 308,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Side panel \"\"; on the page it comes after Text \"PLANNING PACKET · BUILT BY TOLA\"",
+          "inside a side panel on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Tunde Bello ▾\"",
+        "kind": "Text",
+        "name": "Tunde Bello ▾",
+        "boardBox": {
+          "x": 1028,
+          "y": 636,
+          "w": 308,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"PM\"; on the page it comes after Link \"Assistant\"",
+          "inside a side panel on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"Carried over from the RFP. Change it only if someone else will run delivery.\"",
+        "kind": "Text",
+        "name": "Carried over from the RFP. Change it only if someone else will run delivery.",
+        "boardBox": {
+          "x": 1028,
+          "y": 690,
+          "w": 308,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 353,
+          "w": 308,
+          "h": 36
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Tunde Bello ▾\"; on the page it comes after Text \"RFP response v3 · 58 requirements addressed\"",
+          "inside a side panel on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Confirm PM\"",
+        "kind": "Link",
+        "name": "Confirm PM",
+        "boardBox": {
+          "x": 1028,
+          "y": 736,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 559,
+          "w": 308,
+          "h": 50
+        },
+        "reasons": [
+          "inside a side panel on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1034,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 239,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PRE-SALE",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ENGAGEMENTS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 149,
+          "y": 85,
+          "w": 104,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "EN-0042",
+        "container": "navigation",
+        "pageBox": {
+          "x": 254,
+          "y": 85,
+          "w": 73,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION NEEDED",
+        "container": "main",
+        "pageBox": {
+          "x": 1239,
+          "y": 120,
+          "w": 113,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "DECIDE",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1014,
+          "y": 219,
+          "w": 336,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Form",
+        "role": "form",
+        "name": "Decide",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 276,
+          "w": 308,
+          "h": 333
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "PM",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 303,
+          "w": 308,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 1062,
+          "y": 406,
+          "w": 61,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 1028,
+          "y": 432,
+          "w": 308,
+          "h": 88
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 1283,
+          "y": 526,
+          "w": 53,
+          "h": 17
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

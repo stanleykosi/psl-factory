@@ -1,0 +1,910 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T08:50:45.035Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-41/design/canvas/finance/project/SCR-20-mobile.dc.html",
+  "boardName": "SCR-20-mobile.dc.html",
+  "pageUrl": "http://localhost:4951/finance/payments?status=issued",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-41/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 71.1 is below 90.",
+    "8 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 41.4,
+    "coverageWithExceptions": 100,
+    "visual": 71.1
+  },
+  "visual": {
+    "score": 71.1,
+    "allCellsScore": 71.4,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1183,
+    "cell": 12,
+    "contentCells": 2309,
+    "mismatchedCells": 668
+  },
+  "coverage": {
+    "total": 29,
+    "found": 12,
+    "coverage": 41.4,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Payments",
+        "pageName": "Payments",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 146,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 358,
+          "h": 98
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 110,
+          "w": 306,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 222,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter, 1 on",
+        "pageName": "Filter, 1 on",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [
+          "coloured bar under it on the board (#1F2427), none on the page"
+        ],
+        "boardBox": {
+          "x": 330,
+          "y": 110,
+          "w": 44,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 248,
+          "y": 112,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "State",
+        "pageName": "State",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 27,
+          "y": 171,
+          "w": 31,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 27,
+          "y": 180,
+          "w": 31,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Issued",
+        "pageName": "Issued",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 64,
+          "y": 171,
+          "w": 41,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 64,
+          "y": 180,
+          "w": 41,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Remove State filter",
+        "pageName": "Remove State filter",
+        "pageRole": "button",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 111,
+          "y": 165,
+          "w": 28,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 111,
+          "y": 166,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Clear all",
+        "pageName": "Clear all",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 150,
+          "y": 171,
+          "w": 47,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 160,
+          "y": 166,
+          "w": 47,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Owed to PSL ₦7,300,000.00 + Unknown",
+        "pageName": "₦7,300,000.00 + Unknown",
+        "pageRole": "text",
+        "similarity": 86,
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "text size 14px on the board, 16px on the page",
+          "weight 400 on the board, 700 on the page",
+          "text colour #1F2427 on the board, #6E4700 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 208,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 158,
+          "y": 236,
+          "w": 200,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OVERDUE",
+        "pageName": "OVERDUE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "weight 600 on the board, 400 on the page",
+          "background #FBE3D9 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 289,
+          "y": 358,
+          "w": 71,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 282,
+          "w": 51,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦6,800,000.00",
+        "pageName": "₦6,800,000.00",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "text size 14px on the board, 16px on the page",
+          "text colour #1F2427 on the board, #9A2F10 on the page"
+        ],
+        "boardBox": {
+          "x": 95,
+          "y": 385,
+          "w": 99,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 245,
+          "y": 279,
+          "w": 113,
+          "h": 17
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Home",
+        "key": "link: ← Home",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 14: the shell's phone back link reads \"← Home\" and is named \"Back to Home\" for screen readers; the words match, the accessible name does not.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · M1",
+        "key": "text: Lagoon Health · M1",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 252,
+          "w": 133,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PART PAID",
+        "key": "text: PART PAID",
+        "container": "page",
+        "boardBox": {
+          "x": 283,
+          "y": 252,
+          "w": 77,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Still owed ₦500,000.00",
+        "key": "text: Still owed ₦500,000.00",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 279,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦500,000.00",
+        "key": "text: ₦500,000.00",
+        "container": "page",
+        "boardBox": {
+          "x": 95,
+          "y": 279,
+          "w": 86,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0398 · overdue 9 days",
+        "key": "text: INV-0398 · overdue 9 days",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 303,
+          "w": 330,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Harmattan Bank · M1",
+        "key": "text: Harmattan Bank · M1",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 358,
+          "w": 148,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Still owed ₦6,800,000.00",
+        "key": "text: Still owed ₦6,800,000.00",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 385,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0391 · overdue 21 days",
+        "key": "text: INV-0391 · overdue 21 days",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 409,
+          "w": 330,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Kora Logistics · M1",
+        "key": "text: Kora Logistics · M1",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 464,
+          "w": 130,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "BANK DATA MISSING",
+        "key": "text: BANK DATA MISSING",
+        "container": "page",
+        "boardBox": {
+          "x": 225,
+          "y": 464,
+          "w": 135,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Still owed Unknown",
+        "key": "text: Still owed Unknown",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 491,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown",
+        "key": "text: Unknown",
+        "container": "page",
+        "boardBox": {
+          "x": 95,
+          "y": 491,
+          "w": 61,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0402 · overdue 6 days",
+        "key": "text: INV-0402 · overdue 6 days",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 515,
+          "w": 330,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent Reminder for Harmattan Bank drafted. You send it.",
+        "key": "text: Chidi · Finance agent Reminder for Harmattan Bank drafted. You send it.",
+        "container": "page",
+        "boardBox": {
+          "x": 76,
+          "y": 568,
+          "w": 284,
+          "h": 61
+        },
+        "exception": {
+          "reason": "Conflicts 12: the phone draws the note's own returned lines (the same three as desktop) under \"Chidi · Finance agent\"; the board's shortened phone sentence has no source.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi",
+        "key": "text: Chidi",
+        "container": "page",
+        "boardBox": {
+          "x": 76,
+          "y": 569,
+          "w": 33,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12: the phone note head reads \"Chidi · Finance agent\" as one line, as on desktop.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record a payment received",
+        "key": "link: Record a payment received",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Conflicts 1: recording a payment is held (D-RECEIPT-ALLOCATION open, D14 UNCONFIGURED, FE-PAYMENTS-RECEIPT); the button is not drawn at either width.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Search area \"\"",
+        "kind": "Search area",
+        "name": "",
+        "boardBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 358,
+          "h": 98
+        },
+        "reasons": [
+          "order: on the board it comes after Heading \"Payments\"; on the page it comes after Filter \"Filter, 1 on\""
+        ]
+      },
+      {
+        "label": "Filter \"Filter, 1 on\"",
+        "kind": "Filter",
+        "name": "Filter, 1 on",
+        "boardBox": {
+          "x": 330,
+          "y": 110,
+          "w": 44,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 248,
+          "y": 112,
+          "w": 44,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: right on the board (90% across), right on the page (69% across)"
+        ]
+      },
+      {
+        "label": "Text \"State\"",
+        "kind": "Text",
+        "name": "State",
+        "boardBox": {
+          "x": 27,
+          "y": 171,
+          "w": 31,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 27,
+          "y": 180,
+          "w": 31,
+          "h": 17
+        },
+        "reasons": [
+          "inside the main area on the board, inside the search bar on the page"
+        ]
+      },
+      {
+        "label": "Text \"Issued\"",
+        "kind": "Text",
+        "name": "Issued",
+        "boardBox": {
+          "x": 64,
+          "y": 171,
+          "w": 41,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 64,
+          "y": 180,
+          "w": 41,
+          "h": 17
+        },
+        "reasons": [
+          "inside the main area on the board, inside the search bar on the page"
+        ]
+      },
+      {
+        "label": "Filter \"Remove State filter\"",
+        "kind": "Filter",
+        "name": "Remove State filter",
+        "boardBox": {
+          "x": 111,
+          "y": 165,
+          "w": 28,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 111,
+          "y": 166,
+          "w": 44,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside the search bar on the page"
+        ]
+      },
+      {
+        "label": "Link \"Clear all\"",
+        "kind": "Link",
+        "name": "Clear all",
+        "boardBox": {
+          "x": 150,
+          "y": 171,
+          "w": 47,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 160,
+          "y": 166,
+          "w": 47,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside the search bar on the page"
+        ]
+      },
+      {
+        "label": "Text \"OVERDUE\"",
+        "kind": "Text",
+        "name": "OVERDUE",
+        "boardBox": {
+          "x": 289,
+          "y": 358,
+          "w": 71,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 282,
+          "w": 51,
+          "h": 14
+        },
+        "reasons": [
+          "across the page: right on the board (83% across), left on the page (15% across)"
+        ]
+      },
+      {
+        "label": "Text \"₦6,800,000.00\"",
+        "kind": "Text",
+        "name": "₦6,800,000.00",
+        "boardBox": {
+          "x": 95,
+          "y": 385,
+          "w": 99,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 245,
+          "y": 279,
+          "w": 113,
+          "h": 17
+        },
+        "reasons": [
+          "across the page: middle on the board (37% across), right on the page (77% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Home",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 12 Nov 10:00",
+        "container": "main",
+        "pageBox": {
+          "x": 230,
+          "y": 85,
+          "w": 144,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "\"Unknown\" means the October bank statement hasn't been imported for that account, so the factory won't assume nothing was paid.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 408,
+          "w": 358,
+          "h": 51
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "4 INVOICES",
+        "container": "search",
+        "pageBox": {
+          "x": 302,
+          "y": 127,
+          "w": 72,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Chidi · Finance agent",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 895,
+          "w": 358,
+          "h": 272
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "· Finance agent",
+        "container": "complementary",
+        "pageBox": {
+          "x": 113,
+          "y": 917,
+          "w": 91,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Harmattan Bank is 21 days overdue. I drafted a reminder from the invoice and the SOW payment terms.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 34,
+          "y": 969,
+          "w": 322,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I can't send messages to clients or change what is owed.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 34,
+          "y": 1076,
+          "w": 322,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the reminder draft",
+        "container": "complementary",
+        "pageBox": {
+          "x": 34,
+          "y": 1130,
+          "w": 152,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-41/design/mascots/canvas-assets.json (19 mapped).",
+    "Images: 1 /_blob/ image(s) could not be shown because they are not in the assets map: /_blob/4ac9ee52f6c83d9cdc4f91e694a3a025. They render as broken images and lower the visual score."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

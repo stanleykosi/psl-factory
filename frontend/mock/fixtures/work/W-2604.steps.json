@@ -1,0 +1,9 @@
+{
+  "register_engagement": {
+    "status": 200,
+    "body": {
+      "outcome": "effect_uncertain",
+      "message": "We couldn’t confirm the engagement was registered."
+    }
+  }
+}

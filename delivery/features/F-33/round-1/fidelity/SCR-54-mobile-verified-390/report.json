@@ -1,0 +1,339 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T01:05:22.367Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-33/design/canvas/finance/project/SCR-54-mobile-verified.dc.html",
+  "boardName": "SCR-54-mobile-verified.dc.html",
+  "pageUrl": "http://localhost:4881/work/W-2704",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-33/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 85.1 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 66.7,
+    "coverageWithExceptions": 100,
+    "visual": 85.1
+  },
+  "visual": {
+    "score": 85.1,
+    "allCellsScore": 85.9,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2212,
+    "mismatchedCells": 330
+  },
+  "coverage": {
+    "total": 6,
+    "found": 4,
+    "coverage": 66.7,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SCH-0021",
+        "pageName": "SCH-0021",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Verified",
+        "pageName": "VERIFIED",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "heading level 1 on the board, 2 on the page",
+          "text size 20px on the board, 14px on the page",
+          "capitals on the page, not on the board",
+          "letter width 112% on the board, 100% on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 191,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "STATION 4 OF 5 · VERIFIED",
+        "pageName": "STATION 4 OF 5 · VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 118,
+          "w": 358,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 157,
+          "w": 180,
+          "h": 18
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 11: the phone bar's way back is the frame's (\"← Queue\" to My work, F-17/F-22 as built); the board's wording is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Export as an adjustment",
+        "key": "link: Export as an adjustment",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Conflicts 5: Export as an adjustment is part 2 (G-54-5); the verified fixture sends no export step, so no button is drawn. The Next sentence is shown as returned.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"SCH-0021\"",
+        "kind": "Text",
+        "name": "SCH-0021",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Heading \"Verified\"",
+        "kind": "Heading",
+        "name": "Verified",
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 191,
+          "w": 354,
+          "h": 37
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Start\"; on the page it comes after Text \"STATION 4 OF 5 · VERIFIED\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Income detail · October",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 286,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 103,
+          "w": 73,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "heading",
+        "name": "NEXT",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 372,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Optional: export the 7 additive and reclassification rows as an accounting adjustment for October's accounts.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 409,
+          "w": 326,
+          "h": 63
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-33/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

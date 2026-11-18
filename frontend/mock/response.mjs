@@ -110,8 +110,10 @@ function upload(body, ctx) {
   const inCase = [...items].filter(([, item]) => item.case_id === caseId);
   if (inCase.length === 0) return [404, SCENARIO_BODIES[404]];
   const all = inCase.map(([, item]) => item);
+  // F-31: a workspace step's evidence field (plan evidence on the engagement) takes uploads of its kind on the item's case
+  const stepEvidence = (item) => (item.workspace?.steps ?? []).flatMap((s) => (s.fields ?? []).filter((f) => f.type === 'evidence' && f.evidence_kind));
   const kinds = all
-    .flatMap((item) => [...responseTasks(item).map((t) => t.response.evidence_kind), item.reconcile?.evidence_kind, item.rfp_outcome?.evidence_kind])
+    .flatMap((item) => [...responseTasks(item).map((t) => t.response.evidence_kind), item.reconcile?.evidence_kind, item.rfp_outcome?.evidence_kind, ...stepEvidence(item).map((f) => f.evidence_kind)])
     .filter(Boolean);
   const fields = [];
   if (!kinds.includes(body.kind)) fields.push('kind');
@@ -124,7 +126,8 @@ function upload(body, ctx) {
     (item) =>
       responseTasks(item).some((t) => t.you_can_act) ||
       (Boolean(item.reconcile) && (item.allowed_actions ?? []).includes('reconcile')) ||
-      Boolean(item.rfp_outcome),
+      Boolean(item.rfp_outcome) ||
+      stepEvidence(item).length > 0,
   );
   if (!granted) return [403, SCENARIO_BODIES[403]];
 
@@ -169,13 +172,15 @@ function respond(body, ctx) {
   const next = structuredClone(sidecar);
   if (item.case_revision !== undefined) next.case_revision = item.case_revision;
   const done = next.tasks.find((t) => t.id === task.id);
-  const board = done.response.recorded?.summary;
+  // F-31: one team's input on a task that stays open for the other teams (the sidecar carries no `recorded`): the 200 says who recorded it and the task is not marked recorded
+  const staysOpen = done.response.variant === 'team_input' && !done.response.recorded;
+  const board = staysOpen ? `${response.teams.find((t) => t.key === body.team).name}\u2019s input` : done.response.recorded?.summary;
   const recorded = { by: { name: me.name, role: me.roles[0], is_you: true }, at: new Date().toISOString() };
   if (board) {
     Object.assign(recorded, { responded_at: body.responded_at, proof_count: 1 + (body.evidence_ids?.length ?? 0), summary: board });
     if (body.received_via) recorded.received_via = body.received_via;
   }
-  done.response.recorded = recorded;
+  if (!staysOpen) done.response.recorded = recorded;
   overrides.set(workId, next);
   if (!board) return [200, { task_id: task.id, work_state: next.state }];
   const result = { task_id: task.id, work_state: next.state, revision: done.revision, recorded };
