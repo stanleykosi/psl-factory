@@ -3,25 +3,50 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-48",
-  "outcome": null,
+  "outcome": "The Assistant \"can't\" state: a person asks for something their access does not allow and sees that the agent cannot do it, why, and what it checked (contract mock only)",
   "state": "PLANNED",
   "task_ids": [
     "FE-ASSISTANT"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Desktop board at 1440.** `SCR-05-desktop-cant` reports `pass: true`, `scores.coverageWithExceptions` = 100 and `scores.visual` >= 70 (the D-64/D-83 floor), or a D-83 waiver signed per board by the design engineer where the gap is a field the API lacks. \u2014 verify: the command exits 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass.",
+    "**Phone board at 390.** `SCR-05-mobile-cant` passes at `--width 390` with the same thresholds. \u2014 verify: same, a row in `scores.txt`.",
+    "**Exceptions are limited and explained.** Each entry in `delivery/features/F-48/fidelity-exceptions.json` has `role`, `name`, `category`, `reason`, `approved_by` (\"builder proposal, pending design engineer\" until signed) and a Conflicts number; F-24's approved entries are carried over unchanged. None covers a value the data can supply. The two phone buttons cite G-SCR05-5. \u2014 verify: file content and the build.md mapping.",
+    "**Pose by status.** Unit tests: `poseFor` returns `cant` for `cannot_answer`, `working` for `working`, `done` for `drafted`, `idle` for `answered`. The side panel image for CV-2404 is `/agents/zainab-cant.png`; for `answered` it stays `-idle.png`. \u2014 verify: `assistant.test.tsx`.",
+    "**Pose assets.** `frontend/public/agents/{tola,chidi,zainab}-cant.png` exist, are copies of (or web-sized versions of) `design/mascots/revised-poses/*-cant.png`, and were not drawn or generated; if Conflicts 1's fallback applies, the missing agent keeps `-idle.png` and an `asset` exception is listed. \u2014 verify: `ls frontend/public/agents`; `cmp` or image dimensions against the source; build.md.",
+    "**Side panel text.** For CV-2404 the panel reads \"Zainab can't do that with your access.\", Project \"October payroll\" (as the fixture returns), \"Your access\" \"PMO \u00b7 no payroll access\" (as `context.access` returns), and the agents-cannot note. The sentence comes from `status`, not from message text: a fixture whose agent text says \"I can't\" but has `status: answered` reads the answered sentence. \u2014 verify: component tests.",
+    "**Thread content.** `/assistant/CV-2404` shows, in order: the ask in the person bubble; \"Zainab \u00b7 HR agent\"; the checklist step \"Checked your access to payroll records\" with \"1 STEPS \u00b7 DONE\"; the answer; the `cannot_reason`; one restricted source tag. The list row reads \"A staff member's salary\" with \"Can't share\". \u2014 verify: component test; page at 1440.",
+    "**Reason is text.** A fixture whose `cannot_reason` contains `<img src=x onerror=alert(1)>` and `**bold**` renders those characters literally, creates no element, and is not edited, trimmed of words or joined with `text`. \u2014 verify: component test; `grep -rn \"dangerouslySetInnerHTML\\|innerHTML\" frontend/src/features/assistant` is empty.",
+    "**No new controls.** On a `cannot_answer` thread there is no draft card, no start button, no \"Edit draft\", no \"Show staff-cost totals\", no \"Ask HR Lead for access\", no request-access link or button, and the composer is empty (not prefilled). No new request is sent by opening or reloading the thread (mock log shows zero POSTs). \u2014 verify: component tests; `grep -rn \"staff-cost\\|Ask HR\" frontend/src` is empty; e2e reading `GET /__mock/assistant-log`.",
+    "**Restricted source.** The restricted tag shows the lock and \"Restricted\" only; the fixture's label and reference are not in `document.body.textContent`, and it is not a link. \u2014 verify: component test.",
+    "**Phone pose card.** At 390, CV-2404 shows the inline pose card with the `zainab-cant.png` image, alt \"Zainab, can't do this\", in the agent tint. CV-2401 (drafted), CV-2403 (answered) and CV-2405 (working) at 390 show no such card. At 1440 the card is not shown (the side panel carries the pose). \u2014 verify: component tests with `useIsPhone` both ways; e2e at 390.",
+    "**Wrong user, unknown id, signed out.** `finance_lead` opening `/assistant/CV-2404` and anyone opening `/assistant/CV-2499` see \"We could not find that conversation.\" with no title, agent or reason. 401 shows the signed-out callout with `next` = this URL. \u2014 verify: component tests (F-24's remain green; add CV-2404 to the wrong-user case).",
+    "**Provider or read failure.** A failed E-CONVERSATION read for CV-2404 shows F-24's `ErrorState` with \"Try again\", with no pose card and no stale refusal text. \u2014 verify: component test.",
+    "**Accessibility.** `/assistant/CV-2404` at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`), no sideways scroll, visible focus, one h1, the pose image has the alt above (the side-panel image keeps a meaningful alt, not empty), 44px touch targets on the phone. \u2014 verify: `e2e/assistant.spec.ts` with axe and a bounding-box check of every phone control.",
+    "**Reduced motion.** With `reducedMotion: 'reduce'` the `cant` pose has no running animation or transition. \u2014 verify: e2e computed-style check.",
+    "**Library first, tokens only.** The pose card reuses shared components and styles; `features/assistant/**` adds no local copy of a library component. `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\" ` on the diff of `assistant.css` and any new CSS returns nothing. \u2014 verify: the command.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `frontend/mock/assistant.mjs` or `src/shell/**`. Writes send only typed fields. \u2014 verify: `git diff --stat`; `npx tsc --noEmit`.",
+    "**F-24 not weakened.** All F-24 assistant tests (`assistant.test.tsx`, `assistant-mock.test.ts`, `e2e/assistant.spec.ts`), the Start work suites and every other suite in `delivery/checks.sh` pass; no assertion removed or loosened; the only edit to an F-24 test is the added CV-2404 cases. \u2014 verify: `delivery/checks.sh`; `git diff` on tests.",
+    "**No overclaim.** build.md and the PR state: contract mock only, nothing released, no real agent answered, the refusal text is the mock's sample text, and no access request exists. \u2014 verify: build.md.",
+    "**build.md evidence.** Commands and results, the 2 scores, every exception with its Conflicts number, the asset source for each `-cant.png`, and the G-SCR05-5 proposal. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "low",
+    "surfaces": [
+      "ui"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Low. This is a read-only state on screens F-24 already built, over an existing contract field and an existing fixture. The change is a pose mapping, assets, one phone layout element and tests in `frontend/src/features/assistant/` (SidePanel.tsx, Thread.tsx, ThreadPage.tsx). There is no write, money or migration, and no new authority rule: the restricted payroll content is never in the response, and the screen only shows the backend's refusal. SURFACES is ui only, because the one contract gap (G-SCR05-5) is dropped by exception and not proposed. PRODUCT-ACCEPTANCE is not-required: the work matches the client-approved board, and the left-out phone buttons go to the design engineer as a fidelity difference, as in D-100."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-48/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
+    "readiness_checked": true,
     "explicit_exception": null
   },
   "roles": {},
@@ -59,9 +84,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": false,
+      "assessment_reason": "delivery/features/F-48/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -139,7 +178,18 @@
   "round": 0,
   "round_limit": null,
   "history": [],
-  "routing": null,
+  "routing": {
+    "review": {
+      "technical": "haiku",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-48/readiness.md",
+      "delivery/features/F-48/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

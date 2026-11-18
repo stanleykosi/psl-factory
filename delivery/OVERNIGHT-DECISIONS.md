@@ -197,3 +197,6 @@ The design engineer, going to bed, said: "make any decision that isn't difficult
 
 ## D-115 · F-41 spec conflicts taken as recommended — PROVISIONAL (19 Nov 2026, coordinator under the design engineer's bedtime instruction)
 Same basis as D-114. F-41 (payments and follow-up list) is built on its own unmerged branch with every "Recommend" in delivery/features/F-41/spec.md taken as written (17 conflicts: 11 need an answer). Money rules are unchanged and hard. Nothing is merged on it; every exception stays pending the design engineer, who confirms or changes each conflict before sign-off.
+
+## D-116 · F-48 spec conflicts taken as recommended — PROVISIONAL (19 Nov 2026, coordinator under the design engineer's bedtime instruction)
+Same basis as D-114. F-48 (assistant "can't", 2 boards, low risk) is built on its own branch with the spec's recommendations: copy the existing design/mascots/revised-poses/*-cant.png into frontend/public/agents and map "can't" to that pose. The two phone buttons with no contract are left out as exceptions. Nothing is merged; the design engineer confirms.
