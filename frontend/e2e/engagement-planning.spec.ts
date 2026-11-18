@@ -132,7 +132,7 @@ for (const [label, viewport] of [
       await loaded(page);
       const button = page.getByRole('button', { name: 'Record input' }).first();
       await button.click();
-      await page.getByRole('dialog').getByRole('button', { name: 'Cancel' }).click();
+      await page.getByRole('dialog').getByRole('button', { name: phone ? 'Close' : 'Cancel' }).click();
       await expect(page.getByRole('dialog')).toHaveCount(0);
       await expect(button).toBeFocused();
     });

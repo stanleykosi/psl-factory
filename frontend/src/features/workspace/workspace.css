@@ -32,8 +32,8 @@
 .ws-decide .ws-steps__buttons { flex-direction: column; align-items: stretch; gap: var(--space-2); }
 .ws-decide .ws-steps__buttons > span, .ws-decide .ws-control { display: flex; flex-direction: column; align-items: stretch; }
 .ws-decide .psl-btn { width: 100%; min-height: var(--control-lg); white-space: nowrap; }
-.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject) { background: var(--verified); }
-.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):hover { background: var(--verified-strong); }
+.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):not([aria-disabled="true"]) { background: var(--verified); }
+.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):not([aria-disabled="true"]):hover { background: var(--verified-strong); }
 .ws-hint { margin: 0; }
 /* a suggestion is the board's card: a mono reference, the answer in a tinted box, the source beneath */
 .ws-sugg { gap: var(--space-6px); }
@@ -221,3 +221,30 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 /* F-31: the engagement's Confirm PM form sits in the side panel with no box of its own; the department input form fills the Drawer */
 .ws-form--bare { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
 .ws-respdrawer { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+
+/* F-31 round 2 (UI-1-1 to UI-1-9, UI-1-13) */
+/* the engagement's Register form replaces the Decide panel while it is open (its consequence and button were drawn twice) */
+.ws[data-line="engagement"] .ws-decide[data-form-open] { display: none; }
+/* planning table: the estimate stays on one line and the department is the row's name */
+.ws[data-line="planning"] .ws-table td:first-child { font-weight: 600; }
+.ws[data-line="planning"] .ws-table td:nth-child(4) { white-space: nowrap; }
+/* a form in a Drawer is the Drawer's own: no second box or repeated title; its actions stay at the bottom of the sheet */
+.cmp-panel .ws-form { border: none; background: none; padding: 0; }
+.cmp-panel .ws-form > .ws-form__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
+.cmp-panel .ws-form__body { padding: 0; }
+.cmp-panel .ws-form__actions { position: sticky; bottom: 0; background: var(--surface); padding: var(--space-3) 0; }
+/* department input: one column, no page box, F-18's Record bar pinned in the Drawer, 44px+ targets on a phone */
+.ws-respdrawer .resp-form { border: none; background: none; padding: 0; }
+@media (min-width: 720px) { .ws-respdrawer .resp-phonebar { position: sticky; left: auto; right: auto; bottom: 0; background: var(--surface); padding: var(--space-3) 0; } }
+.ws-respdrawer .psl-seg__opt, .ws-respdrawer .resp-filebtn { min-height: var(--control-phone); }
+@media (max-width: 719.98px) {
+  .ws-form--bare { border: none; background: none; padding: 0; }
+  .ws[data-line="engagement"] .ws-ref { display: inline-flex; align-items: center; min-height: var(--control-phone); }
+}
+/* a phone sheet's form fills it, so its actions sit at the bottom as the board pins them */
+@media (max-width: 719.98px) {
+  .cmp-panel--full .psl-sheet__body:has(> .ws-form) { display: flex; flex-direction: column; }
+  .cmp-panel--full .psl-sheet__body > .ws-form { flex: 1; display: flex; flex-direction: column; }
+  .cmp-panel--full .ws-form > .ws-form__body { flex: 1; display: flex; flex-direction: column; }
+  .cmp-panel--full .ws-form__actions { margin-top: auto; }
+}

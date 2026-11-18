@@ -130,6 +130,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   // F-31: a department's "Record input" opens F-18's team-input form in the Drawer; `recording` names the pressed row's button.
   const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);
   const [recorded, setRecorded] = useState<string | null>(null);
+  const [teamGone, setTeamGone] = useState<string | null>(null);
   // The PM's own tick or untick of an `items` target, by section and item id. An item the PM has not touched follows the
   // step's `items_default` (PROPOSAL G-SCR28-1), so an item that arrives with a reload starts as the data says.
   const [choices, setChoices] = useState<Record<string, boolean>>({});
@@ -232,6 +233,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           onClick={(event) => {
             if (off(step)) return;
             setRecorded(null);
+            setTeamGone(null);
             setRecording({ token, taskId, teamKey: extra?.row ? itemTeamKey(extra.row) : undefined, heading: event.currentTarget.closest('section')?.querySelector<HTMLElement>('h2, h3') ?? null });
           }}
         >
@@ -301,13 +303,28 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const afterRecorded = async (result: Recorded | undefined) => {
     const heading = recording?.heading;
     setRecording(null);
-    setRecorded(RESPONSE_TEXT.done(result?.summary, result?.at));
-    await page.reload();
+    // the notice waits for the re-read (TECH-1-1): nothing says "recorded" until the item itself has been read again
+    const item = await page.reload();
+    if (item) setRecorded(RESPONSE_TEXT.done(result?.summary, result?.at));
     requestAnimationFrame(() => {
       if (!heading) return;
       heading.tabIndex = -1;
       heading.focus();
     });
+  };
+
+  // UX-1-1: the re-read no longer lists the chosen team; the page shows where things stand
+  const afterTeamGone = (name: string) => {
+    const heading = recording?.heading;
+    setRecording(null);
+    setTeamGone(name);
+    void page.reload().then(() =>
+      requestAnimationFrame(() => {
+        if (!heading) return;
+        heading.tabIndex = -1;
+        heading.focus();
+      }),
+    );
   };
 
   const closeAssign = () => {
@@ -434,6 +451,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           {recorded && (
             <Callout kind="success" announce={false}>
               <span>{recorded}</span>
+            </Callout>
+          )}
+          {teamGone && (
+            <Callout kind="warning" announce={false}>
+              <span>{RESPONSE_TEXT.teamGone(teamGone)}</span>
             </Callout>
           )}
           {assignFlow.notice?.kind === 'done' && (
@@ -594,6 +616,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           taskId={recording.taskId}
           title={item.tasks.find((t) => t.id === recording.taskId)?.title ?? 'Record input'}
           teamKey={recording.teamKey}
+          eyebrow={workspace.context?.project?.title}
+          onTeamGone={afterTeamGone}
           onClose={closeRecording}
           onRecorded={(result) => void afterRecorded(result)}
           onAccessLost={page.onAccessLost}

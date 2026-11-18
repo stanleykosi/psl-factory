@@ -26,6 +26,7 @@ export const RESPONSE_TEXT = {
   stale: 'This changed while you were recording. We’ve reloaded it. Check the details and record again.',
   uncertain: 'We couldn’t confirm your input was recorded. We’ve reloaded this item so you can see whether it was.',
   unconfirmed: 'We couldn’t confirm whether your input was recorded, and couldn’t reload to check. Record stays off. Try again reloads the item; it doesn’t send your input again.',
+  teamGone: (name: string) => `${name} is no longer waiting. We’ve reloaded this item so you can see whether it was recorded.`,
   claimFailed: 'We couldn’t get this ready. Try again.',
   tryAgain: 'Try again',
   checking: 'Checking…',
@@ -49,6 +50,10 @@ type Props = {
   title: string;
   /** The team of the pressed row, when the row names one. */
   teamKey?: string;
+  /** The project's title from the response (the Drawer's eyebrow). */
+  eyebrow?: string;
+  /** The team the person chose is no longer waiting after a re-read: the page closes the Drawer and says so. */
+  onTeamGone: (name: string) => void;
   onClose: () => void;
   /** 200: the drawer is done; the page re-reads and tells the person. */
   onRecorded: (recorded: Recorded | undefined) => void;
@@ -56,7 +61,7 @@ type Props = {
   onAccessLost: (error: ApiError) => void;
 };
 
-export function ResponseDrawer({ workId, taskId, title, teamKey, onClose, onRecorded, onAccessLost }: Props) {
+export function ResponseDrawer({ workId, taskId, title, teamKey, eyebrow, onClose, onRecorded, onAccessLost, onTeamGone }: Props) {
   const flow = useResponse(workId, taskId);
   const phone = useIsPhone();
   const { view, notice, task } = flow;
@@ -80,6 +85,23 @@ export function ResponseDrawer({ workId, taskId, title, teamKey, onClose, onReco
   useEffect(() => {
     if (errorKind && (errorKind.kind === 'unauthenticated' || errorKind.kind === 'forbidden' || errorKind.kind === 'not_found')) onAccessLost(errorKind);
   }, [errorKind, onAccessLost]);
+
+  // UX-1-1: a re-read (after a lost reply or a 409) that no longer lists the team the person chose closes the Drawer, so a form for one team is never recorded for another
+  const chosen = useRef<{ key: string; name: string } | null>(null);
+  const teamKeyNow = flow.entries.team;
+  useEffect(() => {
+    const teams = flow.response?.teams;
+    if (!teams) return;
+    if (teamKeyNow) {
+      chosen.current = { key: teamKeyNow, name: teams.find((t) => t.key === teamKeyNow)?.name ?? teamKeyNow };
+      return;
+    }
+    if (chosen.current && !finished.current) {
+      const { name } = chosen.current;
+      chosen.current = null;
+      onTeamGone(name);
+    }
+  }, [teamKeyNow, flow.response, onTeamGone]);
 
   // a 403 on the write: the page shows the same not-open view as for any other refusal of access
   const refused = notice?.kind === 'problem' && notice.forbidden ? notice.message : undefined;
@@ -106,6 +128,9 @@ export function ResponseDrawer({ workId, taskId, title, teamKey, onClose, onReco
     </Button>
   );
 
+  // on a phone the sheet has its own Close and F-18's Record bar is pinned at the bottom, so Cancel is the desktop footer's
+  const showCancel = view.kind === 'form' && open && !phone;
+
   let body;
   if (view.kind === 'loading' || view.kind === 'done') body = <p>{RESPONSE_TEXT.loading}</p>;
   else if (view.kind === 'error') {
@@ -131,8 +156,6 @@ export function ResponseDrawer({ workId, taskId, title, teamKey, onClose, onReco
     body = (
       <>
         {response.intro && <Callout kind="info">{response.intro}</Callout>}
-        {/* on a phone F-18's Record bar is pinned to the bottom of the sheet and would cover a Cancel below the form */}
-        {phone && cancelButton}
         {notice?.kind === 'stale' && <Callout kind="warning">{RESPONSE_TEXT.stale}</Callout>}
         {notice?.kind === 'uncertain' && <Callout kind="warning">{RESPONSE_TEXT.uncertain}</Callout>}
         {unconfirmed && (
@@ -151,7 +174,8 @@ export function ResponseDrawer({ workId, taskId, title, teamKey, onClose, onReco
           proof={flow.proof}
           busy={flow.busy}
           locked={unconfirmed}
-          phone={phone}
+          // one column with a pinned Record bar, as the board's Drawer draws it, at either width
+          phone
           touched={edited || flow.proof.files.length > 0}
           onRecord={() => void flow.record()}
           notice={
@@ -162,13 +186,12 @@ export function ResponseDrawer({ workId, taskId, title, teamKey, onClose, onReco
           }
           heading={false}
         />
-        {!phone && cancelButton}
       </>
     );
   }
 
   return (
-    <Drawer title={title} onClose={onClose}>
+    <Drawer title={title} eyebrow={eyebrow} onClose={onClose} footer={showCancel ? cancelButton : undefined}>
       <div className="ws-respdrawer">{body}</div>
     </Drawer>
   );

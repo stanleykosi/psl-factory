@@ -70,7 +70,8 @@ beforeEach(() => {
       if (request.method === 'GET' && itemMatch) {
         const queue = reads[itemMatch[1]];
         if (!queue) return json(404, { code: 'not_found', message: 'Not here.' });
-        return json(200, queue.length > 1 ? queue.shift()! : queue[0]);
+        const next = queue.length > 1 ? queue.shift()! : queue[0];
+        return (next as unknown) === 'fail' ? json(500, { code: 'server_error', message: 'Nope.' }) : json(200, next);
       }
       const write = SUFFIX.exec(url.pathname);
       if (request.method === 'POST' && write) {
@@ -669,6 +670,36 @@ describe('Record department input, in the Drawer (AC 8, 9, 10)', () => {
     expect(ws().getAllByRole('button', { name: 'Record input' })).toHaveLength(1);
     expect(await screen.findByText(/Recorded under your name: QA’s input/)).toBeTruthy();
     await waitFor(() => expect(document.activeElement?.textContent).toBe('What each department must give'));
+  });
+
+  it('TECH-1-1: no "Recorded under your name" until the re-read has been read; a failed re-read says nothing was confirmed', async () => {
+    await openDrawer('QA', 'fail' as never);
+    await fillQa();
+    writes.response = [json(200, { task_id: 'T-2603', work_state: 'waiting', recorded: { by: { name: 'Tunde Bello' }, at: '2026-12-11T15:05:00Z', summary: 'QA’s input' } })];
+    await act(async () => {
+      fireEvent.click(recordButton());
+    });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    await waitFor(() => expect(itemReads('W-2603').length).toBeGreaterThanOrEqual(3));
+    expect(text()).not.toMatch(/Recorded under your name/);
+  });
+
+  it('UX-1-1: a re-read that no longer lists the chosen team closes the Drawer and says so, so QA’s form is never recorded for Infrastructure', async () => {
+    await openDrawer('QA', item('W-2603.recorded'));
+    await fillQa();
+    writes.response = [() => Promise.reject(new TypeError('Failed to fetch'))];
+    await act(async () => {
+      fireEvent.click(recordButton());
+    });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(await screen.findByText(/QA is no longer waiting/)).toBeTruthy();
+    expect(posts('/response')).toHaveLength(1);
+    expect(text()).not.toMatch(/Recorded under your name/);
+  });
+
+  it('UI-1-8: the Drawer’s eyebrow is the project title from the response', async () => {
+    await openDrawer('QA');
+    expect(screen.getByRole('dialog').textContent).toContain('Ojo Foods · ordering app');
   });
 
   it('the recorded text says it was recorded under the PM’s name and never that the department logged in', async () => {

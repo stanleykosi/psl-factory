@@ -176,7 +176,7 @@ function CellValue({ cell, column }: { cell: Cell | undefined; column: Column })
   // F-31: an estimate or other value the response leaves out reads Unknown (a cell that exists and carries nothing)
   if ((kind === 'text' || kind === 'integer' || kind === 'tag') && !hasValue(cell.text) && !cell.money && !cell.tag && !cell.link && !cell.date) value = <Unknown />;
   // F-31 (G-41-3): a text cell that also carries a typed amount reads "text · amount", the amount in the table's money format
-  else if (kind === 'text' && hasValue(cell.text) && cell.money) value = <>{cell.text} · <MoneyValue money={cell.money} /></>;
+  else if (kind === 'text' && hasValue(cell.text) && cell.money) value = `${cell.text} · ${moneyText(cell.money) ?? WS_TEXT.unknown}`;
   else if (kind === 'money') value = cell.money ? <MoneyValue money={cell.money} /> : <Unknown />;
   else if (kind === 'date') value = cell.date ? <DateText value={cell.date} short={columnDayMonth(column)} /> : <Unknown />;
   else if (kind === 'tag' && cell.tag) value = <Tag tone={tagTone(cell.tag.tone)}>{cell.tag.label}</Tag>;
