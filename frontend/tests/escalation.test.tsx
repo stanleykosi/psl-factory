@@ -241,8 +241,13 @@ describe('who may act (AC 6)', () => {
   it('W-3605 not your role: the reason and Kemi Adebayo · PMO Lead from asked, no button, no claim', async () => {
     await open(item('W-3605'));
     expect(await ws().findByText('This decision needs a PMO Lead.')).toBeTruthy();
-    // the fixture carries `asked` (Kemi Adebayo · PMO Lead); F-33's InlineDecide, which this feature may not change, draws only the reason
-    expect(item('W-3605').tasks[0]).toMatchObject({ asked: [{ name: 'Kemi Adebayo', role: 'PMO Lead' }] });
+    expect(ws().getByText('Kemi Adebayo · PMO Lead')).toBeTruthy();
+    cleanup();
+    const bare = item('W-3605');
+    delete (bare.tasks[0] as { asked?: unknown }).asked;
+    await open(bare);
+    expect(await ws().findByText('This decision needs a PMO Lead.')).toBeTruthy();
+    expect(document.body.textContent).not.toContain('Kemi Adebayo');
     expect(buttons()).toEqual([]);
     await new Promise((r) => setTimeout(r, 50));
     expect(taskPosts()).toHaveLength(0);
