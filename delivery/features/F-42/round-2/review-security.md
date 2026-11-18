@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-security
-COMMIT: 8779c5f30c05ed760fc1cbfe3a2dddf790daca1e
+COMMIT: 8d59b2422e06f960853993435c2935b7b9805046
 AUTHORITY: delivery security review
 
 ## Summary
@@ -14,3 +14,11 @@ None.
 
 ## Verified
 - Round-1 security PASS carried forward. The diff does not touch any surface that review covered: auth, CSRF, the claim, decide or the API client.
+
+## Update for head 8d59b242 (diff c972854d..8d59b242)
+
+- The head moved only by merging dlv-00 (F-47 Start work proof upload, F-41 payments list and reminder, test fix #65). Frontend diff re-read at Workspace.tsx, Sections.tsx, workspace.css, workspace.mjs, proposals.ts and the mock-contract lists.
+- F-42 decide in place, holds, proof row and money rules are intact; F-41 reminder line, phone Drawer and attachment row and F-33 income line are intact; the proof row and attachment row stay distinct; no assertion was loosened (the only edit is the sample:false case for W-3813).
+- Vitest on asset-schedule, income-schedule, payments, payment-reminder, workspace and mock-contract files: 11 test files passed (586 tests). checks.sh 2655 and e2e 142 passed on this head.
+
+Verdict unchanged.
