@@ -104,14 +104,14 @@ const ISSUE_TEXT = { register: 'Open the issue register' } as const;
 /** F-33: the income schedule boards draw the stations in the main column and the working agent's card beside it. */
 const INCOME_LINE = 'income_schedules';
 
-/** The stations as the income schedule boards draw them: a row of boxes on desktop, the small bar and its words on a phone.
- *  The page keeps the full track for screen readers (WorkItemOverview), so the drawn row is hidden from them. */
+/** The stations as the income schedule boards draw them: a row of boxes on desktop, the small bar and its words on a phone
+ *  (where the page keeps the full track for screen readers, WorkItemOverview). */
 function LineStations({ item, phone }: { item: WorkItem; phone: boolean }) {
   const { stations } = item;
   if (stations.length === 0) return null;
   if (!phone) {
     return (
-      <div aria-hidden="true" className="ws-stations">
+      <div className="ws-stations">
         <StationTrack stations={stations} state={item.state} quiet />
       </div>
     );
@@ -122,13 +122,11 @@ function LineStations({ item, phone }: { item: WorkItem; phone: boolean }) {
   return <MiniStationBar className="ws-ministations" stations={stations.map((s) => STATIONS[s.status].modifier as StationStatus)} text={`Station ${Math.max(at, 0) + 1} of ${stations.length} · ${shown.name}`} />;
 }
 
-/** The working agent's card beside the sections (the page's own copy stays for screen readers), with when it started. */
+/** The working agent's card beside the sections, with when it started (WorkItemOverview then draws no copy of its own). */
 function LineAgent({ agent }: { agent: WorkItem['agent'] }) {
   return (
     <div className="ws-lineagent">
-      <div aria-hidden="true">
-        <AgentCard agent={agent} />
-      </div>
+      <AgentCard agent={agent} />
       {agent.started_at && <p className="ws-detail">Started <time dateTime={agent.started_at}>{formatClock(agent.started_at)}</time></p>}
     </div>
   );

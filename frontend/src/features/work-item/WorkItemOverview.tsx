@@ -697,15 +697,17 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   // D-73: the line boards draw the workspace straight under the title. The facts, stations, agent card and next step
   // stay in the page for screen readers only (the contract data is never dropped), the way the state boards do.
   if (item.workspace) {
+    // F-33: the income schedule boards draw the station row (desktop) and the working agent's card in the workspace itself
+    const income = item.workspace.line_key === 'income_schedules';
     before = (
       <div className="cmp-sr">
         <FactsStrip facts={item.facts} paidNote={false} />
-        <StationTrack stations={item.stations} state={item.state} />
+        {!(income && !phone) && <StationTrack stations={item.stations} state={item.state} />}
       </div>
     );
     main = (
       <div className="cmp-sr">
-        <AgentCard agent={item.agent} />
+        {!(income && agent.status === 'working') && <AgentCard agent={item.agent} />}
         <NextStep item={item} quiet />
       </div>
     );

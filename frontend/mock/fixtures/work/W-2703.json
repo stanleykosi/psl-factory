@@ -12,11 +12,11 @@
     },
     {
       "name": "Prepare",
-      "status": "current_person"
+      "status": "done"
     },
     {
       "name": "Review",
-      "status": "not_started"
+      "status": "stopped"
     },
     {
       "name": "Verified",
