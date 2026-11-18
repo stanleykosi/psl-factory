@@ -206,6 +206,35 @@ describe('four states from data (AC 1, 2)', () => {
   });
 });
 
+describe('round 2: the boards draw no extra card, no empty line and the board tones', () => {
+  it('W-3601 and W-3603 draw no "Decide whether to escalate" task card', async () => {
+    for (const id of ['W-3601', 'W-3603']) {
+      await open(item(id));
+      expect(screen.queryByText('Decide whether to escalate')).toBeNull();
+      expect(document.querySelector('.work-aside .psl-panel--decide')).toBeNull();
+      cleanup();
+    }
+  });
+
+  it('W-3604 shows the message as the section item, with no empty line and no warning callout', async () => {
+    await open(item('W-3604'));
+    const section = ws().getByRole('heading', { name: 'Message v1' }).closest('section')!;
+    expect(section.textContent).toContain('Could you confirm a date this week?');
+    expect(section.textContent).not.toContain('Nothing here yet.');
+    expect(section.querySelector('.psl-callout--warning')).toBeNull();
+  });
+
+  it('the not-escalated sentence is an info callout, and the status tones are the boards (drafted agent, not escalated neutral)', async () => {
+    await open(item('W-3603'));
+    expect(document.querySelector('.ws-note.psl-callout--info')?.textContent).toContain('decided not to escalate');
+    expect(document.querySelector('.ws-note.psl-callout--warning')).toBeNull();
+    expect(status().className).toContain('neutral');
+    cleanup();
+    await open(item('W-3604'));
+    expect(status().className).toContain('agent');
+  });
+});
+
 describe('unknown, sample and the sent-to-client rule (AC 3, 5, 14)', () => {
   it('W-3606: Delays and Already asked the client read Unknown, never 0, blank or a dash', async () => {
     await open(item('W-3606'));

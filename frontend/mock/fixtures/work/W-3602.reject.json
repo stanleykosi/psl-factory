@@ -129,7 +129,7 @@
     "title": "Client test data three weeks late",
     "status": {
       "label": "NOT ESCALATED",
-      "tone": "stopped"
+      "tone": "neutral"
     },
     "sections": [
       {

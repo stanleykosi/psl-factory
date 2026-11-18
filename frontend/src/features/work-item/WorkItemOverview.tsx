@@ -724,7 +724,10 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   // A task the workspace's own steps already link to is decided from that link: no second card for it (F-23).
   const linked = new Set((item.workspace?.steps ?? []).map((step) => step.task_id).filter(Boolean));
   // F-33: on the income schedule line a decided task has nothing left to open; the workspace shows what it became.
-  const settled = (task: WorkItem['tasks'][number]) => item.workspace?.line_key === 'income_schedules' && task.cannot_act_reason === 'already_decided';
+  // F-39: the escalation boards draw no task card for a decision that is decided or has no step on the page.
+  const settled = (task: WorkItem['tasks'][number]) =>
+    (item.workspace?.line_key === 'income_schedules' && task.cannot_act_reason === 'already_decided') ||
+    (item.workspace?.line_key === 'escalation' && (task.cannot_act_reason === 'already_decided' || !linked.has(task.id)));
   const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task));
 
   return (

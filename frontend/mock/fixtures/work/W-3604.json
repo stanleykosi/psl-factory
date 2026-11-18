@@ -113,15 +113,19 @@
     "title": "Client test data three weeks late",
     "status": {
       "label": "MESSAGE DRAFTED",
-      "tone": "person"
+      "tone": "agent"
     },
     "sections": [
       {
         "key": "message",
         "kind": "text",
         "title": "Message v1",
-        "items": [],
-        "note": "Your team's test data is now 15 days late (asked 22 Oct, 29 Oct, 5 Nov). Go-live on 4 Dec depends on it. Could you confirm a date this week?"
+        "items": [
+          {
+            "id": "M-1",
+            "text": "Your team's test data is now 15 days late (asked 22 Oct, 29 Oct, 5 Nov). Go-live on 4 Dec depends on it. Could you confirm a date this week?"
+          }
+        ]
       }
     ],
     "steps": [

@@ -161,9 +161,16 @@ const splitAsk = (links: WorkspaceLink[], inCard: boolean) => {
 };
 
 /** The lead banner's tone follows the data (never the words): the issue follow-up reads the status tone (F-30); the income
- *  schedule line reads a stopped station too, as a returned or rejected schedule has (F-33). Every other line is unchanged. */
-const bannerTone = (workspace: WorkspaceData, item: WorkItem): 'warning' | 'success' | 'problem' =>
-  workspace.line_key === INCOME_LINE
+ *  schedule line reads a stopped station too, as a returned or rejected schedule has (F-33); the escalation line reads a neutral
+ *  status (not escalated) as info (F-39). Every other line is unchanged. */
+const bannerTone = (workspace: WorkspaceData, item: WorkItem): 'warning' | 'success' | 'problem' | 'info' =>
+  workspace.line_key === ESCALATION_LINE
+    ? workspace.status?.tone === 'verified'
+      ? 'success'
+      : workspace.status?.tone === 'neutral'
+        ? 'info'
+        : 'warning'
+    : workspace.line_key === INCOME_LINE
     ? workspace.status?.tone === 'verified'
       ? 'success'
       : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain' || item.stations.some((s) => s.status === 'stopped')
