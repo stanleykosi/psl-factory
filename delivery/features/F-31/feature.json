@@ -94,6 +94,18 @@
       "at": "2026-11-18T02:58:41Z",
       "seconds": 272.9,
       "evidence_ref": "delivery/features/F-31/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T04:36:33Z",
+      "seconds": 335.7,
+      "evidence_ref": "delivery/features/F-31/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -101,9 +113,9 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delivery technical review",
-      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
       "evidence_refs": [
-        "delivery/features/F-31/round-2/review-technical.md"
+        "delivery/features/F-31/round-3/review-technical.md"
       ]
     },
     "integrated_qa": {
@@ -133,18 +145,18 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "delivery UX review",
-      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
       "evidence_refs": [
-        "delivery/features/F-31/round-2/review-ux.md"
+        "delivery/features/F-31/round-3/review-ux.md"
       ]
     },
     "ui": {
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "delivery UI review",
-      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
       "evidence_refs": [
-        "delivery/features/F-31/round-2/review-ui.md"
+        "delivery/features/F-31/round-3/review-ui.md"
       ]
     }
   },
@@ -1009,7 +1021,7 @@
         "delivery/features/F-31/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1026,11 +1038,25 @@
           ],
           "head": "83747e368e5af5b4680839ede43bd485d8744414",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-18T04:00:16Z",
+          "refs": [
+            "J9 at 390, measured after a real register write: \"Ojo Foods \u00b7 ordering app\" 163\u00d748 and \"Planning \u00b7 PLN-0031\" 137\u00d748."
+          ],
+          "head": "83747e368e5af5b4680839ede43bd485d8744414",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "83747e3"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "J9 at 390, measured after a real register write: \"Ojo Foods \u00b7 ordering app\" 163\u00d748 and \"Planning \u00b7 PLN-0031\" 137\u00d748."
       ]
     },
     {
@@ -1101,6 +1127,205 @@
           "head": "83747e368e5af5b4680839ede43bd485d8744414"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**Phone Drawer file-chip remove button is 24\u00d724 px.** After a file is uploaded in the Register engagement Drawer (plan evidence) or the Record department input Drawer (proof), the chip's \"\u00d7\" remove button measures 24\u00d724 at 390. Expected: at least 44px, per D-92c (\"every button, tab, switch, chip\u2026\") and spec AC 15 (\"Every button, row control\u2026 is at least 44px\"). Round 2 already raised the segments and the file button to `--control-phone` inside Drawers (UI-1-5), but missed this chip, which is only drawn after an upload. The same 24px chip is on F-18's own respond page (pre-existing), so a Drawer-scoped rule in `frontend/src/features/workspace/workspace.css`, like UI-1-5's, fixes F-31 without touching F-18. Evidence: `scratchpad/qa-f31/shots/T-record-390-uploaded.png`, `R1-390-form.png`; `plan2.mjs` \"T record drawer 390 targets after upload\", `reg.mjs` \"R1 390 register Drawer targets\". Axe passes (WCAG 2.2 AA requires only 24px), so this fails the project's 44px rule, not axe.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T04:00:16Z",
+          "head": "83747e368e5af5b4680839ede43bd485d8744414"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T04:36:33Z",
+          "refs": [
+            "9b73aacf87069a93f583f69053dacf3151e3ae68"
+          ],
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T04:53:31Z",
+          "refs": [
+            "rule scoped to .cmp-panel; response.css untouched"
+          ],
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9b73aacf87069a93f583f69053dacf3151e3ae68"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "rule scoped to .cmp-panel; response.css untouched"
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Record 422 shows the server message, not messages under the fields.** AC 10 and the E-RESPONSE contract (\"422 \u2192 messages under the fields\") differ from F-18's rule, which the same section also cites (\"Errors: as F-18\"): F-18 shows the server message. A 422 with `fields[]` for `estimate_person_days` and `what` shows \"Check these fields: estimate_person_days, what.\" in the Drawer, with the entries kept, axe clean and nothing recorded. The two sentences in the spec contradict each other, and `useResponse.ts` is a read-only lane. Amend AC 10 to F-18's behaviour, or plan field mapping for F-18 in a later pass.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T04:00:16Z",
+          "head": "83747e368e5af5b4680839ede43bd485d8744414"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Pre-existing frame target:** the work item's \"History\" link is 42\u00d724 at 390 on every line (W-2209, W-2411, W-2901, W-2601, W-2603). This is under D-92c, but it is shared frame code and not changed by F-31. Route it to a frame pass.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T04:00:16Z",
+          "head": "83747e368e5af5b4680839ede43bd485d8744414"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-4",
+      "round": 2,
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The assign failure heading reads \"Not recorded / We couldn't confirm the owner was set\" for the PM role. The spec's E-WORK-ASSIGN errors say \"Not confirmed\". This is F-30's wording and the meaning is correct. Consider \"Not confirmed\" and \"the PM\" when `assign.role` is \"PM\", as was done for the success notice.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T04:00:16Z",
+          "head": "83747e368e5af5b4680839ede43bd485d8744414"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T04:36:33Z",
+          "refs": [
+            "9b73aacf87069a93f583f69053dacf3151e3ae68"
+          ],
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T04:53:31Z",
+          "refs": [
+            "role PM only; F-30 string unchanged"
+          ],
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9b73aacf87069a93f583f69053dacf3151e3ae68"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "role PM only; F-30 string unchanged"
+      ]
+    },
+    {
+      "id": "QA-2-5",
+      "round": 2,
+      "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After a 200 on record followed by a failed re-read, the page says \"We couldn't refresh this item\u2026\" and still shows QA as WAITING with Record input. Nothing tells the person their input went through. This is correct per the spec (nothing says \"recorded\" before a re-read), and a second record would be refused by revision. Consider a line such as \"Your input was sent; reload to see it\" for product acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T04:00:16Z",
+          "head": "83747e368e5af5b4680839ede43bd485d8744414"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T04:36:33Z",
+          "refs": [
+            "9b73aacf87069a93f583f69053dacf3151e3ae68"
+          ],
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T04:53:31Z",
+          "refs": [
+            "sentNoRefresh text, no \"recorded\" state set"
+          ],
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9b73aacf87069a93f583f69053dacf3151e3ae68"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "sentNoRefresh text, no \"recorded\" state set"
+      ]
     }
   ],
   "prior_review_records": [
@@ -1158,6 +1383,63 @@
           ]
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+          "evidence_refs": [
+            "delivery/features/F-31/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+          "evidence_refs": [
+            "delivery/features/F-31/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-31/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+          "evidence_refs": [
+            "delivery/features/F-31/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "83747e368e5af5b4680839ede43bd485d8744414",
+          "evidence_refs": [
+            "delivery/features/F-31/round-2/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -1182,7 +1464,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "d9ca6f97f4bca34349115014697714c3ab7aae9b",
     "task_branch": "fe-engagement-planning-register-engagement-and-record-input",
-    "head_sha": "83747e368e5af5b4680839ede43bd485d8744414",
+    "head_sha": "9b73aacf87069a93f583f69053dacf3151e3ae68",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-31",
     "pr_url": null,
     "pr_number": null,
@@ -1256,7 +1538,7 @@
     }
   },
   "created_at": "2026-11-18T00:08:37Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -1314,6 +1596,38 @@
       "round": 2,
       "head": "83747e368e5af5b4680839ede43bd485d8744414",
       "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T04:00:16Z",
+      "round": 2,
+      "head": "83747e368e5af5b4680839ede43bd485d8744414",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T04:00:16Z",
+      "round": 3,
+      "head": "83747e368e5af5b4680839ede43bd485d8744414",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T04:36:42Z",
+      "round": 3,
+      "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T04:53:31Z",
+      "round": 3,
+      "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "reason": null
     }
   ],
   "routing": {
@@ -1329,10 +1643,10 @@
     ]
   },
   "gate": {
-    "round": 2,
+    "round": 3,
     "attempts": 1,
     "verdict": "PASS",
-    "commit": "83747e368e5af5b4680839ede43bd485d8744414"
+    "commit": "9b73aacf87069a93f583f69053dacf3151e3ae68"
   },
   "blocked": null
 }
