@@ -165,6 +165,30 @@ for (const [label, viewport] of [
       expect(decisions.map((w) => w.body)).toEqual([{ verdict: 'return', expected_revision: 1, note: 'Add the Lagoon Health escalation to the summary.' }]);
     });
 
+    test('QA-2-1: two reviewers, A approves first; B’s return gets 409 and B sees the sent state, the stale sentence and the unsent note', async ({ page, context }) => {
+      const other = await context.newPage();
+      await other.goto('/work/W-3202');
+      await page.goto('/work/W-3202');
+      await loaded(other);
+      await loaded(page);
+      await readyToDecide(other);
+      await readyToDecide(page);
+      await other.getByRole('button', { name: 'Approve and send' }).click();
+      await expect(other.locator('.work-state')).toHaveText('SENT · CHECKING DELIVERIES');
+      const writes = recordWrites(page);
+      await page.getByRole('button', { name: 'Return with a note' }).click();
+      const scope = phone ? page.getByRole('dialog', { name: 'Return with a note' }) : page;
+      await scope.getByLabel(/^Note/).fill('Stale tab note');
+      await scope.getByRole('button', { name: 'Return with a note' }).click();
+      await expect(page.locator('.work-state')).toHaveText('SENT · CHECKING DELIVERIES');
+      await expect(page.getByText('This review changed while you were reading it, so nothing was recorded.')).toBeVisible();
+      await expect(page.getByText('Your note wasn’t sent: “Stale tab note”')).toBeVisible();
+      await expect(page.getByText(/is approved|is returned/)).toHaveCount(0);
+      expect(writes.filter((w) => w.path.endsWith('/decision')).map((w) => w.body)).toEqual([{ verdict: 'return', expected_revision: 1, note: 'Stale tab note' }]);
+      await expectNoAxeViolations(page);
+      await other.close();
+    });
+
     test('W-3209: an uncertain approve reads "result not confirmed", Finance Lead CHECKING, no resend and no action write', async ({ page }) => {
       const writes = recordWrites(page);
       await page.goto('/work/W-3209');

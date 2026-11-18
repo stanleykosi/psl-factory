@@ -433,6 +433,38 @@ describe('refusals and uncertain writes (AC 14, 15, 17)', () => {
     expect(posts('/decision')[1].body!.expected_revision).toBe(2);
   });
 
+  it('QA-2-1: another reviewer approved first; the 409 re-read shows the sent state, the stale sentence and the unsent note', async () => {
+    // Reviewer A's approve lands before B's return: the task is decided, so the re-read has no decide steps left.
+    onDecide = () => {
+      served = item('W-3202.approve');
+      return json(409, { code: 'stale_revision', message: 'Someone changed this since you opened it.' });
+    };
+    await open(item('W-3202'));
+    await ready();
+    fireEvent.change(note(), { target: { value: '  Stale tab note  ' } });
+    await click('Return with a note');
+    await waitFor(() => expect(status().textContent).toBe('SENT · CHECKING DELIVERIES'));
+    expect(await ws().findByText('This review changed while you were reading it, so nothing was recorded.')).toBeTruthy();
+    expect(ws().getByText('Your note wasn’t sent: “Stale tab note”')).toBeTruthy();
+    expect(document.querySelector('.ws-idecide')).toBeNull();
+    expect(said()).not.toMatch(/is approved|is returned/i);
+    expect(posts('/decision')).toHaveLength(1);
+  });
+
+  it('QA-2-1: an approve that loses the race says nothing was recorded and names no note', async () => {
+    onDecide = () => {
+      served = item('W-3202.return');
+      return json(409, { code: 'stale_revision', message: 'Someone changed this since you opened it.' });
+    };
+    await open(item('W-3202'));
+    await ready();
+    await click('Approve and send');
+    await waitFor(() => expect(status().textContent).toBe('DRAFTING · RETURNED'));
+    expect(await ws().findByText('This review changed while you were reading it, so nothing was recorded.')).toBeTruthy();
+    expect(said()).not.toMatch(/note wasn’t sent|is approved/i);
+    expect(posts('/decision')).toHaveLength(1);
+  });
+
   it('422: the backend message under the note', async () => {
     onDecide = () => json(422, { code: 'invalid', message: 'Say which escalation.', fields: [{ name: 'note', message: 'Say which escalation.' }] });
     await open(item('W-3202'));
