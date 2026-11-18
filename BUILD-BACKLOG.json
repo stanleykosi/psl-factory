@@ -1,5 +1,20 @@
 {
   "design_consolidation_20261116": {
+    "staff_profiles_20261118":{
+      "status":"pg157_158_hosted_browser_single_workspace_profile_invite_and_navigation_verified",
+      "states":["SCR-21","SCR-21-invite"],
+      "implemented":["Version3 nullable profile controls and closed named permission bundles","New-version profile configuration UI and current exact staff editor","Native access changes with stale/concurrent review protection and immutable provenance","Named or legacy invitations, exact source version renewal and single use","Three-query metadata-only current labels for at most25 exact bindings","Scoped paginated pending invitation rows and advanced individual-access fallback","Phone navigation repair with44px accessible controls"],
+      "migrations_preserve":["identity0008","identity0009"],
+      "postgresql_156":{"deployment":"3a22abcf-73b7-4e75-bb49-16a5580921cd","passed":51,"failures":1,"errors":1,"seconds":77.498,"final_exit":1,"reason":"Two new tests captured stale fixture case revisions before review; setup corrected without weakening native CAS"},
+      "postgresql_157":{"deployment":"37df86fe-1075-491e-b680-1de08a3ab52a","passed":55,"seconds":38.247,"final_exit":0,"preview_migration":true,"source_only_fixture":true},
+      "postgresql_158":{"deployment":"1185190e-83f1-4487-ad1f-fd4d0655e663","passed":18,"seconds":23.421,"final_exit":0},
+      "runtime_158":{"web":"321e742e-648c-486d-bbb2-be44848c0af3","worker":"bfe9ef0d-27c4-4edc-8b5d-baf3a2cc3e60","status":"SUCCESS","paths_per_service":1723,"root_paths":1722,"mismatches":0},
+      "browser":{"profile_person":121,"profile_scope":"f01c74c2-81f7-4be8-b9a5-6aae4c71a243","profile":"SAMPLE project contributor","cancel_preserved_access":true,"other_scope_ownership_removal_held":true,"invitations":[5,6],"renewal_replaced_prior":true,"recipient_setup_by_user":true,"accepted_person":123,"accepted_profile":"SAMPLE workspace reader","pending_after_acceptance":0,"viewport_reset":true,"actual_body_client":{"desktop1280":[1265,1265],"phone390":[375,375],"phone320":[305,305]}},
+      "remaining":["Multi/all-project profile allocation","Native started-work and recording responsibility handover","Fresh-access reactivation"],
+      "next":"Continue native work handover/reactivation and payroll progression; do not reset accepted synthetic records or restore historical grants",
+      "owner_decisions":"Actual login profiles, people, management scope and reactivation authority remain deferred",
+      "all_states_accepted":false
+    },
     "payroll_row_progress_20261118":{
       "status":"board_and_native_code_reconciled_engineering_remaining",
       "states":["SCR-09","SCR-09-error","SCR-18","SCR-18-permission"],

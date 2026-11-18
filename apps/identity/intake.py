@@ -23,6 +23,14 @@ SCHEMA['properties']['staff_lifecycle']=obj({
 })
 for key in ['allow_roster','allow_account_deactivation','allow_unassigned_departure']:
     SCHEMA['properties']['staff_lifecycle']['properties'][key]={'type':['boolean','null']}
+for key in ['allow_profile_edit','allow_reactivation']:
+    SCHEMA['properties']['staff_lifecycle']['properties'][key]={'type':['boolean','null']}
+SCHEMA['properties']['staff_lifecycle']['properties']['profiles']={
+    'type':['array','null'],'maxItems':30,'items':obj({
+        'key':{'type':'string','pattern':r'^[a-z][a-z0-9_-]{0,49}$'},
+        'label':{'type':'string','minLength':1,'maxLength':80},
+        'actions':{'type':'array','minItems':1,'maxItems':1000,'uniqueItems':True,
+                   'items':{'type':'string','minLength':1,'maxLength':100}}})}
 
 def source_system(action):
     prefix='approval.source.read:'
@@ -43,13 +51,22 @@ def checked(v):
     if v.get('staff_lifecycle') and (not v['manage_access'] or 'case.read' not in allowed or not v['kinds']):
         raise ValidationError('Staff lifecycle requires explicit workspace access delegation')
     controls=v.get('staff_lifecycle',{})
-    advanced={'allow_roster','allow_account_deactivation','allow_unassigned_departure'}
+    advanced={'allow_roster','allow_account_deactivation','allow_unassigned_departure',
+              'allow_profile_edit','allow_reactivation','profiles'}
     if advanced.intersection(controls) and v['format']!='psl.tenant-access/v3':
         raise ValidationError('Account controls require a version3 delegation; legacy authority is unchanged')
     if controls.get('allow_account_deactivation') and not controls.get('allow_deactivation'):
         raise ValidationError('Account departure requires explicit workspace departure delegation')
     if controls.get('allow_unassigned_departure') and not controls.get('allow_account_deactivation'):
         raise ValidationError('Unassigned departure requires explicit account departure delegation')
+    if (controls.get('allow_profile_edit') or controls.get('allow_reactivation')) and controls.get('allow_roster') is not True:
+        raise ValidationError('Account access changes require explicit staff review access')
+    profiles=controls.get('profiles') or []
+    if len({p['key'] for p in profiles})!=len(profiles):raise ValidationError('Profile keys must be unique in this delegation version')
+    for profile in profiles:
+        text(profile['label'],80)
+        if 'case.read' not in profile['actions'] or not set(profile['actions'])<=allowed:
+            raise ValidationError('Each access profile needs workspace read and only explicitly delegated actions')
 
 def text(v,maximum):
     if not isinstance(v,str) or not v.strip() or v!=v.strip() or len(v)>maximum:raise ValidationError('Provide bounded nonempty text without surrounding whitespace')

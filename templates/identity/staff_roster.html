@@ -11,7 +11,7 @@
   {% if not available %}<p>Staff management needs an explicit account delegation. Your project work can continue.</p>{% endif %}
   <div class="table-wrap detail-table"><table><thead><tr><th>Name</th><th>Workspace access</th><th>Status</th><th>Last sign-in</th><th>Action</th></tr></thead><tbody>
   {% for person in people %}<tr><th scope="row">{{ person.get_full_name|default:person.username }}<br><small>{{ person.email|default:person.username }}</small></th>
-    <td data-label="Workspace access">{{ person.managed_workspace_count }} managed workspace{{ person.managed_workspace_count|pluralize }}</td>
+    <td data-label="Workspace access">{{ person.first_profile_label }}<br><a href="{% url 'staff_person' person.pk %}">{{ person.managed_workspace_count }} managed workspace{{ person.managed_workspace_count|pluralize }}</a>{% if person.managed_workspace_count > 1 %}<br><small>Profile shown for the first workspace. View all access above.</small>{% endif %}</td>
     <td data-label="Status">{% if not person.is_active %}Inactive{% elif not person.has_usable_password %}Sign-in not set up{% else %}Active{% endif %}</td>
     <td data-label="Last sign-in">{{ person.last_login|date:'d M Y H:i T'|default:'Never' }}</td>
     <td data-label="Action">{% if person.departure_available %}<a href="{% url 'staff_account_departure' person.pk %}">Review deactivation</a>{% else %}—{% endif %}</td>
@@ -19,5 +19,12 @@
   </tbody></table></div>
   <nav aria-label="Staff pages">{% if people.has_previous %}<a class="button secondary" href="?q={{ search|urlencode }}&amp;status={{ status }}&amp;page={{ people.previous_page_number }}">Previous</a>{% endif %}{% if people.has_next %}<a class="button secondary" href="?q={{ search|urlencode }}&amp;status={{ status }}&amp;page={{ people.next_page_number }}">Next</a>{% endif %}</nav>
   <p class="coverage-note">{{ people.paginator.count }} matching accounts in your managed workspaces · Checked {{ observed_at|date:'d M Y H:i:s T' }}.</p>
+</section>
+<section class="card"><h2>Pending invitations</h2><p>Current links in your managed workspaces. Renewing creates a new one-use link and replaces the old one.</p>
+  <div class="table-wrap detail-table"><table><thead><tr><th>Person</th><th>Workspace</th><th>Requested access</th><th>Status</th><th>Action</th></tr></thead><tbody>
+  {% for invitation in invitations %}<tr><th scope="row">{{ invitation.name }}<br><small>{{ invitation.email }}</small></th><td data-label="Workspace">{{ invitation.case.title }}</td><td data-label="Requested access">{{ invitation.profile_label|default:'Individual workspace functions' }}</td><td data-label="Status">{% if invitation.expires_at <= observed_at %}Expired{% else %}Pending · expires {{ invitation.expires_at|date:'d M Y H:i T' }}{% endif %}</td><td data-label="Action"><a href="{% url 'staff_renew_invite' invitation.case_id invitation.pk %}">Renew invitation</a></td></tr>
+  {% empty %}<tr><td colspan="5">No pending invitations match this search.</td></tr>{% endfor %}</tbody></table></div>
+  <nav aria-label="Invitation pages">{% if invitations.has_previous %}<a class="button secondary" href="?q={{ search|urlencode }}&amp;status={{ status }}&amp;invitations_page={{ invitations.previous_page_number }}">Previous invitations</a>{% endif %}{% if invitations.has_next %}<a class="button secondary" href="?q={{ search|urlencode }}&amp;status={{ status }}&amp;invitations_page={{ invitations.next_page_number }}">Next invitations</a>{% endif %}</nav>
+  <p class="coverage-note">{{ invitations.paginator.count }} current invitations · Checked {{ observed_at|date:'d M Y H:i:s T' }}.</p>
 </section>
 {% endblock %}

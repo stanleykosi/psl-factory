@@ -19,7 +19,7 @@ from .models import Grant
 from .staff_models import StaffAccountChange
 
 MAX_CASES = 100
-CONTROL_KEYS = ('allow_roster','allow_account_deactivation','allow_unassigned_departure')
+CONTROL_KEYS = ('allow_roster','allow_account_deactivation','allow_unassigned_departure','allow_profile_edit','allow_reactivation')
 
 
 @transaction.atomic
@@ -76,15 +76,9 @@ def prepare(actor,person_id):
             raise PermissionDenied('The complete account scope needs its authorised administrators.')
         scopes.append({'case':case,'authority':cfg,'grants':grants})
     blocked=[]
-    from apps.workflows.factory_execution import available_actor
     for scope in scopes:
         case=scope['case']
-        work=list(FactoryWork.objects.filter(Q(actor=person)|Q(execution_binding__principal=person),case=case).exclude(
-            status__in=['verified','cancelled','followup_needed']).select_related('case','actor','execution_binding')[:101])
-        if len(work)>100 or any(available_actor(row) in (None,person) for row in work):
-            blocked.append('Complete the native handover of open factory work before disabling this account.')
-        if HumanTask.objects.filter(case=case,claimed_by=person,status='open').exists():
-            blocked.append('Release outstanding decision claims before disabling this account.')
+        blocked.extend(staff.work_handover_findings(case,person))
         items=list(staff.open_actions(case,person.pk)[:101])
         if len(items)>100:raise ValidationError('The complete action inventory needs administrator review.')
         if items:require(actor,case,'action.manage')

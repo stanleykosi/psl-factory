@@ -22,6 +22,7 @@
 .design-shell .skip-link { left: 12px; }
 .factory-nav {
   position: relative;
+  min-height: 72px;
   z-index: 10;
   display: flex;
   flex-wrap: wrap;
@@ -39,6 +40,8 @@
 .factory-nav nav a[aria-current='page'] { border-bottom-color: var(--accent); font-weight: 700; }
 .factory-menu { margin: 0 0 0 auto; padding: 0; background: transparent; border: 0; }
 .factory-menu summary { cursor: pointer; color: white; }
+.factory-menu > summary { min-width: 44px; justify-content: center; }
+.factory-menu[open] > summary, .factory-alert-menu[open] > summary { margin-bottom: 0; }
 .factory-menu > div {
   position: absolute;
   inset: 100% max(16px, 3vw) auto auto;
@@ -50,8 +53,9 @@
   border: 1px solid var(--line);
 }
 .factory-menu > div a:hover { color: var(--ink); }
-.factory-alert-menu { position: relative; }
+.factory-alert-menu { position: relative; flex: 0 0 auto; margin: 0; padding: 0; border: 0; background: transparent; }
 .factory-alert-menu summary { cursor: pointer; display: grid; place-items: center; min-width: 44px; min-height: 44px; list-style: none; border-radius: 8px; }
+.factory-alert-menu summary { color: inherit; }
 .factory-alert-menu summary::-webkit-details-marker { display: none; }
 .factory-alert-menu[open] summary, .factory-alert-menu summary:hover { background: #ffffff24; }
 .factory-alert-panel { position: absolute; z-index: 20; right: 0; top: calc(100% + 8px); width: min(330px, 85vw); padding: 16px; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 25px #21342825; }
@@ -159,7 +163,7 @@
   .detail-table td[colspan] { display: block; }
 }
 @media (max-width: 650px) {
-  .factory-nav { gap: 0 12px; }
+  .factory-nav { gap: 0 8px; }
   .factory-nav nav { order: 1; width: 100%; overflow-x: auto; }
   .factory-nav nav a { flex: 1 0 auto; justify-content: center; padding-inline: 8px; }
   .design-shell .topbar-search { display: none; }
@@ -170,6 +174,10 @@
   .start-work-desktop-word, .factory-nav .start-work-split a + a { display: none; }
   .start-work-dialog { inset: auto 0 0; width: 100%; height: auto; max-height: 92dvh; border-left: 0; border-top: 2px solid var(--ink); border-radius: 16px 16px 0 0; }
   .start-work-dialog-body { padding: 20px 16px; }
+}
+@media (max-width: 360px) {
+  .factory-wordmark { font-size: 12px; }
+  .factory-nav .start-work-split a { padding-inline: 8px; }
 }
 
 .factory-case-layout > * { min-width: 0; }

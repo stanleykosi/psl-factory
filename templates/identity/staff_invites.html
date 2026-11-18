@@ -7,7 +7,9 @@
   <label for="staff-invitation-link">Invitation link</label><input id="staff-invitation-link" readonly value="{{ invitation_link }}">
 </section>{% endif %}
 <section class="card onboarding-card"><h2>{% if renewing %}Renew invitation{% else %}Invite a person{% endif %}</h2>
-  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary">Create invitation link</button></form>
+  <form method="post">{% csrf_token %}{{ form.non_field_errors }}{{ form.revision }}{{ form.name.as_field_group }}{{ form.username.as_field_group }}{{ form.email.as_field_group }}{{ form.profile.as_field_group }}
+    <details><summary>Review individual workspace functions</summary><p>Use this only when a named access profile has not been configured. The invitation must include workspace read access.</p>{{ form.actions.as_field_group }}</details>
+    <p>Project responsibilities and approval authority are assigned separately.</p><button class="button primary">Create invitation link</button></form>
 </section>
 <section class="card"><h2>Invitation history</h2><ul>{% for row in rows %}<li>
   {{ row.name }} · {{ row.email }} · Version {{ row.number }} · {% if row.admission %}Accepted

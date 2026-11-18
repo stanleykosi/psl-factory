@@ -10,6 +10,7 @@
     <tbody>{% for person in people %}<tr>
       <td>{% firstof person.user__first_name person.user__username %}{% if person.user__first_name and person.user__last_name %} {{ person.user__last_name }}{% endif %}{% if person.user__email %}<br>{{ person.user__email }}{% endif %}</td>
       <td>{{ person.user__is_active|yesno:'Active,Inactive' }}<br>Account {{ person.user_id }}
+        {% if staff_access.allow_profile_edit and person.user__is_active and person.user_id != user.pk %}<br><a href="{% url 'staff_profile_access' case.pk person.user_id %}">Review named access</a>{% endif %}
         {% if staff_access.allow_deactivation and person.active_actions and person.user_id != user.pk %}
           <br><a href="{% url 'staff_departure' case.pk person.user_id %}">Remove workspace access</a>
         {% endif %}
@@ -23,11 +24,11 @@
     {% if people.has_next %}<a href="?person={{ search|urlencode }}&amp;page={{ people.next_page_number }}">Next</a>{% endif %}
   </nav>{% endif %}
 </section>
-<section class="card onboarding-card">
-  <h2>Grant or remove access</h2>
+<details class="card onboarding-card">
+  <summary>Individual access controls</summary><h2>Grant or remove access</h2>
   <p>Choose which action the account can take in this workspace.</p>
   <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary" type="submit">Save access change</button></form>
-</section>
+</details>
 <section class="card table-wrap"><h2>Access history</h2>
   <table><thead><tr><th>Account</th><th>Action</th><th>Access</th><th>Reason</th><th>When</th></tr></thead>
     <tbody>{% for record in history %}<tr><td>{{ record.subject_id }}</td><td>{{ record.action }}</td><td>{{ record.enabled|yesno:'Granted,Removed' }}</td><td>{{ record.reason }}</td><td>{{ record.created_at }}</td></tr>{% empty %}<tr><td colspan="5">No access changes recorded.</td></tr>{% endfor %}</tbody>

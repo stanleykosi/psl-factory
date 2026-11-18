@@ -23,8 +23,26 @@ class InviteForm(forms.Form):
     name = forms.CharField(max_length=150)
     username = forms.CharField(max_length=150, label='Sign-in name')
     email = forms.EmailField()
-    actions = forms.MultipleChoiceField(label='Workspace access', widget=forms.CheckboxSelectMultiple)
+    profile = forms.ChoiceField(label='Account access profile',required=False,choices=[])
+    actions = forms.MultipleChoiceField(label='Individual workspace functions',required=False, widget=forms.CheckboxSelectMultiple)
     revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
+
+    def __init__(self,configuration,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        from .staff_profiles import choices
+        self.profiles={p['key']:p for p in choices(configuration)}
+        self.fields['profile'].choices=[('', 'Choose a configured profile')]+[(k,p['label']) for k,p in self.profiles.items()]
+        self.fields['actions'].choices=[(a,a.replace('.', ' · ').replace('_',' ').capitalize())
+            for a in sorted(set(configuration.value['allowed_actions'])&set(ACTIONS))]
+
+    def clean(self):
+        values=super().clean();key=values.get('profile');actions=values.get('actions',[])
+        if key:
+            supplied=self.profiles[key]['actions']
+            if actions and set(actions)!=set(supplied):self.add_error('actions','Use the selected profile or choose individual functions, not both.')
+            values['actions']=list(supplied)
+        elif not actions:self.add_error('profile','Choose a configured profile, or review explicit individual workspace functions.')
+        return values
 
 
 class PasswordForm(forms.Form):
@@ -77,9 +95,11 @@ def invites(request, case_id, invitation_id=None):
     initial = {'revision': case.revision}
     if old:
         initial.update({key: getattr(old, key) for key in ('name','username','email','actions')})
-    form = InviteForm(request.POST if request.method == 'POST' else None, initial=initial)
-    form.fields['actions'].choices = [(a, a.replace('.', ' · ').replace('_', ' ').capitalize())
-                                      for a in sorted(set(cfg.value['allowed_actions']) & set(ACTIONS))]
+        from .staff_profiles import choices
+        current={p['key']:p for p in choices(cfg)}
+        if old.profile_key in current:
+            initial.update(profile=old.profile_key,actions=[])
+    form = InviteForm(cfg,request.POST if request.method == 'POST' else None, initial=initial)
     invitation_link = None
     if request.method == 'POST' and form.is_valid():
         values = form.cleaned_data
@@ -88,7 +108,8 @@ def invites(request, case_id, invitation_id=None):
         else:
             try:
                 _, token = staff.invite(request.user, case.pk, values['username'], values['name'], values['email'],
-                                        values['actions'], values['revision'], preceding=invitation_id)
+                                        values['actions'], values['revision'], preceding=invitation_id,
+                                        profile_key=values.get('profile',''))
             except ValidationError as exc:
                 form.add_error(None, exc)
             else:

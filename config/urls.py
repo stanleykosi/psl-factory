@@ -31,6 +31,7 @@ from apps.documents import validation_views
 from apps.finance import payroll_views, payroll_correction_views, reminder_views
 from apps.identity import staff_views
 from apps.identity import staff_account_views
+from apps.identity import staff_profile_views
 from apps.finance import hrfinance_views
 from apps.finance import recognition_views
 from apps.finance import payment_views
@@ -205,6 +206,9 @@ urlpatterns += [path('cases/<uuid:case_id>/staff/invitations/', staff_views.invi
                 path('cases/<uuid:case_id>/staff/<int:person_id>/remove-access/', staff_views.departure, name='staff_departure'),
                 path('staff/join/', staff_views.accept, name='staff_accept_invite')]
 urlpatterns += [path('staff/',staff_account_views.roster,name='staff_roster'),
+                path('staff/<int:person_id>/',staff_profile_views.person,name='staff_person'),
+                path('cases/<uuid:case_id>/staff/<int:person_id>/access/',staff_profile_views.access,name='staff_profile_access'),
+                path('staff/delegation/<int:authority_id>/profiles/',staff_profile_views.configure,name='staff_profile_configuration'),
                 path('staff/<int:person_id>/deactivate/',staff_account_views.departure,name='staff_account_departure'),
                 path('staff/delegation/<int:authority_id>/',staff_account_views.controls,name='staff_account_controls')]
 urlpatterns += [path('cases/<uuid:case_id>/documents/review/<int:version_id>/', design_review.show, name='design_document_review')]

@@ -13,6 +13,7 @@ from django.utils import timezone
 
 from apps.core.models import Case
 from apps.core.services import bump, event
+from apps.documents.contracts import digest
 from apps.pmo.meetings import change_action
 from apps.pmo.models import ActionItem
 from apps.policy.role_assignments import eligibility
@@ -43,7 +44,7 @@ def _revision(case, expected):
 
 
 @transaction.atomic
-def invite(actor, case_id, username, name, email, actions, expected, preceding=None):
+def invite(actor, case_id, username, name, email, actions, expected, preceding=None, *, profile_key=''):
     case = Case.objects.select_for_update().get(pk=case_id)
     intake.lock_users([actor.pk])
     cfg, settings = authority(actor, case, 'allow_invite')
@@ -55,8 +56,13 @@ def invite(actor, case_id, username, name, email, actions, expected, preceding=N
     intake.text(name, 150)
     from .actions import ACTIONS
     if ('case.read' not in actions or len(actions) != len(set(actions)) or
-            not set(actions) <= set(cfg.value['allowed_actions']) & set(ACTIONS)):
+            not set(actions) <= set(cfg.value['allowed_actions']) or not profile_key and not set(actions)<=set(ACTIONS)):
         raise PermissionDenied('Select the exact record access you can delegate.')
+    profile=None
+    if profile_key:
+        from .staff_profiles import selected
+        profile=selected(cfg,profile_key)
+        if set(profile['actions'])!=set(actions):raise ValidationError('Use the exact selected access profile.')
     old = StaffInvitation.objects.filter(case=case, username=username).order_by('-number').first()
     if preceding != (old.pk if old else None) or user_model.objects.filter(username__iexact=username).exists():
         raise ValidationError('Use the current pending invitation or choose a new account name.')
@@ -64,7 +70,10 @@ def invite(actor, case_id, username, name, email, actions, expected, preceding=N
     expires = min(timezone.now()+timedelta(minutes=settings['invite_minutes']), cfg.expires_at)
     row = StaffInvitation.objects.create(case=case, username=username, name=name, email=email, actions=sorted(actions),
                                          number=old.number+1 if old else 1, token_hash=sha256(token.encode()).hexdigest(),
-                                         expires_at=expires, authority=cfg, actor=actor)
+                                         expires_at=expires, authority=cfg, actor=actor,
+                                         profile_key=profile['key'] if profile else '',
+                                         profile_label=profile['label'] if profile else '',
+                                         profile_sha256=digest(profile) if profile else '')
     event(actor, case, 'staff.invitation_created', invitation=row.pk)
     bump(case)
     return row, token
@@ -80,6 +89,12 @@ def pending(token):
     cfg, _ = authority(row.actor, row.case, 'allow_invite')
     if cfg.pk != row.authority_id:
         raise ValidationError('This invitation needs to be renewed under current access rules.')
+    if row.profile_key:
+        from .staff_profiles import selected
+        profile=selected(cfg,row.profile_key)
+        if (row.profile_sha256!=digest(profile) or row.profile_label!=profile['label'] or
+                set(row.actions)!=set(profile['actions'])):
+            raise ValidationError('This invitation and its reviewed access profile differ.')
     return row
 
 
@@ -104,9 +119,9 @@ def accept(token, password):
         raise ValidationError('This invitation is unavailable.') from None
     StaffAdmission.objects.create(invitation=row, user=user)
     for action in row.actions:
-        Grant.objects.create(user=user, case=case, action=action)
-        intake.AccessChange.objects.create(subject=user, case=case, action=action, enabled=True, authority=row.authority,
-                                           actor=row.actor, reason='Accepted exact staff invitation')
+        intake.change_access(row.actor,case.pk,user.pk,action,True,'Accepted exact staff invitation')
+    from .staff_profiles import record_invitation
+    record_invitation(row,user)
     event(user, case, 'staff.invitation_accepted', invitation=row.pk)
     bump(case)
     return user
@@ -127,6 +142,24 @@ def role_context(actor,case):
     return config,reference_values(config)
 
 
+def work_handover_findings(case,user):
+    from apps.workflows.factory_execution import available_actor
+    related=Q(execution_binding__principal=user)|Q(actor=user)
+    work=list(FactoryWork.objects.filter(related,case=case).exclude(status__in=['verified','cancelled','followup_needed']).select_related(
+        'case','actor','execution_binding')[:101])
+    findings=[]
+    if len(work)>100 or any(available_actor(row) in (None,user) for row in work):
+        findings.append('Complete the native handoff of this person’s open factory work first.')
+    if HumanTask.objects.filter(case=case,claimed_by=user,status='open').exists():
+        findings.append('Release this person’s open decision claims first.')
+    return findings
+
+
+def require_work_handover(case,user):
+    findings=work_handover_findings(case,user)
+    if findings:raise ValidationError(findings)
+
+
 @transaction.atomic
 def deactivate(actor, case_id, person_id, replacements, evidence_id, reason, expected):
     case = Case.objects.select_for_update().get(pk=case_id)
@@ -140,15 +173,7 @@ def deactivate(actor, case_id, person_id, replacements, evidence_id, reason, exp
     grants = list(Grant.objects.select_for_update().filter(case=case, user=user, active=True).order_by('pk'))
     if not grants or any(row.action not in cfg.value['allowed_actions'] for row in grants):
         raise PermissionDenied('Current access exceeds this administrator’s delegation.')
-    from apps.workflows.factory_execution import available_actor
-
-    related_work = Q(execution_binding__principal=user) | Q(actor=user)
-    open_work = list(FactoryWork.objects.filter(related_work, case=case).exclude(
-        status__in=['verified','cancelled','followup_needed']).select_related('case','actor','execution_binding')[:101])
-    if len(open_work) > 100 or any(available_actor(work) in (None, user) for work in open_work):
-        raise ValidationError('Complete the native handoff of this person’s open factory work first.')
-    if HumanTask.objects.filter(case=case, claimed_by=user, status='open').exists():
-        raise ValidationError('Release this person’s open decision claims first.')
+    require_work_handover(case,user)
     items = list(open_actions(case, user.pk)[:101])
     if len(items) > 100 or {item.pk for item in items} != set(replacements):
         raise ValidationError('Select a successor for every open project action.')
