@@ -260,6 +260,17 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (WORKSPACE_OPERATIONS.includes(route.operationId)) return send(res, ...workspaceRoute({ req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides, operationId: route.operationId }));
       // E-EVIDENCE-UPLOAD has two mock owners: Setup proof cases (C-SETUP-*, F-11, evidence.mjs) and work-item cases (F-09, response.mjs).
       const setupProof = route.operationId === 'E-EVIDENCE-UPLOAD' && decodeURIComponent(url.pathname.split('/')[4] ?? '').startsWith('C-SETUP-');
+      // F-47: a third owner, start work (start-work.mjs), for an upload whose kind is a Start work line's evidence_kind for this persona, on a case that line starts on.
+      if (route.operationId === 'E-EVIDENCE-UPLOAD' && !setupProof) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        if (startWork.ownsUpload(url, raw, persona)) {
+          const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+          if (scenario && SCENARIO_BODIES[scenario] && route.statuses.includes(String(scenario))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+          if (req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+          return send(res, ...startWork.handle(route.operationId, { url, raw, persona, cookies }));
+        }
+      }
       if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {
         return send(res, ...responseRoute(route.operationId, { req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
       }
@@ -299,7 +310,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const fromDraft = assistant.draftStart(raw, persona);
         if (fromDraft) return send(res, ...fromDraft);
       }
-      if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona }));
+      if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona, cookies }));
       if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
       // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.
       if (route.operationId === 'E-DOCUMENT') { const r = documentRead({ url, persona, cookies, work, overrides }); if (r) return send(res, r.status, r.body); }
