@@ -1,0 +1,149 @@
+{
+  "id": "W-3608",
+  "title": "Client test data three weeks late",
+  "line": "Escalation",
+  "reference": "ESC-0012",
+  "state": "action_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Tola investigates",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead decides",
+      "status": "done"
+    },
+    {
+      "name": "Tola drafts",
+      "status": "current_person"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T12:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Used the PMO Lead's decision",
+        "status": "done",
+        "source": "ESCALATE · 13 NOV"
+      },
+      {
+        "text": "Drafted the message to the sponsor",
+        "status": "done",
+        "source": "FACTS AND DATES ONLY"
+      },
+      {
+        "text": "Listed the recipients",
+        "status": "done",
+        "source": "SPONSOR · PROJECT CONTACT"
+      }
+    ],
+    "started_at": "2026-11-13T12:40:00Z"
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "escalation",
+    "screen": "SCR-51",
+    "view": "default",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "registers",
+          "label": "Registers"
+        },
+        {
+          "value": "escalations",
+          "label": "Escalations"
+        },
+        {
+          "value": "ESC-0012",
+          "label": "ESC-0012"
+        }
+      ]
+    },
+    "revision": 2,
+    "title": "Client test data three weeks late",
+    "status": {
+      "label": "MESSAGE DRAFTED",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "message",
+        "kind": "text",
+        "title": "Message v1",
+        "items": [],
+        "note": "Your team's test data is now 15 days late (asked 22 Oct, 29 Oct, 5 Nov). Go-live on 4 Dec depends on it. Could you confirm a date this week?"
+      }
+    ],
+    "steps": [
+      {
+        "key": "send_for_review",
+        "label": "Send for review",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "disabled_reason": "No one is set to review client messages yet. An admin sets this in Setup."
+      }
+    ],
+    "next": [
+      "The PMO Lead reviews the message before it's sent."
+    ],
+    "links": [
+      {
+        "key": "ask_tola",
+        "label": "Ask Tola",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ]
+  }
+}

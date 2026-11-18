@@ -13,7 +13,7 @@ import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
-import { Workspace } from '@/features/workspace/Workspace';
+import { drawsAgentCard, Workspace } from '@/features/workspace/Workspace';
 import { RfpOutcomeLink } from '@/features/rfp';
 
 import {
@@ -709,7 +709,7 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
     );
     main = (
       <div className="cmp-sr">
-        {!(income && agent.status === 'working') && <AgentCard agent={item.agent} />}
+        {!drawsAgentCard(item.workspace.line_key, agent.status) && <AgentCard agent={item.agent} />}
         <NextStep item={item} quiet />
       </div>
     );

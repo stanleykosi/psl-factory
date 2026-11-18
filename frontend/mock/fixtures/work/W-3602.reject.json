@@ -1,0 +1,156 @@
+{
+  "id": "W-3602",
+  "title": "Client test data three weeks late",
+  "line": "Escalation",
+  "reference": "ESC-0012",
+  "state": "cancelled",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Tola investigates",
+      "status": "done"
+    },
+    {
+      "name": "PMO Lead decides",
+      "status": "stopped"
+    },
+    {
+      "name": "Tola drafts",
+      "status": "not_started"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3602",
+      "kind": "decide",
+      "title": "Decide whether to escalate",
+      "required_role": "PMO Lead",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Escalation ESC-0012",
+          "number": 1,
+          "drafted_at": "2026-11-13T12:00:00Z"
+        },
+        "basis": "Escalate ESC-0012 to the client, or leave the issue with its owner.",
+        "prepared_by": {
+          "name": "Tola",
+          "role": "PMO agent",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PMO Lead",
+              "status": "rejected",
+              "is_you": false
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "stopped"
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "escalation",
+    "screen": "SCR-51",
+    "view": "default",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "registers",
+          "label": "Registers"
+        },
+        {
+          "value": "escalations",
+          "label": "Escalations"
+        },
+        {
+          "value": "ESC-0012",
+          "label": "ESC-0012"
+        }
+      ]
+    },
+    "revision": 2,
+    "title": "Client test data three weeks late",
+    "status": {
+      "label": "NOT ESCALATED",
+      "tone": "stopped"
+    },
+    "sections": [
+      {
+        "key": "decision",
+        "kind": "text",
+        "items": [],
+        "note": "Kemi Adebayo decided not to escalate on 13 Nov: “Their new lead starts Monday. Ask them directly first.”"
+      }
+    ],
+    "next": [
+      "The issue stays open with its owner. You can raise the escalation again later."
+    ],
+    "links": [
+      {
+        "key": "back_to_issue",
+        "label": "Back to the issue",
+        "target": {
+          "kind": "work",
+          "work_id": "W-3609"
+        }
+      }
+    ]
+  }
+}

@@ -673,8 +673,8 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
         .filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name))
         .filter((name) => (key === 'links' ? 'links' in (JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}) : JSON.stringify(JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}).includes('"items_default"')));
     expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
-    // F-31 (W-26xx) and F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) carry links too; F-33's investigating board (W-2701) draws Ask Chidi
-    expect(withKey('links').every((name) => /^W-(23|25|26)/.test(name) || name === 'W-2701.json')).toBe(true);
+    // F-31 (W-26xx) and F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) carry links too; F-33's investigating board (W-2701) draws Ask Chidi; F-39's escalation boards (W-36xx) draw Ask Tola and Back to the issue
+    expect(withKey('links').every((name) => /^W-(23|25|26|36)/.test(name) || name === 'W-2701.json')).toBe(true);
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
   });
 

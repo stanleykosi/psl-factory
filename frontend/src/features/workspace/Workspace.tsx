@@ -108,6 +108,12 @@ const ENGAGEMENT_LINE = 'engagement';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
 /** F-33: the income schedule boards draw the stations in the main column and the working agent's card beside it. */
 const INCOME_LINE = 'income_schedules';
+/** F-39: the escalation boards draw Tola's card beside the sections while she works and once she has drafted. */
+const ESCALATION_LINE = 'escalation';
+
+/** Whether the workspace draws the agent's card itself (WorkItemOverview then keeps its copy for screen readers only). */
+export const drawsAgentCard = (lineKey: string, status: string) =>
+  (lineKey === INCOME_LINE && status === 'working') || (lineKey === ESCALATION_LINE && (status === 'working' || status === 'done'));
 
 /** The stations as the income schedule boards draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
@@ -521,7 +527,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const side = workspace.sections.filter(inSide(item));
   const main = workspace.sections.filter((section) => !inSide(item)(section) && !strip.includes(section));
   const sideNote = issueLine(workspace) && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
-  const agentSide = incomeLine && item.agent.status === 'working';
+  const agentSide = drawsAgentCard(workspace.line_key, item.agent.status);
   const notice = flow.notice;
   return (
     <>
@@ -747,7 +753,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   if (!workspace) return null;
   // the income line's stations and working agent are drawn here whichever branch draws the sections (WorkItemOverview draws no copy)
   const income = workspace.line_key === INCOME_LINE;
-  const agentSide = income && item.agent.status === 'working';
+  const agentSide = drawsAgentCard(workspace.line_key, item.agent.status);
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';
