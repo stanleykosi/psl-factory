@@ -3,25 +3,59 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-33",
-  "outcome": null,
+  "outcome": "Income detail \u00b7 October: Finance reviews the prepared income schedule, returns it for correction or approves it, in four states (contract mock only)",
   "state": "PLANNED",
   "task_ids": [
     "FE-FIN-SCHEDULES"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-2701`\u2026`W-2704` show the status label and tone, stations, sections, agent card, quote, facts and \"Next\" of their fixture and nothing else; no board string is in `src` (`grep -rn \"CHIDI INVESTIGATING\\|AWAITING FINANCE DECISION\\|CORRECT AND RESUBMIT\\|THESE 38 ROWS\\|Service revenue\" frontend/src` returns nothing). \u2014 verify: `cd frontend && npx vitest run tests/income-schedule.test.tsx`; pages at 1440 and 390.",
+    "**Amounts as returned.** On W-2702 the report line reads \"\u20a612,400,000.00\" at 1440 and at 390 (no \"\u20a612.4M\"); changing the fixture's amount to `\"12400000.10\"` shows \"\u20a612,400,000.10\" exactly. \u2014 verify: component test at both widths.",
+    "**The page computes nothing.** Changing W-2701's figure values (e.g. \"31 ROWS\" to \"30 ROWS\") leaves the section title \"Income detail \u00b7 38 rows\" unchanged; changing W-2702's \"2 OF 2\" or W-2704's `next` text changes only that text; no new or changed file under `frontend/src/features/workspace/` adds `parseFloat`, `Number(`, `reduce(`, `compactAmount` or arithmetic on an amount or count. \u2014 verify: component tests on modified copies; `git diff -U0 frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(|compactAmount\"` returns nothing.",
+    "**Unknown is never 0, blank or a dash.** W-2707 shows \"Unknown\" for the report line and for Detail rows; the page contains no \"\u20a60\", no \"0.00\", no empty value cell and no \"-\" or \"\u2014\" in their place. \u2014 verify: component test on W-2707.",
+    "**Sample-marked.** Every fixture page shows the shared `SampleLabel` (\"SAMPLE DATA\") because the record says `sample: true`; a copy with `sample: false` does not. \u2014 verify: component test.",
+    "**Reviewer not set is a hold.** W-2706 shows the backend's status, the \"Who reviews schedules \u00b7 NOT SET\" fact and its `next` sentence; there is no Decide panel, no button, no claim or decide request, and no reviewer's name or role anywhere on the page. \u2014 verify: component test with a recording `fetch` (zero POSTs); `document.body.textContent` checked for \"Ada Okafor\" and \"Schedules reviewer\" (absent).",
+    "**Decide controls only from `you_can_act` and the steps.** W-2702 shows \"Approve schedule\", \"Return with a note\" and \"Reject\" under \"Decide \u00b7 Schedules reviewer\"; W-2709 shows only Approve and Return; W-2711 shows neither the `revoke` nor the `post` step; W-2710 draws its step as the existing link (the step's own label) to `/work/W-2710/decide?task=T-2710`. W-2705 shows \"You prepared Schedule v1, so someone else must review it.\" and W-2708 the `not_your_role` copy, each with no button and no claim sent. The same pages for personas `finance_lead`, `ceo` and `pm` draw the same controls; the new code does not read `/me` (`grep -rn \"useMe\\|/me\\b\" frontend/src/features/workspace/InlineDecide.tsx` returns nothing). \u2014 verify: component tests with three personas and a recording `fetch`.",
+    "**Agent work is not a decision.** On W-2701 Chidi's steps, sources, \"WORKING\" and \"CHIDI CHECKING\" render in the agent style; there is no decide control; the possible duplicates are never shown as \"none\" or \"no duplicates\"; \"Ask Chidi\" links to `/assistant`. \u2014 verify: component test; link href.",
+    "**Verified only when the response says so.** W-2704 shows \"VERIFIED\" from its status; pressing Approve on W-2702 shows \"Verified\" only after the re-read serves `W-2702.approve.json` (`state: verified`); with the decide answering 200 but the re-read still serving the review state (test double), the page does not say \"Verified\". \"Posted to the ledger: NO\" and \"THESE 38 ROWS ONLY\" come from `facts`; W-2704 has no Export or Withdraw button. \u2014 verify: component tests with a recording `fetch`.",
+    "**Approve.** On W-2702, the page sends one E-TASK-CLAIM to `/api/v1/tasks/T-2702/claim`, then pressing \"Approve schedule\" sends exactly one POST `/api/v1/tasks/T-2702/decision` with the CSRF header and `{verdict: \"approve\", expected_revision: 1}` (validates against the generated request schema, no note, no extra keys); a double press sends one. \u2014 verify: component test; e2e request log.",
+    "**Return and reject need a note.** Pressing \"Return with a note\" or \"Reject\" with an empty or blank note sends nothing and shows the note message under the field, announced, with focus on it; a note over 2000 characters is refused before sending. With a note, one POST with `verdict: \"return\"` (or `\"reject\"`) and the trimmed note; the re-read shows the returned (or rejected) state. \u2014 verify: component tests; e2e request log shows no decision POST without a note.",
+    "**No write when the person cannot act.** On W-2705, W-2706 and W-2708 no claim and no decision is sent, whatever is pressed or typed. \u2014 verify: e2e request log (zero task POSTs).",
+    "**Backend refusals are shown.** With `psl_mock_scenario` 403 the decide shows the read-only view and no \"approved\"; 409 shows the stale view, keeps the note and sends again only on a new press with the new revision; 422 shows the message under the note. \u2014 verify: component tests; `tests/income-schedule-mock.test.ts`.",
+    "**Uncertain decide.** A network failure, timeout or 500 on decide re-reads the item before anything else, shows `UncertainNotice`, never shows \"approved\", \"returned\" or \"rejected\" from the click, and sends no second decision automatically. \u2014 verify: component test with fake timers (one POST after 60 s); e2e with a routed abort.",
+    "**Correct and resubmit.** On W-2703 (and on `W-2702` after a return), \"Correct and resubmit\" opens the step form with \"Row 12 relationship\" as a required choice of three with nothing selected; submitting without a choice sends nothing and shows the field message; with a choice, one POST `/api/v1/work/W-2703/steps` with CSRF, `expected_revision`, `step: \"correct_and_resubmit\"`, `inputs.row_12_relationship` one of the options, and a UUID `idempotency_key`; a retry after a 500 reuses the same key; on 200 the re-read shows the item back in review with the `prepared_by_you` copy. The page never says \"resubmitted\" before the re-read. \u2014 verify: component tests; e2e request log.",
+    "**No D-RETURN wording of our own.** The returned page shows the reviewer's quote and the step's `consequence` as returned and no \"Proposal: every return\u2026\" note (absent from the fixture); `grep -rn \"backend only waits\\|every return\" frontend/src` returns nothing. \u2014 verify: grep; component test.",
+    "**Access.** 401 on read or write \u2192 signed-out with `next=/work/<id>`; 403 and 404 on read look the same and show no title, amount or fact; persona `none` gets the same not-open view with no further call. \u2014 verify: component tests with a recording `fetch`.",
+    "**Phone.** At 390 each state is one column with the same sections, words and values as desktop; the Decide bar is pinned with the three step labels; \"Return with a note\", \"Reject\" and \"Correct and resubmit\" open the full-height `Drawer` with the note or the field; Escape and Cancel close it and return focus to the button; no sideways scroll; every button, link, tab and segment is at least 44 by 44 px (D-92c; links inside sentences exempt, D-95). \u2014 verify: e2e at 390 measuring bounding boxes.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 8 boards on a production build at `--width 1440` and `--width 390`; every board's element coverage after approved exceptions is 100%; visual is at least 90, or a board-level waiver citing D-83 in `fidelity-exceptions.json` with visual at least 70 (lower only with a signed one-board floor exception); every exception has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number; none covers a value the data can supply (an amount, a name, a date, a tag, a count, a sentence). The UI reviewer's side-by-side reading finds no fixable gap. \u2014 verify: the fidelity command per board; `round-<N>/fidelity/scores.txt`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on W-2701\u2026W-2706, the open Drawer, the note error, the uncertain notice and the not-open view; every field labelled; errors announced; status words in text, not colour only; visible focus; the agent pulse does not animate under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/income-schedule.spec.ts`.",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in `features/workspace/*.css`, and no local copy of a component `@/components` exports (`Button`, `Drawer`, `TextArea`, `Callout`, `Panel`, `Tag`, `Segmented`). \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `tests/income-schedule-mock.test.ts`: every new fixture and sidecar validates against the generated E-WORK-ITEM schema with `steps[].verdict` stripped; claim then approve on W-2702 serves `W-2702.approve.json`; return without a note is 422; a stale revision is 409; W-2705's decide is 403; the W-2703 step serves `W-2703.next.json`; reset clears. \u2014 verify: `cd frontend && npx vitest run tests/income-schedule.test.tsx tests/income-schedule-mock.test.ts tests/mock-contract.test.ts`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `frontend/src/features/decide/**`, `frontend/src/shell/**`, `frontend/mock/server.mjs`, `frontend/mock/workspace.mjs`, `frontend/mock/fixtures/response/**`, `frontend/mock/fixtures/finance/**`, `E-MONTH-END.json`, any existing fixture, `apps/**`, `architecture/**`, `design/**` or the protected paths; every overlay field is listed as a contract proposal in build.md. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing tests green.** `delivery/checks.sh` passes, and the tests listed under Context pass unchanged, including `tests/response-mock.test.ts` (W-1603 reconcile) and the month-end link assertions. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** Commands and results, the 8 scores and waivers, every exception with its Conflicts number, every proposal and backend item, the held list from \"What is sent\", and the mock-seam choice (option (b)). \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High, because this is a Finance approval over money. A reviewer approves the October income detail (\u20a612,400,000.00 service revenue), and a wrong control would let a Finance figure look approved or verified without the human decision. The rules the product forbids most are at stake here: unknown shown as zero, a frontend-computed figure, an invented approver, an agent claim read as verified. The work is contained: a view on the F-17 frame with the existing E-TASK-DECIDE and E-WORK-STEP writes, on the mock, with nothing posted. SURFACES: ui (8 boards); api (E-WORK-ITEM, E-TASK-CLAIM/DECIDE, E-WORK-STEP); security (an authority-bearing approval write with CSRF, revision, idempotency and separation of duties, so it gets a security review); contract-change (G-C-1, G-C-2, G-54-3 and the `income_schedules` line proposal under D-LINE-WORKSPACE); product-decision (Income detail rules and Who reviews schedules are NOT SET, and D-RETURN is open; both hold the real transition). PRODUCT-ACCEPTANCE is required: this is a new Finance flow (prepare, review, return, verify) with new wording, the client has not seen it working, and it is money, so it does not merge without the design engineer."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-33/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
+    "readiness_checked": true,
     "explicit_exception": null
   },
   "roles": {},
@@ -59,9 +93,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-33/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -139,7 +194,19 @@
   "round": 0,
   "round_limit": null,
   "history": [],
-  "routing": null,
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-33/readiness.md",
+      "delivery/features/F-33/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

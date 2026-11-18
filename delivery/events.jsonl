@@ -2372,3 +2372,6 @@
 {"at":"2026-11-18T00:08:37Z","feature":"F-31","round":0,"kind":"created","tasks":["FE-ENGAGEMENT-PLANNING"]}
 {"at":"2026-11-18T00:08:37Z","feature":"F-32","round":0,"kind":"created","tasks":["FE-DELIVERY-RELEASE"]}
 {"at":"2026-11-18T00:08:37Z","feature":"F-33","round":0,"kind":"created","tasks":["FE-FIN-SCHEDULES"]}
+{"at":"2026-11-18T00:27:22Z","feature":"F-31","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-18T00:27:22Z","feature":"F-32","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","auth","contract-change","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-18T00:27:23Z","feature":"F-33","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change","product-decision"],"reviewers":["technical","ux","ui","security"]}

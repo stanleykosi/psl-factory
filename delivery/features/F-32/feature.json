@@ -3,25 +3,61 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-32",
-  "outcome": null,
+  "outcome": "Delivery tab and release gates: a project's six delivery lines, and the release item from waiting on the PMO Lead through their decision to release ready (contract mock only)",
   "state": "PLANNED",
   "task_ids": [
     "FE-DELIVERY-RELEASE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Scores.** One fidelity run per round covers all 8 boards in the Boards table. Every board has `coverageWithExceptions` = 100 and `visual` \u2265 90. A board at 70 or more but below 90 passes only with a D-83 waiver signed for that board in `fidelity-exceptions.json`, and only when the UI reviewer's side-by-side reading finds no fixable gap. No board passes under 70. \u2014 verify: the commands exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass and waiver.",
+    "**Exceptions limited.** Each entry has `role`, `name`, `category`, `reason` and `approved_by`, and maps to a Conflicts number. None covers a value the data can supply (a name, date, reference, tag, count or sentence). \u2014 verify: file content; build.md.",
+    "**The tab exists everywhere tabs are drawn.** `/projects/P-0101` and every other project tab show the tabs Journey, Delivery, Milestones 4, Documents 6, Money, Registers 6, Actions 9. Delivery links to `/projects/P-0101/delivery` and is selected there. The line tab bar on `/work/W-2501` shows the same seven, linked, with none current. An unknown tab (`/projects/P-0101/planning`) is still a 404 page. \u2014 verify: `tests/delivery-overview.test.tsx`; the updated `projects-journey.test.tsx` and `workspace.test.tsx` assertions; e2e.",
+    "**Rows from data.** `/projects/P-0101/delivery` shows six rows in the returned order, numbered 01 to 06. Each shows its title, reference (or \"\u2014\"), the returned gate label with its returned tone, and the date or reason. Release gates links to `/work/W-2503` and Go-live acceptance to `/work/W-2510`. Hypercare, Archive, Handover and Closure have no link. Reordering the fixture reorders the page. A row with `state: \"verified\"` but a `gate.tone` of `uncertain` shows the uncertain tone. \u2014 verify: component tests on the fixture and modified copies; `grep -rn \"Release ready\\|Not yet\\|Support listed\" frontend/src` returns nothing.",
+    "**Nothing counted or ruled in the browser.** No \"3 of 6\" or similar count appears, and no closure sentence appears unless `delivery_summary.note` is returned. A copy without `note` shows no line-order sentence. A copy with five rows shows five and the heading \"The delivery lines, in order\". `grep -rniE \"closure needs|retrospective|finance's confirmation\" frontend/src` finds nothing. \u2014 verify: component tests; grep.",
+    "**Tola and Next.** With `delivery_agent`, the card shows its title, the four steps with their sources, \"Checked 12 Apr 09:00\" and \"Ask Tola\" (a link to `/assistant` that sends nothing). Without it, the existing summary of `agent_summary.text` appears. `next` is plain text with no link. \u2014 verify: component tests with and without `delivery_agent`; a recording `fetch` (no POST).",
+    "**Sub-nav (Conflicts 5).** At 1440 the Delivery tab shows Overview (current) and one entry per row, labelled `short_title` (or `title` when absent). Only Release and Go-live are links. At 390 the sub-nav is not drawn. \u2014 verify: component test; e2e at both widths.",
+    "**Empty and Unknown.** A copy with `delivery: []`, and one with no `delivery`, show \"No delivery lines yet.\" A row with `at: {unknown: true}` shows \"Unknown\", and a row with no `gate` shows an \"Unknown\" tag. Neither shows blank or \"0\". \u2014 verify: component tests.",
+    "**Three states from data.** `/work/W-2501`, `/work/W-2502` and `/work/W-2503` each show their fixture's status label and tone, sections, steps, Next and links, and nothing else. W-2501 has no decision control. Its gate row reads \"Waiting for PMO Lead\", and its task panel reads \"Only a PMO Lead can decide.\" (Conflicts 4). `grep -rnE \"WAITING ON PMO LEAD|Approve for release|Release ready|PMO Lead\" frontend/src` finds no new match. \u2014 verify: `tests/release-gates.test.tsx` at 1440 and 390.",
+    "**Decision controls only from `you_can_act`.**",
+    "**No decision write from the work page.** Pressing either link on W-2502 navigates only. A recording `fetch` sees no POST to `/claim`, `/decision` or `/steps` from the work page. \u2014 verify: component test.",
+    "**Approve ends on ready only through the response.** In the e2e:",
+    "Open `/work/W-2502`, press \"Approve for release\" and land on the F-16 page.",
+    "The F-16 page sends one claim and one decide with `verdict: approve`, `expected_revision` 1 and the CSRF header.",
+    "Back on `/work/W-2502`, the page shows \"Release ready\", the banner, the readiness note, Next and \"Open go-live\" (linking to `/work/W-2510`).",
+    "**Return needs a note.** On the F-16 page for T-2502, Return with an empty note sends nothing and shows the note message under the field. With a note it sends one decide (`verdict: return`), and the work page then shows the generic outcome with no \"Release ready\". \u2014 verify: e2e.",
+    "**Verified only from the backend (INV-AGENT).** W-2508, whose agent step \"Mark release ready\" is done, shows no green banner, no \"Release ready\" status and no \"Open go-live\". The banner is green on W-2503 only because `status.tone` is `verified`: a copy with the same text and tone `person` draws the warning banner. \u2014 verify: component tests.",
+    "**Unknown, not zero.** On W-2507, Open issues reads \"Unknown\", the unknown gate reads \"Unknown\", and Tola's checklist has no time line. Nothing shows blank or \"0\". \u2014 verify: component test.",
+    "**Links only from data.** \"Open go-live\" appears only with a `work` link whose `work_id` is a valid id. A copy with `work_id: \"../x\"`, or an unknown kind, draws nothing. W-2501 and W-2502 show no \"Open go-live\". \u2014 verify: component tests.",
+    "**Access.**",
+    "**Phone.** At 390 both routes are one column, with the desktop sections in the desktop order (Conflicts 6). There is no sideways scroll. Every button, tab, row link and standalone link is at least 44px tall (D-92c). \u2014 verify: e2e at 390 measuring `getBoundingClientRect`.",
+    "**Accessibility.** There are no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 or 390 on: the Delivery tab and its empty state; W-2501, W-2502, W-2503, W-2504 and W-2507; the no-access views. Unavailable decision controls expose their reason through `aria-describedby`. Tags and status are text, not colour only. Focus is visible, and nothing animates under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/delivery-release.spec.ts`.",
+    "**Tokens and components only.** New UI imports from `@/components` (`Tabs`, `Tag`, `Panel`, `Link`, `Unknown`, `EmptyState`, `Callout`) and adds no local button, tag, panel or tab. `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\"` on this feature's CSS diff returns nothing. \u2014 verify: diff and grep.",
+    "**Mock matches the contract.**",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `src/shell/**`, `src/features/decide/**` or the protected paths. No existing fixture is edited, except the additive `delivery`, `delivery_agent` and `delivery_summary` keys in `P-0101.json`. Every overlay field is listed in build.md as a contract proposal. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing behaviour not weakened.** `delivery/checks.sh` passes. `tests/workspace*.test.*`, `work-item*.test.tsx`, `decide*.test.tsx`, `projects*.test.tsx`, `project-tabs.test.tsx`, `issue-detail.test.tsx`, `minutes*.test.*` and their e2e specs pass. No assertion is removed or loosened; the four tab-list assertions only gain \"Delivery\". \u2014 verify: `delivery/checks.sh`; e2e output in build.md; `git diff` of `tests/`.",
+    "**No overclaim.** build.md and the PR carry the \"What is released\" section: contract mock only, nothing released or deployed, no authority configured, and the two product questions open. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "RISK is medium: - The work has several behaviours on two routes: a new project tab and a line workspace with three states. - It sits on the shared F-17 frame and the F-16 decide page, against two proposed contracts (D-LINE-WORKSPACE, D-PROJECTS-VIEW), and adds G-F32-1 to the additive proposals. - It is not high: no money, migration or deploy effect, no new write endpoint, and the decision reuses the tested F-16 claim and decide path on the mock. SURFACES: - `auth` is ticked because the page displays a release decision. The security lens must confirm the decide control follows `tasks[].you_can_act` and `required_role` only. - `product-decision` is ticked for open business questions: the gate is labelled \"Planning decision\" while the buttons say \"Approve for release\", and planning and costing must precede the signed SOW. D-ROLE-PMO's scope (architecture/model.json:753-764) names closure, commercial approvals and escalations, not release. Both are backend or PSL confirmations (gaps-d-delivery.md:68-73). They hold the real transition, not this mock build. PRODUCT-ACCEPTANCE is required because the Delivery tab and the release-gate flow are new to the client."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-32/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
+    "readiness_checked": true,
     "explicit_exception": null
   },
   "roles": {},
@@ -59,9 +95,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-32/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -139,7 +196,19 @@
   "round": 0,
   "round_limit": null,
   "history": [],
-  "routing": null,
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-32/readiness.md",
+      "delivery/features/F-32/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

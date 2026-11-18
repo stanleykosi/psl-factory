@@ -3,25 +3,54 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-31",
-  "outcome": null,
+  "outcome": "Engagement and planning, part 1: a won RFP becomes a registered engagement, and the planning page shows what each department owes and records what one sent (contract mock only)",
   "state": "PLANNED",
   "task_ids": [
     "FE-ENGAGEMENT-PLANNING"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Packet from data.** `/work/W-2601` shows the crumbs, title, subtitle, the six packet rows with their IN / UNKNOWN / NOT YET tags, \"Costing v2 \u00b7 \u20a640,951,000.00\" on the Price row, the \"Unknowns stay Unknown\u2026\" line, Tola's checklist and \"Ask Tola\". No board string is in `src` (`grep -rn \"Not in the award letter\\|Needs planning\\|PLANNING \u00b7 \\|OWNER NEEDED\" frontend/src` returns nothing). Neither \"Open question for PSL\" note is shown. \u2014 verify: `cd frontend && npx vitest run tests/engagement-planning.test.tsx`; pages at 1440 and 390.",
+    "**Money and Unknown.** The Price cell shows the formatted typed amount. A copy with `money.unknown: true` shows \"Costing v2 \u00b7 Unknown\", never \"\u20a60.00\". Tables in other fixtures (W-2209, W-2411) draw exactly as before. A copy with the start-date row's tag removed shows \"Unknown\" in its place, never a blank. \u2014 verify: component tests on modified copies; the F-17 and F-30 tests are unchanged and green.",
+    "**Confirm PM, pre-filled from the response only.** On W-2601 the side panel shows a labelled \"PM\" Select with exactly the three `assign.candidates`, Sola Martins chosen (from `default_person_id`), the returned hint and \"Confirm PM\". Pressing it sends one POST `/api/v1/work/W-2601/assignment` with CSRF and `{expected_revision, person_id: <Sola's id>}`, with no extra key. A double press sends one. On 200 the page re-reads, the notice reads \"PM confirmed: Sola Martins\", and the register step appears only from the re-read. A copy with `default_person_id` not in the candidates, or absent, shows F-30's closed \"Set an owner\" behaviour with nothing chosen. `/me` is not read (`grep -n \"useMe\\|/me\\b\" frontend/src/features/workspace/AssignForm.tsx frontend/src/features/workspace/useWorkspaceAssign.ts` returns nothing). \u2014 verify: component tests with a recording `fetch`; `GET /__mock/workspace-log`.",
+    "**Register.** On W-2602, \"Register engagement\" opens the step form with Plan evidence, Start date and Client project contact, required only as each field's `required` says. Choosing a PDF uploads it once to the engagement item's case with its `case_revision`. Submitting sends one POST `/api/v1/work/W-2602/steps` that validates against the generated request schema: `step: \"register_engagement\"`, `inputs.start_date: \"2027-01-15\"`, `inputs.client_contact` trimmed, `evidence_ids: [<the id>]`, a UUID `idempotency_key`, no extra keys, and an empty optional field not sent. On 200 the notice is the response's message. \"Ojo Foods \u00b7 ordering app\" links to `/projects/P-0106`, and \"Planning \u00b7 PLN-0031\" links to `/work/W-2603`, both from the re-read item's cites. No sentence on the page says the project was created unless the re-read item says it. \u2014 verify: component tests; e2e at 1440 walks W-2601 \u2192 confirm \u2192 register \u2192 planning link.",
+    "**Registration never repeats blind.** For W-2604 (`effect_uncertain`) the page shows the reconcile notice, every step is off, and a reload keeps it off. Exactly one register request is in the mock log. For `psl_mock_scenario` 500 and a network error, the page says \"Not done\", re-reads, and Try again repeats the same `idempotency_key`. 409 re-reads, keeps the entries and sends the new revision on the next press. 422 shows messages under the named fields. None of these shows the registered state. \u2014 verify: component tests; e2e reads the mock log.",
+    "**Departments from data.** `/work/W-2603` shows the status \"PLANNING \u00b7 2 OF 5 IN\" and the byline \"PM Sola Martins\" as returned. The table shows the five rows with their tags, the estimates \"230 person-days\" and \"20 person-days\", and \"Unknown\" for QA, Product and Infrastructure. It also shows the table note, the finding with its cites, Tola's checklist and the Readiness panel. A copy with a different `status.label` shows that label; nothing on the page counts rows or adds estimates (`grep -rnE \"reduce\\(|person-days\" frontend/src/features/workspace` finds no new arithmetic or the word). \u2014 verify: component tests; pages at 1440 and 390.",
+    "**Controls only from the response.** \"Record input\" appears on QA and Infrastructure only. \"Who receives this?\" appears on Product, disabled with \"Not available yet\" and no href. \"Prepare readiness\" is disabled with its returned reason and consequence, and pressing it sends nothing. The same data gives the same controls for personas `pm`, `finance_lead` and `ceo`. A copy with the steps removed draws none, and a copy whose `T-2603` has `you_can_act: false` draws no \"Record input\". \u2014 verify: component tests with three personas and stripped copies.",
+    "**Record department input.** Pressing QA's \"Record input\" opens the shared `Drawer` titled \"Record department input\" with F-18's form: the Department picker lists exactly QA and Infrastructure (QA chosen from `team_key`), plus the estimate in person-days (shown because QA has `estimate_needed`), What they gave, Proof, Received, the attestation and the returned intro sentence. Submitting sends one E-TASK-CLAIM only if `claim_required`, then one POST `/api/v1/tasks/T-2603/response` with CSRF and F-18's body: `team: \"qa\"`, `estimate_person_days: 45`, `what`, `evidence_id`, `responded_at` as entered, `attested: true`, `expected_revision` and `case_revision` as read. A double press sends one. On 200 the drawer closes, focus returns to the table heading, the re-read shows QA \"IN \u00b7 11 DEC\", \"45 person-days\" and its Proof, the status \"PLANNING \u00b7 3 OF 5 IN\" comes from the re-read, and QA's button is gone. A team with the overlay `disabled_reason` is not offered. \u2014 verify: component tests; e2e at 1440 and 390.",
+    "**Recorded under the PM's name, never as the department.** The notice and the re-read attribute the input to the signed-in person as the response's `recorded.by` says. No text says the department logged in or sent it themselves (`grep -rniE \"logged in|signed in as\" frontend/src/features/workspace/ResponseDrawer.tsx` returns nothing). Without the attestation ticked, Record stays off and nothing is sent. \u2014 verify: component test; grep.",
+    "**Record failures never say recorded.** 422 shows messages under the fields with the entries kept. 409 re-reads with the entries kept and no automatic resend. 500, a network error and `record-then-fail` re-read before offering Record again, and never show \"Recorded\". A stale proof upload (409) re-reads `case_revision` before any new upload. \u2014 verify: component tests; `engagement-planning-mock.test.ts`.",
+    "**Agent text is only displayed.** Tola's checklists, the finding and \"Sent requests to Engineering, QA, Security and Infrastructure \u00b7 EMAIL \u00b7 08 DEC\" appear exactly as returned and labelled as Tola's. Nothing marks them verified, shows a delivery receipt for them, or offers to send, resend or start costing. \"Ask Tola\" appears only when `links[]` carries it (a stripped copy has none). \u2014 verify: component tests on `document.body.textContent` and on stripped copies.",
+    "**Planning is reached from the project.** On `/projects/P-0106`, the \"Plan a project\" line links to `/work/W-2603`. The F-30 project bar on W-2603 links Journey, Milestones, Documents, Money, Registers and Actions to P-0106, and marks none current. On phones the back link reads \"\u2190 Project\" to `/projects/P-0106`. Other line items keep their back link (W-2209 still \"Queue\"). \u2014 verify: component tests; e2e.",
+    "**401, 403, 404.** 401 on any read or write \u2192 signed-out with `next=/work/<id>`. 403 and 404 on W-2601 to W-2603 look the same, with no title, name, amount or fact. A 403 or 404 on the E-RESPONSE write closes the drawer onto that view. Persona `none` gets the not-open view with no further call. \u2014 verify: component tests with a recording `fetch`.",
+    "**Nothing from `/me`.** No component in this feature reads `/me` to decide a control, a PM, a name or a department. The PM pre-fill comes from `assign.default_person_id` and the recorded-by name from the response. \u2014 verify: `git diff` adds no `useMe` or `/api/v1/me` reference under `features/workspace` or `features/work-item`; review.",
+    "**Phone.** At 390 each page is one column, with the same sections in the same order as desktop (Conflicts 7). \"Register engagement\" and \"Record input\" open the full-height `Drawer` with the desktop form's fields and the same outcomes. Escape and Cancel close it and return focus to the button. There is no sideways scroll. Every button, row control, link outside running text and tab is at least 44px (D-92c). \u2014 verify: e2e at 390, measuring target boxes.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over all 8 boards, on a production build: the four live URLs, plus the four driver-frozen pages for the register and record boards. For every board, coverage after approved exceptions is 100% and visual is at least 90, or a board-level D-83 waiver (floor 70) is signed in `fidelity-exceptions.json` citing the shared frame. Every exception has `role`, `name`, `category`, `reason` and `approved_by`, and maps to a Conflicts number. None covers a value the data can supply (a name, a date, a tag, an estimate, a sentence). \u2014 verify: the fidelity command per board (`--width 1440` and `--width 390`); `round-<N>/fidelity/`; re-run of `drive-states.mjs`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390, checked on W-2601 to W-2604, the open PM form, the open register form, the open record drawer, a 422 state in each form, the uncertain state, the not-open view and the empty workspace. Every field is labelled, errors are announced, status words are in text and not colour only, focus is visible and stays in the open Drawer, and nothing animates under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/engagement-planning.spec.ts`.",
+    "**Tokens and components only.** `git diff` adds no `#hex`, `rgb(` or `hsl(` in any CSS, and no local copy of a component `@/components` exports. The drawer is the shared `Drawer`, not a new overlay. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `engagement-planning-mock.test.ts` checks that every new fixture validates against the generated E-WORK-ITEM schema after the overlay is stripped, that `default_person_id` is among the candidates, the register script, the uncertain script, and the T-2603 rules (unlisted team, missing estimate, second QA record) with the swap to `W-2603.recorded.json`. It also checks that reset clears. \u2014 verify: `cd frontend && npx vitest run tests/engagement-planning.test.tsx tests/engagement-planning-mock.test.ts tests/mock-contract.test.ts tests/workspace.test.tsx tests/work-item.test.tsx tests/issue-detail.test.tsx tests/project-tabs.test.tsx tests/mock-projects.test.ts tests/response.test.tsx tests/response-mock.test.ts tests/rfp.test.tsx`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `src/shell/**`, `src/features/response/**` or the protected paths. The only change to existing fixtures is the one P-0106 `lines[]` entry. Every overlay field is listed as a contract proposal in build.md. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing tests kept green.** `delivery/checks.sh` passes. The F-17, F-18, F-25 and F-30 unit tests and e2e listed under Context pass unchanged: no assertion is edited, skipped or loosened. \u2014 verify: `checks.sh` output and the e2e output in build.md; `git diff --stat frontend/tests frontend/e2e` shows only new files."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. Part 1 has several behaviours across two line workspaces (four writes: confirm PM, evidence upload, register, record input) on the shared F-17 frame, and it adds additive contract proposals (G-41-1, -4, -5, G-42-1, -2), so it touches a cross-layer contract. Registering creates the project and starts planning. That effect happens in the backend and is hard to undo, but here it runs on the contract mock only. The front end's part is limited to an idempotent single step that re-reads and doesn't retry while the result is uncertain, which keeps it below high. The backend task for G-41-5 should be rated high. SURFACES are ui, api and contract-change, plus product-decision because the boards draw two open PSL questions (G-41-2 re-asking for the PM, and G-42-3 agent-sent department requests) that are shown here but not decided. auth is not ticked: no new authority rule is added, and the PM can be chosen only from the candidates the backend returns. external-messaging is not ticked: this part sends nothing outside. PRODUCT-ACCEPTANCE is required because the engagement registration and the \"record department input\" flows, and their wording, are new to the client."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-31/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
+    "readiness_checked": true,
     "explicit_exception": null
   },
   "roles": {},
@@ -59,9 +88,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-31/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -139,7 +182,18 @@
   "round": 0,
   "round_limit": null,
   "history": [],
-  "routing": null,
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-31/readiness.md",
+      "delivery/features/F-31/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
