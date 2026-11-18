@@ -1,5 +1,30 @@
 {
   "design_consolidation_20261116": {
+    "full_archive_recovery_20261118": {
+      "status": "passed",
+      "package": 76,
+      "deployment": "7e9f3986-4367-4417-adb2-8ecb21be8509",
+      "postgresql": {"passed": 37, "seconds": 3647.526},
+      "checks_and_fixtures": "passed, final exit zero",
+      "next": {"package": 77, "deployment": "0b0103f2-d0ed-45dc-aa6f-98054caac89b", "tests": 16, "status": "running"},
+      "later_source": "Package78 native decision wakes and finalization race protection, PostgreSQL pending",
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
+    "corrected_acceptance_and_native_wakes_20261118": {
+      "status": "browser_acceptance_passed_wake_checks_pending",
+      "checkpoint": "f661cbe0",
+      "browser": {"work": 82, "report_version": 2, "receipt": 55, "signature_sources": [1657, 1658], "result": "verified", "edit_refresh_guard": "passed"},
+      "remote_main": "e74e312282372e02c510c08756544af37696f5d8",
+      "additional_design_reference": "origin/dlv-00-delivery-setup at e0f9c54d, canvas unchanged, mock contracts reviewed",
+      "package_77": "frozen source for sixteen tests and three guarded Support reply fixtures",
+      "later_package_78": ["Native human decision and receipt wakes", "Source-wake versus finalization race protection", "Human-pause versus finalization race test"],
+      "states_with_browser_observations": 189,
+      "observed_states_with_open_checks": 188,
+      "states_without_direct_browser_observation": 73,
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
     "private_archive_and_support_reply_20261118": {
       "status": "private_archive_passed_support_reply_pending_verification",
       "checkpoint": "c4f4d4cd",

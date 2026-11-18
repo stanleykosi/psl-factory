@@ -1,5 +1,15 @@
 # PSL operations factory build state
 
+## Archive and handover recovery suite passed · 18 November 2026
+
+All 37 PostgreSQL tests in package 76 passed in 3647.526 seconds, together with checks and fixtures. This covers worker-exit recovery, concurrency, original receipts, permission revocation, source successors and the bounded archive request. The new Support reply path is under package 77 verification in `0b0103f2`. Later source-wake race protection awaits package 78. Runtime web remains 76 with worker 74. The milestone remains 189 observed states, including partials, and 73 unseen. HOD decisions stay deferred.
+
+## Corrected client acceptance completed · 18 November 2026
+
+Work 82 reached Verified in the browser through corrected report version 2, fresh approval, receipt 55 and distinct synthetic signature sources 1657/1658. The unsaved-edit refresh guard also worked in the browser. Checkpoint `f661cbe0` is pushed. Main is still `e74e3122`; newly fetched mock branches retain the same canvas inventory. The ledger has 189 observed states and 73 unseen, with open checks remaining.
+
+Package 76's 37-test PostgreSQL run is on final recovery/concurrency cases. Package 77 is staged for the Support reply path and its exact source. Later root work wakes existing background requests after human decisions and protects wakes arriving during finalization. Its new race tests require the subsequent package 78 run. HOD roles, channels and other owner values remain deferred. The full 262-state milestone remains incomplete.
+
 ## Real archive receipts and connected Support replies · 18 November 2026
 
 Package 75 passed eleven PostgreSQL tests in 287.784 seconds and the actual private-store trial. Work 92 verified three synthetic files by real byte readback. Browser work 90 recovered an original receipt and work 91 completed a missing-file-only retry. The private-store archive fit desktop and phone widths. Package 76's request regression passed at 571 queries, with fresh write-authority checks, and its wider 37-test suite is running. Web 76 is hosted with worker 74. A handover preflight timeout remains under correction in the next source.

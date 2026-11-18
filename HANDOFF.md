@@ -1,5 +1,21 @@
 # PSL operations factory cloud handoff
 
+## Full archive recovery suite passed · 18 November 2026
+
+Package 76 `7e9f3986-4367-4417-adb2-8ecb21be8509` passed all 37 PostgreSQL tests in 3647.526 seconds. Checks, fixture steps and both final exit markers passed. This includes actual worker exits, retained original receipts, concurrency, exact source and policy successors, revoked actors and the 571-query archive request regression. Runtime web 76 and worker 74 remain active.
+
+Frozen Support reply package 77 is now running as `0b0103f2-d0ed-45dc-aa6f-98054caac89b`. It has sixteen targeted tests, then the existing fixtures and three new Support reply examples. Read its final result and fix any failures before deploying that exact stage. Later root native wake hooks and `test_factory_wake_races.py` belong to package 78 and are excluded from 77. Keep this separation when making the next stages. Two database-free Support schema/template tests passed in 0.080 seconds, and later Python compilation passed. These do not substitute for the pending PostgreSQL checks.
+
+## Corrected acceptance verified, final recovery tests running · 18 November 2026
+
+GitHub build checkpoint `f661cbe0` is pushed. Main remains `e74e312282372e02c510c08756544af37696f5d8` after another fetch. Remote `dlv-00-delivery-setup` advanced to `e0f9c54d`, with mock-only minutes, document-review and issue-detail additions. Its canvas files have no differences from main, so the inventory remains 262. Read its added backend handoff as design evidence. Its no-login team ownership, owner reply and per-recipient receipt questions require careful native mapping. No branch was merged.
+
+Browser work 82 completed the corrected-response successor. Report version 2 used incident 1443 and the reviewed withdrawal, received fresh approval and receipt 55 at 01:31:25 WAT. Separate synthetic PM/client signature sources 1657/1658 and signer facts at 01:37 WAT produced actual attestation at 01:41:01 WAT, followed by Verified. The original decline, report and receipt remain. Unsaved review text survived the refresh interval and showed the explicit refresh control. Finance work 42 also rendered its current protected report and receipt wait. Browser is on verified work 82's response view, with viewport reset and no unsaved input.
+
+Package 76 `7e9f3986` is on its final worker-exit/concurrency tests after all ordinary archive and handover cases passed. Read the final result before replacing it. Package 77 is frozen in `.runtime/design-states-77-checks` with sixteen selected tests and the three new Support reply fixtures. Its 2,226 tracked source/test files matched root before the later wake work. One subsequent fixture ordering correction was explicitly copied into 77. Upload that existing stage when 76 finishes. Preserve the stage's separation from later root work.
+
+Later root work for package 78 adds explicit wakes after native go-live review/sign-off and handover review/acknowledgement. It also preserves a source wake arriving during background finalization through a claimed-timestamp comparison and token/state-checked rescheduling. New real-service PostgreSQL race tests inject source arrival or a human pause at the final SQL write. These changes are unverified and excluded from stage 77. Stage 78 from 77 with those root files after 77 has completed. Keep HOD choices deferred and continue the actual remaining functions and browser checks. Current ledger coverage is 189 observed, including partials, and 73 unseen.
+
 ## Private archive verified and Support reply path staged · 18 November 2026
 
 Latest pushed checkpoint is `c4f4d4cd`. Preserve later uncommitted source. Package 75 `f7c5b81b-b929-46b7-bc12-932c40d77e94` passed eleven PostgreSQL tests in 287.784 seconds, checks and all fixtures. Its actual private-store fixture completed work 92, case `2b9b1465-de69-41e0-9f9b-5bd7a12e5427`, plan 4, jobs 10–12, three verified files and `external_store_bytes_verified=true`. Both final exit markers were zero. This used the existing approved preview bucket and unique synthetic keys.

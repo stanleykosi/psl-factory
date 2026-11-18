@@ -1,5 +1,17 @@
 # Actual test execution ledger
 
+## Full archive and handover recovery regression · 18 November 2026
+
+Package 76 `7e9f3986-4367-4417-adb2-8ecb21be8509` passed all 37 PostgreSQL tests in 3647.526 seconds on `test_design_archive_20261117`. Django checks, migration drift and fixtures passed. Both final exit markers were zero. Coverage includes actual worker exits before and after committed native effects, original receipt recovery, competing intake forms, current permissions, source and policy changes, preserved lifetime allowance and the archive detail regression measured at 571 queries.
+
+Package 77 `0b0103f2-d0ed-45dc-aa6f-98054caac89b` is now running sixteen targeted tests for the new Support reply capture and related interfaces. Results are pending. Later package 78 wake hooks and finalization-race tests remain excluded from this stage and unverified on PostgreSQL. Python compilation and whitespace checks passed locally.
+
+## Corrected acceptance and refresh guard in the browser · 18 November 2026
+
+Work 82 prepared report version 2 from incident 1443 and the evidenced withdrawal. Fresh browser approval led to receipt 55 at 01:31:25 WAT. Created distinct synthetic signature sources 1657/1658, entered separate signer/source/decision references with signing time 01:37 WAT and recorded sign-off at 01:41:01 WAT. Subsequent readback showed Verified with retained response history. Review text survived the automatic refresh interval and the page exposed the explicit refresh control. Finance work 42 rendered its protected report and current recipient wait. These were synthetic preview records.
+
+Package 76 remains running its final worker-exit/concurrency cases. Package 77's frozen stage was checked against 2,226 tracked source/test files with zero mismatches before the explicitly copied fixture-order adjustment and later root wake changes. Its PostgreSQL run has not started. New background wake/finalization tests and native wake hooks belong to the later package 78 source and have not run on PostgreSQL. No completed suite result is inferred from running cases.
+
 ## Private store and request regression · 18 November 2026
 
 Package 75 `f7c5b81b-b929-46b7-bc12-932c40d77e94` passed eleven PostgreSQL tests in 287.784 seconds, Django checks and migration drift. Six idempotent sample lookups and the real private-store fixture passed, ending with both final exit markers zero. Work 92, plan 4 and jobs 10–12 have three exact store readback receipts and a verified native output. Synthetic content only. No real customer account was used.

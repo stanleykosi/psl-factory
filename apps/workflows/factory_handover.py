@@ -279,7 +279,10 @@ def acknowledge(actor,work_id,expected,case_expected,receipt_id,status,evidence_
     if any(type(n) is not int or n<1 for n in [expected,case_expected,receipt_id,evidence_id]) or w.revision!=expected:raise ValidationError('STALE_VERSION: refresh the exact handover work and project versions')
     v=document(w)
     if not v or not PublicationReceipt.objects.filter(pk=receipt_id,recipient=actor,publication__version=v,publication__factory_work=w,publication__factory_source=w.source_head).exists():raise ValidationError('Select your own exact current handover receipt')
-    return closure.acknowledge_handover(actor,w.case_id,w.request['dossier'],receipt_id,status,evidence_id,note,case_expected)
+    recorded = closure.acknowledge_handover(actor,w.case_id,w.request['dossier'],receipt_id,status,evidence_id,note,case_expected)
+    from .factory_progress import wake_waiting
+    wake_waiting(w.pk)
+    return recorded
 
 
 @transaction.atomic
@@ -306,7 +309,10 @@ def review(actor,work_id,expected,case_expected,version_id,verdict,note):
     access(actor,w.case,envelope=DEFINITION);v=document(w)
     if any(type(n) is not int or n<1 for n in [expected,case_expected,version_id]) or w.revision!=expected or w.cancel_requested or not v or v.pk!=version_id:raise ValidationError('STALE_VERSION: review this exact current handover version')
     current_version(w.case,v.pk)
-    return review_version(actor,w.case_id,v.pk,verdict,note,case_expected)
+    decision = review_version(actor,w.case_id,v.pk,verdict,note,case_expected)
+    from .factory_progress import wake_waiting
+    wake_waiting(w.pk)
+    return decision
 
 
 def reconcile(actor,work_id,expected):

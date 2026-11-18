@@ -20,7 +20,6 @@ from .test_factory_handover import setup, ready, receipt
 
 def prepare():
     f = setup()
-    ready(f)
     for action in ['document.receive:internal', 'delivery.support_receive']:
         Grant.objects.get_or_create(case=f.case, user=f.publisher, action=action)
     references = []
@@ -29,6 +28,7 @@ def prepare():
             'schema:psl/document-recipient/v1', {'audience': audience, 'user_id': user.pk}, f.e['policy_decision'].pk)
         references.append(reference.ref)
     activate(f.actor, f.case, 'D11.recipient_grant_refs', references, f.e['policy_decision'])
+    ready(f)
     factory.run_until_wait(f.work.pk)
     f.work.refresh_from_db()
     f.reply_proof = f.evidence('handover_receipt', 'SAMPLE Support reply and runbook acknowledgement proof.')

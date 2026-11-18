@@ -250,7 +250,13 @@ class FactoryHandoverTests(TestCase):
         self.assertContains(page,'Exact recipient document');self.assertContains(page,'SYNTHETIC Support operations instructions')
         self.assertNotContains(page,v.fields['executive_summary']['text']);self.assertNotContains(page,v.fields['status']['text'])
         self.assertNotContains(page,'Continue eligible work')
+        from apps.workflows.factory_progress import set_progress
+        from apps.workflows.models import FactoryProgress
+        progress = set_progress(f.actor, f.work.pk, f.work.revision, True)
+        FactoryProgress.objects.filter(pk=progress.pk).update(status='waiting', observation='review-pending')
         response=self.client.post(url,{'action':'review','revision':f.work.revision,'case_revision':rev(f.case),'version':v.pk,'verdict':'approve','note':'Exact synthetic controlled package reviewed'})
+        progress.refresh_from_db()
+        self.assertEqual(progress.observation, '')
         self.assertRedirects(response,url);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'waiting')
         ack(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
 

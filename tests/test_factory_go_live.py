@@ -156,7 +156,14 @@ class FactoryGoLiveTests(TestCase):
         self.assertFalse(Publication.objects.filter(factory_work=f.work).exists());self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='go_live').exists())
         self.client.force_login(f.actor);url=reverse('factory_detail',args=[f.work.pk]);page=self.client.get(url)
         self.assertContains(page,'Review the exact client report');self.assertNotContains(page,'Record actual sign-off for this report')
-        review(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();p=Publication.objects.get(factory_work=f.work)
+        from apps.workflows.factory_progress import set_progress
+        from apps.workflows.models import FactoryProgress
+        progress = set_progress(f.actor, f.work.pk, f.work.revision, True)
+        FactoryProgress.objects.filter(pk=progress.pk).update(status='waiting', observation='review-pending')
+        review(f)
+        progress.refresh_from_db()
+        self.assertEqual(progress.observation, '')
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db();p=Publication.objects.get(factory_work=f.work)
         self.assertEqual(p.actor_id,f.publisher.pk);self.assertEqual(PublicationReceipt.objects.filter(publication=p).count(),1)
         self.assertEqual(f.work.status,'waiting',f.work.finding);self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='go_live').exists())
         page=self.client.get(url);self.assertContains(page,'Record actual PM and Client sign-off');self.assertNotContains(page,'Continue eligible work')
@@ -169,6 +176,7 @@ class FactoryGoLiveTests(TestCase):
         self.assertContains(page,'Client signature evidence')
         payload={'action':'accept','revision':f.work.revision,'case_revision':rev(f.case),'version':v.pk,'receipt':receipt.pk,
                  'pm_signature':pm.pk,'client_signature':customer.pk,'note':'Synthetic actual separate sign-offs checked'}
+        FactoryProgress.objects.filter(pk=progress.pk).update(status='waiting', observation='signoff-pending')
         for role in ('pm','client'):
             for key,value in {'source_system':'synthetic-test','source_reference':f'source-{role}','decision_id':f'decision-{role}',
                               'decision_version':'1','signer_reference':f'signer-{role}','signed_at':timezone.now().isoformat()}.items():
@@ -176,7 +184,11 @@ class FactoryGoLiveTests(TestCase):
         error=self.client.post(response_url,{**payload,'client_signature':pm.pk})
         self.assertContains(error,'Choose a different source record for each signature.')
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='go_live').exists())
+        progress.refresh_from_db()
+        self.assertEqual(progress.observation, 'signoff-pending')
         self.assertRedirects(self.client.post(response_url,payload),response_url,fetch_redirect_response=False)
+        progress.refresh_from_db()
+        self.assertEqual(progress.observation, '')
         decision=DeliveryRecord.objects.get(dossier=f.d,kind='go_live')
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         proof=go_live.verify(f.work);self.assertEqual(proof['acceptance'],decision.pk);self.assertNotEqual(proof['pm_signature'],proof['client_signature'])

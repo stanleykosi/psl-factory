@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+from django.db.models import Case, DateTimeField, F, Value, When
 from django.utils import timezone
 
 from apps.agents import factory_coordinator
@@ -23,8 +24,11 @@ LEASE = timedelta(minutes=6)
 
 def wake_waiting(work_id):
     """A native decision or receipt can advance an existing authorised request."""
-    FactoryProgress.objects.filter(work_id=work_id, status='waiting').update(
-        available_at=timezone.now(), observation='')
+    now = timezone.now()
+    FactoryProgress.objects.filter(work_id=work_id, status__in=['waiting', 'running']).update(
+        available_at=Case(When(status='waiting', then=Value(now)), default=F('available_at'),
+                          output_field=DateTimeField()),
+        observation='', updated_at=now)
 
 
 @transaction.atomic
@@ -127,8 +131,14 @@ def run_once():
     except (ValidationError, PermissionDenied):
         status, observation = 'held', ''
     now = timezone.now()
-    FactoryProgress.objects.filter(pk=job.pk, token=job.token, status='running').update(
+    completed = FactoryProgress.objects.filter(pk=job.pk, token=job.token, status='running',
+        updated_at=job.updated_at).update(
         status=status, observation=observation, token=None,
         available_at=now + WAIT_INTERVAL if status == 'waiting' else now, updated_at=now,
     )
+    if not completed:
+        # A source wake during processing needs another observation. A pause or
+        # replacement owns a different state/token and is preserved by this filter.
+        FactoryProgress.objects.filter(pk=job.pk, token=job.token, status='running').update(
+            status='queued', observation='', token=None, available_at=now, updated_at=now)
     return job.pk

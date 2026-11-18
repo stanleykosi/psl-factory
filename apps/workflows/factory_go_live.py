@@ -280,7 +280,10 @@ def review(actor,work_id,expected,case_expected,version_id,verdict,note):
     w=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);source(w,actor);v=document(w)
     if w.revision!=expected or w.cancel_requested or w.lease_until and w.lease_until>timezone.now() or not v or v.pk!=version_id:raise ValidationError('STALE_VERSION: refresh current go-live work')
-    return review_version(actor,w.case_id,v.pk,verdict,note,case_expected)
+    decision = review_version(actor,w.case_id,v.pk,verdict,note,case_expected)
+    from .factory_progress import wake_waiting
+    wake_waiting(w.pk)
+    return decision
 
 @transaction.atomic
 def accept(actor,work_id,expected,case_expected,version_id,receipt_id,pm_signature_id,client_signature_id,note,previous_acceptance_id=None,*,attestation=None,mode="fresh_signatures"):
@@ -301,6 +304,8 @@ def accept(actor,work_id,expected,case_expected,version_id,receipt_id,pm_signatu
         accepted=native.accept_go_live(actor,w.case_id,d.pk,receipt_id,pm_signature_id,client_signature_id,note,case_expected,attestation=attestation)
     w.status='ready';w.finding='Actual human sign-off recorded; verify the native evidence head';w.observation_hash='';w.revision+=1;w.save()
     event(actor,w.case,'factory.go_live_signoff_recorded',work=w.pk,acceptance=accepted.pk,previous=previous.pk if previous else None)
+    from .factory_progress import wake_waiting
+    wake_waiting(w.pk)
     return accepted
 
 @transaction.atomic
