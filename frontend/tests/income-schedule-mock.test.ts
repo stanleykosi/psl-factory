@@ -103,7 +103,8 @@ describe('F-33 fixtures', () => {
   it('the verdict overlay appears only on W-27xx steps that carry a task id; W-2706 names no reviewer and has no task', () => {
     const all = readdirSync(workDir).filter((name) => name.endsWith('.json'));
     const carrying = all.filter((name) => /"verdict"/.test(readFileSync(join(workDir, name), 'utf8')));
-    expect(carrying.every((name) => /^W-27/.test(name))).toBe(true);
+    // F-35 reuses the overlay on the leadership report's review fixtures (W-32xx)
+    expect(carrying.every((name) => /^W-(27|32)/.test(name))).toBe(true);
     const hold = readItem('W-2706.json');
     expect(hold.tasks).toEqual([]);
     expect(hold.workspace.steps).toBeUndefined();

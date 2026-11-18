@@ -66,6 +66,12 @@ export function word<K extends string>(words: Record<K, string>, value: string):
 
 export const agentName = (agent: string) => word(AGENT_NAMES, agent);
 
+/** F-33, F-35: the lines whose boards draw the working agent's card beside the sections, with the assistant link in the card;
+ *  a task decided there has nothing left to open. */
+export const AGENT_BESIDE_LINES: ReadonlySet<string> = new Set(['income_schedules', 'leadership_report']);
+/** F-33: the lines whose boards draw the stations in the workspace itself. */
+export const STATION_LINES: ReadonlySet<string> = new Set(['income_schedules']);
+
 // Frontend-owned neutral sentences (spec Assumptions); none of them is a business rule.
 export const WS_TEXT = {
   empty: 'Nothing here yet.',
