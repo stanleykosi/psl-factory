@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-ux
-COMMIT: 5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b
+COMMIT: 62ed73aa419d1e6a2bc990125bfd517422a778d3
 AUTHORITY: delivery UX review
 
 ## Summary
@@ -15,3 +15,9 @@ None new.
 - UX-1-1 | verified | W-2501 at 1440: the Planning decision panel now spans the full content width, with a margin before the Release gates card. There is no floating panel or blank left band (screenshot checked).
 - UX-1-2 | carried, non-blocking | The History link is still 24px tall at 390 (17px at 1440). It is the shared LineHeader frame, which the builder left as a known gap. It is not introduced by this feature.
 - UX-1-3 | verified | W-2502 at 1440 and 390: no "Claim it first" text on the page. Approve for release and Return with a note render as clean links with no stray hint.
+
+## Update for head 62ed73aa (diff 5bab76ae..62ed73aa)
+- Read the diff 5bab76ae..62ed73aa on the shared files (Steps, Workspace, Sections, WorkItemView, AssignForm, workspace.mjs, mock-contract test): F-31 additions sit beside the F-32 release-gate paths without changing them.
+- Orphan-step rule checked: a step whose task is in tasks[] with you_can_act true still links to the decision page; only a missing task or you_can_act false is unavailable.
+- Ran engagement-planning, release-gates, delivery-*, workspace* and issue-detail tests in the worktree: 8 files, 230 tests passed.
+- Verdict unchanged.

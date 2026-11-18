@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-ui
-COMMIT: 5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b
+COMMIT: 62ed73aa419d1e6a2bc990125bfd517422a778d3
 AUTHORITY: delivery UI review
 
 ## Summary
@@ -27,3 +27,9 @@ None new. Notes only, no block:
 - UI-1-8 | verified | The four SCR-43 links and the Next sentence are re-filed as `sample data`. The duplicated "Conflicts 5:" prefix is fixed, and the Tola entry now says it covers SCR-44.
 - UI-1-9 | verified | Open go-live is now a `frame layout` exception.
 - UI-1-10 | verified | Not fixed, and not in this diff. The History link is 42x24px at 390 on the F-30 frame. Record it for a frame fix.
+
+## Update for head 62ed73aa (diff 5bab76ae..62ed73aa)
+- Read the diff 5bab76ae..62ed73aa on the shared files (Steps, Workspace, Sections, WorkItemView, AssignForm, workspace.mjs, mock-contract test): F-31 additions sit beside the F-32 release-gate paths without changing them.
+- Orphan-step rule checked: a step whose task is in tasks[] with you_can_act true still links to the decision page; only a missing task or you_can_act false is unavailable.
+- Ran engagement-planning, release-gates, delivery-*, workspace* and issue-detail tests in the worktree: 8 files, 230 tests passed.
+- Verdict unchanged.

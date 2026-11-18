@@ -77,3 +77,31 @@ All 8 boards have per-board D-83 waivers (each at least 70), pending the design 
 - UX-2-1: the hold's "See all exceptions" button comes from the shared frame, which draws it for every exception state (`setup_needed` included). It was left as is; the frame owner should confirm.
 - E-TASK-DECIDE has no idempotency key (round-1 security note, for the backend).
 - All exceptions and waivers are "builder proposal, pending design engineer".
+
+## Merge with F-31 and F-32
+The coordinator started `git merge 62ed73aa` in the worktree. That commit is F-32's head and already contains F-31 and dlv-00. The merge commit is `306728777fda087120513e0a18e5bcc8d2344389` (new head, pushed). It has no AI trailer.
+
+### Conflicts and resolutions
+- `delivery/BACKEND-HANDOFF.md`: every section is kept, in merge order: F-31 (engagement and planning), F-32 (delivery tab and release gates), then F-33 (income schedules, including the idempotency-key bullet already on this branch).
+- `frontend/src/features/workspace/proposals.ts`: both sides are kept. That is F-31's `assignDefault`, `itemTeamKey` and `teamDisabled`, followed by F-33's `stepVerdict`.
+- `frontend/src/features/workspace/workspace.css`: both blocks are kept in full. F-31's bare form, response Drawer, planning table and sheet rules come first, then F-33's agent card, mini stations and InlineDecide rules. The selectors do not overlap.
+- `frontend/tests/mock-contract.test.ts`: the `links` allowlist combines both sides, `/^W-(23|25|26)/.test(name) || name === 'W-2701.json'`. F-31 (W-26xx), F-32 (W-2501, W-2503) and F-33 (W-2701) all keep their links.
+- `frontend/src/features/workspace/Workspace.tsx`, two hunks:
+  1. Imports: the combined `proposals` import (`assignDefault`, `itemTeamKey`, `stepVerdict`, `type WorkspaceLink` and the rest), plus F-31's `Recorded` type and `ResponseDrawer` imports.
+  2. The phone Drawer applies to `ISSUE_LINE || ENGAGEMENT_LINE || INCOME_LINE`. F-33's `incomeLine` is kept, as is F-31's response-drawer state (`recording`, `recorded`, `teamGone`, `sentNote`).
+- Auto-merged with no conflict, checked by hand:
+  - F-32's orphan-step rule lives in `Steps.tsx` `StepControl`: a step whose `task_id` is not in `tasks[]`, or whose task cannot act, is unavailable and gives a reason. F-33's verdict steps never reach `StepControl` (they go to `InlineDecide`, where a missing or non-acting task gives no buttons). W-2710's no-verdict step still links because its task can act.
+  - No F-31 or F-32 fixture carries `verdict`.
+  - F-32's `work` link kind and F-31's AssignForm default and stacked tables are untouched.
+
+### Results
+- Coordinator's targeted list (`npx vitest run tests/income-schedule*.test.* tests/engagement-planning.test.tsx tests/release-gates.test.tsx tests/delivery-*.test.* tests/mock-contract.test.ts tests/workspace*.test.* tests/issue-detail.test.tsx tests/finance-month-end.test.tsx`):
+  - First run: 11 files and 606 tests passed. `income-schedule-mock.test.ts` failed with a 10 s `beforeAll` hook timeout while starting the mock server; the machine load was 267 at the time.
+  - Rerun of that file alone: 8 passed.
+  - Recorded as a load flake.
+- `bash /Users/Hunchoo/psl-factory/delivery/checks.sh`: exit 0, run under the shared lock after F-32's run released it.
+  - The gate was the 1-minute load below 12. The run started at 9.6.
+  - Gate note: `sysctl -n vm.loadavg` prints `{ 1m 5m 15m }`, so awk `$2` is the 1-minute value. The `$1` in the coordinator's instruction is the `{`, which reads as 0.
+  - Django check found no issues. Lint, typecheck and build succeeded. 107 test files, 2446 tests passed.
+- `cd frontend && E2E_PORT=4881 MOCK_PORT=4880 npx playwright test e2e/income-schedule.spec.ts e2e/finance-month-end.spec.ts e2e/engagement-planning.spec.ts e2e/delivery-release.spec.ts`: 96 passed (2.7 min). `test-results` was deleted afterwards and no server was left on 4880 or 4881.
+- No fidelity rerun: F-33's layout code is unchanged by the merge.

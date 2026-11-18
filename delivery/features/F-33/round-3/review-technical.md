@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: d20fd9b2ccee7be267936cc2758358989ecdedbb
+COMMIT: 306728777fda087120513e0a18e5bcc8d2344389
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -19,3 +19,8 @@ None new.
 - W-2712 fixture | verified | `mock/server.mjs:177-181` serves `work[<id>.<verdict>]` and answers `work_state: (decided ?? item).state`, and there is no `mock/` code diff. W-2712.json is W-2702.json with only the ids changed (W-2712/T-2712). Each sidecar has `state: effect_uncertain`, `view: effect_uncertain`, status "DECISION NOT CONFIRMED"/`uncertain` and revision 2. Its stations are left current/not started, not earned or verified, so no outcome is implied. Sidecars and items pass E-WORK-ITEM validation (mock test "twelve items and their sidecars"). The mock decide test answers 200 `effect_uncertain` for approve, return and reject, and the re-read is `effect_uncertain`.
 - Reject consequence | verified | The only change is a `consequence` string added to the reject step in the fixtures W-2702, W-2703.next, W-2705, W-2707, W-2708 and W-2711. W-2711's step is malformed (`verdict: post`) and is not drawn. `InlineDecide` still renders `<Consequence step>` from the step and adds no text of its own. The test "UX-2-2" deletes the consequence and asserts that none is drawn.
 - Money rules | verified | The src diff touches no amounts. It adds no `parseFloat`, `Number(`, `reduce(` or `compactAmount`, adds no buttons beyond the task's steps, and leaves `useDecision` unchanged: one send, never resent, and the claim and body are as before. The `AgentCard` `foot` is optional, so cards without it render exactly as before. The Ask Chidi link goes to `/assistant`, the same as `Links.tsx`, and is moved out of the links only on the income line while the agent is working (`agentSide`). The test checks that there is exactly one such link.
+
+## Update for head 30672877 (diff b8265cdb..30672877)
+- Merge head 30672877 only adds F-31 (response drawer, engagement/planning) and F-32 (orphan-step rule, work links) code around F-33; F-33's inline decide, uncertain handling, income banner and agent card are untouched in the Workspace/proposals/workspace.css diff.
+- No money arithmetic added; Unknown never 0. The phone Drawer change (issue, engagement, income lines) leaves every other line inline.
+- Verdict unchanged.

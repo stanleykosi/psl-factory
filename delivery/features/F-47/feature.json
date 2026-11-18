@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-47",
   "outcome": "Start work: add the proof file in the drawer for minutes, a change, an income schedule and a ledger source, uploaded first and sent with the start (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M2A-PROOF"
   ],
@@ -109,11 +109,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -580,6 +582,52 @@
           "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "An upload answering 413 or 415 shows \"Couldn't upload. Try again.\" with a Try again that will fail the same way, and the backend's message is lost. The contract lists only 401/403/404/409/422 for E-EVIDENCE-UPLOAD, and the spec has the backend send its limits as 422, so this is within spec. But a proxy or Django body-size limit will answer 413 before the view does. The backend handoff should confirm that size and type limits answer 422 with a message, and that the request-body limit is above the largest allowed file. `frontend/src/api/errors.ts:4-10` maps 413 and 415 to `server`, and `frontend/src/features/response/useEvidenceUpload.ts:104` then makes them retryable.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T09:17:21Z",
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A 403 or 404 on the start shows \"You can't start this here.\" followed by the backend's own message, word for word. The mock's messages are safe (\"Your role does not allow you to start this line.\" and \"We could not find that record.\"). A faked message holding a case id and a file name was shown in full, and the two messages tell 403 apart from 404. This is F-05 code that this head does not change (`frontend/src/features/start-work/useStartWork.ts:375-376`). The backend should keep 403/404 messages free of record and file names; or the frontend could show only the lead sentence in a later slice.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T09:17:21Z",
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -794,6 +842,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-18T08:59:01Z",
+      "round": 2,
+      "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T09:17:21Z",
       "round": 2,
       "head": "8d7da0c400b19e41356a0230e1328978452bc763",
       "reason": null
