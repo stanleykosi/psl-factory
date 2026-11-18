@@ -2613,3 +2613,6 @@
 {"at":"2026-11-18T08:05:45Z","feature":"F-31","round":3,"kind":"finding","action":"add","finding":"QA-3-1","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-18T08:05:45Z","feature":"F-31","round":3,"kind":"transition","head":"9b73aacf8706","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
 {"at":"2026-11-18T08:07:10Z","feature":"F-31","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"9b73aacf8706","findings":{"PMO-3-1":"low","PMO-3-2":"low","PMO-3-3":"low"},"written_at":"2026-11-18T08:06:42Z"}
+{"at":"2026-11-18T08:14:05Z","feature":"F-47","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":205.7,"commit":"438c350fe7fe"}
+{"at":"2026-11-18T08:14:11Z","feature":"F-47","round":1,"kind":"transition","head":"438c350fe7fe","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-18T08:14:25Z","feature":"F-41","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}

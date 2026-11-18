@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-47",
   "outcome": "Start work: add the proof file in the drawer for minutes, a change, an income schedule and a ledger source, uploaded first and sent with the start (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-M2A-PROOF"
   ],
@@ -72,7 +72,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T08:14:05Z",
+      "seconds": 205.7,
+      "evidence_ref": "delivery/features/F-47/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -150,7 +163,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "29fff6e553b57ffa9b7d6f95e4a7dce45beee430",
     "task_branch": "fe-m2a-proof-start-work-proof-upload",
-    "head_sha": null,
+    "head_sha": "438c350fe7fe79233604f2293b6812d10df6c1ee",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-47",
     "pr_url": null,
     "pr_number": null,
@@ -161,7 +174,32 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/start-work-proof.spec.ts",
+      "frontend/e2e/start-work.spec.ts",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/start-work/lines.finance_lead.json",
+      "frontend/mock/fixtures/start-work/options/continues.json",
+      "frontend/mock/fixtures/start-work/options/mapping_run.json",
+      "frontend/mock/fixtures/work/W-4401.json",
+      "frontend/mock/fixtures/work/W-4402.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/start-work.mjs",
+      "frontend/src/features/response/useEvidenceUpload.ts",
+      "frontend/src/features/start-work/IntakeField.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/StartProof.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/tests/start-work-intake.test.ts",
+      "frontend/tests/start-work-mock.test.ts",
+      "frontend/tests/start-work-proof-mock.test.ts",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -212,6 +250,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T08:14:11Z",
+      "round": 1,
+      "head": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "reason": null
     }
   ],
   "routing": {
@@ -229,9 +275,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "438c350fe7fe79233604f2293b6812d10df6c1ee"
   },
   "blocked": null
 }

@@ -194,3 +194,6 @@ F-31 engagement and planning part 1: "Need an answer" 1–6 as recommended (samp
 
 ## D-114 · F-47 spec conflicts taken as recommended — PROVISIONAL (19 Nov 2026, coordinator under the design engineer's bedtime instruction)
 The design engineer, going to bed, said: "make any decision that isn't difficult and can be reverted." F-47 (Start work proof fields) is built on its own unmerged branch with every "Recommend" in delivery/features/F-47/spec.md taken as written (14 conflicts: 7 need an answer, 4 layout, 3 exceptions). This is provisional: nothing is merged on it, every exception stays "builder proposal, pending design engineer", and the design engineer confirms or changes each conflict before review sign-off. Undo: change the spec answer and run a fix round on the branch.
+
+## D-115 · F-41 spec conflicts taken as recommended — PROVISIONAL (19 Nov 2026, coordinator under the design engineer's bedtime instruction)
+Same basis as D-114. F-41 (payments and follow-up list) is built on its own unmerged branch with every "Recommend" in delivery/features/F-41/spec.md taken as written (17 conflicts: 11 need an answer). Money rules are unchanged and hard. Nothing is merged on it; every exception stays pending the design engineer, who confirms or changes each conflict before sign-off.

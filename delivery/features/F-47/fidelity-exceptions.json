@@ -231,7 +231,64 @@
    "conflicts": 9,
    "reason": "Conflicts 9: the drawer marks every optional field \"(optional)\", as F-05 built; the label reads \"Continues (optional)\".",
    "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Done 28",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer); its tab counts come from the persona's work list.",
+   "approved_by": "builder proposal, pending design engineer"
   }
  ],
- "visual_waivers": []
+ "visual_waivers": [
+  {
+   "board": "SCR-04-desktop-minutes",
+   "width": 1440,
+   "visual": 89.3,
+   "conflicts": 14,
+   "reason": "D-83, Conflicts 14: measured 89.3 in round 1 on a production build; the drawer itself matches (fields, Audience, the uploaded card, the footer). Remaining gaps are outside it or listed: the My work page under the scrim is the pm persona's own (\"Nothing needs you right now\" with the agent figure and the short list) where the board draws a four-row table (Conflicts 8); the card's \"×\" the board doesn't draw (Conflicts 2); the bell and the \"records you can see\" line in the frame.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-04-desktop-change",
+   "width": 1440,
+   "visual": 86.3,
+   "conflicts": 14,
+   "reason": "D-83, Conflicts 14: measured 86.3 in round 1 on a production build; the drawer matches in fields, order, the card and the help under it. Remaining gaps: the My work page under the scrim (pm's empty state and short list, not the board's table; Conflicts 8); the request box is the shared TextArea, about 20px shorter than the board's 98px box (F-05 as signed); the card's \"×\" (Conflicts 2).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-04-mobile-minutes",
+   "width": 390,
+   "visual": 78.6,
+   "conflicts": 14,
+   "reason": "D-83, Conflicts 14: measured 78.6 in round 1 on a production build; the form is F-05's bottom sheet over My work (Conflicts 8, signed for F-05 on 14 Nov), so the board's full-screen page with its \"← My work · START\" bar is drawn as the shared phone bar, a 70px strip of My work, the sheet grab and the sheet head (\"Step 2 of 2 · change line\" and Close), which pushes every field down about 100px; the card's 44px \"×\" (Conflicts 2, 11). Fields, words and order match the board.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-04-mobile-change",
+   "width": 390,
+   "visual": 81.0,
+   "conflicts": 14,
+   "reason": "D-83, Conflicts 14: measured 81.0 in round 1 on a production build; F-05's bottom sheet (Conflicts 8): the phone bar, the strip of My work and the sheet head replace the board's page bar and move the form down; the shared TextArea's height (F-05); the card's 44px \"×\" (Conflicts 2, 11). Fields, the card and the moved help match.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-04-mobile-schedules",
+   "width": 390,
+   "visual": 75.3,
+   "conflicts": 14,
+   "reason": "D-83, Conflicts 14: measured 75.3 in round 1 on a production build; F-05's bottom sheet (Conflicts 8): the phone bar, the strip of My work and the sheet head (a two-line title at 390px plus \"Step 2 of 2 · change line\") move Kind, Reference, Mapping note and Proof down about 130px; the Finance persona's long My work list under the scrim makes the captured page far taller than the board; the card's 44px \"×\" (Conflicts 2, 11).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-04-mobile-ledger",
+   "width": 390,
+   "visual": 84.9,
+   "conflicts": 14,
+   "reason": "D-83, Conflicts 14: measured 84.9 in round 1 on a production build; F-05's bottom sheet (Conflicts 8): the phone bar, the strip of My work and the sheet head move Key, Proof and Continues down; the Finance persona's long My work list under the scrim lengthens the capture; \"Continues (optional)\" (Conflicts 9) and the card's 44px \"×\" (Conflicts 2, 11).",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ]
 }
