@@ -52,8 +52,8 @@ def document(work):
     binding=CommercialDocumentBinding.objects.filter(revision=revision).select_related('version__document').order_by('-pk').first() if revision else None
     return binding.version if binding else None
 
-def rules(work,data):
-    config,rule,oracle,value=costing.configured(work.case)
+def rules(work,data,actor=None):
+    config,rule,oracle,value=costing.configured(work.case,actor or work.execution_actor)
     if data['rule_id'] not in [None,rule.pk] or data['oracle_id'] not in [None,oracle.pk]:raise ValidationError('Intake rule/oracle differs from the active independently reviewed costing contract')
     return config,rule,oracle
 
@@ -66,7 +66,7 @@ def snapshot(work,value,reader=None):
     latest={head.kind:head};latest.update({e.kind:e for e in records})
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
-    try:policy,rule,oracle=rules(work,data);model={'status':'configured','policy':policy.pk,'rule':rule.pk,'oracle':oracle.pk}
+    try:policy,rule,oracle=rules(work,data,actor);model={'status':'configured','policy':policy.pk,'rule':rule.pk,'oracle':oracle.pk}
     except (ValidationError,PermissionDenied) as exc:model={'status':'unconfigured','finding':'; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)}
     revision=proposal(work);version=document(work)
     publications=Publication.objects.filter(version=version) if version else Publication.objects.none()
@@ -234,7 +234,7 @@ def projection(actor,work):
     try:
         data=intake.read(actor,work.case,work.source_head);result['intake_sources']=data
         if row:result['costing_report']=costing.report(actor,work.case_id,row.pk)
-        rule=costing.rule_for(work.case,data['rule_id']) if data['rule_id'] else None
+        rule=costing.rule_for_use(actor,work.case,data['rule_id']) if data['rule_id'] else None
         oracle=costing.oracle_for(rule,data['oracle_id']) if rule and data['oracle_id'] else None
         for target in ([None]+([oracle] if oracle else [])) if rule else []:
             try:

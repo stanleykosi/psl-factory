@@ -1385,7 +1385,17 @@ class CommercialStartForm(StartWithBackground):
                 query=public_evidence(query)
             self.fields[key]=forms.ModelChoiceField(queryset=query,required=False,label=label)
             self.fields[key].label_from_instance=lambda e:e.source+' · version '+str(e.version)
-        for key,label,query in [('rule_id','Calculator rule',CostingRule.objects.filter(case=selected)),('oracle_id','Independent example set',CostingOracle.objects.filter(rule__case=selected)),
+        rule_query=CostingRule.objects.filter(case=selected)
+        oracle_query=CostingOracle.objects.filter(rule__case=selected)
+        if selected:
+            from apps.pmo import costing
+            try:
+                _,rule,oracle,_=costing.configured(selected,actor)
+                rule_query=rule_query | CostingRule.objects.filter(pk=rule.pk)
+                oracle_query=oracle_query | CostingOracle.objects.filter(pk=oracle.pk)
+            except (PermissionDenied,ValidationError):
+                pass
+        for key,label,query in [('rule_id','Calculator rule',rule_query),('oracle_id','Independent example set',oracle_query),
             ('template_id','Client SOW template',Template.objects.filter(case=selected,definition__document_type='sow')),('predecessor_id','Prior commercial proposal',CommercialRevision.objects.filter(dossier__case=selected))]:
             self.fields[key]=forms.ModelChoiceField(queryset=query if selected else query.none(),required=False,label=label)
             self.fields[key].label_from_instance=lambda obj:getattr(obj,'reference',getattr(obj,'name','Proposal'))+' · '+str(getattr(obj,'version',getattr(obj,'number','')))

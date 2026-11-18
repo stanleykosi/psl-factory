@@ -1,5 +1,22 @@
 {
   "design_consolidation_20261116": {
+    "studio_calculator_and_browser_recovery_20261118": {
+      "status": "postgresql_passed_runtime90_running_browser_acceptance_continuing",
+      "runtime_90": {"web": "2f103cd0-4b4b-4042-a464-336ecb2ff138", "worker": "e59a46ef-054a-4f7d-9b91-20d6350ea3c6", "startup": "passed"},
+      "package_88": {"deployment": "957e3e9c-99d8-4756-bd53-b434fc9d05c5", "passed": 69, "failed": 1, "not_run": 26, "seconds": 734.396, "failure": "Commercial projection called a command-only lock from a read observation", "final_exit": 1},
+      "package_89": {"deployment": "24b63dcc-d6d6-4629-87de-27d5abaf83f6", "passed": 109, "seconds": 501.186, "final_exit": 0, "fixture_exit": 0},
+      "package_90": {"deployment": "4b3943a0-bdc3-4918-ad37-f62593e1014d", "passed": 39, "seconds": 105.908, "final_exit": 0, "fixture_exit": 0},
+      "source_comparison": {"root_application_and_test_paths": 2171, "runtime_paths_per_service": 1661, "mismatches": 0},
+      "implemented": ["Versioned organization-scoped calculator selection with original-source authority", "Shared rule and oracle identity with project-local calculation inputs", "Current independent proposal-review authority at native use", "Pure private costing report observation", "In-page unsaved-answer confirmation", "Latest current suggestion selection with undo handling", "Unique document-form labels preserving legacy field names"],
+      "browser": {"bid_work": 97, "bid_source": 1800, "calculator_confirmed_proposal": 1, "withdrawn_proposal": 2, "remediated_release_work": 93, "release_dossier": 23, "release_candidate": 32, "accepted_source_gates": 8},
+      "studio_fixture": {"case": "81635fff-9b1b-4300-b96d-a42008610ce7", "source": 7, "proof": 1816, "inputs": 1817},
+      "states_with_browser_observations": 201,
+      "observed_states_with_open_checks": 194,
+      "states_without_direct_browser_observation": 61,
+      "remaining_engineering": ["Proposed-version worked-example comparison", "Reviewed past-winning-answer reuse", "Team/no-login issue recording", "Other state-specific functions and acceptance"],
+      "owner_policy": "Deferred",
+      "all_states_accepted": false
+    },
     "bid_and_costing_review_20261118": {
       "status": "postgresql_passed_exact_runtime_uploading",
       "package_87": {"deployment": "2f8db15b-d836-47ba-a5be-a873b59b8878", "passed": 64, "seconds": 146.068, "final_exit": 0, "fixture_exit": 0},

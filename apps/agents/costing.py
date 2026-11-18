@@ -26,11 +26,18 @@ def investigate(a,case_id,expected=None):
         except (ValidationError,PermissionDenied):status='held_or_stale'
         questions.append({'run':row.pk,'recorded_status':row.result['status'],'unknown_operand_count':sum(x.startswith('unknown:') for x in row.result['findings']) if source_allowed else None,'division_by_zero_count':sum(x.startswith('division_by_zero:') for x in row.result['findings']) if source_allowed else None,'status':status,'question':'Trace missing operands or changed evidence; calculate a successor without changing historical results or case approvals.'})
     proposals=[]
+    studio_source=None
     if source_allowed:
+        try:
+            _,rule,oracle,value=d.configured(c,a)
+            if 'studio_source_id' in value:
+                studio_source={'source':value['studio_source_id'],'rule':rule.pk,'oracle':oracle.pk}
+        except (ValidationError,PermissionDenied):
+            pass
         from apps.pmo.costing_proposals import current
         for proposal in CostingProposal.objects.filter(base__case=c,decision__isnull=True).select_related('base__case','actor').order_by('-pk')[:20]:
             try:current(proposal);status='awaiting_independent_review'
             except (PermissionDenied,ValidationError):status='source_reassessment_required'
             proposals.append({'proposal':proposal.pk,'base_version':proposal.base.version,'status':status})
     e=add_evidence(a,c.pk,'agent_costing','Bounded P14 evidence/lineage investigation; no raw financial source or automatic model/case decision','local:deterministic-costing-v1')
-    r=AgentRun.objects.create(case=c,actor=a,evidence=e,process_id='P14',provider='deterministic-costing-v1',result={'independent_comparisons':comparisons,'questions':questions,'pending_version_proposals':proposals,'policy_status':resolve(COMPONENT,c).status,'source_body_read':False,'expected_outputs_generated':False,'case_cost_approved':False,'native_workbook_verified':False,'financial_execution':False});event(a,c,'agent.costing',run=r.pk);bump(c);return r
+    r=AgentRun.objects.create(case=c,actor=a,evidence=e,process_id='P14',provider='deterministic-costing-v1',result={'independent_comparisons':comparisons,'questions':questions,'pending_version_proposals':proposals,'studio_source':studio_source,'policy_status':resolve(COMPONENT,c).status,'source_body_read':False,'expected_outputs_generated':False,'case_cost_approved':False,'native_workbook_verified':False,'financial_execution':False});event(a,c,'agent.costing',run=r.pk);bump(c);return r

@@ -38,7 +38,7 @@ def workbench(request,case_id):
         except PermissionDenied:hidden.append(version.pk)
     versions=versions.exclude(pk__in=hidden)
     evidence=public_evidence(case.evidence.all()).order_by('-pk')
-    tf=TemplateForm();df=DraftForm();rf=ReviewForm();cf=CandidateForm();gf=GateForm()
+    tf=TemplateForm(auto_id='template_%s');df=DraftForm(auto_id='draft_%s');rf=ReviewForm(auto_id='review_%s');cf=CandidateForm(auto_id='candidate_%s');gf=GateForm(auto_id='gate_%s')
     candidates=DeliveryCandidate.objects.filter(case=case)
     cf.fields['requirements'].queryset=evidence.filter(kind='requirements')
     gf.fields['candidate'].queryset=candidates;gf.fields['evidence'].queryset=evidence
@@ -49,11 +49,11 @@ def workbench(request,case_id):
         try:
             action=request.POST.get('action');expected=int(request.POST['revision'])
             if action=='candidate':
-                cf=CandidateForm(request.POST);cf.fields['requirements'].queryset=evidence.filter(kind='requirements')
+                cf=CandidateForm(request.POST,auto_id='candidate_%s');cf.fields['requirements'].queryset=evidence.filter(kind='requirements')
                 if not cf.is_valid():raise ValidationError(cf.errors.as_text())
                 d=cf.cleaned_data;register_candidate(request.user,case.pk,d['reference'],d['requirements'].pk,expected)
             elif action=='gate':
-                gf=GateForm(request.POST);gf.fields['candidate'].queryset=candidates;gf.fields['evidence'].queryset=evidence
+                gf=GateForm(request.POST,auto_id='gate_%s');gf.fields['candidate'].queryset=candidates;gf.fields['evidence'].queryset=evidence
                 if not gf.is_valid():raise ValidationError(gf.errors.as_text())
                 d=gf.cleaned_data;record_gate(request.user,case.pk,d['candidate'].pk,d['kind'],d['external_ref'],d['evidence'].pk,expected)
             elif action=='gate_verify':
@@ -63,11 +63,11 @@ def workbench(request,case_id):
             elif action=='gate_check':
                 check_candidate(request.user,case.pk,int(request.POST['candidate']))
             elif action=='template':
-                tf=TemplateForm(request.POST);tf.fields['evidence'].queryset=evidence.filter(kind='policy_decision')
+                tf=TemplateForm(request.POST,auto_id='template_%s');tf.fields['evidence'].queryset=evidence.filter(kind='policy_decision')
                 if not tf.is_valid():raise ValidationError(tf.errors.as_text())
                 d=tf.cleaned_data;register_template(request.user,case.pk,d['name'],d['definition'],d['evidence'].pk,expected)
             elif action in ['draft','agent_draft']:
-                df=DraftForm(request.POST);df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence;df.fields['template_scope'].queryset=visible_scopes(request.user,case)
+                df=DraftForm(request.POST,auto_id='draft_%s');df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence;df.fields['template_scope'].queryset=visible_scopes(request.user,case)
                 if not df.is_valid():raise ValidationError(df.errors.as_text())
                 d=df.cleaned_data
                 if action=='agent_draft':
@@ -75,7 +75,7 @@ def workbench(request,case_id):
                 else:
                     create_version(request.user,case.pk,d['template'].pk,d['title'],d['audience'],d['fields'] or {},expected,d['document_id'],template_scope_id=d['template_scope'].pk if d['template_scope'] else None)
             elif action=='review':
-                rf=ReviewForm(request.POST);rf.fields['version'].queryset=versions
+                rf=ReviewForm(request.POST,auto_id='review_%s');rf.fields['version'].queryset=versions
                 if not rf.is_valid():raise ValidationError(rf.errors.as_text())
                 d=rf.cleaned_data;review_version(request.user,case.pk,d['version'].pk,d['verdict'],d['note'],expected,d['delegated'])
             elif action in ['request','publish','check','withdraw']:
@@ -105,7 +105,7 @@ def workbench(request,case_id):
     from apps.pmo.models import ApprovalGateBinding
     for candidate in candidate_rows:
         candidate.summary=gate_summary(candidate,request.user);candidate.visible_gates=[]
-        for gate in candidate.gates.all():
+        for gate in candidate.gates.order_by('pk'):
             binding=ApprovalGateBinding.objects.filter(verification__record=gate).select_related('observation__receipt').order_by('-pk').first()
             if binding:
                 try:require(request.user,case,'approval.source.read:'+binding.observation.receipt.system)

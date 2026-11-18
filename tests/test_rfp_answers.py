@@ -184,6 +184,35 @@ class RFPAnswerTests(TestCase):
         with self.assertRaises(ValidationError):
             self.save([decision(suggestion)])
 
+    def test_next_answer_skips_an_older_unreviewed_suggestion_for_an_accepted_requirement(self):
+        data = self.data
+        old = request(data)
+        answer(old, 'SAMPLE older unreviewed draft.')
+        current = request(data)
+        answer(current, 'SAMPLE current accepted draft.')
+        second = request(data, 'R2')
+        answer(second, 'SAMPLE second current draft.')
+        self.save([decision(current)])
+        data['work'].refresh_from_db()
+        self.client.force_login(data['actor'])
+        url = reverse('factory_rfp_answers', args=[data['work'].pk])
+        values = dict(decision(second), action='review', requirement='R2',
+            revision=data['work'].revision, case_revision=rev(data['case']))
+        response = self.client.post(url, values)
+        self.assertRedirects(response, url + '?requirement=R2')
+        self.assertFalse(old.reviews.exists())
+        self.assertContains(self.client.get(url), 'Discard your answer edits?')
+        reviewed = RFPAnswerReview.objects.get(suggestion=current)
+        data['work'].refresh_from_db()
+        rfp_answers.undo(data['actor'], data['work'].pk, reviewed.pk,
+            data['work'].revision, rev(data['case']))
+        replacement = request(data, 'R2')
+        answer(replacement, 'SAMPLE newer second draft.')
+        data['work'].refresh_from_db()
+        values = dict(decision(replacement), action='review', requirement='R2',
+            revision=data['work'].revision, case_revision=rev(data['case']))
+        self.assertRedirects(self.client.post(url, values), url + '?requirement=R1')
+
     def test_many_requirement_rows_share_authority_and_source_reads(self):
         data = self.data
         work = data['work']

@@ -33,6 +33,35 @@ class ControlledDocumentTests(TestCase):
     def action_matrix(self,actions):
         return artifact(self.actor,self.case,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':actions},{'role':'PM','actions':['withdraw']}]},self.owner)
 
+    def test_workbench_form_labels_are_unique_and_legacy_gate_fields_still_submit(self):
+        from collections import Counter
+        from html.parser import HTMLParser
+        from apps.pmo.gates import register_candidate
+
+        class FieldIds(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.ids = []
+
+            def handle_starttag(self, tag, attrs):
+                self.ids.extend(value for name, value in attrs if name == 'id')
+
+        self.client.force_login(self.actor)
+        url = f'/cases/{self.case.pk}/documents/'
+        page = self.client.get(url)
+        fields = FieldIds()
+        fields.feed(page.content.decode())
+        self.assertFalse([key for key, count in Counter(fields.ids).items() if count > 1])
+        self.assertContains(page, '<label for="gate_evidence">Evidence:</label>', html=True)
+        source = add_evidence(self.actor, self.case.pk, 'requirements',
+            'SAMPLE candidate requirements for source-gate form verification.', 'synthetic:gate-labels')
+        candidate = register_candidate(self.actor, self.case.pk, 'SAMPLE-GATE-LABELS', source.pk, rev(self.case))
+        response = self.client.post(url, {'action': 'gate', 'revision': rev(self.case),
+            'candidate': candidate.pk, 'kind': 'qa_exit', 'evidence': source.pk,
+            'external_ref': 'SAMPLE-QA-SOURCE'})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(candidate.gates.get().external_ref, 'SAMPLE-QA-SOURCE')
+
     def test_publication_batch_checks_each_original_once_before_later_work(self):
         from functools import partial
         from io import StringIO

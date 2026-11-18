@@ -1,5 +1,13 @@
 # PSL operations factory build state
 
+Package90 web `2f103cd0` and worker `e59a46ef` are running with successful startup. Browser work93 reached verified release-evidence readiness at05:15:10WAT, native record209. Work97 retained its reviewed answers through the separate PMO Lead and Engineering Lead response approvals, with commercial review continuing. The broader201-state observation ledger remains open.
+
+## Shared calculator and review recovery verified · 18 November 2026
+
+Package89 passed109 tests in501.186s and package90 passed39 in105.908s. Both checks, drift and fixtures passed with final markerszero. These are separate overlapping suites. Fixed the pure costing read path after package88 exposed its command-only lock. Added organization-scoped calculator reuse, original source/role checks, independent proposal-authority reassessment, normal commercial intake and agent metadata. Package90 adds current latest-suggestion/undo navigation, an accessible discard dialog, and unique document-form labels with preserved legacy POST fields. Root matched2,171 checked application/test paths, and matching runtime packages matched1,661 paths each. Exact package90 web/worker uploads are running.
+
+The browser confirmed calculator proposal1 and withdrew own proposal2. Actual model answers in work97 were accepted, edited, replaced, undone and bulk accepted against new explicit synthetic source1800, then passed to background response work. Source correction retained the initial insufficient-detail answer as history. Dossier23/candidate32 now has six verified Planning sources, decision206, fresh kickoff64/link207, request208 and eight accepted source gates. Its worker is processing readiness. The ledger has201 observed states,194 open checks and61 unseen. Proposed-example comparison, approved past-answer reuse, no-login issue recording and other design-state work remain engineering gaps. HOD values remain deferred.
+
 ## Bid answers and calculator review passed · 18 November 2026
 
 Package 87 passed all 64 PostgreSQL/application tests in 146.068 seconds. Checks, drift, preview migrations `agents.0011` and `pmo.0060`, four synthetic fixtures and both final exit markers passed. This adds immutable calculator proposals, independently configured review, return and proposer withdrawal, current source/role checks, agent inventory and a connected native successor calculation. Pending, returned and withdrawn proposals preserve the current calculator. Existing source-owner confirmation and independent examples govern the reviewed version's use. Readable evidence pages and bounded bid-answer changes are included. Exact source matched 1,660 paths in each web/worker upload. Browser acceptance follows startup.

@@ -45,6 +45,19 @@ class CostingDesignTests(TestCase):
         self.assertNotContains(self.client.get(url + '?view=page'), '20.00')
         self.assertNotContains(self.client.get(home), '20.00')
 
+    def test_report_is_a_pure_observation_with_fresh_private_source_checks(self):
+        from apps.core.read_observation import observation_scope
+        from apps.pmo.costing import report
+
+        data = self.data
+        with observation_scope():
+            result = report(data['actor'], data['case'].pk, self.costing_run.pk)
+        self.assertEqual(result['result']['values'][0]['value'], '20.00')
+        Grant.objects.filter(case=data['case'], user=data['actor'],
+                             action='costing.source.read').update(active=False)
+        with observation_scope():
+            self.assertNotIn('result', report(data['actor'], data['case'].pk, self.costing_run.pk))
+
 
 class CostingDesignTemplateTests(SimpleTestCase):
     def test_readable_costing_templates_compile(self):

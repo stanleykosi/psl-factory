@@ -21,18 +21,36 @@ from .costing_proposal_models import CostingProposal
 from . import costing_proposals
 from apps.policy.costing_proposal_validators import COMPONENT as PROPOSAL_REVIEW
 from apps.policy.document_validators import ROLES
+from apps.policy.models import ScopeVersion
+from apps.identity.services import visible_cases
+
+
+class VersionChoice(forms.ModelChoiceField):
+    def label_from_instance(self, record):
+        return f'{record.reference} · version {record.version}'
+
+
+class StudioChoice(forms.ModelChoiceField):
+    def label_from_instance(self, source):
+        return f'{source.configuration.case.title} · studio version {source.revision}'
 
 def commands(a,c,data=None):
     grants=set(Grant.objects.filter(case=c,user=a,active=True).values_list('action',flat=True))
     def ev(kind):return forms.ModelChoiceField(c.evidence.filter(kind=kind))
+    studio_cases=visible_cases(a).filter(grant__user=a,grant__active=True,grant__action='costing.read').filter(grant__user=a,grant__active=True,grant__action='costing.source.read')
+    studio_sources=ScopeVersion.objects.filter(kind='organization',ref=c.tenant,
+        configuration__case__in=studio_cases,configuration__case__tenant=c.tenant,
+        configuration__case__synthetic=c.synthetic,configuration__component=COMPONENT,
+        states__state='active').select_related('configuration__case').distinct()
     integer=lambda:forms.IntegerField(min_value=1)
     defs={
-      'proposal':('Propose a calculator change','costing.capture',{'base':forms.ModelChoiceField(CostingRule.objects.filter(case=c)), 'evidence':ev('p14_rule'), 'reason':forms.CharField(max_length=2000,widget=forms.Textarea), 'operation_key':forms.CharField(max_length=100,label='Proposal reference')}),
+      'studio_policy':('Use a reviewed studio calculator','policy.configure',{'studio_source':StudioChoice(studio_sources,label='Studio calculator'), 'evidence':ev('policy_decision'), 'effective_from':forms.DateTimeField(initial=timezone.now)}),
+      'proposal':('Propose a calculator change','costing.capture',{'base':VersionChoice(CostingRule.objects.filter(case=c)), 'evidence':ev('p14_rule'), 'reason':forms.CharField(max_length=2000,widget=forms.Textarea), 'operation_key':forms.CharField(max_length=100,label='Proposal reference')}),
       'proposal_policy':('Prepare calculator reviewer settings','policy.configure',{'reviewer':forms.ModelChoiceField(get_user_model().objects.filter(is_active=True,grant__case=c,grant__action='costing.rule.review',grant__active=True).distinct(),required=False), 'role':forms.ChoiceField(choices=[('', 'Not yet chosen')]+[(role,role) for role in ROLES],required=False), 'evidence':ev('policy_decision'), 'effective_from':forms.DateTimeField(initial=timezone.now)}),
       'rule':('Record a rule version','costing.capture',{'reference':forms.CharField(max_length=100),'evidence':ev('p14_rule'),'predecessor':forms.IntegerField(required=False,min_value=1)}),
-      'oracle':('Record independent worked examples','costing.oracle.capture',{'rule':forms.ModelChoiceField(CostingRule.objects.filter(case=c)),'reference':forms.CharField(max_length=100),'evidence':ev('p14_oracle'),'predecessor':forms.IntegerField(required=False,min_value=1)}),
-      'rule_review':('Confirm, dispute or withdraw rule source','costing.rule.review',{'rule':forms.ModelChoiceField(CostingRule.objects.filter(case=c)),'verdict':forms.ChoiceField(choices=[(x,x) for x in ['confirm','dispute','withdraw']]),'operation_key':forms.CharField(max_length=100),'evidence':ev('p14_review')}),
-      'oracle_review':('Review the independent worked examples','costing.oracle.review',{'rule':forms.ModelChoiceField(CostingRule.objects.filter(case=c)),'oracle':forms.ModelChoiceField(CostingOracle.objects.filter(rule__case=c)),'verdict':forms.ChoiceField(choices=[(x,x) for x in ['confirm','dispute','withdraw']]),'operation_key':forms.CharField(max_length=100),'evidence':ev('p14_review')}),
+      'oracle':('Record independent worked examples','costing.oracle.capture',{'rule':VersionChoice(CostingRule.objects.filter(case=c)),'reference':forms.CharField(max_length=100),'evidence':ev('p14_oracle'),'predecessor':forms.IntegerField(required=False,min_value=1)}),
+      'rule_review':('Confirm, dispute or withdraw rule source','costing.rule.review',{'rule':VersionChoice(CostingRule.objects.filter(case=c)),'verdict':forms.ChoiceField(choices=[(x,x) for x in ['confirm','dispute','withdraw']]),'operation_key':forms.CharField(max_length=100),'evidence':ev('p14_review')}),
+      'oracle_review':('Review the independent worked examples','costing.oracle.review',{'rule':VersionChoice(CostingRule.objects.filter(case=c)),'oracle':VersionChoice(CostingOracle.objects.filter(rule__case=c)),'verdict':forms.ChoiceField(choices=[(x,x) for x in ['confirm','dispute','withdraw']]),'operation_key':forms.CharField(max_length=100),'evidence':ev('p14_review')}),
       'policy':('Prepare costing settings for review','policy.configure',{'content':forms.JSONField(widget=forms.Textarea),'evidence':ev('policy_decision'),'effective_from':forms.DateTimeField(initial=timezone.now)}),
       'calculate':('Calculate exact plan and estimate inputs','costing.calculate',{'plan':ev('plan'),'engineering':ev('engineering_estimate'),'security':ev('security_estimate'),'inputs':ev('p14_inputs'),'operation_key':forms.CharField(max_length=100)}),
       'bind':('Create cost evidence for existing case approvals','costing.bind',{'run':forms.ModelChoiceField(CostingRun.objects.filter(case=c))}),
@@ -48,7 +66,13 @@ def workbench(request,case_id):
             f=next((x['form'] for x in forms if x['form']['action'].value()==request.POST.get('action')),None)
             if not f or not f.is_valid() or set(request.POST)-set(f.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Valid permitted typed command required')
             v=f.cleaned_data;a=request.user;k=v['action'];rev=v['revision'];eid=v['evidence'].pk if v.get('evidence') else None
-            if k=='proposal':costing_proposals.propose(a,c.pk,v['base'].pk,eid,v['reason'],v['operation_key'],rev)
+            if k=='studio_policy':
+                from .costing_studio import draft_application
+                from django.db import transaction
+                with transaction.atomic():
+                    d.locked(a,c.pk,'policy.configure',rev)
+                    draft_application(a,c.pk,v['studio_source'].pk,eid,v['effective_from'])
+            elif k=='proposal':costing_proposals.propose(a,c.pk,v['base'].pk,eid,v['reason'],v['operation_key'],rev)
             elif k=='proposal_policy':
                 from apps.policy.operator_drafts import draft_operator_policy
                 from django.db import transaction
@@ -68,8 +92,16 @@ def workbench(request,case_id):
             messages.success(request,'P14 evidence history updated; no case approval, invoice or native workbook verification inferred')
         except (ValidationError,ValueError,TypeError) as exc:messages.error(request,str(exc))
         return redirect('costing',case_id=c.pk)
+    studio_calculator=None
+    try:
+        configured_policy,rule,oracle,value=d.configured(c,request.user)
+        if 'studio_source_id' in value:
+            studio_calculator={'rule':rule,'oracle':oracle,'case':rule.case,'source_id':value['studio_source_id']}
+    except (PermissionDenied,ValidationError):
+        pass
     response=render(request,'pmo/costing.html',{
         'case':c,
+        'studio_calculator':studio_calculator,
         'investigations':AgentRun.objects.filter(case=c,actor=request.user,
             provider='deterministic-costing-v1').order_by('-pk')[:5],
         'policy':resolve(COMPONENT,c),

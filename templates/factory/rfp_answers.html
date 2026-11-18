@@ -17,5 +17,6 @@
 </section>{% endif %}
 </aside></div>
 {% if waiting %}<div data-work-watch data-preserve-form="{% if request.method == 'POST' %}true{% else %}false{% endif %}"><a href="{% url 'factory_rfp_answers' work.pk %}">Check for suggestions</a></div><script defer src="{% static 'work-progress.js' %}"></script>{% endif %}
+<dialog id="discard-answer-dialog" class="card" aria-labelledby="discard-answer-title"><h2 id="discard-answer-title">Discard your answer edits?</h2><p>Your saved answer stays in the review history. The changes in this form will be discarded.</p><div class="action-row"><button id="keep-answer-editing" type="button" autofocus>Keep editing</button><button id="discard-answer-edits" type="button" class="secondary">Discard edits</button></div></dialog>
 <script defer src="{% static 'rfp-answer-review.js' %}"></script>
 {% endblock %}

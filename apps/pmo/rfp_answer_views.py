@@ -5,6 +5,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db.models import OuterRef, Q, Subquery
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
@@ -89,10 +90,18 @@ def workbench(request, work_id):
                 raise ValidationError('Choose an available answer action.')
             messages.success(request, 'Answer saved under your name. The bid still needs its response and commercial reviews.')
             work.refresh_from_db()
-            pending_keys = set(RFPAnswerSuggestion.objects.filter(work=work, turn__status='answered',
-                reviews__isnull=True).values_list('key', flat=True))
+            current_anchors, _ = rfp_answers.read_state(request.user, work)
+            latest_ids = RFPAnswerSuggestion.objects.filter(work=work).order_by(
+                'key', '-pk').distinct('key').values('pk')
+            last_verdict = RFPAnswerReview.objects.filter(suggestion_id=OuterRef('pk')).order_by(
+                '-pk').values('verdict')[:1]
+            pending = {suggestion.key: suggestion for suggestion in
+                RFPAnswerSuggestion.objects.annotate(last_verdict=Subquery(last_verdict)).filter(
+                    pk__in=latest_ids, turn__status='answered', context=current_anchors).filter(
+                    Q(last_verdict__isnull=True) | Q(last_verdict='undo')).select_related('turn')}
             next_key = next((row['key'] for row in inputs(work)['matrix']
-                             if row['key'] != selected_key and row['key'] in pending_keys), None)
+                if row['key'] != selected_key and row['key'] in pending
+                and pending[row['key']].row == row and pending[row['key']].turn.sources), None)
             return redirect(item_url(work.pk, next_key or saved[-1].suggestion.key))
         except (ValidationError, ValueError, TypeError) as exc:
             message = ' '.join(exc.messages) if isinstance(exc, ValidationError) else 'Reload the current answer form.'

@@ -168,7 +168,7 @@ class CostingProposalTests(TestCase):
         data = self.data
         original = run(data)
         proposal = self.proposal()
-        self.configure()
+        review_policy = self.configure()
         decision = self.decision(proposal)
         rule = decision.rule
         rule_review = costing.review(data['owner'], data['case'].pk, rule.pk, None,
@@ -191,6 +191,10 @@ class CostingProposalTests(TestCase):
         original.refresh_from_db()
         self.assertEqual(original.result['values'][0]['value'], '20.00')
         self.assertFalse(costing.report(data['actor'], data['case'].pk, original.pk)['current_usable'])
+        transition(data['actor'], review_policy.pk, 'revoked')
+        with self.assertRaises(ValidationError):
+            costing.current_source(rule)
+        self.assertFalse(costing.report(data['actor'], data['case'].pk, result.pk)['current_usable'])
 
 
 class CostingProposalTemplateTests(SimpleTestCase):

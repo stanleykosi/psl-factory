@@ -71,6 +71,28 @@ def prepare(key, operator):
         existing = FactoryWork.objects.filter(case=case).first()
         return {'case': str(case.pk), 'work': existing.pk if existing else None}
     Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
+    if key == 'costing-studio-project':
+        from apps.pmo import costing
+        from apps.policy import scopes
+        from apps.policy.costing_drafts import draft_costing_policy
+        from tests.helpers import project_evidence
+
+        studio = Case.objects.get(tenant=case.tenant, synthetic=True,
+            title='Browser design states · costing-proposal-own')
+        _, rule, oracle, value = costing.configured(studio, operator)
+        policy = draft_costing_policy(operator, studio.pk, value,
+            studio.evidence.filter(kind='policy_decision').latest('pk').pk,
+            timezone.now() - timedelta(seconds=1))
+        transition(operator, policy.pk, 'validated')
+        shared = scopes.create(operator, policy.pk, 'organization', studio.tenant, [])
+        scopes.transition(operator, shared.pk, 'validated')
+        scopes.transition(operator, shared.pk, 'active')
+        sources = project_evidence(operator, case)
+        inputs = add_evidence(operator, case.pk, 'p14_inputs',
+            json.dumps([{'key': 'hours', 'unit': 'hour', 'value': '2'}]), 'synthetic:studio-project-inputs')
+        return {'case': str(case.pk), 'studio_case': str(studio.pk), 'studio_source': shared.pk,
+                'rule': rule.pk, 'oracle': oracle.pk, 'proof': sources['policy_decision'].pk,
+                'inputs': inputs.pk}
     if key in {'costing-proposal-review', 'costing-proposal-own', 'costing-proposal-rules'}:
         import copy
         from tests import costing_helpers
@@ -446,6 +468,8 @@ elif workflow == 'bid-answer-states':
     fixtures = ('bid-answer-review',)
 elif workflow == 'costing-proposal-states':
     fixtures = ('costing-proposal-review', 'costing-proposal-own', 'costing-proposal-rules')
+elif workflow == 'costing-studio-states':
+    fixtures = ('costing-studio-project',)
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

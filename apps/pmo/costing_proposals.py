@@ -76,6 +76,20 @@ def review_authority(actor, proposal):
             'role': decision_authority(actor, case, value['reviewer_role'])}
 
 
+def validate_adoption(rule):
+    decision = CostingProposalDecision.objects.select_related(
+        'proposal__base__case', 'proposal__actor', 'actor').filter(rule=rule).first()
+    if decision is None:
+        return
+    proposal = decision.proposal
+    native.readable(proposal.actor, rule.case, True)
+    require(proposal.actor, rule.case, 'costing.capture')
+    _, value = source(rule.case, proposal.evidence_id)
+    if (decision.verdict != 'confirm' or proposal.sha256 != rule.sha256 or value != rule.payload
+            or decision.authority != review_authority(decision.actor, proposal)):
+        raise ValidationError('Reassess the proposed calculator source and independent review authority.')
+
+
 @transaction.atomic
 def decide(actor, case_id, proposal_id, verdict, note, evidence_id, expected=None):
     action = 'costing.capture' if verdict == 'withdraw' else 'costing.rule.review'
@@ -132,7 +146,9 @@ def presentation(actor, proposal):
     review_hold = ''
     try:
         review_authority(actor, proposal)
-    except (PermissionDenied, ValidationError) as exc:
+    except PermissionDenied as exc:
         review_hold = str(exc)
+    except ValidationError:
+        review_hold = 'Choose and confirm the independent calculator reviewer in business rules.'
     return {'proposal': proposal, 'parameters': rows, 'hold': hold,
             'own': own, 'review_hold': review_hold}
