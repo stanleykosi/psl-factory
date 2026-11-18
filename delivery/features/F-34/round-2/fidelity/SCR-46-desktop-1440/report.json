@@ -1,0 +1,1338 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T12:47:45.045Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-46-desktop.dc.html",
+  "boardName": "SCR-46-desktop.dc.html",
+  "pageUrl": "http://localhost:4961/work/W-3101",
+  "viewport": {
+    "width": 1440,
+    "height": 980
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-34/fidelity-exceptions.json",
+  "pass": true,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 92.1 meets 90.",
+    "10 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 71.7,
+    "coverageWithExceptions": 100,
+    "visual": 92.1
+  },
+  "visual": {
+    "score": 92.1,
+    "allCellsScore": 96,
+    "width": 1440,
+    "height": 980,
+    "boardHeight": 980,
+    "pageHeight": 980,
+    "cell": 12,
+    "contentCells": 4975,
+    "mismatchedCells": 392
+  },
+  "coverage": {
+    "total": 46,
+    "found": 33,
+    "coverage": 71.7,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 780
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 782
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Tamarind Loans · loan origination",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Tamarind Loans · loan origination\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [
+          "text size 32px on the board, 35px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 651,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 535,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HYPERCARE · DAY 10 OF 30",
+        "pageName": "HYPERCARE · DAY 10 OF 30",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1058,
+          "y": 133,
+          "w": 171,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1175,
+          "y": 120,
+          "w": 177,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM TUNDE BELLO",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 600 on the board, 400 on the page",
+          "text colour #3F474B on the board, #C8CDD0 on the page",
+          "capitals on the board, not on the page",
+          "background #E2E5E0 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 1238,
+          "y": 133,
+          "w": 114,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Delivery",
+        "pageName": "Delivery",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "background #1F2427 on the board, #FFFFFF on the page"
+        ],
+        "boardBox": {
+          "x": 266,
+          "y": 176,
+          "w": 87,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 87,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones 4",
+        "pageName": "Milestones",
+        "pageRole": "link",
+        "similarity": 93,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 352,
+          "y": 176,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 3",
+        "pageName": "Documents",
+        "pageRole": "link",
+        "similarity": 93,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 482,
+          "y": 176,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 366,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 615,
+          "y": 176,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 473,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers 2",
+        "pageName": "Registers",
+        "pageRole": "link",
+        "similarity": 93,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 691,
+          "y": 176,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 549,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 5",
+        "pageName": "Actions",
+        "pageRole": "link",
+        "similarity": 91,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 811,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 643,
+          "y": 177,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OBSERVATIONS SO FAR",
+        "pageName": "OBSERVATIONS SO FAR",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 300,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 287,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 353,
+          "w": 866,
+          "h": 162
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 346,
+          "w": 866,
+          "h": 170
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WHAT",
+        "pageName": "WHAT",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 266,
+          "y": 353,
+          "w": 444,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 267,
+          "y": 346,
+          "w": 444,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATE",
+        "pageName": "STATE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 711,
+          "y": 353,
+          "w": 261,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 711,
+          "y": 346,
+          "w": 261,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0301",
+        "pageName": "ISS-0301",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page"
+        ],
+        "boardBox": {
+          "x": 106,
+          "y": 388,
+          "w": 160,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 384,
+          "w": 161,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Login slow on older phones · medium",
+        "pageName": "Login slow on older phones · medium",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 266,
+          "y": 388,
+          "w": 444,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 267,
+          "y": 384,
+          "w": 444,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OBS-0012",
+        "pageName": "OBS-0012",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page"
+        ],
+        "boardBox": {
+          "x": 106,
+          "y": 430,
+          "w": 160,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 428,
+          "w": 161,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Peak load on day 3 handled",
+        "pageName": "Peak load on day 3 handled",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 266,
+          "y": 430,
+          "w": 444,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 267,
+          "y": 428,
+          "w": 444,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page"
+        ],
+        "boardBox": {
+          "x": 106,
+          "y": 472,
+          "w": 160,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 472,
+          "w": 161,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Incidents",
+        "pageName": "Incidents",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 266,
+          "y": 472,
+          "w": 444,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 267,
+          "y": 472,
+          "w": 444,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CRITERIA · FROM SETUP › RULES (PSL TO CONFIRM)",
+        "pageName": "CRITERIA · FROM SETUP › RULES (PSL TO CONFIRM)",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 549,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 550,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Next",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 298,
+          "w": 340,
+          "h": 194
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 285,
+          "w": 340,
+          "h": 200
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "NEXT",
+        "pageName": "NEXT",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1014,
+          "y": 300,
+          "w": 336,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 1014,
+          "y": 287,
+          "w": 336,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola evaluates hypercare when the window ends on 01 May. You can log an issue or observation any time.",
+        "pageName": "Tola evaluates hypercare when the window ends on 01 May. You can log an issue or observation any time.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 351,
+          "w": 308,
+          "h": 63
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 344,
+          "w": 308,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Log an observation",
+        "pageName": "Log an observation",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 426,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 419,
+          "w": 308,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "key": "text: Tunde Bello · PMO",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 14: the signed-in name and role are the frame's top bar, as built (F-22), not the board's wording.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / TAMARIND LOANS / DELIVERY / HYP-0062",
+        "key": "text: PROJECTS / TAMARIND LOANS / DELIVERY / HYP-0062",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 14 and 15: the crumbs are the frame's list of items as returned (Projects / Lagoon Health / Delivery / HYP-0062), not one text line; Lagoon Health is the sample project.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PROJECTS",
+        "key": "link: PROJECTS",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 14: the first crumb is drawn by the frame's crumb list.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "key": "tablist: Project",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 831,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8: the project tab bar on a line item is the frame's navigation with no tab marked current (F-32 Conflicts 8).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Planning",
+        "key": "tab: Planning",
+        "container": "tablist",
+        "boardBox": {
+          "x": 176,
+          "y": 176,
+          "w": 90,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 8: the project bar is the frame's navigation of links, drawn as links with no current tab.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Delivery lines",
+        "key": "tablist: Delivery lines",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 242,
+          "w": 1264,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Overview",
+        "key": "tab: Overview",
+        "container": "tablist",
+        "boardBox": {
+          "x": 88,
+          "y": 242,
+          "w": 82,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Release",
+        "key": "tab: Release",
+        "container": "tablist",
+        "boardBox": {
+          "x": 174,
+          "y": 242,
+          "w": 74,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Go-live",
+        "key": "tab: Go-live",
+        "container": "tablist",
+        "boardBox": {
+          "x": 252,
+          "y": 242,
+          "w": 69,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Hypercare",
+        "key": "tab: Hypercare",
+        "container": "tablist",
+        "boardBox": {
+          "x": 325,
+          "y": 242,
+          "w": 91,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Archive",
+        "key": "tab: Archive",
+        "container": "tablist",
+        "boardBox": {
+          "x": 421,
+          "y": 242,
+          "w": 71,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Handover",
+        "key": "tab: Handover",
+        "container": "tablist",
+        "boardBox": {
+          "x": 496,
+          "y": 242,
+          "w": 85,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Closure",
+        "key": "tab: Closure",
+        "container": "tablist",
+        "boardBox": {
+          "x": 585,
+          "y": 242,
+          "w": 72,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 8: the delivery sub-nav is not drawn on a line item (D-113, F-32 Conflicts 5); the Delivery tab carries it.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Heading \"Tamarind Loans · loan origination\"",
+        "kind": "Heading",
+        "name": "Tamarind Loans · loan origination",
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 651,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 535,
+          "h": 35
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Text \"HYPERCARE · DAY 10 OF 30\""
+        ]
+      },
+      {
+        "label": "Text \"PM TUNDE BELLO\"",
+        "kind": "Text",
+        "name": "PM TUNDE BELLO",
+        "boardBox": {
+          "x": 1238,
+          "y": 133,
+          "w": 114,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"HYPERCARE · DAY 10 OF 30\"; on the page it comes after Link \"Assistant\"",
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Journey\"",
+        "kind": "Tab",
+        "name": "Journey",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Delivery\"",
+        "kind": "Tab",
+        "name": "Delivery",
+        "boardBox": {
+          "x": 266,
+          "y": 176,
+          "w": 87,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 87,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Milestones 4\"",
+        "kind": "Tab",
+        "name": "Milestones 4",
+        "boardBox": {
+          "x": 352,
+          "y": 176,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Documents 3\"",
+        "kind": "Tab",
+        "name": "Documents 3",
+        "boardBox": {
+          "x": 482,
+          "y": 176,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 366,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Money\"",
+        "kind": "Tab",
+        "name": "Money",
+        "boardBox": {
+          "x": 615,
+          "y": 176,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 473,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Registers 2\"",
+        "kind": "Tab",
+        "name": "Registers 2",
+        "boardBox": {
+          "x": 691,
+          "y": 176,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 549,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Actions 5\"",
+        "kind": "Tab",
+        "name": "Actions 5",
+        "boardBox": {
+          "x": 811,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 643,
+          "y": 177,
+          "w": 82,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 106,
+          "y": 353,
+          "w": 866,
+          "h": 162
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 346,
+          "w": 866,
+          "h": 170
+        },
+        "reasons": [
+          "inside the table frame on the board, inside a section on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1034,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 343,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LAGOON HEALTH",
+        "container": "navigation",
+        "pageBox": {
+          "x": 149,
+          "y": 85,
+          "w": 120,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DELIVERY",
+        "container": "navigation",
+        "pageBox": {
+          "x": 269,
+          "y": 85,
+          "w": 81,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HYP-0062",
+        "container": "navigation",
+        "pageBox": {
+          "x": 350,
+          "y": 85,
+          "w": 81,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Project",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 637,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 243,
+          "w": 98,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

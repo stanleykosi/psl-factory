@@ -81,9 +81,16 @@ describe('buildIntake: the submitted shape per kind (D-START-INTAKE)', () => {
     expect(buildIntake(KINDS, {})).toEqual({});
   });
 
-  it('never sends an evidence, money or unknown field', () => {
-    const fields = [f('proof', 'evidence'), f('amount', 'money'), f('odd', 'colour'), f('note', 'text')];
+  it('never sends money or an unknown field; evidence only as the confirmed upload ids, never from typed values', () => {
+    const fields = [f('proof', 'evidence', { evidence_kind: 'client_request' }), f('amount', 'money'), f('odd', 'colour'), f('note', 'text')];
     expect(buildIntake(fields, { proof: 'EV-1', amount: '100', odd: 'red', note: 'kept' })).toEqual({ note: 'kept' });
+    expect(buildIntake(fields, { note: 'kept' }, { proof: ['EV-1', 'EV-2'] })).toEqual({ note: 'kept', proof: 'EV-2' });
+    expect(buildIntake(fields, {}, { proof: [] })).toEqual({});
+    const many = [f('proof', 'evidence', { evidence_kind: 'client_request', multiple: true })];
+    expect(buildIntake(many, {}, { proof: ['EV-1', 'EV-2'] })).toEqual({ proof: ['EV-1', 'EV-2'] });
+    // no evidence_kind, or restricted: nothing can be uploaded, so nothing is sent
+    expect(buildIntake([f('proof', 'evidence')], {}, { proof: ['EV-1'] })).toEqual({});
+    expect(buildIntake([f('proof', 'evidence', { evidence_kind: 'k', restricted: true })], {}, { proof: ['EV-1'] })).toEqual({});
   });
 });
 
@@ -128,14 +135,16 @@ describe('resolveCase: the case comes from the chosen option or the fixed line, 
 });
 
 describe('fields this release renders', () => {
-  it('drops optional money and unknown kinds, keeps an optional evidence field (drawn disabled), in the order returned', () => {
+  it('drops optional money and unknown kinds, keeps an evidence field (the Proof box), in the order returned', () => {
     const line = { ...projectLine, intake: [project, f('proof', 'evidence'), milestone, f('fee', 'money'), f('x', 'colour')] };
     expect(shownFields(line).map((field) => field.name)).toEqual(['project', 'proof', 'milestone']);
     expect(startableHere(line)).toBe(true);
   });
 
-  it('a required evidence field, or another start route, means the line cannot start here', () => {
+  it('a required evidence field nobody can upload to, or another start route, means the line cannot start here', () => {
     expect(startableHere({ ...projectLine, intake: [project, f('proof', 'evidence', { required: true })] })).toBe(false);
+    expect(startableHere({ ...projectLine, intake: [project, f('proof', 'evidence', { required: true, evidence_kind: 'k', restricted: true })] })).toBe(false);
+    expect(startableHere({ ...projectLine, intake: [project, f('proof', 'evidence', { required: true, evidence_kind: 'k' })] })).toBe(true);
     expect(startableHere({ ...projectLine, start_via: 'finance_import' })).toBe(false);
     expect(startableHere({ ...projectLine, start_via: 'work_start' })).toBe(true);
     expect(startableHere(fixedLine)).toBe(true);

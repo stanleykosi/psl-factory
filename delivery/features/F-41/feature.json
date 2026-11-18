@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-41",
   "outcome": "Payments and follow-up: Finance sees what each invoice was billed, received and still owes, and sends Chidi's drafted reminder for an overdue invoice (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-PAYMENTS"
   ],
@@ -92,22 +92,38 @@
       "at": "2026-11-18T09:52:25Z",
       "seconds": 358.8,
       "evidence_ref": "delivery/features/F-41/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T11:29:42Z",
+      "seconds": 284.1,
+      "evidence_ref": "delivery/features/F-41/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "evidence_refs": [
+        "delivery/features/F-41/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "evidence_refs": [
+        "delivery/features/F-41/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -126,29 +142,433 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "evidence_refs": [
+        "delivery/features/F-41/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "evidence_refs": [
+        "delivery/features/F-41/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "evidence_refs": [
+        "delivery/features/F-41/round-2/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "ee7d652f59577f8005fa6587ffc5c0aca6253e48",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "frontend/src/features/workspace/useWorkspaceStep.ts:118-120, frontend/tests/payment-reminder.test.tsx:168-175. On a 200 `done`, the shared frame sets the green \"Done: Send reminder.\" notice before `await page.reload()`. So a success callout drawn from the 200 body shows while the re-read is in flight, and it stays when the re-read still serves the unsent draft. AC 15 says the page says nothing about sending until the re-read. The test's regex `/\\bSent\\b | Delivered | Received/` does not catch \"Done: Send reminder.\", so the test proves less than build.md claims. This is accepted F-17/F-28 frame behaviour (\"Done: Approve and send.\"), so it does not block here. Expected: the coordinator records it as accepted frame wording for a client send, and the test asserts the exact notice. Alternatively, a frame task moves `setNotice` after the reload, with its own test, because `useWorkspaceStep` is read-only for this lane.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T10:58:28Z",
+          "head": "ee7d652f59577f8005fa6587ffc5c0aca6253e48"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "ee7d652f59577f8005fa6587ffc5c0aca6253e48",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "frontend/tests/payment-reminder.test.tsx:242-254, frontend/src/api/client.ts. AC 16 asks that a 60 s timeout \"do the same\" as a 5xx: re-read, show the uncertain item, keep Send off. The API client has no timeout, so a hung send leaves the button busy indefinitely. It never resends, so INV-RESEND is safe, but it never re-reads or shows the uncertain notice either. If the person reloads during the hang, the lock is gone until the backend marks the item uncertain. The builder disclosed this. Expected: record it as a deviation, and add a frame-level request timeout that maps to the network-failure path to the backlog. The backend's server-side resend refusal (BACKEND-HANDOFF priority 1) remains the real guard.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T10:58:28Z",
+          "head": "ee7d652f59577f8005fa6587ffc5c0aca6253e48"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "ee7d652f59577f8005fa6587ffc5c0aca6253e48",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/finance/payments/PaymentsView.tsx:363-366. The search `<form onSubmit>` calls `applySearch(text)` with no `SEARCH_MIN_CHARS` check, so pressing Enter on a single character sends `q=H`. AC 8 says none for one character; typing is correctly gated by `SearchField`. Expected: apply the same 2-character rule on submit, or note the choice.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T10:58:28Z",
+          "head": "ee7d652f59577f8005fa6587ffc5c0aca6253e48"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 1,
+      "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On W-3803 (uncertain), the subtitle still reads \"Nothing is sent until you press Send.\" and \"This sends to the client.\" sits under the disabled buttons. Both are stale next to \"Delivery uncertain\". This comes from the shared frame and fixture text, not the F-41 page. Consider updating the fixture subtitle for uncertain items.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T10:58:41Z",
+          "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 1,
+      "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The phone list cards show only \"Still owed\", state and overdue days, not invoiced or received. This matches the SCR-20-mobile board, but a person on a phone cannot see billed and received without the desktop table. Needs a design-engineer decision if wanted.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T10:58:41Z",
+          "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-3",
+      "round": 1,
+      "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Edit drawer's submit button is labelled \"Edit\", the same as the step that opened it. Use \"Save draft\" if the backend sends a label.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T10:58:41Z",
+          "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 1,
+      "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The phone tap target on the list's main route to the reminder is too small. Chidi's \"Open the reminder draft\" measures 152x18 at 390 on the live build (localhost:4955, finance_lead). It is a standalone link, not a word inside a sentence. Spec AC22 and the project's 44px phone rule (tokens.json size note, shell.css:18) require at least 44x44. Build.md AC22 claims \"every target is at least 44x44\", but this link fails that. Expected: the link fills a target at least 44px tall on phones (for example `display:inline-flex; min-height: var(--control-lg); align-items:center` under the phone media query), with its look unchanged. Actual: 18px. `frontend/src/features/finance/payments/PaymentsView.tsx:219`, `payments.css` (phone block).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T10:58:41Z",
+          "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T11:32:39Z",
+          "refs": [
+            "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4"
+          ],
+          "head": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T11:32:41Z",
+          "refs": [
+            "In the phone block of `payments.css`, `.payments__notebody a` is now `display:inline-flex; align-items:center; min-height: var(--control-md)`. Its look is unchanged. The builder measured 151.6x44 at 390, and `e2e/payments.spec.ts` now asserts a height of at least 44 on the phone."
+          ],
+          "head": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "In the phone block of `payments.css`, `.payments__notebody a` is now `display:inline-flex; align-items:center; min-height: var(--control-md)`. Its look is unchanged. The builder measured 151.6x44 at 390, and `e2e/payments.spec.ts` now asserts a height of at least 44 on the phone."
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 1,
+      "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The reminder's attachment is restyled away from the board, on a style this feature owns. SCR-32 desktop and phone draw \"INV-0391.pdf / Uploaded \u00b7 84 KB\" in a neutral box with a dashed `--rule` border and a paperclip icon, under the message. The page draws it as an `--action-tint` tile with bold `--action-ink` text. That is the same colour pair as the links and agent notes, so a non-link reads as clickable, and spec item 8 says it is \"never a link\". The exceptions for \"INV-0391.pdf\" and \"Uploaded \u00b7 84 KB\" (category `tool limit`) cover where the tool pairs the element, not this restyle. `.ws-attachment` is new in this feature, so this is a fixable gap and not frame work. Expected: a neutral surface with a dashed border and the paperclip glyph from the icon set, and ink-colour text. Its position inside the message section can stay, as listed. `frontend/src/features/workspace/workspace.css:75-76`, `Sections.tsx:113-116`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T10:58:41Z",
+          "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T11:32:40Z",
+          "refs": [
+            "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4"
+          ],
+          "head": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T11:32:41Z",
+          "refs": [
+            "`.ws-attachment` is now flex, with gap `--space-10px`, padding 10/12, a `--rule-strong` (2px) dashed `--ink` border, a `--surface` background and `--ink` text. `Sections.tsx` adds `<Icon name=\"clip\">`. This matches the SCR-32 board markup exactly (`2px dashed #1F2427`, `#FFFFFF`, paperclip svg, bold name, 12px muted \"Uploaded \u00b7 84 KB\"). The `--action-tint`/`--action-ink` pair is gone. Scope: `Attachment` renders only when `itemAttachment` finds an `attachment`, and only the W-38xx reminder fixtures carry one. The weekly, minutes and issue-detail tests pass unchanged. The test asserts the icon is drawn and there is no link."
+          ],
+          "head": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`.ws-attachment` is now flex, with gap `--space-10px`, padding 10/12, a `--rule-strong` (2px) dashed `--ink` border, a `--surface` background and `--ink` text. `Sections.tsx` adds `<Icon name=\"clip\">`. This matches the SCR-32 board markup exactly (`2px dashed #1F2427`, `#FFFFFF`, paperclip svg, bold name, 12px muted \"Uploaded \u00b7 84 KB\"). The `--action-tint`/`--action-ink` pair is gone. Scope: `Attachment` renders only when `itemAttachment` finds an `attachment`, and only the W-38xx reminder fixtures carry one. The weekly, minutes and issue-detail tests pass unchanged. The test asserts the icon is drawn and there is no link."
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 1,
+      "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The \"Updated 12 Nov 10:00\" line sits at the right of the title row (it takes the held button's place). Spec item 15 places the \"as of\" line \"beside the count\", following the F-25 precedent. On phones the count (\"4 INVOICES\") and \"Updated\" also end up on different rows. Moving it beside \"4 INVOICES\" would follow the spec and drop one extra element from the title row. `payments.css:9-10`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T10:58:41Z",
+          "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-4",
+      "round": 1,
+      "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop the table starts about 10px lower than on the board: the gap between the chip row and the table is larger, apparently the `.payments__main` gap of `--space-3` plus the toolbar's own margin. It is a small rhythm difference. Worth closing while UI-2-1 is fixed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T10:58:41Z",
+          "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-5",
+      "round": 1,
+      "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Exception mapping. The four \"INV-xxxx\" link exceptions cite Conflicts 16, but item 16 is about \"every board string is data\". No spec item says the reference is a link only when the row sends `work_id`. The behaviour is right (no invented link, and no field exists), but the design engineer should sign it as its own item, next to the G-SCR20 gap, rather than under 16.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T10:58:41Z",
+          "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When a send that sends fails with a 5xx, a network failure or a 500 (W-3804), the page shows the frame's notice \"We couldn\u2019t confirm this step. Check the page before trying again.\" Spec line 128 and AC16 ask for \"We are checking what happened. Nothing was sent again.\" This deviation is not recorded in any build.md. The meaning is safe: no success words appear, and Send is locked in the session. But \"before trying again\" invites a retry the page itself refuses. Expected: record it as a deviation from F-17's shared text, or route the wording to UX. Actual: `useWorkspaceStep.ts` `default:` branch \u2192 `failed` notice, rendered by the frame.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-41/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T12:19:08Z",
+          "head": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+          "evidence_refs": [
+            "delivery/features/F-41/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-41/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+          "evidence_refs": [
+            "delivery/features/F-41/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+          "evidence_refs": [
+            "delivery/features/F-41/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+          "evidence_refs": [
+            "delivery/features/F-41/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -171,7 +591,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b16a284a1fe4114c0fc578204fedc5bc9e2ed3df",
     "task_branch": "fe-payments-payments-list-and-reminder",
-    "head_sha": "ee7d652f59577f8005fa6587ffc5c0aca6253e48",
+    "head_sha": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-41",
     "pr_url": null,
     "pr_number": null,
@@ -184,11 +604,107 @@
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/BACKEND-HANDOFF.md",
+      "delivery/NIGHT-LOG-2026-11-18.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-31/feature.json",
+      "delivery/features/F-31/fidelity-exceptions.json",
+      "delivery/features/F-31/round-3/acceptance-product.md",
+      "delivery/features/F-32/feature.json",
+      "delivery/features/F-32/fidelity-exceptions.json",
+      "delivery/features/F-32/round-2/acceptance-pmo.md",
+      "delivery/features/F-32/round-2/acceptance-product.md",
+      "delivery/features/F-32/round-2/build.md",
+      "delivery/features/F-32/round-2/review-qa.md",
+      "delivery/features/F-32/round-2/review-security.md",
+      "delivery/features/F-32/round-2/review-technical.md",
+      "delivery/features/F-32/round-2/review-ui.md",
+      "delivery/features/F-32/round-2/review-ux.md",
+      "delivery/features/F-33/feature.json",
+      "delivery/features/F-33/fidelity-exceptions.json",
+      "delivery/features/F-33/round-3/acceptance-pmo.md",
+      "delivery/features/F-33/round-3/acceptance-product.md",
+      "delivery/features/F-33/round-3/build.md",
+      "delivery/features/F-33/round-3/review-qa.md",
+      "delivery/features/F-33/round-3/review-security.md",
+      "delivery/features/F-33/round-3/review-technical.md",
+      "delivery/features/F-33/round-3/review-ui.md",
+      "delivery/features/F-33/round-3/review-ux.md",
+      "delivery/features/F-41/feature.json",
+      "delivery/features/F-41/fidelity-exceptions.json",
+      "delivery/features/F-41/round-1/build.md",
+      "delivery/features/F-41/round-1/checks.md",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-desktop-1440/board-marked.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-desktop-1440/board.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-desktop-1440/board.rendered.html",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-desktop-1440/diff.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-desktop-1440/page-marked.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-desktop-1440/page.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-desktop-1440/report.html",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-desktop-1440/report.json",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-desktop-1440/side-by-side.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-mobile-390/board-marked.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-mobile-390/board.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-mobile-390/board.rendered.html",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-mobile-390/diff.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-mobile-390/page-marked.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-mobile-390/page.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-mobile-390/report.html",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-mobile-390/report.json",
+      "delivery/features/F-41/round-1/fidelity/SCR-20-mobile-390/side-by-side.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-desktop-1440/board-marked.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-desktop-1440/board.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-desktop-1440/board.rendered.html",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-desktop-1440/diff.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-desktop-1440/page-marked.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-desktop-1440/page.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-desktop-1440/report.html",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-desktop-1440/report.json",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-desktop-1440/side-by-side.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-mobile-390/board-marked.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-mobile-390/board.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-mobile-390/board.rendered.html",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-mobile-390/diff.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-mobile-390/page-marked.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-mobile-390/page.png",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-mobile-390/report.html",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-mobile-390/report.json",
+      "delivery/features/F-41/round-1/fidelity/SCR-32-mobile-390/side-by-side.png",
+      "delivery/features/F-41/round-1/fidelity/run.sh",
+      "delivery/features/F-41/round-1/fidelity/scores.txt",
+      "delivery/features/F-41/round-1/review-security.md",
+      "delivery/features/F-41/round-1/review-technical.md",
+      "delivery/features/F-47/decision.md",
+      "delivery/features/F-47/feature.json",
+      "delivery/features/F-47/round-1/fidelity/scores.txt",
+      "delivery/features/F-47/round-1/review-security.md",
+      "delivery/features/F-47/round-1/review-technical.md",
+      "delivery/features/F-47/round-1/review-ui.md",
+      "delivery/features/F-47/round-1/review-ux.md",
+      "delivery/features/F-47/round-2/acceptance-pmo.md",
+      "delivery/features/F-47/round-2/build.md",
+      "delivery/features/F-47/round-2/checks.md",
+      "delivery/features/F-47/round-2/review-qa.md",
+      "delivery/features/F-47/round-2/review-security.md",
+      "delivery/features/F-47/round-2/review-technical.md",
+      "delivery/features/F-47/round-2/review-ui.md",
+      "delivery/features/F-47/round-2/review-ux.md",
+      "delivery/features/F-48/feature.json",
+      "delivery/features/F-48/fidelity-exceptions.json",
+      "delivery/features/F-48/round-1/build.md",
+      "frontend/e2e/delivery-release.spec.ts",
+      "frontend/e2e/engagement-planning.spec.ts",
+      "frontend/e2e/income-schedule.spec.ts",
+      "frontend/e2e/issue-detail.spec.ts",
       "frontend/e2e/payments.spec.ts",
+      "frontend/e2e/projects.spec.ts",
       "frontend/mock/fixtures/finance/invoices.board.json",
       "frontend/mock/fixtures/finance/invoices.empty.json",
       "frontend/mock/fixtures/finance/invoices.known.json",
       "frontend/mock/fixtures/finance/invoices.unknown.json",
+      "frontend/mock/fixtures/projects/P-0101.json",
+      "frontend/mock/fixtures/projects/P-0106.json",
+      "frontend/mock/fixtures/response/W-2603.recorded.json",
       "frontend/mock/fixtures/response/W-3803.delivered.json",
       "frontend/mock/fixtures/response/W-3803.not_delivered.json",
       "frontend/mock/fixtures/response/W-3803.unknown.json",
@@ -198,6 +714,46 @@
       "frontend/mock/fixtures/response/W-3805.delivered.json",
       "frontend/mock/fixtures/response/W-3805.not_delivered.json",
       "frontend/mock/fixtures/response/W-3805.unknown.json",
+      "frontend/mock/fixtures/work/W-2501.json",
+      "frontend/mock/fixtures/work/W-2502.approve.json",
+      "frontend/mock/fixtures/work/W-2502.json",
+      "frontend/mock/fixtures/work/W-2503.json",
+      "frontend/mock/fixtures/work/W-2504.json",
+      "frontend/mock/fixtures/work/W-2505.json",
+      "frontend/mock/fixtures/work/W-2506.json",
+      "frontend/mock/fixtures/work/W-2507.json",
+      "frontend/mock/fixtures/work/W-2508.json",
+      "frontend/mock/fixtures/work/W-2510.json",
+      "frontend/mock/fixtures/work/W-2601.json",
+      "frontend/mock/fixtures/work/W-2601.next.json",
+      "frontend/mock/fixtures/work/W-2601.steps.json",
+      "frontend/mock/fixtures/work/W-2602.json",
+      "frontend/mock/fixtures/work/W-2602.next.json",
+      "frontend/mock/fixtures/work/W-2602.steps.json",
+      "frontend/mock/fixtures/work/W-2603.json",
+      "frontend/mock/fixtures/work/W-2604.json",
+      "frontend/mock/fixtures/work/W-2604.next.json",
+      "frontend/mock/fixtures/work/W-2604.steps.json",
+      "frontend/mock/fixtures/work/W-2701.json",
+      "frontend/mock/fixtures/work/W-2702.approve.json",
+      "frontend/mock/fixtures/work/W-2702.json",
+      "frontend/mock/fixtures/work/W-2702.reject.json",
+      "frontend/mock/fixtures/work/W-2702.return.json",
+      "frontend/mock/fixtures/work/W-2703.json",
+      "frontend/mock/fixtures/work/W-2703.next.json",
+      "frontend/mock/fixtures/work/W-2703.steps.json",
+      "frontend/mock/fixtures/work/W-2704.json",
+      "frontend/mock/fixtures/work/W-2705.json",
+      "frontend/mock/fixtures/work/W-2706.json",
+      "frontend/mock/fixtures/work/W-2707.json",
+      "frontend/mock/fixtures/work/W-2708.json",
+      "frontend/mock/fixtures/work/W-2709.json",
+      "frontend/mock/fixtures/work/W-2710.json",
+      "frontend/mock/fixtures/work/W-2711.json",
+      "frontend/mock/fixtures/work/W-2712.approve.json",
+      "frontend/mock/fixtures/work/W-2712.json",
+      "frontend/mock/fixtures/work/W-2712.reject.json",
+      "frontend/mock/fixtures/work/W-2712.return.json",
       "frontend/mock/fixtures/work/W-3801.json",
       "frontend/mock/fixtures/work/W-3801.next.edit_draft.json",
       "frontend/mock/fixtures/work/W-3801.next.send_reminder.json",
@@ -223,6 +779,9 @@
       "frontend/mock/fixtures/work/W-3812.json",
       "frontend/mock/fixtures/work/W-3813.json",
       "frontend/mock/invoices.mjs",
+      "frontend/mock/proposals/delivery-release.json",
+      "frontend/mock/proposals/engagement-planning.json",
+      "frontend/mock/response.mjs",
       "frontend/mock/server.mjs",
       "frontend/mock/workspace.mjs",
       "frontend/src/app/finance/payments/page.tsx",
@@ -231,14 +790,41 @@
       "frontend/src/features/finance/payments/payments.css",
       "frontend/src/features/finance/payments/proposal.ts",
       "frontend/src/features/finance/payments/usePayments.ts",
+      "frontend/src/features/projects/DeliveryTab.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/model.ts",
+      "frontend/src/features/projects/project-tabs.css",
+      "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/src/features/workspace/AssignForm.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/ResponseDrawer.tsx",
       "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/StepForm.tsx",
+      "frontend/src/features/workspace/Steps.tsx",
       "frontend/src/features/workspace/Workspace.tsx",
       "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/useWorkspaceAssign.ts",
+      "frontend/src/features/workspace/useWorkspaceStep.ts",
       "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/delivery-release-mock.test.ts",
+      "frontend/tests/engagement-planning-mock.test.ts",
+      "frontend/tests/engagement-planning.test.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/income-schedule.test.tsx",
+      "frontend/tests/issue-detail.test.tsx",
       "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-projects.test.ts",
       "frontend/tests/payment-reminder.test.tsx",
       "frontend/tests/payments-mock.test.ts",
-      "frontend/tests/payments.test.tsx"
+      "frontend/tests/payments.test.tsx",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/release-gates.test.tsx",
+      "frontend/tests/workspace.test.tsx"
     ]
   },
   "parallel_execution": {
@@ -272,7 +858,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -298,6 +884,46 @@
       "round": 1,
       "head": "ee7d652f59577f8005fa6587ffc5c0aca6253e48",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T10:58:42Z",
+      "round": 1,
+      "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T10:58:43Z",
+      "round": 2,
+      "head": "ea9718cd5eeb3fd267df59ebb13d7373165cd43e",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T11:29:49Z",
+      "round": 2,
+      "head": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T11:32:42Z",
+      "round": 2,
+      "head": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T12:19:08Z",
+      "round": 2,
+      "head": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4",
+      "reason": null
     }
   ],
   "routing": {
@@ -314,10 +940,10 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 1,
     "verdict": "PASS",
-    "commit": "ee7d652f59577f8005fa6587ffc5c0aca6253e48"
+    "commit": "2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4"
   },
   "blocked": null
 }

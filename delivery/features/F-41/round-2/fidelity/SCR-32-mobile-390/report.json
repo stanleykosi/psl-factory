@@ -1,0 +1,471 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T11:03:20.665Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-41/design/canvas/finance/project/SCR-32-mobile.dc.html",
+  "boardName": "SCR-32-mobile.dc.html",
+  "pageUrl": "http://localhost:4951/work/W-3801",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-41/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 79.2 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 100,
+    "visual": 79.2
+  },
+  "visual": {
+    "score": 79.2,
+    "allCellsScore": 79.6,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1202,
+    "cell": 12,
+    "contentCells": 2297,
+    "mismatchedCells": 477
+  },
+  "coverage": {
+    "total": 10,
+    "found": 5,
+    "coverage": 50,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0391",
+        "pageName": "INV-0391",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Reminder · Harmattan Bank",
+        "pageName": "Payment reminder · Harmattan Bank",
+        "pageRole": "heading",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "To finance@harmattanbank.example",
+        "pageName": "finance@harmattanbank.example",
+        "pageRole": "text",
+        "similarity": 96,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page"
+        ],
+        "boardBox": {
+          "x": 30,
+          "y": 299,
+          "w": 330,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 149,
+          "y": 324,
+          "w": 209,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Send reminder",
+        "pageName": "Send reminder",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #C8401C on the board, #22764A on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 734,
+          "w": 175,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Payments",
+        "key": "link: ← Payments",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 14: the work-item frame's phone back reads \"← Queue\"; changing it to \"← Payments\" is a shell change, out of scope.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi drafted this. Nothing is sent until you press Send.",
+        "key": "text: Chidi drafted this. Nothing is sent until you press Send.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 140,
+          "w": 306,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 13: the phone shows the same full subtitle as desktop (from workspace.subtitle).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0391 · ₦6,800,000.00",
+        "key": "text: INV-0391 · ₦6,800,000.00",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 218,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 13: the phone shows the same sections as desktop; the reference is in the phone bar and the amount in This invoice.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "21 days overdue · no reminders yet",
+        "key": "text: 21 days overdue · no reminders yet",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 242,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 13: the phone shows the backend's facts (Overdue by 21 days, Reminders sent None yet) in This invoice, not a composed summary line.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Our records show invoice INV-0391 for ₦6,800,000.00 was due on 22 Oct and hasn't been paid yet…",
+        "key": "text: Our records show invoice INV-0391 for ₦6,800,000.00 was due on 22 Oct and hasn't been paid yet…",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 322,
+          "w": 330,
+          "h": 63
+        },
+        "exception": {
+          "reason": "Conflicts 13: the phone shows the full message, not a cut-off one.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"INV-0391\"",
+        "kind": "Text",
+        "name": "INV-0391",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Link \"Send reminder\"",
+        "kind": "Link",
+        "name": "Send reminder",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 734,
+          "w": 175,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi drafted this from the invoice and the SOW payment terms. Nothing is sent until you press Send.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 358,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION NEEDED",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 171,
+          "w": 113,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 171,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 171,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 243,
+          "w": 272,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "After you send it, I'll check it was delivered.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 266,
+          "w": 272,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "THIS INVOICE",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 765,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "This sends to the client.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 680,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Nothing is sent. The draft is kept here.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 707,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Edit",
+        "container": "complementary",
+        "pageBox": {
+          "x": 199,
+          "y": 734,
+          "w": 175,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Not now",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-41/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

@@ -288,6 +288,22 @@ Screen: SCR-54 part 1 (investigating, review, returned, verified; `/work/W-2701.
 - **Ask Chidi** (G-C-4): the existing `workspace.links[]` `assistant` link to `/assistant`, with no work-item context.
 - **Held to part 2**: the held board and duplicate settlement (G-54-1, G-54-2), Export as an adjustment (G-54-5), Withdraw approval (`revoke`, G-54-4), the inventory kind (G-54-6).
 
+## Added during F-47: Start work proof upload (19 Nov)
+
+Screens: SCR-04 minutes, change, income schedules and ledger sources (desktop and phone), the Proof box in the Start work drawer. Contract mock only (D-START-INTAKE r1 proposed; nothing released). Gap ids G-SCR04P-* and the four backend questions are in [gaps-e-finance-payroll.md](backend-handoff/gaps-e-finance-payroll.md). No generated type changed.
+
+- **Order of writes**: one E-EVIDENCE-UPLOAD per chosen file, on the line's case, the moment the file is chosen; then one E-WORK-START per press carrying the uploaded `evidence_id`s in `intake.<field>` (one id, or a list when the field is `multiple`) and the `case_revision` the last upload returned. The upload 200 must carry a non-empty `evidence_id` (a 200 without one is shown as not uploaded) and should carry `case_revision`; without it the start sends the last revision the page knew.
+- **Which case for the two Finance lines** (gaps-e question 3): the mock serves `income_schedules` on fixed case `C-FIN-SCHEDULES` (revision 3) and `ledger_sources` on `C-FIN-LEDGER` (revision 2), one case per line so one line's upload doesn't make the other's revision stale. The backend picks both; the page reads `case_id` and `case_revision` from E-LINES only.
+- **Evidence kinds**: `schedule_source` and `ledger_source` (proposed; no source names them), alongside the existing `meeting_notes` and `client_request`.
+- **Upload limits**: size, type, page count and duplicate-by-sha256 are the backend's, answered as a 422 `{code, message}`; the page shows `message` word for word and checks nothing itself. The mock's only sample is `"EXE files can't be used as proof."` for a name ending `.exe`, and an empty file.
+- **One revision per case**: please confirm a case revision is shared by everything on the case (uploads, starts, responses). The mock keeps start-work cases apart from F-09's response cases (`C-0101` has its own counter in each).
+- **Evidence on the start**: an id not uploaded to the same case by the same person should answer 422 `{fields: [{name: <field>, message}]}`; the page shows it under the Proof box. Mock message: "That proof isn't on this record. Add it again."
+- **403 and 404 on an upload** are shown the same ("You can’t add proof to this item."), and the file is not kept on the form.
+- **`next` for the Finance lines** (G-SCR04P-9): the fixtures send none, as the boards draw none; if the backend sends it, it is drawn.
+- **Who may start the Finance lines** (Conflicts 7): in the mock only the Finance persona is served them; the backend's E-LINES and `startable_lines` decide. The CEO persona keeps its 8 lines until D-LEADERS-START.
+- **Held**: the Finance runs may wait in `setup_needed` while SCR-13 finance rules are NOT SET (the drawer only starts the line); fixed assets and cash forecast (F-47B); management accounts and `money` (F-47C); payroll and business-unit drawers.
+- **Mock only**: cookie `psl_mock_start_work` = `upload_uncertain` (the next upload is stored and answers 500) or `start_uncertain` (the next start is stored and answers 500; a replay with the same key answers its 201), once per reset; ids `EV-SW-<case_id>-<n>`; fixtures `W-4401`, `W-4402`.
+
 ## Added during F-41: payments list and reminder (19 Nov)
 
 Screens: SCR-20 (`/finance/payments`, the list; entry by address and from Chidi's note, no top-nav item) and SCR-32 (the payment reminder on the line workspace, `/work/W-3801..W-3813`, `line_key: payment_reminder`). Contract mock only (`frontend/mock/invoices.mjs`, `fixtures/finance/invoices.*.json`, `fixtures/work/W-38xx*`); nothing is sent to a client and no money record is written. Gap ids G-SCR20-* and G-SCR32-* are in [gaps-e-finance-payroll.md](backend-handoff/gaps-e-finance-payroll.md). Spec conflicts were taken as recommended under D-115 (provisional, pending the design engineer).
