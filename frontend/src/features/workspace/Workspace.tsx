@@ -108,6 +108,8 @@ const ENGAGEMENT_LINE = 'engagement';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
 /** F-33: the income schedule boards draw the stations in the main column and the working agent's card beside it. */
 const INCOME_LINE = 'income_schedules';
+/** F-41: the payment reminder's line key (SCR-32); read only to open its Edit form in the phone Drawer. */
+const REMINDER_LINE = 'payment_reminder';
 
 /** The stations as the income schedule boards draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
@@ -181,8 +183,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const [assigning, setAssigning] = useState(false);
   const assignButton = useRef<HTMLButtonElement>(null);
   const phone = useIsPhone();
-  // F-30 (D-103, D-107): on a phone the issue follow-up's forms open in the full-height Drawer.
-  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || workspace.line_key === INCOME_LINE);
+  // F-30 (D-103, D-107), F-31, F-33, F-41: on a phone these lines' forms open in the full-height Drawer.
+  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || workspace.line_key === INCOME_LINE || workspace.line_key === REMINDER_LINE);
   const incomeLine = workspace.line_key === INCOME_LINE;
   // F-31: a department's "Record input" opens F-18's team-input form in the Drawer; `recording` names the pressed row's button.
   const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);
