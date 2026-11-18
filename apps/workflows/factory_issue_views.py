@@ -118,6 +118,8 @@ def detail(request,work):
         except (ValidationError,ValueError,KeyError) as exc:messages.error(request,domain.finding(exc));work.refresh_from_db();work.case.refresh_from_db()
     from apps.core.evidence_access import public_evidence
     row = presentation(request.user,work)
+    from .factory_views import permitted
+    row['can_read_messages']=bool(row['issues'].get('team',{}).get('mode')=='team' and permitted(request.user,work,'issue.message.read'))
     if row['issues'].get('can_record_team') and reply_form is None:
         from apps.pmo.issue_team_forms import TeamReplyForm
         task = next((task for task in row['tasks'] if task.status=='open'),None)
@@ -125,7 +127,9 @@ def detail(request,work):
             acknowledged=row['issues']['issue'].current.acknowledged_at is not None)
     from apps.pmo.issue_team_models import IssueTeamReply
     team_history = IssueTeamReply.objects.filter(assignment__issue_id=work.request['issue_id']).select_related(
-        'assignment','actor','state').order_by('-pk')[:20]
+        'assignment','actor','state__issue__case').defer('state__note').order_by('-pk')[:20]
+    from apps.pmo.issue_access import state_public
+    team_history=[reply for reply in team_history if state_public(reply.state)]
     return render(request,'factory/issue_detail.html',{'row':row,'case':work.case,
         'evidence':public_evidence(work.case.evidence.all()).defer('body').order_by('-pk')[:50],
         'team_reply_form':reply_form,'team_history':team_history})

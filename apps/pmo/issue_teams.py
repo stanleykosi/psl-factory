@@ -55,7 +55,7 @@ def current(assignment, issue):
     if (configuration.pk != assignment.policy_id or team is None or team['label'] != assignment.team_label or
         recorder_authority(assignment.recorder, issue.case, assignment.recorder_role, value) != assignment.authority):
         raise ValidationError('Team or recorder authority changed. Review the assignment first.')
-    proof = issue_subject(issue.case, assignment.evidence_id)
+    proof = issue_subject(issue.case, assignment.evidence_id, metadata_only=True)
     for action in ['case.read', 'evidence.add']:
         require(proof.created_by, issue.case, action)
     for action in ['case.read', 'issue.read', 'issue.manage']:
@@ -190,7 +190,7 @@ def record_reply(actor, case_id, issue_id, state_id, assignment_id, operation_ke
 
 def validate_reply(reply, issue):
     current(reply.assignment, issue)
-    proof = issue_subject(issue.case, reply.evidence_id)
+    proof = issue_subject(issue.case, reply.evidence_id, metadata_only=True)
     require(proof.created_by, issue.case, 'case.read')
     require(proof.created_by, issue.case, 'evidence.add')
     if (reply.actor_id != reply.assignment.recorder_id or reply.state.issue_id != issue.pk or

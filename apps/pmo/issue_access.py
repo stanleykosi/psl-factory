@@ -5,7 +5,7 @@ from apps.core.models import Evidence
 from .services import subject
 
 
-def issue_subject(case, pk, kind=None, *, metadata_only=False):
+def issue_subject(case, pk, kind=None, *, metadata_only=True):
     evidence = subject(case, pk, kind, metadata_only=metadata_only)
     if not public_evidence(Evidence.objects.filter(pk=evidence.pk)).exists():
         raise ValidationError('Private source evidence requires its native scoped interface')
@@ -22,7 +22,7 @@ def state_public(state):
 def issue_projection(issue,actor=None):
     if not issue.current or not state_public(issue.current):
         return None
-    issue.public_history = [state for state in issue.states.select_related('issue__case') if state_public(state)]
+    issue.public_history = [state for state in issue.states.select_related('issue__case').defer('note') if state_public(state)]
     for state in issue.public_history:
         state.public_closure_entries = list(state.closure_entries.filter(evidence_id__in=public_evidence(Evidence.objects.filter(case=issue.case)).values('pk')))
     if actor is not None:

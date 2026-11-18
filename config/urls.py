@@ -43,6 +43,7 @@ from apps.pmo import views as pmo_views
 from apps.pmo import commercial_views
 from apps.pmo import issue_views
 from apps.pmo import issue_team_views
+from apps.pmo import issue_message_views
 from apps.pmo import escalation_views
 from apps.pmo import emergency_views, recovery_views, delivery_views
 from apps.pmo import rfp_views
@@ -75,6 +76,9 @@ urlpatterns = [
     path('cases/<uuid:case_id>/emergencies/',emergency_views.workbench,name='emergencies'),
     path('cases/<uuid:case_id>/issues/',issue_views.workbench,name='issues'),
     path('cases/<uuid:case_id>/issues/team-settings/',issue_team_views.configuration,name='issue_team_configuration'),
+    path('cases/<uuid:case_id>/issues/message-settings/',issue_message_views.configuration,name='issue_message_configuration'),
+    path('cases/<uuid:case_id>/issues/<int:issue_id>/messages/',issue_message_views.index,name='issue_messages'),
+    path('cases/<uuid:case_id>/issues/<int:issue_id>/messages/<int:draft_id>/',issue_message_views.detail,name='issue_message_detail'),
     path('cases/<uuid:case_id>/issues/<int:issue_id>/owner/',issue_team_views.owner,name='issue_team_owner'),
     path('cases/<uuid:case_id>/issues/<int:issue_id>/resolution/',issue_team_views.resolution,name='issue_team_resolution'),
     path('cases/<uuid:case_id>/escalations/',escalation_views.workbench,name='escalations'),

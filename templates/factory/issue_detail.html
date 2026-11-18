@@ -9,6 +9,7 @@
     <p><a href="{% url 'escalations' case.pk %}">Escalation decisions</a> · <a href="{% url 'changes' case.pk %}">Related changes</a></p>
     {% if row.issues.team.mode == 'team' %}<p>Follow-up coordinator · {% firstof row.issues.team.assignment.recorder.get_full_name row.issues.team.assignment.recorder.username %}</p>
     {% if row.issues.team.finding %}<p role="status">{{ row.issues.team.finding }}</p>{% endif %}{% endif %}
+    {% if row.can_read_messages %}<p><a class="button secondary" href="{% url 'issue_messages' case.pk row.issues.issue.pk %}">Owner requests and reminders</a></p>{% endif %}
     {% if row.can_assign_team %}<a class="button secondary" href="{% url 'issue_team_owner' case.pk row.issues.issue.pk %}{% if row.can_manage %}?work={{ row.work.pk }}{% endif %}">Review issue owner</a>{% endif %}
     {% if not row.issues.owner_available %}<p role="status">The recorded owner needs current access before following up.</p><a href="{% url 'issues' case.pk %}">Review the responsible owner</a>{% endif %}
   </section>{% endif %}

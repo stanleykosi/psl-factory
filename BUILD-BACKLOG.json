@@ -1,5 +1,29 @@
 {
   "design_consolidation_20261116": {
+    "issue_messages_20261118": {
+      "status":"pg129_130_131_passed_hosted131_browser_owner_message_journey_verified",
+      "base_checkpoint":"4acc6f7d",
+      "hosted_runtime":131,
+      "package_127":{"deployment":"bace5614-08cf-406a-af80-3f898fa27c82","passed":42,"seconds":108.649,"final_exit":0,"preview_migrated":false,"fixtures_run":false},
+      "failed_128":{"deployment":"97bd9ad7-4ba8-4f4e-b405-75dbcca9d684","passed":111,"errors":1,"not_run":5,"seconds":624.275,"preview_migrated":false,"fixtures_run":false,"final_exit":1,"reason":"Outdated Finance fixture lacked obligation identity; native helper restored"},
+      "package_129":{"deployment":"ef22b6e0-4539-43de-90af-39b5160b11d4","passed":117,"seconds":251.533,"final_exit":0,"preview_migrated":true,"fixtures_run":true},
+      "runtime_129":{"web":"67fadd26-29f2-4cd5-9ad1-399e36ce86a0","worker":"e0adeec9-3f37-46c6-93ed-1c3b73b9c681","paths_per_service":1695,"mismatches":0,"worker_script_sha256":"540f735cd6a2f42fccbf9aad5c044fd7594e1506ea07f79251224968aae06d6e","startup":"passed"},
+      "test_database_migrations":["pmo.0064_issue_messages","pmo.0065_issue_message_guards","pmo.0066_issue_message_recovery_evidence","pmo.0067_issue_message_evidence_guard"],
+      "package_130":{"deployment":"d6cb48a1-7f98-4ca1-a692-eafe242de62a","passed":41,"seconds":314.407,"final_exit":0,"preview_migrated":false,"fixtures_run":false},
+      "package_131":{"deployment":"98602921-0570-4101-b502-0cfac5ff8d10","passed":22,"seconds":141.201,"final_exit":0,"preview_migrated":false,"fixtures_run":false},
+      "runtime_131":{"web":"74177a4a-8bd3-4588-ab3f-0557636be963","worker":"8ef8ebba-6ee2-425e-976c-e3a9b8f13e13","paths_per_service":1695,"mismatches":0,"startup":"passed"},
+      "browser":{"request_work":104,"corrected_draft":6,"delivered_at":"2026-11-18T16:04:41+01:00","reminder_draft":7,"reminder_receipt":"pending_readback","manual_work":105,"manual_raw_proof":1972,"manual_actual_time":null,"manual_recorded_at":"2026-11-18T16:07:34+01:00","recovery_work":106,"original_recovered":"automatically","absence_work":107,"terminal_absence":"explicit_original_lookup","scheduled_work":108,"scheduled_result":"cancelled_before_attempt"},
+      "browser_final":{"request_work":104,"reminder":7,"reminder_delivered_at":"2026-11-18T16:11:59+01:00","escalation_deadline_unchanged":"2026-11-18T16:05:41+01:00","owner_proof":1974,"actual_owner_ack":"2026-11-18T16:19:21+01:00","recorded_owner_ack":"2026-11-18T16:20:50+01:00","verified":"2026-11-18T16:21:49+01:00","native_issue":"Open","fresh_request":8,"fresh_request_delivered_at":"2026-11-18T16:24:26+01:00","original_absence_preserved":true,"deferred_configuration":963,"active_configuration_unchanged":938,"phone_widths":[375,375],"desktop_widths":[1265,1265]},
+      "states_with_browser_observations":203,
+      "observed_states_with_open_checks":184,
+      "completed_scoped_journeys":19,
+      "states_without_direct_browser_observation":59,
+      "current_unverified_refinements":[],
+      "remote_main_review":{"commit":"8f347a0a32a24ad3b48fbc6ab2ea351613e1dfa6","fetched":true,"merged":false,"native_or_board_changes":false,"new_frontend_and_handoff_reconciliation":"pending"},
+      "next":["Push verified owner-message checkpoint","Reconcile new main frontend/backend handoff detail without importing sample authority","Approved answer reuse, client acceptance and remaining Finance/Setup/project state coverage"],
+      "owner_policy":"Deferred; examples remain synthetic",
+      "all_states_accepted":false
+    },
     "issue_team_resolution_20261118": {
       "status": "postgresql_verified_hosted126_browser_closed_and_clock_checked_checkpoint",
       "process_ids": ["P50", "P51", "P54", "P55"],

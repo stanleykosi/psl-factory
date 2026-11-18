@@ -13,6 +13,7 @@
 {% if i.team.finding %}<p role="status">{{ i.team.finding }}</p>{% endif %}
 {% if i.current.status != 'Closed' %}<p><a href="{% url 'factory_create' %}?definition=pmo-issues/v1&amp;case={{ case.pk }}&amp;issue={{ i.pk }}">Open issue follow-up</a></p>{% elif i.team.assignment.auto_work_id %}<p><a href="{% url 'factory_detail' i.team.assignment.auto_work_id %}">View follow-up history</a></p>{% endif %}{% endif %}
 {% if i.team.can_resolve %}<p><a class="button" href="{% url 'issue_team_resolution' case.pk i.pk %}">Record team resolution</a></p>{% endif %}
+{% if i.team.mode == 'team' and 'issue.message.read' in issue_permissions %}<p><a href="{% url 'issue_messages' case.pk i.pk %}">Owner requests and reminders</a></p>{% endif %}
 {% if 'issue.manage' in issue_permissions and i.current.status != 'Closed' %}<p><a class="button secondary" href="{% url 'issue_team_owner' case.pk i.pk %}">Review issue owner or external team</a></p>{% endif %}
 <p>Acknowledged {{ i.current.acknowledged_at|date:'d M Y, H:i T'|default:'not recorded' }} · Resolved {{ i.current.resolved_at|date:'d M Y, H:i T'|default:'not recorded' }}</p>
 {% if i.team.mode == 'team' %}{% for reply in i.team_replies %}<p>{{ reply.operation|readable }} · {{ reply.party }} · {{ reply.channel|readable }} · actual reply {{ reply.responded_at|date:'d M Y, H:i:s T' }}<br><small>Recorded {{ reply.created_at|date:'d M Y, H:i:s T' }} by {{ reply.actor.username }} · {{ reply.source_ref }}</small></p>{% endfor %}{% endif %}

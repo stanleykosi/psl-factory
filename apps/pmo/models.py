@@ -211,3 +211,5 @@ from .planning_input_models import PlanningDepartmentInput
 from .go_live_reply_models import GoLiveClientReply, GoLiveReplyIssue, GoLiveRemediation
 from .archive_transfer_models import ArchiveCopyPlan, ArchiveCopyFile, ArchiveCopyJob, ArchiveCopyAttempt, ArchiveCopyReceipt, SyntheticArchiveObject
 from .issue_team_models import IssueTeamAssignment, IssueTeamReply
+from .issue_message_models import (IssueMessageDraft, IssueMessageReview, IssueMessageDispatch,
+    IssueMessageAttempt, IssueMessageReceipt, IssueMessageCancellation, SyntheticIssueMessage, IssueMessageCursor)

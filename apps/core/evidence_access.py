@@ -2,7 +2,7 @@
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.expressions import RawSQL
 PLANNING_PRIVATE=['planning_packet','planning_prd_alignment','planning_scope_alignment','planning_contract_comparison','planning_readiness','planning_department_review']
-PRIVATE=['qbo_native_intent','qbo_native_observation','template_current_source','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review','approval_source','approval_observation','migration_proof','d03_source']+PLANNING_PRIVATE
+PRIVATE=['qbo_native_intent','qbo_native_observation','template_current_source','ledger_source','quickbooks_verification','ledger_resolution','ledger_resolution_review','approval_source','approval_observation','migration_proof','d03_source','issue_message_receipt']+PLANNING_PRIVATE
 PRIVATE_PREFIXES=('d03_control_','p14_','ops_','integration_','agent_private_','coverage_','usage_intake_','payment_reminder_')
 CONFIRMED_CHANGE_SOURCE='psl:p56-confirmed-request/v1'
 def forecast_private(e):
@@ -64,4 +64,4 @@ def public_timeline(case):
  private_ids+=list(IntegrationSelection.objects.filter(contract__in=private_contracts).values_list('evidence_id',flat=True))
  private_ids=[pk for pk in private_ids if pk is not None]
  # JSON missing keys must retain unrelated public activity; NOT(NULL) alone would drop it.
- return case.audit.exclude(action__startswith='ledger.qbo.').exclude(action__startswith='delivery.progress.').exclude(action__startswith='document.template_current.').exclude(action__startswith='coverage.').exclude(action__startswith='usage_intake.').exclude(action__startswith='agent.coverage').exclude(action__startswith='agent.contract_coverage').exclude(action__startswith='forecast.').exclude(action__startswith='agent.forecast_').exclude(action__startswith='agent.data.').exclude(action__startswith='planning.').exclude(action__startswith='factory.').exclude(Q(data__has_key='evidence')&Q(data__evidence__in=private_ids))
+ return case.audit.exclude(action__startswith='ledger.qbo.').exclude(action__startswith='delivery.progress.').exclude(action__startswith='document.template_current.').exclude(action__startswith='coverage.').exclude(action__startswith='usage_intake.').exclude(action__startswith='agent.coverage').exclude(action__startswith='agent.contract_coverage').exclude(action__startswith='forecast.').exclude(action__startswith='agent.forecast_').exclude(action__startswith='agent.data.').exclude(action__startswith='planning.').exclude(action__startswith='factory.').exclude(action__startswith='issue.message.').exclude(Q(data__has_key='evidence')&Q(data__evidence__in=private_ids))

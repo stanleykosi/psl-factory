@@ -98,9 +98,10 @@ class SharedWorkbenchTests(TransactionTestCase):
 
     def test_financial_intent_metadata_does_not_retry_or_issue(self):
         from tests import settlement_helpers as f
+        from tests.obligation_helpers import approve_identified
         from apps.finance import invoices,invoice_delivery
         from apps.finance.models import InvoiceIssue,InvoiceJob
-        a,c,coverage,preparation,e=f.fixture();invoice=f.draft(a,c,preparation);f.approve(a,c,invoice,e)
+        a,c,coverage,preparation,e=f.fixture();invoice=f.draft(a,c,preparation);approve_identified(a,c,invoice,e)
         job=invoices.reserve(a,c.pk,invoice.pk,'issue','Finance',rev(c))
         Grant.objects.filter(case=c,user=a,action='finance.invoice.issue').update(active=False);invoice_delivery.run_once();job.refresh_from_db();self.assertEqual(job.status,'held')
         before=(job.status,job.attempts,InvoiceIssue.objects.count());rows=d.work(a)['rows']

@@ -31,3 +31,4 @@ ACTIONS += ['finance.draft_generation.dispatch', 'finance.draft_generation.looku
 ACTIONS += ['finance.reminder.read','finance.reminder.prepare','finance.reminder.send','finance.reminder.confirm']
 ACTIONS += ['delivery.archive_files']
 ACTIONS += ['delivery.record_support_reply']
+ACTIONS += ['issue.message.read','issue.message.prepare','issue.message.review','issue.message.release','issue.message.recover']

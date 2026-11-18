@@ -59,7 +59,7 @@ def workbench(request,case_id):
         item.team_replies = []
         if item.team['mode'] == 'team' and item.team['status'] == 'current':
             from .issue_teams import validate_reply
-            for reply in item.team['assignment'].replies.select_related('actor','state').order_by('-pk')[:20]:
+            for reply in item.team['assignment'].replies.select_related('actor','state').defer('state__note').order_by('-pk')[:20]:
                 try:
                     validate_reply(reply, item)
                 except (PermissionDenied,ValidationError):

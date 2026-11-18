@@ -176,7 +176,15 @@ def act(work,choice,value,latest,missing,ts,jobs):
         refs.report(owner,issue)
         row,created=HumanTask.objects.get_or_create(factory_key=f'factory:{work.pk}:issue:{work.source_head_id}',defaults={'case':case,'kind':'issue_followup','required_role':'Issue owner','created_by':work.execution_actor,'context':{'work':work.pk,'head':work.source_head_id,'issue_id':issue.pk,'state_id':issue.current_id,'owner_id':owner.pk}})
         if created:TaskEvent.objects.create(task=row,actor=work.execution_actor,action='issue.followup_opened',data={'work':work.pk,'head':work.source_head_id})
-        return {'head':work.source_head_id,'task':row.pk,'waiting':'Waiting for the responsible issue owner; no approval was requested'}
+        result={'head':work.source_head_id,'task':row.pk,'waiting':'Waiting for the responsible issue owner; no approval was requested'}
+        from apps.pmo.issue_messages import maybe_prepare
+        try:
+            draft=maybe_prepare(work.execution_actor,case.pk,issue.pk,work.pk,work.source_head_id)
+            if draft:result['owner_message_draft']=draft.pk
+        except (PermissionDenied,ValidationError):
+            result['owner_message_drafting']='Current message settings or drafting authority need review.'
+        case.refresh_from_db();work.case=case
+        return result
     if kind=='ACT13':
         result=verify(work,work.execution_actor);work.status='verified';return result
     raise ValidationError('Issue severity, closure and external lifecycle decisions are not agent tools')

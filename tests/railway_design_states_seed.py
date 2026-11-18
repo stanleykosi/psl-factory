@@ -269,7 +269,8 @@ def prepare(key, operator):
             data=setup(missing=key=='commercial-information')
             factory.run_until_wait(data['work'].pk)
         return {'case':str(case.pk),'work':data['work'].pk,'head':data['head'].pk}
-    if key in {'issue-team-owner','issue-team-resolution','issue-team-closure','issue-team-overdue'}:
+    if key in {'issue-team-owner','issue-team-resolution','issue-team-closure','issue-team-overdue',
+               'issue-message-flow','issue-message-manual','issue-message-recovery','issue-message-absent','issue-message-scheduled'}:
         from tests import test_factory_issues, test_issue_teams
         from apps.pmo import issue_teams
         from apps.workflows import factory_issues, factory_progress
@@ -280,7 +281,8 @@ def prepare(key, operator):
             entry = test_factory_issues.FactoryIssueTests()
             entry.setUp()
         test_issue_teams.configure(entry)
-        if key in {'issue-team-resolution','issue-team-closure','issue-team-overdue'}:
+        if key in {'issue-team-resolution','issue-team-closure','issue-team-overdue',
+                   'issue-message-flow','issue-message-manual','issue-message-recovery','issue-message-absent','issue-message-scheduled'}:
             from apps.policy.operator_drafts import draft_operator_policy
             if key == 'issue-team-closure':
                 from apps.policy.services import register_reference
@@ -293,6 +295,13 @@ def prepare(key, operator):
             rule=draft_operator_policy(operator,case.pk,'OPS.issue_team_controls',value,
                                        entry.e['policy_decision'].pk,timezone.now())
             transition(operator,rule.pk,'validated');transition(operator,rule.pk,'active')
+            if key.startswith('issue-message-'):
+                from tests import test_issue_messages
+                message_value=json.loads(Path('fixtures/issue-message-controls.json').read_text())['value']
+                message_value['reminder_after_hours']=1/3600
+                message_value['escalation_after_hours']=1/60
+                if key=='issue-message-manual':message_value['routes'][0]['mode']='manual_evidence'
+                test_issue_messages.configure(entry,**message_value)
             from apps.pmo.issues import update_issue
             state=update_issue(operator,case.pk,entry.state.issue_id,entry.state.pk,'manage',
                 entry.e['requirements'].pk,'Synthetic critical severity for fix and root-cause checks',rev(case),severity='Critical')
@@ -301,6 +310,24 @@ def prepare(key, operator):
                 work_id=entry.work.pk,source_id=entry.work.source_head_id)
             factory_issues.sync_owner(entry.work.pk)
             factory.run_until_wait(entry.work.pk)
+            if key.startswith('issue-message-'):
+                from apps.pmo import issue_messages
+                from adapters.issue_messages import SyntheticIssueMailbox
+                from apps.pmo.issue_message_models import IssueMessageDraft
+                draft=IssueMessageDraft.objects.get(issue_id=entry.state.issue_id)
+                if key in {'issue-message-recovery','issue-message-absent','issue-message-scheduled'}:
+                    reviewed=issue_messages.review(operator,case.pk,draft.pk,'PM','approve',entry.e['requirements'].pk,
+                        'Synthetic exact wording review for recovery acceptance',rev(case))
+                    dispatch=issue_messages.release(operator,case.pk,reviewed.pk,'PM','email',rev(case),
+                        not_before=timezone.now()+timedelta(days=1) if key=='issue-message-scheduled' else None)
+                    if key!='issue-message-scheduled':
+                        class Interrupted(SyntheticIssueMailbox):
+                            def deliver(self,release):
+                                if key=='issue-message-recovery':super().deliver(release)
+                                raise TimeoutError('Synthetic original channel response unavailable')
+                        issue_messages.run_once(dispatch.pk,Interrupted())
+                return {'case':str(case.pk),'work':entry.work.pk,'issue':entry.state.issue_id,
+                        'draft':draft.pk,'proof':entry.e['requirements'].pk,'message_timing':'one-second reminder, one-minute escalation; synthetic only'}
             fix=add_evidence(operator,case.pk,'resolution','Synthetic documented fix for browser closure checks.','synthetic:resolution-fixture')
             root=add_evidence(operator,case.pk,'root_cause','Synthetic documented root cause for browser closure checks.','synthetic:resolution-fixture')
             if key == 'issue-team-overdue':
@@ -569,6 +596,8 @@ elif workflow == 'issue-team-resolution-states':
     fixtures = ('issue-team-resolution',)
 elif workflow == 'issue-team-closure-states':
     fixtures = ('issue-team-closure','issue-team-overdue')
+elif workflow == 'issue-message-states':
+    fixtures = ('issue-message-flow','issue-message-manual','issue-message-recovery','issue-message-absent','issue-message-scheduled')
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False
