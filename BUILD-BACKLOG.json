@@ -1,5 +1,24 @@
 {
   "design_consolidation_20261116": {
+    "extended_hr_fields_20261118": {
+      "status": "postgresql_passed_runtime111_browser_checked",
+      "failed_108": {"deployment": "9a9d3c14-65d9-474f-9313-63cc6f7e5f65", "errors": 1, "not_run": 87, "seconds": 0.000, "final_exit": 1, "reason": "Incorrect test module name", "fixtures_run": false},
+      "packages": {
+        "109": {"deployment": "9a987a1b-f06f-4231-9fcd-349334419054", "passed": 107, "seconds": 465.918},
+        "110": {"deployment": "f01a6609-ae7b-49fa-a434-613559b10288", "passed": 38, "seconds": 50.277},
+        "111": {"deployment": "1970a3c9-d6e2-48f4-a4e8-f39d417f49b9", "passed": 36, "seconds": 40.298}
+      },
+      "successful_final_exits": 0,
+      "runtime_111": {"web": "a0c1a46c-420b-4e59-b87c-a0f339361c4c", "worker": "0c19fcaf-ba0a-4754-9a20-b3d17a086db8", "paths_per_service": 1665, "mismatches": 0, "startup": "passed"},
+      "browser": {"case": "49819185-cffa-4fc0-9957-20f4b5eef0dc", "source": 1856, "proposal": 914, "active_revision": 3, "extended_pairing_refusal": "passed", "review_and_activation": "passed", "phone_body_and_viewport": [375,375]},
+      "implemented": ["Explicit version2 source inventory and needs", "Five additional design fields", "Private supplied-export validation", "Legacy version1 compatibility", "Twelve-field visibility matrix and review", "Private-payload-free readable HR Assistant context"],
+      "next": ["Approved past-winning-answer reuse", "Team/no-login issue recording", "Remaining client/project/Finance states", "Railway deployment configuration migration before 2026-12-01"],
+      "states_with_browser_observations": 201,
+      "observed_states_with_open_checks": 187,
+      "states_without_direct_browser_observation": 61,
+      "owner_policy": "Deferred",
+      "all_states_accepted": false
+    },
     "focused_visibility_review_20261118": {
       "status": "postgresql_passed_runtime107_browser_checked",
       "package_106": {"deployment": "8acd84ed-1ec0-4bbf-bdd2-a86c4e1690fd", "passed": 80, "seconds": 61.100, "final_exit": 0},

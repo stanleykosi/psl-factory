@@ -17,13 +17,15 @@
 <section class="card"><h2>HR handoff fields</h2>
 {% if disclosure %}
 <p>Current source {{ disclosure.source_view }} · {{ disclosure.from_period }} to {{ disclosure.to_period }}.</p>
-<ul>{% for label in disclosure_fields %}<li>{{ label }}</li>{% endfor %}</ul>
+<div class="table-wrap detail-table"><table><thead><tr><th scope="col">Staff field</th><th scope="col">Finance may see</th></tr></thead><tbody>
+{% for field in field_rows %}<tr><th scope="row">{{ field.label }}</th><td data-label="Finance may see">{% if field.included %}Allowed{% elif field.supported %}Hidden{% else %}Source contract required{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
 <p>Recipients, permitted purposes, retention and source authority follow the current disclosure contract.</p>
 {% elif disclosure_hold %}<p role="status">{{ disclosure_hold }}</p>
 {% else %}<p>Choose the HR source, recipients, purpose and retention terms in the rule configuration.</p>{% endif %}
 {% if visibility_draft %}<p role="status">Proposed version {{ visibility_draft.revision }} · {% if visibility_draft.state == 'validated' %}ready for activation{% else %}awaiting review{% endif %}.</p><p><a class="button secondary" href="{% url 'visibility_review' case.pk visibility_draft.id %}">Review proposed fields</a></p>{% endif %}
 {% if visibility_form %}<details{% if visibility_form.is_bound %} open{% endif %}><summary>Propose field visibility</summary>
-<p>Include the staff reference, business unit and membership dates. Select monthly pay together with its currency when the owner authorises those fields.</p>
+<p>Include the staff reference, business unit and membership dates. Select pay amounts together with their currency when the owner authorises those fields.</p>
 <form method="post">{% csrf_token %}{{ visibility_form.as_p }}<button>Save visibility draft</button></form>
 </details>{% endif %}
 </section>

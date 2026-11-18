@@ -1,5 +1,13 @@
 # Actual test execution ledger
 
+## Extended source fields and private Assistant reads · 18 November 2026
+
+Failed108 `9a9d3c14-65d9-474f-9313-63cc6f7e5f65` used nonexistent tests.test_hr_scope. Checks/drift passed, then one loader error in0.000 seconds,87 not run, fixture unrun and final exitone. Corrected109 `9a987a1b-f06f-4231-9fcd-349334419054` passed107 PostgreSQL tests in465.918 seconds. Includes extended private disclosure, explicit HR approval/separate Finance read, zero/unknown and leading-zero preservation, malformed/future/medical-field refusal, legacy version1 compatibility, native payroll, private corrections and scope clarification races.
+
+Final110 `f01a6609-ae7b-49fa-a434-613559b10288` passed38 in50.277 seconds. Final111 `1970a3c9-d6e2-48f4-a4e8-f39d417f49b9` passed36 in40.298 seconds. The HR Assistant test makes private snapshot payload materialisation fail, verifies allowed field metadata and checks reader revocation. Native source receipt concurrency, current owner/role checks, structured UI, normal Assistant workflows and all templates passed. Each successful run passed checks/drift/idempotent fixtures/final markerszero. Exact1,665 runtimepaths matched each111service, both started.
+
+Browser on case49819185-cffa-4fc0-9957-20f4b5eef0dc refused gross pay/deductions without currency. Saved914/version3 with five extended fields and currency, reviewed the exact comparison and retained terms, validated and activated it on390px/body375, and reread the active allowed/hidden matrix. Current111 wording and phone fit passed. Saved `.runtime/design-acceptance-extended111-active-phone.jpg`. Private staff values were exercised only through the isolated native PostgreSQL tests. No real provider/HR account evaluation or owner values installed.
+
 ## Focused visibility review · 18 November 2026
 
 Package106 `8acd84ed-1ec0-4bbf-bdd2-a86c4e1690fd` passed80 PostgreSQL tests in61.100 seconds. Package107 `06586d10-3da3-4f1b-8709-68ed6cf69765` passed22 in18.854 seconds. Both passed checks/drift/idempotent fixtures/final markerszero. New HTTP tests compare fields/reason/recipients, separate validation from activation, reject CSRF/stale/replaced/unauthorised requests and preserve active rules. Final guards reject missing/boolean revisions. Original-source case/policy-read withdrawal hides the shared comparison. Two connections record one native validation. Exact1,664 runtimepaths per service matched and both107services started.

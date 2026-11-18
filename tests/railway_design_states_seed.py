@@ -71,7 +71,7 @@ def prepare(key, operator):
         existing = FactoryWork.objects.filter(case=case).first()
         return {'case': str(case.pk), 'work': existing.pk if existing else None}
     Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
-    if key == 'payroll-field-setup':
+    if key in {'payroll-field-setup', 'payroll-field-extended'}:
         from tests import hrfinance_helpers
 
         users = get_user_model().objects
@@ -79,9 +79,16 @@ def prepare(key, operator):
         with (
             patch.object(hrfinance_helpers, 'setup_case', return_value=(operator, case)),
             patch.object(users, 'create_user', side_effect=lambda username, **values:
-                create_user(username='state-payroll-field-setup-' + username, **values)),
+                create_user(username='state-' + key + '-' + username, **values)),
         ):
             data = hrfinance_helpers.fixture()
+        if key == 'payroll-field-extended':
+            from tests.test_hrfinance_extended import extended
+            from apps.policy.hrfinance_validators import REQUIRED
+
+            configured, contract, source = extended(data, REQUIRED)
+            return {'case': str(case.pk), 'disclosure': configured.pk,
+                    'contract': contract.pk, 'source': source.pk, 'proof': data['e']['owner'].pk}
         snapshot = hrfinance_helpers.capture(data)
         return {'case': str(case.pk), 'disclosure': data['disclosure_policy'].pk,
                 'snapshot': snapshot.pk, 'proof': data['e']['owner'].pk}
@@ -499,6 +506,8 @@ elif workflow == 'costing-studio-states':
     fixtures = ('costing-studio-project',)
 elif workflow == 'payroll-field-setup':
     fixtures = ('payroll-field-setup',)
+elif workflow == 'payroll-field-extended':
+    fixtures = ('payroll-field-extended',)
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

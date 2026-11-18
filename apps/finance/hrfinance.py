@@ -13,11 +13,13 @@ from apps.documents.contracts import validate,digest
 from apps.documents.validation import finite
 from apps.policy.services import active_component,reference_values,decision_authority,register_reference,save_draft
 from apps.policy.registry import components
-from apps.policy.hrfinance_validators import AUTHORITY,DISCLOSURE,REQUIRED,FIELD_LIST,IDS,MONTH,TEXT,BASIS_SCHEMAS
+from apps.policy.hrfinance_validators import AUTHORITY,DISCLOSURE,REQUIRED,FIELD_LIST,IDS,MONTH,TEXT,BASIS_SCHEMAS,EXTENDED_FIELD_LIST,money_fields,source_kind
 from adapters.forecast import obj,KEY
 from adapters.hrfinance import SuppliedHRExportAdapter,HRExportError,day,timestamp
 from .hrfinance_models import HRFinanceNeed,HRDisclosure,HRReadSnapshot,HRHandoffRecord
 NEED=obj({'purpose':KEY,'entity':KEY,'period':MONTH,'as_of':{'type':'string'},'fields':FIELD_LIST,'justification':{'type':'object','additionalProperties':TEXT},'recipient_ids':IDS})
+NEED_FORMAT_V2 = 'psl.hr-finance-need/v2'
+EXTENDED_NEED = obj({**NEED['properties'], 'format': {'const': NEED_FORMAT_V2}, 'fields': EXTENDED_FIELD_LIST})
 
 def locked(actor,case_id,action,expected=None):
  c=lock_case(actor,case_id,action,expected)
@@ -46,7 +48,7 @@ def current_contract(c):
   if active_component(key,c.need.case).pk!=pk:raise ValidationError('HR/Finance policy changed; prepare a new exact disclosure')
  if HRDisclosure.objects.filter(need=c.need,pk__gt=c.pk).exists():raise ValidationError('Disclosure replaced')
  rules=reference_values(active_component(DISCLOSURE,c.need.case))[0]
- e=subject(c.need.case,rules['source_evidence_id'],'hr_contract_source')
+ e=subject(c.need.case,rules['source_evidence_id'],source_kind(rules))
  if c.need.case.evidence.filter(kind=e.kind,version__gt=e.version).exists():raise ValidationError('HR source-view contract evidence revised')
  return c
 
@@ -59,23 +61,24 @@ def authorized(c):
 
 @transaction.atomic
 def need(actor,case_id,reference,payload,evidence_id,expected):
- c=locked(actor,case_id,'hrfinance.need',expected);validate(KEY,reference);finite(payload);validate(NEED,payload)
+ c=locked(actor,case_id,'hrfinance.need',expected);validate(KEY,reference);finite(payload);validate(EXTENDED_NEED if isinstance(payload,dict) and payload.get('format')==NEED_FORMAT_V2 else NEED,payload)
  if set(payload['justification'])!=set(payload['fields']) or not set(REQUIRED)<=set(payload['fields']):raise ValidationError('Every requested field needs its own purpose justification and exact identity/date fields')
  at=day(payload['as_of'])
  if at.strftime('%Y-%m')!=payload['period'] or at>timezone.localdate():raise ValidationError('As-of date must be actual and within requested period')
- if ('monthly_pay' in payload['fields'])!=('currency' in payload['fields']):raise ValidationError('Monthly pay requires currency')
+ if money_fields(payload['fields'])!=('currency' in payload['fields']):raise ValidationError('Pay fields require currency')
  e=subject(c,evidence_id,'hr_finance_need');v=(HRFinanceNeed.objects.filter(case=c,reference=reference).order_by('-version').values_list('version',flat=True).first() or 0)+1
  r=HRFinanceNeed.objects.create(case=c,reference=reference,version=v,payload=payload,evidence=e,actor=actor)
  event(actor,c,'hrfinance.need',need=r.pk,version=v);bump(c);return r
 
 @transaction.atomic
 def contract(actor,case_id,need_id,operation_key,evidence_id,expected):
- c=locked(actor,case_id,'hrfinance.contract',expected);validate(KEY,operation_key);n=exact(c,HRFinanceNeed,need_id);e=subject(c,evidence_id,'hr_contract_source')
+ c=locked(actor,case_id,'hrfinance.contract',expected);validate(KEY,operation_key);n=exact(c,HRFinanceNeed,need_id);e=subject(c,evidence_id)
  old=HRDisclosure.objects.filter(need=n,operation_key=operation_key).first()
  if old:
   if old.actor_id!=actor.pk or old.evidence_id!=e.pk:raise ValidationError('Disclosure operation intent changed')
   return old
  latest_need(n);policy=active_component(DISCLOSURE,c);rules=reference_values(policy)[0];p=n.payload
+ if e.kind!=source_kind(rules):raise ValidationError('Use the reviewed source-contract version for this disclosure')
  if not set(p['fields'])<=set(rules['allowed_fields']) or not set(p['recipient_ids'])<=set(rules['recipient_ids']) or p['purpose'] not in rules['purposes'] or not rules['from_period']<=p['period']<=rules['to_period']:raise ValidationError('Need exceeds exact configured fields, recipients, purpose or periods')
  if e.pk!=rules['source_evidence_id']:raise ValidationError('Use the exact configured source-view contract evidence')
  for uid in p['recipient_ids']:

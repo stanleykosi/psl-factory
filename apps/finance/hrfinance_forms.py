@@ -9,7 +9,7 @@ def commands(actor,case,data=None):
   path='case' if model==HRFinanceNeed else 'need__case' if model==HRDisclosure else 'contract__need__case'
   q=model.objects.defer('payload') if model==HRReadSnapshot else model.objects
   return forms.ModelChoiceField(q.filter(**{path:case}),required=required)
- def evidence(kind):return forms.ModelChoiceField(case.evidence.filter(kind=kind))
+ def evidence(kind):return forms.ModelChoiceField(case.evidence.filter(kind__in=[kind,'hr_contract_source_v2'] if kind=='hr_contract_source' else [kind]))
  from apps.workflows.models import HumanTask
  from .hr_scope import PURPOSE,REPLIES
  def scope_task():return forms.ModelChoiceField(HumanTask.objects.filter(case=case,context__purpose=PURPOSE,status='open'))

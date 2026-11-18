@@ -15,7 +15,7 @@ def draft_disclosure_fields(actor, case_id, base_id, latest_revision, fields, ev
     from apps.core.services import bump, event
     from apps.documents.contracts import validate
     from apps.identity.services import require
-    from .hrfinance_validators import DISCLOSURE, FIELD_LIST
+    from .hrfinance_validators import DISCLOSURE, FIELD_LIST, EXTENDED_FIELD_LIST, DISCLOSURE_FORMAT_V2
     from .models import Configuration
     from .impact import configuration
     from .services import active_component, reference_values, validate_envelope
@@ -32,8 +32,9 @@ def draft_disclosure_fields(actor, case_id, base_id, latest_revision, fields, ev
         raise ValidationError('The disclosure changed. Refresh before proposing its fields.')
     if not isinstance(reason, str) or not reason.strip() or len(reason) > 1000:
         raise ValidationError('Provide a concise reason for the visibility change.')
-    validate(FIELD_LIST, fields)
-    content = dict(reference_values(current)[0], allowed_fields=fields)
+    original = reference_values(current)[0]
+    validate(EXTENDED_FIELD_LIST if original.get('format') == DISCLOSURE_FORMAT_V2 else FIELD_LIST, fields)
+    content = dict(original, allowed_fields=fields)
     draft = draft_hrfinance_policy(actor, case.pk, DISCLOSURE, content, evidence_id, effective_from)
     validate_envelope(case, draft.envelope)
     event(actor, case, 'policy.disclosure_fields_proposed', configuration=draft.pk,
@@ -93,6 +94,8 @@ def review_disclosure_fields(actor, case_id, configuration_id, expected_state, a
 def draft_hrfinance_policy(actor,case_id,component,content,evidence_id,effective_from):
     case=lock_case(actor,case_id,'policy.configure')
     if component not in SCHEMAS:raise ValidationError('Choose an HR/Finance interface')
-    r=register_reference(actor,case.pk,'hrfinance:'+str(uuid4()),SCHEMAS[component][0],content,evidence_id)
+    from .hrfinance_validators import DISCLOSURE,disclosure_schema
+    schema=disclosure_schema(content)[0] if component==DISCLOSURE else SCHEMAS[component][0]
+    r=register_reference(actor,case.pk,'hrfinance:'+str(uuid4()),schema,content,evidence_id)
     value={'artifact_ref':r.ref,'artifact_version':r.version,'sha256':r.sha256,'schema_ref':r.schema_ref}
     return save_draft(actor,case.pk,{'slot_id':components()[component]['parent_decision_id'],'component_id':component,'component_schema_ref':components()[component]['schema_ref'],'schema_version':'1','policy_revision':1,'lifecycle':'draft','subject_scope':{'kind':'project' if case.kind=='project' else 'service','ref':str(case.pk)},'effective_from':aware(effective_from).isoformat(),'effective_until':None,'evidence_refs':['evidence:'+str(evidence_id)],'human_decision_ref':'evidence:'+str(evidence_id),'implementation_id':'psl.reference-validation','implementation_version':'1','reviewed_implementation_ref':'code:apps/policy/services.py#reference-validation-v1','fixture_scope':'synthetic_test' if case.synthetic else 'operational','value':value})

@@ -1,0 +1,16 @@
+{
+  "classification": "Synthetic contract examples for engineering tests. Owner field choices remain unset for operational use.",
+  "format": "psl.hr-finance-disclosure/v2",
+  "need_format": "psl.hr-finance-need/v2",
+  "source_fields": ["employee_id", "bu", "effective_from", "effective_until", "role", "monthly_pay", "currency", "gross_pay", "deductions", "bank_account", "home_address", "date_of_birth"],
+  "row_values": {
+    "role": "SAMPLE-role",
+    "monthly_pay": "123.45",
+    "currency": "NGN",
+    "gross_pay": "0",
+    "deductions": null,
+    "bank_account": "000123-SAMPLE",
+    "home_address": "SAMPLE address for a fictional staff record",
+    "date_of_birth": "1990-01-02"
+  }
+}

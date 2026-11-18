@@ -16,20 +16,15 @@ from apps.identity.models import Grant
 from apps.identity.services import require, visible_cases
 from apps.identity.intake import options
 from apps.policy.services import resolve
+from apps.policy.hrfinance_validators import FIELDS
 
 from .views import accessible_case
-
-
-FIELD_LABELS = {
-    'employee_id': 'Staff reference', 'bu': 'Business unit',
-    'effective_from': 'Membership start date', 'effective_until': 'Membership end date',
-    'role': 'Job role', 'monthly_pay': 'Monthly pay', 'currency': 'Pay currency',
-}
+from .presentation import HR_FIELD_LABELS as FIELD_LABELS
 
 
 class DisclosureFieldsForm(forms.Form):
     fields = forms.MultipleChoiceField(label='Fields allowed in the HR handoff',
-        choices=list(FIELD_LABELS.items()), widget=forms.CheckboxSelectMultiple)
+        choices=[(key, FIELD_LABELS[key]) for key in FIELDS], widget=forms.CheckboxSelectMultiple)
     evidence = forms.ChoiceField(label='Decision evidence')
     reason = forms.CharField(label='Reason for the change', max_length=1000,
                              widget=forms.Textarea(attrs={'rows': 3}))
@@ -113,6 +108,7 @@ def overview(request, case_id):
     form = None
     visibility_draft = None
     disclosure_hold = None
+    field_rows = []
     role_rows = []
     role_hold = None
     if area == 'roles':
@@ -127,7 +123,7 @@ def overview(request, case_id):
             role_rows = [{'person': people[row['user_id']], 'roles': row['roles'],
                           'eligible': row['eligible_role_bundle']} for row in assignments]
     if area == 'payroll':
-        from apps.policy.hrfinance_validators import DISCLOSURE
+        from apps.policy.hrfinance_validators import DISCLOSURE, DISCLOSURE_FORMAT_V2
         from apps.policy.models import Configuration
         from apps.policy.services import reference_values
 
@@ -140,6 +136,10 @@ def overview(request, case_id):
                 disclosure_hold = 'Current disclosure requires access to its original rules.'
         if current.status == 'ACTIVE':
             disclosure = reference_values(current.configuration)[0] if not disclosure_hold else None
+            if disclosure:
+                supported = disclosure.get('source_fields', FIELDS)
+                field_rows = [{'label': label, 'included': key in disclosure['allowed_fields'],
+                               'supported': key in supported} for key, label in FIELD_LABELS.items()]
             latest = Configuration.objects.filter(case=case, component=DISCLOSURE).order_by('-revision').first()
             if latest.pk != current.configuration.pk:
                 state = latest.states.order_by('-pk').first().state
@@ -151,6 +151,8 @@ def overview(request, case_id):
                     'latest_revision': latest.revision, 'revision': case.revision,
                     'effective_from': timezone.localtime().replace(microsecond=0),
                 })
+                if disclosure.get('format') == DISCLOSURE_FORMAT_V2:
+                    form.fields['fields'].choices = [(key, FIELD_LABELS[key]) for key in disclosure['source_fields']]
                 proofs = case.evidence.filter(kind='policy_decision').defer('body').order_by('-pk')[:30]
                 form.fields['evidence'].choices = [(row.pk, f'Version {row.version} · {row.source[:120]}') for row in proofs]
         if request.method == 'POST':
@@ -176,8 +178,8 @@ def overview(request, case_id):
                   'can_configure':can_configure,'navigation':[(key,value[0]) for key,value in AREAS.items()],
                   'disclosure':disclosure, 'visibility_form':form, 'visibility_draft':visibility_draft,
                   'disclosure_hold':disclosure_hold,
-                  'role_rows':role_rows, 'role_hold':role_hold, 'observed_at':timezone.now(),
-                  'disclosure_fields':[FIELD_LABELS[field] for field in disclosure['allowed_fields']] if disclosure else []})
+                  'field_rows':field_rows,
+                  'role_rows':role_rows, 'role_hold':role_hold, 'observed_at':timezone.now()})
 
 
 @login_required

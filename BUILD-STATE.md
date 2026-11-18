@@ -1,5 +1,13 @@
 # PSL operations factory build state
 
+## Current extended visibility controls · 18 November 2026
+
+Hosted111 adds the five wider design fields through explicit version2 source/need contracts, while version1 remains closed. Source declarations, exact proof family, typed validation and fresh native HR approval control private use. UI supports all twelve fields. HR Assistant reads current metadata with private payloads deferred and uses plain source citations.
+
+Corrected109 passed107 PostgreSQL tests/465.918 seconds,110 passed38/50.277 seconds and111 passed36/40.298 seconds. Retained108 loader error, one error/87 not run. Successful runs passed checks/drift/fixtures/final markers. Matching1,665 runtimepaths and web/worker startup. Browser914/version3 passed pairing refusal, full comparison, validation, activation and phone375/375. SCR13-fields journey completed. Ledger201 observed/187 open/61 unseen.
+
+Next implement approved answer reuse, team/no-login issue recording and remaining client/project/Finance variants. Deployment configuration migration is also pending under the CLI's1 December2026 TOML deadline. HOD values remain deferred. Full262 remains incomplete.
+
 ## Current focused rule review · 18 November 2026
 
 Hosted107 passed22 focused PostgreSQL checks in18.854 seconds after106 passed80 in61.100 seconds. Both passed checks/drift/fixtures/final markers. Matching1,664 runtimepaths, successful web/worker startup. Setup now compares exact earlier/proposed fields and disclosure terms with recorded reason, then performs separate native validation and activation. Fresh original-source access, permission, state, revision and concurrent-review checks apply.

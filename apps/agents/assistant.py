@@ -171,10 +171,11 @@ def tool_context(conversation):
             if handoffs:
                 next_work.append('pmo-finance/v1')
     else:
+        from apps.core.presentation import HR_FIELD_LABELS
         from apps.finance.hrfinance import check_snapshot_access
         from apps.finance.models import HRReadSnapshot
 
-        snapshots = HRReadSnapshot.objects.filter(contract__need__case=case, status='accepted').select_related(
+        snapshots = HRReadSnapshot.objects.defer('payload').filter(contract__need__case=case, status='accepted').select_related(
             'contract__need__case',
         ).order_by('-pk')[:5]
         for snapshot in snapshots:
@@ -182,7 +183,11 @@ def tool_context(conversation):
                 check_snapshot_access(actor, snapshot)
             except (PermissionDenied, ValidationError):
                 continue
-            source(f'HR handoff #{snapshot.pk}', 'An accepted read-only handoff is available under current access.',
+            details = snapshot.contract.payload
+            field_names = ', '.join(HR_FIELD_LABELS[key] for key in details['fields'])
+            source(f'HR handoff #{snapshot.pk}',
+                   f"Accepted read-only handoff for {details['period']}. "
+                   f"Purpose {details['purpose'].replace('_', ' ')}. Approved fields include {field_names}.",
                    'hrfinance_snapshot', case.pk, snapshot.pk)
     next_work.extend('assistant:' + target for target in PERSONAS
                      if target != persona and cases_for(actor, target).filter(pk=case.pk).exists())
