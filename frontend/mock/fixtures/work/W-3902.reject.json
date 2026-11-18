@@ -1,0 +1,249 @@
+{
+  "id": "W-3902",
+  "title": "Fixed asset schedule · October",
+  "line": "Fixed asset schedule",
+  "reference": "PPE-0006",
+  "state": "cancelled",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Register review",
+      "status": "stopped"
+    },
+    {
+      "name": "Date review (if unclear)",
+      "status": "not_started"
+    },
+    {
+      "name": "Calculate",
+      "status": "not_started"
+    },
+    {
+      "name": "Schedule review",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3902",
+      "kind": "decide",
+      "title": "Review the asset register",
+      "required_role": "PPE reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "October register",
+          "number": 1,
+          "drafted_at": "2026-11-13T11:40:00Z"
+        },
+        "basis": "Approve the October register as the source for the schedule.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": false,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PPE reviewer",
+              "status": "approved",
+              "is_you": false,
+              "person": "Ada Okafor",
+              "decided_at": "2026-11-13T14:05:00Z"
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the asset register",
+        "status": "done",
+        "source": "PPE_REGISTER_OCT.XLSX · 64 ASSETS"
+      },
+      {
+        "text": "Compared with September's schedule",
+        "status": "done",
+        "source": "PPE-0005"
+      },
+      {
+        "text": "Found 3 assets with unclear in-service dates",
+        "status": "done",
+        "source": "VALUES NOT READ"
+      },
+      {
+        "text": "Hand to register review",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-13T09:05:00Z"
+  },
+  "next_step": "Ada Okafor rejected the October register.",
+  "sample": true,
+  "workspace": {
+    "line_key": "fixed_assets",
+    "screen": "SCR-55",
+    "view": "rejected",
+    "status": {
+      "label": "REJECTED",
+      "tone": "stopped"
+    },
+    "sections": [
+      {
+        "key": "rejected",
+        "kind": "text",
+        "items": [],
+        "note": "Ada Okafor rejected the October register on 13 Nov."
+      },
+      {
+        "key": "register_changes",
+        "kind": "table",
+        "title": "Register changes",
+        "columns": [
+          {
+            "key": "asset",
+            "label": "ASSET",
+            "kind": "text"
+          },
+          {
+            "key": "change",
+            "label": "CHANGE",
+            "kind": "text"
+          },
+          {
+            "key": "cost",
+            "label": "COST",
+            "kind": "money"
+          }
+        ],
+        "items": [
+          {
+            "id": "A-0412",
+            "cells": [
+              {
+                "column": "asset",
+                "text": "Dell server rack · A-0412"
+              },
+              {
+                "column": "change",
+                "text": "Added 02 Oct"
+              },
+              {
+                "column": "cost",
+                "money": {
+                  "amount": "8400000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              }
+            ]
+          },
+          {
+            "id": "A-0388",
+            "cells": [
+              {
+                "column": "asset",
+                "text": "Toyota Hilux · A-0388"
+              },
+              {
+                "column": "change",
+                "text": "Disposed 20 Oct"
+              },
+              {
+                "column": "cost",
+                "money": {
+                  "amount": "14000000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              }
+            ]
+          },
+          {
+            "id": "L-3",
+            "cells": [
+              {
+                "column": "asset",
+                "text": "3 laptops"
+              },
+              {
+                "column": "change",
+                "text": "Added"
+              },
+              {
+                "column": "cost",
+                "money": {
+                  "amount": "3150000.00",
+                  "currency": "NGN",
+                  "unknown": false
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "PPE-0006",
+          "label": "ASSETS · PPE-0006"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}
