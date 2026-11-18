@@ -217,3 +217,7 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-section--strip .ws-fact--blocked { background: var(--signal-tint); }
   .ws-section--strip .ws-fact--blocked dd, .ws-section--strip .ws-fact--blocked dt { color: var(--signal-ink); }
 }
+
+/* F-31: the engagement's Confirm PM form sits in the side panel with no box of its own; the department input form fills the Drawer */
+.ws-form--bare { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.ws-respdrawer { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
