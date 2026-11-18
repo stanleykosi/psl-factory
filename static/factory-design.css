@@ -173,4 +173,6 @@
 }
 
 .factory-case-layout > * { min-width: 0; }
+.issue-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.issue-facts > div:last-child { grid-column: 1 / -1; }
 .table-scroll { max-width: 100%; overflow-x: auto; }

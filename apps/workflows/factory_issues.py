@@ -101,7 +101,35 @@ def response(work):
 
 
 def investigation(work,state):
-    return Attempt.objects.filter(activity__work=work,activity__key=investigation_key(work,state),activity__kind='ACT04',phase='observed').order_by('-pk').first()
+    attempts = Attempt.objects.filter(activity__work=work,activity__kind='ACT04',phase='observed')
+    exact = attempts.filter(activity__key=investigation_key(work,state)).order_by('-pk').first()
+    if exact:
+        return exact
+    # Earlier releases included display labels in the native projection. Keep
+    # their immutable keys and reconstruct every source/check pin exactly.
+    for attempt in attempts.filter(result__head=work.source_head_id).select_related('activity').order_by('-pk')[:2]:
+        observed = attempt.result.get('investigation')
+        if not isinstance(observed,dict) or canonical_report(observed) != canonical_report(state['native']):
+            continue
+        previous = dict(state,native=observed)
+        if attempt.activity.key == investigation_key(work,previous):
+            return attempt
+    return None
+
+
+def canonical_report(value):
+    """Normalise known presentation-only additions while retaining authority pins."""
+    result = dict(value)
+    result['gaps'] = ['PM severity classification is not recorded' if gap ==
+        'Project manager severity assessment is not recorded' else gap for gap in value.get('gaps',[])]
+    owner = dict(value.get('owner_context') or {})
+    owner.pop('label',None)
+    if owner == {'mode':'internal','status':'current'}:
+        owner = {}
+    result.pop('owner_context',None)
+    if owner:
+        result['owner_context'] = owner
+    return result
 
 
 @read_observation
@@ -125,12 +153,12 @@ def snapshot(work,value,reader=None):
 def eligible(work,value,state,latest,missing,stale,ts,jobs):
     if missing or stale:return [],'Current configured intake sources required: '+', '.join(missing+stale)
     if state['native']['status'] not in ['Open','In Progress']:return [],'Continue resolved or closed issues through the native closure/reopen flow; stop this owner follow-up if no longer needed'
-    if not investigation(work,state):return ['ACT04'],'Investigate exact current issue and permitted external source observations'
+    if not investigation(work,state):return ['ACT04'],'Investigate the current issue and available source evidence'
     if state['native']['owner_context']['mode']=='team' and state['native']['owner_context']['status']!='current':
-        return [],'Review the external owner and the permitted human recorder before requesting its response'
-    if response(work):return ['ACT13'],'Verify the scoped investigation and recorded owner follow-up, not issue closure'
-    if any(t.status=='open' for t in ts):return [],'Waiting for the current responsible owner to record a native next action'
-    return ['ACT05'],'Create the bounded internal owner follow-up'
+        return [],'Choose the team and its follow-up coordinator'
+    if response(work):return ['ACT13'],'Verify the current investigation and recorded owner response'
+    if any(t.status=='open' for t in ts):return [],'Waiting for the owner’s update'
+    return ['ACT05'],'Request the owner’s update'
 
 
 def act(work,choice,value,latest,missing,ts,jobs):
@@ -228,6 +256,27 @@ def refresh(actor,work_id,expected,case_expected,reason,restart=False):
         TaskEvent.objects.create(task=t,actor=actor,action='issue.source_superseded',data={'reason':reason});t.status='returned';t.revision+=1;t.save(update_fields=['status','revision'])
     work.source_head=capture(actor,work.case,data,'factory.issue_source');work.status='ready';work.cancel_requested=False;work.finding='';work.revision+=1;work.save()
     event(actor,work.case,'factory.issue_reassessed',work=work.pk,head=work.source_head_id,reason=reason);return work
+
+
+@transaction.atomic
+def request_update(actor, work_id, expected, case_expected, background):
+    """A new human request starts another exact follow-up within the original allowance."""
+    if any(type(value) is not int or value < 1 for value in [work_id, expected, case_expected]):
+        raise ValidationError('Use the exact current work and project revisions.')
+    if type(background) is not bool:
+        raise ValidationError('Choose whether to continue this update in the background.')
+    work = locked(actor, work_id, expected, case_expected, 'factory.manage')
+    if work.status != 'verified' or work.cancel_requested:
+        raise ValidationError('Finish or recover the current follow-up before requesting another update.')
+    issue, _ = inputs(actor, work.case, work.request['issue_id'])
+    if issue.current.status not in {'Open', 'In Progress'}:
+        raise ValidationError('Use the issue register for resolution and closure.')
+    work = refresh(actor, work.pk, work.revision, work.case.revision,
+                   'Requested another update from the current issue owner.')
+    if background:
+        from .factory_progress import set_progress
+        set_progress(actor, work.pk, work.revision, True)
+    return work
 
 
 @transaction.atomic

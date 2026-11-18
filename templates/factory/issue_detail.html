@@ -5,7 +5,7 @@
 <div class="factory-case-layout"><div>
   {% if row.issues.issue %}<section class="card"><h2>Current issue</h2>
     <p>{{ row.issues.issue.reference }} · {{ row.issues.issue.current.title }}</p>
-    <dl class="decision-facts"><div><dt>Status</dt><dd>{{ row.issues.issue.current.status }}</dd></div><div><dt>Severity</dt><dd>{{ row.issues.issue.current.severity|default:'Awaiting assessment' }}</dd></div><div><dt>Next action</dt><dd>{{ row.issues.issue.current.next_action }}</dd></div></dl>
+    <dl class="decision-facts issue-facts"><div><dt>Status</dt><dd>{{ row.issues.issue.current.status }}</dd></div><div><dt>Severity</dt><dd>{{ row.issues.issue.current.severity|default:'Awaiting assessment' }}</dd></div><div><dt>Next action</dt><dd>{{ row.issues.issue.current.next_action }}</dd></div></dl>
     <p><a href="{% url 'escalations' case.pk %}">Escalation decisions</a> · <a href="{% url 'changes' case.pk %}">Related changes</a></p>
     {% if row.issues.team.mode == 'team' %}<p>Follow-up coordinator · {% firstof row.issues.team.assignment.recorder.get_full_name row.issues.team.assignment.recorder.username %}</p>
     {% if row.issues.team.finding %}<p role="status">{{ row.issues.team.finding }}</p>{% endif %}{% endif %}
@@ -14,7 +14,7 @@
   </section>{% endif %}
   <section class="card"><h2>Investigation</h2>
     {% if row.issues.finding %}<p role="status">{{ row.issues.finding }}</p>{% endif %}
-    {% if row.issues.native %}<ul>{% for gap in row.issues.native.gaps %}<li>{{ gap }}</li>{% empty %}<li>The selected source checks are complete.</li>{% endfor %}</ul>
+    {% if row.issues.native %}<ul>{% for gap in row.issues.display_gaps %}<li>{{ gap }}</li>{% empty %}<li>The selected source checks are complete.</li>{% endfor %}</ul>
     <details><summary>Source observations and related records</summary>
       {% for source in row.issues.native.references.references %}<article><h3>{{ source.kind|readable }} · {{ source.source_ref }}</h3>
         {% if source.source_identity %}<p>Source · {{ source.source_identity }}</p>{% endif %}
@@ -31,6 +31,11 @@
     </article>{% endfor %}
     {% for task in row.tasks %}<p>{{ task.status|readable }}</p>{% empty %}<p>No owner response requested yet.</p>{% endfor %}</section>
 </div><aside class="factory-action-panel">
+  {% if row.can_request_update %}<section class="card"><h2>Continue owner follow-up</h2><form method="post">{% csrf_token %}
+    <input type="hidden" name="action" value="request_update"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
+    {% if row.can_background_update %}<label><input type="checkbox" name="background" checked>Continue in background after requesting</label>{% endif %}
+    <button>Request another owner update</button>
+  </form></section>{% endif %}
   {% if team_reply_form %}<section class="card"><h2>Record the team reply</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="team_respond">{{ team_reply_form.as_p }}<button>Record owner reply</button></form></section>{% endif %}
   {% for task in row.tasks %}{% if task.status == 'open' %}<section class="card"><h2>Owner update</h2>
     {% if row.issues.team.mode == 'team' %}<p>The configured coordinator records the actual external reply with its proof and time.</p>

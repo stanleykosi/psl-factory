@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
@@ -37,7 +38,13 @@ def owner(request, case_id, issue_id):
     if request.GET.get('work'):
         from apps.workflows import factory, factory_issues
         from apps.workflows.models import FactoryWork
-        work = get_object_or_404(FactoryWork, case=case, pk=request.GET['work'], definition=factory_issues.DEFINITION)
+        try:
+            work_id = int(request.GET['work'])
+            if not 1 <= work_id <= 9223372036854775807:
+                raise ValueError
+        except ValueError:
+            raise Http404('Open a current issue investigation.') from None
+        work = get_object_or_404(FactoryWork, case=case, pk=work_id, definition=factory_issues.DEFINITION)
         factory.access(request.user, case, 'factory.manage', factory_issues.DEFINITION)
         if work.request.get('issue_id') != issue.pk:
             raise PermissionDenied('Open the investigation for this issue.')

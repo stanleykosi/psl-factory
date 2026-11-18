@@ -318,6 +318,198 @@ class IssueTeamTests(TestCase):
         self.assertEqual(latest.states.order_by('-pk').first().state, 'draft')
         self.assertEqual(reference_values(latest)[0]['teams'][0]['key'], 'sample-engineering')
 
+    def test_invalid_reply_ui_preserves_fields_with_plain_error_and_current_update_choices(self):
+        self.assign()
+        factory_issues.sync_owner(self.work.pk)
+        factory.run_until_wait(self.work.pk)
+        self.client.force_login(self.a)
+        url = reverse('factory_detail', args=[self.work.pk])
+        page = self.client.get(url)
+        form = page.context['team_reply_form']
+        self.assertEqual(list(form.fields['operation'].choices), [('acknowledge', 'Acknowledge')])
+        self.assertContains(page, 'Africa/Lagos')
+        data = dict(form.initial, action='team_respond', operation='acknowledge', party='Sample engineer',
+            channel='email', responded_at=(timezone.now()+timedelta(days=1)).isoformat(),
+            source_ref='synthetic:invalid-time', evidence=self.e['requirements'].pk,
+            note='Sample source update', next_action='Investigate sample cause')
+        refused = self.client.post(url, data)
+        self.assertEqual(refused.status_code, 200)
+        self.assertContains(refused, 'The actual reply time cannot be in the future.')
+        self.assertNotContains(refused, '[&#x27;The actual reply time')
+        self.assertEqual(refused.context['team_reply_form']['party'].value(), 'Sample engineer')
+        self.assertFalse(IssueTeamReply.objects.exists())
+
+    def test_malformed_owner_work_link_is_a_not_found_response(self):
+        self.client.force_login(self.a)
+        base = reverse('issue_team_owner', args=[self.c.pk, self.issue.pk])
+        for value in ['abc', '-1', '0', '999999999999999999999999']:
+            self.assertEqual(self.client.get(base+'?work='+value).status_code, 404)
+
+    def test_progress_command_enforces_its_batch_bound_through_native_steps(self):
+        from io import StringIO
+        from django.core.management import call_command, CommandError
+        for limit in [0, -1, 129, True, 1.5]:
+            with self.assertRaises(CommandError):
+                call_command('work_factory_progress', limit=limit, stdout=StringIO())
+        self.assign()
+        factory_issues.sync_owner(self.work.pk)
+        self.work.refresh_from_db()
+        factory_progress.set_progress(self.a, self.work.pk, self.work.revision, True)
+        output = StringIO()
+        call_command('work_factory_progress', limit=2, stdout=output)
+        self.assertIn('Background work steps checked: 2', output.getvalue())
+        self.assertEqual(FactoryAttempt.objects.filter(activity__work=self.work,
+            activity__kind__in=['ACT04', 'ACT05'], phase='observed').count(), 2)
+        self.assertTrue(factory_issues.tasks(self.work).filter(status='open').exists())
+
+    def complete_followup(self, assignment):
+        factory.run_until_wait(self.work.pk)
+        self.work.refresh_from_db()
+        task = factory_issues.tasks(self.work).get(status='open')
+        self.issue.refresh_from_db()
+        operation = 'progress' if self.issue.current.acknowledged_at else 'acknowledge'
+        factory_issues.respond(self.a, self.work.pk, self.work.revision, rev(self.c), task.pk,
+            task.revision, operation, self.e['requirements'].pk, 'Sample actual team update',
+            'Investigate the sample source', team_reply={'assignment_id': assignment.pk,
+            'operation_key': uuid4(), 'party': 'Sample Engineering', 'channel': 'email',
+            'responded_at': timezone.now()-timedelta(minutes=1), 'source_ref': 'synthetic:next-team-update'})
+        factory.run_until_wait(self.work.pk)
+        self.work.refresh_from_db()
+        self.assertEqual(self.work.status, 'verified', self.work.finding)
+        return task
+
+    def test_readable_labels_preserve_the_canonical_investigation_and_prior_verification(self):
+        assignment = self.assign()
+        factory_issues.sync_owner(self.work.pk)
+        self.complete_followup(assignment)
+        self.assertIn('PM severity classification is not recorded', factory_issues.report(self.work, self.a)['gaps'])
+        self.assertTrue(factory_issues.verify(self.work, self.a)['verified'])
+        self.client.force_login(self.a)
+        page = self.client.get(reverse('factory_detail', args=[self.work.pk]))
+        self.assertContains(page, 'Project manager severity assessment is not recorded')
+        self.assertNotContains(page, 'PM severity classification is not recorded')
+        self.assertContains(page, 'Request another owner update')
+        self.assertTrue(factory_issues.verify(self.work, self.a)['verified'])
+
+    def test_another_update_preserves_allowance_history_and_rejects_old_response_forms(self):
+        assignment = self.assign()
+        factory_issues.sync_owner(self.work.pk)
+        old_task = self.complete_followup(assignment)
+        old_head, used, old_revision = self.work.source_head_id, self.work.budget_used, self.work.revision
+        result = factory_issues.request_update(self.a, self.work.pk, old_revision, rev(self.c), True)
+        self.assertEqual(result.budget_used, used)
+        self.assertNotEqual(result.source_head_id, old_head)
+        self.assertEqual(IssueTeamReply.objects.count(), 1)
+        self.assertEqual(result.background_progress.status, 'queued')
+        factory.run_until_wait(self.work.pk)
+        self.work.refresh_from_db()
+        current_task = factory_issues.tasks(self.work).get(status='open')
+        self.assertNotEqual(current_task.pk, old_task.pk)
+        with self.assertRaises(ValidationError):
+            factory_issues.respond(self.a, self.work.pk, self.work.revision, rev(self.c), old_task.pk,
+                old_task.revision, 'progress', self.e['requirements'].pk, 'Stale old form', 'Old source')
+        self.client.force_login(self.a)
+        page = self.client.get(reverse('factory_detail', args=[self.work.pk]))
+        self.assertEqual(list(page.context['team_reply_form'].fields['operation'].choices),
+                         [('start', 'Started'), ('progress', 'Progress update')])
+        self.complete_followup(assignment)
+        self.assertEqual(IssueTeamReply.objects.count(), 2)
+        self.assertEqual(factory_issues.tasks(self.work).filter(status='completed').count(), 2)
+        self.assertGreater(self.work.budget_used, used)
+
+    def test_new_update_requires_current_authority_and_preserves_pause_without_background_consent(self):
+        assignment = self.assign()
+        factory_issues.sync_owner(self.work.pk)
+        self.work.refresh_from_db()
+        job = factory_progress.set_progress(self.a, self.work.pk, self.work.revision, True)
+        factory_progress.set_progress(self.a, self.work.pk, self.work.revision, False)
+        self.complete_followup(assignment)
+        old_head, old_revision = self.work.source_head_id, self.work.revision
+        Grant.objects.filter(user=self.a, case=self.c, action='factory.execute').update(active=False)
+        with self.assertRaises(PermissionDenied):
+            factory_issues.request_update(self.a, self.work.pk, old_revision, rev(self.c), True)
+        self.work.refresh_from_db()
+        self.assertEqual(self.work.source_head_id, old_head)
+        factory_issues.request_update(self.a, self.work.pk, old_revision, rev(self.c), False)
+        job.refresh_from_db()
+        self.assertEqual(job.status, 'paused')
+        with self.assertRaises(ValidationError):
+            factory_issues.request_update(self.a, self.work.pk, old_revision, rev(self.c), False)
+
+    def test_issue_intake_uses_named_projects_and_one_project_control(self):
+        self.client.force_login(self.a)
+        url = reverse('factory_create')+'?definition=pmo-issues/v1&case='+str(self.c.pk)
+        page = self.client.get(url)
+        self.assertNotContains(page, 'Case object (')
+        self.assertContains(page, 'Open issue follow-up')
+        self.assertEqual(page.content.decode().count('name="case"'), 1)
+
+    def test_another_manager_can_request_an_update_without_worker_execution_grant(self):
+        assignment = self.assign()
+        factory_issues.sync_owner(self.work.pk)
+        self.complete_followup(assignment)
+        other = get_user_model().objects.create_user('sample-followup-manager')
+        for action in ['case.read','issue.read','factory.read','factory.manage','evidence.add']:
+            Grant.objects.create(user=other, case=self.c, action=action)
+        self.client.force_login(other)
+        page = self.client.get(reverse('factory_detail', args=[self.work.pk]))
+        self.assertContains(page, 'Request another owner update')
+        self.assertNotContains(page, 'Continue in background after requesting')
+        factory_issues.request_update(other, self.work.pk, self.work.revision, rev(self.c), False)
+        self.work.refresh_from_db()
+        self.assertEqual(self.work.source_head.created_by_id, other.pk)
+        page = self.client.get(reverse('factory_detail', args=[self.work.pk]))
+        self.assertNotContains(page, 'Continue source checks')
+        Grant.objects.create(user=other, case=self.c, action='factory.execute')
+        page = self.client.get(reverse('factory_detail', args=[self.work.pk]))
+        self.assertContains(page, 'Continue source checks')
+
+    def legacy_investigation(self, state, report):
+        """Persist an earlier-format observation as migration compatibility input."""
+        from apps.workflows.models import FactoryActivity
+        from apps.workflows.factory_delivery import investigation_key
+        previous = dict(state, native=report)
+        activity = FactoryActivity.objects.create(work=self.work, kind='ACT04',
+            key=investigation_key(self.work, previous), plan_revision=self.work.plan_revision, status='succeeded')
+        return FactoryAttempt.objects.create(activity=activity, number=1, phase='observed',
+            fence=self.work.fence, observation=previous,
+            result={'head': self.work.source_head_id, 'investigation': report, 'issue_resolution_verified': False})
+
+    def test_pre_team_observation_preserves_exact_source_and_check_pins(self):
+        _, value = factory.profile(self.work)
+        state = factory_issues.snapshot(self.work, value, reader=self.a)[0]
+        previous = deepcopy(state['native'])
+        previous.pop('owner_context')
+        legacy = self.legacy_investigation(state, previous)
+        from django.test.utils import CaptureQueriesContext
+        with CaptureQueriesContext(connection) as captured:
+            self.assertEqual(factory_issues.investigation(self.work, state).pk, legacy.pk)
+        self.assertLessEqual(len(captured), 2)
+        changed = deepcopy(state)
+        changed['checks']['response'] = 999999
+        self.assertIsNone(factory_issues.investigation(self.work, changed))
+        changed = deepcopy(state)
+        changed['native']['state_id'] += 1
+        self.assertIsNone(factory_issues.investigation(self.work, changed))
+
+    def test_earlier_display_wording_keeps_exact_team_authority_and_refuses_changed_pins(self):
+        self.assign()
+        factory_issues.sync_owner(self.work.pk)
+        self.work.refresh_from_db()
+        _, value = factory.profile(self.work)
+        state = factory_issues.snapshot(self.work, value, reader=self.a)[0]
+        previous = deepcopy(state['native'])
+        previous['gaps'] = ['Project manager severity assessment is not recorded' if gap ==
+            'PM severity classification is not recorded' else gap for gap in previous['gaps']]
+        legacy = self.legacy_investigation(state, previous)
+        self.assertEqual(factory_issues.investigation(self.work, state).pk, legacy.pk)
+        changed = deepcopy(state)
+        changed['native']['owner_context']['policy_id'] += 1
+        self.assertIsNone(factory_issues.investigation(self.work, changed))
+        changed = deepcopy(state)
+        changed['native']['references']['revision_id'] = 999999
+        self.assertIsNone(factory_issues.investigation(self.work, changed))
+
 
 class IssueTeamConcurrencyTests(TransactionTestCase):
     def setUp(self):

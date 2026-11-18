@@ -1,7 +1,7 @@
 {
   "design_consolidation_20261116": {
     "issue_team_followup_20261118": {
-      "status": "postgresql_passed_hosted115_browser_owner_saved_reply_pending",
+      "status": "postgresql120_passed_hosted120_browser_verified_checkpoint",
       "process_ids": ["P50", "P51", "P54", "P55"],
       "failed_112": {"deployment": "1345bbd3-b187-48bd-b164-f1b261e044ed", "passed": 10, "errors": 1, "not_run": 63, "seconds": 16.557, "final_exit": 1, "reason": "Frozen package omitted new URL routes", "fixtures_run": false},
       "failed_113": {"deployment": "0dab3297-a4b8-41aa-964d-d4c9423f61a6", "passed": 59, "failures": 1, "not_run": 14, "seconds": 238.821, "final_exit": 1, "reason": "Missing authorised original source label in issue register", "fixtures_run": false},
@@ -11,7 +11,21 @@
       "runtime_mismatches": 0,
       "runtime_115": {"web": "e734ca23-0084-44a0-809b-06e9bc17a87e", "worker": "cc148b66-eb36-4633-8f69-69dafa1f2f65", "startup": "passed"},
       "synthetic_fixture": {"case": "c01cf601-288c-4d0e-9490-7bc15b088a09", "work": 100, "issue": 10, "proof": 1857},
-      "next": ["Improve bounded worker queue throughput", "Finish same browser reply and verification", "External closure and reminder variants"],
+      "browser": {"source": 1869, "future_time_refusal": "passed", "actual_response": "2026-11-18T09:36:00+01:00", "recorded_at": "2026-11-18T09:39:11+01:00", "verified_at": "2026-11-18T09:42:43+01:00", "native_issue": "Open", "phone_body_and_viewport": [375,390]},
+      "checkpoint": "5503edc4",
+      "failed_116": {"deployment": "7edcfa8c-3c20-422f-8c57-26114b4f3d3a", "passed": 16, "failures": 1, "not_run": 35, "seconds": 33.033, "final_exit": 1, "reason": "Test counted coordinator observations as domain steps", "fixtures_run": false},
+      "package_117": {"deployment": "a2c0b4b2-0e9c-42e0-8985-9cfdfe2b0aed", "passed": 52, "seconds": 301.458, "final_exit": 0, "browser_finding": "Display wording changed an old investigation key; corrected in118"},
+      "package_118": {"deployment": "d74a7163-5a3b-4774-848f-bbc1c54d8784", "passed": 58, "seconds": 156.468, "final_exit": 0},
+      "runtime_118": {"web": "10fa95c8-2157-43d8-bacf-9de351840212", "worker": "621b2ef0-4a2d-4462-af7e-343bf2a6a763", "paths_per_service": 1676, "mismatches": 0, "startup": "passed"},
+      "failed_119": {"deployment": "e5fdef39-4f9d-4369-a1f9-09e8b9baad71", "passed": 1, "failures": 1, "not_run": 57, "seconds": 5.201, "final_exit": 1, "reason": "Test assumed native managers with both manage/execute grants lacked control", "fixtures_run": false},
+      "package_120": {"deployment": "96a10974-6e11-4f9f-819c-ae20acd06bee", "passed": 59, "seconds": 428.704, "final_exit": 0},
+      "runtime_120": {"web": "732bd045-a27c-4d12-9f23-6fa5245a8c0b", "worker": "05e4807d-1b1a-4ef6-93ff-893d4a1c520c", "paths_per_service": 1676, "mismatches": 0, "startup": "passed", "browser_readback": "passed", "used_allowance": 1000, "original_allowance": 20000},
+      "browser_repeat": {"original_verification_preserved": true, "requested_at": "2026-11-18T10:15:45+01:00", "source": 1872, "actual_source_time": "2026-11-18T10:12:27+01:00", "recorded_at": "2026-11-18T10:19:36+01:00", "native_issue": "In Progress", "future_time_plain_refusal_and_retained_text": "passed", "final_verification": "2026-11-18T10:20:07+01:00", "phone_body_and_client": [375,375], "desktop_body_and_client": [1265,1265]},
+      "states_with_browser_observations": 202,
+      "observed_states_with_open_checks": 187,
+      "completed_scoped_journeys": 15,
+      "states_without_direct_browser_observation": 60,
+      "next": ["Source-aware issue clocks and reminder delivery", "Controlled team resolution and native closure interfaces", "Approved past-winning-answer reuse", "Client acceptance and remaining Finance/Setup/project state branches", "Railway deployment configuration migration before 2026-12-01"],
       "owner_policy": "Deferred",
       "all_states_accepted": false
     },

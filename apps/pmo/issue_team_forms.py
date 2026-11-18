@@ -2,6 +2,7 @@ from hashlib import sha256
 
 from django import forms
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from apps.core.evidence_access import public_evidence
 from apps.core.templatetags.studio_ui import role_name
@@ -70,6 +71,7 @@ class TeamReplyForm(forms.Form):
     party = forms.CharField(label='Who replied', max_length=200)
     channel = forms.ChoiceField(label='Reply channel')
     responded_at = forms.DateTimeField(label='Actual reply time',
+        help_text='Use when the team actually replied.',
         widget=forms.DateTimeInput(format='%Y-%m-%dT%H:%M:%S', attrs={'type': 'datetime-local', 'step': 1}))
     source_ref = forms.CharField(label='Source reference', max_length=240)
     evidence = forms.ChoiceField(label='Supporting evidence')
@@ -82,13 +84,16 @@ class TeamReplyForm(forms.Form):
     task = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
     task_revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
 
-    def __init__(self, work, team, task, data=None):
+    def __init__(self, work, team, task, data=None, *, acknowledged=False):
         from uuid import uuid4
 
         super().__init__(data, initial={'assignment_id': team['assignment'].pk, 'operation_key': uuid4(),
             'revision': work.revision, 'case_revision': work.case.revision,
             'task': task.pk, 'task_revision': task.revision})
         self.fields['channel'].choices = [(channel, channel.capitalize()) for channel in team['channels']]
+        self.fields['operation'].choices = [('start', 'Started'), ('progress', 'Progress update')] if acknowledged else [
+            ('acknowledge', 'Acknowledge')]
+        self.fields['responded_at'].help_text += ' Time zone '+timezone.get_current_timezone_name()+'.'
         self.fields['evidence'].choices = evidence_choices(work.case)
 
 
