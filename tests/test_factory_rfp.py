@@ -77,6 +77,60 @@ class FactoryRFPTests(TestCase):
         with observation_scope(), self.assertRaises(PermissionDenied):
             rfp.current_response(f['case'], response.pk)
 
+    def test_console_decisions_wake_the_existing_request_and_preserve_a_human_pause(self):
+        from apps.workflows import factory_progress
+        from apps.workflows.factory_rfp_views import human_command
+
+        f = self.data
+        work = helpers.start(f)
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        response = factory_rfp.response_for(work)
+        job = factory_progress.set_progress(f['actor'], work.pk, work.revision, True)
+
+        def decide(kind, target, role, verdict='approve', *, paused=False):
+            work.refresh_from_db()
+            job.status = 'waiting'
+            job.available_at = timezone.now() + timedelta(hours=1)
+            job.observation = 'previous-source-observation'
+            job.save()
+            if paused:
+                factory_progress.set_progress(f['actor'], work.pk, work.revision, False)
+                job.refresh_from_db()
+            before = (job.status, job.observation, job.available_at)
+            evidence = f['evidence']['rfp_outcome' if kind == 'outcome' else 'policy_decision']
+            human_command(f['actor'], work.pk, work.revision, rev(f['case']), kind, target,
+                          role, verdict, evidence.pk, 'Actual sample human decision',
+                          observed_at=timezone.now() if kind == 'outcome' else None)
+            job.refresh_from_db()
+            if paused:
+                self.assertEqual((job.status, job.observation, job.available_at), before)
+            else:
+                self.assertEqual(job.status, 'waiting')
+                self.assertEqual(job.observation, '')
+                self.assertLessEqual(job.available_at, timezone.now())
+
+        for role in rfp.REVIEW_ROLES:
+            decide('response', response.pk, role)
+        for role in ['PM', 'Head of PMO', 'CEO']:
+            decide('commercial', response.commercial_id, role, paused=role == 'PM')
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        document = factory_rfp.review_document(work)
+        decide('document', document.pk, 'PMO Lead')
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        submission = RFPSubmission.objects.get(response=response)
+        decide('outcome', submission.pk, 'Client', 'won')
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        self.assertEqual(work.status, 'verified')
+        self.client.force_login(f['actor'])
+        page = self.client.get(reverse('factory_detail', args=[work.pk]))
+        for text in ['Verified outcome', 'Reviewed response', 'Delivered client response', 'No action required']:
+            self.assertContains(page, text)
+
+
     def test_intake_useful_agent_human_reviews_receipt_and_won_route_a(self):
         self.assertEqual(connection.vendor,'postgresql')
         f=self.data;work=helpers.start(f);starter=work.actor_id

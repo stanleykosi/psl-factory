@@ -1,5 +1,7 @@
 # Build decisions
 
+18 November 2026. Human bid decisions wake the existing authorised background request through the existing race-safe wake mechanism. Preserve paused requests. Verified bid pages show their recorded completed response and delivery. Grid children and answer tables stay within the available phone width. Actual source text shown for answer review must reuse the same bounded, current-authorised source read and disappear when that authority is unavailable.
+
 18 November 2026. Signing forms preserve explicitly supplied seconds through HTML step1 and normal Django validation. Opening a document form expands its existing native form while preserving its source, revision and CSRF checks. Proposed-example links use the current button layout for readable phone navigation. Browser captures made during viewport settling are excluded from acceptance.
 
 18 November 2026. Reuse checked immutable RFP and commercial facts only inside the existing bounded read-only observation. Complete native approval groups can omit repeated prefix checks in display preparation. Commands obtain fresh checks outside that observation. One authority calculation uses its exact already-validated role assignment for both identity and recorded policy pin. This removes a duplicate resolution while retaining original-source and current-principal validation.

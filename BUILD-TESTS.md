@@ -1,5 +1,11 @@
 # Actual test execution ledger
 
+## Decision wakes and responsive bid acceptance · 18 November 2026
+
+Package98 `d10c60b2-64ba-4851-89bf-fb75a377a9d4` passed5tests in86.182s, checks/drift/fixtures and final markerszero. Current bid page852queries/1.233s. Native response/commercial/final-document/customer decisions woke the same authorised progress request. Pausing through the native control stayed paused after the human decision. Source-arrival and human-pause finalization races passed. Tested source matched1,662 runtimepaths per service and both deployed98services started. Browser97 showed correct final headings and owner. The phone history overflow corrected from457to375 against375viewport, with settled screenshot saved.
+
+Fixture-only99 `774962f0-317e-49a1-9270-df23478956f0` passed checks/drift and both fixture markers. No unit suite ran. Its new work99 used actual Tola drafts forR1/R2. Browser Cancel→Keep editing preserved live text; cross-row navigation→Discard edits retained the saved original. EditedR1 saved and selected current pendingR2. Own-answer mode cleared its live value; saving R2 on390px/body375 produced Own answer. Accepted filter showed2of4. No unsaved edits remain. Pending100 adds authorised source display and verification; no100pass claimed.
+
 ## Exact signing and completed browser journeys · 18 November 2026
 
 Package96 `21208b73-5147-4a33-863e-778ba24c9785` passed23tests in57.313s, checks/drift/fixtures and final markerszero. Includes all current workspace template/permissions checks, calculator proposals, distinct go-live attester HTTP authority and exact signing seconds. Actual count23 supersedes planned24. Deployed exact1,662 matching runtimepaths. Web/worker started successfully. Browser Add a document opened its form directly. New signer input rendered step1 and accepted06:05:26WAT, preserving distinct proofs1820/1821 and delivery65. Work98 reached Verified06:22:32WAT. Settled390px/body375 capture saved locally; the first unsettled image is excluded.

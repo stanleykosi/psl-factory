@@ -171,3 +171,6 @@
   .start-work-dialog { inset: auto 0 0; width: 100%; height: auto; max-height: 92dvh; border-left: 0; border-top: 2px solid var(--ink); border-radius: 16px 16px 0 0; }
   .start-work-dialog-body { padding: 20px 16px; }
 }
+
+.factory-case-layout > * { min-width: 0; }
+.table-scroll { max-width: 100%; overflow-x: auto; }

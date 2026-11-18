@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Current runtime98 and bid edit acceptance · 18 November 2026
+
+Passed98 five PostgreSQL tests/86.182s, current-source/query checks, full decision wake path and pause/final-write races. Hosted matching98services. Browser phone table overflow is corrected375/375 and completed bid labels are accurate. Fresh work99 proved the discard/keep controls, current next-suggestion selection, an edited answer and a phone own-answer save/filter using actual model drafts. Ledger201observed/188open/61unseen.
+
+Pending100 displays the exact authorised requirement source beside review and adds source-revocation tests, with21 selected PostgreSQL tests running. Past-answer reuse, team/no-login issue recording and remaining design-state functions still need engineering. HOD choices remain deferred.
+
 ## Current verified browser outcomes · 18 November 2026
 
 Hosted96 passed23tests/57.313s, checks/drift/fixtures, matching1,662 runtimepaths and successful startup. Browser corrected-release work98 reached Verified06:22:32WAT with fresh report/review/receipt65 and distinct sample signatures1820/1821. Bid97 reached Verified outcome06:24:19WAT after actual model drafting, human edits and reviews, original submission10 and explicit award1822. Amount/currency stay unknown. Document entry and precise signing seconds now work in the browser.

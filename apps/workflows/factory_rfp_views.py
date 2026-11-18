@@ -336,6 +336,9 @@ def presentation(actor,work,submission_id=None):
         'rfp':{'root':root,'response':current,'document':document,'submission':submission,'outcome':outcome,'disposition':disposition,
                'decisions':decisions,'outcome_roles':outcome_roles,'value':value,'state':state,'selection':selection,
                'submitted_versions':list(actual_submissions.filter(pk__in=[item['id'] for item in selection['inventory']['submissions']]).order_by('pk'))}}
+    if work.status == 'verified' and not changed:
+        row['owner'] = 'No action required'
+        row['blocker'] = ''
     return decorate(actor,work,row)
 
 
@@ -368,6 +371,8 @@ def human_command(actor,work_id,revision,case_revision,kind,target,role,verdict,
                     award_amount=award_amount,award_currency=award_currency)
     else:raise ValidationError('Choose a current human decision')
     work.status='ready';work.finding='';work.revision+=1;work.save(update_fields=['status','finding','revision','updated_at'])
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
 
 
 def detail(request,work,focus=None):

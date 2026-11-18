@@ -326,9 +326,20 @@ def prepare(key, operator):
         with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
             _, _, evidence, _, _ = test_rfp.fixture(record_intake=False)
         return {'case': str(case.pk), 'intake_source': evidence['rfp_intake'].pk}
-    if key == 'bid-answer-review':
+    if key in {'bid-answer-review', 'bid-answer-editing'}:
+        reference = 'RFP-SAMPLE-ANSWER-REVIEW' if key == 'bid-answer-review' else 'RFP-SAMPLE-ANSWER-EDITING'
         with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
-            data = factory_rfp_helpers.configured(reference='RFP-SAMPLE-ANSWER-REVIEW')
+            data = factory_rfp_helpers.configured(reference=reference)
+        if key == 'bid-answer-editing':
+            requirements = add_evidence(operator, case.pk, 'requirements',
+                'SAMPLE training facts. R1 is an order register with order reference and status. '
+                'R2 is a daily CSV export containing those two fields. '
+                'R3 restricts access to assigned project members. '
+                'R4 supplies a test report and a user acceptance record before release. '
+                'Pricing, dates and real customer details are undecided.',
+                'synthetic:browser-answer-editing-facts')
+            data['payload']['sources']['requirements'] = requirements.pk
+            data['payload']['matrix'][0]['evidence_id'] = requirements.pk
         row = data['payload']['matrix'][0]
         data['payload']['matrix'] = [dict(row, key='R' + str(number),
             response='SAMPLE current response for requirement ' + str(number) + '.') for number in range(1, 5)]
@@ -466,6 +477,8 @@ elif workflow == 'handover-reply-states':
     fixtures = ('handover-external-reply', 'handover-reply-rules', 'handover-reply-gaps')
 elif workflow == 'bid-answer-states':
     fixtures = ('bid-answer-review',)
+elif workflow == 'bid-answer-editing-states':
+    fixtures = ('bid-answer-editing',)
 elif workflow == 'costing-proposal-states':
     fixtures = ('costing-proposal-review', 'costing-proposal-own', 'costing-proposal-rules')
 elif workflow == 'costing-studio-states':
