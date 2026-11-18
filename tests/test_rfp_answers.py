@@ -200,6 +200,55 @@ class RFPAnswerTests(TestCase):
         print('PSL_RFP_ANSWER_LIST_QUERIES=' + str(len(queries)))
         self.assertLess(len(queries), 180)
 
+    def test_oversized_requirement_is_filtered_in_postgresql_before_provider_context_loading(self):
+        from apps.core.services import add_evidence
+
+        data = self.data
+        work = data['work']
+        large = add_evidence(data['actor'], data['case'].pk, 'requirements', 'S' * 64001,
+            'synthetic:oversized-requirement')
+        current = factory_rfp.inputs(work)
+        payload = {key: current[key] for key in factory_rfp.FIELDS}
+        payload['sources'] = dict(payload['sources'], requirements=large.pk)
+        payload['matrix'] = [dict(row, evidence_id=large.pk) for row in payload['matrix']]
+        factory_rfp.correct(data['actor'], work.pk, work.revision, rev(data['case']), payload,
+            'SAMPLE large imported requirement source.')
+        with CaptureQueriesContext(connection) as queries, self.assertRaisesMessage(ValidationError, '64,000 bytes'):
+            request(data)
+        self.assertTrue(any('OCTET_LENGTH' in query['sql'] and '<= 64000' in query['sql'] for query in queries))
+        self.assertFalse(RFPAnswerSuggestion.objects.exists())
+
+    def test_current_response_reviewer_can_read_history_without_changing_answers(self):
+        from django.contrib.auth import get_user_model
+        from apps.policy.services import active_component, register_reference
+        from tests.helpers import activate
+
+        data = self.data
+        actor, case = data['actor'], data['case']
+        reviewer = get_user_model().objects.create_user(username='sample-answer-reviewer')
+        for action in ['case.read', 'rfp.read', 'factory.read', 'rfp.review']:
+            Grant.objects.create(case=case, user=reviewer, action=action)
+        roles = active_component('D05.role_principal_assignments', case)
+        reference = register_reference(actor, case.pk, 'synthetic:answer-reviewer', 'schema:psl/role-assignment/v1',
+            {'role': 'PMO Lead', 'user_id': reviewer.pk}, data['evidence']['policy_decision'].pk)
+        activate(actor, case, 'D05.role_principal_assignments', [*roles.envelope['value'], reference.ref],
+            data['evidence']['policy_decision'])
+        rfp.assign(actor, case.pk, actor, 'CEO', data['evidence']['policy_decision'].pk,
+            'SAMPLE current assignment after reviewer configuration.', rev(case))
+        suggestion = request(data)
+        answer(suggestion)
+        self.save([decision(suggestion, verdict='edit', answer='SAMPLE reviewed change.', note='SAMPLE internal review history.')])
+        self.client.force_login(reviewer)
+        page = self.client.get(reverse('factory_rfp_answers', args=[data['work'].pk]))
+        self.assertContains(page, 'SAMPLE supported answer.')
+        self.assertContains(page, 'SAMPLE internal review history.')
+        self.assertNotContains(page, 'Undo this answer')
+        self.assertNotContains(page, 'Ask Tola for an answer')
+        with self.assertRaises(PermissionDenied):
+            rfp_answers.writable(reviewer, data['work'])
+        Grant.objects.filter(case=case, user=reviewer, action='rfp.review').update(active=False)
+        self.assertEqual(self.client.get(reverse('factory_rfp_answers', args=[data['work'].pk])).status_code, 403)
+
 
 @patch.dict(os.environ, {'OPENROUTER_MODEL': 'synthetic-model', 'OPENROUTER_API_KEY': 'synthetic'})
 class RFPAnswerConcurrencyTests(TransactionTestCase):

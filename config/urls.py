@@ -12,6 +12,7 @@ from apps.finance import acceptance_views
 from apps.workflows import readiness_views
 from apps.workflows import operator_views
 from apps.pmo import costing_views
+from apps.pmo import costing_proposal_views
 from apps.finance import d03_views
 from apps.documents import migration_views
 from apps.pmo import approval_views
@@ -59,6 +60,7 @@ handler404 = 'apps.core.error_views.missing'
 handler500 = 'apps.core.error_views.failed'
 
 urlpatterns = [
+    path('cases/<uuid:case_id>/costing/proposals/<int:pk>/', costing_proposal_views.detail, name='costing_proposal'),
     path('health/', health, name='health'),
     path('cases/<uuid:case_id>/files/', upload_views.workbench, name='case_uploads'),
     path('cases/<uuid:case_id>/files/<int:upload_id>/', upload_views.download, name='case_upload_download'),

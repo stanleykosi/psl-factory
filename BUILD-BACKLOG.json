@@ -1,5 +1,45 @@
 {
   "design_consolidation_20261116": {
+    "bid_and_costing_review_20261118": {
+      "status": "postgresql_passed_exact_runtime_uploading",
+      "package_87": {"deployment": "2f8db15b-d836-47ba-a5be-a873b59b8878", "passed": 64, "seconds": 146.068, "final_exit": 0, "fixture_exit": 0},
+      "runtime_source_comparison": {"paths_per_service": 1660, "mismatches": 0},
+      "migrations": ["agents.0011_rfp_answer_review", "pmo.0060_costingproposal_costingproposaldecision_and_more"],
+      "implemented": ["Bounded per-requirement Tola drafts and native answer successors", "Readable rule, example and calculation evidence", "Immutable calculator proposals and independent current-role decisions", "Return and withdrawal preserve current calculator", "Configured proposal review prevents direct legacy capture bypass", "Native source-owner, independent examples, activation and successor calculation"],
+      "earlier_diagnostics": {"84": "18 passed before runner error, exit 1", "85": "42 passed and 1 outdated display assertion failed in 235.026s", "86": "43 passed and 1 outdated display assertion failed in 225.969s"},
+      "fixtures": {"bid_work": 97, "costing_proposals": [1, 2, 3]},
+      "remaining_engineering": ["Browser bid review and calculator proposal acceptance", "Studio-wide calculator distribution and proposed-example comparison", "Reviewed past-winning-answer reuse", "Team/no-login issue recording", "Remaining design-state functions and acceptance"],
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
+    "native_wakes_support_and_bid_diagnostics_20261118": {
+      "status": "support_browser_passed_bid_and_costing_composition_running",
+      "package_81": {"deployment": "4808af5a-0a47-449b-bce2-d5011b790d78", "passed": 10, "seconds": 341.644, "final_exit": 0},
+      "runtime": {"web": "6180ad21-f1e0-476f-adea-a5ce51bab6f9", "worker": "6af4ed22-03b4-48dd-b838-11d58d4fa9b7", "startup": "passed"},
+      "browser_verified": [86, 94, 96],
+      "browser_missing_rule_draft": 95,
+      "package_82": {"passed": 4, "failed": 1, "not_run": 14, "seconds": 67.715, "query_count": 751},
+      "package_83": {"deployment": "005813ac-3b15-4593-a999-1d6f7b42333c", "passed": 2, "seconds": 2.129, "query_count": 179, "final_exit": 0},
+      "package_84": {"deployment": "abc661ee-bc2a-4ff6-9c03-e6a9c61e9a94", "tests": 54, "status": "runner_error_after_18_database_tests_passed", "error": "Costing test fixture shadowed unittest TestCase.run", "source_paths_compared": 2120, "mismatches": 0, "final_exit": 1, "preview_migration_and_fixture": "not_run"},
+      "package_85": {"deployment": "28003430-3080-4e48-aaaa-1a0d83da49d8", "tests": 54, "status": "running", "change": "Rename test fixture attribute to costing_run"},
+      "states_with_browser_observations": 194,
+      "observed_states_with_open_checks": 187,
+      "states_without_direct_browser_observation": 68,
+      "remaining_engineering": ["Finish full bid/costing regression and browser acceptance", "Reviewed past-winning-answer reuse", "Costing proposal review and withdrawal with typed authority", "Team/no-login issue owner replies", "Remaining state-specific functions and checks"],
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
+    "support_reply_verified_20261118": {
+      "status": "postgresql_passed_runtime_uploading_fixtures_running",
+      "deployment": "94e4f41a-df14-4548-9a0a-61c8e16e85d4",
+      "postgresql": {"passed": 17, "seconds": 2229.814, "archive_request_queries": 572},
+      "checks_and_preview_migration": "passed",
+      "runtime_source_comparison": {"paths": 1604, "mismatches": 0},
+      "fixtures": "Six lookups and actual private-store verification passed, three new Support examples running",
+      "next": ["Observe final fixture exit markers and web/worker startup", "Browser Support replies and exact successor", "Package81 ten wake tests", "Package82 nineteen bid and Assistant tests", "Typed costing proposal review and readable rule views", "Approved bid answer reuse and remaining states"],
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
     "per_requirement_bid_answers_20261118": {
       "status": "implemented_pending_postgresql_and_browser_verification",
       "migration": "agents.0011_rfp_answer_review",

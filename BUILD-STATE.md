@@ -1,5 +1,25 @@
 # PSL operations factory build state
 
+## Bid answers and calculator review passed · 18 November 2026
+
+Package 87 passed all 64 PostgreSQL/application tests in 146.068 seconds. Checks, drift, preview migrations `agents.0011` and `pmo.0060`, four synthetic fixtures and both final exit markers passed. This adds immutable calculator proposals, independently configured review, return and proposer withdrawal, current source/role checks, agent inventory and a connected native successor calculation. Pending, returned and withdrawn proposals preserve the current calculator. Existing source-owner confirmation and independent examples govern the reviewed version's use. Readable evidence pages and bounded bid-answer changes are included. Exact source matched 1,660 paths in each web/worker upload. Browser acceptance follows startup.
+
+Runs 85 and 86 each stopped on an outdated display-text assertion after 42 and 43 passes respectively. Corrected both exact labels and reran the full selection in 87. The ledger remains 194 observed, 187 open and 68 unseen until new browser checks. Studio-wide calculator distribution, proposed-version example comparison, reviewed past-answer reuse and no-login issue recording remain engineering work. HOD values remain deferred.
+
+## Bid and costing composition rerun · 18 November 2026
+
+Package 84 passed eighteen database tests before a new costing test fixture shadowed the test runner's `run` method. Its final exit was one and preview migration and fixtures did not run. Renamed that fixture attribute. Exact copied package 85 `28003430-3080-4e48-aaaa-1a0d83da49d8` now reruns all 54 tests. Hosted web and worker remain verified package 81. Remote main remains `e74e3122` and build branch `6e3fcad8`, checked directly against GitHub. No local work was replaced. New mock-only delivery feature evidence adds engagement, release and schedule interactions. The canvas inventory remains 262 and these mock results grant no native acceptance.
+
+## Support handovers verified and bid query overhead reduced · 18 November 2026
+
+Hosted package 81 passed ten PostgreSQL tests in 341.644 seconds, including native decision wakes and pause/finalization races. Browser works 94 and 96 completed external recording and corrected handover receipt through Verified. Work 86 completed exact document review, delivery and actual recipient acknowledgement through Verified. Work 95 preserved the missing-rule hold after a draft save. The real-store archive and exact handover intake link passed. The ledger has 194 observed states, including 187 open checks, and 68 unseen.
+
+Bid package 82 exposed 751 queries in a hundred-row read. Package 83 passed two focused tests in 2.129 seconds after reducing that read to 179 queries and adding the database-side source-size filter. Full package 84 now runs 54 PostgreSQL tests for bid answers, existing Assistant behavior and the readable costing interfaces. Its final result and deployment are pending. Approved-answer reuse, costing proposal review, no-login issue replies and other design gaps remain engineering work. HOD values remain deferred.
+
+## Support replies passed PostgreSQL verification · 18 November 2026
+
+Package 80 passed seventeen tests in 2229.814 seconds, Django/drift checks and preview migration 0089. Exact source, current permissions, immutable successors, SQL guards and competing reply writes passed. Archive detail measured 572 queries. Existing fixtures and real private-store readback passed, with the three new Support fixtures still running. Matching web/worker uploads started after comparing 1,604 runtime paths. Package 81 native wakes and package 82's nineteen bid/Assistant tests remain unrun. Browser work 93 now has its activated synthetic fixture profile and queued fresh-candidate checks. HOD values and full 262-state acceptance remain open.
+
 ## Per-answer bid work prepared for verification · 18 November 2026
 
 Implemented durable Tola suggestions for individual requirements, assigned-manager edits and replacements, bulk acceptance, undo, source-safe history, search/filter UI and the handoff into existing native bid reviews and submission. Migration `agents.0011` and nine new PostgreSQL tests are prepared, with nine existing Assistant regressions in package 82. One database-free form/template test passed. PostgreSQL and browser checks remain pending. Package 81 separately verifies native decision wakes and races after the current package 80 suite. Past-winning-answer reuse and team/no-login issue replies remain engineering work. The 262-state milestone remains open and HOD values deferred.

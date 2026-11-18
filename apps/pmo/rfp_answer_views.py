@@ -53,7 +53,6 @@ def item_url(work_id, key=None, mode=None):
 def workbench(request, work_id):
     work = get_object_or_404(FactoryWork.objects.select_related('case', 'source_head__created_by'),
         pk=work_id, definition=DEFINITION, case__in=visible_cases(request.user))
-    rfp_answers.authorize(request.user, work)
     selected_key = request.POST.get('requirement') or request.GET.get('requirement')
     form = None
     if request.method == 'POST':
@@ -104,15 +103,12 @@ def workbench(request, work_id):
     work.refresh_from_db()
     work.case.refresh_from_db()
     rows = inputs(work)['matrix']
-    suggestions = list(RFPAnswerSuggestion.objects.filter(work=work, key__in=[row['key'] for row in rows],
-        turn__conversation__actor=request.user).select_related('turn__conversation__actor').order_by('key', '-pk').distinct('key'))
+    suggestions = list(RFPAnswerSuggestion.objects.filter(work=work, key__in=[row['key'] for row in rows])
+        .select_related('turn__conversation__actor').order_by('key', '-pk').distinct('key'))
     latest = {suggestion.key: suggestion for suggestion in suggestions}
     reviews = {review.suggestion_id: review for review in RFPAnswerReview.objects.filter(suggestion__in=suggestions)
         .select_related('actor').order_by('suggestion_id', '-pk').distinct('suggestion_id')}
-    try:
-        current_anchors = rfp_answers.anchors(request.user, work)
-    except (PermissionDenied, ValidationError):
-        current_anchors = None
+    current_anchors, writable = rfp_answers.read_state(request.user, work)
     readable_sources = {}
     for row in rows:
         if row['evidence_id'] not in readable_sources:
@@ -124,11 +120,6 @@ def workbench(request, work_id):
     query = request.GET.get('q', '').strip()[:120]
     status_filter = request.GET.get('status', '')
     items = []
-    writable = True
-    try:
-        rfp_answers.writable(request.user, work)
-    except (PermissionDenied, ValidationError):
-        writable = False
     for row in rows:
         suggestion = latest.get(row['key'])
         item = {'row': row, 'suggestion': suggestion, 'status': 'Current answer', 'code': 'current',

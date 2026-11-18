@@ -44,6 +44,11 @@ def capture_rule(a,case_id,reference,evidence_id,expected=None,predecessor=None)
     for param in v['parameters']:subject(c,param['evidence_id'],'p14_parameter')
     old=CostingRule.objects.filter(case=c,reference=reference).order_by('-version').first()
     if old and old.sha256==digest(v):return old
+    if old:
+        from apps.policy.models import Configuration
+        from apps.policy.costing_proposal_validators import COMPONENT as PROPOSAL_REVIEW
+        if Configuration.objects.filter(case=c,component=PROPOSAL_REVIEW,states__state='active').exists():
+            raise ValidationError('Submit this calculator change through its independent proposal review.')
     if (old.pk if old else None)!=predecessor:raise ValidationError('Explicit current rule predecessor required')
     r=CostingRule.objects.create(case=c,reference=reference,version=old.version+1 if old else 1,payload=v,sha256=digest(v),evidence=e,actor=a);event(a,c,'costing.rule_captured',rule=r.pk,native_workbook_verified=False);bump(c);return r
 

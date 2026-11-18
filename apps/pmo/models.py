@@ -198,6 +198,7 @@ class MeetingActionLink(AppendOnly):
 from .approval_models import ApprovalRequest,ApprovalContractReview,ApprovalRouteJob,ApprovalRouteReceipt,ApprovalSourceReceipt,ApprovalObservation,ApprovalGateBinding
 
 from .costing_models import CostingRule,CostingOracle,CostingReview,CostingRun,CostingBinding,CostingAF13Binding
+from .costing_proposal_models import CostingProposal, CostingProposalDecision
 from .engagement_models import EngagementRecord,ProjectIdentifier
 from .identity_resolution_models import ProjectIdentityDecision
 

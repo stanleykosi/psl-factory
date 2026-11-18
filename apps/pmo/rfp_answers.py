@@ -4,6 +4,7 @@ from uuid import UUID
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
+from django.db.models import F, Func, IntegerField
 from django.urls import reverse
 from django.utils import timezone
 
@@ -14,6 +15,7 @@ from apps.core.models import Evidence
 from apps.core.services import event, lock_case
 from apps.documents.contracts import digest
 from apps.identity.services import require
+from apps.policy.services import decision_authority
 from apps.workflows import factory_rfp
 from apps.workflows.models import FactoryWork
 
@@ -32,21 +34,32 @@ def authorize(actor, work):
     from apps.workflows.factory import access
 
     access(actor, work.case, 'factory.read', factory_rfp.DEFINITION)
-    for action in ['rfp.read', 'rfp.prepare']:
-        require(actor, work.case, action)
+    require(actor, work.case, 'rfp.read')
     root = factory_rfp.subject(work)
-    if rfp.current_assignment(root).pm_id != actor.pk:
-        raise PermissionDenied('The assigned project manager reviews requirement answers.')
-    return root
+    assignment = rfp.current_assignment(root)
+    if assignment.pm_id == actor.pk:
+        require(actor, work.case, 'rfp.prepare')
+        return assignment
+    require(actor, work.case, 'rfp.review')
+    for role in rfp.REVIEW_ROLES:
+        try:
+            decision_authority(actor, work.case, role)
+            return assignment
+        except (PermissionDenied, ValidationError):
+            pass
+    raise PermissionDenied('The current project manager or response reviewer can inspect requirement answers.')
 
 
 def anchors(actor, work):
-    root = authorize(actor, work)
+    return source_anchors(work, authorize(actor, work))
+
+
+def source_anchors(work, assignment):
     data = factory_rfp.inputs(work)
-    if data['intake'] != root.current_intake_id or not factory_rfp.instruction_current(work):
+    if data['intake'] != assignment.intake_id or not factory_rfp.instruction_current(work):
         raise ValidationError('Review the current received bid and its source owner first.')
     return {
-        'intake': data['intake'], 'assignment': rfp.current_assignment(root).pk,
+        'intake': data['intake'], 'assignment': assignment.pk,
         'sources': data['sources'], 'response_evidence': data['response_evidence'],
         'public_terms': data['public_terms'],
     }
@@ -60,12 +73,12 @@ def row_for(work, key):
 
 
 def source_for(actor, work, row):
-    source = public_evidence(Evidence.objects.filter(case=work.case, pk=row['evidence_id'])).select_related('created_by').first()
+    source = public_evidence(Evidence.objects.filter(case=work.case, pk=row['evidence_id'])).alias(
+        source_bytes=Func(F('body'), function='OCTET_LENGTH', output_field=IntegerField())
+    ).filter(source_bytes__lte=MAX_SOURCE_BYTES).select_related('created_by').first()
     if source is None or source.kind not in {'requirements', 'rfp_intake'}:
-        raise ValidationError('The original requirement source needs authorised review.')
+        raise ValidationError('Select an authorised requirement source of at most 64,000 bytes.')
     require(source.created_by, work.case, 'evidence.add')
-    if len(source.body.encode('utf-8')) > MAX_SOURCE_BYTES:
-        raise ValidationError('Select a requirement source of at most 64,000 bytes for this answer.')
     return source
 
 
@@ -86,7 +99,13 @@ def context_for(suggestion, *, pending=True):
 
 
 def writable(actor, work):
-    authorize(actor, work)
+    write_checks(actor, work, authorize(actor, work))
+
+
+def write_checks(actor, work, assignment):
+    require(actor, work.case, 'rfp.prepare')
+    if assignment.pm_id != actor.pk:
+        raise PermissionDenied('The assigned project manager saves requirement answers.')
     require(actor, work.case, 'factory.manage')
     require(actor, work.case, 'evidence.add')
     rfp.ensure_open(factory_rfp.subject(work))
@@ -96,6 +115,23 @@ def writable(actor, work):
         raise ValidationError('Wait for the current agent step to finish.')
     if factory_rfp.submission_for(work) or factory_rfp.pending_jobs(work).exists() or factory_rfp.uncaptured(work):
         raise ValidationError('Resolve original submission receipts before changing bid answers.')
+
+
+def read_state(actor, work):
+    """Prepare one current assignment observation for the read-only screen."""
+    try:
+        assignment = authorize(actor, work)
+    except ValidationError:
+        return None, False
+    try:
+        current = source_anchors(work, assignment)
+    except ValidationError:
+        current = None
+    try:
+        write_checks(actor, work, assignment)
+    except (PermissionDenied, ValidationError):
+        return current, False
+    return current, True
 
 
 @transaction.atomic

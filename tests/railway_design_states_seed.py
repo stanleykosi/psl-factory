@@ -71,6 +71,35 @@ def prepare(key, operator):
         existing = FactoryWork.objects.filter(case=case).first()
         return {'case': str(case.pk), 'work': existing.pk if existing else None}
     Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
+    if key in {'costing-proposal-review', 'costing-proposal-own', 'costing-proposal-rules'}:
+        import copy
+        from tests import costing_helpers
+        from tests.operator_helpers import policy as operator_policy
+        from apps.pmo import costing_proposals
+        from apps.policy.costing_proposal_validators import COMPONENT as PROPOSAL_REVIEW
+
+        users = get_user_model().objects
+        create_user = users.create_user
+        with (
+            patch.object(costing_helpers, 'setup_case', return_value=(operator, case)),
+            patch.object(users, 'create_user', side_effect=lambda username, **values:
+                create_user(username='state-' + key + '-' + username, **values)),
+        ):
+            data = costing_helpers.fixture()
+        proposed = copy.deepcopy(data['rule'].payload)
+        proposed['calculator_version'] = 'v2'
+        proposed['parameters'][0]['value'] = '12.00'
+        source = costing_helpers.evidence(data, 'p14_rule', proposed)
+        proposer = operator if key == 'costing-proposal-own' else data['owner']
+        proposal = costing_proposals.propose(proposer, case.pk, data['rule'].pk, source.pk,
+            'SAMPLE proposed hourly rate supported by revised source evidence.', 'browser-version-2')
+        if key != 'costing-proposal-rules':
+            reviewer = data['owner'] if key == 'costing-proposal-own' else operator
+            operator_policy(data, PROPOSAL_REVIEW, {'reviewer_id': reviewer.pk,
+                'reviewer_role': 'PMO' if key == 'costing-proposal-own' else 'PM',
+                'independent_review': True})
+        return {'case': str(case.pk), 'proposal': proposal.pk, 'rule': data['rule'].pk,
+                'proof': data['review_evidence'].pk}
     if key in {'handover-external-reply', 'handover-reply-rules', 'handover-reply-gaps'}:
         from tests import test_delivery, test_handover_replies
         users = get_user_model().objects
@@ -415,6 +444,8 @@ elif workflow == 'handover-reply-states':
     fixtures = ('handover-external-reply', 'handover-reply-rules', 'handover-reply-gaps')
 elif workflow == 'bid-answer-states':
     fixtures = ('bid-answer-review',)
+elif workflow == 'costing-proposal-states':
+    fixtures = ('costing-proposal-review', 'costing-proposal-own', 'costing-proposal-rules')
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

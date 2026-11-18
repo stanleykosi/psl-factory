@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block content %}
+<header class="page-heading"><div><p>{{ case|workspace_name }}</p><h1>Review proposed calculator version</h1></div><a class="button secondary" href="{% url 'costing' case.pk %}">Costing rules</a></header>
+<div class="factory-case-layout"><div>
+<section class="card"><h2>What changes</h2><p>{{ proposal.reason }}</p><p>Proposed by {{ proposal.actor.get_full_name|default:proposal.actor.username }} · {{ proposal.created_at|date:'d M Y H:i T' }}</p>
+<table><thead><tr><th>Parameter</th><th>Current version {{ proposal.base.version }}</th><th>Proposed version {{ proposal.base.version|add:'1' }}</th></tr></thead><tbody>{% for row in parameters %}<tr><th>{{ row.key|readable }}</th><td>{% if row.current %}{{ row.current.value|default_if_none:'Unknown' }} {{ row.current.unit }}{% else %}Absent{% endif %}</td><td>{% if row.proposed %}{{ row.proposed.value|default_if_none:'Unknown' }} {{ row.proposed.unit }}{% else %}Removed{% endif %}</td></tr>{% endfor %}</tbody></table>
+<h3>Proposed calculation steps</h3>{% for step in proposal.payload.nodes %}<p>{{ step.key|readable }} · {{ step.operation|readable }} · {{ step.operands|join:', ' }}</p>{% endfor %}
+<p><a href="{% url 'costing_source' case.pk 'rule' proposal.base.pk %}?view=page">Current source, owners and worked examples</a></p>
+<details><summary>Exact proposed source</summary><pre>{{ proposal.payload }}</pre><p>{{ proposal.sha256 }}</p></details></section>
+</div><aside class="factory-action-panel"><section class="card">
+{% if proposal.decision %}<h2>{{ proposal.decision.verdict|readable }}</h2><p>{{ proposal.decision.note }}</p><p>{{ proposal.decision.actor.get_full_name|default:proposal.decision.actor.username }} · {{ proposal.decision.created_at|date:'d M Y H:i T' }}</p>{% if proposal.decision.rule_id %}<p>The reviewed version is recorded. Its source-owner confirmation, independent worked examples and activation are the next steps.</p><a href="{% url 'costing_source' case.pk 'rule' proposal.decision.rule_id %}?view=page">Open reviewed source</a>{% endif %}
+{% elif own %}<h2>Awaiting independent review</h2><p>You proposed this version. The configured reviewer makes the decision.</p><form method="post">{% csrf_token %}{{ form.as_p }}<button>Withdraw proposal</button></form>
+{% elif review_hold %}<h2>Reviewer needed</h2><p>{{ review_hold }}</p><a href="{% url 'costing' case.pk %}">Review calculator settings</a>
+{% elif hold %}<h2>Source needs reassessment</h2><p>{{ hold }}</p>
+{% else %}<h2>Your decision</h2><p>Confirming records this exact source as the next version. Source-owner confirmation, independent worked examples and project-cost approvals follow.</p><form method="post">{% csrf_token %}{{ form.as_p }}<button>Record decision</button></form>{% endif %}
+</section></aside></div>
+{% endblock %}
