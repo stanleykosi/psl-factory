@@ -15,6 +15,7 @@ import { SignedOutState } from '@/shell/FrameStates';
 import { DrawerFrame, useWide } from './DrawerFrame';
 import { caseOptionUnusable, parentValue, startableHere } from './intake';
 import { IntakeField } from './IntakeField';
+import { StartProof } from './StartProof';
 import { AGENT_NAMES, drawerTitle, footerGoesBack, journeyLabel, startLabel } from './labels';
 import type { Field, FieldProblem, Line } from './types';
 import { useStartForm, type Notice } from './useStartWork';
@@ -226,7 +227,9 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
     );
   }
 
-  const canPress = !form.prefilling && !form.awaitingChange && notice?.kind !== 'gone' && (form.uncertain || form.caseRef !== null);
+  // Held while any proof is uploading or failed, so nobody starts believing a file went with it (Conflicts 5).
+  const canPress =
+    !form.prefilling && !form.awaitingChange && notice?.kind !== 'gone' && (form.uncertain || (form.caseRef !== null && !form.proofHeld));
   const footer = (
     <>
       {form.uncertain && <span className="psl-hint sw-foothint">If it started, it will appear in My work.</span>}
@@ -249,21 +252,38 @@ export function LineForm({ line, onBack, onClose, onStarted, pathname, initialIn
   return (
     <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={footer} focusKey={`line-${line.key}`}>
       {notice && <NoticeCallout notice={notice} agent={agent} wide={wide} seq={noticeSeq} />}
-      {form.fields.map((field, at) => (
-        <IntakeField
-          key={field.name}
-          lineKey={line.key}
-          field={field}
-          value={form.values[field.name]}
-          onChange={(value) => form.setValue(field.name, value)}
-          parent={parentValue(field, form.values)}
-          parentLabel={field.depends_on ? labels[field.depends_on] : undefined}
-          readOnly={readOnly}
-          error={form.fieldErrors[field.name]}
-          note={field.name === line.case_field && unusable ? CASE_UNUSABLE : form.fieldNotes[field.name]}
-          movedHelp={movedHelp(form.fields, at)}
-        />
-      ))}
+      {form.fields.map((field, at) =>
+        field.type === 'evidence' ? (
+          <StartProof
+            key={field.name}
+            field={field}
+            sendCase={form.sendCase}
+            readOnly={readOnly}
+            error={form.fieldErrors[field.name]}
+            movedHelp={movedHelp(form.fields, at)}
+            moved={form.proofMoved}
+            reread={form.rereadCase}
+            onState={form.reportProof}
+            onSignedOut={form.signOut}
+            onRefused={form.proofRefused}
+          />
+        ) : (
+          <IntakeField
+            key={field.name}
+            lineKey={line.key}
+            field={field}
+            value={form.values[field.name]}
+            onChange={(value) => form.setValue(field.name, value)}
+            parent={parentValue(field, form.values)}
+            parentLabel={field.depends_on ? labels[field.depends_on] : undefined}
+            // The project can't change while a file uploads to its case.
+            readOnly={readOnly || (field.name === line.case_field && form.proofBusy)}
+            error={form.fieldErrors[field.name]}
+            note={field.name === line.case_field && unusable ? CASE_UNUSABLE : form.fieldNotes[field.name]}
+            movedHelp={movedHelp(form.fields, at)}
+          />
+        ),
+      )}
       {notice?.kind === 'invalid' && notice.unmatched.map((problem, at) => <ProblemBox key={`${problem.name}-${at}`} problem={problem} />)}
       {line.next && <WhatHappensNext lineKey={line.key} next={line.next} wide={wide} />}
     </DrawerFrame>

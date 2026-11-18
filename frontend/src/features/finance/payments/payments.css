@@ -1,0 +1,68 @@
+/* SCR-20 Payments and follow-up, desktop and phone boards. Token variables only; layout switches at 720px (bp-phone).
+   Bundle classes (psl-table, psl-tag, psl-empty, psl-panel) are composed, not restyled outside .payments. */
+
+.payments { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; line-height: normal; }
+.payments__eyebrow { margin: 0; font-family: var(--font-mono); font-size: var(--text-eyebrow-size); color: var(--ink-muted); }
+.payments .cmp-page-title { overflow-wrap: anywhere; }
+.payments__plain { margin: 0; }
+/* the title row is as tall as the board's (its 50px button is held, Conflicts 1); "Updated" sits at its right */
+.payments__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--space-3); min-height: var(--control-lg); }
+.payments__updated { margin: 0; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
+/* the SCR-20 boards draw square tags at the page's line height */
+.payments .psl-tag { border-radius: 0; line-height: normal; }
+
+/* the strip: four cells, each the backend's figure; a fill only on a cell with a known amount */
+.payments__strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: var(--rule-strong) solid var(--ink); background: var(--surface); }
+.payments__cell { padding: var(--space-3) var(--space-14px); border-right: var(--rule-strong) solid var(--ink); display: flex; flex-direction: column; gap: var(--space-1); color: var(--ink-subtle); background: var(--surface); }
+.payments__cell:last-child { border-right: none; }
+.payments__cell--owed { background: var(--waiting-tint); color: var(--waiting-ink); }
+.payments__cell--overdue { background: var(--signal-tint); color: var(--signal-ink); }
+.payments__cell--received { background: var(--verified); color: var(--on-strong); }
+.payments__celllabel { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; }
+.payments__cellvalue { font-family: var(--font-display); font-weight: 700; font-size: var(--text-amount-size); overflow-wrap: anywhere; }
+.payments__coverage { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
+
+/* the list and Chidi's note side by side */
+.payments__row { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
+.payments__main { flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.payments__toolbar { margin: 0; }
+.payments__table .psl-table { min-width: 900px; }
+.payments__table td { vertical-align: middle; }
+.payments__refcell { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.payments__ref:focus-visible { outline: var(--rule-strong) solid var(--focus); outline-offset: var(--rule-strong); }
+.payments__more { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+
+.payments__note { flex: 1 1 300px; max-width: 380px; background: var(--action-tint); border: var(--rule-strong) solid var(--action); }
+.payments__notehead { padding: var(--space-3) var(--space-4); border-bottom: var(--rule-strong) solid var(--action); display: flex; align-items: center; gap: var(--space-10px); }
+.payments__notename { font-weight: 600; }
+.payments__noterole { font-weight: 500; font-size: var(--text-hint-size); color: var(--action-ink); }
+.payments__notebody { padding: var(--space-14px) var(--space-4); display: flex; flex-direction: column; gap: var(--space-10px); color: var(--action-ink); line-height: 1.55; }
+.payments__notebody p { margin: 0; }
+
+.payments__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.payments__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.payments__cardhead { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); width: 100%; }
+.payments__cardref { font-size: var(--text-small-size); color: var(--ink-muted); }
+.payments__cardref .psl-mono { font-family: inherit; }
+
+.payments__noaccess { max-width: 720px; }
+.payments__noaccesstag { align-self: flex-start; }
+
+@media (max-width: 719.98px) {
+  /* one column in the phone board's order: title, toolbar, figures, the cards, then Chidi's note */
+  .payments { gap: var(--space-3); }
+  .payments__eyebrow { display: none; }
+  .payments__row, .payments__main { display: contents; }
+  .payments__head { order: 0; min-height: 0; }
+  .payments__toolbar { order: 1; }
+  /* search and Filter share the first row, as drawn; the count wraps under them */
+  .payments__toolbar .cmp-toolsearch { flex: 1 1 0; min-width: 0; }
+  .payments__strip { order: 2; grid-template-columns: minmax(0, 1fr); }
+  .payments__cell { border-right: none; border-bottom: var(--rule-strong) solid var(--ink); flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: baseline; }
+  .payments__cell:last-child { border-bottom: none; }
+  .payments__coverage { order: 3; }
+  .payments__main > :not(.payments__toolbar) { order: 4; }
+  .payments__note { order: 5; max-width: none; flex-basis: auto; }
+  /* a standalone link on a phone: a 44px target, its look unchanged (D-92c) */
+  .payments__notebody a { display: inline-flex; align-items: center; min-height: var(--control-md); }
+}

@@ -1,0 +1,9 @@
+{
+  "send_reminder": {
+    "status": 200,
+    "body": {
+      "outcome": "effect_uncertain",
+      "message": "Delivery to Harmattan Bank couldn’t be confirmed."
+    }
+  }
+}

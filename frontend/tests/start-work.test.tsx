@@ -170,11 +170,11 @@ describe('the main button and the chooser', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('only lines E-LINES returned are offered (finance_lead: exactly 1; a /me key missing from E-LINES is absent)', async () => {
+  it('only lines E-LINES returned are offered (finance_lead: exactly 3; a /me key missing from E-LINES is absent)', async () => {
     persona = 'finance_lead';
     await openChooser();
-    expect(within(dialog()).getByText('LINES YOU CAN START · 1')).toBeTruthy();
-    expect(within(dialog()).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['invoice']);
+    expect(within(dialog()).getByText('LINES YOU CAN START · 3')).toBeTruthy();
+    expect(within(dialog()).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['invoice', 'income_schedules', 'ledger_sources']);
   });
 
   it('E-LINES is read on every press, never before', async () => {
@@ -328,7 +328,7 @@ describe('fields by kind', () => {
     expect(request.getAttribute('aria-describedby')!.split(' ')).toContain(hint.id);
   });
 
-  it('an optional money field is not rendered; an optional evidence field is drawn disabled; neither is sent', async () => {
+  it('an optional money field is not rendered; an optional evidence field is the live Proof box, and nothing is sent for it until a file is uploaded', async () => {
     const intake: Field[] = [
       { name: 'note', label: 'Note', type: 'text', required: false },
       { name: 'fee', label: 'Fee', type: 'money', required: false },
@@ -338,9 +338,8 @@ describe('fields by kind', () => {
     await openMain();
     expect(within(dialog()).queryByText(/Fee/)).toBeNull();
     expect(within(dialog()).getByText('Proof')).toBeTruthy();
-    const proof = within(dialog()).getByText('Proof upload comes next');
-    expect(proof.getAttribute('aria-disabled')).toBe('true');
-    expect(proof.closest('[data-field]')!.querySelector('input, button')).toBeNull();
+    const proof = within(dialog()).getByRole('group', { name: 'Proof' });
+    expect(within(proof).getByRole('button', { name: 'Choose a file' })).toHaveProperty('disabled', false);
     fireEvent.change(within(dialog()).getByRole('textbox', { name: 'Note (optional)' }), { target: { value: 'hi' } });
     press('Start work');
     await waitFor(() => expect(posts).toHaveLength(1));
@@ -519,7 +518,7 @@ describe('server answers', () => {
     );
   });
 
-  it('422: a problem for the disabled proof box, or one name twice, is drawn as its own boxes', async () => {
+  it('422: a problem for Proof sits under the Proof box; one for a field not rendered, or one name twice, is drawn as its own boxes', async () => {
     override = (request, url) => {
       if (request.method === 'POST')
         return json(422, {
@@ -544,7 +543,8 @@ describe('server answers', () => {
       ['billing_contact', 'First.'],
       ['billing_contact', 'Second.'],
     ]);
-    expect(dialog().querySelector('.sw-proof')!.parentElement!.querySelector('.psl-error')).toBeNull();
+    expect(boxes[0].tagName).toBe('FIELDSET');
+    expect(within(boxes[0] as HTMLElement).getByRole('group', { name: 'Proof' })).toBeTruthy();
   });
 
   it('a double press sends one start', async () => {
