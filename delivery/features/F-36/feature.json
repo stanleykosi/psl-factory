@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-36",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Assign the accountable PM: a PMO Lead picks the PM for an unassigned RFP from the backend's list, in a panel over My work (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-RFP-INTAKE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Opens over My work.** As `pmo_lead` on `/my-work?queue=unassigned`, pressing \"Tamarind Loans \u00b7 loan origination RFP\" opens the Drawer \"Assign accountable PM\" over the list at `?queue=unassigned&assign=W-3302`. The desktop eyebrow is \"TAMARIND LOANS \u00b7 TL-RFP-2026-014\"; the phone subline is \"Tamarind Loans \u00b7 TL-RFP-2026-014\". The list stays drawn behind. Escape, \"\u00d7\" and Cancel close it with no request and return focus to the row link. \u2014 verify: e2e at 1440 and 390; component test with a recording `fetch`.",
+    "**Candidates only from the response.** On W-3301 the Accountable PM list holds exactly the three candidates (name, plus role and hint as returned; Ife Okoro shows no hint, not \"0\"). Nothing is chosen (\"Choose a PM\"). There is no free-text option. The text reads \"3 people can prepare RFPs here\"; W-3303 reads \"1 person can prepare RFPs here\". \u2014 verify: `cd frontend && npx vitest run tests/rfp-assign.test.tsx`.",
+    "**No `assign`, no control.** W-3305 sends the person to `/work/W-3305` with no assign control anywhere. W-3304 shows \"No one can prepare RFPs here yet.\" and no Select or \"Assign PM\". Removing `assign` from a W-3301 copy draws no control. The code reads no `/me` (`git diff` adds no `/me`, `useMe` or `roles` read under `features/rfp`, `features/my-work` or `features/workspace`). \u2014 verify: component tests; grep on the diff.",
+    "**Acting role from the response only.** W-3301 shows \"You are assigning as \u00b7 PMO Lead\" as text and sends no `acting_role`. W-3302 shows a Select of exactly \"PMO Lead\" and \"CEO\", with \"PMO Lead\" chosen (the returned default). Choosing \"CEO\" sends `acting_role: \"ceo\"`. The same pages for personas `pm` and `ceo`, given the same item, draw the same role choices (the role does not follow the signed-in person). \u2014 verify: component tests with three personas; request bodies.",
+    "**What happens next.** W-3302 shows the returned `summary` and `agent` sentences word for word. W-3301 shows the fixed sentence, which names no channel and has no \"Tola\" (`textContent` contains no \"WhatsApp\", \"email\" or \"Tola\"). \u2014 verify: component tests.",
+    "**Typed assign.** On W-3301, choosing Tunde Bello and pressing \"Assign PM\" sends one POST `/api/v1/work/W-3301/assignment` with `X-CSRFToken` and a body that validates against the generated E-WORK-ASSIGN request schema: `{expected_revision: 1, person_id: <Tunde's id>}` plus `note` only when typed (trimmed), and no other key. A double press sends one. \u2014 verify: component test; `GET /__mock/workspace-log` `assignments` in `rfp-assign-mock.test.ts`.",
+    "**No success before the re-read.** On 200, the Drawer stays until the item re-read and the list refresh both finish. Only then the notice \"TL-RFP-2026-014 is now with Tunde Bello.\" appears, the row is gone, and the Unassigned count is one lower. A fake-timer test that holds the re-read shows no \"is now with\" and no closed Drawer while it is pending. If the re-read fails, the page shows the \"sent, but we couldn't refresh\" sentence and no success words. \u2014 verify: component tests; e2e reads the list after assigning.",
+    "**Overlay assign with proof.** On W-3302, choosing a file uploads one E-EVIDENCE-UPLOAD with `kind: \"assignment_proof\"` and `case_revision: 1`. \"Assign PM\" then sends `acting_role`, `evidence_id` and `case_revision: 2`, and the mock records it. While uploading, Assign sends nothing. With the upload made to fail (`psl_mock_scenario=500` on the upload), the chip shows its problem and Try again; Assign shows \"Remove the file that didn't upload, or try it again.\" and sends nothing. Removing the chip then lets Assign send without `evidence_id`. \u2014 verify: component tests; `rfp-assign-mock.test.ts`.",
+    "**Validation.** Pressing Assign with no PM shows \"Choose a PM to continue.\" under the field, a top summary and focus on the field, and sends nothing. On W-3303, an empty note shows \"Add a note to continue.\" A note over 2000 characters is refused before sending. A mock 422 naming `person_id`, `acting_role` or `evidence_id` puts the message under that field and keeps the entries. \u2014 verify: component tests; `psl_mock_assign=invalid`.",
+    "**Stale.** With `psl_mock_assign=stale`, the 409 re-reads and shows the stale sentence with the choices kept. The next press sends `expected_revision: 2` and succeeds. After 60 seconds of fake time there is still only one POST. \u2014 verify: component test; mock log.",
+    "**Uncertain never says assigned.**",
+    "**Access 401, 403, 404.** A 401 on the item read or the write shows the signed-out state with `next` set to the panel URL. A 403 and a 404 (W-3399, which has no fixture) show the same not-open view in the Drawer, with no client, reference or name and no further call. A 403 on the write does the same. Persona `pm` on `?queue=unassigned` keeps F-02's \"Only Leads can see unassigned work.\" \u2014 verify: component tests with a recording `fetch`; e2e for `pm`.",
+    "**Unknown, never 0.** On a copy of W-3301 with `rfp.client`, a candidate's `role` and `hint` and the file size removed, the page shows \"Unknown\" where a value is drawn (header part, size \"Size unknown\"), never a blank, \"0\" or \"0 RFPs\". After the write, a re-read with no `rfp.pm` shows \"Assigned to Unknown\". \u2014 verify: component test on the modified copy.",
+    "**Phone (D-92c).** At 390 the sheet shows the same parts as desktop in one column (conflict 7), with \"Assign PM\" pinned and no sideways scroll. Every target in the sheet is at least 44px, including the Select, the role Select, the file button, Try again and **the uploaded file chip's remove \"\u00d7\" after an upload** (the F-31 QA-2-1 lesson). Links inside a sentence are exempt (D-95). \u2014 verify: e2e measures `getBoundingClientRect` of every button, link and input in the dialog before and after a W-3302 upload.",
+    "**Fidelity (D-64).** One design-fidelity run per round over both boards on a production build, with the cookies in the Boards table. Element coverage after approved exceptions is 100% on each board, and visual is at least 90 or carries a board-level waiver citing D-83, never under 70. Every exception has `role`, `name`, `category`, `reason` and `approved_by` and maps to a Conflicts number. None covers a value the data can supply (a name, a reference, a count or a returned sentence). \u2014 verify: the fidelity command per board (`--width 1440`, `--width 390`); `round-<N>/fidelity/`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on W-3301, W-3302 (before and after an upload), W-3304, the 422 state, the uncertain state, the not-open view and the list after success. The Drawer is a labelled dialog with focus held inside it. Every field has a label. Errors and the success notice are announced (`role=\"status\"` or `alert`). Nothing animates under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/rfp-assign.spec.ts`.",
+    "**Tokens and components only.** `git diff` adds no `#hex`, `rgb(` or `hsl(` in any `.css`, and no literal px size outside a token. There is no local copy of a component `@/components` exports; the Drawer, Select, TextArea, Button, Callout and ValidationSummary are the shared ones, and the proof is F-09's `ProofField`. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `rfp-assign-mock.test.ts` checks:",
+    "**Contract not extended.** `git diff --stat` against the base shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `frontend/src/shell/**`, `frontend/src/features/start-work/**`, the protected paths, or existing fixtures other than the appended `pmo_lead` rows. Every overlay field and request key is listed as a contract proposal in build.md. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing behaviour green.** F-30 assign, My work and F-09 proof all still pass: `cd frontend && npx vitest run tests/issue-detail.test.tsx tests/issue-assign-mock.test.ts tests/workspace.test.tsx tests/my-work.test.tsx tests/my-work-model.test.ts tests/mock-work-list.test.ts tests/response.test.tsx tests/response-mock.test.ts`, plus `E2E_PORT=4960 MOCK_PORT=4961 npx playwright test e2e/my-work.spec.ts e2e/issue-detail.spec.ts e2e/response.spec.ts`. W-2413 still says \"Set an owner\" and \"Owner set: \u2026\". F-31's W-2601 still says \"Confirm PM\" when merged. Finance Lead's Unassigned receipt rows still end on `/work/W-1137` and `/work/W-1138`. \u2014 verify: the commands; build.md output."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. Assigning the accountable PM changes who is responsible for a client bid. It is also the first write that records an acting role as the authority in the audit (G-24-1), so `auth` is ticked. The surface is small, though: one existing write (E-WORK-ASSIGN, already exercised by F-30), the candidates and roles are limited to what the backend returns, and there is no money, migration or client sending. SURFACES are ui, api, auth and contract-change (G-24-1, -2 and -3 are additive proposals). PRODUCT-ACCEPTANCE is required because the assign flow, its wording and the \"What happens next\" copy are new to the client."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-36/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,7 +69,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "023ad69ede328ce092a5c2d2cd91ec3b462ac6bd",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T12:22:44Z",
+      "seconds": 396.7,
+      "evidence_ref": "delivery/features/F-36/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -45,7 +92,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +106,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-36/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +157,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-RFP-INTAKE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "be04d072e0e7ac24c1e79ca10e0d7044b7c7291c",
+    "task_branch": "fe-rfp-intake-assign-accountable-pm",
+    "head_sha": "023ad69ede328ce092a5c2d2cd91ec3b462ac6bd",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-36",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +171,43 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/rfp-assign.spec.ts",
+      "frontend/mock/alerts.mjs",
+      "frontend/mock/fixtures/E-WORK-LIST.board.json",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/fixtures/me.pmo_lead.json",
+      "frontend/mock/fixtures/work/W-3301.json",
+      "frontend/mock/fixtures/work/W-3301.next.json",
+      "frontend/mock/fixtures/work/W-3302.json",
+      "frontend/mock/fixtures/work/W-3302.next.json",
+      "frontend/mock/fixtures/work/W-3303.json",
+      "frontend/mock/fixtures/work/W-3303.next.json",
+      "frontend/mock/fixtures/work/W-3304.json",
+      "frontend/mock/fixtures/work/W-3305.json",
+      "frontend/mock/fixtures/work/W-3306.assign.json",
+      "frontend/mock/fixtures/work/W-3306.json",
+      "frontend/mock/fixtures/work/W-3306.next.json",
+      "frontend/mock/proposals/rfp-assign.json",
+      "frontend/mock/response.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/WorkRows.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/src/features/response/labels.ts",
+      "frontend/src/features/rfp/AssignPmDrawer.tsx",
+      "frontend/src/features/rfp/proposals.ts",
+      "frontend/src/features/rfp/rfp.css",
+      "frontend/src/features/workspace/AssignForm.tsx",
+      "frontend/src/features/workspace/useWorkspaceAssign.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/rfp-assign-mock.test.ts",
+      "frontend/tests/rfp-assign.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +240,44 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T10:36:17Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T10:36:17Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-36/readiness.md",
+      "delivery/features/F-36/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 1,
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "023ad69ede328ce092a5c2d2cd91ec3b462ac6bd"
   },
   "blocked": null
 }

@@ -190,20 +190,6 @@
       "approved_by": "design engineer, 16 Nov 2026 — D-100"
     },
     {
-      "role": "button",
-      "name": "Show staff-cost totals",
-      "category": "no field",
-      "reason": "Conflicts 6 (D-116): no field carries suggestion buttons (G-SCR05-5); not drawn. Proposal: typed suggestions[] on the message.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
-      "role": "button",
-      "name": "Ask HR Lead for access",
-      "category": "no field",
-      "reason": "Conflicts 6 (D-116): no field carries it (G-SCR05-5) and who receives an access request is an unproposed business decision; not drawn.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
       "role": "text",
       "name": "Payroll",
       "category": "wording",
@@ -211,10 +197,38 @@
       "approved_by": "builder proposal, pending design engineer"
     },
     {
+      "role": "link",
+      "name": "Show staff-cost totals",
+      "category": "no field",
+      "reason": "Conflicts 6 (D-116): no field carries suggestion buttons (G-SCR05-5); not drawn. Proposal: typed suggestions[] on the message.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Ask HR Lead for access",
+      "category": "no field",
+      "reason": "Conflicts 6 (D-116): no field carries it (G-SCR05-5); who receives an access request is an unproposed business decision; not drawn.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
       "role": "text",
-      "name": "I can’t share an individual’s pay with you; that is restricted to HR roles. I can show staff-cost totals for your business unit, or you can ask the HR Lead for access if your work needs it.",
+      "name": "Zainab · HR agent I can’t share an individual’s pay with you; that is restricted to HR roles. I can show staff-cost totals for your business unit instead.",
       "category": "wording",
-      "reason": "Conflicts 3: contract carries text and cannot_reason as separate plain lines; the board's one paragraph differs from the two mock lines, never joined or rewritten.",
+      "reason": "Conflicts 3: the contract carries text and cannot_reason as separate plain lines, never joined or rewritten; the board's one paragraph differs from the mock's two lines.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "ACCESS · payroll (restricted)",
+      "category": "restricted",
+      "reason": "A restricted source shows only the lock and 'Restricted'; its label and reference are never in the page (spec criterion 10). The board draws the label.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "pattern",
+      "name": "Repeated list items with 2 text field(s) each",
+      "category": "structure",
+      "reason": "The conversation list rows are on the page (title and status line, as F-24 built them) but the tool does not match them as a 2-field pattern; no data is missing.",
       "approved_by": "builder proposal, pending design engineer"
     }
   ],

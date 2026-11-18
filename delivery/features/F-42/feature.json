@@ -3,26 +3,65 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-42",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Fixed asset schedule \u00b7 October: Chidi checks the register, a PPE reviewer approves the register changes and then the explained dates in place, and the item goes to calculation or is held (contract mock only)",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-FIN-PPE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-3901`\u2026`W-3904` show their fixture's status label and tone, stations, sections, agent card, table rows, proof, facts and \"Next\", and nothing else. No board string is in `src`. \u2014 verify: `grep -rn \"CHIDI INVESTIGATING\\|AWAITING FINANCE DECISION\\|PPE reviewer\\|never reads asset values\\|VALUES NOT READ\\|Depreciation starts\\|F07\\|PPE_REGISTER\\|asset-dates-explanation\" frontend/src` returns nothing; `cd frontend && npx vitest run tests/asset-schedule.test.tsx`; pages at 1440 and 390.",
+    "**Costs as returned.** On W-3902 the cost cells read \"\u20a68,400,000.00\", \"\u20a614,000,000.00\" and \"\u20a63,150,000.00\" at 1440 and at 390, with no short form. If the fixture's `\"14000000.00\"` is changed to `\"14000000.10\"`, the page shows \"\u20a614,000,000.10\" exactly. \u2014 verify: component test at both widths.",
+    "**The page computes nothing.**",
+    "**Unknown is never 0, blank or a dash.** W-3910 shows \"Unknown\" in the Toyota Hilux COST cell. That cell is not \"\u20a60\", \"0.00\", empty, \"-\" or \"\u2014\". \u2014 verify: component test on W-3910.",
+    "**Sample-marked.** Every fixture page shows the shared `SampleLabel` (\"SAMPLE DATA\") because the record says `sample: true`. A copy with `sample: false` does not show it. \u2014 verify: component test; `jq '.sample' frontend/mock/fixtures/work/W-39*.json` all `true`.",
+    "**Each unset key is a hold with no controls.**",
+    "**Decide controls only from `you_can_act` and the steps.**",
+    "**Agent work is not a decision.**",
+    "**Approved and calculating only when the response says so.**",
+    "**Approve.** On W-3902 the page sends one E-TASK-CLAIM to `/api/v1/tasks/T-3902/claim`. Pressing \"Approve register\" then sends exactly one POST `/api/v1/tasks/T-3902/decision` with the CSRF header and `{verdict: \"approve\", expected_revision: 1}`. The body validates against the generated request schema, with no note and no extra keys. A double press sends one. The same holds for W-3903 and T-3903. \u2014 verify: component test; e2e request log.",
+    "**Return and reject need a note.**",
+    "**No write when the person cannot act.** On W-3901, W-3904, W-3905, W-3906, W-3907, W-3908, W-3909 and W-3912, no claim and no decision is sent, whatever is pressed or typed. \u2014 verify: e2e request log (zero task POSTs).",
+    "**Backend refusals are shown.**",
+    "**Uncertain decide.** A network failure, timeout or 500 on decide re-reads the item before anything else and shows `UncertainNotice`. It never shows \"approved\", \"returned\" or \"rejected\" from the click, and sends no second decision automatically. A later deliberate decide clears the earlier notice. \u2014 verify: component test with fake timers (one POST after 60 s); e2e with a routed abort.",
+    "**Access.**",
+    "**Phone.** At 390:",
+    "**Other lines unchanged.** The income schedule pages (`W-2701`\u2026`W-2712`) and every other line workspace render as before. \u2014 verify: F-33's `tests/income-schedule.test.tsx` and `e2e/income-schedule.spec.ts` pass unchanged.",
+    "**Fidelity (D-64, D-83).** There is one design-fidelity run per round over the 8 boards, on a production build at `--width 1440` and `--width 390`.",
+    "**Accessibility.** There are no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on these states: W-3901\u2026W-3904, W-3907, W-3909, the open Drawer, the note error, the uncertain notice and the not-open view. Also:",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in `features/workspace/*.css`. It adds no local copy of a component that `@/components` exports (`Button`, `Drawer`, `TextArea`, `Callout`, `Panel`, `Tag`, `MiniStationBar`). \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `tests/asset-schedule-mock.test.ts` checks that:",
+    "**Contract not extended.** `git diff --stat` against the base (with F-33 merged) shows no change in any of these:",
+    "**Existing tests green.** `delivery/checks.sh` passes. The tests listed under Context pass unchanged, including `tests/response-mock.test.ts` and `tests/response.test.tsx` (W-1604 no grant) and the month-end link assertions. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** build.md records:"
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. This is a Finance approval of the register and dates that the asset schedule is built on, and the register-change rows carry money (\u20a614,000,000.00 disposal). A wrong control would make a Finance source look approved without the human decision. The rules at stake are the ones the product guards most closely: Unknown shown as 0, a browser-computed figure, an invented reviewer or rule, and an agent claim read as approval. The work stays contained: two decide tasks on the F-17 frame through F-33's inline Decide, on the mock, with nothing calculated or posted. The SURFACES are these: - ui: 8 boards. - api: E-WORK-ITEM and E-TASK-CLAIM/DECIDE. - security: an authority-bearing approval write. - contract-change: `fixed_assets` line, `steps[].verdict`, two tasks per item. - product-decision: all asset rules and F07 unset, plus D-RETURN open. PRODUCT-ACCEPTANCE is required, because this is a new Finance flow, it involves money, and the client has not seen it working."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-42/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,21 +74,74 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T12:52:58Z",
+      "seconds": 311.7,
+      "evidence_ref": "delivery/features/F-42/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T13:11:22Z",
+      "seconds": 566.2,
+      "evidence_ref": "delivery/features/F-42/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T13:44:29Z",
+      "seconds": 260.6,
+      "evidence_ref": "delivery/features/F-42/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T14:08:10Z",
+      "seconds": 319.9,
+      "evidence_ref": "delivery/features/F-42/round-2/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "evidence_refs": [
+        "delivery/features/F-42/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "evidence_refs": [
+        "delivery/features/F-42/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -59,17 +151,521 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-42/readiness.md",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "evidence_refs": [
+        "delivery/features/F-42/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "evidence_refs": [
+        "delivery/features/F-42/round-2/review-ui.md"
+      ]
+    },
+    "security": {
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "evidence_refs": [
+        "delivery/features/F-42/round-2/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "**Fixture lifecycle facts go backwards.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T13:44:29Z",
+          "refs": [
+            "8779c5f3"
+          ],
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T14:33:17Z",
+          "refs": [
+            "In W-3903.approve, W-3904 and W-3909, `drafted` and `reviewed` are now `earned` with `at` set. They match W-3902.approve, so the facts never go back to \"not yet\" across the line. The new test \"TECH-1-1: after both reviews\u2026\" in `frontend/tests/asset-schedule.test.tsx` checks this. Station statuses agree: W-3902.approve is done, done, waiting; W-3903.approve and W-3904 are done, done, done, waiting; W-3909 is done, done, done, stopped."
+          ],
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8779c5f3"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "In W-3903.approve, W-3904 and W-3909, `drafted` and `reviewed` are now `earned` with `at` set. They match W-3902.approve, so the facts never go back to \"not yet\" across the line. The new test \"TECH-1-1: after both reviews\u2026\" in `frontend/tests/asset-schedule.test.tsx` checks this. Station statuses agree: W-3902.approve is done, done, waiting; W-3903.approve and W-3904 are done, done, done, waiting; W-3909 is done, done, done, stopped."
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The three holds (W-3907, W-3908, W-3909) and the uncertain state (W-3911) draw a full-width \"See all exceptions\" button above the stations. Expected: holds read as a status, a reason (\"NOT SET\") and a Next sentence, with no button (spec criterion 6, \"no button\"; the Setup link is deliberately not drawn, G-C-3). Actual: a large button with a vague label that goes nowhere the hold explains. At 390 it sits directly on the mini station bar and clips it (see W-3907 and W-3909 at 390). Either remove it for these states or make it a plain, correctly spaced link with a label that says what it opens, and leave the station bar clear.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T13:44:29Z",
+          "refs": [
+            "8779c5f3"
+          ],
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T14:33:17Z",
+          "refs": [
+            "The new condition is `line_key !== 'issue_followup' && line_key !== 'fixed_assets'`, so it applies only to this line. The test \"UX-1-1: no hold or uncertain state\u2026\" checks that W-3907, W-3908, W-3909 and W-3911.approve have no \"See all exceptions\" link, and that W-2706 (F-33) still has one. work-item, work-item-board and workspace tests pass, so other pages keep the shell button where they had it."
+          ],
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8779c5f3"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "The new condition is `line_key !== 'issue_followup' && line_key !== 'fixed_assets'`, so it applies only to this line. The test \"UX-1-1: no hold or uncertain state\u2026\" checks that W-3907, W-3908, W-3909 and W-3911.approve have no \"See all exceptions\" link, and that W-2706 (F-33) still has one. work-item, work-item-board and workspace tests pass, so other pages keep the shell button where they had it."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "After \"Approve register\" on W-3902 the page shows \"WAITING FOR DATE EXPLANATIONS\" with the Next sentence \"The 3 unclear in-service dates are explained and the proof attached. The date review starts then.\" The sentence says the explanation is already done, which contradicts the status, and station 3 reads \"Needs a person\" although nobody on the page can act and nothing says who explains the dates (G-55-1, no board). Expected (conflict 2 in spec.md): a clear waiting state with no dead end. Fix the sample `W-3902.approve.json` wording so it says what is still missing and who it waits for (for example \"Waiting for someone to explain the 3 unclear dates and attach the proof. The date review starts after that.\"). The missing explain step itself stays with the design engineer (G-55-1).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T13:44:29Z",
+          "refs": [
+            "8779c5f3"
+          ],
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T14:33:17Z",
+          "refs": [
+            "In W-3902.approve.json, `next_step` and `workspace.next` now read \"Waiting for someone to explain the 3 unclear in-service dates and attach the proof. The date review starts after that.\", and station 3 is `waiting` instead of `current_person`. The test checks the new text and that \"dates are explained\" is absent. There is still no panel and no control on this state. Who explains the dates stays with the design engineer (G-55-1)."
+          ],
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8779c5f3"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "In W-3902.approve.json, `next_step` and `workspace.next` now read \"Waiting for someone to explain the 3 unclear in-service dates and attach the proof. The date review starts after that.\", and station 3 is `waiting` instead of `current_person`. The test checks the new text and that \"dates are explained\" is absent. There is still no panel and no control on this state. Who explains the dates stays with the design engineer (G-55-1)."
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The approve consequence (\"3 assets have unclear dates; they go to a date review next.\") sits below all three buttons, so it reads as if it applied to Return and Reject as well. Return and Reject state no consequence at all. Expected: each button is clear about what it does. Needs a decision on where the consequence is drawn, and wording for return and reject from the backend or the design engineer (D-RETURN is open); the frontend must not invent it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The visually hidden \"lifecycle\" strip (DRAFTED, REVIEWED, APPROVED, SENT, RECEIPT RECORDED \"Unknown\", VERIFIED) is read by screen readers on every state. It disagrees with the screen: \"Receipt recorded: Unknown\" on a fixed asset schedule, \"Reviewed: In progress\" on the date review after the register is done, \"Drafted: Not yet\" on PROCESSING. It comes from the generic `facts` array on the base item. Fix the fixtures or drop the strip on this line so screen-reader users hear the same story as the stations.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The uncertain decide shows two stacked amber notices (\"October register: result not confirmed\" and \"We are checking what happened. Nothing was sent again.\") with the Reload button jammed against the sentence on desktop and wrapped awkwardly at 390. It reads correctly (never success) but should be one notice with spaced actions.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-3904 and the date approval show \"PROCESSING\", station 4 \"Waiting\" and \"Rule \u00b7 F07 CALCULATION RULES\" while Calculation rules are NOT SET (W-3909 is the real state). It does not claim agent work (Chidi's card is absent on W-3904 and the Next sentence says the factory calculates). The internal code \"F07\" is not plain business language. This is sample data per conflict 5; the backend value should become a plain rule name before it carries real policy.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The proof file name is drawn wrong, and the exceptions call it a tool false-miss. Fixture `cites[0].label` is \"asset-dates-explanation.pdf\". The page draws it as `span.ws-ref` with computed `text-transform: uppercase`, in IBM Plex Mono 12px, colour ink-muted (rgb 74,83,87), on the right of the row (x 779 at 1440). It reads \"ASSET-DATES-EXPLANATION.PDF\", and at 390 it wraps to \"ASSET-DATES- / EXPLANATION.PDF\". \"Uploaded \u00b7 64 KB\" sits alone on the left. The board (SCR-55-desktop-date-review, SCR-55-mobile via the same section) draws the file name in its own case, on its own line, with the detail under it, at x 146. Conflicts 12 (D-118) approves only dropping the paperclip and the bold. It does not cover the capitals, the monospace grey or the move. A file name's case is part of the value. Expected: on the fixed_assets line, the cite label in its returned case, in body text (no capitals or mono), placed above \"Uploaded \u00b7 64 KB\", the way the board draws it. Scope it like the existing `.ws[data-line=\"fixed_assets\"]` rules in `frontend/src/features/workspace/workspace.css:272-279` so F-33 and other lines are untouched. Then rewrite the \"asset-dates-explanation.pdf\" and \"Uploaded \u00b7 64 KB\" exceptions in `fidelity-exceptions.json` (keep them only if the tool still misses them once the text matches), and re-score the two date-review boards.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T13:44:29Z",
+          "refs": [
+            "8779c5f3"
+          ],
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T14:33:17Z",
+          "refs": [
+            "In the round-2 side-by-side at 1440, the file name is in its own case above \"Uploaded \u00b7 64 KB\", in body text, at the row start. At 390 the proof sits below the stacked Unclear dates table, as Conflicts 10 allows. The test checks that `.ws-row__end` is \"asset-dates-explanation.pdf\", `.ws-row__main` is \"Uploaded \u00b7 64 KB\", and that the scoped `text-transform: none` rule is present. The two proof exceptions are now labelled as tool limitations, because the check does not read text nested in the list row."
+          ],
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8779c5f3"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "In the round-2 side-by-side at 1440, the file name is in its own case above \"Uploaded \u00b7 64 KB\", in body text, at the row start. At 390 the proof sits below the stacked Unclear dates table, as Conflicts 10 allows. The test checks that `.ws-row__end` is \"asset-dates-explanation.pdf\", `.ws-row__main` is \"Uploaded \u00b7 64 KB\", and that the scoped `text-transform: none` rule is present. The two proof exceptions are now labelled as tool limitations, because the check does not read text nested in the list row."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Investigating (W-3901, 1440 and 390): the register's values note \"Chidi never reads asset values; he checks structure, dates and provenance.\" is drawn as the shared amber warning box with a warning icon. The board draws a plain muted line. This comes from Sections' facts `note`, which the approved spec chose (spec Decisions, \"Values note\"). The waiver covers it, but a warning tone on a reassurance is a change in meaning the design engineer should look at when signing the waiver.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "owner": "design engineer / backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Calculating (W-3904, 1440 and 390): the Calculate station is amber with \"Waiting\" (shared StationTrack). The board draws it blue for \"in progress\". The builder's reason holds: `current_agent` would draw \"Agent working\" for a factory step. It needs a station status for a running factory step from the backend (backend handoff). Waivable under D-83 until then. No Conflicts item covers it, so the design engineer signs it explicitly.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T13:16:48Z",
+          "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The frame's \"History\" link is under the project's 44px phone rule. Expected: at least 44 by 44 px (D-92c). Actual: 42\u00d724 at 390 on every F-42 page and on F-33's W-2702. It still passes WCAG 2.2 AA target size (24px). It is shared F-17 frame code (`frontend/src/features/work-item/work-item.css:406`, `WorkItemView.tsx:151`), outside this feature's lane, and the builder's e2e excludes it explicitly (`e2e/asset-schedule.spec.ts:220`). It needs a frame-wide fix.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T17:04:23Z",
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On the proof row, the file name is moved first with CSS `order: -1` (`frontend/src/features/workspace/workspace.css:282`), so the DOM order is \"Uploaded \u00b7 64 KB\" and then \"asset-dates-explanation.pdf\". A screen reader reads the detail before the file name. Expected: the reading order matches the visual order, with the file name first in the DOM.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T17:04:23Z",
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Once, in run1 at 390, a forced 404 read showed \"ERROR \u00b7 COULDN'T LOAD \u2026 Reference unexpected_response\" instead of the NO ACCESS view. That was at load average about 300. It did not recur in 4 later tries at 390 or in any try at 1440. No title, cost or asset leaked. I'm recording it as possible flakiness of the proxy or client under load, not as a defect.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-42/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T17:04:23Z",
+          "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+          "evidence_refs": [
+            "delivery/features/F-42/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-42/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+          "evidence_refs": [
+            "delivery/features/F-42/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+          "evidence_refs": [
+            "delivery/features/F-42/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+          "evidence_refs": [
+            "delivery/features/F-42/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -89,11 +685,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-FIN-PPE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "be04d072e0e7ac24c1e79ca10e0d7044b7c7291c",
+    "task_branch": "fe-fin-ppe-fixed-asset-register-review",
+    "head_sha": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-42",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +699,39 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/asset-schedule.spec.ts",
+      "frontend/mock/fixtures/work/W-3901.json",
+      "frontend/mock/fixtures/work/W-3902.approve.json",
+      "frontend/mock/fixtures/work/W-3902.json",
+      "frontend/mock/fixtures/work/W-3902.reject.json",
+      "frontend/mock/fixtures/work/W-3902.return.json",
+      "frontend/mock/fixtures/work/W-3903.approve.json",
+      "frontend/mock/fixtures/work/W-3903.json",
+      "frontend/mock/fixtures/work/W-3903.reject.json",
+      "frontend/mock/fixtures/work/W-3903.return.json",
+      "frontend/mock/fixtures/work/W-3904.json",
+      "frontend/mock/fixtures/work/W-3905.json",
+      "frontend/mock/fixtures/work/W-3906.json",
+      "frontend/mock/fixtures/work/W-3907.json",
+      "frontend/mock/fixtures/work/W-3908.json",
+      "frontend/mock/fixtures/work/W-3909.json",
+      "frontend/mock/fixtures/work/W-3910.json",
+      "frontend/mock/fixtures/work/W-3911.approve.json",
+      "frontend/mock/fixtures/work/W-3911.json",
+      "frontend/mock/fixtures/work/W-3911.reject.json",
+      "frontend/mock/fixtures/work/W-3911.return.json",
+      "frontend/mock/fixtures/work/W-3912.json",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/asset-schedule-mock.test.ts",
+      "frontend/tests/asset-schedule.test.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +764,92 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T10:37:49Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T10:37:50Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T13:11:47Z",
+      "round": 1,
+      "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T13:16:48Z",
+      "round": 1,
+      "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T13:16:49Z",
+      "round": 2,
+      "head": "5fd62b4c65d9c80c66ebf0f6e3dd37bb0ddb8dc0",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T14:10:18Z",
+      "round": 2,
+      "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T14:33:20Z",
+      "round": 2,
+      "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T17:04:23Z",
+      "round": 2,
+      "head": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-42/readiness.md",
+      "delivery/features/F-42/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 2,
+    "attempts": 2,
+    "verdict": "PASS",
+    "commit": "8779c5f30c05ed760fc1cbfe3a2dddf790daca1e"
   },
   "blocked": null
 }
