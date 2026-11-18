@@ -131,6 +131,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);
   const [recorded, setRecorded] = useState<string | null>(null);
   const [teamGone, setTeamGone] = useState<string | null>(null);
+  // QA-2-5: the write answered 200 but the re-read failed: say it was sent, never that it is recorded
+  const [sentNote, setSentNote] = useState(false);
   // The PM's own tick or untick of an `items` target, by section and item id. An item the PM has not touched follows the
   // step's `items_default` (PROPOSAL G-SCR28-1), so an item that arrives with a reload starts as the data says.
   const [choices, setChoices] = useState<Record<string, boolean>>({});
@@ -234,6 +236,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             if (off(step)) return;
             setRecorded(null);
             setTeamGone(null);
+            setSentNote(false);
             setRecording({ token, taskId, teamKey: extra?.row ? itemTeamKey(extra.row) : undefined, heading: event.currentTarget.closest('section')?.querySelector<HTMLElement>('h2, h3') ?? null });
           }}
         >
@@ -306,6 +309,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
     // the notice waits for the re-read (TECH-1-1): nothing says "recorded" until the item itself has been read again
     const item = await page.reload();
     if (item) setRecorded(RESPONSE_TEXT.done(result?.summary, result?.at));
+    else setSentNote(true);
     requestAnimationFrame(() => {
       if (!heading) return;
       heading.tabIndex = -1;
@@ -453,6 +457,11 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
               <span>{recorded}</span>
             </Callout>
           )}
+          {sentNote && (
+            <Callout kind="warning" announce={false}>
+              <span>{RESPONSE_TEXT.sentNoRefresh}</span>
+            </Callout>
+          )}
           {teamGone && (
             <Callout kind="warning" announce={false}>
               <span>{RESPONSE_TEXT.teamGone(teamGone)}</span>
@@ -506,8 +515,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         {assignFlow.notice?.kind === 'unconfirmed' && (
           <Callout kind="problem" className="ws-notice">
             <span className="ws-stack">
-              <strong>{ASSIGN_TEXT.unconfirmedHead}</strong>
-              <span>{ASSIGN_TEXT.unconfirmed}</span>
+              <strong>{assign?.role === 'PM' ? ASSIGN_TEXT.pmUnconfirmedHead : ASSIGN_TEXT.unconfirmedHead}</strong>
+              <span>{assign?.role === 'PM' ? ASSIGN_TEXT.pmUnconfirmed : ASSIGN_TEXT.unconfirmed}</span>
             </span>
           </Callout>
         )}

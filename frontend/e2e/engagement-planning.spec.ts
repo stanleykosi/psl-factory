@@ -74,6 +74,9 @@ for (const [label, viewport] of [
       await scope.locator('input[type="file"]').setInputFiles(pdf('kickoff-plan-v1.pdf'));
       await uploaded;
       await expect(scope.getByText(/Add another file/)).toBeVisible();
+      // QA-2-1: the chip's remove button is a 44px target in a Drawer
+      const removeBox = await (phone ? page.getByRole('dialog') : page).getByRole('button', { name: /^Remove / }).boundingBox();
+      if (phone) expect(removeBox!.width >= 44 && removeBox!.height >= 44).toBe(true);
       await scope.getByLabel(/Start date/).fill('15 Jan 2027');
       await scope.getByLabel(/Start date/).press('Tab');
       await scope.getByLabel(/Client project contact/).fill('Ngozi Bello');
@@ -117,6 +120,9 @@ for (const [label, viewport] of [
       await dialog.getByLabel(/What they gave/).fill('Test plan and QA effort');
       await dialog.locator('input[type="file"]').setInputFiles(pdf('qa-plan.pdf'));
       await expect(dialog.getByText(/Uploaded/)).toBeVisible();
+      // QA-2-1: the chip's remove button is a 44px target in a Drawer
+      const removeBox = await dialog.getByRole('button', { name: /^Remove / }).boundingBox();
+      if (phone) expect(removeBox!.width >= 44 && removeBox!.height >= 44).toBe(true);
       await dialog.getByLabel(/Received/).fill('2026-12-11T16:05');
       await dialog.getByRole('checkbox').check();
       await dialog.getByRole('button', { name: /^Record/ }).click();

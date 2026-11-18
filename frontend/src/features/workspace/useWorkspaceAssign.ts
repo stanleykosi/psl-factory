@@ -25,6 +25,9 @@ export const ASSIGN_TEXT = {
   confirm: (role: string) => `Confirm ${role}`,
   unconfirmed: 'We couldn’t confirm the owner was set. Check the page before trying again.',
   unconfirmedHead: 'Not recorded',
+  // the engagement's PM confirmation (role "PM"): the spec's own words for a write that could not be confirmed
+  pmUnconfirmed: 'We couldn’t confirm the PM was set. Check the page before trying again.',
+  pmUnconfirmedHead: 'Not confirmed',
   stale: (revision: number | undefined) =>
     revision === undefined ? 'This changed while you were working, and we couldn’t reload it.' : `This changed while you were working. Showing version ${revision}.`,
   noCandidates: 'No one can be chosen yet.',

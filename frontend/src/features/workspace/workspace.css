@@ -248,3 +248,5 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .cmp-panel--full .ws-form > .ws-form__body { flex: 1; display: flex; flex-direction: column; }
   .cmp-panel--full .ws-form__actions { margin-top: auto; }
 }
+/* QA-2-1: the uploaded file chip's remove button is a 44px target inside a Drawer (F-18's own page is unchanged) */
+.cmp-panel .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }

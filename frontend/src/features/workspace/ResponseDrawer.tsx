@@ -27,6 +27,7 @@ export const RESPONSE_TEXT = {
   uncertain: 'We couldn’t confirm your input was recorded. We’ve reloaded this item so you can see whether it was.',
   unconfirmed: 'We couldn’t confirm whether your input was recorded, and couldn’t reload to check. Record stays off. Try again reloads the item; it doesn’t send your input again.',
   teamGone: (name: string) => `${name} is no longer waiting. We’ve reloaded this item so you can see whether it was recorded.`,
+  sentNoRefresh: 'Your input was sent, but we couldn’t refresh this page to confirm it. Reload to see where it stands.',
   claimFailed: 'We couldn’t get this ready. Try again.',
   tryAgain: 'Try again',
   checking: 'Checking…',

@@ -297,14 +297,23 @@ describe('Confirm PM, pre-filled from the response only (AC 3)', () => {
     expect(pmSelect().textContent).toContain('Tunde Bello');
   });
 
-  it('a 5xx says "Not recorded", re-reads, and sends once', async () => {
+  it('a 5xx says "Not confirmed", re-reads, and sends once', async () => {
     await open(item('W-2601'));
     writes.assignment = [json(500, { code: 'server_error', message: 'Nope.' })];
     await press('Confirm PM');
-    expect(await screen.findByText('Not recorded')).toBeTruthy();
+    expect(await screen.findByText('Not confirmed')).toBeTruthy();
     expect(text()).not.toContain('PM confirmed');
     expect(posts('/assignment')).toHaveLength(1);
     expect(ws().getByRole('button', { name: 'Try again' })).toBeTruthy();
+  });
+
+  it('QA-2-4: a failed Confirm PM reads "Not confirmed", while F-30’s owner line keeps "Not recorded"', async () => {
+    await open(item('W-2601'));
+    writes.assignment = [json(500, { code: 'server_error', message: 'Nope.' })];
+    await press('Confirm PM');
+    expect(await screen.findByText('Not confirmed')).toBeTruthy();
+    expect(text()).toContain('We couldn’t confirm the PM was set.');
+    expect(text()).not.toContain('Not recorded');
   });
 
   it('the assign hook and form never read /me', () => {
@@ -681,6 +690,7 @@ describe('Record department input, in the Drawer (AC 8, 9, 10)', () => {
     });
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     await waitFor(() => expect(itemReads('W-2603').length).toBeGreaterThanOrEqual(3));
+    expect(text()).toContain('Your input was sent, but we couldn’t refresh this page');
     expect(text()).not.toMatch(/Recorded under your name/);
   });
 
