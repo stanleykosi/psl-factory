@@ -99,6 +99,8 @@ type Open = { token: string; step: Step; itemIds?: string[]; items?: { section?:
 /** The Start work line key of an issue's follow-up (E-LINES); the only name this frame reads for F-30's read-only link and phone Drawer. */
 const ISSUE_LINE = 'issue_followup';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
+/** F-41: the payment reminder's line key (SCR-32); read only to open its Edit form in the phone Drawer. */
+const REMINDER_LINE = 'payment_reminder';
 
 /** The lead banner's tone follows the status tone the response sends (never the words); only the issue follow-up reads it (F-30). */
 const bannerTone = (workspace: WorkspaceData): 'warning' | 'success' | 'problem' =>
@@ -120,8 +122,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const [assigning, setAssigning] = useState(false);
   const assignButton = useRef<HTMLButtonElement>(null);
   const phone = useIsPhone();
-  // F-30 (D-103, D-107): on a phone the issue follow-up's forms open in the full-height Drawer.
-  const inDrawer = phone && workspace.line_key === ISSUE_LINE;
+  // F-30 (D-103, D-107), F-41: on a phone the issue follow-up's and the payment reminder's forms open in the full-height Drawer.
+  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === REMINDER_LINE);
   // The PM's own tick or untick of an `items` target, by section and item id. An item the PM has not touched follows the
   // step's `items_default` (PROPOSAL G-SCR28-1), so an item that arrives with a reload starts as the data says.
   const [choices, setChoices] = useState<Record<string, boolean>>({});

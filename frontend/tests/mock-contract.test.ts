@@ -21,6 +21,8 @@ import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractBody as monthEndBody } from '../mock/finance.mjs';
 // @ts-expect-error plain ESM module without type declarations
+import { contractBody as invoicesBody } from '../mock/invoices.mjs';
+// @ts-expect-error plain ESM module without type declarations
 import { contractRules } from '../mock/setup.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractDelegation, contractDelegations } from '../mock/delegations.mjs';
@@ -58,6 +60,7 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-CLIENT-CONTACT': { none: 403 },
   'E-EXCEPTIONS': { pm: 403 },
   'E-MONTH-END': { pm: 403, none: 403 },
+  'E-INVOICES': { pm: 403, none: 403 },
   'E-SETUP-RULES': { pm: 403, none: 403 },
   'E-SETUP-RULE-SAVE': { pm: 403, none: 403 },
   'E-EVIDENCE-UPLOAD': { pm: 403, none: 403 },
@@ -123,6 +126,13 @@ function minutesProposalsStripped(body: unknown): unknown {
       }
       delete row.values;
     }
+    // PROPOSAL (F-41 G-SCR32-3): an item's `attachment` {label, size_bytes, document_id?}
+    for (const row of section.items as { id: string; attachment?: { label?: unknown; size_bytes?: unknown; document_id?: unknown } }[]) {
+      if (row.attachment === undefined) continue;
+      const { label, size_bytes: size, document_id: documentId, ...rest } = row.attachment;
+      expect(typeof label === 'string' && label !== '' && Number.isInteger(size) && (documentId === undefined || typeof documentId === 'string') && Object.keys(rest).length === 0, row.id).toBe(true);
+      delete row.attachment;
+    }
   }
   // PROPOSAL (F-30): `steps[].starts_line` {line_key, prefill} and `assign.candidates[].kind`
   const candidates = (copy as { assign?: { candidates: { kind?: unknown }[] } }).assign?.candidates ?? [];
@@ -147,6 +157,7 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
   'E-WORK-ITEM': minutesProposalsStripped,
   'E-EXCEPTIONS': exceptionsBody,
   'E-MONTH-END': monthEndBody,
+  'E-INVOICES': invoicesBody,
   'E-SETUP-RULES': contractRules,
   'E-EVIDENCE-UPLOAD': contractEvidence,
   'E-DELEGATIONS': contractDelegations,
@@ -473,7 +484,8 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
           expect(decidePresentation, name).toBeUndefined();
         }
         expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(item));
-        expect(body.sample, name).toBe(true);
+        // F-41: W-3813 is the one item served with sample: false, to prove the label follows the record
+        expect(body.sample, name).toBe(name !== 'W-3813.json');
       }
     }
     expect(files.filter(boardFixture)).toHaveLength(12);

@@ -1,0 +1,15 @@
+{
+  "edit_draft": {
+    "status": 422,
+    "body": {
+      "code": "invalid",
+      "message": "Check these fields: message.",
+      "fields": [
+        {
+          "name": "message",
+          "message": "The message must name the invoice reference."
+        }
+      ]
+    }
+  }
+}

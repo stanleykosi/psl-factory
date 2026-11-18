@@ -65,3 +65,12 @@ export const assignCandidateKind = (candidate: object): 'person' | 'team' | 'out
   const kind = (candidate as { kind?: unknown }).kind;
   return kind === 'person' || kind === 'team' || kind === 'outside_party' ? kind : undefined;
 };
+
+/** PROPOSAL (`sections[].items[].attachment {label, size_bytes, document_id?}`, F-41 G-SCR32-3): a file that goes with the message,
+ *  drawn as text ("<file name> · Uploaded · <size>"); it is never a link here. Absent or malformed reads as not supplied. */
+export function itemAttachment(item: object): { label: string; sizeBytes: number } | undefined {
+  const value = (item as { attachment?: { label?: unknown; size_bytes?: unknown } }).attachment;
+  if (typeof value !== 'object' || value === null || !text(value.label)) return undefined;
+  const size = value.size_bytes;
+  return typeof size === 'number' && Number.isInteger(size) && size >= 0 ? { label: value.label, sizeBytes: size } : undefined;
+}
