@@ -143,12 +143,12 @@ describe('P-0101 delivery rows', () => {
     expect(extra(body), ajv.errorsText(extra.errors)).toBe(true);
   });
 
-  it('has the six rows in order; only Release and Go-live carry a work id', async () => {
+  it('has the six rows in order; only Release, Go-live and Hypercare carry a work id', async () => {
     const { body } = await send('GET', '/api/v1/projects/P-0101');
     expect(body.delivery.map((r: Body) => [r.title, r.work_id])).toEqual([
       ['Release gates', 'W-2503'],
       ['Go-live acceptance', 'W-2510'],
-      ['Hypercare', undefined],
+      ['Hypercare', 'W-3101'],
       ['Archive', undefined],
       ['Handover to Support', undefined],
       ['Closure', undefined],
