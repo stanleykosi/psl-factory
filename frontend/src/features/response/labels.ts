@@ -73,9 +73,12 @@ export function checksSentence(checks: Reconcile['checks']): string | undefined 
   return `${who} checked ${plural(checks.count, 'time')}${over ? ` over ${over}` : ''} and found no delivery receipt.`;
 }
 
-/** One reconcile option: the bold lead and the rest, from the API's notes. */
-export function outcomeWords(outcome: ReconcileOutcome, reconcile: Reconcile): { lead: string; rest?: string } {
-  if (outcome === 'delivered') return { lead: 'It arrived.', rest: 'I have proof the client received it (upload it next).' };
+/** F-43 (spec Conflicts 4): the internal cash forecast's reconcile words; every other line keeps the client-invoice words. */
+export const INTERNAL_RECONCILE_LINE = 'cash_forecast';
+
+/** One reconcile option: the bold lead and the rest, from the API's notes. `internal`: the delivery went to someone inside PSL. */
+export function outcomeWords(outcome: ReconcileOutcome, reconcile: Reconcile, internal = false): { lead: string; rest?: string } {
+  if (outcome === 'delivered') return { lead: 'It arrived.', rest: internal ? 'I have proof it was received (upload it next).' : 'I have proof the client received it (upload it next).' };
   if (outcome === 'not_delivered') return { lead: 'It didn’t arrive.', rest: reconcile.resend ? sentence(`Allow ${reconcile.resend}`) : undefined };
   return { lead: 'I can’t tell yet.', rest: reconcile.unknown_note ? sentence(reconcile.unknown_note) : undefined };
 }

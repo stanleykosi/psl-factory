@@ -14,7 +14,7 @@ import { NoAccessState } from '@/features/work-item/WorkItemStates';
 
 import { getWorkItem, workAction } from './api';
 import type { Reconcile, ReconcileOutcome, ResponseWorkItem, WorkActionBody } from './contract';
-import { checksSentence, outcomeWords, plural, RESPONSE_LABELS, sentence } from './labels';
+import { checksSentence, INTERNAL_RECONCILE_LINE, outcomeWords, plural, RESPONSE_LABELS, sentence } from './labels';
 import { ProofField } from './ProofField';
 import { reloadPage } from './reload';
 import { useEvidenceUpload } from './useEvidenceUpload';
@@ -112,14 +112,17 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
   };
 
   const checks = checksSentence(reconcile.checks);
+  // F-43: an internal delivery (the cash forecast to the CEO) is recorded in its board's words, with no client in them
+  const internal = item.workspace?.line_key === INTERNAL_RECONCILE_LINE;
+  const title = internal ? 'Record what happened' : 'Confirm what happened';
   const resendNote = reconcile.resend_note ? ` ${sentence(reconcile.resend_note)}` : '';
 
   return (
     <div className="work-column">
-      <aside className="resp-reconcile" aria-labelledby={phone ? undefined : headId} aria-label={phone ? 'Confirm what happened' : undefined}>
+      <aside className="resp-reconcile" aria-labelledby={phone ? undefined : headId} aria-label={phone ? title : undefined}>
         {!phone && (
           <h2 id={headId} className="resp-reconcile__head">
-            Confirm what happened
+            {title}
           </h2>
         )}
         <div className="resp-reconcile__body" aria-busy={status.kind === 'busy'}>
@@ -133,13 +136,17 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
             </div>
           ) : (
             <p className="resp-plain">
-              {checks ? `${checks} ` : ''}The factory won&rsquo;t resend until a person confirms what happened, so the client is never invoiced
-              twice.
+              {checks ? `${checks} ` : ''}
+              {internal ? (
+                'Nothing is sent again until a person records what happened.'
+              ) : (
+                <>The factory won&rsquo;t resend until a person confirms what happened, so the client is never invoiced twice.</>
+              )}
             </p>
           )}
-          <div ref={options} role="radiogroup" aria-label="Confirm what happened" className="resp-options">
+          <div ref={options} role="radiogroup" aria-label={title} className="resp-options">
             {reconcile.outcomes.map((value) => {
-              const words = outcomeWords(value, reconcile);
+              const words = outcomeWords(value, reconcile, internal);
               return (
                 <label key={value} className="resp-option">
                   <input
