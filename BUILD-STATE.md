@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Current focused rule review · 18 November 2026
+
+Hosted107 passed22 focused PostgreSQL checks in18.854 seconds after106 passed80 in61.100 seconds. Both passed checks/drift/fixtures/final markers. Matching1,664 runtimepaths, successful web/worker startup. Setup now compares exact earlier/proposed fields and disclosure terms with recorded reason, then performs separate native validation and activation. Fresh original-source access, permission, state, revision and concurrent-review checks apply.
+
+Browser saved908/version3, reviewed its terms, validated and activated it on390px/body375, retaining earlier907/version2. Broader field contracts, approved answer reuse, team/no-login issue recording and remaining state functions still need engineering. HOD values deferred, ledger201 observed/188 open/61 unseen and full262 incomplete.
+
 ## Current Setup controls · 18 November 2026
 
 Current105 passed78 PostgreSQL tests in112.464 seconds. Earlier102/103/104 passed50/57/62 in76.695/81.745/55.140 seconds. Every run passed checks/drift/fixtures/final markers. Matching105 web/worker started with1,663 runtimepaths per service.

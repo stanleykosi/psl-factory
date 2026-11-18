@@ -144,7 +144,7 @@ def overview(request, case_id):
             if latest.pk != current.configuration.pk:
                 state = latest.states.order_by('-pk').first().state
                 if state in {'draft', 'validated'}:
-                    visibility_draft = {'revision': latest.revision, 'state': state}
+                    visibility_draft = {'id': latest.pk, 'revision': latest.revision, 'state': state}
             if can_configure and disclosure:
                 form = DisclosureFieldsForm(request.POST if request.method == 'POST' else None, initial={
                     'fields': disclosure['allowed_fields'], 'base_id': current.configuration.pk,
@@ -178,3 +178,40 @@ def overview(request, case_id):
                   'disclosure_hold':disclosure_hold,
                   'role_rows':role_rows, 'role_hold':role_hold, 'observed_at':timezone.now(),
                   'disclosure_fields':[FIELD_LABELS[field] for field in disclosure['allowed_fields']] if disclosure else []})
+
+
+@login_required
+@require_http_methods(['GET', 'HEAD', 'POST'])
+@never_cache
+def visibility_review(request, case_id, configuration_id):
+    from apps.policy.hrfinance_drafts import disclosure_field_review, review_disclosure_fields
+
+    case = accessible_case(request.user, case_id)
+    require(request.user, case, 'policy.read')
+    try:
+        review = disclosure_field_review(request.user, case.pk, configuration_id)
+    except ValidationError:
+        messages.error(request, 'This proposal needs a current source and complete rule review.')
+        return redirect('workspace_settings', case_id=case.pk)
+    if request.method == 'POST':
+        try:
+            if set(request.POST) - {'csrfmiddlewaretoken'} != {'action', 'revision', 'state'}:
+                raise ValidationError('Use the displayed review action.')
+            review_disclosure_fields(request.user, case.pk, configuration_id, request.POST.get('state'),
+                                     request.POST.get('action'), int(request.POST.get('revision', '0')))
+        except (ValidationError, ValueError):
+            messages.error(request, 'The review could not proceed. Check the current version and source before continuing.')
+        else:
+            messages.success(request, 'Visibility version activated.' if request.POST['action'] == 'activate'
+                             else 'Visibility proposal checked and ready for activation.')
+        return redirect('visibility_review', case_id=case.pk, configuration_id=configuration_id)
+    permissions = set(Grant.objects.filter(case=case, user=request.user, active=True).values_list('action', flat=True))
+    recipients = get_user_model().objects.filter(pk__in=review['proposed']['recipient_ids']).only(
+        'id', 'username', 'first_name', 'last_name').order_by('username')
+    rows = [{'label': label, 'current': key in review['original']['allowed_fields'],
+             'proposed': key in review['proposed']['allowed_fields']} for key, label in FIELD_LABELS.items()]
+    from apps.pmo.clocks import aware
+    return render(request, 'design/visibility_review.html', {'case': case, 'review': review, 'rows': rows,
+        'recipients': recipients, 'effective_at': aware(review['configuration'].envelope['effective_from']),
+        'can_validate': review['current'] and review['state'] == 'draft' and 'policy.configure' in permissions,
+        'can_activate': review['current'] and review['state'] == 'validated' and 'policy.activate' in permissions})

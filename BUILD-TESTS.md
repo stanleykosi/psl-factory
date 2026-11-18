@@ -1,5 +1,11 @@
 # Actual test execution ledger
 
+## Focused visibility review · 18 November 2026
+
+Package106 `8acd84ed-1ec0-4bbf-bdd2-a86c4e1690fd` passed80 PostgreSQL tests in61.100 seconds. Package107 `06586d10-3da3-4f1b-8709-68ed6cf69765` passed22 in18.854 seconds. Both passed checks/drift/idempotent fixtures/final markerszero. New HTTP tests compare fields/reason/recipients, separate validation from activation, reject CSRF/stale/replaced/unauthorised requests and preserve active rules. Final guards reject missing/boolean revisions. Original-source case/policy-read withdrawal hides the shared comparison. Two connections record one native validation. Exact1,664 runtimepaths per service matched and both107services started.
+
+Browser saved synthetic908/version3, followed its direct comparison, checked its exact reason/source/periods/purpose/recipient/retention/effective time, validated and activated through Setup. Reread Active and earlier version2. Phone390/body375 had no overflow. Saved `.runtime/design-acceptance-visibility107-active-phone.jpg`. No private HR rows or external provider calls were used in this increment. Wider design field types remain unimplemented.
+
 ## Typed disclosure fields and current named roles · 18 November 2026
 
 Railway102 `3ca721c7-8d7b-4a8b-a6ac-f07d760a3c25` passed50 PostgreSQL tests in76.695 seconds. Browser subsequently found that invalid field errors were collapsed. Corrected103 `b8b44a56-30a4-4773-b219-6e79e5ecb25c` passed57 in81.745 seconds, adding visible retained errors, required reasons and pending-version feedback. Browser verified invalid pay/currency pairing, draft907, separate validation/activation and new active revision2. Original904 remains superseded. Phone375/375 passed.

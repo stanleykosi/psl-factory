@@ -21,7 +21,7 @@
 <p>Recipients, permitted purposes, retention and source authority follow the current disclosure contract.</p>
 {% elif disclosure_hold %}<p role="status">{{ disclosure_hold }}</p>
 {% else %}<p>Choose the HR source, recipients, purpose and retention terms in the rule configuration.</p>{% endif %}
-{% if visibility_draft %}<p role="status">Proposed version {{ visibility_draft.revision }} · {% if visibility_draft.state == 'validated' %}ready for activation{% else %}awaiting review{% endif %}.</p>{% endif %}
+{% if visibility_draft %}<p role="status">Proposed version {{ visibility_draft.revision }} · {% if visibility_draft.state == 'validated' %}ready for activation{% else %}awaiting review{% endif %}.</p><p><a class="button secondary" href="{% url 'visibility_review' case.pk visibility_draft.id %}">Review proposed fields</a></p>{% endif %}
 {% if visibility_form %}<details{% if visibility_form.is_bound %} open{% endif %}><summary>Propose field visibility</summary>
 <p>Include the staff reference, business unit and membership dates. Select monthly pay together with its currency when the owner authorises those fields.</p>
 <form method="post">{% csrf_token %}{{ visibility_form.as_p }}<button>Save visibility draft</button></form>

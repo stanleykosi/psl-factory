@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from apps.finance import hrfinance
 from apps.identity.models import Grant
-from apps.policy.hrfinance_drafts import draft_disclosure_fields
+from apps.policy.hrfinance_drafts import draft_disclosure_fields, review_disclosure_fields
 from apps.policy.hrfinance_validators import DISCLOSURE, REQUIRED
 from apps.policy.models import Configuration, RegisteredReference
 from apps.policy.services import active_component, reference_values, transition
@@ -77,6 +77,57 @@ class DisclosureSetupTests(TestCase):
         self.assertEqual(new.payload['fields'], REQUIRED)
         with self.assertRaises(ValidationError):
             hrfinance.authorized(new)
+
+    def test_focused_review_compares_reason_terms_and_uses_native_lifecycle(self):
+        f = self.f
+        draft = draft_disclosure_fields(f['hr'], f['case'].pk, f['disclosure_policy'].pk, 1,
+            REQUIRED + ['role'], f['e']['owner'].pk, timezone.now(), rev(f['case']), reason='SAMPLE field review')
+        self.client.force_login(f['hr'])
+        url = reverse('visibility_review', args=[f['case'].pk, draft.pk])
+        page = self.client.get(url)
+        self.assertContains(page, 'Earlier version 1')
+        self.assertContains(page, 'Proposed version 2')
+        self.assertContains(page, 'SAMPLE field review')
+        self.assertContains(page, f['finance'].username)
+        self.assertNotContains(page, 'private-staff-001')
+        self.assertNotContains(page, 'Activate reviewed version')
+        values = {'action': 'validate', 'state': 'draft', 'revision': rev(f['case'])}
+        self.assertContains(self.client.post(url, values, follow=True), 'Activate reviewed version')
+        self.assertEqual(active_component(DISCLOSURE, f['case']).pk, f['disclosure_policy'].pk)
+        self.assertContains(self.client.post(url, values, follow=True), 'The review could not proceed')
+        values.update(action='activate', state='validated', revision=rev(f['case']))
+        self.assertContains(self.client.post(url, values, follow=True), 'This version is active')
+        self.assertEqual(active_component(DISCLOSURE, f['case']).pk, draft.pk)
+
+    def test_focused_review_rechecks_permission_csrf_and_replaced_proposal(self):
+        f = self.f
+        draft = draft_disclosure_fields(f['hr'], f['case'].pk, f['disclosure_policy'].pk, 1,
+            REQUIRED + ['role'], f['e']['owner'].pk, timezone.now(), rev(f['case']), reason='SAMPLE first version')
+        self.client.force_login(f['hr'])
+        url = reverse('visibility_review', args=[f['case'].pk, draft.pk])
+        secure = Client(enforce_csrf_checks=True)
+        secure.force_login(f['hr'])
+        values = {'action': 'validate', 'state': 'draft', 'revision': rev(f['case'])}
+        self.assertEqual(secure.post(url, values).status_code, 403)
+        Grant.objects.filter(case=f['case'], user=f['hr'], action='policy.configure').update(active=False)
+        self.assertNotContains(self.client.get(url), 'Check proposed version')
+        self.assertEqual(self.client.post(url, values).status_code, 403)
+        Grant.objects.filter(case=f['case'], user=f['hr'], action='policy.configure').update(active=True)
+        draft_disclosure_fields(f['hr'], f['case'].pk, f['disclosure_policy'].pk, draft.revision,
+            REQUIRED, f['e']['owner'].pk, timezone.now(), rev(f['case']), reason='SAMPLE replacement')
+        self.assertContains(self.client.get(url), 'A newer rule or proposal requires review')
+        with self.assertRaises(ValidationError):
+            review_disclosure_fields(f['hr'], f['case'].pk, draft.pk, 'draft', 'validate', rev(f['case']))
+
+    def test_service_commands_reject_missing_and_boolean_revisions(self):
+        f = self.f
+        for expected in [None, True, 0, -1]:
+            with self.assertRaises(ValidationError):
+                draft_disclosure_fields(f['hr'], f['case'].pk, f['disclosure_policy'].pk, 1,
+                    REQUIRED, f['e']['owner'].pk, timezone.now(), expected, reason='SAMPLE typed check')
+            with self.assertRaises(ValidationError):
+                review_disclosure_fields(f['hr'], f['case'].pk, f['disclosure_policy'].pk,
+                    'draft', 'validate', expected)
 
     def test_invalid_fields_roll_back_every_draft_and_reference(self):
         f = self.f
@@ -156,6 +207,10 @@ class DisclosureSetupTests(TestCase):
         self.client.force_login(viewer)
         url = reverse('workspace_settings', args=[target.pk]) + '?area=payroll'
         self.assertContains(self.client.get(url), 'synthetic-finance-view')
+        shared_draft = draft_disclosure_fields(viewer, target.pk, applied.pk, applied.revision,
+            REQUIRED + ['role'], proof.pk, timezone.now(), rev(target), reason='SAMPLE shared-field proposal')
+        review_url = reverse('visibility_review', args=[target.pk, shared_draft.pk])
+        self.assertContains(self.client.get(review_url), 'SAMPLE shared-field proposal')
         for denied in ['policy.read', 'case.read']:
             Grant.objects.filter(case=f['case'], user=viewer, action=denied).update(active=False)
             self.assertEqual(active_component(DISCLOSURE, target).pk, applied.pk)
@@ -163,6 +218,7 @@ class DisclosureSetupTests(TestCase):
             self.assertContains(page, 'Current disclosure requires access to its original rules')
             self.assertNotContains(page, 'synthetic-finance-view')
             self.assertNotContains(page, 'Save visibility draft')
+            self.assertEqual(self.client.get(review_url).status_code, 403)
             with self.assertRaises(PermissionDenied):
                 draft_disclosure_fields(viewer, target.pk, applied.pk, applied.revision, REQUIRED,
                     proof.pk, timezone.now(), rev(target), reason='SAMPLE inaccessible source')
@@ -170,6 +226,31 @@ class DisclosureSetupTests(TestCase):
 
 
 class DisclosureSetupConcurrencyTests(TransactionTestCase):
+    def test_competing_reviews_record_one_native_validation(self):
+        f = fixture()
+        draft = draft_disclosure_fields(f['hr'], f['case'].pk, f['disclosure_policy'].pk, 1,
+            REQUIRED + ['role'], f['e']['owner'].pk, timezone.now(), rev(f['case']), reason='SAMPLE competing review')
+        expected = rev(f['case'])
+        barrier = Barrier(2)
+
+        def validate(_):
+            close_old_connections()
+            try:
+                barrier.wait(timeout=20)
+                try:
+                    return review_disclosure_fields(f['hr'], f['case'].pk, draft.pk,
+                                                    'draft', 'validate', expected).pk
+                except ValidationError:
+                    return None
+            finally:
+                connections.close_all()
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results = list(pool.map(validate, range(2)))
+        self.assertEqual(sum(value is not None for value in results), 1)
+        self.assertEqual(draft.states.filter(state='validated').count(), 1)
+        self.assertEqual(active_component(DISCLOSURE, f['case']).pk, f['disclosure_policy'].pk)
+
     def test_competing_field_proposals_preserve_one_current_base(self):
         f = fixture()
         barrier = Barrier(2)

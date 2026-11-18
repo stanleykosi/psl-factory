@@ -1,5 +1,15 @@
 # PSL operations factory cloud handoff
 
+## Current focused visibility review · 18 November 2026
+
+Package106 `8acd84ed-1ec0-4bbf-bdd2-a86c4e1690fd` passed80 PostgreSQL tests in61.100 seconds. Final107 `06586d10-3da3-4f1b-8709-68ed6cf69765` passed22 in18.854 seconds, including exact positive revision types, current original-source read permission on the comparison, CSRF, stale/replaced proposals and two connections competing for one native validation. Both passed checks/drift/fixtures and final markerszero. No migration.
+
+Matching107 web `88d5e5c9-1343-41a8-95be-98d581b3f679` and worker `16546830-ef4d-4c11-a71a-cb0a15b2f5e7` started. Exact1,664 runtimepaths per service matched. Setup links directly to an earlier/proposed field comparison, recorded reason, source, periods, purpose, recipients, retention and effective time. Human Check proposed version and Activate reviewed version call the existing native lifecycle under fresh permission/base/state/revision checks.
+
+Browser saved new proposal908/version3 in synthetic case`880dafcb-15d1-4c7b-ba3b-07bd7886ebf1`, hiding the sample job-role field. Followed Review proposed fields, checked the exact comparison and terms, validated, then activated on390px/body375. Reread Version3 Active and retained earlier version2. Screenshot `.runtime/design-acceptance-visibility107-active-phone.jpg`. Browser2/tab4 remains on this active review at390px, no unsaved edits. Reset viewport before normal navigation.
+
+Continue broader design field contracts, approved past-winning-answer reuse, team/no-login issue recording and remaining state-specific functions. The current source contract supports seven fields. Gross pay, deductions, bank account, address and birth-date switches from the design still require a versioned contract/adapter extension. This is engineering work separate from HOD field values and owner appointments. Keep legacy contracts and private payload protections. Ledger201 observed/188 open/61 unseen, full262 remains incomplete.
+
 ## Current Setup controls and original-source checks · 18 November 2026
 
 Packages102/103/104/105 passed50/57/62/78 PostgreSQL tests in76.695/81.745/55.140/112.464 seconds. Each passed Django checks, migration drift, idempotent synthetic fixtures and final exit markers. Current105 `a6f697b6-a486-4b4a-9bd2-34805156ef91` covers current named role summaries, one batched name read, original-source reader permission, shared policy lifecycles, native HR authorisation and metadata-only agents, private payroll handling and concurrent proposals. No migration added.

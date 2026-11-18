@@ -20,6 +20,8 @@ def draft_disclosure_fields(actor, case_id, base_id, latest_revision, fields, ev
     from .impact import configuration
     from .services import active_component, reference_values, validate_envelope
 
+    if any(type(value) is not int or value < 1 for value in [base_id, latest_revision, expected]):
+        raise ValidationError('Use exact current disclosure and workspace revisions.')
     case = lock_case(actor, case_id, 'policy.configure', expected)
     require(actor, case, 'case.read')
     require(actor, case, 'policy.read')
@@ -38,6 +40,54 @@ def draft_disclosure_fields(actor, case_id, base_id, latest_revision, fields, ev
           base=current.pk, reason=reason.strip())
     bump(case)
     return draft
+
+
+def disclosure_field_review(actor, case_id, configuration_id):
+    """Read the exact proposal and its original reviewed terms under current access."""
+    from apps.core.models import Audit
+    from .hrfinance_validators import DISCLOSURE
+    from .impact import configuration
+    from .models import Configuration
+    from .services import active_component, reference_values, validate_envelope
+
+    draft = configuration(actor, case_id, configuration_id)
+    recorded = Audit.objects.filter(case_id=case_id, action='policy.disclosure_fields_proposed',
+                                     data__configuration=draft.pk).first()
+    if draft.component != DISCLOSURE or recorded is None:
+        raise ValidationError('Choose a saved visibility proposal from this workspace.')
+    base = configuration(actor, case_id, recorded.data['base'])
+    original = reference_values(base)[0]
+    proposed = reference_values(draft)[0]
+    if (base.component != DISCLOSURE or
+        {key: value for key, value in original.items() if key != 'allowed_fields'} !=
+        {key: value for key, value in proposed.items() if key != 'allowed_fields'}):
+        raise ValidationError('Review the complete disclosure terms through its configuration history.')
+    validate_envelope(draft.case, draft.envelope)
+    state = draft.states.order_by('-pk').first().state
+    current = active_component(DISCLOSURE, draft.case)
+    latest = Configuration.objects.filter(case_id=case_id, component=DISCLOSURE).order_by('-revision').first()
+    return {'configuration': draft, 'base': base, 'original': original, 'proposed': proposed,
+            'reason': recorded.data['reason'], 'state': state,
+            'current': latest.pk == draft.pk and current.pk == base.pk}
+
+
+@transaction.atomic
+def review_disclosure_fields(actor, case_id, configuration_id, expected_state, action, expected):
+    from apps.core.services import bump
+    from .services import transition
+
+    if any(type(value) is not int or value < 1 for value in [configuration_id, expected]):
+        raise ValidationError('Use exact current disclosure and workspace revisions.')
+    if action not in {'validate', 'activate'}:
+        raise ValidationError('Choose an available visibility review action.')
+    case = lock_case(actor, case_id, 'policy.configure' if action == 'validate' else 'policy.activate', expected)
+    review = disclosure_field_review(actor, case.pk, configuration_id)
+    if (not review['current'] or review['state'] != expected_state or
+        review['state'] != ('draft' if action == 'validate' else 'validated')):
+        raise ValidationError('The proposal changed. Refresh its current review before continuing.')
+    result = transition(actor, configuration_id, 'validated' if action == 'validate' else 'active')
+    bump(case)
+    return result
 
 @transaction.atomic
 def draft_hrfinance_policy(actor,case_id,component,content,evidence_id,effective_from):

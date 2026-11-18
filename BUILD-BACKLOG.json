@@ -1,5 +1,18 @@
 {
   "design_consolidation_20261116": {
+    "focused_visibility_review_20261118": {
+      "status": "postgresql_passed_runtime107_browser_checked",
+      "package_106": {"deployment": "8acd84ed-1ec0-4bbf-bdd2-a86c4e1690fd", "passed": 80, "seconds": 61.100, "final_exit": 0},
+      "package_107": {"deployment": "06586d10-3da3-4f1b-8709-68ed6cf69765", "passed": 22, "seconds": 18.854, "final_exit": 0},
+      "runtime_107": {"web": "88d5e5c9-1343-41a8-95be-98d581b3f679", "worker": "16546830-ef4d-4c11-a71a-cb0a15b2f5e7", "paths_per_service": 1664, "mismatches": 0, "startup": "passed"},
+      "browser": {"proposal": 908, "active_revision": 3, "earlier_revision": 2, "comparison": "passed", "native_validation_and_activation": "passed", "phone_body_and_viewport": [375,375]},
+      "next": ["Versioned broader design field contracts and adapters", "Approved past-winning-answer reuse", "Team/no-login issue recording", "Remaining state functions and acceptance"],
+      "states_with_browser_observations": 201,
+      "observed_states_with_open_checks": 188,
+      "states_without_direct_browser_observation": 61,
+      "owner_policy": "Deferred",
+      "all_states_accepted": false
+    },
     "setup_disclosure_controls_20261118": {
       "status": "postgresql_passed_runtime105_browser_checked",
       "packages": {
