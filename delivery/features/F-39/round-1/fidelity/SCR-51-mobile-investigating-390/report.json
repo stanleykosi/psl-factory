@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-18T17:55:21.024Z",
+  "generatedAt": "2026-11-18T19:11:24.600Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-39/design/canvas/project/SCR-51-mobile-investigating.dc.html",
   "boardName": "SCR-51-mobile-investigating.dc.html",
   "pageUrl": "http://localhost:4937/work/W-3601",
@@ -18,25 +18,25 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-39/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "2 board item(s) are missing from the page and are not approved exceptions (coverage 75% with exceptions, needs 100%).",
-    "Visual match 86.2 is below 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 86.1 is below 90.",
     "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 50,
-    "coverageWithExceptions": 75,
-    "visual": 86.2
+    "coverageWithExceptions": 100,
+    "visual": 86.1
   },
   "visual": {
-    "score": 86.2,
+    "score": 86.1,
     "allCellsScore": 88.5,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 948,
     "cell": 12,
-    "contentCells": 1946,
-    "mismatchedCells": 269
+    "contentCells": 1947,
+    "mismatchedCells": 270
   },
   "coverage": {
     "total": 8,
@@ -146,7 +146,10 @@
           "w": 64,
           "h": 44
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 9: the frame's phone bar draws the back link (\"← Project\", to /projects/P-0101) with the accessible name \"Back to Project\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -194,7 +197,10 @@
           "w": 354,
           "h": 36
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 7: shared agent card shows time only (\"Started 11:00\"), not the date; \"Ask Tola\" is the assistant link in the same footer. Pending the design engineer.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [
@@ -301,7 +307,7 @@
         }
       }
     ],
-    "unexcepted": 2
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-39/design/mascots/canvas-assets.json (19 mapped)."

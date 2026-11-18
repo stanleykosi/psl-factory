@@ -76,7 +76,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T18:45:10Z",
+      "seconds": 337.2,
+      "evidence_ref": "delivery/features/F-35/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -130,8 +143,139 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "owner": "backend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The `sends` flag (FLAG judgement). The spec's table puts `sends: true` on `approve_send`. The builder left it off (build.md:23), and the deviation is listed in BACKEND-HANDOFF.md. On a decision step `sends` changes only the wording: the write goes through InlineDecide, not `useWorkspaceStep`'s lock-on-failure path. So the mock's rendered behaviour is honest. It is not honest about the shape the real backend will most likely send for \"Approve and send\". Shared `Consequence` (frontend/src/features/workspace/Steps.tsx:18-21) adds `STEP_TEXT.sends` \"This sends to the client.\" whenever `sends` is true and the step's own `consequence` does not contain \"send\". A real `sends: true` with no consequence would therefore print a false sentence on an internal report (leadership-report.test.tsx:155 would catch it only on the fixture as it stands). Recommendation: keep this fixture as built for round 1, and settle it as a contract rule rather than with a frontend audience guess. Whenever a step has `sends: true`, the backend also sends a `consequence` that names who receives it (for example \"Approving sends this exact version to the leadership audience.\"). The existing regex already suppresses the client sentence in that case. When that is confirmed, the fixture should carry `sends: true` with that consequence. Follow-up outside this lane (Steps.tsx is read-only here): the shared fallback should not say \"client\" on a line it does not know. It could use audience-neutral wording, or omit the sentence when no consequence is given. Add a test that a `sends: true` copy of W-3202 never renders \"client\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T18:48:16Z",
+          "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "INV-ACCESS (G-SCR52-3) in the agent's text. W-3210 is the partial-visibility fixture: figures \"Projects covered 3 OF 5\" and coverage \"2 projects are left out because you can't see them.\" Its `agent.steps` were copied from the full fixture: \"Gathered October's records\" with source \"5 PROJECTS \u00b7 41 MEETINGS \u00b7 12 ISSUES\", \"3 MILESTONES COMPLETE \u00b7 2 INVOICES VERIFIED\", and \"Drafted the escalations section\" citing \"ESC-0011 \u00b7 ESC-0012\", while \"Open escalations\" is Unknown. On the page this tells a viewer who can see 3 projects that Tola read 5 projects and how many meetings and issues they have, and it shows escalation ids that may belong to hidden projects. The spec allows only a count of left-out projects. This fixture is also the contract the backend is asked to build to. Expected: on W-3210, Tola's step sources describe only the records the viewer can see (for example \"3 PROJECTS \u00b7 \u2026\", escalation ids only from visible projects or none), or no source at all. The partial-visibility checks should also look at `agent.steps[].source` and text, not only at project titles. Actual: `frontend/mock/fixtures/work/W-3210.json` (agent steps); the tests `frontend/tests/leadership-report-mock.test.ts:113-123` and `frontend/tests/leadership-report.test.tsx:240-248` check only project titles, so they pass.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-18T18:48:16Z",
+          "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-2",
+      "round": 1,
+      "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "What approving sends. The builder left `sends: true` off `approve_send` in W-3202, W-3209 and W-3210, which the spec table asked for. The reason given is that `Consequence` (`frontend/src/features/workspace/Steps.tsx:17-25`) turns `sends` into \"This sends to the client.\" The person deciding is not misled on the mock: the button label \"Approve and send\" and `decision.basis` \"Approving sends this exact version to the audience.\" both come from the backend and show in the panel (`InlineDecide.tsx:307-361`). The gap is with a real backend. If it sets `sends: true` on this line with no step `consequence`, the panel would say the report goes to the client, which is the wrong audience for an internal send. If it sends no `basis`, nothing but the button label says a send happens. `delivery/BACKEND-HANDOFF.md` already asks for audience wording for `sends` on a decision step. Keep that question open, and require that an approve step that sends carries a backend sentence saying who receives it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-18T18:48:16Z",
+          "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+          "evidence_refs": [
+            "delivery/features/F-35/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-35/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ui": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "security": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+          "evidence_refs": [
+            "delivery/features/F-35/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -154,7 +298,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "6f14afbf81207d0c520572ba012a4684f59da2ba",
     "task_branch": "fe-leadership-report-drafting-review-tuesday",
-    "head_sha": null,
+    "head_sha": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-35",
     "pr_url": null,
     "pr_number": null,
@@ -165,7 +309,36 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/leadership-report.spec.ts",
+      "frontend/mock/fixtures/work/W-3201.json",
+      "frontend/mock/fixtures/work/W-3202.approve.json",
+      "frontend/mock/fixtures/work/W-3202.json",
+      "frontend/mock/fixtures/work/W-3202.return.json",
+      "frontend/mock/fixtures/work/W-3203.json",
+      "frontend/mock/fixtures/work/W-3204.json",
+      "frontend/mock/fixtures/work/W-3205.json",
+      "frontend/mock/fixtures/work/W-3205.next.json",
+      "frontend/mock/fixtures/work/W-3205.steps.json",
+      "frontend/mock/fixtures/work/W-3206.json",
+      "frontend/mock/fixtures/work/W-3207.json",
+      "frontend/mock/fixtures/work/W-3208.json",
+      "frontend/mock/fixtures/work/W-3209.approve.json",
+      "frontend/mock/fixtures/work/W-3209.json",
+      "frontend/mock/fixtures/work/W-3210.json",
+      "frontend/mock/fixtures/work/W-3211.json",
+      "frontend/mock/fixtures/work/W-3212.json",
+      "frontend/mock/fixtures/work/W-3212.steps.json",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/leadership-report-mock.test.ts",
+      "frontend/tests/leadership-report.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -198,7 +371,7 @@
     }
   },
   "created_at": "2026-11-18T05:12:22Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -216,6 +389,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T18:45:38Z",
+      "round": 1,
+      "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T18:48:16Z",
+      "round": 1,
+      "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T18:48:17Z",
+      "round": 2,
+      "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "reason": null
     }
   ],
   "routing": {
@@ -232,7 +429,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null

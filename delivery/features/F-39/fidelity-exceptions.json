@@ -192,7 +192,7 @@
    "name": "Started 13 Nov 11:00 Ask Tola",
    "category": "component",
    "conflicts": 7,
-   "reason": "Conflicts 7: the shared AgentCard footer reads \"Started <agent.started_at>\" as a clock time and \"Ask Tola\" is the assistant link in that footer.",
+   "reason": "Conflicts 7: shared agent card shows time only (\"Started 11:00\"), not the date; \"Ask Tola\" is the assistant link in the same footer. Pending the design engineer.",
    "approved_by": "builder proposal, pending design engineer",
    "added_after_run": true
   },
@@ -210,7 +210,7 @@
    "name": "Started 13 Nov",
    "category": "component",
    "conflicts": 7,
-   "reason": "Conflicts 7: the shared AgentCard footer reads \"Started <clock time>\" on the phone too.",
+   "reason": "Conflicts 7: shared agent card shows time only (\"Started 11:00\"), not the date; \"Ask Tola\" is the assistant link in the same footer. Pending the design engineer.",
    "approved_by": "builder proposal, pending design engineer",
    "added_after_run": true
   },
@@ -267,8 +267,8 @@
   {
    "board": "SCR-51-mobile-investigating",
    "width": 390,
-   "visual": 86.2,
-   "reason": "D-83: measured 86.2 in round 1 on a production build. Remaining gaps: the frame's phone bar and \"← Project\" (Conflicts 9); the item title instead of \"Escalation\" and the extra facts the phone board omits (Conflicts 6); the AgentCard head and footer (Conflicts 7).",
+   "visual": 86.1,
+   "reason": "D-83: measured 86.1 in round 1 on a production build. Remaining gaps: the frame's phone bar and \"← Project\" (Conflicts 9); the item title instead of \"Escalation\" and the extra facts the phone board omits (Conflicts 6); the AgentCard head and footer (Conflicts 7).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {

@@ -185,5 +185,62 @@
    "approved_by": "builder proposal, pending design engineer"
   }
  ],
- "visual_waivers": []
+ "visual_waivers": [
+  {
+   "board": "SCR-52-desktop-drafting",
+   "width": 1440,
+   "visual": 85.9,
+   "reason": "D-83: measured 85.9 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar from /me with the alerts bell, Overview and no Setup for persona ceo, the signed-in name, crumbs as a list, the History link, the page width; Conflicts 11); the AgentCard head with no title and the name, \"Cannot approve, send or pay.\" and \"step 3 of 4\" on their own lines, which makes the card 34px taller (Conflicts 16); the access sentence reads \"counted as left out\" (Conflicts 2). Banner tone, steps, sources, footer and Ask Tola match.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-52-desktop-review",
+   "width": 1440,
+   "visual": 81.6,
+   "reason": "D-83: measured 81.6 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar from /me with the alerts bell, Overview and no Setup for persona ceo, the signed-in name, crumbs as a list, the History link, the page width; Conflicts 11), which moves the panels down 6px; the shared figures rows and the shared TextArea (88px, not 66px) make the Decide panel 40px taller; \"Open the full report\" not drawn (Conflicts 5); note label \"(needed to return)\" (Conflicts 14).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-52-desktop-tuesday",
+   "width": 1440,
+   "visual": 86.6,
+   "reason": "D-83: measured 86.6 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar from /me with the alerts bell, Overview and no Setup for persona ceo, the signed-in name, crumbs as a list, the History link, the page width; Conflicts 11); the crumb is the fixture's own RPT-T-2026-11-10; recipient rows add the returned time \"10 Nov 09:00\" and \"Time unknown\" beside the tags (Conflicts 14); CHECKING is the amber waiting tag, not blue (Conflicts 7, D-92 (b)).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-52-desktop-received",
+   "width": 1440,
+   "visual": 86.3,
+   "reason": "D-83: measured 86.3 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar from /me with the alerts bell, Overview and no Setup for persona ceo, the signed-in name, crumbs as a list, the History link, the page width; Conflicts 11); \"Open the report\" not drawn, so the Next panel is 50px shorter (Conflicts 5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-52-mobile-drafting",
+   "width": 390,
+   "visual": 84.9,
+   "reason": "D-83: measured 84.9 in round 1 on a production build. Remaining gaps: The F-17 phone bar (\"← Queue\", the reference, the bell) and the full item title on two lines with the status and History under it (Conflicts 9, 11); the access note is drawn above the card, as desktop (Conflicts 10); the AgentCard head with no title, the limits line and step count on their own lines (Conflicts 16); \"Ask Tola\" in the footer with the full start time (Conflicts 13).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-52-mobile-review",
+   "width": 390,
+   "visual": 77.5,
+   "reason": "D-83: measured 77.5 in round 1 on a production build. Remaining gaps: The F-17 phone bar and the full item title with the status and History under it (Conflicts 9, 11); the figures panel has its \"Monthly report v1\" head, and the basis sentence is drawn above the pinned bar, as desktop (Conflicts 10); the pinned bar carries both steps, \"Approve and send\" and \"Return with a note\", so it is 60px taller (Conflicts 10).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-52-mobile-tuesday",
+   "width": 390,
+   "visual": 80.7,
+   "reason": "D-83: measured 80.7 in round 1 on a production build. Remaining gaps: The F-17 phone bar and the full item title with \"PUBLISHED · NO REVIEW\" and History under it (Conflicts 9, 11); the phone shows the backend's full note sentence, the recipients panel and Next, as desktop, instead of the board's one-line summary (Conflicts 10).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-52-mobile-received",
+   "width": 390,
+   "visual": 71.9,
+   "reason": "D-83: measured 71.9 in round 1 on a production build. Remaining gaps: The F-17 phone bar and the full item title on two lines with \"RECEIVED BY EVERY RECIPIENT\" and History under it (Conflicts 9, 11); the phone shows the backend's full sentence and the Next panel, as desktop, instead of the board's one-line summary (Conflicts 10). Above the 70 floor.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ]
 }

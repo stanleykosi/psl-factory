@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-18T17:54:54.558Z",
+  "generatedAt": "2026-11-18T19:11:08.468Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-39/design/canvas/project/SCR-51-desktop-not-escalated.dc.html",
   "boardName": "SCR-51-desktop-not-escalated.dc.html",
   "pageUrl": "http://localhost:4937/work/W-3603",
@@ -18,13 +18,13 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-39/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "3 board item(s) are missing from the page and are not approved exceptions (coverage 88.5% with exceptions, needs 100%).",
+    "Every board item is on the page or approved as an exception (100%).",
     "Visual match 78.6 is below 90.",
     "10 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 84.6,
-    "coverageWithExceptions": 88.5,
+    "coverageWithExceptions": 100,
     "visual": 78.6
   },
   "visual": {
@@ -563,7 +563,10 @@
           "w": 58,
           "h": 15
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 9: the crumbs are workspace.context.crumbs as returned, drawn by the frame as plain items (not links).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Link",
@@ -577,7 +580,10 @@
           "w": 94,
           "h": 15
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 9: as PROJECTS.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Tabs",
@@ -591,7 +597,10 @@
           "w": 654,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 9: the project tab bar links every tab and marks none current (F-30); it is drawn by the frame as a nav, not a tablist.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [
@@ -931,7 +940,7 @@
         }
       }
     ],
-    "unexcepted": 3
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-39/design/mascots/canvas-assets.json (19 mapped)."

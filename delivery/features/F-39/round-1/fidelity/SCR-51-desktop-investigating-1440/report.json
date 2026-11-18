@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-18T17:54:24.881Z",
+  "generatedAt": "2026-11-18T19:10:52.814Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-39/design/canvas/project/SCR-51-desktop-investigating.dc.html",
   "boardName": "SCR-51-desktop-investigating.dc.html",
   "pageUrl": "http://localhost:4937/work/W-3601",
@@ -16,27 +16,27 @@
     "strictPosition": false
   },
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-39/fidelity-exceptions.json",
-  "pass": false,
+  "pass": true,
   "passReasons": [
-    "4 board item(s) are missing from the page and are not approved exceptions (coverage 85.7% with exceptions, needs 100%).",
-    "Visual match 90 meets 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 90.1 meets 90.",
     "9 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 75,
-    "coverageWithExceptions": 85.7,
-    "visual": 90
+    "coverageWithExceptions": 100,
+    "visual": 90.1
   },
   "visual": {
-    "score": 90,
-    "allCellsScore": 94.6,
+    "score": 90.1,
+    "allCellsScore": 94.7,
     "width": 1440,
     "height": 800,
     "boardHeight": 800,
     "pageHeight": 892,
     "cell": 12,
     "contentCells": 4312,
-    "mismatchedCells": 432
+    "mismatchedCells": 429
   },
   "coverage": {
     "total": 28,
@@ -540,7 +540,10 @@
           "w": 58,
           "h": 15
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 9: the crumbs are workspace.context.crumbs as returned, drawn by the frame as plain items (not links).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Link",
@@ -554,7 +557,10 @@
           "w": 94,
           "h": 15
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 9: as PROJECTS.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Tabs",
@@ -568,7 +574,10 @@
           "w": 654,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 9: the project tab bar links every tab and marks none current (F-30); it is drawn by the frame as a nav, not a tablist.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -616,7 +625,10 @@
           "w": 336,
           "h": 36
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 7: shared agent card shows time only (\"Started 11:00\"), not the date; \"Ask Tola\" is the assistant link in the same footer. Pending the design engineer.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [
@@ -935,7 +947,7 @@
         }
       }
     ],
-    "unexcepted": 4
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-39/design/mascots/canvas-assets.json (19 mapped)."

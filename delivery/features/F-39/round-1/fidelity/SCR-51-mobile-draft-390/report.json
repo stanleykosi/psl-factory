@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-18T17:55:49.703Z",
+  "generatedAt": "2026-11-18T19:11:48.982Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-39/design/canvas/project/SCR-51-mobile-draft.dc.html",
   "boardName": "SCR-51-mobile-draft.dc.html",
   "pageUrl": "http://localhost:4937/work/W-3604",
@@ -18,13 +18,13 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-39/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "2 board item(s) are missing from the page and are not approved exceptions (coverage 77.8% with exceptions, needs 100%).",
+    "Every board item is on the page or approved as an exception (100%).",
     "Visual match 81.2 is below 90.",
     "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 55.6,
-    "coverageWithExceptions": 77.8,
+    "coverageWithExceptions": 100,
     "visual": 81.2
   },
   "visual": {
@@ -170,7 +170,10 @@
           "w": 64,
           "h": 44
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 9: the frame's phone bar draws the back link (\"← Project\", to /projects/P-0101) with the accessible name \"Back to Project\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -218,7 +221,10 @@
           "w": 354,
           "h": 36
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 7: as above; no finished_at.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [
@@ -465,7 +471,7 @@
         }
       }
     ],
-    "unexcepted": 2
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-39/design/mascots/canvas-assets.json (19 mapped)."

@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-18T17:55:38.730Z",
+  "generatedAt": "2026-11-18T19:11:40.804Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-39/design/canvas/project/SCR-51-mobile-not-escalated.dc.html",
   "boardName": "SCR-51-mobile-not-escalated.dc.html",
   "pageUrl": "http://localhost:4937/work/W-3603",
@@ -18,12 +18,12 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-39/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "2 board item(s) are missing from the page and are not approved exceptions (coverage 60% with exceptions, needs 100%).",
+    "Every board item is on the page or approved as an exception (100%).",
     "Visual match 79.2 is below 90."
   ],
   "scores": {
     "coverage": 40,
-    "coverageWithExceptions": 60,
+    "coverageWithExceptions": 100,
     "visual": 79.2
   },
   "visual": {
@@ -103,7 +103,10 @@
           "w": 64,
           "h": 44
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 9: the frame's phone bar draws the back link (\"← Project\", to /projects/P-0101) with the accessible name \"Back to Project\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -134,7 +137,10 @@
           "w": 208,
           "h": 21
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 6: the phone shows the desktop sentence as returned, not the shorter quote.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [],
@@ -212,7 +218,7 @@
         }
       }
     ],
-    "unexcepted": 2
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-39/design/mascots/canvas-assets.json (19 mapped)."

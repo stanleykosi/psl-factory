@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-36",
   "outcome": "Assign the accountable PM: a PMO Lead picks the PM for an unassigned RFP from the backend's list, in a panel over My work (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-RFP-INTAKE"
   ],
@@ -105,6 +105,18 @@
       "at": "2026-11-18T17:59:53Z",
       "seconds": 528.8,
       "evidence_ref": "delivery/features/F-36/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T19:09:04Z",
+      "seconds": 563.0,
+      "evidence_ref": "delivery/features/F-36/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -112,17 +124,19 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "delivery technical review",
-      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
       "evidence_refs": [
-        "delivery/features/F-36/round-2/review-technical.md"
+        "delivery/features/F-36/round-3/review-technical.md"
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "evidence_refs": [
+        "delivery/features/F-36/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -143,28 +157,28 @@
     "ux": {
       "status": "passed",
       "reviewer": "reviewer-ux",
-      "authority": "delivery UX review",
-      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "authority": "delivery ux review",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
       "evidence_refs": [
-        "delivery/features/F-36/round-2/review-ux.md"
+        "delivery/features/F-36/round-3/review-ux.md"
       ]
     },
     "ui": {
       "status": "passed",
       "reviewer": "reviewer-ui",
-      "authority": "delivery UI review",
-      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "authority": "delivery ui review",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
       "evidence_refs": [
-        "delivery/features/F-36/round-2/review-ui.md"
+        "delivery/features/F-36/round-3/review-ui.md"
       ]
     },
     "security": {
       "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "delivery security review",
-      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
       "evidence_refs": [
-        "delivery/features/F-36/round-2/review-security.md"
+        "delivery/features/F-36/round-3/review-security.md"
       ]
     }
   },
@@ -209,15 +223,43 @@
           ],
           "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
           "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "qa",
+          "at": "2026-11-18T18:20:36Z",
+          "refs": [],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": "The messages under the fields are the page's own for all four fields. For `acting_role` and `evidence_id`, the raw backend summary \"Check these fields: acting_role.\" is still shown at the top (QA-2-1)."
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T19:09:04Z",
+          "refs": [
+            "4f53c9f1"
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:10:22Z",
+          "refs": [
+            "422 on person_id/note/acting_role/evidence_id shows the page's own sentences, with summary and focus; tests and e2e (axe clean) assert it."
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
-        "6ffed6d1"
+        "4f53c9f1"
       ],
       "verified_by": "reviewer-ux",
       "verification_refs": [
-        "422 on person_id/note/acting_role/evidence_id shows the page's own sentences (`ASSIGN_PM_TEXT.fieldMessage`); test and e2e assert them."
+        "422 on person_id/note/acting_role/evidence_id shows the page's own sentences, with summary and focus; tests and e2e (axe clean) assert it."
       ]
     },
     {
@@ -474,6 +516,131 @@
       "verification_refs": [
         "`.rfp-assign__next` has hint size, 1px soft top rule, space-3 padding."
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A 422 on \"You are assigning as\" or the proof shows the backend's raw sentence and skips the summary and focus. Expected (spec Contract, 422, and the prompt's \"frontend wording\"): the page's own words, a top summary and focus on the first named field. Actual (real mock 422 on `acting_role: \"cfo\"` or `evidence_id: \"EV-NOPE\"`, at 1440 and 390): a Callout \"Check these fields: acting_role.\" (or \"evidence_id\"), so the PMO Lead sees a field key, no \"things to fix\" summary, and focus stays on \"Assign PM\". The messages under each field are correct, and the entries are kept. Cause: `AssignPmDrawer.tsx:145` passes `result.message` back to `AssignForm`. `AssignForm.tsx:115` shows that message whenever neither `person_id` nor `note` is named, and only focuses those two fields. Fix: when the 422 names `acting_role` or `evidence_id`, drop the backend message, add those fields to the summary, and focus the role list or the proof field. Then add a test where the mock refuses each field.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T18:20:36Z",
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T19:09:04Z",
+          "refs": [
+            "4f53c9f1"
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:12:31Z",
+          "refs": [
+            "read the fix; 422 on acting_role or evidence_id shows the page's words under the field, a linked summary, focus on the first field, entries kept, and no \"Check these fields\" text. Component 422 tests (7 incl. the 5 new) pass; e2e 422 case passes with axe clean at 1440. QA still to re-check in the browser."
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "4f53c9f1"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "read the fix; 422 on acting_role or evidence_id shows the page's words under the field, a linked summary, focus on the first field, entries kept, and no \"Check these fields\" text. Component 422 tests (7 incl. the 5 new) pass; e2e 422 case passes with axe clean at 1440. QA still to re-check in the browser."
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The summary's links in the phone sheet are 37px tall: \"Choose a PM to continue.\" 158x37 and \"Add a note to continue.\" 145x37 on W-3303, and \"Choose a PM from the list to continue.\" 237x37 after a 422. D-92c and D-95 ask for 44px on standalone links. This passes WCAG 2.5.8 (24px). The links come from the shared `src/components/ValidationSummary.tsx`, which is read-only for this lane, and F-30's W-2411 summary links are 18px tall today. Route it as a fix to the shared component, not to F-36.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T18:20:36Z",
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When the item read returns a 500, the problem card says \"Nothing was changed.\" twice: once in its title \"We couldn't load this item. Nothing was changed.\" and again in its body. Cause: `AssignPmDrawer.tsx:43` and `:173-174`. Remove one.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T18:20:36Z",
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T19:09:04Z",
+          "refs": [
+            "4f53c9f1"
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-18T19:18:56Z",
+          "refs": [
+            "An item-read 500 on W-3301 shows \"Nothing was changed.\" exactly once (\"We couldn\u2019t load this item. Nothing was changed. / Retry\") at 1440 and 390, and axe is clean."
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "4f53c9f1"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "An item-read 500 on W-3301 shows \"Nothing was changed.\" exactly once (\"We couldn\u2019t load this item. Nothing was changed. / Retry\") at 1440 and 390, and axe is clean."
+      ]
     }
   ],
   "prior_review_records": [
@@ -540,6 +707,72 @@
           ]
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-36/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-security.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -564,7 +797,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "be04d072e0e7ac24c1e79ca10e0d7044b7c7291c",
     "task_branch": "fe-rfp-intake-assign-accountable-pm",
-    "head_sha": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+    "head_sha": "4f53c9f15d69264d048e8ea482fb80475d936481",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-36",
     "pr_url": null,
     "pr_number": null,
@@ -646,7 +879,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -704,6 +937,46 @@
       "round": 2,
       "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
       "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T18:20:36Z",
+      "round": 2,
+      "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T18:20:38Z",
+      "round": 3,
+      "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T19:09:14Z",
+      "round": 3,
+      "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T19:12:31Z",
+      "round": 3,
+      "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T19:18:56Z",
+      "round": 3,
+      "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "reason": null
     }
   ],
   "routing": {
@@ -720,10 +993,10 @@
     ]
   },
   "gate": {
-    "round": 2,
+    "round": 3,
     "attempts": 1,
     "verdict": "PASS",
-    "commit": "5e14a6ada5bd803586a0ced36e05176e8f84f66c"
+    "commit": "4f53c9f15d69264d048e8ea482fb80475d936481"
   },
   "blocked": null
 }
