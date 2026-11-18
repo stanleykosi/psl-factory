@@ -90,3 +90,36 @@ Read first: `delivery/OVERNIGHT-DECISIONS.md` ("Waiting for you" + decisions D-0
 - Merge practice that worked: one shared checks lock (`psl-factory-worktrees/.checks.lock`) plus a wait for 5-minute load < 14 before any full suite. Since then, no flaky failures. After each merge of dlv-00 into a branch, one Sonnet impact reviewer re-pins all round reviews; PMO re-runs only if its last verdict was CHANGES.
 - Follow-ups (not started): F-29 UX-2-1 (disabled "Ask Tola to draft v3" reads as plain text); F-30 PMO-3-5 (flaky `setup-rules`/`rfp` tests: raise testing-library's async timeout), PMO-3-6 (UX-1-2..1-4, TECH-1-1 non-blocking); F-30 PMO-3-3 note: some exceptions cover sample data and times (signed as a set by D-112); the backend panel title for "Owner follow-up" (UI-1-7).
 - Next candidates: assistant "can't" (SCR-05), mark milestone complete (SCR-19, needs FE-M2A-PROOF), engagement/planning (SCR-41/42), delivery line screens SCR-43..51, Finance workspaces SCR-53..58, leadership report (SCR-52). Still held by PSL: SCR-17, 20, 21, 27, 31, 39 and payroll.
+
+## Eighth session (18 Nov 2026 evening): handed off mid-wave — read this first
+
+Merged into dlv-00 today: F-31 #62, F-32 #63, F-33 #64, flaky-test fix #65, F-47 #66, F-41 #67, F-42 #68.
+Main synced through PR #61 (user merged). Next dlv-00 → main sync PR needs the user. Deadline: Friday 20 Nov.
+Full action log: `delivery/NIGHT-LOG-2026-11-18.md` (sign-off lists 1–3). Decisions D-112..D-120 in `OVERNIGHT-DECISIONS.md`.
+
+State at handoff (check `feature.py status` and each worktree; the agents below were started by the old
+session and report only there, so read their output files / worktree commits instead of waiting):
+
+| Feature | State | Next |
+|---|---|---|
+| F-34 hypercare | signed D-119; builder a8d96d0120b9daa3a merging dlv-00 + PMO-3-1/3-2 housekeeping | impact re-pin 7 round files + build.md COMMIT → PR → merge recipe → DONE |
+| F-36 RFP intake | signed D-120; builder a7f8dd4d5a60e4d45 merging dlv-00 | same merge recipe |
+| F-35 leadership report | round 2: security, technical, UX, UI all PASS (UI-2-1 Ask Tola link 51x20, inherited from F-33 footer; UX-2-1/2/3 non-blocking; UX-2-3 green banner on partial delivery → put on user's sign-off list 3) | advance to INTEGRATED_QA → QA (demo 4987, mock 4986) → PMO → approver → sign-off list 3 |
+| F-39 escalation | round 1: technical PASS; UX CHANGES (UX-1-1 blocking: desktop NOT ESCALATED page layout broken vs board; UX-1-2..6 non-blocking); UI review a6459e063fc7d322d still running when handed off | wait/read UI review-ui.md, then CHANGES_REQUESTED → round 2 builder fixes UX-1-1 (+ UI findings) |
+| F-37 RFP response | building, agent aff21ac6671c86c11, ports 4994-4997 | gate → reviews |
+| F-43 cash forecast | building, agent ad9305d22b02637a4 (Opus), ports 4894-4897 | gate → reviews |
+| F-48 assistant "can't" | builder a0ac9b1aac696b8f7 finished (result unread) | read its build.md / output, gate → reviews |
+| F-38, F-40, F-45 | specs accepted (D-118), not started | start builds as slots (max 3–4) and disk (stop < 3 GB; was 4.8 GB) allow |
+| F-36 part 2 (SCR-23), FE-MILESTONE-COMPLETE (SCR-19), F-47B | newly unblocked | readiness → spec |
+
+Agent output files: `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/0986a60c-391e-48d6-b2da-79de8713a755/tasks/<agentId>.output`.
+If a builder died mid-merge, resume by spawning a new builder on the same worktree with the round's instructions.
+
+Recipes (unchanged): gate wrapper waits on `/Users/Hunchoo/psl-factory-worktrees/.checks.lock` and loadavg field `$2`;
+merge recipe = builder merges origin/dlv-00 → impact reviewer re-pins → `gh pr create` (no AI footer) → `F set ci_status`
+→ PR_OPEN → decide → `gh pr merge --merge --match-head-commit` → AWAITING_USER_APPROVAL → approved → APPROVED → MERGED → DONE
+→ remove worktree. Stop on any tool refusal. Never merge to main without the user.
+
+Also requested by the user at handoff: a PDF of every decision PSL still has to take — what each means in plain business
+terms and where in the product it is taken (screen / configuration page / process ID). Sources: guide/10-POLICY-CONFIGURATION.md,
+BUILD-DECISIONS.md, delivery backend-handoff + readiness/spec "blocked by PSL" notes, memory product-decisions-2026-11.
