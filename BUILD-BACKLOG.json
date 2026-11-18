@@ -1,7 +1,7 @@
 {
   "design_consolidation_20261116": {
     "registration_details_20261118": {
-      "status":"pg137_138_140_141_passed_hosted140_browser113_verified_141_deploy_next",
+      "status":"pg137_138_140_141_passed_hosted141_browser113_verified_checkpoint4efb8408_pushed",
       "base_checkpoint":"b76cdbef",
       "process_ids":["P03","P16","P17"],
       "policy":"D11.project_identifiers/v2; nullable planned_start/client_contact requiredness",
@@ -15,9 +15,13 @@
       "migrations":["pmo.0068_engagement_details","pmo.0069_engagement_details_guard"],
       "fixture":{"case":"140e50b0-1178-489b-8871-2b12343edf86","source":1986,"plan":1987,"proof":1988,"reference":"SAMPLE-ENGAGEMENT-DETAILS","work":null},
       "runtime_140":{"web":"03e77852-9a18-422b-8a3b-042c324a6d7c","worker":"685076c3-ccb3-4463-b6d6-1e4ef22031cc","status":"SUCCESS","paths_per_service":1702,"mismatches":0},
+      "runtime_141":{"web":"5d3e55dc-6f99-4aa5-9d58-3989c2b549bb","worker":"1b769697-7101-4918-b6d8-9225d6c4aa24","status":"SUCCESS","paths_per_service":1702,"mismatches":0},
       "hosted_new_runtime":true,
       "browser_new_details":{"work":113,"planning_work":114,"intake_source":1986,"plan":1987,"facts_source":1991,"planned_start":"2027-01-15","contact_revision":2,"observed_verified_at":"2026-11-18T19:03:38+01:00","private_planning_context":"passed","draft_configuration":979,"active_configuration_unchanged":977,"requiredness_in_draft":{"planned_start":null,"client_contact":null},"phone_body_client_widths":[375,375],"reset_default_body_client_widths":[600,600]},
-      "next":["Read141 final for browser-found local-time and heading presentation refinements; promote matching source and read back","Push tested registration checkpoint","Build actual permission-checked won-proposal planning evidence carryover; current ACT07 starts blank inputs","Continue remaining262 states"],
+      "checkpoint":"4efb8408",
+      "browser_141":{"desktop_body_client_widths":[1265,1265],"phone_body_client_widths":[375,375],"local_record_time":"2026-11-18T19:01:06+01:00","planning_heading_order":"passed","viewport_reset":true,"handoff_marked":true},
+      "acceptance":{"observed":205,"observed_with_open_checks":185,"unseen":57,"completed_scoped_journeys":20},
+      "next":["Build actual permission-checked won-proposal planning evidence carryover; current ACT07 starts blank inputs","Approved answer reuse, client acceptance and remaining Finance/Setup/project variants","Continue remaining262 states"],
       "owner_policy":"Deferred; synthetic fixture choices only",
       "all_states_accepted":false
     },

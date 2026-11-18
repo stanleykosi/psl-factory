@@ -2,6 +2,8 @@
 
 ## Registration facts · current
 
+Final141 web5d3e55dc/worker1b769697 SUCCESS, both1,702 runtimepaths match the passing source. Checkpoint4efb8408 pushed. Browser113 final local-time/private Planning/heading readback passed at explicit1280/390, body-client1265/1265 and375/375; screenshots inspected, normal viewport restored/handoff marked. Ledger205observed/185open/57unseen/20scoped complete. SCR41-register's direct source-bound journey is complete; fullSCR41 still needs actual won-proposal evidence carryover. No running tests. Continue with the typed actual-source adoption and bounded historical reader, not another plan-only handoff.
+
 Hosted140 web03e77852/worker685076c3 SUCCESS. Browser113 completed direct intake→PM confirmation→Planning114→fictional contactv2/source1991→dated facts→formal registration→background Verified, observed19:03:38WAT. Date2027-01-15/contact visible in private Planning. Draft979 keeps both owner-requiredness choicesNone, active977 unchanged. Phone375/375 and reset default600/600 passed.141 checks only the browser-found local-time labels/Planning heading refinement before checkpoint. Actual won-proposal source carryover remains separate code work; full262 not complete.
 
 140 passed29 PostgreSQL tests/99.466seconds, checks/drift/final0, no preview migration/fixtures.139's20PASS/1fixtureFAIL/8notrun was a missing hidden test field, corrected without runtime changes. Both prepared services match1,702 runtimepaths and root1,701; worker script unchanged. New deployments underway, browser acceptance next. A separate actual SCR41 engineering gap remains: ACT07 currently makes blank Planning inputs even for won proposals; carry reviewed, authorised winning evidence forward before claiming that board complete.
