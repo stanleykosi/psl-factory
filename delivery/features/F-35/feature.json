@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-35",
   "outcome": "Leadership report: a PMO Lead follows Tola's draft, a leadership reviewer approves and sends it or returns it, and each recipient's delivery shows, with the Tuesday report published without review (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-LEADERSHIP-REPORT"
   ],
@@ -104,13 +104,11 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "delivery technical review",
-      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
-      "evidence_refs": [
-        "delivery/features/F-35/round-2/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
       "status": "pending",
@@ -136,31 +134,25 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "delivery UX review",
-      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
-      "evidence_refs": [
-        "delivery/features/F-35/round-2/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "passed",
-      "reviewer": "reviewer-ui",
-      "authority": "delivery UI review",
-      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
-      "evidence_refs": [
-        "delivery/features/F-35/round-2/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "security": {
-      "status": "passed",
-      "reviewer": "reviewer-security",
-      "authority": "delivery security review",
-      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
-      "evidence_refs": [
-        "delivery/features/F-35/round-2/review-security.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -380,6 +372,98 @@
           "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "When the revision really goes stale, the reviewer is not told their decision was not recorded, and their note is lost. Spec Writes/E-TASK-DECIDE \"409 \u2192 the existing stale view; the note is kept and nothing is resent automatically\" (criterion 14). Repro: reset; tab A (`ceo`) and tab B (`pm`) open `/work/W-3202`; A presses \"Approve and send\" (200); B opens \"Return with a note\", types \"Stale tab note\" and presses it. B's log: `POST /api/v1/tasks/T-3202/claim {\"expected_revision\":1}` 200, then `POST \u2026/decision {\"expected_revision\":1,\"verdict\":\"return\",\"note\":\"Stale tab note\"}` 409, then a re-read. Expected: the stale sentence (\"This review changed while you were reading it, so nothing was recorded.\") and the note kept. Actual: B's page silently becomes \"SENT \u00b7 CHECKING DELIVERIES\". The page contains no stale, \"changed\" or \"not recorded\" text, has no textarea, and the note is gone. Cause: the re-read item has no decide steps, so `decideTasks` is empty (`frontend/src/features/workspace/Workspace.tsx:225-228`). The `InlineDecide` that held the stale view (`InlineDecide.tsx:265-269`) unmounts at `Workspace.tsx:677-678`. The scenario-cookie 409 passes only because the task is still actionable after the re-read. Fix: keep the stale notice, and the typed note, visible at page level when the decided task drops out on re-read, the way `assignFlow.notice` stale is kept (`Workspace.tsx:608-612`). Add an e2e for the two-tab race.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T20:15:48Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 390 the workspace header link \"History\" is 42x24 px on every leadership page (W-3201, W-3202, W-3203, W-3205, W-3209). Criterion 18 asks for at least 44x44, and this link is not inside a sentence. F-33's W-2701 has the same 42x24, so this is the shared header: fix it once, alongside UI-2-1.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T20:15:48Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Criterion 8 says \"received\" appears nowhere on W-3203 and W-3211. The spec's own fixture text puts it there twice: the station name \"Received\" and the `next` sentence \"\u2026before marking it received. It won't resend until it knows.\". Neither claims receipt, and both are backend text. The criterion should read \"never claims received\", or the fixture wording should change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T20:15:48Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-4",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Product input, as asked (UX-2-3). W-3203 draws the note \"\u20265 deliveries confirmed, 1 still checking.\" in a green `psl-callout--success` banner, because the backend status tone is `verified` (`bannerTone`, `Workspace.tsx:162-171`). The recipient row is correctly amber. This breaks no spec criterion: the tone comes from the response and the board draws green. Whether a partial delivery should ever carry a success tone is a product and backend question.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T20:15:48Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -439,6 +523,72 @@
           "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
           "evidence_refs": [
             "delivery/features/F-35/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-35/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-security.md"
           ]
         }
       }
@@ -539,7 +689,7 @@
     }
   },
   "created_at": "2026-11-18T05:12:22Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -597,6 +747,22 @@
       "round": 2,
       "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
       "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T20:15:48Z",
+      "round": 2,
+      "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T20:15:49Z",
+      "round": 3,
+      "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "reason": null
     }
   ],
   "routing": {
@@ -613,10 +779,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
