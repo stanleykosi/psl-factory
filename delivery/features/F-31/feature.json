@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-31",
   "outcome": "Engagement and planning, part 1: a won RFP becomes a registered engagement, and the planning page shows what each department owes and records what one sent (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-ENGAGEMENT-PLANNING"
   ],
@@ -119,11 +119,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "evidence_refs": [
+        "delivery/features/F-31/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -1238,7 +1240,7 @@
         "delivery/features/F-31/round-2/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "VERIFIED",
+      "state": "OPEN",
       "history": [
         {
           "action": "add",
@@ -1265,6 +1267,14 @@
           ],
           "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
           "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "qa",
+          "at": "2026-11-18T08:05:45Z",
+          "refs": [],
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+          "reason": "J5: 5xx, network and `uncertain` read \"Not confirmed / \u2026 the PM was set\u2026\". J7: F-30's W-2413 still reads \"Not recorded\". J6: `uncertain_written` still reads \"Not recorded / \u2026 the owner\u2026\", now QA-3-1 (non-blocking)."
         }
       ],
       "fix_by": "builder",
@@ -1325,6 +1335,29 @@
       "verified_by": "reviewer-technical",
       "verification_refs": [
         "sentNoRefresh text, no \"recorded\" state set"
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When the PM assignment is written but the response fails (`psl_mock_assign=uncertain_written`), the notice still reads \"Not recorded / We couldn't confirm the owner was set\u2026\", while the re-read page shows PM Sola Martins. Expected: \"Not confirmed / \u2026 the PM was set\u2026\", as in the other failure modes (QA-2-4). Cause: `Workspace.tsx:518-519` picks the wording from `assign?.role` on the re-read item, and the re-read no longer has `assign` once it is written. Fix: keep the role from the time of the press, for example in `useWorkspaceAssign` (which already receives `role`, `Workspace.tsx:124`), and store it on the `unconfirmed` notice. The meaning is still safe: nothing says \"confirmed\" and nothing is resent.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T08:05:45Z",
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68"
+        }
       ]
     }
   ],
@@ -1625,6 +1658,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-18T04:53:31Z",
+      "round": 3,
+      "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T08:05:45Z",
       "round": 3,
       "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
       "reason": null

@@ -1,0 +1,237 @@
+{
+ "exceptions": [
+  {
+   "role": "link",
+   "name": "← My work",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the phone form is F-05's bottom sheet over My work (signed 14 Nov for F-05), so the board's page bar \"← My work · START\" is not drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "START",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the phone board's page bar title; the bottom sheet head reads \"Step 2 of 2 · change line\" instead (F-05).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tablist",
+   "name": "My work",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "table",
+   "name": "",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "columnheader",
+   "name": "WORK",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "columnheader",
+   "name": "STATE",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "columnheader",
+   "name": "AGE",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "2h",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "40m",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "1d",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "3d",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Lagoon Health · Milestone 2 invoice",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Harmattan Bank · go-live report",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Kora Logistics · fleet tracker SOW v3",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Ojo Foods · ordering app plan",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Unassigned 1",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Lagoon Health · patient app ▾",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Weekly sync · 17 Nov ▾",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Mapping run MR-0044 ▾",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "None ▾",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "SCH-INC-2026-10",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "QB-JE-7741",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Add WhatsApp reminders as well as SMS",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "What the client asked for",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: a native input's label is matched by the control it names (F-05 as signed), not as loose text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Reference",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: a native input's label is matched by the control it names (F-05 as signed), not as loose text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Key",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: a native input's label is matched by the control it names (F-05 as signed), not as loose text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "×",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the drawn \"×\" close mark is the drawer's Close button (F-05 as signed).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tunde Bello · PMO",
+   "category": "sample data",
+   "conflicts": 7,
+   "reason": "Conflicts 7: the signed-in name comes from /me. The Finance lines are served only to the mock's Finance persona (Ada Okafor · Finance Lead); a PM starting Finance back-office lines would be a grant the frontend invents. On the minutes and change boards the PM persona's own /me name is shown.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Continues",
+   "category": "component",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the drawer marks every optional field \"(optional)\", as F-05 built; the label reads \"Continues (optional)\".",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ],
+ "visual_waivers": []
+}

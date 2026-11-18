@@ -1,0 +1,2 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-04-desktop-minutes-1440	1440	73.7	100	89.3	False
