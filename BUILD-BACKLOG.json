@@ -1,5 +1,18 @@
 {
   "design_consolidation_20261116": {
+    "staff_reactivation_20261118":{
+      "status":"pg159_160_hosted_browser_restoration_and_fresh_access_verified",
+      "states":["SCR-21"],
+      "implemented":["Current all-previous-workspace restoration authority and original role-source checks","Immutable access/admission/departure history retains previous scope","Old project role removal and stale identity/source/delegation guards","Restore sign-in with zero old grants and a fresh global session fence","Separate native fresh-profile allocation","Human review/cancel interface and bounded source-free O01 investigation"],
+      "postgresql_159":{"deployment":"bf26e5d7-c60c-4d09-b30c-2c1c9b006499","passed":78,"seconds":102.657,"final_exit":0,"preview_migration":false},
+      "postgresql_160":{"deployment":"3f3fb5d9-dc70-4fb2-86a2-33b80589be04","passed":79,"seconds":68.509,"final_exit":0,"preview_migration":true,"authority_only_fixture":true},
+      "runtime_160":{"web":"82ed0b0a-aa9e-47b3-9b16-091eebe8801f","worker":"f1a56efc-f07b-42e4-afe5-95e10c83f165","status":"SUCCESS","paths_per_service":1727,"root_paths":1726,"mismatches":0},
+      "browser":{"person":123,"native_departure_inactive_observed":"2026-11-18T23:07:06+01:00","restoration_cancel_retained_inactive":true,"active_zero_access_observed":"2026-11-18T23:08:07+01:00","separate_fresh_reader_allocated":true,"old_person120_still_inactive":true,"old_nomination_hold_observed":true,"phone_body_client":[375,375],"desktop_body_client":[1280,1280],"viewport_reset":true},
+      "migration_preserve":"identity0010 applied in retained testDB and synthetic preview",
+      "next":"Continue connected native work/recording handover, multi-project profiles and actual payroll row-progression reconciliation. Preserve inactive120 and restored123/current fresh reader.",
+      "owner_decisions":"Real reactivation administrators/scopes/profile values remain deferred",
+      "all_states_accepted":false
+    },
     "staff_profiles_20261118":{
       "status":"pg157_158_hosted_browser_single_workspace_profile_invite_and_navigation_verified",
       "states":["SCR-21","SCR-21-invite"],

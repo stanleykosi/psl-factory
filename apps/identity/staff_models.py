@@ -45,7 +45,7 @@ class StaffAccountChange(AppendOnly):
     """Global session fence and exact affected workspace history; never a role grant."""
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='+')
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='+')
-    kind = models.CharField(max_length=20, choices=[('deactivated','Deactivated')])
+    kind = models.CharField(max_length=20, choices=[('deactivated','Deactivated'),('reactivated','Reactivated')])
     operation = models.UUIDField(unique=True)
     manifest = models.JSONField()
     reason = models.CharField(max_length=1000)

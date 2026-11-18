@@ -210,6 +210,7 @@ urlpatterns += [path('staff/',staff_account_views.roster,name='staff_roster'),
                 path('cases/<uuid:case_id>/staff/<int:person_id>/access/',staff_profile_views.access,name='staff_profile_access'),
                 path('staff/delegation/<int:authority_id>/profiles/',staff_profile_views.configure,name='staff_profile_configuration'),
                 path('staff/<int:person_id>/deactivate/',staff_account_views.departure,name='staff_account_departure'),
+                path('staff/<int:person_id>/reactivate/',staff_account_views.reactivate,name='staff_account_reactivation'),
                 path('staff/delegation/<int:authority_id>/',staff_account_views.controls,name='staff_account_controls')]
 urlpatterns += [path('cases/<uuid:case_id>/documents/review/<int:version_id>/', design_review.show, name='design_document_review')]
 urlpatterns += [path('notifications/', alerts_views.index, name='design_alerts'),

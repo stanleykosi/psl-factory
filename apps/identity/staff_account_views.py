@@ -45,6 +45,7 @@ def roster(request):
         user.managed_workspace_count=counts.get(user.pk,0)
         user.first_profile_label=labels.get((user.first_profile_case,user.pk),'No current access')
         user.departure_available=user.is_active and user.pk!=request.user.pk and not(user.is_staff or user.is_superuser)
+        user.reactivation_available=not user.is_active and not(user.is_staff or user.is_superuser)
     later=StaffInvitation.objects.filter(case_id=OuterRef('case_id'),username=OuterRef('username'),number__gt=OuterRef('number'))
     pending=StaffInvitation.objects.filter(case__in=cases,admission__isnull=True).annotate(
         superseded=Exists(later)).filter(superseded=False)
@@ -134,6 +135,41 @@ class ControlsForm(forms.Form):
     allow_profile_edit=forms.NullBooleanField(label='May change named workspace access profiles')
     allow_reactivation=forms.NullBooleanField(label='May reactivate accounts after fresh access review')
     reason=forms.CharField(max_length=1000,label='Reason and authority reference',widget=forms.Textarea(attrs={'rows':3}))
+
+
+class ReactivationForm(forms.Form):
+    fingerprint=forms.CharField(widget=forms.HiddenInput,min_length=64,max_length=64)
+    operation=forms.UUIDField(widget=forms.HiddenInput)
+    reason=forms.CharField(max_length=1000,label='Reason for restoring sign-in',widget=forms.Textarea(attrs={'rows':3}))
+    confirmed=forms.BooleanField(label='I reviewed every listed workspace. Previous access and project roles will not be restored.')
+
+
+@login_required
+@require_http_methods(['GET','HEAD','POST'])
+@never_cache
+def reactivate(request,person_id):
+    from . import staff_reactivation
+    from apps.agents.staff_accounts import investigate_restoration
+    person=domain.account(request.user,person_id)
+    prepared=None;held=None;form=None
+    try:prepared=investigate_restoration(request.user,person_id)
+    except PermissionDenied:held='Restoring this account needs current delegation and role-source access in every affected workspace.'
+    except ValidationError as exc:held=exc.messages[0]
+    if prepared:
+        form=ReactivationForm(request.POST if request.method=='POST' else None,
+            initial={'fingerprint':prepared['fingerprint'],'operation':uuid4()})
+        if prepared['blocked']:held=' '.join(prepared['blocked'])
+    if request.method=='POST' and not held and form and form.is_valid():
+        try:
+            if set(request.POST)-set(form.fields)-{'csrfmiddlewaretoken'}:raise ValidationError('Use the displayed restoration review.')
+            staff_reactivation.restore(request.user,person_id,form.cleaned_data['fingerprint'],form.cleaned_data['reason'],
+                                        form.cleaned_data['operation'])
+        except PermissionDenied:form.add_error(None,'Current delegation or role-source access changed. Review again.')
+        except ValidationError as exc:form.add_error(None,exc)
+        else:
+            messages.success(request,'Sign-in restored. Allocate fresh workspace access before this person resumes work.')
+            return redirect('staff_person',person_id)
+    return render(request,'identity/staff_reactivation.html',{'person':person,'prepared':prepared,'held':held,'form':form})
 
 
 @login_required
