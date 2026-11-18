@@ -113,10 +113,10 @@ describe('header from data', () => {
     const body = item('W-2001');
     await open(body);
     const bar = screen.getByRole('navigation', { name: 'Project' });
-    expect(within(bar).getAllByText(/./).map(text)).toEqual(['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
+    expect(within(bar).getAllByText(/./).map(text)).toEqual(['Journey', 'Delivery', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
     const links = within(bar).getAllByRole('link');
-    expect(links.map(text)).toEqual(['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
-    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/projects/C-0211', '/projects/C-0211/milestones', '/projects/C-0211/documents', '/projects/C-0211/money', '/projects/C-0211/registers', '/projects/C-0211/actions']);
+    expect(links.map(text)).toEqual(['Journey', 'Delivery', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/projects/C-0211', '/projects/C-0211/delivery', '/projects/C-0211/milestones', '/projects/C-0211/documents', '/projects/C-0211/money', '/projects/C-0211/registers', '/projects/C-0211/actions']);
     expect(bar.querySelector('[aria-current]')).toBeNull();
     expect(bar.querySelectorAll('[tabindex]')).toHaveLength(0);
   });

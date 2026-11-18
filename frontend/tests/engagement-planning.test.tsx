@@ -557,8 +557,12 @@ describe('W-2603 planning, from data (AC 6, 7)', () => {
     const stray = clone('W-2603');
     stray.tasks = [];
     await open(stray);
-    // a step whose task is not in this item stays the F-16 decision link, not a drawer
-    expect(ws().getAllByRole('link', { name: 'Record input' })[0].getAttribute('href')).toBe('/work/W-2603/decide?task=T-2603');
+    // F-32: a step whose task is not in this item is no decision link and no drawer: it is unavailable, with no href
+    expect(ws().queryAllByRole('link', { name: 'Record input' })).toHaveLength(0);
+    const orphan = ws().getAllByRole('button', { name: 'Record input' })[0];
+    expect(orphan.getAttribute('aria-disabled')).toBe('true');
+    expect(orphan.getAttribute('href')).toBeNull();
+    expect(document.getElementById(orphan.getAttribute('aria-describedby')!.split(' ').at(-1)!)!.textContent).toBe('This decision isn’t open to you here.');
   });
 
   it('Tola’s text is only displayed: no verified mark, no delivery receipt, no costing; Ask Tola only when links carries it', async () => {
@@ -881,11 +885,12 @@ describe('access and the project (AC 12, 13, 14)', () => {
     expect(link.getAttribute('href')).toBe('/work/W-2603');
   });
 
-  it('the project bar on W-2603 links six tabs to P-0106 and marks none current; on a phone the back link reads Project, and other lines keep Queue', async () => {
+  it('the project bar on W-2603 links seven tabs to P-0106 and marks none current; on a phone the back link reads Project, and other lines keep Queue', async () => {
     await open(item('W-2603'));
     const bar = within(screen.getByRole('navigation', { name: 'Project' }));
     expect(bar.getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
       ['Journey', '/projects/P-0106'],
+      ['Delivery', '/projects/P-0106/delivery'],
       ['Milestones', '/projects/P-0106/milestones'],
       ['Documents', '/projects/P-0106/documents'],
       ['Money', '/projects/P-0106/money'],

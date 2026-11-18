@@ -1,0 +1,140 @@
+{
+  "id": "W-2508",
+  "title": "Lagoon Health · patient app",
+  "line": "Release gates",
+  "reference": "REL-0091",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Client UAT",
+      "status": "done"
+    },
+    {
+      "name": "Release gates",
+      "status": "current_person"
+    },
+    {
+      "name": "Go-live",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-03-22T09:10:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Read progress against the plan",
+        "status": "done"
+      },
+      {
+        "text": "Checked the UAT response",
+        "status": "done"
+      },
+      {
+        "text": "Mark release ready",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 1,
+  "workspace": {
+    "line_key": "delivery_release",
+    "screen": "SCR-44",
+    "view": "release",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "REL-0091",
+          "label": "REL-0091"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 1,
+    "status": {
+      "label": "Preparing",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "checks",
+        "kind": "checklist",
+        "title": "Release checks in progress",
+        "agent": "tola",
+        "items": [
+          {
+            "id": "C-1",
+            "text": "Read progress against the plan",
+            "status": "done"
+          },
+          {
+            "id": "C-2",
+            "text": "Checked the UAT response",
+            "status": "done"
+          },
+          {
+            "id": "C-3",
+            "text": "Mark release ready",
+            "status": "done"
+          }
+        ]
+      }
+    ]
+  }
+}

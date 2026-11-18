@@ -1,0 +1,226 @@
+{
+  "id": "W-2506",
+  "title": "Lagoon Health · patient app",
+  "line": "Release gates",
+  "reference": "REL-0091",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Client UAT",
+      "status": "done"
+    },
+    {
+      "name": "Release gates",
+      "status": "current_person"
+    },
+    {
+      "name": "Go-live",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-03-22T09:10:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-2506",
+      "kind": "decide",
+      "title": "Planning decision",
+      "required_role": "PMO Lead",
+      "you_can_act": false,
+      "revision": 1,
+      "decision": {
+        "version": {
+          "label": "Release gates · build 1.0.0",
+          "number": 1,
+          "drafted_at": "2026-03-23T09:12:00Z"
+        },
+        "basis": "Delivered against plan v1",
+        "prepared_by": {
+          "name": "Tunde Bello",
+          "role": "PMO",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PMO Lead",
+              "person": "Kemi Adebayo",
+              "status": "current",
+              "is_you": false
+            }
+          ],
+          "your_step": 1,
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "not_your_role"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Checked release progress",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 1,
+  "workspace": {
+    "line_key": "delivery_release",
+    "screen": "SCR-44",
+    "view": "release",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "REL-0091",
+          "label": "REL-0091"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 1,
+    "status": {
+      "label": "Your decision",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "deciding",
+        "kind": "facts",
+        "title": "What you’re deciding",
+        "items": [
+          {
+            "id": "F-1",
+            "label": "Delivered against plan v1",
+            "value": "4 of 4 stages built"
+          },
+          {
+            "id": "F-2",
+            "label": "Client UAT",
+            "value": "Approved 22 Mar"
+          },
+          {
+            "id": "F-3",
+            "label": "Open issues",
+            "value": "1 medium · 0 high"
+          },
+          {
+            "id": "F-4",
+            "label": "Changes since the SOW",
+            "value": "CR-0044 · signed"
+          }
+        ]
+      },
+      {
+        "key": "checks",
+        "kind": "checklist",
+        "title": "Checked release progress",
+        "agent": "tola",
+        "as_of": "2026-03-23T09:12:00Z",
+        "items": [
+          {
+            "id": "C-1",
+            "text": "Read progress against the plan",
+            "status": "done",
+            "tag": {
+              "label": "PLAN V1 · 4 STAGES",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "C-2",
+            "text": "Checked the UAT response",
+            "status": "done",
+            "tag": {
+              "label": "UAT APPROVED · 22 MAR",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "C-3",
+            "text": "Checked a PMO Lead is assigned",
+            "status": "done",
+            "tag": {
+              "label": "KEMI ADEBAYO",
+              "tone": "neutral"
+            }
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_release",
+        "label": "Approve for release",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "task_id": "T-2599",
+        "consequence": "Approving lets Tola prepare release readiness. It doesn’t deploy anything."
+      },
+      {
+        "key": "return_release",
+        "label": "Return with a note",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "task_id": "T-2599"
+      }
+    ]
+  }
+}
