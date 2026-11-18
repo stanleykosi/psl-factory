@@ -288,6 +288,20 @@ Screen: SCR-54 part 1 (investigating, review, returned, verified; `/work/W-2701.
 - **Ask Chidi** (G-C-4): the existing `workspace.links[]` `assistant` link to `/assistant`, with no work-item context.
 - **Held to part 2**: the held board and duplicate settlement (G-54-1, G-54-2), Export as an adjustment (G-54-5), Withdraw approval (`revoke`, G-54-4), the inventory kind (G-54-6).
 
+## Added during F-34: hypercare (19 Nov)
+
+Screen: SCR-46 part 1 (running, record, setup-needed, qualified; `/work/W-3101..W-3104`, failure paths W-3105..W-3112, link target W-3120), the hypercare line's work item (`line_key: "delivery_hypercare"`), contract mock only (D-LINE-WORKSPACE proposed). Nothing is deployed, evaluated or qualified. Every "Day 10 of 30", "30 days · from Setup", Met and "qualified" is sample fixture text: PSL has not set `delivery.hypercare_window` or `delivery.hypercare_criteria` (D11 open), so the honest state today is the setup-needed hold. The page computes no day, window end, criterion or qualification.
+
+- **Writes (mock only)**: `record_release` (inputs `version`, `released_at` ISO, `environment`; the deployment log uploaded first through E-EVIDENCE-UPLOAD with `evidence_kind: "deployment_log"`, sent in `evidence_ids`) and `log_observation` (`what`, optional proof `hypercare_observation`). Each carries CSRF, `expected_revision` as read and one `idempotency_key` per attempt. No deploy, evaluation trigger or Setup write exists.
+- **After Record release the mock re-read is the hold** (`state: setup_needed`, no steps, no criteria rows), because a backend must not start a window it has no rule for.
+- **Proposals**: G-F34-1 `workspace.links[]` target kind `setup_rules` `{kind, area}` (drawn only for a known area; the PM may get 403 on Setup, so please send the link only to people who may open it); G-46-1 `log_observation` and `OBS-` table rows (real write held); `environment` as free `text` (is it a list?); `evidence_kind` names `deployment_log`, `hypercare_observation`.
+- **Not built, recorded**: G-46-2 evaluation trigger (who or what runs Tola's evaluation); G-46-3 drop "Record go-live acceptance" from this line; where the incidents count comes from; who sets the window and criteria (D11, D-ADMIN-AUTHORITY).
+- **Only a returned `verified` status draws the green banner.** An agent step "Mark hypercare qualified" marked done (W-3110) is not qualification; the deterministic factory check sets it.
+- **Shared fixes**: the "Done: …" notice now follows the re-read in `useWorkspaceStep` (same shape as F-41); an empty tag cell already read Unknown (F-31); the mock already accepted a workspace step's evidence upload (F-31).
+- **Missing `waiting` tone (D-46, UI-1-2)**: the boards draw the running hypercare status, "Release not recorded" and the "Open · owner set" row tag amber (waiting on someone), but the workspace tone list (`neutral, person, agent, stopped, uncertain, verified, restricted`) has no plain waiting value; `person` draws orange and `uncertain` (the only amber) is reserved for effect uncertain. The fixtures return `person`; the page adds no mapping. Please add a `waiting` tone to `status.tone` and tag tones. Until then these three tags are listed as tone exceptions.
+- **Setup link for a PM (UX-1-4, Conflicts 1)**: please send "Open Setup › Rules" only to people who may open Setup.
+- **Backend asks from QA (QA-2-3, QA-2-4)**: the mock serves a default item for an unknown work id, where the real E-WORK-ITEM must answer 404 (the page treats 403 and 404 alike); and the mock accepts unknown `evidence_ids` on a step write, where the real E-WORK-STEP must refuse an id that was not issued by E-EVIDENCE-UPLOAD on this case (422).
+
 ## Added during F-47: Start work proof upload (19 Nov)
 
 Screens: SCR-04 minutes, change, income schedules and ledger sources (desktop and phone), the Proof box in the Start work drawer. Contract mock only (D-START-INTAKE r1 proposed; nothing released). Gap ids G-SCR04P-* and the four backend questions are in [gaps-e-finance-payroll.md](backend-handoff/gaps-e-finance-payroll.md). No generated type changed.

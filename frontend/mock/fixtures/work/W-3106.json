@@ -1,0 +1,149 @@
+{
+  "id": "W-3106",
+  "title": "Lagoon Health · patient app",
+  "line": "Hypercare",
+  "reference": "HYP-0062",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Go-live",
+      "status": "done"
+    },
+    {
+      "name": "Hypercare",
+      "status": "current_person"
+    },
+    {
+      "name": "Archive",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-04-01T22:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Checked the observations so far",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "delivery_hypercare",
+    "screen": "SCR-46",
+    "view": "hypercare",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "HYP-0062",
+          "label": "HYP-0062"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 1,
+    "status": {
+      "label": "Hypercare · release not recorded",
+      "tone": "person"
+    },
+    "sections": [],
+    "next": [
+      "Engineering deploys outside the factory. You record what was released, with the deployment log as proof."
+    ],
+    "steps": [
+      {
+        "key": "record_release",
+        "label": "Record release",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "consequence": "What happens next: the hypercare window starts from the release date. Go-live acceptance (02 Apr) is already recorded.",
+        "fields": [
+          {
+            "name": "version",
+            "label": "Version",
+            "type": "text",
+            "required": true,
+            "value": "Build 1.0.0"
+          },
+          {
+            "name": "released_at",
+            "label": "Released on",
+            "type": "datetime",
+            "required": true
+          },
+          {
+            "name": "environment",
+            "label": "Environment",
+            "type": "text",
+            "required": true,
+            "value": "Production · Lagoon Health"
+          },
+          {
+            "name": "proof",
+            "label": "Proof",
+            "type": "evidence",
+            "required": true,
+            "evidence_kind": "deployment_log"
+          }
+        ]
+      }
+    ]
+  }
+}
