@@ -356,7 +356,7 @@ describe('holds and who may act (AC 6 to 8, 11, 15)', () => {
     expect(document.body.textContent).not.toContain('Forecast reviewer');
     cleanup();
     const none = item('W-4002') as WorkItem;
-    delete none.tasks[0].required_role;
+    delete (none.tasks[0] as { required_role?: string }).required_role;
     for (const step of none.tasks[0].decision?.chain?.steps ?? []) delete (step as { role?: string }).role;
     await open(none);
     await ready('Approve forecast');
