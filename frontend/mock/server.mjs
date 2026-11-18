@@ -25,6 +25,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
+import { documentRead } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
@@ -255,8 +256,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (method === 'get' && url.pathname === ASSISTANT_LOG_PATH) return send(res, 200, assistant.log());
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
-      // F-17: E-WORK-STEP goes to workspace.mjs (fixture scripts, the mock's idempotency map and log).
-      if (WORKSPACE_OPERATIONS.includes(route.operationId)) return send(res, ...workspaceRoute({ req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
+      // F-17, F-30: E-WORK-STEP and E-WORK-ASSIGN go to workspace.mjs (fixture scripts, the mock's idempotency map and log).
+      if (WORKSPACE_OPERATIONS.includes(route.operationId)) return send(res, ...workspaceRoute({ req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides, operationId: route.operationId }));
       // E-EVIDENCE-UPLOAD has two mock owners: Setup proof cases (C-SETUP-*, F-11, evidence.mjs) and work-item cases (F-09, response.mjs).
       const setupProof = route.operationId === 'E-EVIDENCE-UPLOAD' && decodeURIComponent(url.pathname.split('/')[4] ?? '').startsWith('C-SETUP-');
       if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {
@@ -300,6 +301,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona }));
       if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
+      // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.
+      if (route.operationId === 'E-DOCUMENT') { const r = documentRead({ url, persona, cookies, work, overrides }); if (r) return send(res, r.status, r.body); }
       // F-23: the one document the minutes fixtures name (D-2304 v1); any other document stays unmocked, as before.
       if (route.operationId === 'E-DOCUMENT' && url.pathname !== '/api/v1/documents/D-2304/versions/1') return send(res, 501, NOT_MOCKED);
       return send(res, 200, fixtures[route.operationId]);

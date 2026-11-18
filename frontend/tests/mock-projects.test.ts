@@ -29,6 +29,14 @@ const v7Validators: Record<string, ReturnType<typeof ajv.compile>> = {
 
 const fixtures = join(__dirname, '../mock/fixtures');
 const readJson = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
+// F-32 PROPOSAL keys (mock/proposals/delivery-release.json, checked in tests/delivery-release-mock.test.ts) are removed before the schema check.
+function withoutDeliveryOverlay(body: unknown): unknown {
+  const copy = structuredClone(body) as { delivery?: Record<string, unknown>[]; delivery_agent?: unknown; delivery_summary?: unknown };
+  for (const row of copy.delivery ?? []) for (const key of ['reference', 'at', 'detail', 'short_title']) delete row[key];
+  delete copy.delivery_agent;
+  delete copy.delivery_summary;
+  return copy;
+}
 type Item = { case_id: string; title: string; pm: string; stage: string; sample: boolean };
 type Line = { line: string; state: string; work_id: string };
 type ListBody = { items: Item[]; next_cursor?: string; as_of: string; counts?: Record<string, number>; total?: number };
@@ -63,10 +71,11 @@ async function get(path: string, persona: string, operationId: string, validator
   const body = await response.json();
   const validate = validators[String(response.status)];
   expect(validate, `undeclared status ${response.status}`).toBeTruthy();
-  expect(validate(body), `${path} ${response.status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
+  const contract = withoutDeliveryOverlay(body);
+  expect(validate(contract), `${path} ${response.status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
   if (response.status === 200) {
     const full = v7Validators[operationId];
-    expect(full(body), `${path} against v7: ${ajv.errorsText(full.errors)}`).toBe(true);
+    expect(full(contract), `${path} against v7: ${ajv.errorsText(full.errors)}`).toBe(true);
   }
   return { status: response.status, body };
 }
@@ -206,8 +215,8 @@ describe('E-PROJECT mock', () => {
     expect((await journey('P-0105', 'pm')).body.lines).toEqual([]);
   });
 
-  it('E-DOCUMENT and the documents tab still answer 501', async () => {
-    for (const path of ['/api/v1/projects/P-0101/documents', '/api/v1/documents/D-1/versions/1']) {
+  it('E-DOCUMENT of an unmocked document still answers 501', async () => {
+    for (const path of ['/api/v1/documents/D-1/versions/1']) {
       const response = await fetch(base + path);
       expect([response.status, await response.json()]).toEqual([501, { code: 'not_mocked', message: 'Not available in the mock yet.' }]);
     }
@@ -233,9 +242,9 @@ describe('project fixtures', () => {
     expect(journeyFiles.length).toBeGreaterThan(20);
     for (const path of journeyFiles) {
       const validate = journeyValidators['200'];
-      expect(validate(readJson(path)), `${path}: ${ajv.errorsText(validate.errors)}`).toBe(true);
+      expect(validate(withoutDeliveryOverlay(readJson(path))), `${path}: ${ajv.errorsText(validate.errors)}`).toBe(true);
       const full = v7Validators['E-PROJECT'];
-      expect(full(readJson(path)), `${path} against v7: ${ajv.errorsText(full.errors)}`).toBe(true);
+      expect(full(withoutDeliveryOverlay(readJson(path))), `${path} against v7: ${ajv.errorsText(full.errors)}`).toBe(true);
     }
     expect(validate200(readJson(join(fixtures, 'E-PROJECT.json'))), 'the fallback body is schema-valid').toBe(true);
     const validate = listValidators['200'];

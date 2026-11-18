@@ -45,7 +45,8 @@ export type Notice =
   | { kind: 'uncertain' }
   /** Uncertain effect and the reload failed: nothing is known, so Record stays off. */
   | { kind: 'unconfirmed'; checking: boolean }
-  | { kind: 'problem'; message: string }
+  /** `forbidden`: the refusal was a 403 (F-31's Drawer closes onto the not-open view; F-18's page shows the message as before). */
+  | { kind: 'problem'; message: string; forbidden?: boolean }
   | { kind: 'claim_failed' };
 
 const EMPTY: Entries = { who: '', when: '', action: '', version: '', channel: '', note: '', attested: false, team: '', estimate: '', what: '' };
@@ -221,7 +222,7 @@ export function useResponse(id: string, taskId: string | undefined) {
       if (error.kind === 'stale') return settle(before, item, responderId, { kind: 'stale' });
       // 403: a task that is no longer actionable shows the not-open state (the form view decides that from the
       // reloaded task); otherwise the server's message shows and the controls stay.
-      settle(before, item, responderId, { kind: 'problem', message: error.message });
+      settle(before, item, responderId, { kind: 'problem', message: error.message, ...(error.kind === 'forbidden' ? { forbidden: true } : {}) });
     },
     [reread, settle],
   );

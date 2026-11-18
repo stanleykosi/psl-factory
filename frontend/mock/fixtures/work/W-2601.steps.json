@@ -1,0 +1,10 @@
+{
+  "register_engagement": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "Engagement EN-0042 registered."
+    },
+    "serve": "W-2602.next"
+  }
+}

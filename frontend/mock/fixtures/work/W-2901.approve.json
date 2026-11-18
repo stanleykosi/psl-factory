@@ -1,0 +1,127 @@
+{
+  "id": "W-2901",
+  "title": "Lagoon Health · Statement of work",
+  "line": "Draft a statement of work",
+  "reference": "SOW-0198",
+  "state": "processing",
+  "revision": 7,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-10T15:20:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-2901",
+      "kind": "decide",
+      "title": "Review statement of work v2",
+      "required_role": "PMO Lead",
+      "you_can_act": false,
+      "revision": 3,
+      "decision": {
+        "version": {
+          "label": "Statement of work v2",
+          "number": 2,
+          "document_id": "D-2901",
+          "drafted_at": "2026-11-16T15:20:00Z"
+        },
+        "prepared_by": {
+          "name": "Tunde Bello",
+          "role": "PMO",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PMO Lead",
+              "person": "Kemi Adebayo",
+              "status": "approved",
+              "is_you": true,
+              "decided_at": "2026-11-17T09:05:00Z"
+            }
+          ],
+          "your_step": 1,
+          "step_count": 1
+        },
+        "changes": {
+          "previous_label": "v1",
+          "items": [
+            "Section 3: stage amounts now follow costing COST-0140 v2",
+            "Section 4: assumption about clinic data timing"
+          ]
+        }
+      },
+      "cannot_act_reason": "already_decided",
+      "asked": []
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted the statement of work from the planning record",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A PMO Lead reviews statement of work v2.",
+  "sample": true,
+  "case_id": "P-0102",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "minutes",
+    "screen": "SCR-08",
+    "view": "review",
+    "revision": 7,
+    "sections": [],
+    "agent_note": {
+      "agent": "tola",
+      "lines": [
+        "I can draft v3 with section 4 changed to match the minutes. You’d still check it before it goes back."
+      ]
+    }
+  }
+}

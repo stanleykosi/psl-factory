@@ -1,0 +1,133 @@
+{
+  "id": "W-2706",
+  "title": "Income detail · October",
+  "line": "Income schedules",
+  "reference": "SCH-0021",
+  "state": "setup_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Prepare",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "stopped"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    },
+    {
+      "name": "Export (optional)",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the income detail",
+        "status": "done",
+        "source": "INCOME_DETAIL_OCT.XLSX · 38 ROWS"
+      },
+      {
+        "text": "Checked for income already in the accounts",
+        "status": "done",
+        "source": "2 ROWS MAY BE DUPLICATES"
+      },
+      {
+        "text": "Read the mapping note",
+        "status": "done",
+        "source": "MAPPING RUN MR-0044"
+      },
+      {
+        "text": "Hand to preparation",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-13T10:20:00Z"
+  },
+  "next_step": "An admin sets who reviews schedules in Setup. The review starts then.",
+  "sample": true,
+  "workspace": {
+    "line_key": "income_schedules",
+    "screen": "SCR-54",
+    "view": "setup_needed",
+    "status": {
+      "label": "SETUP NEEDED",
+      "tone": "stopped"
+    },
+    "sections": [
+      {
+        "key": "held",
+        "kind": "facts",
+        "title": "Why it's held",
+        "items": [
+          {
+            "id": "H-1",
+            "label": "Who reviews schedules",
+            "value": "NOT SET",
+            "tag": {
+              "label": "NOT SET",
+              "tone": "stopped"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "An admin sets Who reviews schedules in Setup · Finance rules. The review starts then."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "SCH-0021",
+          "label": "SCH-0021"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

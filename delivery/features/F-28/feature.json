@@ -1,0 +1,808 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-28",
+  "outcome": "The minutes line, finished: filed internal minutes and published client minutes show the actions created and who each recipient's delivery receipt says got them (contract mock only)",
+  "state": "DONE",
+  "task_ids": [
+    "FE-LINE-MINUTES"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Desktop boards at 1440.** Both have `scores.coverageWithExceptions` = 100 and `scores.visual` >= 90. A board at >= 70 but below 90 passes only with a D-83 visual waiver signed for that board in `fidelity-exceptions.json` and the UI reviewer's side-by-side reading finding no fixable gap. \u2014 verify: the commands exit 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass and waiver.",
+    "**Phone boards at 390.** The same rule at `--width 390`. The phone boards are sparse, so extras are expected (Conflicts 4). \u2014 verify: same command, rows in `scores.txt`.",
+    "**Exceptions limited.** Each entry has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number; none covers a value the data supplies (name, date, count, receipt, owner, state). One fidelity run per round (D-64). \u2014 verify: file content; `build.md`.",
+    "**Internal from data.** `/work/W-2310` shows the status \"Filed \u00b7 Internal\", the returned sentence, the \"Created\" table with each action's owner, due (\"Unknown\" when missing) and state, the Next sentence and \"Open actions\". Nothing is counted or composed by the frame: a fixture whose sentence says \"3 actions\" over two rows shows both unchanged. \u2014 verify: `tests/minutes-end.test.tsx`; page at 1440 and 390.",
+    "**Published from data.** `/work/W-2311` shows the sentence, three actions with \"OWNER NEEDED\" on the ownerless one (owner cell \"No owner yet\", due \"Unknown\"), \"Sent to\" with each person's name, channel and receipt word and time, Next and \"Open actions\". \u2014 verify: component test; page at 1440 and 390.",
+    "**Receipts are per person.** On W-2312 the received recipient reads Received, the uncertain one reads Uncertain, the `not_yet` one reads Not yet, and a recipient with `unknown` or an absent `receipt` reads Unknown or \"Not yet\" (never blank). The strings \"Sent\" and \"Delivered\" appear only for a recipient whose `receipt` is `received`. No aggregate \"Delivered\" is drawn by the frame; only the returned sentence and tag are. \u2014 verify: component test over all five `receipt` values; `grep -rnE \"Delivered|delivery confirmed\" frontend/src/features/workspace` finds none in code (fixtures only).",
+    "**Uncertain send keeps the lock (INV-RESEND).** On W-2312 the only action is `ReconcilePanel`; \"Open actions\" and \"Open the minutes\" (reads only) stay usable; any step control is `aria-disabled`; one reconcile press sends one POST to `/actions` and none to `/steps`, `/claim` or `/decision`; no new idempotency key; the same after a reload. \u2014 verify: component test with a recording `fetch`; e2e at 1440 and 390.",
+    "**No claim beyond the data.** A published fixture with every recipient `not_yet` and a sentence \"Minutes v1 approved by Kemi Adebayo.\" shows no \"emailed\" or \"delivered\" text from the frame; the page contains only returned strings. \u2014 verify: component test of `document.body.textContent`.",
+    "**OWNER NEEDED and Unknown.** An action with no owner shows \"OWNER NEEDED\" only because the data returns that tag; no owner is guessed from the sentence or notes text (a fixture row text \"owner Tunde\" changes no owner cell). A missing due shows \"Unknown\", never 0, blank or \"-\". \u2014 verify: component test on W-2311/W-2314.",
+    "**Links only from data.** \"Open actions\" appears only when `workspace.links[]` supplies a `project_tab` target whose `tab` is a known project tab and whose `case_id` is a valid id; it links to `/projects/C-0211/actions`. W-2314 shows neither \"Open actions\" nor \"Open the minutes\". A target of an unknown kind or tab draws nothing. \"Open the minutes\" (W-2312) sends exactly one GET `/api/v1/documents/D-2304/versions/1`. \u2014 verify: component tests; recording `fetch`.",
+    "**Reaching internal.** On `/work/W-2301` choosing audience Internal and pressing \"Confirm and create actions\" sends the F-23 request (F-23 criterion 8 unchanged) and the reloaded item renders as the internal view; choosing Client still ends on the drafted view (W-2303). \u2014 verify: component test and e2e.",
+    "**Reaching published.** On `/work/W-2309/decide?task=T-2309` an approve sends the F-16 requests only; back on `/work/W-2309` the item renders as the published view. The work page sends nothing to `/steps`, `/claim` or `/decision`. \u2014 verify: e2e with recorded requests.",
+    "**Owner assignment (W-2313 only).** The \"assign owner\" control exists only on the item whose data lists the step; it uses the F-23 form, sends one POST with `expected_revision` = `workspace.revision` and a UUID key, leaves a blank owner out of `inputs`, shows a 422 under the field with focus there and keeps inputs, and reloads on 409. W-2310, W-2311 and W-2314 draw no such control. \u2014 verify: component tests. (If the builder drops this per the proposal table, `build.md` says so and this criterion is removed by the approver.)",
+    "**Wrong user, wrong tenant, signed out.** With `X-Mock-Scenario: 404` or `403`, `/work/W-2311` shows `NoAccessState` with no title, client, project or id and none of those strings in `document.body.textContent`. A 401 shows the signed-out callout with `next`. \u2014 verify: component tests.",
+    "**Nothing derived from `/me`.** Personas `pm`, `ceo` and `finance_lead` see the same controls for the same fixture; `git diff` adds no `/me` read under `frontend/src/features/workspace`. \u2014 verify: component test across personas; diff.",
+    "**Nothing sends, nothing files.** No request is made on load or on a timer (fake timers advanced 60 s); every e2e request goes to port 4792; the views contain no button that sends, resends, files or approves. \u2014 verify: recording `fetch`; e2e request log; `grep -rniE \"resend|send again\" frontend/src/features/workspace` finds nothing new.",
+    "**Accessibility.** For W-2310 to W-2314 at 1440 and 390: no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`); no sideways scroll; visible focus; 44px phone targets (D-92c); the table has real headers and keeps its meaning on a phone; receipts and state are text, not colour only; no wrapping button labels or tags on one line; live regions for the reconcile result; `prefers-reduced-motion` respected. \u2014 verify: `e2e/minutes-end.spec.ts`.",
+    "**Shared components and tokens.** New UI imports from `@/components`; no new local button, tag, table or panel. `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\"` on this feature's CSS diff returns nothing. \u2014 verify: diff and grep.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**` or the protected paths, and no existing fixture edited. The `project_tab` key exists only in fixtures and `proposals.ts`, is checked on its own and stripped in `mock-contract.test.ts`; the fixtures otherwise validate with no stripping. \u2014 verify: `tests/mock-contract.test.ts`; `git diff --stat`.",
+    "**Mock matches the contract.** `minutes-end-mock.test.ts`: W-2310 to W-2314 and the sidecars load; the audience branch serves the internal sidecar for `internal` and `W-2301.next` for `client`; the W-2309 decide sidecar applies once; a repeated step key returns the stored reply with send count 1. \u2014 verify: `cd frontend && npx vitest run tests/minutes-end*.test.* tests/mock-contract.test.ts`.",
+    "**No overclaim.** `build.md` and the PR state the \"What is sent\" section: contract mock only, nothing sent, filed or created; D-LINE-WORKSPACE limits; the template is a test template. \u2014 verify: file content.",
+    "**Existing behaviour not weakened.** `tests/minutes*.test.*`, `tests/workspace*.test.*`, `weekly*.test.*`, `work-item*.test.tsx`, `decide*.test.tsx`, `response*.test.tsx`, `shell.test.tsx` and the matching e2e specs pass with no assertion removed or loosened; F-23's eight scores and F-21's scores do not drop. \u2014 verify: `delivery/checks.sh`; `e2e/minutes.spec.ts`; `git diff`.",
+    "**build.md evidence:** commands and results, the 4 scores and waivers, every exception with its Conflicts number, every frame change with its reason, every proposal and backend item, and the held list from \"What is sent\". \u2014 verify: file content."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The work sits on the shared F-17 renderer (`features/workspace/**`, `features/work-item/**`) and a proposed v7 contract (D-LINE-WORKSPACE), and the published board shows per-recipient delivery of client minutes (external-messaging, INV-RESEND, uncertain effect). It stays at medium because it is 4 read-mostly boards, everything is on the mock, the backend send and filing are unimplemented and nothing is released. SURFACES match F-23: ui, api, contract-change, external-messaging, product-decision (the audience rule and order of creation belong to the backend and PSL, not this build). PRODUCT-ACCEPTANCE is not-required: the work conforms to the client-approved boards and adds no flow, copy or rule the boards do not already draw."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-28/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T17:56:39Z",
+      "seconds": 253.2,
+      "evidence_ref": "delivery/features/F-28/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T18:44:05Z",
+      "seconds": 339.8,
+      "evidence_ref": "delivery/features/F-28/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T18:55:00Z",
+      "seconds": 268.2,
+      "evidence_ref": "delivery/features/F-28/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": null,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (not client/product acceptance, merge or release)",
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": false,
+      "assessment_reason": "delivery/features/F-28/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": null,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": null,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-ui.md"
+      ]
+    },
+    "security": {
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": null,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-security.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Sections.tsx` recipients row: a channel row with no receipt shows \"Unknown\", but the \"received/uncertain with no time\" check keys on `item.receipt`, so the shape is fine; the `item.tag` path still lets a returned tag stand in for the receipt with no check against `receipt`. This is by spec (Conflicts 2) and is the backend's rule (G-SCR25-1). Record only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`delivery/BACKEND-HANDOFF.md` F-28: the owner-assignment step on W-2313 is not on any board; the handoff flags \"keep or drop\". The design engineer or backend should decide before it becomes contract.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone: \"Open actions\" is a plain underlined text link beside the outlined \"Open the minutes\" button (W-2312, 390), so two links of the same kind look different; the board draws a full-width outlined link. Covered by Conflicts 6 exception; consider matching the button style later.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Finished views still show the frame's journey rows (\"Done: Drafted the client minutes\", step list with \"Review Done\" etc. on internal items it only lists Confirm/Draft/File) and a hidden \"Next step. A person takes the next step on this page.\" line even though nothing is actionable. Frame copy, outside this lane; raise with F-17 owner.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-2312 phone: the reconcile panel sits above the minutes sentence, so the sentence about what was sent appears after the question. Acceptable (lock first); note only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "\"Open actions\" is a plain blue underlined link (weight 400, #2459D6, no border). The board draws an outlined, full-width, weight-600 ink button (tool \"looks\": weight 600 vs 400, colour #1F2427 vs #2459D6, outlined vs none, underline). On W-2312 it sits beside \"Open the minutes\", which is an outlined button, so the same links row mixes two styles. Conflicts 6 (D-111) only excuses the placement and size (links row instead of the Next panel), not the button style. Expected: draw the `project_tab` link with the existing button-link classes the app already uses for navigation (`<Link className=\"psl-btn psl-btn--secondary\">`, as in `src/features/rfp/RfpOutcomeLink.tsx:9` and `src/features/response/ResponseView.tsx:118`). It stays a link for a11y. The `assistant` link stays as it is. Actual: `frontend/src/features/workspace/Links.tsx:94-97` routes `project_tab` through the assistant branch's plain `<Link>`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T18:44:05Z",
+          "refs": [
+            "cc694876c715f0c927f3879491eb9ede706c4f31"
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:57:48Z",
+          "refs": [
+            "\"Open actions\" now renders as `psl-link psl-btn psl-btn--secondary`, weight 600, an outlined button beside \"Open the minutes\". It is still a link and the assistant link is unchanged. Unit test asserts the class."
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc694876c715f0c927f3879491eb9ede706c4f31"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"Open actions\" now renders as `psl-link psl-btn psl-btn--secondary`, weight 600, an outlined button beside \"Open the minutes\". It is still a link and the assistant link is unchanged. Unit test asserts the class."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "At 390 the actions table (W-2310, W-2311, W-2312, W-2314) has `scrollWidth` 560 inside a 322px box (`.ws-table { min-width: 560px }`, `workspace.css:105`). The first view at phone width shows only ACTION and part of OWNER: \"Tunde Bello\" and \"Ada Okoye \u00b7 Lagoon Health\" are cut at the panel edge, and DUE (\"Unknown\") and STATE (OPEN / OWNER NEEDED) are out of view, with nothing on screen to show the table scrolls. D-111 approved Conflicts 4 Option A because \"everything the backend returns is visible \u2026 including OWNER NEEDED\". As built, the key fact on this screen is hidden on phones. W-2313 already gets the stacked phone layout through the `:has(.ws-table__steps)` rule (`workspace.css:153-159`), so the frame can do this. Expected: at phone width the 4-column actions table shows every cell without sideways scrolling. Either stack it like the W-2313 rows, keeping a visible column label for DUE and STATE so a lone \"Unknown\" is not ambiguous, or apply an equivalent rule limited to this table. The F-23 tables must not change, or must be re-proved in the a11y e2e. Actual: see `/private/tmp/claude-501/-Users-Hunchoo--claude-spares-spare-2d2Z3S/0986a60c-391e-48d6-b2da-79de8713a755/scratchpad/shots/W-2311-390.png` and `delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/side-by-side.reviewer-ui.png`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T18:44:05Z",
+          "refs": [
+            "cc694876c715f0c927f3879491eb9ede706c4f31"
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:57:48Z",
+          "refs": [
+            "At 390 the actions table stacks each row, with ACTION, OWNER, DUE and STATE labels on every cell. The frame `scrollWidth` equals `clientWidth` (322), so there is no sideways scroll. OWNER NEEDED and Unknown are visible with their labels. Unit and e2e tests assert the labels and the no-scroll condition."
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cc694876c715f0c927f3879491eb9ede706c4f31"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "At 390 the actions table stacks each row, with ACTION, OWNER, DUE and STATE labels on every cell. The frame `scrollWidth` equals `clientWidth` (322), so there is no sideways scroll. OWNER NEEDED and Unknown are visible with their labels. Unit and e2e tests assert the labels and the no-scroll condition."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`fidelity-exceptions.json` has no entry for the gaps the tool reports as \"moved\" or restyled under signed conflicts: \"Open actions\" in the links row (Conflicts 6), the green band drawn as a white panel with a tag (Conflicts 7), Next order and side column (Conflicts 8), and the project tab with no current tab and Projects not marked current in the nav (Conflicts 11). These are outside the pass rule, but the design engineer signs the waivers from this list. Add them with their Conflicts number so the waiver records the whole visible difference.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:02:11Z",
+          "head": "521bbf184e45598b765b3c59c8625e20cd335980"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T18:44:05Z",
+          "refs": [
+            "(factory file, uncommitted)"
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:57:48Z",
+          "refs": [
+            "`fidelity-exceptions.json` now carries entries for the frame items and layout gaps, each citing its Conflicts number. The waiver is still pending the design engineer."
+          ],
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "(factory file, uncommitted)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`fidelity-exceptions.json` now carries entries for the frame items and layout gaps, each citing its Conflicts number. The waiver is still pending the design engineer."
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The W-2313 mock accepts an assign-owner step with no owner and reports success. The `assign_owner` field is `required: false`, and `W-2313.steps.json` answers every call with 200 \"Done: owner assigned.\". Pressing Assign owner with no owner chosen sent `{\"step\":\"assign_owner\",\"item_ids\":[\"A-2\"],...}` with no `inputs`, and the mock reported success. Expected per criterion 13: the backend refuses a blank owner with a 422. The frontend side is correct: the blank owner is left out, and the 422 path works (forced with `X-Mock-Scenario: 422` at 390: form kept open, \"Tunde Bello\" kept, alert shown). This is a fixture gap, and the step is already flagged keep-or-drop (TECH-1-2). `frontend/mock/fixtures/work/W-2313.steps.json:1`, `frontend/mock/fixtures/work/W-2313.json` (workspace.steps[0].fields[0].required).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T19:08:06Z",
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Design engineer has not signed the three D-83 visual waivers or the exceptions in `delivery/features/F-28/fidelity-exceptions.json` (all \"builder proposal, pending design engineer\"). Acceptance criteria 1 and 2 hold only with these signed. Sign before merge, or record the refusal.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T19:09:06Z",
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UI-1-3 was fixed in a factory file the build marks \"uncommitted\". The file is in the main folder, so keep it with the merge record.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-28/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T19:09:06Z",
+          "head": "cc694876c715f0c927f3879491eb9ede706c4f31"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical (lead)",
+          "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+          "evidence_refs": [
+            "delivery/features/F-28/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": false,
+          "assessment_reason": "delivery/features/F-28/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+          "evidence_refs": [
+            "delivery/features/F-28/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate)",
+          "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+          "evidence_refs": [
+            "delivery/features/F-28/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "reviewer-security",
+          "snapshot_ref": "521bbf184e45598b765b3c59c8625e20cd335980",
+          "evidence_refs": [
+            "delivery/features/F-28/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-LINE-MINUTES",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "8524af3ced023f5a070bb46e5ba3708c9acf53c6",
+    "task_branch": "fe-line-minutes-the-minutes-line-finished-filed-internal",
+    "head_sha": "cc694876c715f0c927f3879491eb9ede706c4f31",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-28",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/58",
+    "pr_number": 58,
+    "pr_author": null,
+    "designated_approver": "design engineer (hunchoweb), D-112",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "062ccd9fe2b58e6e2f82a5850bf6c68348607179",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/minutes-end.spec.ts",
+      "frontend/mock/fixtures/work/W-2301.next.internal.json",
+      "frontend/mock/fixtures/work/W-2309.approve.json",
+      "frontend/mock/fixtures/work/W-2309.json",
+      "frontend/mock/fixtures/work/W-2310.json",
+      "frontend/mock/fixtures/work/W-2311.json",
+      "frontend/mock/fixtures/work/W-2312.json",
+      "frontend/mock/fixtures/work/W-2313.json",
+      "frontend/mock/fixtures/work/W-2313.steps.json",
+      "frontend/mock/fixtures/work/W-2314.json",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/minutes-end-mock.test.ts",
+      "frontend/tests/minutes-end.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-28/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "20 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "cc694876c715f0c927f3879491eb9ede706c4f31",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-17T17:18:00Z",
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-17T17:28:07Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T17:28:34Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T17:56:48Z",
+      "round": 1,
+      "head": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T18:02:18Z",
+      "round": 1,
+      "head": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T18:02:22Z",
+      "round": 2,
+      "head": "521bbf184e45598b765b3c59c8625e20cd335980",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T18:55:10Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T18:57:57Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T19:08:11Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-17T19:09:34Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-17T23:36:54Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-17T23:37:16Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-17T23:37:16Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-17T23:37:17Z",
+      "round": 2,
+      "head": "cc694876c715f0c927f3879491eb9ede706c4f31",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-28/readiness.md",
+      "delivery/features/F-28/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 2,
+    "verdict": "PASS",
+    "commit": "cc694876c715f0c927f3879491eb9ede706c4f31"
+  },
+  "blocked": null
+}

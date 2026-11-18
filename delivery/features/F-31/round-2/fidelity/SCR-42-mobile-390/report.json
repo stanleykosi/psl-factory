@@ -1,0 +1,371 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T02:29:45.019Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-42-mobile.dc.html",
+  "boardName": "SCR-42-mobile.dc.html",
+  "pageUrl": "http://localhost:4861/work/W-2603",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-31/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 79.5 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 42.9,
+    "coverageWithExceptions": 100,
+    "visual": 79.5
+  },
+  "visual": {
+    "score": 79.5,
+    "allCellsScore": 79.9,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 2438,
+    "cell": 12,
+    "contentCells": 2204,
+    "mismatchedCells": 452
+  },
+  "coverage": {
+    "total": 7,
+    "found": 3,
+    "coverage": 42.9,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Planning · Tamarind",
+        "pageName": "Ojo Foods · ordering app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Planning · Tamarind\" on the board, \"Ojo Foods · ordering app\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 296,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record department input",
+        "pageName": "Record input",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "background #2459D6 on the board, #FFFFFF on the page",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 1557,
+          "w": 119,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 64,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: one back link in the shell bar ('Back to Project').",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PLANNING",
+        "key": "text: PLANNING",
+        "container": "page",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 9: 'PLANNING' is not drawn as a bar title.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PLN-0031 · 2 OF 5 DEPARTMENTS IN",
+        "key": "text: PLN-0031 · 2 OF 5 DEPARTMENTS IN",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 9/13: the bar ends with the item's reference; the status tag carries 'PLANNING · 2 OF 5 IN' from the response.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engineering's estimate changed (230 vs 210 days): a new costing version will be needed.",
+        "key": "text: Engineering's estimate changed (230 vs 210 days): a new costing version will be needed.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 396,
+          "w": 358,
+          "h": 34
+        },
+        "exception": {
+          "reason": "Conflicts 7: the phone shows the one returned finding, not a shorter second sentence.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"Record department input\"",
+        "kind": "Link",
+        "name": "Record department input",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 1557,
+          "w": 119,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Project",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 60,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PLN-0031",
+        "container": "main",
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engagement EN-0042 · route A from OF-RFP-2026-006 · start date 15 Jan 2027",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 103,
+          "w": 358,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PLANNING · 2 OF 5 IN",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 147,
+          "w": 144,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 147,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 147,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 2224,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Review and decide",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola prepares the readiness summary once every department has answered.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 715,
+          "w": 358,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Prepare readiness",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 763,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting on QA and Infrastructure. Product has no owner yet.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 811,
+          "w": 358,
+          "h": 20
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

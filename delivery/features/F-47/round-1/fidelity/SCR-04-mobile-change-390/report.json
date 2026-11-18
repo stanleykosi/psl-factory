@@ -1,0 +1,597 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T08:08:08.655Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-47/design/canvas/project/SCR-04-mobile-change.dc.html",
+  "boardName": "SCR-04-mobile-change.dc.html",
+  "pageUrl": "http://localhost:4941/my-work",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-47/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 81 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 61.5,
+    "coverageWithExceptions": 100,
+    "visual": 81
+  },
+  "visual": {
+    "score": 81,
+    "allCellsScore": 82.2,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2197,
+    "mismatchedCells": 417
+  },
+  "coverage": {
+    "total": 13,
+    "found": 8,
+    "coverage": 61.5,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Scope or timeline change",
+        "pageName": "Scope or timeline change",
+        "pageRole": "text",
+        "similarity": 100,
+        "note": "not marked up as a heading on the page",
+        "looks": [
+          "text size 20px on the board, 18px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 149,
+          "w": 253,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 220,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 338,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 426,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "client-request-17nov.pdf",
+        "pageName": "client-request-17nov.pdf",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 375,
+          "w": 162,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 468,
+          "w": 248,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 20 KB",
+        "pageName": "Uploaded · 20 KB",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 58,
+          "y": 395,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 489,
+          "w": 248,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Emergency changes for an incident use \"Emergency change\" instead.",
+        "pageName": "Emergency changes for an incident use \"Emergency change\" instead.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 435,
+          "w": 358,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 527,
+          "w": 358,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Log change",
+        "pageName": "Log change",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 8: the phone form is F-05's bottom sheet over My work (signed 14 Nov for F-05), so the board's page bar \"← My work · START\" is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "START",
+        "key": "text: START",
+        "container": "page",
+        "boardBox": {
+          "x": 245,
+          "y": 21,
+          "w": 36,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 8: the phone board's page bar title; the bottom sheet head reads \"Step 2 of 2 · change line\" instead (F-05).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · patient app ▾",
+        "key": "text: Lagoon Health · patient app ▾",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What the client asked for",
+        "key": "text: What the client asked for",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 189,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 8: a native input's label is matched by the control it names (F-05 as signed), not as loose text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Add WhatsApp reminders as well as SMS",
+        "key": "text: Add WhatsApp reminders as well as SMS",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 214,
+          "w": 358,
+          "h": 112
+        },
+        "exception": {
+          "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Heading \"Scope or timeline change\"",
+        "kind": "Heading",
+        "name": "Scope or timeline change",
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 149,
+          "w": 253,
+          "h": 24
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Project\"",
+        "kind": "Text",
+        "name": "Project",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 220,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Proof\"",
+        "kind": "Text",
+        "name": "Proof",
+        "boardBox": {
+          "x": 16,
+          "y": 338,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 426,
+          "w": 358,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"client-request-17nov.pdf\"",
+        "kind": "Text",
+        "name": "client-request-17nov.pdf",
+        "boardBox": {
+          "x": 58,
+          "y": 375,
+          "w": 162,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 468,
+          "w": 248,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Uploaded · 20 KB\"",
+        "kind": "Text",
+        "name": "Uploaded · 20 KB",
+        "boardBox": {
+          "x": 58,
+          "y": 395,
+          "w": 94,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 489,
+          "w": 248,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Text \"Emergency changes for an incident use \"Emergency change\" instead.\"",
+        "kind": "Text",
+        "name": "Emergency changes for an incident use \"Emergency change\" instead.",
+        "boardBox": {
+          "x": 16,
+          "y": 435,
+          "w": 358,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 527,
+          "w": 358,
+          "h": 36
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      },
+      {
+        "label": "Link \"Log change\"",
+        "kind": "Link",
+        "name": "Log change",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a dialog on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 70,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 122,
+          "h": 28
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Scope or timeline change",
+        "container": "page",
+        "pageBox": {
+          "x": 0,
+          "y": 126,
+          "w": 390,
+          "h": 718
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Step 2 of 2 · change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 173,
+          "w": 253,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "change line",
+        "container": "dialog",
+        "pageBox": {
+          "x": 89,
+          "y": 160,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 330,
+          "y": 148,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Project",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 247,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "What the client asked for",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 328,
+          "w": 358,
+          "h": 88
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Remove client-request-17nov.pdf",
+        "container": "dialog",
+        "pageBox": {
+          "x": 316,
+          "y": 465,
+          "w": 44,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-47/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

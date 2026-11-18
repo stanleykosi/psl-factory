@@ -29,6 +29,7 @@ import {
   type JourneyView,
   type ProjectTab,
 } from './model';
+import { DeliveryTab } from './DeliveryTab';
 import { MoneyTab } from './MoneyTab';
 import { ProjectNoAccess } from './ProjectStates';
 import { ProjectTabContent } from './ProjectTabContent';
@@ -170,21 +171,6 @@ function JourneyTab({ journey }: { journey: JourneyView }) {
   );
 }
 
-/** A tab whose contents FE-M3-PROJECT-TABS builds: a plain "coming next" panel with the way back to the journey. */
-function ComingNext({ tab, base }: { tab: ProjectTab; base: string }) {
-  const label = PROJECT_TABS.find((t) => t.key === tab)?.label ?? '';
-  return (
-    <EmptyState
-      level={2}
-      title={`${label} ${label.endsWith('s') ? 'come' : 'comes'} next`}
-      className="projects__coming"
-      action={<Link href={base}>Open the journey</Link>}
-    >
-      This tab is not built yet. The journey shows every line&rsquo;s work on this project now.
-    </EmptyState>
-  );
-}
-
 function ProjectView({ journey, base, tab }: { journey: JourneyView; base: string; tab: ProjectTab }) {
   return (
     <div className="projects__page">
@@ -200,12 +186,12 @@ function ProjectView({ journey, base, tab }: { journey: JourneyView; base: strin
       <div role="tabpanel" id={PANEL_ID} aria-label={PROJECT_TABS.find((t) => t.key === tab)?.label} className="projects__panel">
         {tab === 'journey' ? (
           <JourneyTab journey={journey} />
+        ) : tab === 'delivery' ? (
+          <DeliveryTab journey={journey} />
         ) : hasTabContent(tab) ? (
           <ProjectTabContent caseId={journey.case_id} journey={journey} base={base} tab={tab} />
-        ) : tab === 'money' ? (
-          <MoneyTab caseId={journey.case_id} base={base} />
         ) : (
-          <ComingNext tab={tab} base={base} />
+          <MoneyTab caseId={journey.case_id} base={base} />
         )}
       </div>
     </div>

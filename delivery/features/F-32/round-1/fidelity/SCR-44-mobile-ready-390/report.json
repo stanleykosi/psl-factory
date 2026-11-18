@@ -1,0 +1,332 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T00:40:06.251Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-44-mobile-ready.dc.html",
+  "boardName": "SCR-44-mobile-ready.dc.html",
+  "pageUrl": "http://localhost:4871/work/W-2503",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-32/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 82.1 is below 90."
+  ],
+  "scores": {
+    "coverage": 50,
+    "coverageWithExceptions": 100,
+    "visual": 82.1
+  },
+  "visual": {
+    "score": 82.1,
+    "allCellsScore": 82.7,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2267,
+    "mismatchedCells": 405
+  },
+  "coverage": {
+    "total": 6,
+    "found": 3,
+    "coverage": 50,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Release ready",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Release ready\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 336,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open go-live",
+        "pageName": "Open go-live",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "underlined on the page, not on the board",
+          "background #2459D6 on the board, #FFFFFF on the page",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 447,
+          "w": 118,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Delivery",
+        "key": "link: ← Delivery",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: The phone bar keeps the built F-22 frame.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "READY",
+        "key": "text: READY",
+        "container": "page",
+        "boardBox": {
+          "x": 245,
+          "y": 21,
+          "w": 36,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 7: phone bar word; the status tag reads \"Release ready\" at both widths.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified 25 Mar. Not a deployment.",
+        "key": "text: Verified 25 Mar. Not a deployment.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 114,
+          "w": 217,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 7: phone wording: the desktop sentence is used at both widths.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REL-0091",
+        "container": "main",
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 106,
+          "w": 84,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RELEASE READY",
+        "container": "main",
+        "pageBox": {
+          "x": 160,
+          "y": 103,
+          "w": 112,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Release ready and verified on 25 Mar. This isn’t a deployment: deploying is done by Engineering outside the factory, and recorded in hypercare.",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 149,
+          "w": 306,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "READINESS NOTE · BY TOLA",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 238,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "heading",
+        "name": "NEXT",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 519,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola drafts the go-live document for the client.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 556,
+          "w": 326,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

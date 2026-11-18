@@ -1,0 +1,2484 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T01:04:41.132Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-42-desktop-record.dc.html",
+  "boardName": "SCR-42-desktop-record.dc.html",
+  "pageUrl": "http://localhost:4860/frozen/SCR-42-desktop-record-1440.html",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-31/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 84.3 is below 90.",
+    "30 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 70.3,
+    "coverageWithExceptions": 100,
+    "visual": 84.3
+  },
+  "visual": {
+    "score": 84.3,
+    "allCellsScore": 84.3,
+    "width": 1440,
+    "height": 1000,
+    "boardHeight": 1000,
+    "pageHeight": 1340,
+    "cell": 12,
+    "contentCells": 10080,
+    "mismatchedCells": 1584
+  },
+  "coverage": {
+    "total": 74,
+    "found": 52,
+    "coverage": 70.3,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 843
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1283
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Tamarind Loans · loan origination",
+        "pageName": "Ojo Foods · ordering app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Tamarind Loans · loan origination\" on the board, \"Ojo Foods · ordering app\" on the page",
+        "looks": [
+          "text size 32px on the board, 35px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 651,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 470,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PLANNING · 2 OF 5 IN",
+        "pageName": "PLANNING · 2 OF 5 IN",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #6E4700 on the board, #16388F on the page"
+        ],
+        "boardBox": {
+          "x": 1090,
+          "y": 133,
+          "w": 140,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1208,
+          "y": 120,
+          "w": 144,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM TUNDE BELLO",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 600 on the board, 400 on the page",
+          "text colour #3F474B on the board, #C8CDD0 on the page",
+          "capitals on the board, not on the page",
+          "background #E2E5E0 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 1238,
+          "y": 133,
+          "w": 114,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engagement EN-0042 · route A from TL-RFP-2026-014 · start date 15 Jan 2027",
+        "pageName": "Engagement EN-0042 · route A from OF-RFP-2026-006 · start date 15 Jan 2027",
+        "pageRole": "text",
+        "similarity": 87,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 1264,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 243,
+          "w": 506,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 214,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones 0",
+        "pageName": "Milestones",
+        "pageRole": "link",
+        "similarity": 93,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 266,
+          "y": 214,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 1",
+        "pageName": "Documents",
+        "pageRole": "link",
+        "similarity": 93,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 395,
+          "y": 214,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 279,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 528,
+          "y": 214,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 386,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers 0",
+        "pageName": "Registers",
+        "pageRole": "link",
+        "similarity": 93,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 605,
+          "y": 214,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 462,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 0",
+        "pageName": "Actions",
+        "pageRole": "link",
+        "similarity": 91,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 724,
+          "y": 214,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 556,
+          "y": 177,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WHAT EACH DEPARTMENT MUST GIVE",
+        "pageName": "WHAT EACH DEPARTMENT MUST GIVE",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 282,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 322,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 335,
+          "w": 866,
+          "h": 246
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 381,
+          "w": 866,
+          "h": 383
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "DEPARTMENT",
+        "pageName": "DEPARTMENT",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 335,
+          "w": 129,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 381,
+          "w": 116,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WHAT WE ASKED FOR",
+        "pageName": "WHAT WE ASKED FOR",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 235,
+          "y": 335,
+          "w": 236,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 222,
+          "y": 381,
+          "w": 190,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATUS",
+        "pageName": "STATUS",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 471,
+          "y": 335,
+          "w": 204,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 412,
+          "y": 381,
+          "w": 189,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "ESTIMATE",
+        "pageName": "ESTIMATE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 675,
+          "y": 335,
+          "w": 145,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 381,
+          "w": 115,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Scope breakdown and effort",
+        "pageName": "Scope breakdown and effort",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 235,
+          "y": 370,
+          "w": 236,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 222,
+          "y": 419,
+          "w": 190,
+          "h": 64
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "230 person-days",
+        "pageName": "230 person-days",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 675,
+          "y": 370,
+          "w": 145,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 419,
+          "w": 115,
+          "h": 64
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Test plan and effort",
+        "pageName": "Test plan and effort",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 235,
+          "y": 412,
+          "w": 236,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 222,
+          "y": 482,
+          "w": 190,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record input",
+        "pageName": "Record input",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "text colour #2459D6 on the board, #1F2427 on the page",
+          "underlined on the board, not on the page",
+          "background none on the board, #FFFFFF on the page",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 834,
+          "y": 425,
+          "w": 77,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 800,
+          "y": 493,
+          "w": 119,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Security review plan and effort",
+        "pageName": "Security review plan and effort",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 235,
+          "y": 454,
+          "w": 236,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 222,
+          "y": 547,
+          "w": 190,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "20 person-days",
+        "pageName": "20 person-days",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 675,
+          "y": 454,
+          "w": 145,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 601,
+          "y": 547,
+          "w": 115,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Confirm scope against the RFP",
+        "pageName": "Confirm scope against the RFP",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 235,
+          "y": 496,
+          "w": 236,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 222,
+          "y": 610,
+          "w": 190,
+          "h": 89
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Who receives this?",
+        "pageName": "Who receives this?",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "text colour #2459D6 on the board, #4A5357 on the page",
+          "underlined on the board, not on the page",
+          "background none on the board, #C9CDC7 on the page"
+        ],
+        "boardBox": {
+          "x": 834,
+          "y": 509,
+          "w": 113,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 800,
+          "y": 621,
+          "w": 157,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Hosting and environments",
+        "pageName": "Hosting and environments",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 235,
+          "y": 538,
+          "w": 236,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 222,
+          "y": 699,
+          "w": 190,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record input",
+        "pageName": "Record input",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "text colour #2459D6 on the board, #FFFFFF on the page",
+          "underlined on the board, not on the page",
+          "background none on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 834,
+          "y": 551,
+          "w": 77,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 768,
+          "w": 123,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Departments don't log in. You record what they send, with proof; the record keeps your name.",
+        "pageName": "Departments don't log in. You record what they send, with proof; the record keeps your name.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #4A5357 on the board, #6E4700 on the page"
+        ],
+        "boardBox": {
+          "x": 104,
+          "y": 595,
+          "w": 870,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 788,
+          "w": 585,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Review and decide",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 280,
+          "w": 340,
+          "h": 563
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 320,
+          "w": 340,
+          "h": 220
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Read the packet and asked departments",
+        "pageName": "READ THE PACKET AND ASKED DEPARTMENTS",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "capitals on the page, not on the board",
+          "bar under it on the page (#1F2427), none on the board"
+        ],
+        "boardBox": {
+          "x": 1070,
+          "y": 292,
+          "w": 208,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 951,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "pageName": "Ask Tola",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "weight 600 on the board, 400 on the page"
+        ],
+        "boardBox": {
+          "x": 1285,
+          "y": 586,
+          "w": 51,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 1228,
+          "w": 53,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola prepares the readiness summary once every department has answered.",
+        "pageName": "Tola prepares the readiness summary once every department has answered.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 681,
+          "w": 308,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 379,
+          "w": 308,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting on QA and Infrastructure. Product has no owner yet.",
+        "pageName": "Waiting on QA and Infrastructure. Product has no owner yet.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #9A2F10 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 729,
+          "w": 308,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 485,
+          "w": 308,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Prepare readiness",
+        "pageName": "Prepare readiness",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #C9CDC7 on the board, #22764A on the page"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 777,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 431,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "dialog",
+        "role": "dialog",
+        "name": "Record department input",
+        "pageName": "Record department input",
+        "pageRole": "dialog",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 938,
+          "y": 0,
+          "w": 502,
+          "h": 1000
+        },
+        "pageBox": {
+          "x": 940,
+          "y": 0,
+          "w": 500,
+          "h": 1000
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Record department input",
+        "pageName": "Record department input",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "letter width 100% on the board, 112% on the page"
+        ],
+        "boardBox": {
+          "x": 960,
+          "y": 36,
+          "w": 236,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 18,
+          "w": 278,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What they gave",
+        "pageName": "What they gave",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 186,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 481,
+          "w": 414,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Estimate (person-days)",
+        "pageName": "Estimate (person-days)",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 272,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 368,
+          "w": 414,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 381,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 570,
+          "w": 199,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "qa-plan-tamarind.pdf",
+        "pageName": "qa-plan.pdf",
+        "pageRole": "text",
+        "similarity": 86,
+        "looks": [],
+        "boardBox": {
+          "x": 1002,
+          "y": 417,
+          "w": 141,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1026,
+          "y": 609,
+          "w": 109,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 210 KB",
+        "pageName": "Uploaded · 1 KB",
+        "pageRole": "text",
+        "similarity": 88,
+        "looks": [],
+        "boardBox": {
+          "x": 1002,
+          "y": 437,
+          "w": 101,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1026,
+          "y": 630,
+          "w": 109,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Received",
+        "pageName": "Received",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 960,
+          "y": 479,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 678,
+          "w": 199,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "QA doesn't log in. This records their input under your name, with the proof attached.",
+        "pageName": "QA doesn't log in. This records their input under your name, with the proof attached.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1000,
+          "y": 575,
+          "w": 408,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 1002,
+          "y": 102,
+          "w": 406,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record input",
+        "pageName": "Record input",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "background #2459D6 on the board, #FFFFFF on the page",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 960,
+          "y": 936,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 800,
+          "y": 709,
+          "w": 119,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Cancel",
+        "pageName": "Cancel",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1270,
+          "y": 936,
+          "w": 150,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 854,
+          "w": 458,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "key": "text: Tunde Bello · PMO",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 15: the shell shows the signed-in persona's name (Tunde Bello · PM).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / TAMARIND LOANS / PLANNING · PLN-0031",
+        "key": "text: PROJECTS / TAMARIND LOANS / PLANNING · PLN-0031",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 10: the frame draws the crumbs from context.crumbs as a plain list; the words are the backend's (Ojo Foods for Tamarind Loans, Conflicts 1/15).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PROJECTS",
+        "key": "link: PROJECTS",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 10: crumbs are plain text in the frame.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "key": "tablist: Project",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 212,
+          "w": 744,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 8: the project bar is a navigation of links, not a tablist, with no counts and none current.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Planning",
+        "key": "tab: Planning",
+        "container": "tablist",
+        "boardBox": {
+          "x": 176,
+          "y": 214,
+          "w": 90,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 8: Planning is not a project tab (G-42-7); the item is reached from the project's line row.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Proof",
+        "key": "link: Proof",
+        "container": "table",
+        "boardBox": {
+          "x": 834,
+          "y": 383,
+          "w": 32,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 13: the proof cite is the backend's evidence cite, drawn as plain text because an evidence id has no app page.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown",
+        "key": "text: Unknown",
+        "container": "table",
+        "boardBox": {
+          "x": 675,
+          "y": 412,
+          "w": 145,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 13: an estimate the response does not give reads Unknown through the shared Unknown value (a chip), never blank.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Proof",
+        "key": "link: Proof",
+        "container": "table",
+        "boardBox": {
+          "x": 834,
+          "y": 467,
+          "w": 32,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 13: the proof cite is the backend's evidence cite, drawn as plain text because an evidence id has no app page.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown",
+        "key": "text: Unknown",
+        "container": "table",
+        "boardBox": {
+          "x": 675,
+          "y": 496,
+          "w": 145,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 13: an estimate the response does not give reads Unknown through the shared Unknown value (a chip), never blank.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown",
+        "key": "text: Unknown",
+        "container": "table",
+        "boardBox": {
+          "x": 675,
+          "y": 538,
+          "w": 145,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 13: an estimate the response does not give reads Unknown through the shared Unknown value (a chip), never blank.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engineering now says 230 person-days; the RFP costing used 210. The SOW price can't come from costing v2 as it stands: a new costing version (v3) will be needed and its approvals start again. Open que",
+        "key": "text: Engineering now says 230 person-days; the RFP costing used 210. The SOW price can't come from costing v2 as it stands: a new costing version (v3) will be needed and its approvals start again. Open que",
+        "container": "main",
+        "boardBox": {
+          "x": 128,
+          "y": 652,
+          "w": 850,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 6: the finding is drawn as returned; the designer's note to PSL is not (G-42-5).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent · done",
+        "key": "text: Tola · PMO agent · done",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1070,
+          "y": 328,
+          "w": 208,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 11: Tola's checklist is the shared workspace checklist (title, 'Tola', rows), not the CMP-09 card.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1287,
+          "y": 307,
+          "w": 49,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 11: no DONE tag on the checklist card; each row carries its own Done word.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finished 08 Dec 11:20 Ask Tola",
+        "key": "text: Finished 08 Dec 11:20 Ask Tola",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1014,
+          "y": 576,
+          "w": 336,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 11: no 'Finished' line; 'Ask Tola' is a workspace link drawn only when returned.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "READINESS",
+        "key": "text: READINESS",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1014,
+          "y": 630,
+          "w": 336,
+          "h": 37
+        },
+        "exception": {
+          "reason": "D-112: the shared side-panel heading ('Decide') stands in until the backend sends a panel title.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TAMARIND LOANS · PLANNING",
+        "key": "text: TAMARIND LOANS · PLANNING",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 21,
+          "w": 165,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Conflicts 4: the Drawer title is the task's title; no eyebrow is returned.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "×",
+        "key": "text: ×",
+        "container": "dialog",
+        "boardBox": {
+          "x": 1407,
+          "y": 18,
+          "w": 13,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Conflicts 4: the shared Drawer's Close is an icon button named Close.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Department (still waiting)",
+        "key": "text: Department (still waiting)",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 96,
+          "w": 460,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 14: F-18's own word 'Team' stays in the shared form.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Test plan and QA effort for the loan app",
+        "key": "text: Test plan and QA effort for the loan app",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 210,
+          "w": 460,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 4/14: the typed value is the value of F-18's field, not a text node.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "45",
+        "key": "text: 45",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 296,
+          "w": 460,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 4/14: the typed estimate is the value of F-18's number field.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Used for the new costing version.",
+        "key": "text: Used for the new costing version.",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 350,
+          "w": 460,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 14: F-18's own help ('Needed for the costing sheet.') stays in the shared form.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "11 Dec 2026, 16:05",
+        "key": "text: 11 Dec 2026, 16:05",
+        "container": "dialog",
+        "boardBox": {
+          "x": 960,
+          "y": 503,
+          "w": 460,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 4/14: F-18's Received field is a native date-time input.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Record department input\"",
+        "kind": "Text",
+        "name": "Record department input",
+        "boardBox": {
+          "x": 960,
+          "y": 36,
+          "w": 236,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 962,
+          "y": 18,
+          "w": 278,
+          "h": 24
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Link \"Assistant\""
+        ]
+      },
+      {
+        "label": "Heading \"Tamarind Loans · loan origination\"",
+        "kind": "Heading",
+        "name": "Tamarind Loans · loan origination",
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 651,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 470,
+          "h": 35
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Record department input\"; on the page it comes after Text \"PLANNING · 2 OF 5 IN\""
+        ]
+      },
+      {
+        "label": "Text \"PM TUNDE BELLO\"",
+        "kind": "Text",
+        "name": "PM TUNDE BELLO",
+        "boardBox": {
+          "x": 1238,
+          "y": 133,
+          "w": 114,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"PLANNING · 2 OF 5 IN\"; on the page it comes after Text \"Record department input\"",
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"Engagement EN-0042 · route A from TL-RFP-2026-014 · start date 15 Jan 2027\"",
+        "kind": "Text",
+        "name": "Engagement EN-0042 · route A from TL-RFP-2026-014 · start date 15 Jan 2027",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 1264,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 243,
+          "w": 506,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"PM TUNDE BELLO\"; on the page it comes after Tab \"Actions 0\""
+        ]
+      },
+      {
+        "label": "Text \"What they gave\"",
+        "kind": "Text",
+        "name": "What they gave",
+        "boardBox": {
+          "x": 960,
+          "y": 186,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 481,
+          "w": 414,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Engagement EN-0042 · route A from TL-RFP-2026-014 · start date 15 Jan 2027\"; on the page it comes after dialog \"Record department input\"",
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Journey\"",
+        "kind": "Tab",
+        "name": "Journey",
+        "boardBox": {
+          "x": 90,
+          "y": 214,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 177,
+          "w": 86,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Milestones 0\"",
+        "kind": "Tab",
+        "name": "Milestones 0",
+        "boardBox": {
+          "x": 266,
+          "y": 214,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 177,
+          "w": 103,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Documents 1\"",
+        "kind": "Tab",
+        "name": "Documents 1",
+        "boardBox": {
+          "x": 395,
+          "y": 214,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 279,
+          "y": 177,
+          "w": 107,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Money\"",
+        "kind": "Tab",
+        "name": "Money",
+        "boardBox": {
+          "x": 528,
+          "y": 214,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 386,
+          "y": 177,
+          "w": 76,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Registers 0\"",
+        "kind": "Tab",
+        "name": "Registers 0",
+        "boardBox": {
+          "x": 605,
+          "y": 214,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 462,
+          "y": 177,
+          "w": 94,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Actions 0\"",
+        "kind": "Tab",
+        "name": "Actions 0",
+        "boardBox": {
+          "x": 724,
+          "y": 214,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 556,
+          "y": 177,
+          "w": 82,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"Estimate (person-days)\"",
+        "kind": "Text",
+        "name": "Estimate (person-days)",
+        "boardBox": {
+          "x": 960,
+          "y": 272,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 368,
+          "w": 414,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Tab \"Actions 0\"; on the page it comes after Text \"WHAT EACH DEPARTMENT MUST GIVE\"",
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Read the packet and asked departments\"",
+        "kind": "Text",
+        "name": "Read the packet and asked departments",
+        "boardBox": {
+          "x": 1070,
+          "y": 292,
+          "w": 208,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 951,
+          "w": 898,
+          "h": 43
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"WHAT EACH DEPARTMENT MUST GIVE\"; on the page it comes after Link \"Cancel\"",
+          "across the page: right on the board (82% across), middle on the page (37% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Proof\"",
+        "kind": "Text",
+        "name": "Proof",
+        "boardBox": {
+          "x": 960,
+          "y": 381,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 570,
+          "w": 199,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"230 person-days\"; on the page it comes after Text \"20 person-days\"",
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"qa-plan-tamarind.pdf\"",
+        "kind": "Text",
+        "name": "qa-plan-tamarind.pdf",
+        "boardBox": {
+          "x": 1002,
+          "y": 417,
+          "w": 141,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 1026,
+          "y": 609,
+          "w": 109,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Record input\"; on the page it comes after Text \"Proof\"",
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Uploaded · 210 KB\"",
+        "kind": "Text",
+        "name": "Uploaded · 210 KB",
+        "boardBox": {
+          "x": 1002,
+          "y": 437,
+          "w": 101,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1026,
+          "y": 630,
+          "w": 109,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"qa-plan-tamarind.pdf\"; on the page it comes after Link \"Who receives this?\"",
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 106,
+          "y": 335,
+          "w": 866,
+          "h": 246
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 381,
+          "w": 866,
+          "h": 383
+        },
+        "reasons": [
+          "inside the table frame on the board, inside a section on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 843
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1283
+        },
+        "reasons": [
+          "order: on the board it comes after Table \"\"; on the page it comes after Text \"Received\""
+        ]
+      },
+      {
+        "label": "dialog \"Record department input\"",
+        "kind": "dialog",
+        "name": "Record department input",
+        "boardBox": {
+          "x": 938,
+          "y": 0,
+          "w": 502,
+          "h": 1000
+        },
+        "pageBox": {
+          "x": 940,
+          "y": 0,
+          "w": 500,
+          "h": 1000
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"20 person-days\"; on the page it comes after Link \"Prepare readiness\""
+        ]
+      },
+      {
+        "label": "Text \"Received\"",
+        "kind": "Text",
+        "name": "Received",
+        "boardBox": {
+          "x": 960,
+          "y": 479,
+          "w": 460,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 678,
+          "w": 199,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after dialog \"Record department input\"; on the page it comes after Text \"Confirm scope against the RFP\"",
+          "inside a dialog on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Confirm scope against the RFP\"",
+        "kind": "Text",
+        "name": "Confirm scope against the RFP",
+        "boardBox": {
+          "x": 235,
+          "y": 496,
+          "w": 236,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 222,
+          "y": 610,
+          "w": 190,
+          "h": 89
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Received\"; on the page it comes after Text \"Uploaded · 210 KB\""
+        ]
+      },
+      {
+        "label": "Link \"Record input\"",
+        "kind": "Link",
+        "name": "Record input",
+        "boardBox": {
+          "x": 834,
+          "y": 551,
+          "w": 77,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 984,
+          "y": 768,
+          "w": 123,
+          "h": 48
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Hosting and environments\"; on the page it comes after Text \"Departments don't log in. You record what they send, with proof; the record keeps your name.\"",
+          "inside the table frame on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Side panel \"\"",
+        "kind": "Side panel",
+        "name": "",
+        "boardBox": {
+          "x": 1012,
+          "y": 280,
+          "w": 340,
+          "h": 563
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 320,
+          "w": 340,
+          "h": 220
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Record input\"; on the page it comes after Text \"Tola prepares the readiness summary once every department has answered.\""
+        ]
+      },
+      {
+        "label": "Text \"QA doesn't log in. This records their input under your name, with the proof attached.\"",
+        "kind": "Text",
+        "name": "QA doesn't log in. This records their input under your name, with the proof attached.",
+        "boardBox": {
+          "x": 1000,
+          "y": 575,
+          "w": 408,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 1002,
+          "y": 102,
+          "w": 406,
+          "h": 42
+        },
+        "reasons": [
+          "order: on the board it comes after Side panel \"\"; on the page it comes after Link \"More ways to start\""
+        ]
+      },
+      {
+        "label": "Link \"Ask Tola\"",
+        "kind": "Link",
+        "name": "Ask Tola",
+        "boardBox": {
+          "x": 1285,
+          "y": 586,
+          "w": 51,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 1228,
+          "w": 53,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"QA doesn't log in. This records their input under your name, with the proof attached.\"; on the page it comes after Text \"Read the packet and asked departments\"",
+          "across the page: right on the board (91% across), left on the page (8% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Departments don't log in. You record what they send, with proof; the record keeps your name.\"",
+        "kind": "Text",
+        "name": "Departments don't log in. You record what they send, with proof; the record keeps your name.",
+        "boardBox": {
+          "x": 104,
+          "y": 595,
+          "w": 870,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 788,
+          "w": 585,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Ask Tola\"; on the page it comes after Link \"Record input\""
+        ]
+      },
+      {
+        "label": "Text \"Tola prepares the readiness summary once every department has answered.\"",
+        "kind": "Text",
+        "name": "Tola prepares the readiness summary once every department has answered.",
+        "boardBox": {
+          "x": 1028,
+          "y": 681,
+          "w": 308,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 379,
+          "w": 308,
+          "h": 42
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Departments don't log in. You record what they send, with proof; the record keeps your name.\"; on the page it comes after Table column \"ESTIMATE\""
+        ]
+      },
+      {
+        "label": "Text \"Waiting on QA and Infrastructure. Product has no owner yet.\"",
+        "kind": "Text",
+        "name": "Waiting on QA and Infrastructure. Product has no owner yet.",
+        "boardBox": {
+          "x": 1028,
+          "y": 729,
+          "w": 308,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 485,
+          "w": 308,
+          "h": 39
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Tola prepares the readiness summary once every department has answered.\"; on the page it comes after Link \"Record input\""
+        ]
+      },
+      {
+        "label": "Link \"Prepare readiness\"",
+        "kind": "Link",
+        "name": "Prepare readiness",
+        "boardBox": {
+          "x": 1028,
+          "y": 777,
+          "w": 308,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 431,
+          "w": 308,
+          "h": 50
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Waiting on QA and Infrastructure. Product has no owner yet.\"; on the page it comes after Text \"230 person-days\""
+        ]
+      },
+      {
+        "label": "Link \"Record input\"",
+        "kind": "Link",
+        "name": "Record input",
+        "boardBox": {
+          "x": 960,
+          "y": 936,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 800,
+          "y": 709,
+          "w": 119,
+          "h": 44
+        },
+        "reasons": [
+          "inside a dialog on the board, inside the table frame on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1034,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 316,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OJO FOODS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 149,
+          "y": 85,
+          "w": 89,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PLANNING · PLN-0031",
+        "container": "navigation",
+        "pageBox": {
+          "x": 238,
+          "y": 85,
+          "w": 166,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Project",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 550,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "DECIDE",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1014,
+          "y": 322,
+          "w": 336,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Close",
+        "container": "dialog",
+        "pageBox": {
+          "x": 1384,
+          "y": 10,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Team",
+        "container": "form",
+        "pageBox": {
+          "x": 984,
+          "y": 192,
+          "w": 414,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "QA, missing",
+        "container": "form",
+        "pageBox": {
+          "x": 986,
+          "y": 221,
+          "w": 171,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Option",
+        "role": "radio",
+        "name": "Infrastructure, missing",
+        "container": "form",
+        "pageBox": {
+          "x": 1157,
+          "y": 221,
+          "w": 241,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Who gave it",
+        "container": "form",
+        "pageBox": {
+          "x": 984,
+          "y": 306,
+          "w": 414,
+          "h": 44
+        }
+      },
+      {
+        "kind": "spinbutton",
+        "role": "spinbutton",
+        "name": "Estimate (person-days)",
+        "container": "form",
+        "pageBox": {
+          "x": 984,
+          "y": 395,
+          "w": 414,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Needed for the costing sheet. Shown for QA and Infrastructure.",
+        "container": "form",
+        "pageBox": {
+          "x": 984,
+          "y": 445,
+          "w": 414,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "What they gave",
+        "container": "form",
+        "pageBox": {
+          "x": 984,
+          "y": 508,
+          "w": 414,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Remove qa-plan.pdf",
+        "container": "form",
+        "pageBox": {
+          "x": 1145,
+          "y": 617,
+          "w": 24,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "I confirm this input came from the team named above.",
+        "container": "form",
+        "pageBox": {
+          "x": 1199,
+          "y": 586,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Received",
+        "container": "form",
+        "pageBox": {
+          "x": 984,
+          "y": 705,
+          "w": 199,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 1233,
+          "y": 679,
+          "w": 62,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "form",
+        "pageBox": {
+          "x": 1348,
+          "y": 680,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Note (optional)",
+        "container": "form",
+        "pageBox": {
+          "x": 1199,
+          "y": 705,
+          "w": 199,
+          "h": 45
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

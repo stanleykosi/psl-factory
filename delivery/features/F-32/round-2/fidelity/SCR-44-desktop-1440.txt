@@ -1,0 +1,3 @@
+FAIL  coverage 56.4% (22/39; 100% with exceptions)  visual 84.9  missing 17  moved 11  extra 10
+note: Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).
+report: /Users/Hunchoo/psl-factory/delivery/features/F-32/round-2/fidelity/SCR-44-desktop-1440/report.html

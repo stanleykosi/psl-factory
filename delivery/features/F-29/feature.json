@@ -1,0 +1,1531 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-29",
+  "outcome": "Document review: read a drafted client document, see what changed and what was checked, approve it or return it with a note (contract mock only)",
+  "state": "DONE",
+  "task_ids": [
+    "FE-DOCUMENT-REVIEW"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "Opening `/projects/P-0102/documents/<SOW id>?v=2` as the acting persona shows crumb \"LAGOON HEALTH / DOCUMENTS / SOW-0198\", heading \"Statement of work \u00b7 v2\", status tag, TEST TEMPLATE tag, five numbered sections, section 4 tinted with the Tola note labelled as agent text, a Checks panel with the three backend checks, Audience rows and the buttons \"Approve v2\" and \"Return with note\" \u2014 verify: e2e `document-review.spec.ts` at 1440 and 390 widths; page text.",
+    "The Documents tab of P-0102 lists its documents (title, version, status, TEST TEMPLATE tag) and each row with a `work_id` opens the review page; a row without one is text \u2014 verify: e2e on `/projects/P-0102/documents`.",
+    "Approve sends claim then decision once with the read `expected_revision` and no note; the page then shows the green \"You approved v2 \u00b7 <name> \u00b7 <time>. Not sent to the client.\" taken from the re-read, and no controls \u2014 verify: e2e with request log; the text \"sent to the client\" never appears as a done state.",
+    "Return with an empty note shows a field error, announced, and sends nothing; with a note it sends `verdict: \"return\"` and the note, then shows the returned state with the quote \u2014 verify: e2e plus unit test of the note rule.",
+    "The returned state (`psl_mock_document=returned`) shows \"RETURNED TO PM\", \"Returned by Kemi Adebayo (PMO Lead) \u00b7 <time>\", the quoted note, \"Approval on v2 is not carried over\", Tola's panel and the sections; with `returned-hidden` no quote appears and the page says the note isn't shown \u2014 verify: e2e both variants.",
+    "\"Ask Tola to draft v3\" and \"Edit as v3\" are disabled with \"Not available yet\", have no handler, and no request to any drafting or document-save URL is made when they are pressed \u2014 verify: e2e request log; grep for no `POST /documents` in `frontend/src`.",
+    "A person without `you_can_act` sees no Approve, Return or note field, and the `cannotActCopy` sentence (`prepared_by_you` variant included); a persona claiming \"PMO Lead\" in `/me` without `you_can_act` gets no controls \u2014 verify: e2e `cannot-act` and persona variants.",
+    "With no `review.task_id` the page is read-only and sends no claim or decision \u2014 verify: e2e `no-review` with request log.",
+    "The amounts check reads Unknown (tag and text) when the backend sends `unknown`, never \"Matches\"; the page contains no check status the backend did not send \u2014 verify: e2e `amount-unknown`; unit test of the check mapping (all four statuses plus absent).",
+    "Section text and notes render as plain text: a fixture containing `<script>` and `<b>` tags shows the characters, not markup; `body_url` appears only as a link \u2014 verify: unit/e2e test with a hostile fixture.",
+    "Wrong user or tenant: 401 shows the sign-in state; 403 and 404 show the same \"not open to you\" state with no title leak; a document of a case the persona cannot see never renders section text \u2014 verify: e2e with `psl_mock_scenario` 401/403/404 and persona `none`.",
+    "A 409 on decision shows the generic stale message, re-reads, enables nothing automatically and sends no second decision; a 422 shows the note error; a network failure or 5xx after the write shows no \"approved\", re-reads the item first, and the retry is a deliberate press \u2014 verify: e2e with scenario cookies.",
+    "A provider/read failure shows the error card with \"Try again\" that re-reads; loading shows the shared loading state with no controls \u2014 verify: e2e.",
+    "The same document with `?v=1` and `?v=2` shows each version's own state; a missing or non-numeric `v` is not found \u2014 verify: e2e.",
+    "A document with no `sections` shows the download link and \"The text isn't available here.\"; with `sections: []` it shows the empty sentence \u2014 verify: e2e `no-sections`.",
+    "The phone (390px) shows the back link \"\u2190 <project>\", the single amounts tag, the \"<agent> flagged section 4\" line, and Approve/Return as 44px targets in the phone action bar; Return opens the drawer with the labelled note field \u2014 verify: e2e at 390 width; computed target size \u226544px.",
+    "Keyboard and screen reader: headings in order, labelled note field, errors announced (`role=\"alert\"` or the existing summary), visible focus, reduced-motion respected, no axe violations at 390 and 1440 on default, returned and cannot-act \u2014 verify: axe in the e2e spec.",
+    "Design fidelity: UI review passes the design-fidelity check of all 4 boards, every element present after approved exceptions, score \u2265 90 with the listed visual waivers per D-83/D-64, one run per round \u2014 verify: the fidelity tool output; exceptions in `delivery/features/F-29/fidelity-exceptions.json`.",
+    "Existing tests stay green: F-04 decide, F-25 project tabs, F-23 minutes (the minutes `D-2304` E-DOCUMENT behaviour unchanged) \u2014 verify: `delivery/checks.sh`, plus `decide.spec.ts`, `project-tabs.spec.ts`, `minutes.spec.ts`."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. Several behaviours (a document read, a decision write, a returned state) cross the layers on a contract that has seven proposed additive gaps, and one new route links the Documents tab to the decide writes. It is not high because there is no new authority, money, identity or migration. Decisions reuse the built E-TASK-DECIDE with its server-side checks, and the work is frontend and mock only (frontend/src/features, frontend/mock). SURFACES are ui, api and contract-change. PRODUCT-ACCEPTANCE is required: the document layout, the checks wording and the returned-state copy are new to the client. A product decision on the two draft-next-version buttons is needed from the design engineer as an exception, not as a block."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-29/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T18:38:10Z",
+      "seconds": 233.6,
+      "evidence_ref": "delivery/features/F-29/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T19:12:05Z",
+      "seconds": 342.6,
+      "evidence_ref": "delivery/features/F-29/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": null,
+      "snapshot_ref": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (frontend with the contract mock; no backend lane in this feature)",
+      "snapshot_ref": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; product acceptance, design-engineer waivers, merge and release keep their own authorities)",
+      "snapshot_ref": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-29/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 18 Nov 2026 \u2014 D-112",
+      "snapshot_ref": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": null,
+      "snapshot_ref": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (design-fidelity gate, D-83)",
+      "snapshot_ref": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/review-ui.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "NoText renders `<a href={doc.body_url}>` with no scheme check (DocumentParts.tsx NoText). The value comes from the server, and a javascript: URL would be an injection route if it were ever sent. Expected: only render the link for http(s) or same-origin relative URLs.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After a return, if the re-read document never shows `returned` (for example the backend keeps the old state), ReviewNotice shows \"Recording the return\u2026\" indefinitely with no retry (DocumentReview.tsx, the view.kind === 'done' return branch). Expected: a \"could not confirm\" fallback like the approve path has. The mock flips the state, so this is unreachable in e2e.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "DocumentsTab passes `VIEW = { register: 'issues' }`, a leftover from the registers tab. It is harmless because buildTabQuery sends register only for the registers tab.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Returned state, desktop: \"Ask Tola to draft v3\" renders as plain bold text with \"Not available yet\" beside it, while \"Edit as v3\" is a grey block button with the note underneath. The two held actions look different and the first does not read as a disabled button (board draws two buttons). Expected the same disabled-button treatment for both. See the returned desktop view, Tola panel in `frontend/src/features/documents/DocumentParts.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Version 1 (status \"Replaced by v2\") shows \"This review isn't open to you here.\" That is true but unhelpful; a superseded version would be clearer as \"Replaced by v2. Review v2.\" (only if the backend sends it; do not build it in the browser). Taste, no spec breach.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone, amount-unknown: the single tag reads just \"UNKNOWN\" with no word saying what is unknown (default reads \"MATCHES COST-0140 V2\"). Consider \"AMOUNTS: UNKNOWN\". The detail is available in the Checks list lower down, so no one is misled.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Fixture inconsistency: crumb and page say \"Lagoon Health\" while the Documents tab and project page for P-0102 title it \"Harmattan Bank \u00b7 mobile onboarding\" (builder noted this; the spec asks for Lagoon Health). Mock-only; settle the fixture name before the backend contract.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The status tag position depends on wrapping. Both desktop boards draw the status tag (\"AWAITING PMO LEAD REVIEW\", \"RETURNED TO PM\") on its own line under the title. The page puts the tag inside `.docrev__titlerow` after the tab bar (`DocumentReview.tsx:201`, `document-review.css:9`). On the default state it wraps under the title by chance. On the returned state it sits at the far right beside the tab bar (page x 1235, y 123; board x 88, y 179). Expected: render the tag on its own line directly under the title, outside the flex row, at every state and width.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:12:06Z",
+          "refs": [
+            "48752f43"
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:14:32Z",
+          "refs": [
+            "The status tag is now outside the flex row (`DocumentReview.tsx`, `.docrev__status { align-self: flex-start }`). It sits on its own line under the title at the same place as the boards on desktop (default and returned) and on phone."
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48752f43"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The status tag is now outside the flex row (`DocumentReview.tsx`, `.docrev__status { align-self: flex-start }`). It sits on its own line under the title at the same place as the boards on desktop (default and returned) and on phone."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The returned-state agent panel is restyled. Both returned boards draw Tola as one compact blue info strip: avatar, \"**Tola** \u00b7 PMO agent\" inline, then the sentence and the action as a text link on the next line. The page uses `Panel kind=\"agent\"` with a separate header \"TOLA \u00b7 PMO AGENT\" (uppercase display type, its own rule) and a padded body (`DocumentParts.tsx:150-180`). That makes it about 2.5x taller (desktop 140px against 57px; phone 178px against 64px). The work-item frame already draws this strip as `Callout kind=\"info\"` with the agent name in bold (`features/workspace/Workspace.tsx:36`, `ws-agentnote`). Expected: reuse that strip with the avatar, the name inline, the backend's lines, and the disabled \"Ask Tola to draft v3\" with \"Not available yet\" in place of the link (conflict 1 B).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:12:06Z",
+          "refs": [
+            "48752f43"
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:14:32Z",
+          "refs": [
+            "The returned agent note is `Callout kind=\"info\"`: avatar, bold name inline, the backend's lines, the disabled \"Ask Tola to draft v3\" with \"Not available yet\". It is now a compact strip, not a headed panel. See Notes for two small styling differences (no 2px blue border, avatar centred on the strip) that match the shared work-item strip, so I do not block."
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48752f43"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The returned agent note is `Callout kind=\"info\"`: avatar, bold name inline, the backend's lines, the disabled \"Ask Tola to draft v3\" with \"Not available yet\". It is now a compact strip, not a headed panel. See Notes for two small styling differences (no 2px blue border, avatar centred on the strip) that match the shared work-item strip, so I do not block."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The disabled \"Edit as v3\" is sized and placed unlike the boards. On desktop-returned the board draws a 226px large button in a row (Compare is dropped, approved). The page stretches it to about 460px because `.docrev__held { max-width: 520px; flex-direction: column }` (`document-review.css`). On mobile-returned the board pins \"Edit as v3\" full-width in the bottom action bar, the same as Return/Approve on the default phone board. The page puts it in the page flow above the sections. Expected: on desktop, the button at its natural or board width, with \"Not available yet\" under it. On phone, use the same pinned bar (`.docrev__bar` / `PhoneActionBar`) for the disabled \"Edit as v3\" and its reason. The grey disabled look is the approved conflict 1 B and stays.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:12:06Z",
+          "refs": [
+            "48752f43"
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:14:32Z",
+          "refs": [
+            "Desktop: the disabled \"Edit as v3\" is at natural width (about 88px, `align-self: flex-start`), with its reason beside it. Phone: it is in the pinned `psl-actionbar` at full width with \"Not available yet\" under it, as the board pins it. The grey look is the approved conflict 1 B."
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48752f43"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Desktop: the disabled \"Edit as v3\" is at natural width (about 88px, `align-self: flex-start`), with its reason beside it. Phone: it is in the pinned `psl-actionbar` at full width with \"Not available yet\" under it, as the board pins it. The grey look is the approved conflict 1 B."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "On phone default, the \"Tola flagged section 4: \u2026\" line is moved. The board draws it directly under the sections card (y 543). The page draws it after the whole Checks and Audience list (y 1164), because it sits in `.docrev__aside` after `<ChecksPanel>` (`DocumentReview.tsx`, the `docrev__flag` block). Expected: put the flag line directly after the sections, before the Checks list. Also, the phone board draws no inline note inside section 4 (only the flag line), but the page shows both. The spec reads either way, so I list that as a note, not a block.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:12:06Z",
+          "refs": [
+            "48752f43"
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:14:32Z",
+          "refs": [
+            "Live at 390: the flag line is at y 826, the Checks panel at y 888. The flag is directly after the sections and before Checks. The inline note inside section 4 stays (the spec reads either way)."
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48752f43"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Live at 390: the flag line is at y 826, the Checks panel at y 888. The flag is directly after the sections and before Checks. The inline note inside section 4 stays (the spec reads either way)."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The desktop default review column runs about 100px longer than the board. The aside is 320px where the board's is 333px (`.docrev__aside { flex: 1 1 320px }`). The narrower column wraps the \"TEST TEMPLATE v1 \u00b7 until PSL supplies the real one\" tag onto two lines. The note box is about 77px tall where the board's is 65px. A \"0 / 2000\" counter is added that no board draws. The review panel body has extra gaps, and \"YOUR REVIEW \u00b7 PMO LEAD\" lands at y 623 against the board's 573. Expected: aside at the board's width (333px, or a token that gives it), the text area at the board's height, and no counter row, unless the shared TextArea always draws one. In that case, list it as a shared-component exception.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:12:06Z",
+          "refs": [
+            "48752f43"
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:14:32Z",
+          "refs": [
+            "The aside is 333px (the board's width). The \"TEST TEMPLATE v1 \u2026\" tag stays on one line. The \"0 / 2000\" counter is gone and the note is 3 rows. \"YOUR REVIEW \u00b7 PMO LEAD\" begins about 40px lower than the board only because the page's Changes text wraps the header block lower; the review panel's own spacing matches. The 2000 limit is still checked on press."
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48752f43"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The aside is 333px (the board's width). The \"TEST TEMPLATE v1 \u2026\" tag stays on one line. The \"0 / 2000\" counter is gone and the note is 3 rows. \"YOUR REVIEW \u00b7 PMO LEAD\" begins about 40px lower than the board only because the page's Changes text wraps the header block lower; the review panel's own spacing matches. The 2000 limit is still checked on press."
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Two pending exceptions cite conflict 1 for something it does not approve. The first is \"Tola\" (frame item), whose reason says \"names the agent\u2026 in the panel head ('TOLA \u00b7 PMO AGENT')\". The second is \"Tola \u00b7 PMO agent I can draft v3 with section 4 fixed.\" on mobile-returned. Conflict 1 B approves the disabled buttons and \"Tola's sentence only if the backend sends it\". It does not approve moving the name into an uppercase panel head. The text part of the second entry, where the backend's longer sentence replaces the board's, is legitimate. Once UI-1-2 is fixed the \"Tola\" exception should not be needed: drop it, or reword it to the true reason. The other 9 entries (Overview, Setup, persona, both Compare links, the \"separate step\" sentence, AMOUNTS MATCH COSTING, the \u2190 Lagoon Health accessible name, the Drafted-by count sentence) each cite the conflict that approves them (9, 9, 9, 5/11, 11, 13, 7, 9, 5).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:12:06Z",
+          "refs": [
+            "exceptions file"
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:14:32Z",
+          "refs": [
+            "The \"Tola\" frame exception is dropped. The \"Tola \u00b7 PMO agent I can draft v3 \u2026\" entry now cites conflict 1 (B) only (the backend's sentence and the disabled buttons). The other 9 entries are unchanged and each cites its approving conflict."
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "exceptions file"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The \"Tola\" frame exception is dropped. The \"Tola \u00b7 PMO agent I can draft v3 \u2026\" entry now cites conflict 1 (B) only (the backend's sentence and the disabled buttons). The other 9 entries are unchanged and each cites its approving conflict."
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`document-review.css` uses raw sizes where tokens exist: `padding: \u2026 20px` in `.docrev__dochead`, `.docrev__section`, `.docrev__sectionempty` and `.docrev__notext` (`--space-20px` exists), and `font-size: 16px` on `.docrev__section h3`. Use the token and the matching text-style variable.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:12:06Z",
+          "refs": [
+            "48752f43"
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:14:32Z",
+          "refs": [
+            "`document-review.css` uses `--space-20px` and `--text-lead-size`. No raw px, hex or inline style remain."
+          ],
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48752f43"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`document-review.css` uses `--space-20px` and `--text-lead-size`. No raw px, hex or inline style remain."
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "D-83 visual waivers are needed per board once UI-1-1 to UI-1-5 are fixed. Each is forced by an approved decision. All 4 boards: the shared frame (Alerts bell, signed-in persona, no Overview or Setup, F-25 tab bar with fixture counts 3/4/2/4 against 6/4/6/9; D-99, D-110, conflict 9). Desktop default: the backend's \"Changes since v1: \u2026\" text (conflict 5) and the \"Minutes MIN-0141\" cite (data). Returned boards: sections below the banner (conflict 4), the grey disabled held buttons (conflict 1), the time as \"17 Nov 14:20\" because the shared `When` gives no \"today\" (conflict 10). Phone: the full title \"Statement of work \u00b7 v2\" (conflict 8), the tab bar wrapping to two rows (D-110), and the Drafted-by line plus the Checks and Audience list (spec success state, conflict 7). Mobile default at 69.1 is below the 70 floor. The gap is approved content (the two-row tab bar, about 45px; the Drafted-by line, about 90px; Checks below), so it needs a one-board exception to the floor, as F-23 SCR-28 got at 69.2. The `visual_waivers` reasons in `fidelity-exceptions.json` still say \"not re-measured\". Update them to the measured scores (73.9 / 72.2 / 69.1 / 72.4, or the scores after the fixes) before the design engineer signs.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:43:54Z",
+          "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried from UX-1-1: the held \"Ask Tola to draft v3\" is not styled as a disabled button like \"Edit as v3\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T19:14:32Z",
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Mock only: after a real Return, the re-read shows the fixture's quote (\"Section 4: confirm week 2 or week 3 \u2026\", Kemi Adebayo, 14:20), not the note the reviewer typed. Evidence: `POST /api/v1/tasks/T-2901/decision {\"expected_revision\":2,\"verdict\":\"return\",\"note\":\"Section 4: QA note, check week 3.\"}`, then the page quotes the fixture text. The page honestly renders what the backend sends, but a demo on the mock looks as if the typed note was replaced. Cause: `frontend/mock/documents.mjs` uses the constant `RETURNED` when W-2901 is served from `.return`. Expected: the mock echoes the posted note and the current time, or the fixture note is labelled as a sample.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T19:24:15Z",
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When a return is not confirmed (TECH-1-2 path), \"Try again\" re-reads only the work item, not the document. Test: the document read was intercepted so it still showed \"Awaiting PMO Lead review\" without `returned`. The warning showed, and Try again sent no new decision (correct). The document read count stayed at 2, so a return that has since been recorded would not show its banner until a full reload. Code: `frontend/src/features/documents/DocumentReview.tsx:82` (`review.retry()` only). Expected: Try again also calls the document `refresh`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T19:24:15Z",
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "If you reopen an approved document, it shows the APPROVED tag and the generic `already_decided` sentence (\"This decision has already been made\u2026\"), not \"You approved v2 \u00b7 <name> \u00b7 <time>. Not sent to the client.\" That callout shows only straight after the click's re-read. This is consistent with spec item 14, which only covers after the decision, but who approved is not visible on a later visit. Evidence: `qa3.mjs`, approve then reload.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T19:24:15Z",
+          "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Open human items, not satisfied by this PASS. (a) `fidelity-exceptions.json` `visual_waivers` for SCR-08-desktop 72.0, desktop-returned 79.5, mobile 69.1, mobile-returned 74.0 all read `approved_by: \"builder proposal, pending design engineer\"`; mobile is under the 70 floor and needs the one-board exception (F-23 SCR-28 precedent). The 10 element exceptions and 7 extras are signed \"design engineer, 17 Nov 2026 - D-111\". (b) Product/client acceptance is required (readiness) and is pending in feature.json. Merge must not treat this file as either. Expected: the design engineer signs or rejects each waiver, and product acceptance is recorded on this head, before merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T23:44:17Z",
+          "head": "8d72b263470b8c40dfd1e6223d8ce5c486712092"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Spec and criteria 1, 2 name project P-0102; the build uses P-0101 (\"Lagoon Health - patient app\") in fixtures, tests and e2e URLs (build.md summary; QA-2-confirmed). Judgement: accepted. The reason is real (the crumb said Lagoon Health while P-0102 is titled Harmattan Bank, UX-1-4, and the board counts 6/4/6/9 are P-0101's), the change is mock fixture data only, no authority, policy or scope changes, and QA ran criteria 1 and 2 on P-0101 with the same observable results. The spec text should be read as P-0101 for the record; no re-spec needed. The extra fixture/test edits (P-0106 documents fixture, mock-money/mock-projects tests) are consequences of the tab-count and documents-route change, inside the frontend/mock lane.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T23:44:17Z",
+          "head": "8d72b263470b8c40dfd1e6223d8ce5c486712092"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Open non-blocking notes carried, none gating: TECH-2-1 (isLinkUrl lets `java<tab>script:` through its check; React 19 blocks it, not exploitable), UX-2-1 (Ask Tola held action not styled as a button), QA-2-1 (mock return echoes fixture quote, not typed note), QA-2-2 (Try again after unconfirmed return re-reads work item only, not the document), QA-2-3 (approved document reopened shows generic text, not who approved), plus round-1 UX-1-2 (superseded version copy) and UI-1-8 (waivers, same as PMO-2-1). Suggest the next touch of the page, or the backend contract round, picks these up.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-29/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T23:44:17Z",
+          "head": "8d72b263470b8c40dfd1e6223d8ce5c486712092"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead), TECH",
+          "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+          "evidence_refs": [
+            "delivery/features/F-29/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-29/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+          "evidence_refs": [
+            "delivery/features/F-29/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate, D-83)",
+          "snapshot_ref": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+          "evidence_refs": [
+            "delivery/features/F-29/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-DOCUMENT-REVIEW",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "8524af3ced023f5a070bb46e5ba3708c9acf53c6",
+    "task_branch": "fe-document-review-document-review-read-a-drafted-client-do",
+    "head_sha": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-29",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/59",
+    "pr_number": 59,
+    "pr_author": null,
+    "designated_approver": "design engineer (hunchoweb), D-112",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "6e12c583bd884a322765c4fa1b354007d808e014",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-28/decision.md",
+      "delivery/features/F-28/feature.json",
+      "delivery/features/F-28/fidelity-exceptions.json",
+      "delivery/features/F-28/round-1/build.md",
+      "delivery/features/F-28/round-1/checks.md",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/board-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/board.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/board.rendered.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/diff.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/page-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/page.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/report.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/report.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/report.reviewer-ui.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/side-by-side.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/side-by-side.reviewer-ui.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/board-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/board.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/board.rendered.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/diff.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/page-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/page.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/report.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/report.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/report.reviewer-ui.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/side-by-side.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/side-by-side.reviewer-ui.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/board-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/board.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/board.rendered.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/diff.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/page-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/page.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/report.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/report.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/report.reviewer-ui.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/side-by-side.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/side-by-side.reviewer-ui.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/board-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/board.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/board.rendered.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/diff.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/page-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/page.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/report.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/report.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/report.reviewer-ui.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/side-by-side.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/side-by-side.reviewer-ui.png",
+      "delivery/features/F-28/round-1/fidelity/scores.txt",
+      "delivery/features/F-28/round-1/review-security.md",
+      "delivery/features/F-28/round-1/review-technical.md",
+      "delivery/features/F-28/round-1/review-ui.md",
+      "delivery/features/F-28/round-1/review-ux.md",
+      "delivery/features/F-28/round-2/acceptance-pmo.md",
+      "delivery/features/F-28/round-2/build.md",
+      "delivery/features/F-28/round-2/checks.md",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/board-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/board.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/board.rendered.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/diff.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/page-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/page.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/report.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/report.json",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/side-by-side.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/board-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/board.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/board.rendered.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/diff.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/page-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/page.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/report.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/report.json",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/side-by-side.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/board-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/board.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/board.rendered.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/diff.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/page-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/page.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/report.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/report.json",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/side-by-side.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/board-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/board.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/board.rendered.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/diff.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/page-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/page.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/report.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/report.json",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/side-by-side.png",
+      "delivery/features/F-28/round-2/fidelity/scores.txt",
+      "delivery/features/F-28/round-2/review-qa.md",
+      "delivery/features/F-28/round-2/review-security.md",
+      "delivery/features/F-28/round-2/review-technical.md",
+      "delivery/features/F-28/round-2/review-ui.md",
+      "delivery/features/F-28/round-2/review-ux.md",
+      "delivery/features/F-29/feature.json",
+      "delivery/features/F-29/fidelity-exceptions.json",
+      "delivery/features/F-29/round-1/build.md",
+      "delivery/features/F-29/round-1/checks.md",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440.txt",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/board-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/board.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/board.rendered.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/diff.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/page-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/page.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/report.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/report.json",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/side-by-side.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440.txt",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/board-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/board.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/board.rendered.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/diff.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/page-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/page.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/report.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/report.json",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/side-by-side.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390.txt",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/board-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/board.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/board.rendered.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/diff.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/page-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/page.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/report.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/report.json",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/side-by-side.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390.txt",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/board-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/board.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/board.rendered.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/diff.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/page-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/page.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/report.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/report.json",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/side-by-side.png",
+      "delivery/features/F-29/round-1/review-technical.md",
+      "delivery/features/F-29/round-1/review-ui.md",
+      "delivery/features/F-29/round-1/review-ux.md",
+      "delivery/features/F-29/round-2/acceptance-pmo.md",
+      "delivery/features/F-29/round-2/acceptance-product.md",
+      "delivery/features/F-29/round-2/build.md",
+      "delivery/features/F-29/round-2/checks.md",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440.txt",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/board-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/board.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/board.rendered.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/diff.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/page-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/page.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/report.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/report.json",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/side-by-side.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440.txt",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/board-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/board.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/board.rendered.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/diff.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/page-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/page.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/report.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/report.json",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/side-by-side.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390.txt",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/board-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/board.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/board.rendered.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/diff.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/page-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/page.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/report.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/report.json",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/side-by-side.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390.txt",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/board-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/board.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/board.rendered.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/diff.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/page-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/page.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/report.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/report.json",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/side-by-side.png",
+      "delivery/features/F-29/round-2/review-qa.md",
+      "delivery/features/F-29/round-2/review-technical.md",
+      "delivery/features/F-29/round-2/review-ui.md",
+      "delivery/features/F-29/round-2/review-ux.md",
+      "delivery/features/F-30/feature.json",
+      "delivery/features/F-30/fidelity-exceptions.json",
+      "delivery/features/F-30/round-1/build.md",
+      "delivery/features/F-30/round-1/checks.md",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/run.sh",
+      "delivery/features/F-30/round-1/fidelity/scores.txt",
+      "delivery/features/F-30/round-1/review-technical.md",
+      "delivery/features/F-30/round-1/review-ui.md",
+      "delivery/features/F-30/round-1/review-ux.md",
+      "delivery/features/F-30/round-2/build.md",
+      "delivery/features/F-30/round-2/checks.md",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/run.sh",
+      "delivery/features/F-30/round-2/fidelity/scores.txt",
+      "delivery/features/F-30/round-2/review-qa.md",
+      "delivery/features/F-30/round-2/review-technical.md",
+      "delivery/features/F-30/round-2/review-ui.md",
+      "delivery/features/F-30/round-2/review-ux.md",
+      "delivery/features/F-30/round-3/acceptance-pmo.md",
+      "delivery/features/F-30/round-3/acceptance-product.md",
+      "delivery/features/F-30/round-3/build.md",
+      "delivery/features/F-30/round-3/checks.md",
+      "delivery/features/F-30/round-3/review-qa.md",
+      "delivery/features/F-30/round-3/review-technical.md",
+      "delivery/features/F-30/round-3/review-ui.md",
+      "delivery/features/F-30/round-3/review-ux.md",
+      "frontend/e2e/document-review.spec.ts",
+      "frontend/e2e/minutes-end.spec.ts",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/D-2901.1.json",
+      "frontend/mock/fixtures/documents/D-2901.2.json",
+      "frontend/mock/fixtures/projects/tabs/P-0101.documents.json",
+      "frontend/mock/fixtures/projects/tabs/P-0106.documents.json",
+      "frontend/mock/fixtures/work/W-2301.next.internal.json",
+      "frontend/mock/fixtures/work/W-2309.approve.json",
+      "frontend/mock/fixtures/work/W-2309.json",
+      "frontend/mock/fixtures/work/W-2310.json",
+      "frontend/mock/fixtures/work/W-2311.json",
+      "frontend/mock/fixtures/work/W-2312.json",
+      "frontend/mock/fixtures/work/W-2313.json",
+      "frontend/mock/fixtures/work/W-2313.steps.json",
+      "frontend/mock/fixtures/work/W-2314.json",
+      "frontend/mock/fixtures/work/W-2901.approve.json",
+      "frontend/mock/fixtures/work/W-2901.json",
+      "frontend/mock/fixtures/work/W-2901.return.json",
+      "frontend/mock/fixtures/work/W-2902.json",
+      "frontend/mock/project-tabs.mjs",
+      "frontend/mock/proposals/document-review.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/app/projects/[caseId]/documents/[documentId]/page.tsx",
+      "frontend/src/features/documents/DocumentParts.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/documents/ReviewControls.tsx",
+      "frontend/src/features/documents/document-review.css",
+      "frontend/src/features/documents/documentModel.ts",
+      "frontend/src/features/documents/useDocument.ts",
+      "frontend/src/features/projects/DocumentsTab.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/ProjectTabContent.tsx",
+      "frontend/src/features/projects/tabsModel.ts",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/document-review-model.test.ts",
+      "frontend/tests/document-review.test.tsx",
+      "frontend/tests/minutes-end-mock.test.ts",
+      "frontend/tests/minutes-end.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-document-review.test.ts",
+      "frontend/tests/mock-money.test.ts",
+      "frontend/tests/mock-project-tabs.test.ts",
+      "frontend/tests/mock-projects.test.ts",
+      "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/projects-journey.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "417 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-17T17:18:01Z",
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-17T17:28:07Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T17:28:42Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T18:38:20Z",
+      "round": 1,
+      "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T18:43:54Z",
+      "round": 1,
+      "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T18:43:55Z",
+      "round": 2,
+      "head": "9a6dd8ea67a79b6f699f55bdbe4ed24c873baeeb",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T19:12:18Z",
+      "round": 2,
+      "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T19:14:32Z",
+      "round": 2,
+      "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T19:24:15Z",
+      "round": 2,
+      "head": "48752f436c91d0f5f3ae640e7372a5cf7021095d",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-17T23:44:17Z",
+      "round": 2,
+      "head": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-17T23:44:46Z",
+      "round": 2,
+      "head": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-17T23:44:46Z",
+      "round": 2,
+      "head": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-17T23:44:47Z",
+      "round": 2,
+      "head": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-17T23:44:47Z",
+      "round": 2,
+      "head": "8d72b263470b8c40dfd1e6223d8ce5c486712092",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-29/readiness.md",
+      "delivery/features/F-29/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "48752f436c91d0f5f3ae640e7372a5cf7021095d"
+  },
+  "blocked": null
+}

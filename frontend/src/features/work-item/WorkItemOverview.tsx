@@ -113,7 +113,8 @@ function AgentSteps({ steps }: { steps: NonNullable<WorkItem['agent']['steps']> 
   );
 }
 
-export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
+/** `foot`: CMP-09's footer row inside the card (the income schedule line puts the started time and Ask Chidi there, F-33). */
+export function AgentCard({ agent, foot }: { agent: WorkItem['agent']; foot?: ReactNode }) {
   if (agent.status === 'none') {
     return (
       <section className="work-agent work-agent--none" aria-label="Agent at work">
@@ -143,6 +144,7 @@ export function AgentCard({ agent }: { agent: WorkItem['agent'] }) {
         </Tag>
       </div>
       {steps.length > 0 && <AgentSteps steps={steps} />}
+      {foot && <div className="psl-agent__foot">{foot}</div>}
     </section>
   );
 }
@@ -697,19 +699,22 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   // D-73: the line boards draw the workspace straight under the title. The facts, stations, agent card and next step
   // stay in the page for screen readers only (the contract data is never dropped), the way the state boards do.
   if (item.workspace) {
+    // F-33: the income schedule boards draw the station row (desktop) and the working agent's card in the workspace itself
+    const income = item.workspace.line_key === 'income_schedules';
     before = (
       <div className="cmp-sr">
         <FactsStrip facts={item.facts} paidNote={false} />
-        <StationTrack stations={item.stations} state={item.state} />
+        {!(income && !phone) && <StationTrack stations={item.stations} state={item.state} />}
       </div>
     );
     main = (
       <div className="cmp-sr">
-        <AgentCard agent={item.agent} />
+        {!(income && agent.status === 'working') && <AgentCard agent={item.agent} />}
         <NextStep item={item} quiet />
       </div>
     );
-    after = hasExceptionsLink(item) ? (
+    // F-30: the issue follow-up boards draw no exceptions button above the workspace
+    after = hasExceptionsLink(item) && item.workspace.line_key !== 'issue_followup' ? (
       <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
         See all exceptions
       </Link>
@@ -718,12 +723,15 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
 
   // A task the workspace's own steps already link to is decided from that link: no second card for it (F-23).
   const linked = new Set((item.workspace?.steps ?? []).map((step) => step.task_id).filter(Boolean));
-  const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id));
+  // F-33: on the income schedule line a decided task has nothing left to open; the workspace shows what it became.
+  const settled = (task: WorkItem['tasks'][number]) => item.workspace?.line_key === 'income_schedules' && task.cannot_act_reason === 'already_decided';
+  const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task));
 
   return (
     <div className={layout ? `work-overview work-board work-state--${item.state}${layout === LAYOUTS.issue ? ' work-board--issue' : ''} work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : `work-overview${item.workspace ? ' work-overview--line' : ''}`}>
       {before}
-      <div className="work-columns">
+      {/* F-32: a release item's workspace draws no main column (only screen-reader text), so its task panel takes the full width instead of floating right beside a blank column */}
+      <div className={item.workspace?.line_key === 'delivery_release' && shownTasks.length > 0 ? 'work-columns work-columns--lone' : 'work-columns'}>
         <div className="work-column">{main}</div>
         <div className="work-column work-aside">
           <ReconcilePanel id={id} item={asResponseItem(item)} />

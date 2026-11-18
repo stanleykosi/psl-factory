@@ -90,7 +90,7 @@ export function dateText(value: DateValue): string | null {
   return formatDate(value.date);
 }
 
-const RECORD_ID = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+export const RECORD_ID = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 
 /** The app path for a cited record: only work items and projects have pages, and only a plain record id
  *  ("W-1004") becomes one; a URL or anything else in an id stays plain text. */

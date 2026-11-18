@@ -46,7 +46,7 @@ describe('fixtures validate against the generated E-PROJECT-TAB 200 schema', () 
 
   it('the handler serves valid bodies for every tab of P-0101, P-0102 and P-0106', async () => {
     for (const id of ['P-0101', 'P-0102', 'P-0106']) {
-      for (const tab of ['milestones', 'registers', 'actions']) {
+      for (const tab of ['milestones', 'documents', 'registers', 'actions']) {
         const { status, body } = await get(`${id}/${tab}`);
         expect(status).toBe(200);
         expect(valid200(body), `${id} ${tab}: ${ajv.errorsText(valid200.errors)}`).toBe(true);
@@ -65,8 +65,9 @@ describe('visibility and access', () => {
     expect((await get('P-0103')).status).toBe(200);
   });
 
-  it('documents answers 501; an unknown tab 404; a project with no fixtures is empty', async () => {
-    expect((await get('P-0101/documents')).status).toBe(501);
+  it('documents answers its rows; an unknown tab 404; a project with no fixtures is empty', async () => {
+    expect((await get('P-0106/documents')).body.documents).toEqual([]);
+    expect(((await get('P-0101/documents')).body.documents as { work_id?: string }[]).map((d) => d.work_id)).toEqual(['W-2901', ...Array(5).fill(undefined)]);
     expect((await get('P-0101/nonsense')).status).toBe(404);
     const empty = await get('P-0108/actions', { persona: 'finance_lead' });
     expect([empty.status, empty.body.actions]).toEqual([200, []]);

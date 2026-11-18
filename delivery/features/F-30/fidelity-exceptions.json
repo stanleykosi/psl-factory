@@ -1,0 +1,244 @@
+{
+ "exceptions": [
+  {
+   "role": "text",
+   "name": "PROJECTS / LAGOON HEALTH / ISSUES / ISS-0233",
+   "category": "frame",
+   "reason": "Conflicts 7: the frame draws the workspace crumbs as a list of plain items, not the board's linked text line; the words come from workspace.context.crumbs.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "link",
+   "name": "PROJECTS",
+   "category": "frame",
+   "reason": "Conflicts 7: the frame draws crumbs as plain text; the board links Projects and the project.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "link",
+   "name": "LAGOON HEALTH",
+   "category": "frame",
+   "reason": "Conflicts 7: the frame draws crumbs as plain text; the board links Projects and the project.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "■■■HIGH",
+   "category": "component",
+   "reason": "Conflicts 10: severity is a facts row in the list (SEVERITY High) from the data, not a tag beside the status.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "■■■",
+   "category": "component",
+   "reason": "Conflicts 10: severity is a facts row in the list (SEVERITY High) from the data, not a tag beside the status.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "OWNER FOLLOW-UP",
+   "category": "component",
+   "reason": "Conflicts 3: the board draws the owner-update form open with sample text; the page opens it on press (D-98 (2)). The panel heading is the shared \"Next\".",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Update type",
+   "category": "component",
+   "reason": "Conflicts 3: the board draws the owner-update form open with sample text; the page opens it on press (D-98 (2)). The panel heading is the shared \"Next\".",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Update",
+   "category": "component",
+   "reason": "Conflicts 3: the board draws the owner-update form open with sample text; the page opens it on press (D-98 (2)). The panel heading is the shared \"Next\".",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Fix verified on 2 of 3 models; third model test tomorrow.",
+   "category": "component",
+   "reason": "Conflicts 3: the board draws the owner-update form open with sample text; the page opens it on press (D-98 (2)). The panel heading is the shared \"Next\".",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "PROJECTS / LAGOON HEALTH / REGISTERS / ISSUES / ISS-0240",
+   "category": "frame",
+   "reason": "Conflicts 7: the frame draws the workspace crumbs as a list of plain items, not the board's linked text line; the words come from workspace.context.crumbs.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "tablist",
+   "name": "Project",
+   "category": "frame",
+   "reason": "Conflicts 8: the project bar is a navigation of links to each tab page, not a tablist, and marks no tab current (the response does not say which tab an issue belongs to); no counts (E-WORK-ITEM carries no tab_counts).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "PROJECTS / LAGOON HEALTH / REGISTERS / ISSUES / ISS-0233",
+   "category": "frame",
+   "reason": "Conflicts 7: the frame draws the workspace crumbs as a list of plain items, not the board's linked text line; the words come from workspace.context.crumbs.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "link",
+   "name": "← Registers",
+   "category": "frame item",
+   "reason": "Conflicts 9: one back link in the shell bar (\"Back to Queue\"), the F-22 frame as built.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "11 Nov 16:40",
+   "category": "component",
+   "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Owner update",
+   "category": "component",
+   "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Fix is in testing on 3 older Android models.",
+   "category": "component",
+   "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "10 Nov 09:15",
+   "category": "component",
+   "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Owner acknowledged",
+   "category": "sample data",
+   "reason": "Conflicts 5/6: the phone board words the lead differently from desktop; the page draws the one sentence the response sends on both.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Engineering (recorded by PM) took it.",
+   "category": "component",
+   "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Tola investigated",
+   "category": "component",
+   "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Found 14 failed logins, all Android 9 or older, since release 1.4.",
+   "category": "component",
+   "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "link",
+   "name": "← Project",
+   "category": "frame item",
+   "reason": "Conflicts 9: one back link in the shell bar (\"Back to Queue\"), the F-22 frame as built.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "ISS-0240 has no owner, so nobody can be chased.",
+   "category": "sample data",
+   "reason": "Conflicts 5/6: the phone board words the lead differently from desktop; the page draws the one sentence the response sends on both.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Engineering hasn't acknowledged since 09 Nov.",
+   "category": "sample data",
+   "reason": "Conflicts 5/6: the phone board words the lead differently from desktop; the page draws the one sentence the response sends on both.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "DONE",
+   "category": "frame item",
+   "reason": "Conflicts 9: \"DONE\" is not drawn as a bar title; the status tag carries the state.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "role": "text",
+   "name": "Updates recorded. Closing the issue is separate.",
+   "category": "sample data",
+   "reason": "Conflicts 5/6: the phone board words the lead differently from desktop; the page draws the one sentence the response sends on both.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-30-desktop",
+   "width": 1440,
+   "visual": 74.3,
+   "reason": "Measured 74.3 in round 2 with board fonts loaded. Covers the shared timeline row layout ('label · text', time on the right; UI-1-6), the shared NEXT heading in place of 'Owner follow-up' (UI-1-7, needs a backend panel title), the project tab bar and frame (D-111 conflicts 8, 9), and the D-111 calls for forms and wording. Also the 'Chasing' section shown from the test data, which the default board does not draw.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-30-mobile",
+   "width": 390,
+   "visual": 81.9,
+   "reason": "Measured 81.9 in round 2 with board fonts loaded. Covers the shared timeline row layout ('label · text', time on the right; UI-1-6), the shared NEXT heading in place of 'Owner follow-up' (UI-1-7, needs a backend panel title), the project tab bar and frame (D-111 conflicts 8, 9), and the D-111 calls for forms and wording.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-30-desktop-overdue",
+   "width": 1440,
+   "visual": 88.4,
+   "reason": "Measured 88.4 in round 2 with board fonts loaded. Covers the shared timeline row layout ('label · text', time on the right; UI-1-6), the shared NEXT heading in place of 'Owner follow-up' (UI-1-7, needs a backend panel title), the project tab bar and frame (D-111 conflicts 8, 9), and the D-111 calls for forms and wording.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-30-mobile-overdue",
+   "width": 390,
+   "visual": 84.6,
+   "reason": "Measured 84.6 in round 2 with board fonts loaded. Covers the shared timeline row layout ('label · text', time on the right; UI-1-6), the shared NEXT heading in place of 'Owner follow-up' (UI-1-7, needs a backend panel title), the project tab bar and frame (D-111 conflicts 8, 9), and the D-111 calls for forms and wording.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-30-desktop-no-owner",
+   "width": 1440,
+   "visual": 85.2,
+   "reason": "Measured 85.2 in round 2 with board fonts loaded. Covers the shared timeline row layout ('label · text', time on the right; UI-1-6), the shared NEXT heading in place of 'Owner follow-up' (UI-1-7, needs a backend panel title), the project tab bar and frame (D-111 conflicts 8, 9), and the D-111 calls for forms and wording.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-30-mobile-no-owner",
+   "width": 390,
+   "visual": 89.9,
+   "reason": "Measured 89.9 in round 2 with board fonts loaded. Covers the shared timeline row layout ('label · text', time on the right; UI-1-6), the shared NEXT heading in place of 'Owner follow-up' (UI-1-7, needs a backend panel title), the project tab bar and frame (D-111 conflicts 8, 9), and the D-111 calls for forms and wording.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-30-desktop-verified",
+   "width": 1440,
+   "visual": 87.2,
+   "reason": "Measured 87.2 in round 2 with board fonts loaded. Covers the shared timeline row layout ('label · text', time on the right; UI-1-6), the shared NEXT heading in place of 'Owner follow-up' (UI-1-7, needs a backend panel title), the project tab bar and frame (D-111 conflicts 8, 9), and the D-111 calls for forms and wording.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  },
+  {
+   "board": "SCR-30-mobile-verified",
+   "width": 390,
+   "visual": 68.5,
+   "reason": "Measured 68.5 in round 2 with board fonts loaded. Covers the shared timeline row layout ('label · text', time on the right; UI-1-6), the shared NEXT heading in place of 'Owner follow-up' (UI-1-7, needs a backend panel title), the project tab bar and frame (D-111 conflicts 8, 9), and the D-111 calls for forms and wording. Below the 70 floor: one-board floor exception signed, as F-23 SCR-28 and F-29 SCR-08-mobile.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-112"
+  }
+ ]
+}

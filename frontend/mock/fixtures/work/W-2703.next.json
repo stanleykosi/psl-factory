@@ -1,0 +1,208 @@
+{
+  "id": "W-2703",
+  "title": "Income detail · October",
+  "line": "Income schedules",
+  "reference": "SCH-0021",
+  "state": "action_needed",
+  "revision": 5,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Prepare",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "current_person"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    },
+    {
+      "name": "Export (optional)",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-2703",
+      "kind": "decide",
+      "title": "Review the income schedule",
+      "required_role": "Schedules reviewer",
+      "you_can_act": false,
+      "revision": 3,
+      "decision": {
+        "version": {
+          "label": "Schedule v1",
+          "number": 1,
+          "drafted_at": "2026-11-13T11:40:00Z"
+        },
+        "basis": "Approve the income detail for Service revenue, October.",
+        "prepared_by": {
+          "name": "Ada Okafor",
+          "role": "Finance Lead",
+          "is_you": true,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Schedules reviewer",
+              "status": "current",
+              "is_you": false
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "prepared_by_you"
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the income detail",
+        "status": "done",
+        "source": "INCOME_DETAIL_OCT.XLSX · 38 ROWS"
+      },
+      {
+        "text": "Checked for income already in the accounts",
+        "status": "done",
+        "source": "2 ROWS MAY BE DUPLICATES"
+      },
+      {
+        "text": "Read the mapping note",
+        "status": "done",
+        "source": "MAPPING RUN MR-0044"
+      },
+      {
+        "text": "Hand to preparation",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-13T10:20:00Z"
+  },
+  "next_step": "A Finance reviewer approves, returns or rejects the prepared schedule on this page.",
+  "sample": true,
+  "workspace": {
+    "line_key": "income_schedules",
+    "screen": "SCR-54",
+    "view": "review",
+    "status": {
+      "label": "AWAITING FINANCE DECISION",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "prepared",
+        "kind": "facts",
+        "title": "Prepared schedule",
+        "items": [
+          {
+            "id": "F-1",
+            "label": "Report line · Service revenue",
+            "money": {
+              "amount": "12400000.00",
+              "currency": "NGN",
+              "unknown": false
+            }
+          },
+          {
+            "id": "F-2",
+            "label": "Detail rows",
+            "value": "38"
+          },
+          {
+            "id": "F-3",
+            "label": "Duplicates resolved",
+            "value": "2 OF 2"
+          },
+          {
+            "id": "F-4",
+            "label": "Prepared by",
+            "value": "BISI ADE"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_schedule",
+        "label": "Approve schedule",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "task_id": "T-2703",
+        "verdict": "approve",
+        "consequence": "Approving doesn't post anything. Exporting it as an accounting adjustment is a separate step with its own approval."
+      },
+      {
+        "key": "return_schedule",
+        "label": "Return with a note",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "task_id": "T-2703",
+        "verdict": "return"
+      },
+      {
+        "key": "reject_schedule",
+        "label": "Reject",
+        "emphasis": "danger",
+        "applies_to": "workspace",
+        "task_id": "T-2703",
+        "verdict": "reject",
+        "consequence": "Rejecting stops this schedule: it isn't used for October's accounts."
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "SCH-0021",
+          "label": "SCH-0021"
+        }
+      ]
+    },
+    "revision": 5
+  }
+}

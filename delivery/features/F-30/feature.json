@@ -1,0 +1,1635 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-30",
+  "outcome": "Issue detail: an issue's work item shows what it is, what happened and how it is being chased, in four states (contract mock only)",
+  "state": "DONE",
+  "task_ids": [
+    "FE-ISSUE"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-2411`, `-2412`, `-2413`, `-2414` show the status label and tone, facts, timeline, \"Chasing\", lead text, agent note and \"Next\" lines of their fixture, and nothing else; every board string comes from a fixture (`grep -rn \"NO RESPONSE\\|OWNER NEEDED\\|FIX IN TESTING\\|FOLLOW-UP VERIFIED\" frontend/src` returns nothing). \u2014 verify: `cd frontend && npx vitest run tests/issue-detail.test.tsx`; pages at 1440 and 390.",
+    "**Unknown, not zero.** A copy of W-2411 with the age fact, the owner and the Reminder time removed shows \"Unknown\" (or \"Time unknown\" for a missing `at`) in each place; no blank and no \"0\". \u2014 verify: component test on the modified copy.",
+    "**Status and overdue come from the response.** Changing the fixture's dates without changing `status` leaves the status and the overdue words unchanged; no component compares a date with now to decide a state (`grep -rniE \"Date\\.now|new Date\\(\\)\" frontend/src/features/workspace/Assign* ` and the diff of `Workspace.tsx` return nothing). \u2014 verify: component test with fake timers; grep.",
+    "**Controls only from the response.** W-2411 shows only \"Post update\"; W-2412 shows \"Record a reply\" and \"Raise an escalation\"; W-2413 shows \"Set an owner\" only; W-2414 shows no button. The same pages for the personas `pm`, `finance_lead` and `ceo` draw the same controls from the same data; a fixture with the steps removed draws none, and `/me` is not read by the issue code (`grep -n \"/me\\b\" frontend/src/features/workspace` unchanged). \u2014 verify: component test with three personas and a stripped copy.",
+    "**Verified is read-only.** W-2414 has no form and no POST of any kind; the status tag is the `verified` tone only because the response says so; \"Open the issue register\" links to `/projects/P-0101/registers`. \u2014 verify: component test with a recording `fetch`; link href.",
+    "**The register row opens the issue.** From `/projects/P-0101/registers`, pressing the title \"Login fails on older Android phones\" goes to `/work/W-2411`, which shows ISS-0233's facts. \u2014 verify: e2e.",
+    "**Agent text is only displayed.** Tola's note and lead sentences appear as returned; there is no generated text, no suggestion button and nothing says the reminder or escalation was sent unless the timeline item says so; \"verified\" never appears from agent text. \u2014 verify: component test of `document.body.textContent` on W-2411 and W-2412 (no \"sent\" beyond fixture words); review.",
+    "**Post an owner update.** Pressing \"Post update\" opens the shared step form with an unselected required Update type (three options) and a required Update box; submitting sends exactly one POST `/api/v1/work/W-2411/steps` with the CSRF header and a body that validates against the generated request schema: `expected_revision` = `workspace.revision`, `step: \"post_owner_update\"`, `inputs.update_type` one of the step's options, `inputs.update` trimmed, a UUID `idempotency_key`, no extra keys. A double press sends one. On 200 the page re-reads and the new timeline item appears from the re-read; the notice reads \"Done: \u2026\". \u2014 verify: component test with a recording `fetch`; `GET /__mock/workspace-log`.",
+    "**Record a reply.** On W-2412, \"Record a reply\" opens a form with one required Reply box; submitting sends one POST with `step: \"record_reply\"`, `inputs.reply`, the revision and a key; the result and attribution (\"recorded by PM\") come from the re-read item, not from the page. \u2014 verify: component test and e2e.",
+    "**Raise an escalation does not claim.** On W-2412, \"Raise an escalation\" opens the Start work drawer on the `escalation` form with the fixture's prefill shown for checking and sends nothing until the person presses the drawer's own start; nothing on the issue page says an escalation was started before the backend answers. Without `starts_line` (stripped copy) the button is not drawn. \u2014 verify: component tests; e2e at 1440.",
+    "**Set an owner.** On W-2413, \"Set an owner\" opens a form with a required Owner `Select` listing exactly the three `assign.candidates` (name, role, hint, `kind` as the backend words it), no preselection and no typed-owner option, plus a Note; submitting sends one POST `/api/v1/work/W-2413/assignment` with CSRF and `{expected_revision, person_id, note?}`, no extra key. On 200 the page re-reads: the lead, status and \"Next\" change only as the re-read says; the notice reads \"Owner set: <assigned_to>\". With `assign` and an empty `candidates`, \"No one can be chosen yet.\" and no control. \u2014 verify: component tests; `issue-assign-mock.test.ts`.",
+    "**Validation.** Submitting without Update type, Update, Reply or Owner shows the message under the field, a top summary, focus on the first, and sends nothing. A note over 2000 characters is refused client-side. \u2014 verify: component tests.",
+    "**Failures never say recorded.** For each write, `psl_mock_scenario` 422 (messages under the named fields, entries kept), 409 (re-read, stale sentence, entries kept, one POST after 60 s of fake time, the next press sends the new revision), 500 and a network error (\"Not recorded\", Try again after a re-read, same key for a step) never show \"Done\", \"recorded\" or \"Owner set\". \u2014 verify: component tests.",
+    "**Uncertain.** With `psl_mock_assign=uncertain` the page says it could not confirm, re-reads, offers \"Set an owner\" again only if the re-read shows no owner; with `uncertain_written` the re-read shows the owner and the form does not offer a second assignment. A step result `uncertain` shows the existing reconcile panel and no \"Send again\". \u2014 verify: component tests; e2e reads the mock state (one assignment in `uncertain_written`, none in `uncertain`).",
+    "**Access.** 401 on read or write \u2192 signed-out with `next=/work/<id>`; 403 and 404 look the same and show no title, name or fact; a persona `none` gets the same not-open view with no further call. \u2014 verify: component tests with a recording `fetch`.",
+    "**No outside claim from the owner.** The page never says the owner logged in or updated it themselves; attribution words come only from the response (`recorded_by_pm`, item text). \u2014 verify: `grep -rniE \"logged in|signed in as the owner\" frontend/src/features/workspace` returns nothing; fixture review.",
+    "**Frame.** The project tab bar on W-2411 to W-2414 links every tab with a route (Journey, Milestones, Documents, Money, Registers, Actions) to its address and marks none current; F-22's work items draw as before; no plain-text tab remains for a tab that has a page. (Pending Conflicts 7 and 8.) \u2014 verify: component test of `WorkItemView` against W-2209; e2e link check.",
+    "**Phone.** At 390 the page is one column, the same sections in the same order as desktop, \"Post an update\", \"Record a reply\" and \"Set an owner\" open the full-height `Drawer` with the desktop form's fields and the same outcomes; Escape and Cancel close it and return focus to the button; no sideways scroll; every target is at least 44px (D-92c). (Pending Conflicts 5.) \u2014 verify: e2e at 390.",
+    "**Fidelity (D-64).** One design-fidelity run per round over all 8 boards on a production build; every board's element coverage after approved exceptions is 100% with visual at least 90, or a board-level waiver (D-83 floor 70) citing the shared frame in `fidelity-exceptions.json`; every exception has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number; none covers a value the data can supply (a name, a time, a tag, a count, a sentence). \u2014 verify: the fidelity command per board (`--width 1440` and `--width 390`); `round-<N>/fidelity/`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on all four states, each open form, the 422 state, the uncertain state, the not-open view and the empty workspace; every field labelled; errors announced; status words in text, not colour only; visible focus; no animation under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/issue-detail.spec.ts`.",
+    "**Tokens and components only.** `git diff` adds no `#hex`, `rgb(`, `hsl(` in `features/workspace/*.css`; no local copy of a component `@/components` exports. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `issue-assign-mock.test.ts`: every fixture validates against the generated E-WORK-ITEM schema plus the overlay; the E-WORK-ASSIGN check order (scenario, CSRF, 404, 422 body and unlisted `person_id`, 409, success bumps revision); step scripts; reset clears. \u2014 verify: `cd frontend && npx vitest run tests/issue-detail.test.tsx tests/issue-assign-mock.test.ts tests/mock-contract.test.ts tests/workspace.test.tsx tests/work-item.test.tsx tests/project-tabs.test.tsx`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `src/shell/**`, protected paths or existing fixtures other than the single ISS-0233 `work_id` line; every overlay field is a contract proposal in build.md. \u2014 verify: `git diff --stat`; build.md."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The page has several behaviours (four states, three writes) and sits on the shared workspace block (F-17), so a cross-layer contract is involved, with two additive proposals. It touches no money, migration or identity change, and the owner assignment is limited to the candidates the backend returns. SURFACES are ui, api and contract-change (G-SCR30-1 and -3). Auth is not ticked because no new authority rule is added: the controls follow the response. PRODUCT-ACCEPTANCE is required because the owner-update, reply, escalate and set-owner flows and their wording are new to the client."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-30/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T18:30:36Z",
+      "seconds": 238.3,
+      "evidence_ref": "delivery/features/F-30/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T19:05:55Z",
+      "seconds": 304.5,
+      "evidence_ref": "delivery/features/F-30/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "3a2884d4707522db814305db68b78dc6e4fc682a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-17T19:51:11Z",
+      "seconds": 182.8,
+      "evidence_ref": "delivery/features/F-30/round-3/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": null,
+      "snapshot_ref": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "evidence_refs": [
+        "delivery/features/F-30/round-3/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (frontend against the contract mock)",
+      "snapshot_ref": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "evidence_refs": [
+        "delivery/features/F-30/round-3/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "evidence_refs": [
+        "delivery/features/F-30/round-3/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-30/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 18 Nov 2026 \u2014 D-112",
+      "snapshot_ref": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "evidence_refs": [
+        "delivery/features/F-30/round-3/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": null,
+      "snapshot_ref": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "evidence_refs": [
+        "delivery/features/F-30/round-3/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": null,
+      "snapshot_ref": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "evidence_refs": [
+        "delivery/features/F-30/round-3/review-ui.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The project tab bar marks no tab as current on work-item pages, because the response does not say which tab the item belongs to. This is documented in WorkItemView.tsx and is acceptable. Revisit when the backend supplies the tab. frontend/src/features/work-item/WorkItemView.tsx:128",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:05:55Z",
+          "refs": [
+            "not changed (non-blocking, documented)"
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "not changed (non-blocking, documented)"
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Back link does not match the approved design or D-111 item 9 (\"one back link '\u2190 Project'\", F-22 frame). Actual: all four pages show \"\u2190 Queue\" to /my-work on the phone bar and the desktop bar (`frontend/src/features/work-item/WorkItemView.tsx:238` `usePhoneBack({label:'Queue',href:'/my-work'})`). A person who came from Registers is sent to the queue, not the project; the boards draw \"\u2190 Project\". Expected: label \"Project\" linking to the work item's project (P-0101) on every state, issue line only if F-22 work items must stay as built.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:05:55Z",
+          "refs": [
+            "48ba8f7a"
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T19:08:23Z",
+          "refs": [
+            "The phone bar and the desktop bar now show \"\u2190 Project\" linking to /projects/P-0101 on W-2411 and W-2413 (D-111 item 9). Other work items keep \"\u2190 Queue\". History keeps its own back link."
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48ba8f7a"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "The phone bar and the desktop bar now show \"\u2190 Project\" linking to /projects/P-0101 on W-2411 and W-2413 (D-111 item 9). Other work items keep \"\u2190 Queue\". History keeps its own back link."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Set an owner form shows its title twice on phone (Drawer title \"Set an owner\" and the card heading \"SET AN OWNER\"), same for the other forms; harmless but repeats. Not a design break.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-2413 \"Next\" text says \"Set an owner in the issue register; follow-up starts straight away\" while the button on the same page sets the owner. Wording comes from the fixture; align it with the page (data, not code).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Empty workspace state (\"Nothing here yet.\") has no axe e2e run (build.md item 20); I did not see it either since no fixture reaches it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Status tag colour differs from the board on two states and no exception lists it. Desktop default board: \"FIX IN TESTING\" is the waiting tag (#FFF1D6 / #6E4700). The page draws the agent tag (blue) because `mock/fixtures/work/W-2411.json:103` sends tone `agent`. Desktop overdue board: \"NO RESPONSE \u00b7 3 DAYS\" is the red tag (#FBE3D9 / #9A2F10, the same as \"OWNER NEEDED\"). The page draws it amber because `W-2412.json:97` sends tone `uncertain`, which `labels.ts:26` maps to waiting. Expected: W-2411 tone `uncertain` (waiting family; the default state has no banner, so `bannerTone` is unaffected) and W-2412 tone `stopped` (person/red family; the banner stays \"problem\"). This is fixture-only and also fixes the phone tags.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:05:55Z",
+          "refs": [
+            "48ba8f7a"
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:08:23Z",
+          "refs": [
+            "Fixtures now send tone `uncertain` (W-2411) and `stopped` (W-2412). The tool's looks list no longer reports a tag colour difference on default or overdue (desktop 1440 and phone 390); the overdue tag draws red like \"OWNER NEEDED\"."
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48ba8f7a"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Fixtures now send tone `uncertain` (W-2411) and `stopped` (W-2412). The tool's looks list no longer reports a tag colour difference on default or overdue (desktop 1440 and phone 390); the overdue tag draws red like \"OWNER NEEDED\"."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "No-owner (desktop and phone): a full-width secondary \"See all exceptions\" button is drawn above the banner and Next panel. No board draws it and no exception lists it. build.md says it is \"the shell's\", which is wrong. It comes from `src/features/work-item/WorkItemOverview.tsx` (the `item.workspace` branch, ~line 708). That code draws it for every work item whose `state` is in `EXCEPTION_STATES`, and W-2413 sends `state: owner_needed`. It pushes the whole workspace down about 50px and is the main reason desktop no-owner scores 70.6. Expected: either keep it off the page (it should not be drawn above the workspace), or list it in `fidelity-exceptions.json` with a true reason for the design engineer. Moving it below the workspace is a frame change, so it needs a test that F-22 work items keep theirs.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:05:55Z",
+          "refs": [
+            "48ba8f7a"
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:08:23Z",
+          "refs": [
+            "The \"See all exceptions\" bar is gone from no-owner. Desktop no-owner 70.6 to 85.2; phone no-owner 81.3 to 89.9. The F-22 items still keep it, as the builder's tests state."
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48ba8f7a"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The \"See all exceptions\" bar is gone from no-owner. Desktop no-owner 70.6 to 85.2; phone no-owner 81.3 to 89.9. The F-22 items still keep it, as the builder's tests state."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone no-owner: \"Set an owner\" sits inside a bordered \"NEXT\" box in the page flow. The board pins it full-width in the bottom action bar, as this page already does for \"Post update\" (default) and \"Record a reply\" (overdue). Cause: `Workspace.tsx:477` adds `ws-decide--info` whenever `workspaceSteps.length === 0`, so a panel whose only control is the assign button is treated as information and flows (workspace.css:187). Expected: `ws-decide--info` only when there are no steps and no assign button with candidates. The pinned bar then draws \"Set an owner\" like the board, and the Drawer behaviour from criterion 18 is unchanged.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:05:55Z",
+          "refs": [
+            "48ba8f7a"
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:08:23Z",
+          "refs": [
+            "Screenshot of W-2413 at 390: \"Set an owner\" is pinned full-width in the bottom bar, with the sentence above it, as on the board. No sideways scroll (scrollWidth 390)."
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48ba8f7a"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Screenshot of W-2413 at 390: \"Set an owner\" is pinned full-width in the bottom bar, with the sentence above it, as on the board. No sideways scroll (scrollWidth 390)."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Desktop default facts: the board draws OWNER / RAISED / AGE / BLOCKS as a 4-cell strip across the full width under the title, with the BLOCKS cell tinted red. The page draws a vertical label/value list inside a bordered box in the main column. The approved conflict 10 (D-111) only makes the phone a list (\"the strip shows on phone as a two-column list\"), which implies the strip stays on desktop. The difference appears only as an \"Open\" waiver in build.md, not as an exception. Expected: on desktop, draw the facts section as the board's strip with the existing strip styles from the work-item frame or the design system (no new colours). If the BLOCKS tint has no tone field in the facts item, propose it to the backend and list it. Otherwise the design engineer signs it explicitly.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:05:55Z",
+          "refs": [
+            "48ba8f7a"
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:08:23Z",
+          "refs": [
+            "Desktop default draws OWNER / RAISED / AGE / BLOCKS as a 4-cell strip under the title, with the BLOCKS cell tinted red. The phone shows the approved two-column list (conflict 10). Remaining difference: strip value size 14px on the page and 16px on the board (taste, see Notes)."
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48ba8f7a"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Desktop default draws OWNER / RAISED / AGE / BLOCKS as a 4-cell strip under the title, with the BLOCKS cell tinted red. The phone shows the approved two-column list (conflict 10). Remaining difference: strip value size 14px on the page and 16px on the board (taste, see Notes)."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Desktop default: the agent note (Tola \u00b7 PMO agent) is moved. The board draws it in the right column under the Owner follow-up panel. The page draws it full-width under the tab bar, the D-73 header placement, and the tool reports it as misplaced. No exception lists it. Expected: on the issue line, draw the note in the side column under the panel (the same kind of rule as `noteBeside`, Workspace.tsx:65), or list it for signature.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:05:55Z",
+          "refs": [
+            "48ba8f7a"
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T19:08:23Z",
+          "refs": [
+            "The Tola note sits in the side column under the Next panel on desktop default, as on the board. The tool still lists the panel sentence and the title as \"misplaced\" (the title moved down by the tab bar; the panel by the tab bar and strip), which come from the approved frame, not from this fix."
+          ],
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "48ba8f7a"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The Tola note sits in the side column under the Next panel on desktop default, as on the board. The tool still lists the panel sentence and the title as \"misplaced\" (the title moved down by the tab bar; the panel by the tab bar and strip), which come from the approved frame, not from this fix."
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Seven pending exceptions (\"11 Nov 16:40\", \"Owner update\", \"Fix is in testing\u2026\", \"10 Nov 09:15\", \"Engineering (recorded by PM) took it.\", \"Tola investigated\", \"Found 14 failed logins\u2026\") cite \"Conflicts 5/11\". Conflict 11 covers only the time format, and conflict 5 covers which sections the phone shows. Neither approves the timeline row layout: the board has the time in a left column, a bold title over the text, and on the phone a bordered card per event, while the page draws \"label \u00b7 text\" with the time on the right. They are legitimate only if the design engineer signs them as a new item (the shared timeline renderer). The reason text should say that, not cite D-111.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Exception \"OWNER FOLLOW-UP\" cites conflict 3. The approved conflict 3 says \"the section 'Owner follow-up' holds the step's button\", so the board heading was meant to stay, and the page shows the shared \"NEXT\" with a black head where the board has a blue decide head. A page string would break the \"no board string in src\" rule, so the heading would need a panel-title field (backend proposal). The design engineer should sign this as a change to the approved recommendation.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Visual waivers needed (D-83), each forced by approved decisions once UI-1-1 to UI-1-5 are fixed: frame (crumbs not linked, tab bar with no counts or current tab, History link, alerts bell; D-99, D-111 conflicts 7 to 9), the form opening on press (conflict 3), the phone using the desktop sections, sentences and item title instead of the status-as-title (D-99, conflicts 5 and 6), and the desktop default's extra \"Chasing\" section. That section is not on the default board; spec conflict 5 assumes the desktop has it, and the W-2411 fixture sends it. Mobile-verified at 68.4 is below the 70 floor. The gap is all approved content: the long backend sentence, the item title plus tag, and the Next panel with \"Open the issue register\" that the phone board omits. It needs a one-board exception to the floor (precedent F-23 SCR-28 at 69.2).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-17T18:38:46Z",
+          "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Criterion 12 is not met for the step forms (\"Post update\", \"Record a reply\").",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T19:29:07Z",
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:51:11Z",
+          "refs": [
+            "3a2884d4"
+          ],
+          "head": "3a2884d4707522db814305db68b78dc6e4fc682a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-17T20:00:22Z",
+          "refs": [
+            "qa8.cjs ran on W-2411 \"Post update\" at 1440 and in the 390 Drawer, by click and by Enter. Each empty submit sent 0 POSTs. The summary read \"2 things to fix \u00b7 Add update type to continue. \u00b7 Add update to continue.\" (role=alert). The focusin trace went submit, then summary, then the first Update type radio (Acknowledge), and focus ended on that radio, not the submit. The first link focuses that radio and the second focuses the Update textarea. After choosing \"Started\", resubmitting showed \"1 thing to fix\" with focus on the textarea. A valid submit sent 1 POST and showed \"Done: update posted.\" On W-2412 \"Record a reply\", at both widths and by click and Enter, the summary read \"1 thing to fix \u00b7 Add reply to continue.\" Focus ended on the Reply textarea, and the link focuses it. The Drawer was 844/844 high with no sideways scroll. Other lines draw no summary (only Workspace passes `summary` on `issue_followup`), and the workspace, weekly and minutes e2e plus their unit tests stay green."
+          ],
+          "head": "3a2884d4707522db814305db68b78dc6e4fc682a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3a2884d4"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "qa8.cjs ran on W-2411 \"Post update\" at 1440 and in the 390 Drawer, by click and by Enter. Each empty submit sent 0 POSTs. The summary read \"2 things to fix \u00b7 Add update type to continue. \u00b7 Add update to continue.\" (role=alert). The focusin trace went submit, then summary, then the first Update type radio (Acknowledge), and focus ended on that radio, not the submit. The first link focuses that radio and the second focuses the Update textarea. After choosing \"Started\", resubmitting showed \"1 thing to fix\" with focus on the textarea. A valid submit sent 1 POST and showed \"Done: update posted.\" On W-2412 \"Record a reply\", at both widths and by click and Enter, the summary read \"1 thing to fix \u00b7 Add reply to continue.\" Focus ended on the Reply textarea, and the link focuses it. The Drawer was 844/844 high with no sideways scroll. Other lines draw no summary (only Workspace passes `summary` on `issue_followup`), and the workspace, weekly and minutes e2e plus their unit tests stay green."
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The candidate option for a team reads \"Engineering / Team \u00b7 recorded by PM \u00b7 Team\" and the outside party reads \"Client \u00b7 recorded by PM \u00b7 Outside party\". When the fixture's `role` is already \"Team\", the page's own kind word repeats it. Spec item 11 says kind should appear \"as the backend words it\", and BACKEND-HANDOFF lists these words as frontend wording. Either drop the kind word when it equals `role`, or let the backend word it. `frontend/src/features/workspace/AssignForm.tsx:58-59`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T19:29:07Z",
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:51:11Z",
+          "refs": [
+            "3a2884d4"
+          ],
+          "head": "3a2884d4707522db814305db68b78dc6e4fc682a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-17T20:00:22Z",
+          "refs": [
+            "The W-2413 owner options at 1440 and 390 read \"Tunde Bello \u00b7 PM \u00b7 Raised it\", \"Engineering \u00b7 Team \u00b7 recorded by PM\" and \"Lagoon Health support \u00b7 Client \u00b7 recorded by PM \u00b7 Outside party\". The kind word no longer repeats the role."
+          ],
+          "head": "3a2884d4707522db814305db68b78dc6e4fc682a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3a2884d4"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "The W-2413 owner options at 1440 and 390 read \"Tunde Bello \u00b7 PM \u00b7 Raised it\", \"Engineering \u00b7 Team \u00b7 recorded by PM\" and \"Lagoon Health support \u00b7 Client \u00b7 recorded by PM \u00b7 Outside party\". The kind word no longer repeats the role."
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The e2e test \"an unknown issue is the same not-open view with no name\" (`e2e/issue-detail.spec.ts:143`) passes without testing anything. The mock serves W-1001 for any unknown id (`GET /api/v1/work/W-2499` returned \"Lagoon Health \u00b7 Milestone 2 invoice\", which the page draws as an h1). The test only checks that the issue title is absent. Criterion 15 does hold: I injected `x-mock-scenario` 403 and 404 on the item read only, and both showed the same \"NO ACCESS \u00b7 You can't open this work item\" view with no title, owner or ISS id. The e2e should use the scenario header on the item read instead.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-17T19:29:07Z",
+          "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-17T19:51:11Z",
+          "refs": [
+            "3a2884d4"
+          ],
+          "head": "3a2884d4707522db814305db68b78dc6e4fc682a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-17T20:00:22Z",
+          "refs": [
+            "`e2e/issue-detail.spec.ts:144` now sends `x-mock-scenario` 403 and 404 on the W-2411 item read only. It asserts the visible text \"You can\u2019t open this work item\", that neither the title nor ISS-0233 appears, and an axe check. All four cases (403 and 404, at desktop 1440 and phone 390) passed in the run above. Because the test asserts the not-open text is visible, it now fails if that view is missing."
+          ],
+          "head": "3a2884d4707522db814305db68b78dc6e4fc682a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "3a2884d4"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "`e2e/issue-detail.spec.ts:144` now sends `x-mock-scenario` 403 and 404 on the W-2411 item read only. It asserts the visible text \"You can\u2019t open this work item\", that neither the title nor ISS-0233 appears, and an axe check. All four cases (403 and 404, at desktop 1440 and phone 390) passed in the run above. Because the test asserts the not-open text is visible, it now fails if that view is missing."
+      ]
+    },
+    {
+      "id": "PMO-3-5",
+      "round": 3,
+      "snapshot_ref": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The builder's full `checks.sh` failed twice on unrelated timing tests (`setup-rules`, `rfp`) in round 3 (`round-3/build.md`). The coordinator's gate then passed, and so did the merged-head run. I accept the gate result and suggest logging the two flaky tests for a separate fix.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T23:53:27Z",
+          "head": "159262446042b5ff19fc5de2a8a089bb654b02fb"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-6",
+      "round": 3,
+      "snapshot_ref": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UX-1-2, UX-1-3, UX-1-4 and TECH-1-1 remain OPEN or FIX_SUBMITTED, all non-blocking. UX-1-3 (W-2413 \"Next\" wording vs the button) is fixture data. Carry them to the next slice or close them with a stated reason. The same goes for UI-1-8 if `feature.json` still shows it open. D-112 signs the waivers it concerned.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-30/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-17T23:53:27Z",
+          "head": "159262446042b5ff19fc5de2a8a089bb654b02fb"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+          "evidence_refs": [
+            "delivery/features/F-30/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-30/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+          "evidence_refs": [
+            "delivery/features/F-30/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate, D-83)",
+          "snapshot_ref": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+          "evidence_refs": [
+            "delivery/features/F-30/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": null,
+          "snapshot_ref": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "evidence_refs": [
+            "delivery/features/F-30/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "integrated QA (frontend against the contract mock)",
+          "snapshot_ref": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "evidence_refs": [
+            "delivery/features/F-30/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-30/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": null,
+          "snapshot_ref": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "evidence_refs": [
+            "delivery/features/F-30/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (design-fidelity gate, D-83)",
+          "snapshot_ref": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+          "evidence_refs": [
+            "delivery/features/F-30/round-2/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-ISSUE",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "8524af3ced023f5a070bb46e5ba3708c9acf53c6",
+    "task_branch": "fe-issue-issue-detail-an-issue-s-work-item-shows",
+    "head_sha": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-30",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/60",
+    "pr_number": 60,
+    "pr_author": null,
+    "designated_approver": "design engineer (hunchoweb), D-112",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "7aac1fb5360298729b95e069052c7fe211333108",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-28/decision.md",
+      "delivery/features/F-28/feature.json",
+      "delivery/features/F-28/fidelity-exceptions.json",
+      "delivery/features/F-28/round-1/build.md",
+      "delivery/features/F-28/round-1/checks.md",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/board-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/board.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/board.rendered.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/diff.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/page-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/page.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/report.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/report.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/report.reviewer-ui.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/side-by-side.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-internal-1440/side-by-side.reviewer-ui.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/board-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/board.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/board.rendered.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/diff.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/page-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/page.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/report.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/report.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/report.reviewer-ui.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/side-by-side.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-desktop-published-1440/side-by-side.reviewer-ui.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/board-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/board.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/board.rendered.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/diff.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/page-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/page.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/report.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/report.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/report.reviewer-ui.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/side-by-side.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-internal-390/side-by-side.reviewer-ui.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/board-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/board.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/board.rendered.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/diff.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/page-marked.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/page.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/report.html",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/report.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/report.reviewer-ui.json",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/side-by-side.png",
+      "delivery/features/F-28/round-1/fidelity/SCR-28-mobile-published-390/side-by-side.reviewer-ui.png",
+      "delivery/features/F-28/round-1/fidelity/scores.txt",
+      "delivery/features/F-28/round-1/review-security.md",
+      "delivery/features/F-28/round-1/review-technical.md",
+      "delivery/features/F-28/round-1/review-ui.md",
+      "delivery/features/F-28/round-1/review-ux.md",
+      "delivery/features/F-28/round-2/acceptance-pmo.md",
+      "delivery/features/F-28/round-2/build.md",
+      "delivery/features/F-28/round-2/checks.md",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/board-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/board.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/board.rendered.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/diff.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/page-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/page.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/report.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/report.json",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-internal-1440/side-by-side.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/board-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/board.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/board.rendered.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/diff.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/page-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/page.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/report.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/report.json",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-desktop-published-1440/side-by-side.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/board-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/board.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/board.rendered.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/diff.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/page-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/page.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/report.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/report.json",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-internal-390/side-by-side.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/board-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/board.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/board.rendered.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/diff.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/page-marked.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/page.png",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/report.html",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/report.json",
+      "delivery/features/F-28/round-2/fidelity/SCR-28-mobile-published-390/side-by-side.png",
+      "delivery/features/F-28/round-2/fidelity/scores.txt",
+      "delivery/features/F-28/round-2/review-qa.md",
+      "delivery/features/F-28/round-2/review-security.md",
+      "delivery/features/F-28/round-2/review-technical.md",
+      "delivery/features/F-28/round-2/review-ui.md",
+      "delivery/features/F-28/round-2/review-ux.md",
+      "delivery/features/F-29/feature.json",
+      "delivery/features/F-29/fidelity-exceptions.json",
+      "delivery/features/F-29/round-1/build.md",
+      "delivery/features/F-29/round-1/checks.md",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440.txt",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/board-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/board.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/board.rendered.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/diff.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/page-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/page.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/report.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/report.json",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-1440/side-by-side.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440.txt",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/board-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/board.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/board.rendered.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/diff.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/page-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/page.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/report.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/report.json",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-desktop-returned-1440/side-by-side.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390.txt",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/board-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/board.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/board.rendered.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/diff.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/page-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/page.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/report.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/report.json",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-390/side-by-side.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390.txt",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/board-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/board.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/board.rendered.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/diff.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/page-marked.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/page.png",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/report.html",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/report.json",
+      "delivery/features/F-29/round-1/fidelity/SCR-08-mobile-returned-390/side-by-side.png",
+      "delivery/features/F-29/round-1/review-technical.md",
+      "delivery/features/F-29/round-1/review-ui.md",
+      "delivery/features/F-29/round-1/review-ux.md",
+      "delivery/features/F-29/round-2/acceptance-pmo.md",
+      "delivery/features/F-29/round-2/acceptance-product.md",
+      "delivery/features/F-29/round-2/build.md",
+      "delivery/features/F-29/round-2/checks.md",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440.txt",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/board-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/board.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/board.rendered.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/diff.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/page-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/page.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/report.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/report.json",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-1440/side-by-side.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440.txt",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/board-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/board.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/board.rendered.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/diff.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/page-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/page.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/report.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/report.json",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-desktop-returned-1440/side-by-side.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390.txt",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/board-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/board.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/board.rendered.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/diff.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/page-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/page.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/report.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/report.json",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-390/side-by-side.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390.txt",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/board-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/board.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/board.rendered.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/diff.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/page-marked.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/page.png",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/report.html",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/report.json",
+      "delivery/features/F-29/round-2/fidelity/SCR-08-mobile-returned-390/side-by-side.png",
+      "delivery/features/F-29/round-2/review-qa.md",
+      "delivery/features/F-29/round-2/review-technical.md",
+      "delivery/features/F-29/round-2/review-ui.md",
+      "delivery/features/F-29/round-2/review-ux.md",
+      "delivery/features/F-30/feature.json",
+      "delivery/features/F-30/fidelity-exceptions.json",
+      "delivery/features/F-30/round-1/build.md",
+      "delivery/features/F-30/round-1/checks.md",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-1440/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-no-owner-1440/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-overdue-1440/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-390/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-no-owner-390/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-overdue-390/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/board-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/board.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/diff.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/page-marked.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/page.png",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/report.html",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/report.json",
+      "delivery/features/F-30/round-1/fidelity/SCR-30-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-30/round-1/fidelity/run.sh",
+      "delivery/features/F-30/round-1/fidelity/scores.txt",
+      "delivery/features/F-30/round-1/review-technical.md",
+      "delivery/features/F-30/round-1/review-ui.md",
+      "delivery/features/F-30/round-1/review-ux.md",
+      "delivery/features/F-30/round-2/build.md",
+      "delivery/features/F-30/round-2/checks.md",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-1440/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-no-owner-1440/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-overdue-1440/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-desktop-verified-1440/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-390/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-no-owner-390/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-overdue-390/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/board-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/board.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/board.rendered.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/diff.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/page-marked.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/page.png",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/report.html",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/report.json",
+      "delivery/features/F-30/round-2/fidelity/SCR-30-mobile-verified-390/side-by-side.png",
+      "delivery/features/F-30/round-2/fidelity/run.sh",
+      "delivery/features/F-30/round-2/fidelity/scores.txt",
+      "delivery/features/F-30/round-2/review-qa.md",
+      "delivery/features/F-30/round-2/review-technical.md",
+      "delivery/features/F-30/round-2/review-ui.md",
+      "delivery/features/F-30/round-2/review-ux.md",
+      "delivery/features/F-30/round-3/acceptance-pmo.md",
+      "delivery/features/F-30/round-3/acceptance-product.md",
+      "delivery/features/F-30/round-3/build.md",
+      "delivery/features/F-30/round-3/checks.md",
+      "delivery/features/F-30/round-3/review-qa.md",
+      "delivery/features/F-30/round-3/review-technical.md",
+      "delivery/features/F-30/round-3/review-ui.md",
+      "delivery/features/F-30/round-3/review-ux.md",
+      "frontend/e2e/document-review.spec.ts",
+      "frontend/e2e/issue-detail.spec.ts",
+      "frontend/e2e/minutes-end.spec.ts",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/D-2901.1.json",
+      "frontend/mock/fixtures/documents/D-2901.2.json",
+      "frontend/mock/fixtures/projects/tabs/P-0101.documents.json",
+      "frontend/mock/fixtures/projects/tabs/P-0101.registers.json",
+      "frontend/mock/fixtures/projects/tabs/P-0106.documents.json",
+      "frontend/mock/fixtures/work/W-2301.next.internal.json",
+      "frontend/mock/fixtures/work/W-2309.approve.json",
+      "frontend/mock/fixtures/work/W-2309.json",
+      "frontend/mock/fixtures/work/W-2310.json",
+      "frontend/mock/fixtures/work/W-2311.json",
+      "frontend/mock/fixtures/work/W-2312.json",
+      "frontend/mock/fixtures/work/W-2313.json",
+      "frontend/mock/fixtures/work/W-2313.steps.json",
+      "frontend/mock/fixtures/work/W-2314.json",
+      "frontend/mock/fixtures/work/W-2411.json",
+      "frontend/mock/fixtures/work/W-2411.next.json",
+      "frontend/mock/fixtures/work/W-2411.steps.json",
+      "frontend/mock/fixtures/work/W-2412.json",
+      "frontend/mock/fixtures/work/W-2412.next.json",
+      "frontend/mock/fixtures/work/W-2412.steps.json",
+      "frontend/mock/fixtures/work/W-2413.json",
+      "frontend/mock/fixtures/work/W-2413.next.json",
+      "frontend/mock/fixtures/work/W-2414.json",
+      "frontend/mock/fixtures/work/W-2901.approve.json",
+      "frontend/mock/fixtures/work/W-2901.json",
+      "frontend/mock/fixtures/work/W-2901.return.json",
+      "frontend/mock/fixtures/work/W-2902.json",
+      "frontend/mock/project-tabs.mjs",
+      "frontend/mock/proposals/document-review.json",
+      "frontend/mock/server.mjs",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/app/projects/[caseId]/documents/[documentId]/page.tsx",
+      "frontend/src/features/documents/DocumentParts.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/documents/ReviewControls.tsx",
+      "frontend/src/features/documents/document-review.css",
+      "frontend/src/features/documents/documentModel.ts",
+      "frontend/src/features/documents/useDocument.ts",
+      "frontend/src/features/projects/DocumentsTab.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/ProjectTabContent.tsx",
+      "frontend/src/features/projects/tabsModel.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/src/features/workspace/AssignForm.tsx",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/StepForm.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/useWorkspaceAssign.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/document-review-model.test.ts",
+      "frontend/tests/document-review.test.tsx",
+      "frontend/tests/issue-assign-mock.test.ts",
+      "frontend/tests/issue-detail.test.tsx",
+      "frontend/tests/minutes-end-mock.test.ts",
+      "frontend/tests/minutes-end.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-document-review.test.ts",
+      "frontend/tests/mock-money.test.ts",
+      "frontend/tests/mock-project-tabs.test.ts",
+      "frontend/tests/mock-projects.test.ts",
+      "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/workspace.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "438 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-17T17:18:01Z",
+  "round": 3,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-17T17:28:07Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T17:28:49Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T18:30:50Z",
+      "round": 1,
+      "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T18:38:46Z",
+      "round": 1,
+      "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T18:38:47Z",
+      "round": 2,
+      "head": "0b69974d2b1d1b2eb6caa228c98466cf054f1698",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T19:06:08Z",
+      "round": 2,
+      "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T19:08:24Z",
+      "round": 2,
+      "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-17T19:29:07Z",
+      "round": 2,
+      "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-17T19:29:07Z",
+      "round": 3,
+      "head": "48ba8f7a6f3cf40c6e185d87dfe9ff4fbabd4c83",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-17T19:51:24Z",
+      "round": 3,
+      "head": "3a2884d4707522db814305db68b78dc6e4fc682a",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-17T20:00:22Z",
+      "round": 3,
+      "head": "3a2884d4707522db814305db68b78dc6e4fc682a",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-17T20:00:31Z",
+      "round": 3,
+      "head": "3a2884d4707522db814305db68b78dc6e4fc682a",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-17T23:53:27Z",
+      "round": 3,
+      "head": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-17T23:53:52Z",
+      "round": 3,
+      "head": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-17T23:53:52Z",
+      "round": 3,
+      "head": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-17T23:53:53Z",
+      "round": 3,
+      "head": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-17T23:53:53Z",
+      "round": 3,
+      "head": "159262446042b5ff19fc5de2a8a089bb654b02fb",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-30/readiness.md",
+      "delivery/features/F-30/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 3,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "3a2884d4707522db814305db68b78dc6e4fc682a"
+  },
+  "blocked": null
+}

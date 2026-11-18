@@ -1,0 +1,9 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-30-desktop-1440	1440	76.5	100	74.3	False
+SCR-30-desktop-overdue-1440	1440	85.7	100	88.4	False
+SCR-30-desktop-no-owner-1440	1440	84.6	100	85.2	False
+SCR-30-desktop-verified-1440	1440	84.6	100	87.2	False
+SCR-30-mobile-390	390	35.3	100	81.9	False
+SCR-30-mobile-overdue-390	390	66.7	100	84.6	False
+SCR-30-mobile-no-owner-390	390	66.7	100	89.9	False
+SCR-30-mobile-verified-390	390	40	100	68.5	False

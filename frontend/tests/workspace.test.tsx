@@ -109,14 +109,15 @@ describe('header from data', () => {
     expect(ws.queryByRole('heading', { name: data.title })).toBeNull();
   });
 
-  it('D-81: the project tab bar comes from the workspace project; only Journey is a link; phones and items without a project draw none', async () => {
+  it('D-81, F-30: the project tab bar comes from the workspace project; every tab with a page is a link and none is current; phones and items without a project draw none', async () => {
     const body = item('W-2001');
     await open(body);
     const bar = screen.getByRole('navigation', { name: 'Project' });
-    expect(within(bar).getAllByText(/./).map(text)).toEqual(['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
+    expect(within(bar).getAllByText(/./).map(text)).toEqual(['Journey', 'Delivery', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
     const links = within(bar).getAllByRole('link');
-    expect(links.map(text)).toEqual(['Journey']);
-    expect(links[0].getAttribute('href')).toBe('/projects/C-0211');
+    expect(links.map(text)).toEqual(['Journey', 'Delivery', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/projects/C-0211', '/projects/C-0211/delivery', '/projects/C-0211/milestones', '/projects/C-0211/documents', '/projects/C-0211/money', '/projects/C-0211/registers', '/projects/C-0211/actions']);
+    expect(bar.querySelector('[aria-current]')).toBeNull();
     expect(bar.querySelectorAll('[tabindex]')).toHaveLength(0);
   });
 

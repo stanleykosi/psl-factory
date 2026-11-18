@@ -83,7 +83,10 @@
   .work-columns { grid-template-columns: minmax(0, 1fr) 324px; }
   .work-board .work-columns { grid-template-columns: minmax(0, 1fr) 324px; gap: var(--space-22px); }
   .work-columns--history { grid-template-columns: minmax(0, 1fr) 300px; gap: var(--space-22px); }
+  .work-columns--lone, .work-board .work-columns--lone { grid-template-columns: minmax(0, 1fr); gap: 0; }
 }
+.work-columns--lone > .work-column:first-child { display: contents; }
+.work-columns--lone > .work-aside { margin-bottom: var(--space-5); }
 
 /* mascots */
 .work-mascot { width: 36px; height: 36px; flex: none; border-radius: var(--radius-round); object-fit: cover; background: var(--mascot-chidi-tint); }
@@ -393,12 +396,10 @@ body:has(.sw-phoneslot) .work-barref { right: calc(var(--space-4) + 134px + var(
 .work-header--line .work-titleline { justify-content: space-between; }
 .work-linemeta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .work-overview--line { gap: 0; }
-/* D-81: the line title is the boards' ~35px (token); the project tab bar sits under it, its unbuilt tabs plain text */
+/* D-81: the line title is the boards' ~35px (token); the project tab bar sits under it */
 .work-header--line { --title-line: 35px; } /* local token: tokens.css is generated from the design system */
 @media (min-width: 720px) { .work-header--line .shell-title { font-size: var(--title-line); } }
 .work-projecttabs { align-self: flex-start; }
-.work-projecttab--plain { cursor: default; }
-.work-projecttab--plain:hover { background: var(--surface); }
 @media (max-width: 719.98px) {
   .work-header--line { gap: 9px; margin-top: -2px; }
   .work-linemeta .work-sub { font-size: var(--text-small-size); }

@@ -148,17 +148,17 @@ function StatusWord({ value, kind }: { value: string; kind: 'status' | 'receipt'
   return <span className={`ws-word ws-word--${kind}-${value}`}>{word(words, value)}</span>;
 }
 
-function FactsList({ section }: { section: Section }) {
+function FactsList({ section, strip }: { section: Section; strip?: boolean }) {
   return (
     <dl className="ws-facts">
-      {section.items.map((item) => (
-        <div key={item.id} className="ws-fact">
+      {section.items.filter((item) => !(strip && item.severity)).map((item) => (
+        <div key={item.id} className={`ws-fact${item.status === 'blocked' ? ' ws-fact--blocked' : ''}`}>
           {item.restricted ? (
             <dd>{WS_TEXT.restricted}</dd>
           ) : (
             <>
               <dt>{item.label ?? item.text}</dt>
-              <dd>{item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? item.value : <Unknown />}</dd>
+              <dd>{item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? item.value : item.severity ? <StatusWord value={item.severity} kind="severity" /> : <Unknown />}</dd>
             </>
           )}
         </div>
@@ -168,11 +168,16 @@ function FactsList({ section }: { section: Section }) {
 }
 
 function CellValue({ cell, column }: { cell: Cell | undefined; column: Column }) {
-  if (!cell) return null;
-  if (cell.restricted) return <>{WS_TEXT.restricted}</>;
   const kind = column.kind ?? 'text';
+  // F-31: a state tag the row does not carry reads Unknown, never a blank
+  if (!cell) return kind === 'tag' ? <Unknown /> : null;
+  if (cell.restricted) return <>{WS_TEXT.restricted}</>;
   let value: ReactNode = cell.text;
-  if (kind === 'money') value = cell.money ? <MoneyValue money={cell.money} /> : <Unknown />;
+  // F-31: an estimate or other value the response leaves out reads Unknown (a cell that exists and carries nothing)
+  if ((kind === 'text' || kind === 'integer' || kind === 'tag') && !hasValue(cell.text) && !cell.money && !cell.tag && !cell.link && !cell.date) value = <Unknown />;
+  // F-31 (G-41-3): a text cell that also carries a typed amount reads "text · amount", the amount in the table's money format
+  else if (kind === 'text' && hasValue(cell.text) && cell.money) value = `${cell.text} · ${moneyText(cell.money) ?? WS_TEXT.unknown}`;
+  else if (kind === 'money') value = cell.money ? <MoneyValue money={cell.money} /> : <Unknown />;
   else if (kind === 'date') value = cell.date ? <DateText value={cell.date} short={columnDayMonth(column)} /> : <Unknown />;
   else if (kind === 'tag' && cell.tag) value = <Tag tone={tagTone(cell.tag.tone)}>{cell.tag.label}</Tag>;
   else if (kind === 'reference' && cell.link && !cell.text) return <RefView value={cell.link} />;
@@ -197,10 +202,10 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
   const stepCol = controls?.item !== undefined && section.items.some((i) => hasNode(controls.item?.(section, i)));
   const span = columns.length + (selectable ? 1 : 0) + (stepCol ? 1 : 0);
   return (
-    // The frame scrolls sideways on phones, so it takes focus for keyboard scrolling (WCAG 2.1.1).
+    // A table with a state tag column stacks its cells on phones (labelled); any other scrolls sideways there, so it takes focus for keyboard scrolling (WCAG 2.1.1).
     // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
     <div className="psl-tablewrap ws-tablewrap" tabIndex={0} role="region" aria-label={section.title ? `Table: ${section.title}` : 'Table'}>
-      <table className="psl-table ws-table">
+      <table className={`psl-table ws-table${columns.some((c) => c.kind === 'tag') ? ' ws-table--stack' : ''}`}>
         <thead>
           <tr>
             {selectable && (
@@ -235,7 +240,7 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
                 <tr>
                   {selectable && <td className="psl-check-cell">{controls?.select?.(section, item)}</td>}
                   {columns.map((c) => (
-                    <td key={c.key} className={c.kind === 'money' || c.kind === 'integer' ? 'num' : c.kind === 'reference' ? 'psl-mono' : undefined}>
+                    <td key={c.key} data-label={c.label} className={c.kind === 'money' || c.kind === 'integer' ? 'num' : c.kind === 'reference' ? 'psl-mono' : undefined}>
                       <CellValue cell={item.cells?.find((cell) => cell.column === c.key)} column={c} />
                     </td>
                   ))}
@@ -342,8 +347,8 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {item.channel && <span className="ws-detail">{item.channel}</span>}
               </span>,
               <>
-                {/* the backend's own tag, when it sends one, stands in for the receipt word (Conflicts 2) */}
-                {item.tag ? <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag> : item.receipt && <StatusWord value={item.receipt} kind="receipt" />}
+                {/* the backend's own tag, when it sends one, stands in for the receipt word (Conflicts 2); a person on a channel with no receipt reads Unknown, never blank (F-28) */}
+                {item.tag ? <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag> : (item.receipt ?? (item.channel ? 'unknown' : undefined)) && <StatusWord value={item.receipt ?? 'unknown'} kind="receipt" />}
                 {item.at ? <time dateTime={item.at}> {formatDayTime(item.at)}</time> : (item.receipt === 'received' || item.receipt === 'uncertain') && <span> {WS_TEXT.timeUnknown}</span>}
               </>,
             );
@@ -354,7 +359,11 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 <span>{item.label ?? item.text}</span>
                 <Detail text={item.detail} />
               </span>,
-              item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? <span className="ws-value">{item.value}</span> : <Unknown />,
+              <>
+                {item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? <span className="ws-value">{item.value}</span> : <Unknown />}
+                {/* F-33: the tag the backend sends with a figure ("CHIDI CHECKING") is drawn beside its value */}
+                {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}
+              </>,
             );
           case 'timeline':
             return row(
@@ -366,7 +375,10 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {(item.agent || item.owner) && <span className="ws-detail">{item.agent ? agentName(item.agent) : item.owner?.name}</span>}
                 <Detail text={item.detail} />
               </span>,
-              item.at ? <time dateTime={item.at}>{formatDayTime(item.at)}</time> : undefined,
+              <>
+                {item.receipt && <StatusWord value={item.receipt} kind="receipt" />}
+                {item.at ? <time dateTime={item.at}>{formatDayTime(item.at)}</time> : <span>{WS_TEXT.timeUnknown}</span>}
+              </>,
             );
           default:
             // `text` and any kind the frame does not know: the words and their cites
@@ -436,7 +448,8 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
   );
 }
 
-export function SectionView({ section, level, controls }: { section: Section; level: 2 | 3; controls?: ItemControls }) {
+/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default. */
+export function SectionView({ section, level, controls, banner = 'warning', strip = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; banner?: 'warning' | 'success' | 'problem' }) {
   const headId = useId();
   const noteId = useId();
   const Heading = level === 2 ? 'h2' : 'h3';
@@ -445,13 +458,13 @@ export function SectionView({ section, level, controls }: { section: Section; le
   // Conflicts 1: a section with no items and no title but a note is the page's banner: the warning alone, no panel
   if (!restricted && empty && !section.title && section.note) {
     return (
-      <Callout kind="warning" announce={false} className="ws-note">
+      <Callout kind={banner} announce={false} className="ws-note">
         {section.note}
       </Callout>
     );
   }
   return (
-    <section className={`psl-panel ws-section ws-section--${section.kind}${section.title ? '' : ' ws-section--untitled'}`} aria-labelledby={section.title ? headId : undefined}>
+    <section className={`psl-panel ws-section ws-section--${section.kind}${strip ? ' ws-section--strip' : ''}${section.title ? '' : ' ws-section--untitled'}`} aria-labelledby={section.title ? headId : undefined}>
       {section.title && (
         <Heading id={headId} className="psl-panel__head ws-section__head">
           {section.title}
@@ -473,7 +486,7 @@ export function SectionView({ section, level, controls }: { section: Section; le
             {empty ? (
               <p className="ws-empty">{WS_TEXT.empty}</p>
             ) : section.kind === 'facts' ? (
-              <FactsList section={section} />
+              <FactsList section={section} strip={strip} />
             ) : section.kind === 'table' ? (
               <Table section={section} controls={controls} />
             ) : (

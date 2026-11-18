@@ -1,0 +1,326 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-17T18:51:43.400Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-30-mobile-no-owner.dc.html",
+  "boardName": "SCR-30-mobile-no-owner.dc.html",
+  "pageUrl": "http://localhost:4831/work/W-2413",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-30/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 89.9 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 66.7,
+    "coverageWithExceptions": 100,
+    "visual": 89.9
+  },
+  "visual": {
+    "score": 89.9,
+    "allCellsScore": 90.1,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2298,
+    "mismatchedCells": 233
+  },
+  "coverage": {
+    "total": 6,
+    "found": 4,
+    "coverage": 66.7,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0240",
+        "pageName": "ISS-0240",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Owner needed",
+        "pageName": "Report totals round differently",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Owner needed\" on the board, \"Report totals round differently\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Set an owner",
+        "pageName": "Set an owner",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 64,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: one back link in the shell bar (\"Back to Queue\"), the F-22 frame as built.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0240 has no owner, so nobody can be chased.",
+        "key": "text: ISS-0240 has no owner, so nobody can be chased.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 114,
+          "w": 306,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 5/6: the phone board words the lead differently from desktop; the page draws the one sentence the response sends on both.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"ISS-0240\"",
+        "kind": "Text",
+        "name": "ISS-0240",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Link \"Set an owner\"",
+        "kind": "Link",
+        "name": "Set an owner",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Project",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 60,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OWNER NEEDED",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 112,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola can't follow this issue up: it has no owner.",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 173,
+          "w": 289,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Set an owner in the issue register; follow-up starts straight away.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 732,
+          "w": 358,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

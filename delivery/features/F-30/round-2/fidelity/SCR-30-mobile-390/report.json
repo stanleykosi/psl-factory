@@ -1,0 +1,540 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-17T18:51:32.304Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-30-mobile.dc.html",
+  "boardName": "SCR-30-mobile.dc.html",
+  "pageUrl": "http://localhost:4831/work/W-2411",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-30/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 81.9 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 35.3,
+    "coverageWithExceptions": 100,
+    "visual": 81.9
+  },
+  "visual": {
+    "score": 81.9,
+    "allCellsScore": 82.3,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1112,
+    "cell": 12,
+    "contentCells": 2291,
+    "mismatchedCells": 414
+  },
+  "coverage": {
+    "total": 17,
+    "found": 6,
+    "coverage": 35.3,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0233",
+        "pageName": "ISS-0233",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Login fails on older Android phones",
+        "pageName": "Login fails on older Android phones",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FIX IN TESTING",
+        "pageName": "FIX IN TESTING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 94,
+          "y": 125,
+          "w": 106,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 109,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "09 Nov 18:02",
+        "pageName": "09 Nov",
+        "pageRole": "text",
+        "similarity": 80,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 374,
+          "w": 330,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 315,
+          "y": 216,
+          "w": 43,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Post an update",
+        "pageName": "Post update",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Registers",
+        "key": "link: ← Registers",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 80,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: one back link in the shell bar (\"Back to Queue\"), the F-22 frame as built.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "■■■HIGH",
+        "key": "text: ■■■HIGH",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 125,
+          "w": 72,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Conflicts 10: severity is a facts row in the list (SEVERITY High) from the data, not a tag beside the status.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "■■■",
+        "key": "text: ■■■",
+        "container": "page",
+        "boardBox": {
+          "x": 24,
+          "y": 128,
+          "w": 19,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 10: severity is a facts row in the list (SEVERITY High) from the data, not a tag beside the status.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "11 Nov 16:40",
+        "key": "text: 11 Nov 16:40",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 172,
+          "w": 330,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Owner update",
+        "key": "text: Owner update",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 192,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Fix is in testing on 3 older Android models.",
+        "key": "text: Fix is in testing on 3 older Android models.",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 216,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10 Nov 09:15",
+        "key": "text: 10 Nov 09:15",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 273,
+          "w": 330,
+          "h": 14
+        },
+        "exception": {
+          "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Owner acknowledged",
+        "key": "text: Owner acknowledged",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 293,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 5/6: the phone board words the lead differently from desktop; the page draws the one sentence the response sends on both.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engineering (recorded by PM) took it.",
+        "key": "text: Engineering (recorded by PM) took it.",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 317,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola investigated",
+        "key": "text: Tola investigated",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 394,
+          "w": 330,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Found 14 failed logins, all Android 9 or older, since release 1.4.",
+        "key": "text: Found 14 failed logins, all Android 9 or older, since release 1.4.",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 418,
+          "w": 330,
+          "h": 34
+        },
+        "exception": {
+          "reason": "Conflicts 5/11: the timeline row draws \"label · text\" with the time at the end, as the shared timeline renderer does; the phone board stacks time, bold title and text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"ISS-0233\"",
+        "kind": "Text",
+        "name": "ISS-0233",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Text \"FIX IN TESTING\"",
+        "kind": "Text",
+        "name": "FIX IN TESTING",
+        "boardBox": {
+          "x": 94,
+          "y": 125,
+          "w": 106,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 109,
+          "h": 23
+        },
+        "reasons": [
+          "across the page: middle on the board (38% across), left on the page (18% across)"
+        ]
+      },
+      {
+        "label": "Link \"Post an update\"",
+        "kind": "Link",
+        "name": "Post an update",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Project",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 60,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The owner can acknowledge, start and report progress. Severity, resolution and closing stay in the issue register (closing needs QA and the PM).",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 717,
+          "w": 358,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "complementary",
+        "pageBox": {
+          "x": 28,
+          "y": 882,
+          "w": 334,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "This issue is blocking go-live. I'll remind the owner if there's no update by 13 Nov.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 28,
+          "y": 905,
+          "w": 334,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
