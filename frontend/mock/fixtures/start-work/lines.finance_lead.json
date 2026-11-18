@@ -43,6 +43,86 @@
         "summary": "Chidi drafts the invoice from the signed SOW · issue, delivery and verification are automatic.",
         "journey_url": "/projects"
       }
+    },
+    {
+      "key": "income_schedules",
+      "title": "Income detail or schedule inventory",
+      "group": "Finance back office",
+      "case_scope": "fixed",
+      "case_id": "C-FIN-SCHEDULES",
+      "case_revision": 3,
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "kind",
+          "label": "Kind",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "income_detail",
+              "label": "Income detail"
+            },
+            {
+              "value": "inventory",
+              "label": "Inventory"
+            }
+          ]
+        },
+        {
+          "name": "reference",
+          "label": "Reference",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "mapping_run",
+          "label": "Mapping note",
+          "type": "record",
+          "required": true,
+          "options_source": "line_options"
+        },
+        {
+          "name": "proof",
+          "label": "Proof",
+          "type": "evidence",
+          "required": true,
+          "evidence_kind": "schedule_source"
+        }
+      ]
+    },
+    {
+      "key": "ledger_sources",
+      "title": "Record a ledger source",
+      "group": "Finance back office",
+      "case_scope": "fixed",
+      "case_id": "C-FIN-LEDGER",
+      "case_revision": 2,
+      "start_via": "work_start",
+      "intake": [
+        {
+          "name": "key",
+          "label": "Key",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "proof",
+          "label": "Proof",
+          "type": "evidence",
+          "required": true,
+          "evidence_kind": "ledger_source"
+        },
+        {
+          "name": "continues",
+          "label": "Continues",
+          "type": "record",
+          "required": false,
+          "placeholder": "None",
+          "help": "Only for a correction of an earlier capture",
+          "options_source": "line_options"
+        }
+      ]
     }
   ],
   "default_line": "invoice",

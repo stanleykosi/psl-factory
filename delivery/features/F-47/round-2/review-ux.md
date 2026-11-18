@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-ux
-COMMIT: 8d7da0c400b19e41356a0230e1328978452bc763
+COMMIT: cfd8a916060e08c73e7217af956fe4d3b98f41a1
 AUTHORITY: delivery UX review
 
 ## Summary
@@ -16,3 +16,11 @@ None.
 ## Verified
 - UX-1-1 | verified | StartProof.tsx adds a hidden role="alert" per failed (non-403/404) file. The vitest "UX-1-1: each upload failure is announced…" covers a 422 .exe, a 500, a 409 and a 200 without an id, and checks no alert is left after a fix. e2e "ledger states" asserts the alert text at 1440 and 390 with axe clean.
 - UX-1-2, UX-1-3, UX-1-4 | carried forward | non-blocking and unchanged this round. The e2e axe runs at both widths stay clean, which still answers UX-1-4.
+
+## Update for head cfd8a916 (diff 8d7da0c4..cfd8a916)
+
+- None of F-47's files (start-work intake, ProofField, useEvidenceUpload, server.mjs, me.finance_lead.json) changed in 8d7da0c4..cfd8a916; the only F-47 file touched is tests/mock-contract.test.ts, which gained F-31, F-32 and F-33 proposal checks.
+- Re-run on the worktree: start-work, response and mock-contract tests, 9 files, 571 passed. checks.sh passed (2552) and e2e passed (99) per build.md.
+- F-31 response Drawer and F-33 lines are untouched by F-47 and their tests pass.
+
+Verdict unchanged.

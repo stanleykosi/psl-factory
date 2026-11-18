@@ -71,6 +71,10 @@
 .ws-empty, .ws-restricted { margin: 0; line-height: 1.5; }
 .ws-empty, .ws-restricted { color: var(--ink-muted); }
 .ws-detail { font-size: var(--text-hint-size); color: var(--ink-muted); }
+/* PROPOSAL (F-41 G-SCR32-3): the file that goes with a message, as the SCR-32 board draws it (dashed box, paperclip); text only, never a link.
+   Drawn only for an item that carries `attachment`; today that is the payment reminder alone. */
+.ws-attachment { display: flex; align-items: center; gap: var(--space-10px); margin-top: var(--space-2); padding: var(--space-10px) var(--space-3); border: var(--rule-strong) dashed var(--ink); background: var(--surface); color: var(--ink); }
+.ws-attachment__meta { display: block; font-size: var(--text-small-size); color: var(--ink-muted); }
 
 /* rows */
 .ws-rows { list-style: none; margin: 0; padding: 0; }
@@ -270,3 +274,16 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-idecide__buttons > :first-child { grid-column: 1 / -1; }
   .ws-lineagent .psl-agent__foot .psl-link { display: inline-flex; align-items: center; min-height: var(--control-md); }
 }
+
+/* F-42: the fixed asset tables stack on a phone, each cell with its column label, so no column is cut off or scrolled to */
+@media (max-width: 719.98px) {
+  .ws[data-line="fixed_assets"] .ws-table { min-width: 0; }
+  .ws[data-line="fixed_assets"] .ws-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .ws[data-line="fixed_assets"] .ws-table tr { display: block; padding: var(--space-6px) 0; border-top: var(--rule-thin) solid var(--rule-soft); }
+  .ws[data-line="fixed_assets"] .ws-table td[data-label] { display: grid; grid-template-columns: 7rem minmax(0, 1fr); column-gap: var(--space-10px); white-space: normal; border: none; align-items: center; }
+  .ws[data-line="fixed_assets"] .ws-table td[data-label]::before { content: attr(data-label); font-size: var(--text-small-size); color: var(--ink-muted); text-transform: uppercase; }
+}
+/* F-42 (UI-1-1): the proof row draws the file name as returned, in body text, with its detail ("Uploaded · 64 KB") under it, as the board does */
+.ws[data-line="fixed_assets"] .ws-rows--text .ws-row { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0; }
+.ws[data-line="fixed_assets"] .ws-rows--text .ws-row__end { order: -1; }
+.ws[data-line="fixed_assets"] .ws-rows--text .ws-cite, .ws[data-line="fixed_assets"] .ws-rows--text .ws-ref { font-family: var(--font-sans); font-size: var(--text-body-size); color: var(--ink); text-transform: none; font-weight: 600; overflow-wrap: anywhere; }

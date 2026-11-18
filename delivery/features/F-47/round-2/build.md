@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 8d7da0c400b19e41356a0230e1328978452bc763
+COMMIT: cfd8a916060e08c73e7217af956fe4d3b98f41a1
 BUILDER: builder
 LANE: full
 
@@ -51,3 +51,15 @@ All 23 criteria are as recorded in round-1/build.md. Two changed this round:
 
 ## Blocked
 None.
+
+## Merge with dlv-00 (F-31..F-33, #65)
+- Merged `origin/dlv-00-delivery-setup` into the branch. Merge commit and new head: `cfd8a916060e08c73e7217af956fe4d3b98f41a1` (parents 8d7da0c4 and the dlv-00 tip). Pushed. No AI trailer.
+- **Conflicts: one.** `delivery/BACKEND-HANDOFF.md` had both sides appending at the end of the file. I kept all sections in date order: F-31 (engagement and planning), F-32 (delivery tab and release gates), F-33 (income schedules), then F-47 (Start work proof upload).
+- **Merged without conflict, then checked:**
+  - `frontend/mock/server.mjs`: identical to the F-47 side. The F-47 upload branch and the `cookies` pass-through on the start-work line are both present. dlv-00 added no `server.mjs` dispatch that this side lacks.
+  - `frontend/mock/fixtures/me.finance_lead.json`: `startable_lines` is still `invoice, income_schedules, ledger_sources`. dlv-00 made no other change to it.
+  - `frontend/tests/mock-contract.test.ts` and `frontend/src/features/response/useResponse.ts`: dlv-00's changes came in cleanly. Neither side's lists or regexes collided.
+  - F-09's `ProofField` is unchanged, so F-31's chip × rule and the step form keep their behaviour. The `useEvidenceUpload.ts` `evidence_id` guard is still there.
+- **Evidence kinds after the merge:** F-31 adds `plan` and `proof`. These don't collide with Start work's kinds (`meeting_notes`, `client_request`, `schedule_source`, `ledger_source`), and uploads are routed by kind and case, so the F-09, F-11 and F-31 owners keep their uploads.
+- `cd /Users/Hunchoo/psl-factory-worktrees/f-47 && bash /Users/Hunchoo/psl-factory/delivery/checks.sh` (under `.checks.lock`, load below 14) exited 0. The Django check found no issues; lint and typecheck were clean; vitest gave **110 files, 2552 tests passed**; the build succeeded.
+- `cd frontend && E2E_PORT=4942 MOCK_PORT=4943 npx playwright test e2e/start-work-proof.spec.ts e2e/start-work.spec.ts e2e/response.spec.ts e2e/workspace.spec.ts e2e/engagement-planning.spec.ts` gave **99 passed, 0 failed, 0 flaky** (8.9 min). `frontend/test-results` was deleted.

@@ -12,6 +12,8 @@ const START_LABELS: Record<string, string> = {
   change_request: 'Log change',
   emergency_change: 'Ask for preauthorisation',
   escalation: 'Raise escalation',
+  income_schedules: 'Start schedule',
+  ledger_sources: 'Record source',
 };
 
 const DRAWER_TITLES: Record<string, string> = {
@@ -56,3 +58,8 @@ export const AGENT_NAMES: Record<NonNullable<NonNullable<Line['next']>['agent']>
   chidi: 'Chidi',
   zainab: 'Zainab',
 };
+
+/** Under the Proof box after the project changed: the file was uploaded to the other project's case (Conflicts 4). */
+export const PROOF_MOVED = 'Proof removed: it was added to the other project. Add it again.';
+/** F-09's 403 sentence (useEvidenceUpload), also shown for a 404 so the two can't be told apart. */
+export const CANT_ADD = 'You can’t add proof to this item.';

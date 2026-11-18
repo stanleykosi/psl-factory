@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-36",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Assign the accountable PM: a PMO Lead picks the PM for an unassigned RFP from the backend's list, in a panel over My work (contract mock only)",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-RFP-INTAKE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Opens over My work.** As `pmo_lead` on `/my-work?queue=unassigned`, pressing \"Tamarind Loans \u00b7 loan origination RFP\" opens the Drawer \"Assign accountable PM\" over the list at `?queue=unassigned&assign=W-3302`. The desktop eyebrow is \"TAMARIND LOANS \u00b7 TL-RFP-2026-014\"; the phone subline is \"Tamarind Loans \u00b7 TL-RFP-2026-014\". The list stays drawn behind. Escape, \"\u00d7\" and Cancel close it with no request and return focus to the row link. \u2014 verify: e2e at 1440 and 390; component test with a recording `fetch`.",
+    "**Candidates only from the response.** On W-3301 the Accountable PM list holds exactly the three candidates (name, plus role and hint as returned; Ife Okoro shows no hint, not \"0\"). Nothing is chosen (\"Choose a PM\"). There is no free-text option. The text reads \"3 people can prepare RFPs here\"; W-3303 reads \"1 person can prepare RFPs here\". \u2014 verify: `cd frontend && npx vitest run tests/rfp-assign.test.tsx`.",
+    "**No `assign`, no control.** W-3305 sends the person to `/work/W-3305` with no assign control anywhere. W-3304 shows \"No one can prepare RFPs here yet.\" and no Select or \"Assign PM\". Removing `assign` from a W-3301 copy draws no control. The code reads no `/me` (`git diff` adds no `/me`, `useMe` or `roles` read under `features/rfp`, `features/my-work` or `features/workspace`). \u2014 verify: component tests; grep on the diff.",
+    "**Acting role from the response only.** W-3301 shows \"You are assigning as \u00b7 PMO Lead\" as text and sends no `acting_role`. W-3302 shows a Select of exactly \"PMO Lead\" and \"CEO\", with \"PMO Lead\" chosen (the returned default). Choosing \"CEO\" sends `acting_role: \"ceo\"`. The same pages for personas `pm` and `ceo`, given the same item, draw the same role choices (the role does not follow the signed-in person). \u2014 verify: component tests with three personas; request bodies.",
+    "**What happens next.** W-3302 shows the returned `summary` and `agent` sentences word for word. W-3301 shows the fixed sentence, which names no channel and has no \"Tola\" (`textContent` contains no \"WhatsApp\", \"email\" or \"Tola\"). \u2014 verify: component tests.",
+    "**Typed assign.** On W-3301, choosing Tunde Bello and pressing \"Assign PM\" sends one POST `/api/v1/work/W-3301/assignment` with `X-CSRFToken` and a body that validates against the generated E-WORK-ASSIGN request schema: `{expected_revision: 1, person_id: <Tunde's id>}` plus `note` only when typed (trimmed), and no other key. A double press sends one. \u2014 verify: component test; `GET /__mock/workspace-log` `assignments` in `rfp-assign-mock.test.ts`.",
+    "**No success before the re-read.** On 200, the Drawer stays until the item re-read and the list refresh both finish. Only then the notice \"TL-RFP-2026-014 is now with Tunde Bello.\" appears, the row is gone, and the Unassigned count is one lower. A fake-timer test that holds the re-read shows no \"is now with\" and no closed Drawer while it is pending. If the re-read fails, the page shows the \"sent, but we couldn't refresh\" sentence and no success words. \u2014 verify: component tests; e2e reads the list after assigning.",
+    "**Overlay assign with proof.** On W-3302, choosing a file uploads one E-EVIDENCE-UPLOAD with `kind: \"assignment_proof\"` and `case_revision: 1`. \"Assign PM\" then sends `acting_role`, `evidence_id` and `case_revision: 2`, and the mock records it. While uploading, Assign sends nothing. With the upload made to fail (`psl_mock_scenario=500` on the upload), the chip shows its problem and Try again; Assign shows \"Remove the file that didn't upload, or try it again.\" and sends nothing. Removing the chip then lets Assign send without `evidence_id`. \u2014 verify: component tests; `rfp-assign-mock.test.ts`.",
+    "**Validation.** Pressing Assign with no PM shows \"Choose a PM to continue.\" under the field, a top summary and focus on the field, and sends nothing. On W-3303, an empty note shows \"Add a note to continue.\" A note over 2000 characters is refused before sending. A mock 422 naming `person_id`, `acting_role` or `evidence_id` puts the message under that field and keeps the entries. \u2014 verify: component tests; `psl_mock_assign=invalid`.",
+    "**Stale.** With `psl_mock_assign=stale`, the 409 re-reads and shows the stale sentence with the choices kept. The next press sends `expected_revision: 2` and succeeds. After 60 seconds of fake time there is still only one POST. \u2014 verify: component test; mock log.",
+    "**Uncertain never says assigned.**",
+    "**Access 401, 403, 404.** A 401 on the item read or the write shows the signed-out state with `next` set to the panel URL. A 403 and a 404 (W-3399, which has no fixture) show the same not-open view in the Drawer, with no client, reference or name and no further call. A 403 on the write does the same. Persona `pm` on `?queue=unassigned` keeps F-02's \"Only Leads can see unassigned work.\" \u2014 verify: component tests with a recording `fetch`; e2e for `pm`.",
+    "**Unknown, never 0.** On a copy of W-3301 with `rfp.client`, a candidate's `role` and `hint` and the file size removed, the page shows \"Unknown\" where a value is drawn (header part, size \"Size unknown\"), never a blank, \"0\" or \"0 RFPs\". After the write, a re-read with no `rfp.pm` shows \"Assigned to Unknown\". \u2014 verify: component test on the modified copy.",
+    "**Phone (D-92c).** At 390 the sheet shows the same parts as desktop in one column (conflict 7), with \"Assign PM\" pinned and no sideways scroll. Every target in the sheet is at least 44px, including the Select, the role Select, the file button, Try again and **the uploaded file chip's remove \"\u00d7\" after an upload** (the F-31 QA-2-1 lesson). Links inside a sentence are exempt (D-95). \u2014 verify: e2e measures `getBoundingClientRect` of every button, link and input in the dialog before and after a W-3302 upload.",
+    "**Fidelity (D-64).** One design-fidelity run per round over both boards on a production build, with the cookies in the Boards table. Element coverage after approved exceptions is 100% on each board, and visual is at least 90 or carries a board-level waiver citing D-83, never under 70. Every exception has `role`, `name`, `category`, `reason` and `approved_by` and maps to a Conflicts number. None covers a value the data can supply (a name, a reference, a count or a returned sentence). \u2014 verify: the fidelity command per board (`--width 1440`, `--width 390`); `round-<N>/fidelity/`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on W-3301, W-3302 (before and after an upload), W-3304, the 422 state, the uncertain state, the not-open view and the list after success. The Drawer is a labelled dialog with focus held inside it. Every field has a label. Errors and the success notice are announced (`role=\"status\"` or `alert`). Nothing animates under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/rfp-assign.spec.ts`.",
+    "**Tokens and components only.** `git diff` adds no `#hex`, `rgb(` or `hsl(` in any `.css`, and no literal px size outside a token. There is no local copy of a component `@/components` exports; the Drawer, Select, TextArea, Button, Callout and ValidationSummary are the shared ones, and the proof is F-09's `ProofField`. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `rfp-assign-mock.test.ts` checks:",
+    "**Contract not extended.** `git diff --stat` against the base shows no change in `frontend/src/api/**`, `apps/**`, `architecture/**`, `design/**`, `frontend/src/shell/**`, `frontend/src/features/start-work/**`, the protected paths, or existing fixtures other than the appended `pmo_lead` rows. Every overlay field and request key is listed as a contract proposal in build.md. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing behaviour green.** F-30 assign, My work and F-09 proof all still pass: `cd frontend && npx vitest run tests/issue-detail.test.tsx tests/issue-assign-mock.test.ts tests/workspace.test.tsx tests/my-work.test.tsx tests/my-work-model.test.ts tests/mock-work-list.test.ts tests/response.test.tsx tests/response-mock.test.ts`, plus `E2E_PORT=4960 MOCK_PORT=4961 npx playwright test e2e/my-work.spec.ts e2e/issue-detail.spec.ts e2e/response.spec.ts`. W-2413 still says \"Set an owner\" and \"Owner set: \u2026\". F-31's W-2601 still says \"Confirm PM\" when merged. Finance Lead's Unassigned receipt rows still end on `/work/W-1137` and `/work/W-1138`. \u2014 verify: the commands; build.md output."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. Assigning the accountable PM changes who is responsible for a client bid. It is also the first write that records an acting role as the authority in the audit (G-24-1), so `auth` is ticked. The surface is small, though: one existing write (E-WORK-ASSIGN, already exercised by F-30), the candidates and roles are limited to what the backend returns, and there is no money, migration or client sending. SURFACES are ui, api, auth and contract-change (G-24-1, -2 and -3 are additive proposals). PRODUCT-ACCEPTANCE is required because the assign flow, its wording and the \"What happens next\" copy are new to the client."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-36/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,21 +69,74 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "023ad69ede328ce092a5c2d2cd91ec3b462ac6bd",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T12:22:44Z",
+      "seconds": 396.7,
+      "evidence_ref": "delivery/features/F-36/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T17:28:24Z",
+      "seconds": 301.8,
+      "evidence_ref": "delivery/features/F-36/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T17:59:53Z",
+      "seconds": 528.8,
+      "evidence_ref": "delivery/features/F-36/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T19:09:04Z",
+      "seconds": 563.0,
+      "evidence_ref": "delivery/features/F-36/round-3/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "evidence_refs": [
+        "delivery/features/F-36/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "evidence_refs": [
+        "delivery/features/F-36/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -59,17 +146,635 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-36/readiness.md",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery ux review",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "evidence_refs": [
+        "delivery/features/F-36/round-3/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery ui review",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "evidence_refs": [
+        "delivery/features/F-36/round-3/review-ui.md"
+      ]
+    },
+    "security": {
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "evidence_refs": [
+        "delivery/features/F-36/round-3/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The 422 message reads \"Check person_id.\" (raw field name, in the summary and under the field). It comes from the mock's invalid scenario, not page copy; the real backend should send plain wording, or the page should map known fields to labels such as \"Accountable PM\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T17:33:20Z",
+          "head": "264b349260dbbd734eaadcb5228781f83cccccb0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T17:59:53Z",
+          "refs": [
+            "6ffed6d1"
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T18:01:11Z",
+          "refs": [
+            "422 on person_id/note/acting_role/evidence_id shows the page's own sentences (`ASSIGN_PM_TEXT.fieldMessage`); test and e2e assert them."
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "qa",
+          "at": "2026-11-18T18:20:36Z",
+          "refs": [],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": "The messages under the fields are the page's own for all four fields. For `acting_role` and `evidence_id`, the raw backend summary \"Check these fields: acting_role.\" is still shown at the top (QA-2-1)."
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T19:09:04Z",
+          "refs": [
+            "4f53c9f1"
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:10:22Z",
+          "refs": [
+            "422 on person_id/note/acting_role/evidence_id shows the page's own sentences, with summary and focus; tests and e2e (axe clean) assert it."
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "4f53c9f1"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "422 on person_id/note/acting_role/evidence_id shows the page's own sentences, with summary and focus; tests and e2e (axe clean) assert it."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The assign form carries `aria-label=\"Assign accountable PM\"`, the same name as the dialog, so `getByLabel` and screen readers find the same name three times. Prefer a different or no form label.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T17:33:20Z",
+          "head": "264b349260dbbd734eaadcb5228781f83cccccb0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T17:59:53Z",
+          "refs": [
+            "6ffed6d1"
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T18:01:11Z",
+          "refs": [
+            "duplicate `ariaLabel` removed from the form in AssignPmDrawer.tsx."
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "6ffed6d1"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "duplicate `ariaLabel` removed from the form in AssignPmDrawer.tsx."
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On W-3306 the \"Not confirmed\" sentence is no longer visible once the re-read shows \"Assigned to Tunde Bello\" (as the spec describes). The person sees no mention that the write was uncertain; consider a one-line \"Confirmed after a re-read\" note. Taste only. The mock's PM name also differs from the one chosen (Sola), a fixture artefact.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T17:33:20Z",
+          "head": "264b349260dbbd734eaadcb5228781f83cccccb0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T17:59:53Z",
+          "refs": [
+            "6ffed6d1"
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T18:01:11Z",
+          "refs": [
+            "after an unconfirmed write, 'Not confirmed at first; confirmed after reading it again.' shows under 'Assigned to <name>'; test asserts it."
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "6ffed6d1"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "after an unconfirmed write, 'Not confirmed at first; confirmed after reading it again.' shows under 'Assigned to <name>'; test asserts it."
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The desktop eyebrow is not in capitals. Expected: the board (`SCR-24-desktop.dc.html` drawer head, \"TAMARIND LOANS \u00b7 TL-RFP-2026-014\") and spec AC 1 (\"The desktop eyebrow is \"TAMARIND LOANS \u00b7 TL-RFP-2026-014\"\"). Actual: the page shows \"Tamarind Loans \u00b7 TL-RFP-2026-014\". The shared `.psl-drawer__eyebrow` has no text-transform (computed `none`), and the fidelity tool flags it: \"capitals on the board, not on the page\". Fix: scoped `.rfp-assign .psl-drawer__eyebrow { text-transform: uppercase; }` in `frontend/src/features/rfp/rfp.css`. The text stays from data and existing tests keep matching textContent. The phone subline stays mixed case, as drawn. `frontend/src/features/rfp/AssignPmDrawer.tsx:289`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T17:33:20Z",
+          "head": "264b349260dbbd734eaadcb5228781f83cccccb0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T17:59:53Z",
+          "refs": [
+            "6ffed6d1"
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T18:01:11Z",
+          "refs": [
+            "`.rfp-assign .psl-drawer__eyebrow { text-transform: uppercase }`; e2e checks computed style."
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "6ffed6d1"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`.rfp-assign .psl-drawer__eyebrow { text-transform: uppercase }`; e2e checks computed style."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Desktop footer buttons are not sized as drawn. Expected (board footer): Cancel `flex:1` and \"Assign PM\" `flex:2`, each 48px high, filling the 500px footer. Start work already builds this as `.sw-secondary`/`.sw-primary` (`flex 1 1 0` / `2 1 0`, `min-height: var(--control-phone)`, `start-work.css:22-23`). Actual: natural widths (Cancel 80x44, Assign PM 103x44) at the left of the footer. Fix: the same two rules scoped to `.rfp-assign`'s footer buttons in `rfp.css`, using tokens only. `AssignPmDrawer.tsx:274-283`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T17:33:20Z",
+          "head": "264b349260dbbd734eaadcb5228781f83cccccb0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T17:59:53Z",
+          "refs": [
+            "6ffed6d1"
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T18:01:11Z",
+          "refs": [
+            "desktop (min-width 720px) footer: Cancel flex 1, Assign PM flex 2, min-height var(--control-phone) 48px; the e2e ratio 1.78 (limit >1.6 <2.2) is the board's 1:2 with padding and gap, not a hidden gap; same rule as Start work."
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "6ffed6d1"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "desktop (min-width 720px) footer: Cancel flex 1, Assign PM flex 2, min-height var(--control-phone) 48px; the e2e ratio 1.78 (limit >1.6 <2.2) is the board's 1:2 with padding and gap, not a hidden gap; same rule as Start work."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The \"What happens next\" block is styled differently. Expected (both boards): 13px text above a 1px `#D5D9D3` rule with 12px padding-top. Actual: `.rfp-assign__next` is 14px (`--text-body-size`) with no rule. Fix: `font-size: var(--text-hint-size); border-top: var(--rule-thin) solid var(--rule-soft); padding-top: var(--space-3)` (or the nearest 12px space token). The returned sentences stay as they are (Conflicts 5). `frontend/src/features/rfp/rfp.css` (`.rfp-assign__next`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T17:33:20Z",
+          "head": "264b349260dbbd734eaadcb5228781f83cccccb0"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T17:59:53Z",
+          "refs": [
+            "6ffed6d1"
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T18:01:11Z",
+          "refs": [
+            "`.rfp-assign__next` has hint size, 1px soft top rule, space-3 padding."
+          ],
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "6ffed6d1"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "`.rfp-assign__next` has hint size, 1px soft top rule, space-3 padding."
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A 422 on \"You are assigning as\" or the proof shows the backend's raw sentence and skips the summary and focus. Expected (spec Contract, 422, and the prompt's \"frontend wording\"): the page's own words, a top summary and focus on the first named field. Actual (real mock 422 on `acting_role: \"cfo\"` or `evidence_id: \"EV-NOPE\"`, at 1440 and 390): a Callout \"Check these fields: acting_role.\" (or \"evidence_id\"), so the PMO Lead sees a field key, no \"things to fix\" summary, and focus stays on \"Assign PM\". The messages under each field are correct, and the entries are kept. Cause: `AssignPmDrawer.tsx:145` passes `result.message` back to `AssignForm`. `AssignForm.tsx:115` shows that message whenever neither `person_id` nor `note` is named, and only focuses those two fields. Fix: when the 422 names `acting_role` or `evidence_id`, drop the backend message, add those fields to the summary, and focus the role list or the proof field. Then add a test where the mock refuses each field.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T18:20:36Z",
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T19:09:04Z",
+          "refs": [
+            "4f53c9f1"
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:12:31Z",
+          "refs": [
+            "read the fix; 422 on acting_role or evidence_id shows the page's words under the field, a linked summary, focus on the first field, entries kept, and no \"Check these fields\" text. Component 422 tests (7 incl. the 5 new) pass; e2e 422 case passes with axe clean at 1440. QA still to re-check in the browser."
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "4f53c9f1"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "read the fix; 422 on acting_role or evidence_id shows the page's words under the field, a linked summary, focus on the first field, entries kept, and no \"Check these fields\" text. Component 422 tests (7 incl. the 5 new) pass; e2e 422 case passes with axe clean at 1440. QA still to re-check in the browser."
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The summary's links in the phone sheet are 37px tall: \"Choose a PM to continue.\" 158x37 and \"Add a note to continue.\" 145x37 on W-3303, and \"Choose a PM from the list to continue.\" 237x37 after a 422. D-92c and D-95 ask for 44px on standalone links. This passes WCAG 2.5.8 (24px). The links come from the shared `src/components/ValidationSummary.tsx`, which is read-only for this lane, and F-30's W-2411 summary links are 18px tall today. Route it as a fix to the shared component, not to F-36.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T18:20:36Z",
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When the item read returns a 500, the problem card says \"Nothing was changed.\" twice: once in its title \"We couldn't load this item. Nothing was changed.\" and again in its body. Cause: `AssignPmDrawer.tsx:43` and `:173-174`. Remove one.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-36/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T18:20:36Z",
+          "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T19:09:04Z",
+          "refs": [
+            "4f53c9f1"
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-18T19:18:56Z",
+          "refs": [
+            "An item-read 500 on W-3301 shows \"Nothing was changed.\" exactly once (\"We couldn\u2019t load this item. Nothing was changed. / Retry\") at 1440 and 390, and axe is clean."
+          ],
+          "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "4f53c9f1"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "An item-read 500 on W-3301 shows \"Nothing was changed.\" exactly once (\"We couldn\u2019t load this item. Nothing was changed. / Retry\") at 1440 and 390, and axe is clean."
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+          "evidence_refs": [
+            "delivery/features/F-36/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-36/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+          "evidence_refs": [
+            "delivery/features/F-36/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+          "evidence_refs": [
+            "delivery/features/F-36/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "264b349260dbbd734eaadcb5228781f83cccccb0",
+          "evidence_refs": [
+            "delivery/features/F-36/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-36/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+          "evidence_refs": [
+            "delivery/features/F-36/round-2/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -89,11 +794,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-RFP-INTAKE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "be04d072e0e7ac24c1e79ca10e0d7044b7c7291c",
+    "task_branch": "fe-rfp-intake-assign-accountable-pm",
+    "head_sha": "4f53c9f15d69264d048e8ea482fb80475d936481",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-36",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +808,45 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/rfp-assign.spec.ts",
+      "frontend/mock/alerts.mjs",
+      "frontend/mock/fixtures/E-WORK-LIST.board.json",
+      "frontend/mock/fixtures/E-WORK-LIST.rows.json",
+      "frontend/mock/fixtures/me.pmo_lead.json",
+      "frontend/mock/fixtures/work/W-3301.json",
+      "frontend/mock/fixtures/work/W-3301.next.json",
+      "frontend/mock/fixtures/work/W-3302.json",
+      "frontend/mock/fixtures/work/W-3302.next.json",
+      "frontend/mock/fixtures/work/W-3303.json",
+      "frontend/mock/fixtures/work/W-3303.next.json",
+      "frontend/mock/fixtures/work/W-3304.json",
+      "frontend/mock/fixtures/work/W-3305.json",
+      "frontend/mock/fixtures/work/W-3306.assign.json",
+      "frontend/mock/fixtures/work/W-3306.json",
+      "frontend/mock/fixtures/work/W-3306.next.json",
+      "frontend/mock/proposals/rfp-assign.json",
+      "frontend/mock/response.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/WorkRows.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/my-work/my-work.css",
+      "frontend/src/features/response/labels.ts",
+      "frontend/src/features/rfp/AssignPmDrawer.tsx",
+      "frontend/src/features/rfp/proposals.ts",
+      "frontend/src/features/rfp/rfp.css",
+      "frontend/src/features/workspace/AssignForm.tsx",
+      "frontend/src/features/workspace/useWorkspaceAssign.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/rfp-assign-mock.test.ts",
+      "frontend/tests/rfp-assign.test.tsx",
+      "frontend/tests/setup.ts",
+      "frontend/vitest.config.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +879,124 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 3,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T10:36:17Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T10:36:17Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T17:28:31Z",
+      "round": 1,
+      "head": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T17:33:20Z",
+      "round": 1,
+      "head": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T17:33:20Z",
+      "round": 2,
+      "head": "264b349260dbbd734eaadcb5228781f83cccccb0",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T18:00:01Z",
+      "round": 2,
+      "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T18:01:11Z",
+      "round": 2,
+      "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T18:20:36Z",
+      "round": 2,
+      "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T18:20:38Z",
+      "round": 3,
+      "head": "5e14a6ada5bd803586a0ced36e05176e8f84f66c",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T19:09:14Z",
+      "round": 3,
+      "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T19:12:31Z",
+      "round": 3,
+      "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T19:18:56Z",
+      "round": 3,
+      "head": "4f53c9f15d69264d048e8ea482fb80475d936481",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-36/readiness.md",
+      "delivery/features/F-36/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 3,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "4f53c9f15d69264d048e8ea482fb80475d936481"
   },
   "blocked": null
 }
