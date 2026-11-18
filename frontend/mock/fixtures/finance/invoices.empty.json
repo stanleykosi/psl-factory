@@ -1,0 +1,23 @@
+{
+  "items": [],
+  "as_of": "2026-11-12T09:00:00Z",
+  "filters": [
+    {
+      "value": "issued",
+      "label": "Issued"
+    },
+    {
+      "value": "overdue",
+      "label": "Overdue"
+    },
+    {
+      "value": "part_paid",
+      "label": "Part paid"
+    },
+    {
+      "value": "paid",
+      "label": "Paid"
+    }
+  ],
+  "total": 0
+}

@@ -21,6 +21,8 @@ import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractBody as monthEndBody } from '../mock/finance.mjs';
 // @ts-expect-error plain ESM module without type declarations
+import { contractBody as invoicesBody } from '../mock/invoices.mjs';
+// @ts-expect-error plain ESM module without type declarations
 import { contractRules } from '../mock/setup.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractDelegation, contractDelegations } from '../mock/delegations.mjs';
@@ -58,6 +60,7 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-CLIENT-CONTACT': { none: 403 },
   'E-EXCEPTIONS': { pm: 403 },
   'E-MONTH-END': { pm: 403, none: 403 },
+  'E-INVOICES': { pm: 403, none: 403 },
   'E-SETUP-RULES': { pm: 403, none: 403 },
   'E-SETUP-RULE-SAVE': { pm: 403, none: 403 },
   'E-EVIDENCE-UPLOAD': { pm: 403, none: 403 },
@@ -124,6 +127,13 @@ function minutesProposalsStripped(body: unknown): unknown {
       }
       delete row.values;
     }
+    // PROPOSAL (F-41 G-SCR32-3): an item's `attachment` {label, size_bytes, document_id?}
+    for (const row of section.items as { id: string; attachment?: { label?: unknown; size_bytes?: unknown; document_id?: unknown } }[]) {
+      if (row.attachment === undefined) continue;
+      const { label, size_bytes: size, document_id: documentId, ...rest } = row.attachment;
+      expect(typeof label === 'string' && label !== '' && Number.isInteger(size) && (documentId === undefined || typeof documentId === 'string') && Object.keys(rest).length === 0, row.id).toBe(true);
+      delete row.attachment;
+    }
   }
   // PROPOSAL (F-31, mock/proposals/engagement-planning.json): `assign.default_person_id` (one of the candidates) and `default_hint`,
   // `items[].team_key` and `tasks[].response.teams[].disabled_reason` / `asked_at`; each is checked on its own, then removed.
@@ -157,6 +167,12 @@ function minutesProposalsStripped(body: unknown): unknown {
     delete candidate.kind;
   }
   for (const step of w?.steps ?? []) {
+    // PROPOSAL (F-41 UX-2-3): `steps[].submit_label`, the words on a step form's submit button
+    const submit = (step as { submit_label?: unknown }).submit_label;
+    if (submit !== undefined) {
+      expect(typeof submit === 'string' && submit.trim() !== '', step.key).toBe(true);
+      delete (step as { submit_label?: unknown }).submit_label;
+    }
     if (step.starts_line !== undefined) {
       const { line_key: line, prefill } = step.starts_line as { line_key?: unknown; prefill?: unknown };
       expect(typeof line === 'string' && line !== '' && typeof prefill === 'object' && prefill !== null, step.key).toBe(true);
@@ -177,6 +193,7 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
   'E-WORK-ITEM': minutesProposalsStripped,
   'E-EXCEPTIONS': exceptionsBody,
   'E-MONTH-END': monthEndBody,
+  'E-INVOICES': invoicesBody,
   'E-SETUP-RULES': contractRules,
   'E-EVIDENCE-UPLOAD': contractEvidence,
   'E-DELEGATIONS': contractDelegations,
@@ -503,7 +520,8 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
           expect(decidePresentation, name).toBeUndefined();
         }
         expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(item));
-        expect(body.sample, name).toBe(true);
+        // F-41: W-3813 is the one item served with sample: false, to prove the label follows the record
+        expect(body.sample, name).toBe(name !== 'W-3813.json');
       }
     }
     expect(files.filter(boardFixture)).toHaveLength(12);

@@ -111,13 +111,17 @@ export function useWorkspaceStep({ id, revision, page, awaitingReconcile }: Args
         if (result.outcome === 'effect_uncertain') {
           setAllLocked(true);
           setNotice({ kind: 'uncertain', message: result.message });
-        } else if (result.outcome === 'queued') {
+          await page.reload();
+          return { kind: 'done' };
+        }
+        // F-41 TECH-1-1: a done or queued notice is told only once the re-read has landed, never from the 200 alone
+        await page.reload();
+        if (result.outcome === 'queued') {
           setNotice({ kind: 'queued', text: `Waiting: ${result.message ?? STEP_TEXT.queued}` });
         } else {
           // a returned message that doesn't name the step gets the step's name beside it
           setNotice(result.message ? { kind: 'done', text: result.message, label: result.message.includes(step.label) || /^done\b/i.test(result.message) ? undefined : step.label } : { kind: 'done', text: STEP_TEXT.done(step.label) });
         }
-        await page.reload();
         return { kind: 'done' };
       } catch (error) {
         const apiError = asApiError(error);

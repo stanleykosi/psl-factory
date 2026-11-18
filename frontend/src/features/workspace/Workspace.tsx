@@ -106,6 +106,9 @@ const ISSUE_LINE = 'issue_followup';
 /** F-31: the engagement's register form opens in the phone Drawer too (the SCR-41 phone register board is its own screen). */
 const ENGAGEMENT_LINE = 'engagement';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
+/** F-41: the payment reminder's line key (SCR-32); read only to open its Edit form in the phone Drawer. */
+const REMINDER_LINE = 'payment_reminder';
+
 /** The stations as the schedule boards (income F-33, fixed assets F-42) draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
 function LineStations({ item, phone }: { item: WorkItem; phone: boolean }) {
@@ -178,8 +181,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const [assigning, setAssigning] = useState(false);
   const assignButton = useRef<HTMLButtonElement>(null);
   const phone = useIsPhone();
-  // F-30 (D-103, D-107): on a phone the issue follow-up's forms open in the full-height Drawer.
-  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key));
+  // F-30 (D-103, D-107), F-31, F-33, F-41, F-42: on a phone these lines' forms open in the full-height Drawer.
+  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE);
   const schedule = scheduleLine(workspace.line_key);
   // F-31: a department's "Record input" opens F-18's team-input form in the Drawer; `recording` names the pressed row's button.
   const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);

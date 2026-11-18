@@ -3,26 +3,67 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-35",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Leadership report: a PMO Lead follows Tola's draft, a leadership reviewer approves and sends it or returns it, and each recipient's delivery shows, with the Tuesday report published without review (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-LEADERSHIP-REPORT"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-3201`\u2026`W-3204` show their fixture's status label and tone, sections, agent card, recipients and Next, and nothing else. No board string is in `src` (`grep -rn \"YOUR REVIEW\\|PUBLISHED \u00b7 NO REVIEW\\|RECEIVED BY EVERY RECIPIENT\\|PMO staff\\|Leadership reviewer\\|paid is reported by Finance\" frontend/src` returns nothing). \u2014 verify: `cd frontend && npx vitest run tests/leadership-report.test.tsx`; the pages at 1440 and 390.",
+    "**The page computes nothing.** Changing W-3202's \"5 OF 5\" to \"4 OF 5\" changes only that value. Changing W-3203's \"5 PMO staff\" row receipt changes neither the note sentence nor the header. No new or changed file under `frontend/src/features/workspace/` adds `parseFloat`, `Number(`, `reduce(` or a count of recipients or projects. \u2014 verify: component tests on modified copies; `git diff -U0 frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(\"` returns nothing.",
+    "**Unknown is never 0, blank or a dash; hidden projects are never named.** W-3210 shows \"Unknown\" for Open escalations, with no \"0\", empty cell, \"-\" or \"\u2014\" in its place. It shows the backend's coverage line \"2 projects are left out because you can't see them.\" and \"3 OF 5\". The page contains no project name. \u2014 verify: component test on W-3210; `document.body.textContent` checked against every name in `mock/fixtures/projects/list.json` (absent).",
+    "**Sample-marked.** Every fixture page shows the shared `SampleLabel` because the record says `sample: true`; a copy with `sample: false` does not. \u2014 verify: component test.",
+    "**Reviewer not set is a hold.** W-3207 shows the backend's status, the \"Leadership reviewer \u00b7 NOT SET\" fact and its `next` sentence. There is no Decide panel, no button, no claim or decide request, and no reviewer's name or role anywhere on the page (\"Ifeoma\", \"Leadership reviewer\" as a panel title and \"Approve and send\" are absent). \u2014 verify: component test with a recording `fetch` (zero POSTs) and a text check.",
+    "**Decide controls only from `you_can_act` and the steps.** W-3202 and W-3210 show \"Approve and send\" and \"Return with a note\" under \"Decide \u00b7 Leadership reviewer\", with the basis sentence as returned. W-3206 shows the `prepared_by_you` copy and W-3208 the `not_your_role` copy, each with no button and no claim sent. W-3201, W-3203, W-3204 and W-3211 show no decide control. Personas `ceo`, `pm` and `finance_lead` see the same controls on the same page. The changed files do not read `/me` (`git diff frontend/src | grep -n \"useMe\\|/me\\b\"` returns nothing). \u2014 verify: component tests with three personas and a recording `fetch`.",
+    "**Agent work is not an output.** On W-3201, Tola's steps, sources and \"WORKING\" render in the agent card in the side column at 1440. \"Send for leadership review\" is the agent's fourth step there, not a button, and no write is possible. \"Ask Tola\" links to `/assistant`. \"Started 01 Nov 08:00\" shows in Lagos time. The agent pulse does not animate under `reducedMotion: 'reduce'`. \u2014 verify: component test; e2e link href and computed style.",
+    "**Nothing says sent, delivered or received unless the response says so.**",
+    "**No resend, no confirm, no action write.** On W-3203, W-3209 (after approve), W-3211 and W-3212 there is no \"Resend\", \"Send again\", \"Try sending\" or \"Confirm what happened\" control. The page sends no request to `/api/v1/work/<id>/actions`. \u2014 verify: e2e request log; component test.",
+    "**No report link yet.** W-3202 and W-3204 draw no \"Open the full report\" or \"Open the report\" link and no link to `/reports/`. W-3204 shows \"Read it any time on Overview.\" as returned. \u2014 verify: component test.",
+    "**Approve and send.** On W-3202 the page sends one E-TASK-CLAIM to `/api/v1/tasks/T-3202/claim`. Pressing \"Approve and send\" then sends exactly one POST `/api/v1/tasks/T-3202/decision` with the CSRF header and `{verdict: \"approve\", expected_revision: 1}`. The body validates against the generated request schema, with no note and no extra keys. A double press sends one. The re-read shows \"SENT \u00b7 CHECKING DELIVERIES\" with four \"Not yet\" rows, and the notice \"Monthly report v1 is approved\" appears only after that re-read. \u2014 verify: component test; e2e request log.",
+    "**Return needs a note.** Pressing \"Return with a note\" with an empty or blank note sends nothing and shows \"Add a note to return it.\" under the field, announced, with focus on it. A note over 2000 characters is refused before sending. With a note, one POST with `verdict: \"return\"` and the trimmed note is sent, and the re-read shows \"DRAFTING \u00b7 RETURNED\" with the returned sentence. \u2014 verify: component tests; the e2e request log shows no decision POST without a note.",
+    "**No write when the person cannot act.** On W-3206, W-3207 and W-3208, no claim and no decision is sent, whatever is pressed or typed. \u2014 verify: e2e request log (zero task POSTs).",
+    "**Backend refusals are shown.** With `psl_mock_scenario` set to 403, the decide shows the read-only view and no \"approved\". With 409 it shows the stale view, keeps the note, and sends again only on a new press with the new revision. With 422 it shows the message under the note. \u2014 verify: component tests; `tests/leadership-report-mock.test.ts`.",
+    "**An uncertain decide never reads as success.** On W-3209, \"Approve and send\" answers `work_state: effect_uncertain`. The page re-reads, shows \"Monthly report v1: result not confirmed\" (never \"is approved\", \"sent\" or \"received\"), and shows the backend's \"SENT \u00b7 DELIVERY NOT CONFIRMED\" with Finance Lead \"CHECKING\". On W-3202, a network failure, timeout or 500 on decide re-reads the item before anything else, shows `UncertainNotice`, and sends no second decision automatically. \u2014 verify: component tests with fake timers (one POST after 60 s); e2e on W-3209, and with a routed abort on W-3202.",
+    "**Send for leadership review, only where offered.** W-3205 shows \"Send for leadership review\" with its consequence. One press sends one POST `/api/v1/work/W-3205/steps` with CSRF, `expected_revision`, `step: \"send_for_review\"`, a UUID `idempotency_key` and no `inputs`, reviewer or audience. A retry after a 500 reuses the same key. On 200 the re-read shows \"AWAITING LEADERSHIP REVIEW\" with the `prepared_by_you` copy. On W-3212 the `effect_uncertain` answer shows the uncertain notice after a re-read, never \"sent for review\", and sends no second POST. \u2014 verify: component tests; e2e request log.",
+    "**Access.** A 401 on read or write \u2192 signed-out with `next=/work/<id>`. A 403 or 404 on read looks the same and shows no title, figure, recipient or sentence. Persona `none` gets the same not-open view with no further call. \u2014 verify: component tests with a recording `fetch` for 401, 403 and 404.",
+    "**Phone.** At 390 each state is one column with the same sections, words and values as desktop (W-3201 includes the access note; W-3203 includes the recipients and Next).",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 8 boards, on a production build at `--width 1440` and `--width 390`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on:",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in `features/workspace/*.css`. It adds no local copy of a component that `@/components` exports (`Button`, `Drawer`, `TextArea`, `Callout`, `Panel`, `Tag`). The banner is the shared `Callout` `info`. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `tests/leadership-report-mock.test.ts` checks that:",
+    "**Contract not extended.** `git diff --stat` against the base (with F-33 merged) shows no change in any of these:",
+    "**Existing tests green.** `delivery/checks.sh` passes. The tests listed under Context pass unchanged, including F-33's income schedule tests after the line-set refactor and `tests/response.test.tsx:761`. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** build.md records:"
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. Approving sends one version of a cross-project report to leaders whose grants may differ from the author's. A wrong control or a figure computed in the browser could disclose records (G-SCR52-3, INV-ACCESS) or claim a delivery that has not happened, and the approver and audience are unset Setup values. The work itself is contained: a view on the F-17 frame with the existing decide, step and reconcile writes, on the mock, with nothing sent. SURFACES: ui (8 boards); api (E-WORK-ITEM, E-TASK-CLAIM/DECIDE, E-WORK-STEP, E-WORK-ACTION); security (an authority-bearing approve-and-send plus record visibility in an aggregate); contract-change (G-SCR52-3..7, X-VERDICTS, X-LINKS, the `leadership_report` workspace under D-LINE-WORKSPACE); external-messaging (email to internal recipients; channel undecided, D-REPORT-DELIVERY suggested); product-decision (reviewer, audience and the review-skip rule are unset). PRODUCT-ACCEPTANCE is required: it is a new flow and new wording, including the review-skip rule, and the client has not seen it working."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-35/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +86,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +100,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-35/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +151,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-LEADERSHIP-REPORT",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "6f14afbf81207d0c520572ba012a4684f59da2ba",
+    "task_branch": "fe-leadership-report-drafting-review-tuesday",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-35",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -136,12 +198,41 @@
     }
   },
   "created_at": "2026-11-18T05:12:22Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T17:34:01Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T17:34:01Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-35/readiness.md",
+      "delivery/features/F-35/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

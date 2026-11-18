@@ -3,26 +3,67 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-34",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Hypercare, part 1: the PM records the release, follows the window and its observations, sees the hold while PSL has not set the criteria, and sees \"qualified\" only when the backend verifies it (contract mock only)",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-DELIVERY-HYPERCARE-ARCHIVE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Scores.** One fidelity run per round covers all 8 boards in the Boards table.",
+    "**Driven state is the real UI.** `drive-states.mjs` resets the mock (`POST /__mock/reset`) and uses the real controls: press, type and upload. Its only DOM edits are the freeze. It does not submit the record. \u2014 verify: the script and `frozen/*.html`; `GET /__mock/workspace-log` is empty after the drive.",
+    "**Exceptions limited.** Each entry has `role`, `name`, `category`, `reason` and `approved_by`, and maps to a Conflicts number. None covers a value the data can supply (a name, date, reference, tag, count or sentence). \u2014 verify: file content; build.md mapping.",
+    "**The row links to the line.** On `/projects/P-0101/delivery`, the Hypercare row and its sub-nav entry link to `/work/W-3101`. Every other row is as F-32 left it. \u2014 verify: the updated `delivery-overview.test.tsx` assertions; e2e.",
+    "**Four states from data.** `/work/W-3101`, `W-3102`, `W-3103` and `W-3104` each show their fixture's status label and tone, sections, steps, Next and links, and nothing else.",
+    "**Setup-needed is the backend's hold, with no controls.**",
+    "**Qualified only when the response says verified (INV-AGENT).**",
+    "**Unknown, not zero.** On W-3111, the Incidents state, the Window tag and the unknown criterion each read \"Unknown\". None of them shows blank, \"None\", \"0\" or \"\u2014\". \u2014 verify: component test, which fails before the `CellValue` fix.",
+    "**Controls only from the response.**",
+    "**Record the release.** In the e2e on `/work/W-3102`:",
+    "Press \"Record release\". The form opens with Version \"Build 1.0.0\" and Environment \"Production \u00b7 Lagoon Health\" pre-filled, and with the returned consequence.",
+    "Submitting with Released on blank, or with no proof, shows the field message and sends nothing.",
+    "Upload the proof. One E-EVIDENCE-UPLOAD is sent with `kind: \"deployment_log\"`, the case revision and CSRF.",
+    "Submit. One E-WORK-STEP is sent with `step: \"record_release\"`, `expected_revision` 1, the three inputs, the returned `evidence_id`, an `idempotency_key` and the CSRF header.",
+    "The page then shows the hold from the re-read.",
+    "**No success before the re-read.** With the re-read held pending after a 200, no \"Done:\" text, no new status and no new row is on screen. Once the re-read resolves, they appear together. \u2014 verify: component test with a deferred second `GET /work/W-3102`, which fails before the `useWorkspaceStep` fix; the existing `workspace-step.test.tsx` done assertions stay green.",
+    "**Each uncertain path has a fixture and never shows \"recorded\".**",
+    "**Log an observation.**",
+    "**Invalid and refused input.**",
+    "**Access.**",
+    "**Phone.**",
+    "**Accessibility.**",
+    "**Tokens and components only (D-91).** New UI uses `@/components` (`Link`, `Tag`, `Callout`, `Unknown`, `Button`) and adds no local button, tag, panel or link. `grep -nE \"#[0-9a-fA-F]{3,8}\\b|rgba?\\(|hsl\\(\"` on this feature's CSS and TSX diff returns nothing. \u2014 verify: diff and grep.",
+    "**Mock matches the contract.**",
+    "**Contract not extended.**",
+    "**Existing behaviour not weakened.**",
+    "**No overclaim.** build.md and the PR carry the \"What is sent, and what stays held\" section: contract mock only; nothing deployed, evaluated or qualified; D11 open; the sample MET rows; the six held items. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium: - The page has four states, two step writes and a proof upload, on the shared F-17 frame. - It works against the proposed D-LINE-WORKSPACE contract and adds an additive step proposal (G-46-1, contract-change). - No money, migration, identity or deploy effect is involved, and no control comes from a role. `product-decision` is ticked because the hypercare window and criteria are a PSL rule, D11, still `open`. The pages only show the hold and the returned values. PRODUCT-ACCEPTANCE is required because the hypercare flow and its wording are new to the client."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-34/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,21 +76,74 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T12:11:11Z",
+      "seconds": 514.0,
+      "evidence_ref": "delivery/features/F-34/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "e3928527335e9963daedccf798e736ff53e1ee8b",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T13:01:10Z",
+      "seconds": 304.6,
+      "evidence_ref": "delivery/features/F-34/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "c8137000b7aa040fa7cd50694adf5f4dba830ed9",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T14:23:17Z",
+      "seconds": 479.8,
+      "evidence_ref": "delivery/features/F-34/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 2,
+      "commit": "af38b43211249d48e71175aee186838dafb76d42",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T16:57:23Z",
+      "seconds": 526.6,
+      "evidence_ref": "delivery/features/F-34/round-3/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "af38b43211249d48e71175aee186838dafb76d42",
+      "evidence_refs": [
+        "delivery/features/F-34/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "af38b43211249d48e71175aee186838dafb76d42",
+      "evidence_refs": [
+        "delivery/features/F-34/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -59,17 +153,616 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-34/readiness.md",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "af38b43211249d48e71175aee186838dafb76d42",
+      "evidence_refs": [
+        "delivery/features/F-34/round-3/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "af38b43211249d48e71175aee186838dafb76d42",
+      "evidence_refs": [
+        "delivery/features/F-34/round-3/review-ui.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "After a 200 on the qualified item (W-3104), the stage strip still reads \"04 Hypercare: Agent working\" and \"05 Archive: Not started\", while the banner says \"Hypercare qualified\". The fixture `stations` has Hypercare as `current_agent` (`frontend/mock/fixtures/work/W-3104.json`). The two disagree; set the fixture to a done state.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T12:18:46Z",
+          "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T13:01:11Z",
+          "refs": [
+            "e3928527"
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T13:04:31Z",
+          "refs": [
+            "W-3104 stage strip Hypercare is done; test checks no current_agent."
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "e3928527"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "W-3104 stage strip Hypercare is done; test checks no current_agent."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On the record form, \"Add proof to continue.\" stays on screen after a file has been added and listed, until the next submit. It reads as an error that was not cleared. Shared `StepForm`/`ProofField` behaviour; the other fields clear their messages on input.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T12:18:46Z",
+          "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T13:01:11Z",
+          "refs": [
+            "e3928527"
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T13:04:31Z",
+          "refs": [
+            "StepForm clears the proof error after upload; test passes."
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "e3928527"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "StepForm clears the proof error after upload; test passes."
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The required-field message is grammatically awkward when the label is a question: \"Add what did you notice? to continue.\" Better: \"Say what you noticed to continue.\" Shared frame copy, so a fix there covers every line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T12:18:46Z",
+          "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A PM who follows \"Open Setup \u203a Rules\" on W-3103 lands on \"This section isn't open to your role\" with a \"Go to My work\" button. This is Conflicts 1, approved as recommended in D-118, and the Next line does say an admin sets the rules. Record it for the backend, which should send the link only to people who may open Setup.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T12:18:46Z",
+          "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T13:01:11Z",
+          "refs": [
+            "e3928527"
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-18T13:36:37Z",
+          "refs": [
+            "recorded in BACKEND-HANDOFF. The page draws the Setup link only when it is returned (journey 3)."
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "e3928527"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "recorded in BACKEND-HANDOFF. The page draws the Setup link only when it is returned (journey 3)."
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On the hold, the frame still says \"Next step. A person takes the next step on this page.\" and \"Done: Checked the observations so far\", yet the page has no control for the person to use. The Next panel text does name the admin. Frame strip text, so only worth revisiting when the frame is next changed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T12:18:46Z",
+          "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After \"Record release\" succeeds, the page does not show what was recorded (version, release date, environment). It shows only the hold plus the \"Done: Record release.\" notice. A PM cannot confirm the entry on the page. The returned data would need a row for it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T12:18:46Z",
+          "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-7",
+      "round": 1,
+      "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 390 the project tabs, crumbs and Delivery sub-nav are not drawn on the work item. Only \"\u2190 Queue\" and the browser back button lead out, so there is no in-page link back to the project's Delivery tab. The spec records the phone bar as the built F-22 frame (Conflicts 7, \"\u2190 Delivery\" a frame item), so this is not blocking.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T12:18:46Z",
+          "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**An extra \"DONE\" tag on each criterion.** Boards SCR-46-desktop, SCR-46-mobile, SCR-46-desktop-qualified and SCR-46-mobile-qualified draw each criterion with one green \"MET\" at the end of the row. The page draws \"MET\" after the text and a second green \"DONE\" at the end (side-by-side.png for desktop-1440, desktop-qualified-1440 and mobile-qualified-390). The cause is in the fixtures: the criteria items C-2..C-4 carry both `tag: Met` and `status: \"done\"` (frontend/mock/fixtures/work/W-3101.json and W-3104.json, criteria checklist). The tool does not report this, but the boards have no such element and no exception covers it. Expected fix: drop `status` from those items so the returned \"Met\" tag is the only result shown. Then add one `frame layout` exception (Conflicts 10/12) for \"MET\" sitting after the text rather than at the row end, which is where the shared checklist puts a tag.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T12:18:46Z",
+          "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T13:01:11Z",
+          "refs": [
+            "e3928527"
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T13:04:31Z",
+          "refs": [
+            "fixtures drop the row \"status\": \"done\"; test asserts three Met rows with no \"Done\"."
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "e3928527"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "fixtures drop the row \"status\": \"done\"; test asserts three Met rows with no \"Done\"."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "**Three tags are orange where the board draws amber, and no exception lists them.** The tags are \"HYPERCARE \u00b7 DAY 10 OF 30\" (W-3101), \"HYPERCARE \u00b7 RELEASE NOT RECORDED\" (W-3102) and the \"Open \u00b7 owner set\" row tag (W-3101/W-3103), at both widths. The fixtures return tone `person`, which draws the orange \"a person must act\" family (Tag.tsx STATE_TAGS; workspace/labels.ts TONE). The boards draw amber, which means waiting on someone. A running window is waiting, not a person's action, and the workspace tone list has no plain \"waiting\" value. `uncertain` is the only tone that draws amber, and it is reserved for effect uncertain, so the fixture must not use it. Spec Conflicts 16 says such a colour difference is listed as an exception and never hard-coded. Also, spec Conflicts 4 assumed `person` draws an amber tag. In fact the setup-needed tag draws orange-red, close to the board's red, and only the banner is amber. Expected fix: add `tone` exceptions for the three tags, stating the real colours and this setup-needed result, so the design engineer can sign them. Add a `waiting` workspace tone to the backend gap list (delivery/BACKEND-HANDOFF.md, \"Added during F-34\").",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T12:18:46Z",
+          "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T13:01:11Z",
+          "refs": [
+            "e3928527"
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T13:04:31Z",
+          "refs": [
+            "exceptions are category tone, tied to Conflicts 16 / D-46, cover only 4 tags; BACKEND-HANDOFF records the gap; no mapping in src."
+          ],
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "e3928527"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "exceptions are category tone, tied to Conflicts 16 / D-46, cover only 4 tags; BACKEND-HANDOFF records the gap; no mapping in src."
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "e3928527335e9963daedccf798e736ff53e1ee8b",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**The proof chip's remove button is too small on a phone.** At 390, the \"\u00d7\" on an uploaded file in the Record release form (W-3102) and the Log an observation form (W-3101) measures 24\u00d724px. Spec AC16 and D-92c require every form control, \"including the open record form and the proof control\", to be at least 44px. The rule `.resp-chip__remove { min-width: 24px; min-height: 24px }` (src/features/response/response.css:77) is raised to 44px only inside `.cmp-panel` (src/features/workspace/workspace.css:252), and the step form is `.ws-form` (StepForm.tsx:288). The feature's e2e hides the gap: `form.locator('button:not(.resp-chip__remove), \u2026')` at frontend/e2e/delivery-hypercare.spec.ts:82. Expected: add `.ws-form .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }` (phone width, or always), and drop the `:not(.resp-chip__remove)` exclusion so the e2e measures it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T13:36:37Z",
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T14:23:17Z",
+          "refs": [
+            "c8137000"
+          ],
+          "head": "c8137000b7aa040fa7cd50694adf5f4dba830ed9",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T16:58:41Z",
+          "refs": [
+            "CSS scoped to .ws-form on phones; e2e now checks all step-form buttons including .resp-chip__remove with no exclusion and asserts width and height >= 44 after upload; respond page and Drawer rule untouched; dlv-00 merge brought only tests/setup.ts and vitest.config.ts."
+          ],
+          "head": "af38b43211249d48e71175aee186838dafb76d42",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "c8137000"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "CSS scoped to .ws-form on phones; e2e now checks all step-form buttons including .resp-chip__remove with no exclusion and asserts width and height >= 44 after upload; respond page and Drawer rule untouched; dlv-00 merge brought only tests/setup.ts and vitest.config.ts."
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "e3928527335e9963daedccf798e736ff53e1ee8b",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The frame's \"History\" link is 24px tall at 390.** It is on every work item, W-2502 included (WorkItemView.tsx:152). It was already there before this feature (round-1 UI notes) and is not inside the feature's e2e locator. It belongs in a frame pass.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T13:36:37Z",
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "e3928527335e9963daedccf798e736ff53e1ee8b",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Spec AC15's unknown id `/work/W-3199` can't be proved on the mock.** `GET /api/v1/work/W-3199` returns 200 with the default item W-1001 (INV-0412), per the server.mjs:8-9 default-fixture rule. The page then draws W-1001 under the W-3199 URL. No-access was proved with W-1099 and with the 403/404 scenario. The real backend must answer 404 for an unknown or other-tenant id, and that is unproved.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T13:36:37Z",
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-4",
+      "round": 2,
+      "snapshot_ref": "e3928527335e9963daedccf798e736ff53e1ee8b",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The mock does not check a step's evidence ids.** A direct `POST /api/v1/work/W-3102/steps` with `evidence_ids: [\"EV-nope\"]` returned 200 `done`. The real backend must reject unknown or foreign evidence ids. Record this in BACKEND-HANDOFF alongside G-46-1.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-34/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T13:36:37Z",
+          "head": "e3928527335e9963daedccf798e736ff53e1ee8b"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+          "evidence_refs": [
+            "delivery/features/F-34/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-34/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+          "evidence_refs": [
+            "delivery/features/F-34/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+          "evidence_refs": [
+            "delivery/features/F-34/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "evidence_refs": [
+            "delivery/features/F-34/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "evidence_refs": [
+            "delivery/features/F-34/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-34/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "evidence_refs": [
+            "delivery/features/F-34/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "e3928527335e9963daedccf798e736ff53e1ee8b",
+          "evidence_refs": [
+            "delivery/features/F-34/round-2/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -89,11 +782,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-DELIVERY-HYPERCARE-ARCHIVE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "be04d072e0e7ac24c1e79ca10e0d7044b7c7291c",
+    "task_branch": "fe-delivery-hypercare-archive-hypercare-window",
+    "head_sha": "af38b43211249d48e71175aee186838dafb76d42",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-34",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +796,51 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/delivery-hypercare.spec.ts",
+      "frontend/e2e/delivery-release.spec.ts",
+      "frontend/mock/fixtures/projects/P-0101.json",
+      "frontend/mock/fixtures/work/W-3101.json",
+      "frontend/mock/fixtures/work/W-3101.next.json",
+      "frontend/mock/fixtures/work/W-3101.steps.json",
+      "frontend/mock/fixtures/work/W-3102.json",
+      "frontend/mock/fixtures/work/W-3102.next.json",
+      "frontend/mock/fixtures/work/W-3102.steps.json",
+      "frontend/mock/fixtures/work/W-3103.json",
+      "frontend/mock/fixtures/work/W-3104.json",
+      "frontend/mock/fixtures/work/W-3105.json",
+      "frontend/mock/fixtures/work/W-3105.steps.json",
+      "frontend/mock/fixtures/work/W-3106.json",
+      "frontend/mock/fixtures/work/W-3106.next.json",
+      "frontend/mock/fixtures/work/W-3106.steps.json",
+      "frontend/mock/fixtures/work/W-3107.json",
+      "frontend/mock/fixtures/work/W-3107.steps.json",
+      "frontend/mock/fixtures/work/W-3108.json",
+      "frontend/mock/fixtures/work/W-3108.next.json",
+      "frontend/mock/fixtures/work/W-3108.steps.json",
+      "frontend/mock/fixtures/work/W-3109.json",
+      "frontend/mock/fixtures/work/W-3110.json",
+      "frontend/mock/fixtures/work/W-3111.json",
+      "frontend/mock/fixtures/work/W-3112.json",
+      "frontend/mock/fixtures/work/W-3112.next.json",
+      "frontend/mock/fixtures/work/W-3112.steps.json",
+      "frontend/mock/fixtures/work/W-3120.json",
+      "frontend/mock/proposals/delivery-hypercare.json",
+      "frontend/src/features/setup/format.ts",
+      "frontend/src/features/workspace/Links.tsx",
+      "frontend/src/features/workspace/StepForm.tsx",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/useWorkspaceStep.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/delivery-hypercare-mock.test.ts",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/delivery-release-mock.test.ts",
+      "frontend/tests/hypercare.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/setup.ts",
+      "frontend/vitest.config.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +873,123 @@
     }
   },
   "created_at": "2026-11-18T05:12:21Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 3,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T10:39:48Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T10:39:49Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T12:11:42Z",
+      "round": 1,
+      "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T12:18:46Z",
+      "round": 1,
+      "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T12:18:47Z",
+      "round": 2,
+      "head": "512e5bc3ca426ddf049cb23ec6272cd4cd2848e4",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T13:02:12Z",
+      "round": 2,
+      "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T13:04:32Z",
+      "round": 2,
+      "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T13:36:37Z",
+      "round": 2,
+      "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T13:36:39Z",
+      "round": 3,
+      "head": "e3928527335e9963daedccf798e736ff53e1ee8b",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T16:57:54Z",
+      "round": 3,
+      "head": "af38b43211249d48e71175aee186838dafb76d42",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T16:58:41Z",
+      "round": 3,
+      "head": "af38b43211249d48e71175aee186838dafb76d42",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T17:11:27Z",
+      "round": 3,
+      "head": "af38b43211249d48e71175aee186838dafb76d42",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-34/readiness.md",
+      "delivery/features/F-34/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 3,
+    "attempts": 2,
+    "verdict": "PASS",
+    "commit": "af38b43211249d48e71175aee186838dafb76d42"
   },
   "blocked": null
 }
