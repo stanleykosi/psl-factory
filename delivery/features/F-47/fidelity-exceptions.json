@@ -6,7 +6,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the phone form is F-05's bottom sheet over My work (signed 14 Nov for F-05), so the board's page bar \"← My work · START\" is not drawn.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -14,7 +14,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the phone board's page bar title; the bottom sheet head reads \"Step 2 of 2 · change line\" instead (F-05).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tablist",
@@ -22,7 +22,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "table",
@@ -30,7 +30,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "columnheader",
@@ -38,7 +38,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "columnheader",
@@ -46,7 +46,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "columnheader",
@@ -54,7 +54,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -62,7 +62,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -70,7 +70,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -78,7 +78,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -86,7 +86,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -94,7 +94,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -102,7 +102,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -110,7 +110,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -118,7 +118,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -126,7 +126,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -134,7 +134,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -142,7 +142,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -150,7 +150,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -158,7 +158,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -166,7 +166,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -174,7 +174,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -182,7 +182,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: text inside a form control is matched by its control, not as page text (F-05 as signed); the value comes from the fixture or what the driver typed.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -190,7 +190,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: a native input's label is matched by the control it names (F-05 as signed), not as loose text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -198,7 +198,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: a native input's label is matched by the control it names (F-05 as signed), not as loose text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -206,7 +206,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: a native input's label is matched by the control it names (F-05 as signed), not as loose text.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -214,7 +214,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the drawn \"×\" close mark is the drawer's Close button (F-05 as signed).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -222,7 +222,7 @@
    "category": "sample data",
    "conflicts": 7,
    "reason": "Conflicts 7: the signed-in name comes from /me. The Finance lines are served only to the mock's Finance persona (Ada Okafor · Finance Lead); a PM starting Finance back-office lines would be a grant the frontend invents. On the minutes and change boards the PM persona's own /me name is shown.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "text",
@@ -230,7 +230,7 @@
    "category": "component",
    "conflicts": 9,
    "reason": "Conflicts 9: the drawer marks every optional field \"(optional)\", as F-05 built; the label reads \"Continues (optional)\".",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "role": "tab",
@@ -238,7 +238,7 @@
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the My work page under the scrim is not this feature (F-05's rule: ignore the page behind the drawer); its tab counts come from the persona's work list.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   }
  ],
  "visual_waivers": [
@@ -248,7 +248,7 @@
    "visual": 89.3,
    "conflicts": 14,
    "reason": "D-83, Conflicts 14: measured 89.3 in round 1 on a production build; the drawer itself matches (fields, Audience, the uploaded card, the footer). Remaining gaps are outside it or listed: the My work page under the scrim is the pm persona's own (\"Nothing needs you right now\" with the agent figure and the short list) where the board draws a four-row table (Conflicts 8); the card's \"×\" the board doesn't draw (Conflicts 2); the bell and the \"records you can see\" line in the frame.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-04-desktop-change",
@@ -256,7 +256,7 @@
    "visual": 86.3,
    "conflicts": 14,
    "reason": "D-83, Conflicts 14: measured 86.3 in round 1 on a production build; the drawer matches in fields, order, the card and the help under it. Remaining gaps: the My work page under the scrim (pm's empty state and short list, not the board's table; Conflicts 8); the request box is the shared TextArea, about 20px shorter than the board's 98px box (F-05 as signed); the card's \"×\" (Conflicts 2).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-04-mobile-minutes",
@@ -264,7 +264,7 @@
    "visual": 78.6,
    "conflicts": 14,
    "reason": "D-83, Conflicts 14: measured 78.6 in round 1 on a production build; the form is F-05's bottom sheet over My work (Conflicts 8, signed for F-05 on 14 Nov), so the board's full-screen page with its \"← My work · START\" bar is drawn as the shared phone bar, a 70px strip of My work, the sheet grab and the sheet head (\"Step 2 of 2 · change line\" and Close), which pushes every field down about 100px; the card's 44px \"×\" (Conflicts 2, 11). Fields, words and order match the board.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-04-mobile-change",
@@ -272,7 +272,7 @@
    "visual": 81.0,
    "conflicts": 14,
    "reason": "D-83, Conflicts 14: measured 81.0 in round 1 on a production build; F-05's bottom sheet (Conflicts 8): the phone bar, the strip of My work and the sheet head replace the board's page bar and move the form down; the shared TextArea's height (F-05); the card's 44px \"×\" (Conflicts 2, 11). Fields, the card and the moved help match.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-04-mobile-schedules",
@@ -280,7 +280,7 @@
    "visual": 75.3,
    "conflicts": 14,
    "reason": "D-83, Conflicts 14: measured 75.3 in round 1 on a production build; F-05's bottom sheet (Conflicts 8): the phone bar, the strip of My work and the sheet head (a two-line title at 390px plus \"Step 2 of 2 · change line\") move Kind, Reference, Mapping note and Proof down about 130px; the Finance persona's long My work list under the scrim makes the captured page far taller than the board; the card's 44px \"×\" (Conflicts 2, 11).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   },
   {
    "board": "SCR-04-mobile-ledger",
@@ -288,7 +288,7 @@
    "visual": 84.9,
    "conflicts": 14,
    "reason": "D-83, Conflicts 14: measured 84.9 in round 1 on a production build; F-05's bottom sheet (Conflicts 8): the phone bar, the strip of My work and the sheet head move Key, Proof and Continues down; the Finance persona's long My work list under the scrim lengthens the capture; \"Continues (optional)\" (Conflicts 9) and the card's 44px \"×\" (Conflicts 2, 11).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
   }
  ]
 }

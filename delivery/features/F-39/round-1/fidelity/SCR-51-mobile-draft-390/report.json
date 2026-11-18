@@ -1,0 +1,487 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T19:11:48.982Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-39/design/canvas/project/SCR-51-mobile-draft.dc.html",
+  "boardName": "SCR-51-mobile-draft.dc.html",
+  "pageUrl": "http://localhost:4937/work/W-3604",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-39/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 81.2 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 55.6,
+    "coverageWithExceptions": 100,
+    "visual": 81.2
+  },
+  "visual": {
+    "score": 81.2,
+    "allCellsScore": 82.1,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2230,
+    "mismatchedCells": 419
+  },
+  "coverage": {
+    "total": 9,
+    "found": 5,
+    "coverage": 55.6,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ESC-0012",
+        "pageName": "ESC-0012",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Message drafted",
+        "pageName": "Client test data three weeks late",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Message drafted\" on the board, \"Client test data three weeks late\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "pageName": "DONE",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #16388F on the board, #16502F on the page"
+        ],
+        "boardBox": {
+          "x": 309,
+          "y": 122,
+          "w": 49,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 309,
+          "y": 381,
+          "w": 49,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Send for review",
+        "pageName": "Send for review",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 64,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: the frame's phone bar draws the back link (\"← Project\", to /projects/P-0101) with the accessible name \"Back to Project\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Escalation message",
+        "key": "text: Escalation message",
+        "container": "page",
+        "boardBox": {
+          "x": 74,
+          "y": 116,
+          "w": 128,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 7: the agent card title has no field.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent · done",
+        "key": "text: Tola · PMO agent · done",
+        "container": "page",
+        "boardBox": {
+          "x": 74,
+          "y": 134,
+          "w": 128,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 7: as above.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Drafted 13 Nov",
+        "key": "text: Drafted 13 Nov",
+        "container": "page",
+        "boardBox": {
+          "x": 18,
+          "y": 315,
+          "w": 354,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 7: as above; no finished_at.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"ESC-0012\"",
+        "kind": "Text",
+        "name": "ESC-0012",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Text \"DONE\"",
+        "kind": "Text",
+        "name": "DONE",
+        "boardBox": {
+          "x": 309,
+          "y": 122,
+          "w": 49,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 309,
+          "y": 381,
+          "w": 49,
+          "h": 23
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Link \"Send for review\"",
+        "kind": "Link",
+        "name": "Send for review",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 786,
+          "w": 358,
+          "h": 44
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Project",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 60,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MESSAGE DRAFTED",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 131,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "MESSAGE V1",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 165,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Nothing here yet.",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 202,
+          "w": 326,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Your team's test data is now 15 days late (asked 22 Oct, 29 Oct, 5 Nov). Go-live on 4 Dec depends on it. Could you confirm a date this week?",
+        "container": "main",
+        "pageBox": {
+          "x": 72,
+          "y": 245,
+          "w": 274,
+          "h": 84
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "complementary",
+        "pageBox": {
+          "x": 74,
+          "y": 373,
+          "w": 156,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cannot approve, send or pay.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 74,
+          "y": 394,
+          "w": 156,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Started 13:40",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 616,
+          "w": 81,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "13:40",
+        "container": "complementary",
+        "pageBox": {
+          "x": 78,
+          "y": 617,
+          "w": 35,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "container": "complementary",
+        "pageBox": {
+          "x": 307,
+          "y": 604,
+          "w": 51,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The PMO Lead reviews the message before it's sent.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 753,
+          "w": 358,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-39/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

@@ -1,0 +1,1389 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T11:03:14.130Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-41/design/canvas/finance/project/SCR-32-desktop.dc.html",
+  "boardName": "SCR-32-desktop.dc.html",
+  "pageUrl": "http://localhost:4951/work/W-3801",
+  "viewport": {
+    "width": 1440,
+    "height": 980
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-41/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 76.7 is below 90.",
+    "18 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 77.1,
+    "coverageWithExceptions": 100,
+    "visual": 76.7
+  },
+  "visual": {
+    "score": 76.7,
+    "allCellsScore": 84.6,
+    "width": 1440,
+    "height": 980,
+    "boardHeight": 980,
+    "pageHeight": 1106,
+    "cell": 12,
+    "contentCells": 6520,
+    "mismatchedCells": 1518
+  },
+  "coverage": {
+    "total": 35,
+    "found": 27,
+    "coverage": 77.1,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 428,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1036,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1154,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 655
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1049
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Payment reminder · Harmattan Bank",
+        "pageName": "Payment reminder · Harmattan Bank",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 35px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 707,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi drafted this from the invoice and the SOW payment terms. Nothing is sent until you press Send.",
+        "pageName": "Chidi drafted this from the invoice and the SOW payment terms. Nothing is sent until you press Send.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #16388F on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 128,
+          "y": 184,
+          "w": 630,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 175,
+          "w": 630,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "finance@harmattanbank.example",
+        "pageName": "finance@harmattanbank.example",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "weight 700 on the board, 400 on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 125,
+          "y": 241,
+          "w": 205,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 765,
+          "y": 349,
+          "w": 209,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Reminder: invoice INV-0391 is 21 days overdue",
+        "pageName": "Reminder: invoice INV-0391 is 21 days overdue",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "weight 700 on the board, 400 on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 155,
+          "y": 258,
+          "w": 286,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 650,
+          "y": 429,
+          "w": 324,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Send reminder",
+        "pageName": "Send reminder",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "background #C8401C on the board, #22764A on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 605,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 442,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Edit",
+        "pageName": "Edit",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 398,
+          "y": 605,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 500,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Not now",
+        "pageName": "Not now",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 708,
+          "y": 605,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 558,
+          "w": 308,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Review and decide",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1032,
+          "y": 174,
+          "w": 320,
+          "h": 326
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 321,
+          "w": 340,
+          "h": 303
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "THIS INVOICE",
+        "pageName": "THIS INVOICE",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1034,
+          "y": 176,
+          "w": 316,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 777,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Amount",
+        "pageName": "Amount",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1048,
+          "y": 227,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 844,
+          "w": 51,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Due",
+        "pageName": "Due",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1048,
+          "y": 257,
+          "w": 25,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 884,
+          "w": 26,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "22 Oct 2026",
+        "pageName": "22 Oct 2026",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "text size 14px on the board, 12px on the page",
+          "weight 700 on the board, 400 on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 1257,
+          "y": 257,
+          "w": 79,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 895,
+          "y": 886,
+          "w": 79,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Overdue by",
+        "pageName": "Overdue by",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1048,
+          "y": 287,
+          "w": 72,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 924,
+          "w": 74,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "21 days",
+        "pageName": "21 days",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "text size 14px on the board, 12px on the page",
+          "weight 700 on the board, 400 on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 1286,
+          "y": 287,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 923,
+          "y": 926,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Reminders sent",
+        "pageName": "Reminders sent",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1048,
+          "y": 317,
+          "w": 99,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 964,
+          "w": 102,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "None yet",
+        "pageName": "None yet",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "text size 14px on the board, 12px on the page",
+          "weight 700 on the board, 400 on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 1278,
+          "y": 317,
+          "w": 58,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 916,
+          "y": 966,
+          "w": 58,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Last payment",
+        "pageName": "Last payment",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1048,
+          "y": 347,
+          "w": 85,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1004,
+          "w": 88,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "None",
+        "pageName": "None",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "text size 14px on the board, 12px on the page",
+          "weight 700 on the board, 400 on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 1302,
+          "y": 347,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 945,
+          "y": 1006,
+          "w": 29,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi",
+        "pageName": "Chidi",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1092,
+          "y": 408,
+          "w": 33,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 100,
+          "y": 253,
+          "w": 272,
+          "h": 21
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Bisi Adeyemi · Finance",
+        "key": "text: Bisi Adeyemi · Finance",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1220,
+          "y": 20,
+          "w": 132,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 14: the signed-in name is the mock's Finance persona (Ada Okafor · Finance Lead), drawn by the shell; the board's sample name is not built.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FINANCE / PAYMENTS / INV-0391 · REMINDER",
+        "key": "text: FINANCE / PAYMENTS / INV-0391 · REMINDER",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 14: the crumbs come from workspace.context.crumbs and the work-item frame draws them as a list (FINANCE, PAYMENTS, INV-0391 · REMINDER), each item matched by words but not as one string.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "To: finance@harmattanbank.example · Copy: Kunle Ade (PM) Subject: Reminder: invoice INV-0391 is 21 days overdue",
+        "key": "text: To: finance@harmattanbank.example · Copy: Kunle Ade (PM) Subject: Reminder: invoice INV-0391 is 21 days overdue",
+        "container": "main",
+        "boardBox": {
+          "x": 90,
+          "y": 231,
+          "w": 918,
+          "h": 55
+        },
+        "exception": {
+          "reason": "Conflicts 14: the shared line workspace draws an untitled facts section as label/value rows (To, Copy, Subject) with the same values; the frame is F-17's and is not changed here.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Dear Harmattan Bank Finance team, Our records show invoice INV-0391 for ₦6,800,000.00 (Milestone 1, mobile onboarding) was due on 22 Oct and hasn't been paid yet. The invoice is attached again for con",
+        "key": "text: Dear Harmattan Bank Finance team, Our records show invoice INV-0391 for ₦6,800,000.00 (Milestone 1, mobile onboarding) was due on 22 Oct and hasn't been paid yet. The invoice is attached again for con",
+        "container": "main",
+        "boardBox": {
+          "x": 90,
+          "y": 286,
+          "w": 918,
+          "h": 230
+        },
+        "exception": {
+          "reason": "Conflicts 14: the shared workspace text section draws the four message paragraphs as rows, word for word; the board draws one block.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0391.pdf",
+        "key": "text: INV-0391.pdf",
+        "container": "main",
+        "boardBox": {
+          "x": 130,
+          "y": 543,
+          "w": 90,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 8: drawn from the attachment proposal under the message (bold name, then \"Uploaded · 84 KB\"), inside the workspace row the tool reads as a data pattern.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 84 KB",
+        "key": "text: Uploaded · 84 KB",
+        "container": "main",
+        "boardBox": {
+          "x": 130,
+          "y": 563,
+          "w": 94,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 8: drawn under the file name from size_bytes (formatSize), inside the workspace row the tool reads as a data pattern.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦6,800,000.00",
+        "key": "text: ₦6,800,000.00",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1237,
+          "y": 227,
+          "w": 99,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 16: the This invoice Amount is on the page as sent (₦6,800,000.00) in the frame's facts list; the tool pairs it with the message's figure.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent After you send it, I'll check it was delivered. If there's no reply in 7 days I'll draft a second reminder for you.",
+        "key": "text: Chidi · Finance agent After you send it, I'll check it was delivered. If there's no reply in 7 days I'll draft a second reminder for you.",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1092,
+          "y": 407,
+          "w": 246,
+          "h": 81
+        },
+        "exception": {
+          "reason": "Conflicts 6: no second-reminder interval is configured, so the \"7 days\" sentence is not shown; the frame's agent note carries the returned line \"After you send it, I'll check it was delivered.\" at the top of the workspace.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"THIS INVOICE\"",
+        "kind": "Text",
+        "name": "THIS INVOICE",
+        "boardBox": {
+          "x": 1034,
+          "y": 176,
+          "w": 316,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 777,
+          "w": 898,
+          "h": 43
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Chidi drafted this from the invoice and the SOW payment terms. Nothing is sent until you press Send.\"; on the page it comes after Link \"Not now\"",
+          "across the page: right on the board (83% across), middle on the page (37% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Amount\"",
+        "kind": "Text",
+        "name": "Amount",
+        "boardBox": {
+          "x": 1048,
+          "y": 227,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 844,
+          "w": 51,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"THIS INVOICE\"; on the page it comes after Text \"THIS INVOICE\"",
+          "across the page: right on the board (75% across), left on the page (9% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"finance@harmattanbank.example\"",
+        "kind": "Text",
+        "name": "finance@harmattanbank.example",
+        "boardBox": {
+          "x": 125,
+          "y": 241,
+          "w": 205,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 765,
+          "y": 349,
+          "w": 209,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: left on the board (16% across), middle on the page (60% across)"
+        ]
+      },
+      {
+        "label": "Text \"Reminder: invoice INV-0391 is 21 days overdue\"",
+        "kind": "Text",
+        "name": "Reminder: invoice INV-0391 is 21 days overdue",
+        "boardBox": {
+          "x": 155,
+          "y": 258,
+          "w": 286,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 650,
+          "y": 429,
+          "w": 324,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: left on the board (21% across), middle on the page (56% across)"
+        ]
+      },
+      {
+        "label": "Text \"Due\"",
+        "kind": "Text",
+        "name": "Due",
+        "boardBox": {
+          "x": 1048,
+          "y": 257,
+          "w": 25,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 884,
+          "w": 26,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (74% across), left on the page (8% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"22 Oct 2026\"",
+        "kind": "Text",
+        "name": "22 Oct 2026",
+        "boardBox": {
+          "x": 1257,
+          "y": 257,
+          "w": 79,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 895,
+          "y": 886,
+          "w": 79,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: right on the board (90% across), right on the page (65% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Overdue by\"",
+        "kind": "Text",
+        "name": "Overdue by",
+        "boardBox": {
+          "x": 1048,
+          "y": 287,
+          "w": 72,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 924,
+          "w": 74,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (75% across), left on the page (10% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"21 days\"",
+        "kind": "Text",
+        "name": "21 days",
+        "boardBox": {
+          "x": 1286,
+          "y": 287,
+          "w": 50,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 923,
+          "y": 926,
+          "w": 50,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: right on the board (91% across), right on the page (66% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"Reminders sent\"",
+        "kind": "Text",
+        "name": "Reminders sent",
+        "boardBox": {
+          "x": 1048,
+          "y": 317,
+          "w": 99,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 964,
+          "w": 102,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (76% across), left on the page (11% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"None yet\"",
+        "kind": "Text",
+        "name": "None yet",
+        "boardBox": {
+          "x": 1278,
+          "y": 317,
+          "w": 58,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 916,
+          "y": 966,
+          "w": 58,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: right on the board (91% across), right on the page (66% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Side panel \"\"",
+        "kind": "Side panel",
+        "name": "",
+        "boardBox": {
+          "x": 1032,
+          "y": 174,
+          "w": 320,
+          "h": 326
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 321,
+          "w": 340,
+          "h": 303
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"None yet\"; on the page it comes after Link \"Send reminder\""
+        ]
+      },
+      {
+        "label": "Text \"Last payment\"",
+        "kind": "Text",
+        "name": "Last payment",
+        "boardBox": {
+          "x": 1048,
+          "y": 347,
+          "w": 85,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1004,
+          "w": 88,
+          "h": 21
+        },
+        "reasons": [
+          "across the page: right on the board (76% across), left on the page (10% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"None\"",
+        "kind": "Text",
+        "name": "None",
+        "boardBox": {
+          "x": 1302,
+          "y": 347,
+          "w": 34,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 945,
+          "y": 1006,
+          "w": 29,
+          "h": 18
+        },
+        "reasons": [
+          "across the page: right on the board (92% across), right on the page (67% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 655
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1049
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"None\"; on the page it comes after Link \"Edit\""
+        ]
+      },
+      {
+        "label": "Text \"Chidi\"",
+        "kind": "Text",
+        "name": "Chidi",
+        "boardBox": {
+          "x": 1092,
+          "y": 408,
+          "w": 33,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 100,
+          "y": 253,
+          "w": 272,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Main area \"\"; on the page it comes after Text \"Chidi drafted this from the invoice and the SOW payment terms. Nothing is sent until you press Send.\"",
+          "across the page: right on the board (77% across), left on the page (16% across)",
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Link \"Send reminder\"",
+        "kind": "Link",
+        "name": "Send reminder",
+        "boardBox": {
+          "x": 88,
+          "y": 605,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 442,
+          "w": 308,
+          "h": 50
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Chidi\"; on the page it comes after Text \"Reminder: invoice INV-0391 is 21 days overdue\"",
+          "across the page: left on the board (17% across), right on the page (82% across)",
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Link \"Edit\"",
+        "kind": "Link",
+        "name": "Edit",
+        "boardBox": {
+          "x": 398,
+          "y": 605,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 500,
+          "w": 308,
+          "h": 50
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Send reminder\"; on the page it comes after Side panel \"\"",
+          "across the page: middle on the board (38% across), right on the page (82% across)",
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Link \"Not now\"",
+        "kind": "Link",
+        "name": "Not now",
+        "boardBox": {
+          "x": 708,
+          "y": 605,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 558,
+          "w": 308,
+          "h": 50
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Edit\"; on the page it comes after Main area \"\"",
+          "across the page: middle on the board (60% across), right on the page (82% across)",
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 979,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1027,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 301,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FINANCE",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 54,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PAYMENTS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 142,
+          "y": 85,
+          "w": 81,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0391 · REMINDER",
+        "container": "navigation",
+        "pageBox": {
+          "x": 223,
+          "y": 85,
+          "w": 166,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ACTION NEEDED",
+        "container": "main",
+        "pageBox": {
+          "x": 1239,
+          "y": 120,
+          "w": 113,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "After you send it, I'll check it was delivered.",
+        "container": "main",
+        "pageBox": {
+          "x": 100,
+          "y": 276,
+          "w": 272,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "DECIDE",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1014,
+          "y": 323,
+          "w": 336,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "This sends to the client.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 380,
+          "w": 308,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Nothing is sent. The draft is kept here.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1028,
+          "y": 411,
+          "w": 308,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-41/design/mascots/canvas-assets.json (19 mapped).",
+    "Images: 1 /_blob/ image(s) could not be shown because they are not in the assets map: /_blob/4ac9ee52f6c83d9cdc4f91e694a3a025. They render as broken images and lower the visual score."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

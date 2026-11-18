@@ -3,26 +3,63 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-39",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Escalation: Tola checks a raised escalation, the PMO Lead decides \"Escalate to the client\" or \"Don't escalate\", and Tola drafts Message v1 for internal review, in four states (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-EMERGENCY-ESCALATION"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-3601` to `W-3604` show their fixture's status label and tone, facts, Tola's card, decide panel, quote, Message v1, Next line and links, and nothing else. No board string is in `src`: `grep -rn \"INVESTIGATING\\|YOUR DECISION\\|NOT ESCALATED\\|MESSAGE DRAFTED\\|Escalate to the client\\|Don't escalate\\|FACTS AND DATES\" frontend/src` returns nothing. \u2014 verify: `cd frontend && npx vitest run tests/escalation.test.tsx`; pages at 1440 and 390.",
+    "**Tola's work is shown, never a decision.** On W-3601 the card shows \"Tola\", \"step 3 of 4\", WORKING, the four steps with their details as returned, \"Started 13 Nov 11:00\" and \"Ask Tola\" (href `/assistant`). There is no decide control. On W-3604 the card shows DONE and the three done details. On W-3602 and W-3603 no visible card is drawn. Changing a fixture step's `source` changes only that text. \u2014 verify: component tests on the fixtures and modified copies.",
+    "**Unknown is never 0.** W-3606 shows \"Unknown\" for \"Delays\" and \"Already asked the client\". The page has no \"0\", \"0 TIMES\", empty value cell or \"-\" or \"\u2014\" in their place. \u2014 verify: component test on W-3606.",
+    "**The page counts and dates nothing.** Changing \"3 TIMES\" to \"4 TIMES\", or \"15 DAYS LATE\" in the facts, changes only that value; Message v1's dates are not reread or reformatted. `git diff -U0 frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(|new Date\\(\"` adds nothing. \u2014 verify: component tests on modified copies; the grep.",
+    "**Sample-marked.** Every fixture page shows `SampleLabel` because `sample: true`; a copy with `sample: false` does not. \u2014 verify: component test.",
+    "**Controls only from `you_can_act` and `required_role`; nothing from `/me`.**",
+    "**Escalate.** On W-3602 the page sends one claim to `/api/v1/tasks/T-3602/claim`. \"Escalate to the client\" then sends exactly one POST `/api/v1/tasks/T-3602/decision` with CSRF and `{verdict: \"approve\", expected_revision: 1}`: no note, no extra keys, valid against the generated schema. A double press sends one. The re-read shows MESSAGE DRAFTED from `W-3602.approve.json`. \u2014 verify: component test; e2e request log.",
+    "**Don't escalate needs a note.** An empty or blank note, or one over 2000 characters, sends nothing; \"Add a note to reject it.\" appears under the note, announced, with focus on the note. With a note, one POST with `verdict: \"reject\"` and the trimmed note follows. The re-read shows NOT ESCALATED with the quote and \"Back to the issue\" linking to `/work/W-3609`, which opens ISS-0241. On the phone, \"Don't escalate\" opens the full-height `Drawer` with the note. \u2014 verify: component tests; e2e at 390.",
+    "**No success before the re-read.** With the decide answering 200 and a test double still serving the decide state on re-read, the page shows neither MESSAGE DRAFTED, NOT ESCALATED nor \"is approved\". The buttons follow the re-read task. \u2014 verify: component test with a recording `fetch`.",
+    "**An uncertain decide never reads as success.**",
+    "**Backend refusals are shown.** With `psl_mock_scenario` 403 the decide shows the read-only view; 409 shows the stale view, keeps the note and resends only on a new press; 422 shows the message under the note. \u2014 verify: component tests; `tests/escalation-mock.test.ts`.",
+    "**Send for review.** On W-3604, \"Send for review\" sends one POST `/api/v1/work/W-3604/steps` with CSRF, `expected_revision`, `step: \"send_for_review\"`, `inputs: {}` and a UUID `idempotency_key`. A retry after a 500 reuses the key. On 200 the re-read shows WAITING FOR REVIEW, with no Approve, Send or Return control for `pm`. The page never shows \"sent for review\" before the re-read. \u2014 verify: component test; e2e request log.",
+    "**A missing reviewer is a hold.** On W-3608 \"Send for review\" is unavailable with the returned `disabled_reason`, no POST is sent whatever is pressed, and no reviewer's name appears. \u2014 verify: component test with a recording `fetch`.",
+    "**Nothing says sent to the client.** On every fixture, sidecar and notice in this feature, `document.body.textContent` contains none of: \"sent to\", \"was sent\", \"has been sent\", \"delivered\", \"received\", \"This sends to the client\". No new fixture step sets `sends`. Message v1 has no Send, Approve and send, or Edit control. \u2014 verify: component test over W-3601 to W-3609 and the sidecars; `grep -n '\"sends\"' frontend/mock/fixtures/work/W-36*` returns nothing.",
+    "**Access 401, 403, 404.**",
+    "**Frame.** The crumbs read Projects / Lagoon Health / Registers / Escalations / ESC-0012 as returned. The project tab bar links every tab and marks none current. The phone bar shows \"\u2190 Project\" to `/projects/P-0101` and \"ESC-0012\" on all four states. F-30's issue pages and F-33's income pages draw as before. \u2014 verify: component tests; e2e.",
+    "**Phone.**",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 8 boards, on a production build at `--width 1440` and `--width 390`.",
+    "**Accessibility.** There are no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390. This covers W-3601 to W-3604 and W-3608, the open Drawer, the note error, the uncertain notice and the not-open view. Also:",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in any `.css`. It adds no local copy of an `@/components` export (`Button`, `Drawer`, `TextArea`, `Callout`, `Panel`, `Tag`). \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** In `tests/escalation-mock.test.ts`:",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `frontend/src/features/decide/**`, `InlineDecide.tsx`, `proposals.ts`, `src/shell/**`, `mock/server.mjs`, `mock/workspace.mjs`, any existing fixture, `apps/**`, `architecture/**`, `design/**` or the protected paths. No new overlay field is added; every reused or recorded one is listed in build.md. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing tests green.** `delivery/checks.sh` passes, and the tests listed under Context pass unchanged. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** It records the commands and results, the 8 scores and waivers, every exception with its Conflicts number, the overlay and backend list, and the held list. It states that nothing reaches the client in part 1. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. Part 1 has several behaviours on the shared workspace block (F-17): an agent checklist, a claim-and-decide with a required note on refusal, and a step write. It also adds additive contract proposals (X-VERDICTS, the escalations enum, cites, links), so SURFACES are ui, api and contract-change. It is not high and has no external-messaging surface, because nothing reaches the client in part 1. The decision only allows a draft that still faces review in part 2. Authority is never decided in the browser, only rendered from `you_can_act` and `required_role` (schema.d.ts:1364-1365), so the auth surface is not ticked. PRODUCT-ACCEPTANCE is required because the escalate and don't-escalate decision, its wording and the drafted client message are new flows the client must see."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-39/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,7 +72,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T19:39:23Z",
+      "seconds": 383.2,
+      "evidence_ref": "delivery/features/F-39/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -45,7 +95,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +109,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-39/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +153,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-EMERGENCY-ESCALATION",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "6f14afbf81207d0c520572ba012a4684f59da2ba",
+    "task_branch": "fe-emergency-escalation-escalate-or-not",
+    "head_sha": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-39",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +167,32 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/escalation.spec.ts",
+      "frontend/mock/fixtures/work/W-3601.json",
+      "frontend/mock/fixtures/work/W-3602.approve.json",
+      "frontend/mock/fixtures/work/W-3602.json",
+      "frontend/mock/fixtures/work/W-3602.reject.json",
+      "frontend/mock/fixtures/work/W-3603.json",
+      "frontend/mock/fixtures/work/W-3604.json",
+      "frontend/mock/fixtures/work/W-3604.next.json",
+      "frontend/mock/fixtures/work/W-3604.steps.json",
+      "frontend/mock/fixtures/work/W-3605.json",
+      "frontend/mock/fixtures/work/W-3606.json",
+      "frontend/mock/fixtures/work/W-3607.approve.json",
+      "frontend/mock/fixtures/work/W-3607.json",
+      "frontend/mock/fixtures/work/W-3608.json",
+      "frontend/mock/fixtures/work/W-3609.json",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/tests/escalation-mock.test.ts",
+      "frontend/tests/escalation.test.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +225,43 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T17:35:06Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T17:35:07Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-39/readiness.md",
+      "delivery/features/F-39/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 1,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
   },
   "blocked": null
 }

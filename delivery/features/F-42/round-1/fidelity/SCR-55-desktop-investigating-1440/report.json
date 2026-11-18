@@ -1,0 +1,1014 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T11:06:16.757Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-42/design/canvas/finance/project/SCR-55-desktop-investigating.dc.html",
+  "boardName": "SCR-55-desktop-investigating.dc.html",
+  "pageUrl": "http://localhost:4969/work/W-3901",
+  "viewport": {
+    "width": 1440,
+    "height": 960
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-42/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 84.1 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 84.8,
+    "coverageWithExceptions": 100,
+    "visual": 84.1
+  },
+  "visual": {
+    "score": 84.1,
+    "allCellsScore": 93.1,
+    "width": 1440,
+    "height": 960,
+    "boardHeight": 960,
+    "pageHeight": 960,
+    "cell": 12,
+    "contentCells": 4164,
+    "mismatchedCells": 660
+  },
+  "coverage": {
+    "total": 33,
+    "found": 28,
+    "coverage": 84.8,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1064,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1182,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 519
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 583
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Fixed asset schedule · October",
+        "pageName": "Fixed asset schedule · October",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 35px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 614,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 602,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CHIDI INVESTIGATING",
+        "pageName": "CHIDI INVESTIGATING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1206,
+          "y": 133,
+          "w": 146,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1201,
+          "y": 120,
+          "w": 151,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "01",
+        "pageName": "01",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 100,
+          "y": 184,
+          "w": 123,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 102,
+          "y": 193,
+          "w": 124,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi investigates",
+        "pageName": "Chidi investigates",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "text size 13px on the board, 15px on the page"
+        ],
+        "boardBox": {
+          "x": 100,
+          "y": 200,
+          "w": 123,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 102,
+          "y": 213,
+          "w": 124,
+          "h": 34
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "02",
+        "pageName": "02",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 251,
+          "y": 184,
+          "w": 123,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 252,
+          "y": 193,
+          "w": 124,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Register review",
+        "pageName": "Register review",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "text size 13px on the board, 15px on the page"
+        ],
+        "boardBox": {
+          "x": 251,
+          "y": 200,
+          "w": 123,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 252,
+          "y": 213,
+          "w": 124,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "03",
+        "pageName": "03",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 402,
+          "y": 184,
+          "w": 123,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 401,
+          "y": 193,
+          "w": 124,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Date review (if unclear)",
+        "pageName": "Date review (if unclear)",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "text size 13px on the board, 15px on the page"
+        ],
+        "boardBox": {
+          "x": 402,
+          "y": 200,
+          "w": 123,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 401,
+          "y": 213,
+          "w": 124,
+          "h": 34
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "04",
+        "pageName": "04",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 553,
+          "y": 184,
+          "w": 123,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 551,
+          "y": 193,
+          "w": 124,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Calculate",
+        "pageName": "Calculate",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "text size 13px on the board, 15px on the page"
+        ],
+        "boardBox": {
+          "x": 553,
+          "y": 200,
+          "w": 123,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 551,
+          "y": 213,
+          "w": 124,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "05",
+        "pageName": "05",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 704,
+          "y": 184,
+          "w": 123,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 700,
+          "y": 193,
+          "w": 124,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Schedule review",
+        "pageName": "Schedule review",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "text size 13px on the board, 15px on the page"
+        ],
+        "boardBox": {
+          "x": 704,
+          "y": 200,
+          "w": 123,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 700,
+          "y": 213,
+          "w": 124,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "06",
+        "pageName": "06",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 855,
+          "y": 184,
+          "w": 123,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 850,
+          "y": 193,
+          "w": 126,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified",
+        "pageName": "Verified",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, Archivo on the page",
+          "text size 13px on the board, 15px on the page"
+        ],
+        "boardBox": {
+          "x": 855,
+          "y": 200,
+          "w": 123,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 850,
+          "y": 213,
+          "w": 126,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REGISTER",
+        "pageName": "REGISTER",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 259,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 298,
+          "w": 898,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi never reads asset values; he checks structure, dates and provenance.",
+        "pageName": "Chidi never reads asset values; he checks structure, dates and provenance.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #4A5357 on the board, #6E4700 on the page"
+        ],
+        "boardBox": {
+          "x": 104,
+          "y": 486,
+          "w": 870,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 537,
+          "w": 469,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Review and decide",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 174,
+          "w": 340,
+          "h": 335
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 179,
+          "w": 340,
+          "h": 349
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WORKING",
+        "pageName": "WORKING",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1250,
+          "y": 208,
+          "w": 86,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1250,
+          "y": 208,
+          "w": 86,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Started 10:05 Ask Chidi",
+        "pageName": "Started 10:05",
+        "pageRole": "text",
+        "similarity": 83,
+        "looks": [
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 1014,
+          "y": 471,
+          "w": 336,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 1028,
+          "y": 498,
+          "w": 81,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Chidi",
+        "pageName": "Ask Chidi",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1279,
+          "y": 481,
+          "w": 57,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1279,
+          "y": 498,
+          "w": 57,
+          "h": 20
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Bisi Ade · Finance",
+        "key": "text: Bisi Ade · Finance",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1248,
+          "y": 20,
+          "w": 104,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 13: the signed-in name comes from /me; the mock's Finance persona is Ada Okafor · Finance Lead on all four boards and no new persona is added.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FINANCE / SCHEDULES / ASSETS · PPE-0006",
+        "key": "text: FINANCE / SCHEDULES / ASSETS · PPE-0006",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 11: the frame draws workspace.context.crumbs as a list of plain items (F-17/F-22/F-33 frame as built), not one text line; the words come from the crumbs.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SAMPLE DATA",
+        "key": "text: SAMPLE DATA",
+        "container": "main",
+        "boardBox": {
+          "x": 1111,
+          "y": 133,
+          "w": 87,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Design decision 14 Nov 2026 (c), restated in D-92: the visible SAMPLE DATA tag is off in team builds. Every fixture is sample: true, and the shared tag shows when the build sets NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1 (component test on all 12 fixtures). Not a spec Conflicts item.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Investigating the asset register",
+        "key": "text: Investigating the asset register",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1070,
+          "y": 186,
+          "w": 170,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Conflicts 15: the agent card is the existing AgentCard drawn from item.agent, which has no title field; the agent's name, steps, sources, WORKING and the footer are drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi · Finance agent · step 3 of 4",
+        "key": "text: Chidi · Finance agent · step 3 of 4",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1070,
+          "y": 222,
+          "w": 170,
+          "h": 30
+        },
+        "exception": {
+          "reason": "Conflicts 15: the existing AgentCard draws the name, \"Cannot approve, send or pay.\" and \"step n of m\" (from the steps sent) on separate lines; item.agent carries no agent role.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Heading \"Fixed asset schedule · October\"",
+        "kind": "Heading",
+        "name": "Fixed asset schedule · October",
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 614,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 120,
+          "w": 602,
+          "h": 35
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Text \"CHIDI INVESTIGATING\""
+        ]
+      },
+      {
+        "label": "Text \"Date review (if unclear)\"",
+        "kind": "Text",
+        "name": "Date review (if unclear)",
+        "boardBox": {
+          "x": 402,
+          "y": 200,
+          "w": 123,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 401,
+          "y": 213,
+          "w": 124,
+          "h": 34
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Verified\"; on the page it comes after Text \"Register review\""
+        ]
+      },
+      {
+        "label": "Text \"Chidi never reads asset values; he checks structure, dates and provenance.\"",
+        "kind": "Text",
+        "name": "Chidi never reads asset values; he checks structure, dates and provenance.",
+        "boardBox": {
+          "x": 104,
+          "y": 486,
+          "w": 870,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 537,
+          "w": 469,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Side panel \"\"; on the page it comes after Link \"Ask Chidi\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 979,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1027,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Where this sits",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 293,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FINANCE",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 54,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SCHEDULES",
+        "container": "navigation",
+        "pageBox": {
+          "x": 142,
+          "y": 85,
+          "w": 89,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ASSETS · PPE-0006",
+        "container": "navigation",
+        "pageBox": {
+          "x": 231,
+          "y": 85,
+          "w": 150,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1310,
+          "y": 85,
+          "w": 42,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1310,
+          "y": 84,
+          "w": 42,
+          "h": 17
+        }
+      },
+      {
+        "kind": "list",
+        "role": "list",
+        "name": "Stations in order",
+        "container": "main",
+        "pageBox": {
+          "x": 90,
+          "y": 181,
+          "w": 898,
+          "h": 99
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1070,
+          "y": 191,
+          "w": 156,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cannot approve, send or pay.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1070,
+          "y": 212,
+          "w": 156,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "step 3 of 4",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1070,
+          "y": 230,
+          "w": 156,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10:05",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1074,
+          "y": 499,
+          "w": 35,
+          "h": 17
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-42/design/mascots/canvas-assets.json (19 mapped).",
+    "Images: 1 /_blob/ image(s) could not be shown because they are not in the assets map: /_blob/4ac9ee52f6c83d9cdc4f91e694a3a025. They render as broken images and lower the visual score."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

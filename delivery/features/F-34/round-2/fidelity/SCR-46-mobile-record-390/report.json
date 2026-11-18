@@ -1,0 +1,549 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T12:48:37.052Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-46-mobile-record.dc.html",
+  "boardName": "SCR-46-mobile-record.dc.html",
+  "pageUrl": "http://localhost:4960/frozen/SCR-46-mobile-record-390.html",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-34/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 77.5 is below 90.",
+    "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 42.9,
+    "coverageWithExceptions": 100,
+    "visual": 77.5
+  },
+  "visual": {
+    "score": 77.5,
+    "allCellsScore": 77.8,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2220,
+    "mismatchedCells": 499
+  },
+  "coverage": {
+    "total": 14,
+    "found": 6,
+    "coverage": 42.9,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HYP-0062",
+        "pageName": "HYP-0062",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Record the release",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Record the release\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 336,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Proof",
+        "pageName": "Proof",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 359,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 549,
+          "w": 326,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "release-1.0.0-log.pdf",
+        "pageName": "release-1.0.0-log.pdf · 2 KB",
+        "pageRole": "text",
+        "similarity": 90,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "weight 700 on the board, 400 on the page"
+        ],
+        "boardBox": {
+          "x": 58,
+          "y": 396,
+          "w": 138,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 57,
+          "y": 601,
+          "w": 218,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Record release",
+        "pageName": "Record release",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 716,
+          "w": 199,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Delivery",
+        "key": "link: ← Delivery",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: the phone bar keeps the built F-22 frame (Back to Queue).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Version",
+        "key": "text: Version",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 6: the record form opens on press and draws Version as a labelled input, not the board's read-only text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Build 1.0.0",
+        "key": "text: Build 1.0.0",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 129,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 6: the pre-filled value sits in the Version input, not as text (the value is the returned `value`).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Released on",
+        "key": "text: Released on",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 189,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 6: Released on is a labelled datetime input, not read-only text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "01 Apr 2027, 22:00",
+        "key": "text: 01 Apr 2027, 22:00",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 214,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 15: dates are 2026 to agree with F-32's rows, and the date is typed by the driver into a datetime input.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Environment",
+        "key": "text: Environment",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 274,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Conflicts 6: Environment is a labelled input, not read-only text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Production · Tamarind Loans",
+        "key": "text: Production · Tamarind Loans",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 299,
+          "w": 358,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 15: the pre-filled environment reads Production · Lagoon Health (P-0101), in an input.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 96 KB",
+        "key": "text: Uploaded · 96 KB",
+        "container": "page",
+        "boardBox": {
+          "x": 58,
+          "y": 416,
+          "w": 94,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 13: the proof line reads as ProofField draws it (file name, size and Add another file).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"HYP-0062\"",
+        "kind": "Text",
+        "name": "HYP-0062",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (65% across), middle on the page (52% across)"
+        ]
+      },
+      {
+        "label": "Text \"Proof\"",
+        "kind": "Text",
+        "name": "Proof",
+        "boardBox": {
+          "x": 16,
+          "y": 359,
+          "w": 358,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 549,
+          "w": 326,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"release-1.0.0-log.pdf\"",
+        "kind": "Text",
+        "name": "release-1.0.0-log.pdf",
+        "boardBox": {
+          "x": 58,
+          "y": 396,
+          "w": 138,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 57,
+          "y": 601,
+          "w": 218,
+          "h": 20
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Record release\"",
+        "kind": "Link",
+        "name": "Record release",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 716,
+          "w": 199,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 105,
+          "w": 84,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HYPERCARE · RELEASE NOT RECORDED",
+        "container": "main",
+        "pageBox": {
+          "x": 127,
+          "y": 103,
+          "w": 247,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 134,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 16,
+          "y": 134,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Form",
+        "role": "form",
+        "name": "Record release",
+        "container": "complementary",
+        "pageBox": {
+          "x": 16,
+          "y": 170,
+          "w": 358,
+          "h": 604
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "RECORD RELEASE",
+        "container": "form",
+        "pageBox": {
+          "x": 18,
+          "y": 172,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "What happens next: the hypercare window starts from the release date. Go-live acceptance (02 Apr) is already recorded.",
+        "container": "form",
+        "pageBox": {
+          "x": 32,
+          "y": 209,
+          "w": 326,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Cancel",
+        "container": "form",
+        "pageBox": {
+          "x": 241,
+          "y": 716,
+          "w": 117,
+          "h": 50
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

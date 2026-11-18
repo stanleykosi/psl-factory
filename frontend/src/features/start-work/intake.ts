@@ -8,7 +8,7 @@ export type FieldValue = string | RangeValue | LineOption | LineOption[];
 export type Values = Record<string, FieldValue | undefined>;
 export type CaseRef = Pick<StartBody, 'case_id' | 'case_revision'>;
 
-/** Kinds this release renders. Evidence and money (and any kind not listed) are FE-M2A-PROOF. */
+/** Kinds this release renders. Money (and any kind not listed) is not handled yet (F-47C). */
 const KINDS = new Set([
   'text',
   'long_text',
@@ -21,23 +21,30 @@ const KINDS = new Set([
   'record',
   'records',
   'display',
+  'evidence',
 ]);
 
-/** The fields rendered, in the order returned. An optional evidence field is drawn as its board shows it but
- *  disabled until proof upload arrives (FE-M2A-PROOF); it and any other unhandled kind are never sent. */
+/** The fields rendered, in the order returned; any unhandled kind is left out and never sent. */
 export function shownFields(line: Line): Field[] {
-  return line.intake.filter((field) => KINDS.has(field.type) || (field.type === 'evidence' && !field.required));
+  return line.intake.filter((field) => KINDS.has(field.type));
 }
 
-/** True for a field the person can fill in this drawer: not the disabled proof box. */
+/** True for a field the person can fill in this drawer, so a 422 for it is drawn under it. */
 export function fillable(field: Field): boolean {
   return KINDS.has(field.type);
 }
 
-/** False when this drawer can't start the line: another start route, a required unhandled field, or no case to start on. */
+/** True for an evidence field proof can be uploaded to: it names its evidence_kind and is not restricted. */
+export function uploadable(field: Field): boolean {
+  return field.type === 'evidence' && Boolean(field.evidence_kind) && !field.restricted;
+}
+
+/** False when this drawer can't start the line: another start route, a required unhandled field (or a required
+ *  proof nobody can upload here), or no case to start on. */
 export function startableHere(line: Line): boolean {
   if (line.start_via !== undefined && line.start_via !== 'work_start') return false;
   if (line.intake.some((field) => field.required && !KINDS.has(field.type))) return false;
+  if (line.intake.some((field) => field.required && field.type === 'evidence' && !uploadable(field))) return false;
   if (line.case_scope === 'project') {
     return line.intake.some((field) => field.name === line.case_field && field.type === 'record');
   }
@@ -131,11 +138,18 @@ function submitted(field: Field, value: FieldValue | undefined): unknown {
   }
 }
 
-/** intake: only the fields the person filled, keyed by Field.name; display fields and unhandled kinds are never sent. */
-export function buildIntake(fields: Field[], values: Values): Record<string, unknown> {
+/** intake: only the fields the person filled, keyed by Field.name; display fields and unhandled kinds are never sent.
+ *  An evidence field sends the evidence_ids whose upload the backend confirmed (`proof`, by field name, in upload
+ *  order): the last one, or all of them when the field is `multiple`. */
+export function buildIntake(fields: Field[], values: Values, proof: Record<string, string[]> = {}): Record<string, unknown> {
   const intake: Record<string, unknown> = {};
   for (const field of fields) {
     if (!KINDS.has(field.type) || field.type === 'display') continue;
+    if (field.type === 'evidence') {
+      const ids = uploadable(field) ? (proof[field.name] ?? []) : [];
+      if (ids.length > 0) intake[field.name] = field.multiple ? ids : ids[ids.length - 1];
+      continue;
+    }
     const value = submitted(field, values[field.name]);
     if (value !== undefined) intake[field.name] = value;
   }

@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 8d7da0c400b19e41356a0230e1328978452bc763
+COMMIT: cfd8a916060e08c73e7217af956fe4d3b98f41a1
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -18,3 +18,11 @@ None.
 - TECH-1-2 | verified | start-work.mjs ownsUpload checks kind and caseBase per line. The routing test covers 9 kind/case/persona combinations. The changed C-FIN-SCHEDULES assertion now expects F-09's 422 with the start-work revision kept at 3, and the other 404s are kept.
 - TECH-1-3 | verified | StartProof.tsx fieldset gets aria-describedby="${id}-error" and aria-invalid only when error is set, and the error span carries that id. The test checks the attribute equals the .psl-error id.
 - TECH-1-4 | verified | round-2/build.md records the round-1 BACKEND-HANDOFF.md edit (c3b03bfb) as an edit outside the lane. This round does not touch it.
+
+## Update for head cfd8a916 (diff 8d7da0c4..cfd8a916)
+
+- None of F-47's files (start-work intake, ProofField, useEvidenceUpload, server.mjs, me.finance_lead.json) changed in 8d7da0c4..cfd8a916; the only F-47 file touched is tests/mock-contract.test.ts, which gained F-31, F-32 and F-33 proposal checks.
+- Re-run on the worktree: start-work, response and mock-contract tests, 9 files, 571 passed. checks.sh passed (2552) and e2e passed (99) per build.md.
+- F-31 response Drawer and F-33 lines are untouched by F-47 and their tests pass.
+
+Verdict unchanged.

@@ -70,6 +70,15 @@ export const assignCandidateKind = (candidate: object): 'person' | 'team' | 'out
   return kind === 'person' || kind === 'team' || kind === 'outside_party' ? kind : undefined;
 };
 
+/** PROPOSAL (`sections[].items[].attachment {label, size_bytes, document_id?}`, F-41 G-SCR32-3): a file that goes with the message,
+ *  drawn as text ("<file name> · Uploaded · <size>"); it is never a link here. Absent or malformed reads as not supplied. */
+export function itemAttachment(item: object): { label: string; sizeBytes: number } | undefined {
+  const value = (item as { attachment?: { label?: unknown; size_bytes?: unknown } }).attachment;
+  if (typeof value !== 'object' || value === null || !text(value.label)) return undefined;
+  const size = value.size_bytes;
+  return typeof size === 'number' && Number.isInteger(size) && size >= 0 ? { label: value.label, sizeBytes: size } : undefined;
+}
+
 /** PROPOSAL (`assign.default_person_id` and `assign.default_hint`, F-31 G-41-1): the person the form opens with and the line under the field.
  *  Read only when the id is one of `assign.candidates`; otherwise nothing is chosen and the form opens on press as in F-30. */
 export function assignDefault(assign: { candidates: { person_id: string }[] }): { personId: string; hint?: string } | undefined {
@@ -97,4 +106,11 @@ export function stepVerdict(step: Step): Verdict | null | undefined {
   if (!step.task_id || !Object.hasOwn(step, 'verdict')) return undefined;
   const value = (step as { verdict?: unknown }).verdict;
   return value === 'approve' || value === 'return' || value === 'reject' ? value : null;
+}
+
+/** PROPOSAL (`steps[].submit_label`, F-41 UX-2-3): the words on a step form's submit button ("Save draft") when they differ from the
+ *  step's own label ("Edit"). Absent reads as the step label, as before. */
+export function stepSubmitLabel(step: object): string | undefined {
+  const value = (step as { submit_label?: unknown }).submit_label;
+  return text(value) ? value : undefined;
 }
