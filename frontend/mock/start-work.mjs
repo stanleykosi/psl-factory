@@ -7,10 +7,10 @@
 // the stored 201; different body: 409), case served to the persona (404), case revision (409), intake (422). Started
 // work is kept in memory by idempotency key; reset() clears it.
 //
-// Proof: an upload whose `kind` is the evidence_kind of a line served to the persona comes here (server.mjs routes
-// it). Checked in order: request schema (422), a case that line starts on (its fixed case, or a project option
-// served to the persona; else 404), case revision (409), content (422: empty, or the backend-stated sample "EXE
-// files can't be used as proof."). Success moves the case revision on by one and returns EV-SW-<case_id>-<n>. Case
+// Proof: an upload whose `kind` is the evidence_kind of a line served to the persona, on a case that line starts on,
+// comes here (server.mjs routes it; any other upload keeps its F-09 or F-11 owner). Checked in order: request
+// schema (422), a case that line starts on (its fixed case, or a project option served to the persona; else 404),
+// case revision (409), content (422: empty, or the backend-stated sample "EXE files can't be used as proof."). Success moves the case revision on by one and returns EV-SW-<case_id>-<n>. Case
 // revisions live in one map ("<persona>:<case_id>", from the fixtures) that E-LINES, E-LINE-OPTIONS and E-WORK-START
 // read, so a re-read after a 409 sees the current one. A start's evidence value must be an id issued here on the
 // same case for the same persona. The mock-only cookie psl_mock_start_work picks an uncertain fixture, used once
@@ -235,15 +235,20 @@ export function createStartWorkMock(openapi) {
   /** The evidence kinds of the lines served to this persona. */
   const kindsFor = (persona) => (lines[persona]?.items ?? []).flatMap((line) => line.intake.filter((f) => f.type === 'evidence' && f.evidence_kind).map((f) => f.evidence_kind));
 
-  /** True when an upload belongs to start work: its kind is the evidence_kind of a line served to the persona. */
-  function ownsUpload(raw, persona) {
+  /** True when an upload belongs to start work: its kind is the evidence_kind of a line served to the persona, and
+   *  its case is one that line starts on (the line's fixed case, or a project option served to the persona). */
+  function ownsUpload(url, raw, persona) {
     let body;
     try {
       body = JSON.parse(raw);
     } catch {
       return false;
     }
-    return typeof body?.kind === 'string' && kindsFor(persona).includes(body.kind);
+    if (typeof body?.kind !== 'string' || !kindsFor(persona).includes(body.kind)) return false;
+    const caseId = decodePart(url.pathname.split('/')[4] ?? '');
+    return lines[persona].items.some(
+      (l) => l.intake.some((f) => f.type === 'evidence' && f.evidence_kind === body.kind) && caseBase(l, persona, caseId) !== undefined,
+    );
   }
 
   function upload(url, raw, persona, cookies) {

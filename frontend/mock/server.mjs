@@ -260,11 +260,11 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (WORKSPACE_OPERATIONS.includes(route.operationId)) return send(res, ...workspaceRoute({ req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides, operationId: route.operationId }));
       // E-EVIDENCE-UPLOAD has two mock owners: Setup proof cases (C-SETUP-*, F-11, evidence.mjs) and work-item cases (F-09, response.mjs).
       const setupProof = route.operationId === 'E-EVIDENCE-UPLOAD' && decodeURIComponent(url.pathname.split('/')[4] ?? '').startsWith('C-SETUP-');
-      // F-47: a third owner, start work (start-work.mjs), for an upload whose kind is a Start work line's evidence_kind for this persona.
+      // F-47: a third owner, start work (start-work.mjs), for an upload whose kind is a Start work line's evidence_kind for this persona, on a case that line starts on.
       if (route.operationId === 'E-EVIDENCE-UPLOAD' && !setupProof) {
         const cookies = parseCookies(req.headers.cookie);
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
-        if (startWork.ownsUpload(raw, persona)) {
+        if (startWork.ownsUpload(url, raw, persona)) {
           const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
           if (scenario && SCENARIO_BODIES[scenario] && route.statuses.includes(String(scenario))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
           if (req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);

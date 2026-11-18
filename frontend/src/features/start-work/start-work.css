@@ -63,6 +63,8 @@
 .sw-prooffield { min-width: 0; }
 .sw-prooffield .resp-label { font-weight: 600; }
 .sw-prooffield .resp-card__text strong { font-weight: 600; }
+/* a failed upload's words for screen readers only (the card shows them) */
+.sw-announce { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .sw-proof { display: flex; align-items: center; gap: var(--space-10px); padding: var(--space-10px) var(--space-3); border: var(--rule-strong) dashed var(--ink); background: var(--steel); color: var(--ink-muted); cursor: not-allowed; }
 .sw-picker { position: relative; }
 .sw-picker > .psl-select { width: 100%; display: flex; align-items: center; gap: var(--space-2); font: inherit; color: inherit; }

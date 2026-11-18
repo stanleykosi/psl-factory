@@ -75,7 +75,20 @@ function Uploader({ field, caseId, caseRevision, reread, onState, onSignedOut, o
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signature]);
 
-  return <ProofField proof={proof} label={field.label} layout={field.multiple ? 'drop' : 'card'} choose={field.multiple ? undefined : 'Choose a file'} />;
+  return (
+    <>
+      <ProofField proof={proof} label={field.label} layout={field.multiple ? 'drop' : 'card'} choose={field.multiple ? undefined : 'Choose a file'} />
+      {/* The card's reason is plain text in F-09's ProofField: a failure is also announced here, as Callout announces
+          a problem (role="alert", inserted with its words), and shown to sight only on the card. */}
+      {files
+        .filter((f) => f.status === 'failed' && f.problem && f.problem !== CANT_ADD)
+        .map((f) => (
+          <span key={f.key} role="alert" className="sw-announce">
+            {`${f.name}: Not uploaded. ${f.problem}`}
+          </span>
+        ))}
+    </>
+  );
 }
 
 type Props = Omit<UploaderProps, 'caseId' | 'caseRevision'> & {
@@ -115,8 +128,15 @@ export function StartProof({ field, sendCase, readOnly, error, movedHelp, moved,
     <Unavailable field={field} text="Choose the project first." />
   );
   return (
-    // A disabled fieldset locks the picker and "×" while the start is sent or unconfirmed.
-    <fieldset role="presentation" className="psl-field sw-field sw-prooffield" data-field={field.name} disabled={readOnly}>
+    // A disabled fieldset locks the picker and "×" while the start is sent or unconfirmed; a 422 for this field
+    // describes it, as IntakeField links a field's error.
+    <fieldset
+      className="psl-field sw-field sw-prooffield"
+      data-field={field.name}
+      disabled={readOnly}
+      aria-describedby={error ? `${id}-error` : undefined}
+      aria-invalid={error ? true : undefined}
+    >
       {box}
       {moved && (
         <span className="psl-hint" role="status">

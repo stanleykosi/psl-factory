@@ -122,7 +122,8 @@ const file = (name: string, size: number) => new File([new Uint8Array(size).fill
 const choose = (f: File) => fireEvent.change(fileInput(), { target: { files: [f] } });
 /** The card's state line; for "Uploaded", also waits until the form has the id (Start no longer held). */
 async function uploaded(name = /Uploaded/) {
-  const found = await within(dialog()).findByText(name);
+  // the card's line; a failure's words are also in the hidden announcement (UX-1-1)
+  const [found] = await within(dialog()).findAllByText(name);
   if (String(name) === String(/Uploaded/)) {
     await waitFor(() => expect(dialog().querySelector('.sw-primary')).toHaveProperty('disabled', false));
   }
@@ -385,6 +386,92 @@ describe('the start', () => {
     startPress('Start minutes');
     await waitFor(() => expect(starts).toHaveLength(1));
     expect([starts[0].body.case_id, starts[0].body.case_revision, starts[0].body.intake.proof]).toEqual(['C-0102', 4, 'EV-SW-C-0102-1']);
+  });
+});
+
+describe('round 2: announced, linked, and no upload to a dropped case', () => {
+  it('UX-1-1: each upload failure is announced with its words (role="alert"), and nothing is announced once it is fixed', async () => {
+    let mode: 'exe' | 'down' | 'stale' | 'noid' | 'ok' = 'exe';
+    override = (_, url) => {
+      if (!url.pathname.endsWith('/evidence')) return undefined;
+      if (mode === 'down') return json(500, { code: 'server', message: 'Down.' });
+      if (mode === 'stale') return json(409, { code: 'stale_revision', message: 'Changed.' });
+      if (mode === 'noid') return json(200, { sha256: 'x', case_revision: 3 });
+      return undefined;
+    };
+    await ledgerReady();
+    const alerts = () => within(dialog()).queryAllByRole('alert').map((a) => a.textContent);
+    choose(file('setup.exe', 1024));
+    await waitFor(() => expect(alerts()).toContain("setup.exe: Not uploaded. EXE files can't be used as proof."));
+    press('Remove setup.exe');
+    expect(alerts()).toEqual([]);
+    for (const [now, words] of [
+      ['down', 'Couldn’t upload. Try again.'],
+      ['stale', 'This item changed. Add the file again.'],
+      ['noid', 'Couldn’t upload. Try again.'],
+    ] as const) {
+      mode = now;
+      choose(file(`${now}.pdf`, 1024));
+      await waitFor(() => expect(alerts()).toContain(`${now}.pdf: Not uploaded. ${words}`));
+      press(`Remove ${now}.pdf`);
+    }
+    mode = 'ok';
+    choose(file('good.pdf', 1024));
+    await uploaded();
+    expect(alerts()).toEqual([]);
+  });
+
+  it('TECH-1-3: a 422 for Proof describes the Proof box (aria-describedby) and marks it invalid', async () => {
+    override = (_, url) => (url.pathname.endsWith('/evidence') ? json(200, { evidence_id: 'EV-ELSEWHERE', sha256: 'x', case_revision: 2 }) : undefined);
+    await ledgerReady();
+    const box = () => dialog().querySelector<HTMLElement>('[data-field="proof"]')!;
+    expect(box().getAttribute('aria-describedby')).toBeNull();
+    choose(file('qb.pdf', 1024));
+    await uploaded();
+    startPress('Record source');
+    const message = await within(dialog()).findByText("That proof isn't on this record. Add it again.");
+    const error = message.closest('.psl-error')!;
+    expect(box().getAttribute('aria-describedby')).toBe(error.id);
+    expect(box().getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('TECH-1-1: Try again sends nothing once the fixed case is no longer served', async () => {
+    let gone = false;
+    override = (_, url) => {
+      if (url.pathname.endsWith('/evidence')) return json(500, { code: 'server', message: 'Down.' });
+      if (url.pathname === '/api/v1/lines' && gone) {
+        const lines = mock.handle('E-LINES', { url, raw: '', persona: 'finance_lead' })[1] as Lines;
+        return json(200, { ...lines, items: lines.items.filter((l: Line) => l.key !== 'ledger_sources') });
+      }
+      return undefined;
+    };
+    await ledgerReady();
+    choose(file('qb.pdf', 1024));
+    await within(proofBox()).findByText('Couldn’t upload. Try again.');
+    gone = true;
+    press('Try again');
+    expect(await within(dialog()).findByText('You can’t add proof to this item.')).toBeTruthy();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(uploads).toHaveLength(1);
+    expect(within(dialog()).queryByText('qb.pdf')).toBeNull();
+  });
+
+  it('TECH-1-1: Try again sends nothing once the chosen project is no longer served (the project is cleared with a note)', async () => {
+    let gone = false;
+    override = (_, url) => {
+      if (url.pathname.endsWith('/evidence')) return json(500, { code: 'server', message: 'Down.' });
+      if (url.pathname.endsWith('/fields/project/options') && gone) return json(200, { items: [], as_of: '2026-11-14T09:00:00Z' });
+      return undefined;
+    };
+    await minutesReady();
+    choose(file('notes.docx', 1024));
+    await within(proofBox()).findByText('Couldn’t upload. Try again.');
+    gone = true;
+    press('Try again');
+    expect(await within(dialog()).findByText('That choice is no longer available. Choose again.')).toBeTruthy();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(uploads).toHaveLength(1);
+    expect(within(proofBox()).getByText('Choose the project first.')).toBeTruthy();
   });
 });
 

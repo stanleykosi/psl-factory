@@ -162,11 +162,14 @@ describe('uploads on a start-work case', () => {
     expect(ceo.body.items.find((o: { value: string }) => o.value === 'P-0101').case_revision).toBe(6);
   });
 
-  it('404 for a case the line does not start on, a project not served, or a case nobody has; 409 on a stale revision', async () => {
+  it('only a case the line starts on is start work\'s: a project not served or a case nobody has answers 404; 409 on a stale revision', async () => {
     expect((await upload('C-0102', { kind: 'ledger_source', case_revision: 3 })).status).toBe(404);
-    expect((await upload('C-FIN-SCHEDULES', { kind: 'ledger_source', case_revision: 3 })).status).toBe(404);
     expect((await upload('C-0103', { kind: 'meeting_notes', case_revision: 1 }, { persona: 'pm' })).status).toBe(404);
     expect((await upload('C-NOPE', { kind: 'ledger_source', case_revision: 2 })).status).toBe(404);
+    // the ledger kind on the schedules case is not start work's (TECH-1-2): its work-item owner (F-09) refuses the kind
+    const elsewhere = await upload('C-FIN-SCHEDULES', { kind: 'ledger_source', case_revision: 3 });
+    expect(elsewhere.status).toBe(422);
+    expect((await lineOf('finance_lead', 'income_schedules')).case_revision).toBe(3);
     const stale = await upload('C-FIN-LEDGER', { kind: 'ledger_source', case_revision: 1 });
     expect(stale.status).toBe(409);
     expectValid('E-EVIDENCE-UPLOAD', 409, stale.body);
@@ -199,6 +202,25 @@ describe('uploads on a start-work case', () => {
     expect(page.body.items.find((o: { value: string }) => o.value === 'P-0101').case_revision).toBe(6);
     const setup = await upload('C-SETUP-ANY', { kind: 'ledger_source', case_revision: 1 });
     expect(setup.body.evidence_id ?? '').not.toMatch(/^EV-SW-/);
+  });
+});
+
+describe('routing (TECH-1-2)', () => {
+  it('ownsUpload needs the kind of a served line and a case that line starts on', async () => {
+    // @ts-expect-error plain ESM module without type declarations
+    const { createStartWorkMock } = await import('../mock/start-work.mjs');
+    const mock = createStartWorkMock(openapi);
+    const owns = (caseId: string, kind: string, persona = 'finance_lead') =>
+      mock.ownsUpload(new URL(`http://x/api/v1/cases/${caseId}/evidence`), JSON.stringify({ kind }), persona);
+    expect(owns('C-FIN-LEDGER', 'ledger_source')).toBe(true);
+    expect(owns('C-FIN-SCHEDULES', 'schedule_source')).toBe(true);
+    expect(owns('C-FIN-SCHEDULES', 'ledger_source')).toBe(false);
+    expect(owns('C-0102', 'ledger_source')).toBe(false);
+    expect(owns('C-0101', 'meeting_notes', 'pm')).toBe(true);
+    expect(owns('C-0103', 'meeting_notes', 'pm')).toBe(false);
+    expect(owns('C-0103', 'meeting_notes', 'ceo')).toBe(true);
+    expect(owns('C-1601', 'client_response_proof', 'pm')).toBe(false);
+    expect(owns('C-FIN-LEDGER', 'ledger_source', 'pm')).toBe(false);
   });
 });
 

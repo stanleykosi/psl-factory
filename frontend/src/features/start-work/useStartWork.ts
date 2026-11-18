@@ -262,21 +262,24 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
   /** For an upload's 409 and its Try again: re-read the case revision from where it came from, keep every value,
    *  and return it. A project no longer served is cleared with a note, as after a start's 409. */
   const rereadCase = useCallback(async (): Promise<number | undefined> => {
+    // No case left to re-read: refuse, so the hook's Try again stops instead of uploading to a dropped case.
+    const gone = () => new ApiError(404, 'not_found', 'not_found', 'This case is no longer served.');
     if (line.case_scope === 'fixed') {
       const current = (await fetchLines()).items.find((l) => l.key === line.key);
-      setFixedRevision(current?.case_revision);
-      setProofRevision(current?.case_revision);
-      return current?.case_revision;
+      if (!current) throw gone();
+      setFixedRevision(current.case_revision);
+      setProofRevision(current.case_revision);
+      return current.case_revision;
     }
     const field = fields.find((f) => f.name === line.case_field);
     const chosen = field ? (values[field.name] as LineOption | undefined) : undefined;
-    if (!field || !chosen) return undefined;
+    if (!field || !chosen) throw gone();
     const page = await fetchOptions(line.key, field.name, { parent: parentValue(field, values), q: chosen.label });
     const fresh = page.items.find((option) => option.value === chosen.value);
     if (!fresh || fresh.case_id !== chosen.case_id) {
       setValue(field.name, undefined);
       setFieldNotes((current) => ({ ...current, [field.name]: NO_LONGER_AVAILABLE }));
-      return undefined;
+      throw gone();
     }
     setValues((current) => ({ ...current, [field.name]: fresh }));
     setProofRevision(fresh.case_revision);

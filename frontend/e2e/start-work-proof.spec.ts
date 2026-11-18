@@ -182,6 +182,8 @@ for (const [label, viewport, phone] of [
       mode = 'fail';
       await expect(proof(page).getByText(/Not uploaded/)).toBeVisible();
       await expect(proof(page).getByText('Couldn’t upload. Try again.')).toBeVisible();
+      // UX-1-1: the failure is announced with its words
+      await expect(dialog(page).getByRole('alert').filter({ hasText: 'Not uploaded' })).toHaveText('qb_export_je7741.pdf: Not uploaded. Couldn’t upload. Try again.');
       await expect(dialog(page).getByRole('button', { name: 'Record source' })).toBeDisabled();
       if (phone) await atLeast44(page, proof(page).getByRole('button', { name: 'Try again' }), 'Try again');
       await expectNoAxeViolations(page, 'failed');
