@@ -183,7 +183,8 @@
         "emphasis": "danger",
         "applies_to": "workspace",
         "task_id": "T-2705",
-        "verdict": "reject"
+        "verdict": "reject",
+        "consequence": "Rejecting stops this schedule: it isn't used for October's accounts."
       }
     ],
     "context": {
