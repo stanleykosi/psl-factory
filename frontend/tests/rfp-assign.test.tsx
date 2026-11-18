@@ -309,7 +309,7 @@ describe('writes (criteria 6 to 11)', () => {
     expect(await within(dialog).findByText('Couldn’t upload. Try again.')).toBeTruthy();
     expect(within(dialog).getByRole('button', { name: 'Try again' })).toBeTruthy();
     press(dialog);
-    expect(await within(dialog).findByText('Remove the file that didn’t upload, or try it again.')).toBeTruthy();
+    expect((await within(dialog).findAllByText('Remove the file that didn’t upload, or try it again.')).length).toBe(2);
     expect(assigns()).toHaveLength(0);
     fireEvent.click(within(dialog).getByRole('button', { name: 'Remove proof.eml' }));
     press(dialog);
@@ -353,13 +353,64 @@ describe('writes (criteria 6 to 11)', () => {
     expect(within(dialog).getByRole('combobox', { name: /Accountable PM/ }).textContent).toContain('Tunde Bello');
   });
 
-  it('names acting_role and evidence_id under their fields on a 422', async () => {
+  const refuse422 = (names: string[]) => (s: Sent) =>
+    s.method === 'POST' && s.path.endsWith('/assignment') ? json(422, { code: 'invalid', message: `Check these fields: ${names.join(', ')}.`, fields: names.map((name) => ({ name, message: `Check ${name}.` })) }) : undefined;
+
+  it.each([
+    [['acting_role'], 'Choose a role you may assign as.', 'assign-pm-role'],
+    [['evidence_id'], 'Remove the file, or add it again.', 'assign-pm-proof'],
+  ])('a 422 naming %j shows the page’s own words, a summary linked to the field, focus on it, and no raw field name', async (names, message, focusId) => {
     const dialog = await open('W-3302');
     await choosePm(dialog, /Tunde Bello/);
-    override = (s) => (s.method === 'POST' && s.path.endsWith('/assignment') ? json(422, { code: 'invalid', message: 'Check these fields: acting_role, evidence_id.', fields: [{ name: 'acting_role', message: 'That role can’t assign here.' }, { name: 'evidence_id', message: 'That file wasn’t found.' }] }) : undefined);
+    fireEvent.change(within(dialog).getByRole('textbox', { name: /Note/ }), { target: { value: 'kept' } });
+    override = refuse422(names);
     press(dialog);
-    expect(await within(dialog).findByText('Choose a role you may assign as.')).toBeTruthy();
-    expect(within(dialog).getByText('Remove the file, or add it again.')).toBeTruthy();
+    await waitFor(() => expect(within(dialog).getAllByText(message).length).toBe(2));
+    expect(within(dialog).getByText('1 thing to fix')).toBeTruthy();
+    expect(within(dialog).getByRole('link', { name: message }).getAttribute('href')).toBe(`#${focusId}`);
+    await waitFor(() => expect(document.activeElement?.id).toBe(focusId));
+    expect(dialog.textContent).not.toMatch(/Check these fields|acting_role|evidence_id/);
+    expect((within(dialog).getByRole('textbox', { name: /Note/ }) as HTMLTextAreaElement).value).toBe('kept');
+    expect(within(dialog).getByRole('combobox', { name: /Accountable PM/ }).textContent).toContain('Tunde Bello');
+  });
+
+  it('a 422 naming both fields lists both in the summary and focuses the role', async () => {
+    const dialog = await open('W-3302');
+    await choosePm(dialog, /Tunde Bello/);
+    override = refuse422(['acting_role', 'evidence_id']);
+    press(dialog);
+    expect(await within(dialog).findByText('2 things to fix')).toBeTruthy();
+    await waitFor(() => expect(document.activeElement?.id).toBe('assign-pm-role'));
+    expect(dialog.textContent).not.toMatch(/Check these fields/);
+  });
+
+  it('a 422 naming the role and the PM lets the form focus the PM, and shows no raw sentence', async () => {
+    const dialog = await open('W-3302');
+    await choosePm(dialog, /Tunde Bello/);
+    override = refuse422(['person_id', 'acting_role']);
+    press(dialog);
+    expect(await within(dialog).findAllByText('Choose a role you may assign as.')).not.toHaveLength(0);
+    expect(within(dialog).getAllByText('Choose a PM from the list to continue.').length).toBeGreaterThan(0);
+    expect(dialog.textContent).not.toMatch(/Check these fields/);
+  });
+
+  it('a 422 on acting_role for a role shown as text puts the message under that row and focuses it', async () => {
+    const dialog = await open('W-3301');
+    await choosePm(dialog, /Tunde Bello/);
+    override = refuse422(['acting_role']);
+    press(dialog);
+    expect((await within(dialog).findAllByText('Choose a role you may assign as.')).length).toBe(2);
+    await waitFor(() => expect(document.activeElement?.id).toBe('assign-pm-role-text'));
+    expect(dialog.textContent).not.toMatch(/Check these fields/);
+  });
+
+  it('a 500 on the item read says "Nothing was changed." once', async () => {
+    override = (s) => (s.method === 'GET' && s.path === '/api/v1/work/W-3301' ? json(500, { code: 'server_error', message: 'x' }) : undefined);
+    nav.set('?queue=unassigned&assign=W-3301');
+    render(<MyWork />);
+    const dialog = await screen.findByRole('dialog', { name: 'Assign accountable PM' });
+    await within(dialog).findByText(/We couldn’t load this item/);
+    expect((dialog.textContent?.match(/Nothing was changed/g) ?? []).length).toBe(1);
   });
 
   it('on a 409 re-reads, keeps the choices, and the next press sends the new revision once', async () => {

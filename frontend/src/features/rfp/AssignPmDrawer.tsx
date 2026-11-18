@@ -9,7 +9,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { Button, Callout, Drawer, ErrorState, Icon, Loading, Select, Unknown, UNKNOWN, useIsPhone } from '@/components';
+import { Button, Callout, Drawer, ErrorState, Icon, Loading, Select, Unknown, UNKNOWN, useIsPhone, ValidationSummary } from '@/components';
 import { ProofField } from '@/features/response/ProofField';
 import { useEvidenceUpload } from '@/features/response/useEvidenceUpload';
 import { AssignForm, type AssignWords } from '@/features/workspace/AssignForm';
@@ -55,6 +55,8 @@ export const ASSIGN_PM_TEXT = {
 const WORDS: AssignWords = { owner: 'Accountable PM', choose: 'Choose a PM', submit: ASSIGN_PM_TEXT.submit, chooseOwner: 'Choose a PM to continue.', gone: ASSIGN_PM_TEXT.gone };
 const FORM_ID = 'assign-pm-form';
 const ROLE_ID = 'assign-pm-role';
+const ROLE_STATIC_ID = 'assign-pm-role-text';
+const PROOF_ID = 'assign-pm-proof';
 
 export type Assigned = { reference: string; assignedTo: string; reread: boolean };
 
@@ -82,6 +84,8 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
   const [roleError, setRoleError] = useState<string>();
   const [proofError, setProofError] = useState<string>();
   const [fieldError, setFieldError] = useState<{ evidence?: string }>({});
+  // bumps when this panel's own fields (role, proof) are refused, so the summary is announced and focus goes to the first of them
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     void reload();
@@ -110,6 +114,13 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
   const picked = roles?.some((r) => r.role === rolePick) ? rolePick : undefined;
   const actingRole = roles && roles.length === 1 ? roles[0].role : (picked ?? roles?.find((r) => r.role === shownAssign?.role)?.role);
 
+  const refused = (fieldId: string) => {
+    setAttempt((n) => n + 1);
+    // after the summary has taken focus for the new attempt
+    requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById(fieldId)?.focus()));
+  };
+  const roleFieldId = roles && roles.length > 1 ? ROLE_ID : ROLE_STATIC_ID;
+
   const submit = async (request: { person_id: string; note?: string }): Promise<SubmitResult> => {
     if (!shownAssign || proof.uploading) return { kind: 'kept' };
     setSubmitted(true);
@@ -118,11 +129,12 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
     setFieldError({});
     if (roles && actingRole === undefined) {
       setRoleError(ASSIGN_PM_TEXT.chooseRole);
-      requestAnimationFrame(() => document.getElementById(ROLE_ID)?.focus());
+      refused(ROLE_ID);
       return { kind: 'invalid', fields: { acting_role: ASSIGN_PM_TEXT.chooseRole } };
     }
     if (proof.files.some((f) => f.status !== 'uploaded')) {
       setProofError(ASSIGN_PM_TEXT.proofBlocked);
+      refused(PROOF_ID);
       return { kind: 'kept' };
     }
     const file = proof.files.length === 1 ? proof.files[0] : undefined;
@@ -142,7 +154,14 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
       const fields = Object.fromEntries(Object.keys(result.fields).map((name) => [name, ASSIGN_PM_TEXT.fieldMessage[name] ?? result.fields[name]]));
       if (fields.acting_role) setRoleError(fields.acting_role);
       if (fields.evidence_id) setFieldError({ evidence: fields.evidence_id });
-      return { ...result, fields };
+      if (fields.acting_role || fields.evidence_id) {
+        // the first of the panel's own fields takes focus, unless the PM or note was refused too (the form focuses that one)
+        if (!fields.person_id && !fields.note) refused(fields.acting_role ? roleFieldId : PROOF_ID);
+        else setAttempt((n) => n + 1);
+      }
+      // a named field has its own message; the backend's raw sentence ("Check these fields: …") is not shown
+      const named = ['person_id', 'note', 'acting_role', 'evidence_id'].some((name) => fields[name]);
+      return { ...result, fields, message: named ? undefined : result.message };
     }
     return result as SubmitResult;
   };
@@ -170,9 +189,7 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
     );
   } else if (!item && page.refreshFailed) {
     body = (
-      <ErrorState title={ASSIGN_PM_TEXT.loadFailed} onRetry={() => void reload()}>
-        Nothing was changed.
-      </ErrorState>
+      <ErrorState title={ASSIGN_PM_TEXT.loadFailed} onRetry={() => void reload()} />
     );
   } else if (!item || leave) {
     body = <Loading>Loading…</Loading>;
@@ -227,7 +244,18 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
           hint={rfpWords ? ASSIGN_PM_TEXT.count(shownAssign.candidates.length) : undefined}
           formId={FORM_ID}
           actions={false}
-          lead={rfpWords ? <Callout kind="info">{ASSIGN_PM_TEXT.intro}</Callout> : undefined}
+          lead={
+            <>
+              <ValidationSummary
+                attempt={attempt}
+                problems={[
+                  ...(roleError ? [{ fieldId: roleFieldId, message: roleError }] : []),
+                  ...((proofError ?? fieldError.evidence) ? [{ fieldId: PROOF_ID, message: (proofError ?? fieldError.evidence)! }] : []),
+                ]}
+              />
+              {rfpWords && <Callout kind="info">{ASSIGN_PM_TEXT.intro}</Callout>}
+            </>
+          }
           middle={
             <>
               {roles && roles.length > 1 ? (
@@ -244,14 +272,21 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
                   />
                 </div>
               ) : staticRole ? (
-                <div className="resp-field">
+                <div className="resp-field" id={ROLE_STATIC_ID} tabIndex={-1}>
                   <span className="resp-label">{ASSIGN_PM_TEXT.roleLabel}</span>
                   <span className="resp-static">{staticRole}</span>
-                  <span className="psl-hint">{ASSIGN_PM_TEXT.roleHelp}</span>
+                  {roleError ? (
+                    <span className="psl-error" role="alert">
+                      <Icon name="warn" />
+                      <span>{roleError}</span>
+                    </span>
+                  ) : (
+                    <span className="psl-hint">{ASSIGN_PM_TEXT.roleHelp}</span>
+                  )}
                 </div>
               ) : null}
               {proofKind && (
-                <div className="resp-field">
+                <div className="resp-field" id={PROOF_ID} tabIndex={-1}>
                   <ProofField proof={proof} layout="card" label={ASSIGN_PM_TEXT.proof} choose={ASSIGN_PM_TEXT.proofChoose} />
                   {(proofError ?? fieldError.evidence) && (
                     <span className="psl-error" role="alert">

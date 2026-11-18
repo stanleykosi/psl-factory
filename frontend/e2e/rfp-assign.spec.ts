@@ -93,6 +93,19 @@ test.describe('desktop 1440', () => {
     expect(await d.locator('.rfp-assign__next').evaluate((el) => getComputedStyle(el).borderTopWidth)).not.toBe('0px');
   });
 
+  test('a 422 on the role or the proof shows the page’s words, a summary, and focus on the field (axe clean)', async ({ page }) => {
+    await page.route('**/api/v1/work/W-3302/assignment', (route) =>
+      route.fulfill({ status: 422, contentType: 'application/json', body: JSON.stringify({ code: 'invalid', message: 'Check these fields: acting_role, evidence_id.', fields: [{ name: 'acting_role', message: 'x' }, { name: 'evidence_id', message: 'x' }] }) }),
+    );
+    await openPanel(page, 'W-3302');
+    await choose(page, /Accountable PM/, /Tunde Bello/);
+    await dialog(page).getByRole('button', { name: 'Assign PM' }).click();
+    await expect(dialog(page).getByText('2 things to fix')).toBeVisible();
+    await expect(dialog(page).getByText('Check these fields')).toHaveCount(0);
+    await expect(dialog(page).getByRole('combobox', { name: /You are assigning as/ })).toBeFocused();
+    await expectNoAxeViolations(page);
+  });
+
   test('assigns W-3301: the notice appears only after the read-back, the row is gone, the count is one lower', async ({ page }) => {
     await openPanel(page, 'W-3301');
     await expect(dialog(page).getByText('3 people can prepare RFPs here')).toBeVisible();
@@ -242,7 +255,7 @@ test.describe('phone 390', () => {
     expect(await smallTargets(page)).toEqual([]);
     await choose(page, /Accountable PM/, /Sola Martins/);
     await dialog(page).getByRole('button', { name: 'Assign PM' }).click();
-    await expect(dialog(page).getByText('Remove the file that didn’t upload, or try it again.')).toBeVisible();
+    await expect(dialog(page).getByText('Remove the file that didn’t upload, or try it again.').first()).toBeVisible();
     expect((await mockLog(page)).assignments).toEqual([]);
   });
 
