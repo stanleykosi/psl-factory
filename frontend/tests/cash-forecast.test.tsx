@@ -672,7 +672,8 @@ describe('record what happened (AC 12, 18, 19)', () => {
     cleanup();
     await open(served);
     expect(status().textContent).toBe('EFFECT UNCERTAIN');
-    expect(document.querySelector('main')!.textContent).not.toMatch(/\bVerified\b|Delivered|received it/);
+    // the status, notices and side column only: the approved option label "I have proof it was received" stays (build.md)
+    expect(said()).not.toMatch(/verified|delivered|received/i);
     expect(panel()).not.toBeNull();
   });
 
