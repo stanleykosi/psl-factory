@@ -240,6 +240,38 @@
    "reason": "Conflicts 6: the phone shows the desktop sentence as returned, not the shorter quote.",
    "approved_by": "builder proposal, pending design engineer",
    "added_after_run": true
+  },
+  {
+   "role": "link",
+   "name": "Back to the issue",
+   "category": "position",
+   "conflicts": null,
+   "reason": "PROPOSED, UI-1-5: the board draws Back to the issue as a full-width button inside the Next panel; the page draws the backend link in the main column under the quote (the shared workspace links row). Conflicts 10 does not cover the position.",
+   "approved_by": "builder proposal, pending design engineer signature (not signed)"
+  },
+  {
+   "role": "text",
+   "name": "15 DAYS LATE",
+   "category": "component",
+   "conflicts": null,
+   "reason": "PROPOSED, UI-1-5: the decide board draws this fact value as a person-tone tag; the shared facts list has no per-value tag, so it is plain text (backend/component list item).",
+   "approved_by": "builder proposal, pending design engineer signature (not signed)"
+  },
+  {
+   "role": "text",
+   "name": "Nothing was sent again.",
+   "category": "copy",
+   "conflicts": null,
+   "reason": "PROPOSED, UX-1-4: shared uncertain notice (useWorkspaceStep, all lines) uses the word sent; not changed here to keep other lines' behaviour. Not on a board.",
+   "approved_by": "builder proposal, pending design engineer signature (not signed)"
+  },
+  {
+   "role": "text",
+   "name": "Your team's test data is now 15 days late (asked 22 Oct, 29 Oct, 5 Nov). Go-live on 4 Dec depends on it. Could you confirm a date this week?",
+   "category": "tool artefact",
+   "conflicts": null,
+   "reason": "PROPOSED, UI-1-2: the message is drawn (as the section item text, in the shared list row) but the fidelity tool skips text inside a list item, so it reports it missing. The words are on the page; changing the shared row markup for every line was not done.",
+   "approved_by": "builder proposal, pending design engineer signature (not signed)"
   }
  ],
  "visual_waivers": [
@@ -253,22 +285,22 @@
   {
    "board": "SCR-51-desktop-not-escalated",
    "width": 1440,
-   "visual": 78.6,
-   "reason": "D-83: measured 78.6 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the Next panel and \"Back to the issue\" placed by the shared workspace layout (Conflicts 10).",
+   "visual": 84.4,
+   "reason": "D-83: measured 84.4 in round 2 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the Next panel and \"Back to the issue\" placed by the shared workspace layout (Conflicts 10).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-51-desktop-draft",
    "width": 1440,
-   "visual": 76.8,
-   "reason": "D-83: measured 76.8 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the AgentCard head and footer (Conflicts 7); the Next panel and Send for review placed by the shared workspace layout (Conflicts 10).",
+   "visual": 80.1,
+   "reason": "D-83: measured 80.1 in round 2 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the AgentCard head and footer (Conflicts 7); the Next panel and Send for review placed by the shared workspace layout (Conflicts 10).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-51-mobile-investigating",
    "width": 390,
-   "visual": 86.1,
-   "reason": "D-83: measured 86.1 in round 1 on a production build. Remaining gaps: the frame's phone bar and \"← Project\" (Conflicts 9); the item title instead of \"Escalation\" and the extra facts the phone board omits (Conflicts 6); the AgentCard head and footer (Conflicts 7).",
+   "visual": 85.0,
+   "reason": "D-83: measured 85.0 in round 2 on a production build. Remaining gaps: the frame's phone bar and \"← Project\" (Conflicts 9); the item title instead of \"Escalation\" and the extra facts the phone board omits (Conflicts 6); the AgentCard head and footer (Conflicts 7).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -281,15 +313,15 @@
   {
    "board": "SCR-51-mobile-not-escalated",
    "width": 390,
-   "visual": 79.2,
-   "reason": "D-83: measured 79.2 in round 1 on a production build. Remaining gaps: the frame's phone bar and bar words (Conflicts 9); the item title instead of \"Not escalated\" and the full sentence instead of the shorter quote (Conflicts 6); the Next panel the phone board omits.",
+   "visual": 75.5,
+   "reason": "D-83: measured 75.5 in round 2 on a production build. Remaining gaps: the frame's phone bar and bar words (Conflicts 9); the item title instead of \"Not escalated\" and the full sentence instead of the shorter quote (Conflicts 6); the Next panel the phone board omits.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-51-mobile-draft",
    "width": 390,
-   "visual": 81.2,
-   "reason": "D-83: measured 81.2 in round 1 on a production build. Remaining gaps: the frame's phone bar (Conflicts 9); the item title instead of \"Message drafted\" (Conflicts 6); the AgentCard head and footer (Conflicts 7); Send for review placed in the page rather than pinned.",
+   "visual": 85.3,
+   "reason": "D-83: measured 85.3 in round 2 on a production build. Remaining gaps: the frame's phone bar (Conflicts 9); the item title instead of \"Message drafted\" (Conflicts 6); the AgentCard head and footer (Conflicts 7); Send for review placed in the page rather than pinned.",
    "approved_by": "builder proposal, pending design engineer"
   }
  ]
