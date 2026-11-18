@@ -275,6 +275,15 @@ def prepare(key, operator):
         with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
             _, _, evidence, _, _ = test_rfp.fixture(record_intake=False)
         return {'case': str(case.pk), 'intake_source': evidence['rfp_intake'].pk}
+    if key == 'bid-answer-review':
+        with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
+            data = factory_rfp_helpers.configured(reference='RFP-SAMPLE-ANSWER-REVIEW')
+        row = data['payload']['matrix'][0]
+        data['payload']['matrix'] = [dict(row, key='R' + str(number),
+            response='SAMPLE current response for requirement ' + str(number) + '.') for number in range(1, 5)]
+        work = factory_rfp_helpers.start(data, key=key)
+        return {'case': str(case.pk), 'work': work.pk, 'requirements': 4,
+                'policy_proof': data['evidence']['policy_decision'].pk}
     if key == 'portal-pricing':
         with patch.object(test_commercial_changes, 'setup_case', return_value=(operator, case)):
             data = factory_rfp_helpers.configured(reference='RFP-SAMPLE-PORTAL-PRICING',portal=True)
@@ -404,6 +413,8 @@ elif workflow == 'archive-private-store':
     fixtures = ('archive-private-store',)
 elif workflow == 'handover-reply-states':
     fixtures = ('handover-external-reply', 'handover-reply-rules', 'handover-reply-gaps')
+elif workflow == 'bid-answer-states':
+    fixtures = ('bid-answer-review',)
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

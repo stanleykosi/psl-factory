@@ -1,5 +1,9 @@
 # PSL operations factory build state
 
+## Per-answer bid work prepared for verification · 18 November 2026
+
+Implemented durable Tola suggestions for individual requirements, assigned-manager edits and replacements, bulk acceptance, undo, source-safe history, search/filter UI and the handoff into existing native bid reviews and submission. Migration `agents.0011` and nine new PostgreSQL tests are prepared, with nine existing Assistant regressions in package 82. One database-free form/template test passed. PostgreSQL and browser checks remain pending. Package 81 separately verifies native decision wakes and races after the current package 80 suite. Past-winning-answer reuse and team/no-login issue replies remain engineering work. The 262-state milestone remains open and HOD values deferred.
+
 ## Support reply SQL provenance correction under test · 18 November 2026
 
 Package 77 exposed the older recipient-only SQL guard. Added `workflows.0089` with configured recorder, exact receipt, current authority and source validation. Package 79 migrated successfully and passed four tests before a stale test-helper reference failed the successor assertion. That helper is corrected. Package 80 `94e4f41a` is running seventeen tests, followed by preview migration and guarded fixtures. Reply metadata privacy and ready-work handling are included. Runtime remains web 76 and worker 74. Native wake race tests remain pending separately. The 262-state milestone is incomplete, with 189 observed states and 73 unseen. HOD decisions remain deferred.

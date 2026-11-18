@@ -1,5 +1,7 @@
 # Build progress log
 
+18 November 2026. Prepared the missing per-requirement bid answer flow using the existing Tola worker and native RFP instruction/review chain. Added immutable suggestion/review records, assigned-manager acceptance, edits, own answers, bulk acceptance, undo, bounded source reads and form protection. One pure UI/schema test and static checks passed. PostgreSQL and browser acceptance remain pending in package 82 after wake package 81. No operational ownership or policy value was selected.
+
 18 November 2026. Corrected the Support reply SQL guard with additive migration 0089, preserving exact native delivery and configured recorder authority. Package 79 passed four tests and exposed a stale successor test-helper reference, which was corrected. Package 80 now runs all seventeen selected tests. Added source-safe reply metadata and ready-state handling. Hosted source stays at web 76 and worker 74 pending verification. HOD values and full 262-state acceptance remain open.
 
 18 November 2026. Package 76 passed all 37 PostgreSQL tests in 3647.526 seconds, checks and fixtures. Started frozen Support reply package 77 as `0b0103f2`. Preserved the separate later source-wake race increment for package 78. All 262-state acceptance remains open.

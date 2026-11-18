@@ -204,6 +204,16 @@ def message_context(conversation, focus):
     return source_focus(sources, focus), next_work
 
 
+def turn_context(turn, *, pending=True):
+    suggestion = getattr(turn, 'rfp_answer', None)
+    if suggestion is not None:
+        from apps.pmo.rfp_answers import context_for
+
+        check(turn.conversation.actor, turn.conversation)
+        return context_for(suggestion, pending=pending)
+    return message_context(turn.conversation, turn.selected_sources or turn.focus)
+
+
 @transaction.atomic
 def reserve(actor, conversation_id, operation_key, question, focus=''):
     keys = [focus] if isinstance(focus, str) and focus else [] if focus == '' else focus
@@ -249,8 +259,7 @@ def worker_once():
         turn.save(update_fields=['status', 'started_at'])
     conversation = turn.conversation
     try:
-        focus = turn.selected_sources or turn.focus
-        sources, next_work = message_context(conversation, focus)
+        sources, next_work = turn_context(turn)
         context_hash = digest(sources)
         handles = {f'S{index}': source for index, source in enumerate(sources, start=1)}
         context = [{'handle': handle, 'label': source['label'], 'fact': source['fact']} for handle, source in handles.items()]
@@ -266,7 +275,7 @@ def worker_once():
                 or raw['next_work'] not in ['', *next_work]):
             raise ValidationError('The assistant reply could not be verified.')
         cited = [handles[handle] for handle in dict.fromkeys(raw['citations'])]
-        current, current_next = message_context(conversation, focus)
+        current, current_next = turn_context(turn)
         if current != sources or (raw['next_work'] and raw['next_work'] not in current_next):
             raise ValidationError('Source access or records changed while the assistant was working.')
         # Without a source, show only a fixed insufficient-evidence message.

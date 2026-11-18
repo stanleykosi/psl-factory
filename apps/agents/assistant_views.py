@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import OuterRef, Q, Subquery
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -94,7 +94,7 @@ def thread(request, conversation_id):
         except ValidationError as exc:
             form.add_error(None, exc)
     saved = AssistantDraftVersion.objects.filter(turn_id=OuterRef('pk')).order_by('-number')
-    turns = list(reversed(conversation.turns.select_related('started_draft').annotate(
+    turns = list(reversed(conversation.turns.select_related('started_draft', 'rfp_answer').annotate(
         saved_number=Subquery(saved.values('number')[:1]),
         saved_reference=Subquery(saved.values('payload__reference')[:1]),
         saved_case_revision=Subquery(saved.values('case_revision')[:1]),
@@ -109,9 +109,12 @@ def thread(request, conversation_id):
         turn.stale = False
         if turn.context_hash:
             try:
-                current = assistant.source_focus(sources, turn.selected_sources or turn.focus)
+                if getattr(turn, 'rfp_answer', None) is not None:
+                    current, _ = assistant.turn_context(turn, pending=False)
+                else:
+                    current = assistant.source_focus(sources, turn.selected_sources or turn.focus)
                 turn.stale = turn.context_hash != digest(current)
-            except ValidationError:
+            except (PermissionDenied, ValidationError):
                 turn.stale = True
         if turn.started_work_id in visible_work:
             turn.started_url = reverse('factory_detail', args=[turn.started_work_id])

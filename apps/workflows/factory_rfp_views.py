@@ -503,7 +503,14 @@ def detail(request,work,focus=None):
     if followup and followup.get('reviewed'):
         followup['released']=RFPFollowupDispatch.objects.filter(review=followup['reviewed'],actor=request.user).exists()
     portal_pack=RFPDocumentBinding.objects.filter(version=document,snapshot__route__method='manual_client_portal').first() if document else None
+    from apps.pmo.rfp_answers import authorize as authorize_answers
+    try:
+        authorize_answers(request.user,work)
+        can_review_requirement_answers=True
+    except (PermissionDenied,ValidationError):
+        can_review_requirement_answers=False
     return response(request,'factory/rfp_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'source_form':source,'mappings':mappings,
+        'can_review_requirement_answers':can_review_requirement_answers,
         'award_comparison':comparison(work.case,row['rfp']['outcome']),
         'followup':followup,
         'followup_routes':followup_routes,'followup_messages':messages_sent,

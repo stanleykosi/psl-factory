@@ -1,5 +1,7 @@
 # Build decisions
 
+18 November 2026. Per-requirement bid drafts use the existing scoped Tola worker. A saved suggestion pins the exact requirement, source and native assignment. Applying a human answer creates a successor native RFP instruction and retains the original model text and private review reason. Bulk acceptance is atomic and attributed to the assigned project manager. Undo restores only the still-current answer through another native instruction. Existing response, commercial, client-document and receipt controls continue to govern the bid. Reuse of an earlier winning bid needs a separately reviewed source projection and audience contract, which remain to be implemented and configured.
+
 18 November 2026. A configured human recorder may capture an evidenced reply from the actual Support recipient. Python services and the database verification guard must validate the same exact publication, receipt, source, recorder role, current grants and immutable predecessor. Copied reply text remains available only while its original proof and owner are authorised. A fresh reply invalidates the prior observed work conclusion and queues native verification. These are engineering controls. Operational recorder roles and permitted channels remain deferred.
 
 18 November 2026. Keep the frozen Support reply stage separate from the later source-wake race changes. Deployment uses the exact tested stage. A passing native recovery suite and a pending new feature suite retain separate evidence records.

@@ -1,5 +1,17 @@
 {
   "design_consolidation_20261116": {
+    "per_requirement_bid_answers_20261118": {
+      "status": "implemented_pending_postgresql_and_browser_verification",
+      "migration": "agents.0011_rfp_answer_review",
+      "states": ["SCR-26-review", "SCR-26-edit", "SCR-26-reject", "SCR-26-accepted"],
+      "implemented": ["Durable existing Tola worker with exact requirement context", "Assigned-manager accept, edit and own answers", "Atomic bulk acceptance and source-preserving undo", "Private review history and original model wording", "Native successor bid instruction and downstream reviews", "Bounded metadata, search, status filter and unsaved-edit handling"],
+      "local_test": {"passed": 1, "seconds": 0.030, "database": false},
+      "package_81": {"tests": 10, "purpose": "Native wake and progression races", "status": "prepared"},
+      "package_82": {"tests": 18, "purpose": "Bid answers and existing Assistant regression", "status": "prepared"},
+      "remaining": ["Approved past-winning-answer source reuse", "PostgreSQL and in-app browser acceptance", "Other unseen states and substantive partials"],
+      "all_states_accepted": false,
+      "owner_policy": "Deferred"
+    },
     "support_reply_sql_provenance_20261118": {
       "status": "verification_running",
       "migration": "workflows.0089_handover_reply_provenance",

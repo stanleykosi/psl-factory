@@ -1,5 +1,9 @@
 # Actual test execution ledger
 
+## Per-answer bid review preparation · 18 November 2026
+
+One local database-free form/template test passed in 0.030 seconds. Django check and syntax/whitespace checks passed. The initial local check using `config.acceptance_settings` failed because that settings file belongs to Railway stages. The corrected normal settings command passed. Model dry-run found no changes with a local database connection timeout warning. No local PostgreSQL test passed or was attempted against real data. Stage 82 has nine new per-answer tests and nine existing department Assistant tests, still unrun. These cover native submission/outcome after edited answers, bulk atomicity, undo, original text and private reasons, source/role changes, form retention, idempotence, concurrent request intake and bounded hundred-row reads. Stage 81 holds the separate ten wake/progress tests. The current package 80 must complete before either replaces its check container.
+
 ## Support reply guard and corrected successor test · 18 November 2026
 
 Package 77 `0b0103f2` ran one test with one error in 283.769 seconds. Fifteen tests did not run after fail-fast. Python reply verification passed, but the existing database guard rejected a distinct human recorder. Added migration `workflows.0089_handover_reply_provenance`.
