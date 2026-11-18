@@ -81,6 +81,18 @@ test.describe('desktop 1440', () => {
     expect((await mockLog(page)).assignments).toEqual([]);
   });
 
+  test('the head, footer and next block are drawn as the board has them', async ({ page }) => {
+    await openPanel(page, 'W-3302');
+    const d = dialog(page);
+    expect(await d.locator('.psl-drawer__eyebrow').evaluate((el) => getComputedStyle(el).textTransform)).toBe('uppercase');
+    const cancel = (await d.getByRole('button', { name: 'Cancel' }).boundingBox())!;
+    const send = (await d.getByRole('button', { name: 'Assign PM' }).boundingBox())!;
+    expect(cancel.height).toBeGreaterThanOrEqual(48);
+    expect(send.width / cancel.width).toBeGreaterThan(1.8);
+    expect(send.width / cancel.width).toBeLessThan(2.2);
+    expect(await d.locator('.rfp-assign__next').evaluate((el) => getComputedStyle(el).borderTopWidth)).not.toBe('0px');
+  });
+
   test('assigns W-3301: the notice appears only after the read-back, the row is gone, the count is one lower', async ({ page }) => {
     await openPanel(page, 'W-3301');
     await expect(dialog(page).getByText('3 people can prepare RFPs here')).toBeVisible();
@@ -166,7 +178,7 @@ test.describe('desktop 1440', () => {
       await openPanel(page, 'W-3301');
       await choose(page, /Accountable PM/, /Tunde Bello/);
       await dialog(page).getByRole('button', { name: 'Assign PM' }).click();
-      await expect(dialog(page).getByText('Check person_id.').first()).toBeVisible();
+      await expect(dialog(page).getByText('Choose a PM from the list to continue.').first()).toBeVisible();
     }],
     ['uncertain', async (page) => {
       await setCookies(page.context(), { psl_mock_assign: 'uncertain' });

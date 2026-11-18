@@ -45,6 +45,9 @@ export const ASSIGN_PM_TEXT = {
   unconfirmed: 'We couldn’t confirm the PM was assigned. Check before trying again.',
   checkAgain: 'Check again',
   gone: 'That person can no longer be chosen.',
+  // the page's own words for a 422 on a field, whatever wording the backend sends
+  fieldMessage: { person_id: 'Choose a PM from the list to continue.', note: 'Check the note and try again.', acting_role: 'Choose a role you may assign as.', evidence_id: 'Remove the file, or add it again.' } as Record<string, string>,
+  confirmedAfter: 'Not confirmed at first; confirmed after reading it again.',
   cancel: 'Cancel',
   close: 'Close',
 } as const;
@@ -136,8 +139,10 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
     }
     setHolding(undefined);
     if (result.kind === 'invalid') {
-      if (result.fields.acting_role) setRoleError(result.fields.acting_role);
-      if (result.fields.evidence_id) setFieldError({ evidence: result.fields.evidence_id });
+      const fields = Object.fromEntries(Object.keys(result.fields).map((name) => [name, ASSIGN_PM_TEXT.fieldMessage[name] ?? result.fields[name]]));
+      if (fields.acting_role) setRoleError(fields.acting_role);
+      if (fields.evidence_id) setFieldError({ evidence: fields.evidence_id });
+      return { ...result, fields };
     }
     return result as SubmitResult;
   };
@@ -179,6 +184,7 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
         <p role="status">
           Assigned to {name ?? <Unknown />}
         </p>
+        {flow.notice?.kind === 'unconfirmed' && <p className="psl-hint">{ASSIGN_PM_TEXT.confirmedAfter}</p>}
         <Button kind="secondary" onClick={close}>
           {ASSIGN_PM_TEXT.close}
         </Button>
@@ -221,7 +227,6 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
           hint={rfpWords ? ASSIGN_PM_TEXT.count(shownAssign.candidates.length) : undefined}
           formId={FORM_ID}
           actions={false}
-          ariaLabel={title}
           lead={rfpWords ? <Callout kind="info">{ASSIGN_PM_TEXT.intro}</Callout> : undefined}
           middle={
             <>

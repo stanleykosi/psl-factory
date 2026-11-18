@@ -348,7 +348,7 @@ describe('writes (criteria 6 to 11)', () => {
     await choosePm(dialog, /Tunde Bello/);
     fireEvent.change(within(dialog).getByRole('textbox', { name: /Note/ }), { target: { value: 'kept' } });
     press(dialog);
-    expect(await within(dialog).findAllByText('Check person_id.')).not.toHaveLength(0);
+    expect(await within(dialog).findAllByText('Choose a PM from the list to continue.')).not.toHaveLength(0);
     expect((within(dialog).getByRole('textbox', { name: /Note/ }) as HTMLTextAreaElement).value).toBe('kept');
     expect(within(dialog).getByRole('combobox', { name: /Accountable PM/ }).textContent).toContain('Tunde Bello');
   });
@@ -358,8 +358,8 @@ describe('writes (criteria 6 to 11)', () => {
     await choosePm(dialog, /Tunde Bello/);
     override = (s) => (s.method === 'POST' && s.path.endsWith('/assignment') ? json(422, { code: 'invalid', message: 'Check these fields: acting_role, evidence_id.', fields: [{ name: 'acting_role', message: 'That role can’t assign here.' }, { name: 'evidence_id', message: 'That file wasn’t found.' }] }) : undefined);
     press(dialog);
-    expect(await within(dialog).findByText('That role can’t assign here.')).toBeTruthy();
-    expect(within(dialog).getByText('That file wasn’t found.')).toBeTruthy();
+    expect(await within(dialog).findByText('Choose a role you may assign as.')).toBeTruthy();
+    expect(within(dialog).getByText('Remove the file, or add it again.')).toBeTruthy();
   });
 
   it('on a 409 re-reads, keeps the choices, and the next press sends the new revision once', async () => {
@@ -397,6 +397,7 @@ describe('writes (criteria 6 to 11)', () => {
     await choosePm(dialog, /Tunde Bello/);
     press(dialog);
     expect(await within(dialog).findByText('Assigned to Tunde Bello')).toBeTruthy();
+    expect(within(dialog).getByText('Not confirmed at first; confirmed after reading it again.')).toBeTruthy();
     expect(within(dialog).queryByRole('combobox')).toBeNull();
     expect(screen.queryByText(/is now with/)).toBeNull();
     await settle();
