@@ -163,7 +163,6 @@
           {
             "id": "G-3",
             "text": "Planning decision",
-            "status": "now",
             "held_by": {
               "kind": "role",
               "name": "PMO Lead",

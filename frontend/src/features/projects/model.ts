@@ -155,7 +155,7 @@ export function lineDetail(line: JourneyLineView): string | undefined {
   return name ? `Station ${index} of ${count} · ${name}` : `Station ${index} of ${count}`;
 }
 
-const AGENT_ROLES: Record<string, string> = { tola: 'PMO agent', chidi: 'Finance agent' };
+export const AGENT_ROLES: Record<string, string> = { tola: 'PMO agent', chidi: 'Finance agent' };
 
 /** The agent summary as name, role and paragraphs (blank lines split the text); undefined unless agent and text are sent. */
 export function agentSummaryOf(value: unknown) {

@@ -161,7 +161,7 @@ for (const [label, viewport] of [
         await expect(page).toHaveURL(/\/work\/W-2411$/);
         await expect(page.getByText('Engineering (recorded by PM)').first()).toBeVisible();
         const bar = page.getByRole('navigation', { name: 'Project' });
-        await expect(bar.getByRole('link')).toHaveCount(6);
+        await expect(bar.getByRole('link')).toHaveCount(7);
         await expect(bar.getByRole('link', { name: 'Registers' })).toHaveAttribute('href', '/projects/P-0101/registers');
         await expect(bar.locator('[aria-current]')).toHaveCount(0);
       });

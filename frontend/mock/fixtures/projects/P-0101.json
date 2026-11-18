@@ -148,7 +148,7 @@
       "reference": "HYP-0062",
       "gate": {
         "label": "Running",
-        "tone": "agent"
+        "tone": "uncertain"
       },
       "detail": "Day 10 of the window"
     },

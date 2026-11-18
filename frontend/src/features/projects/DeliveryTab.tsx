@@ -5,12 +5,12 @@
 // returned `tone`, and a row links only through its `work_id`. No second read and no write.
 import Link from 'next/link';
 
-import { EmptyState, formatDayMonth, formatDayTime, Panel, Tag, Unknown, VisuallyHidden, STATE_TAGS, type FactoryState } from '@/components';
+import { AgentAvatar, agentKey, EmptyState, formatDayMonth, formatDayTime, Panel, Tag, Unknown, VisuallyHidden, STATE_TAGS, type FactoryState } from '@/components';
 import { AGENT_NAMES } from '@/features/decide/format';
-import { AgentCard } from '@/features/work-item/WorkItemOverview';
+import { AGENT_TAGS, STEP_WORDS, stepKind } from '@/features/work-item/labels';
 import { tagTone } from '@/features/workspace/labels';
 
-import { deliveryAgentOf, deliveryNoteOf, deliveryRowsOf, type DeliveryRow, type JourneyView } from './model';
+import { AGENT_ROLES, deliveryAgentOf, deliveryNoteOf, deliveryRowsOf, type DeliveryRow, type JourneyView } from './model';
 
 import './project-tabs.css';
 
@@ -28,17 +28,17 @@ const TEXT = {
 /** The sub-nav at 1440 (Conflicts 5): Overview is current; a row links only when it has a work id. Not drawn on phones. */
 function DeliveryNav({ rows }: { rows: DeliveryRow[] }) {
   return (
-    <nav aria-label="Delivery lines" className="psl-tabs delivery__nav">
-      <span className="psl-tab" aria-current="page">
+    <nav aria-label="Delivery lines" className="delivery__nav">
+      <span className="delivery__navitem" aria-current="page">
         Overview
       </span>
       {rows.map((row) =>
         row.workId ? (
-          <Link key={row.key} className="psl-tab" href={`/work/${encodeURIComponent(row.workId)}`}>
+          <Link key={row.key} className="delivery__navitem" href={`/work/${encodeURIComponent(row.workId)}`}>
             {row.shortTitle}
           </Link>
         ) : (
-          <span key={row.key} className="psl-tab">
+          <span key={row.key} className="delivery__navitem">
             {row.shortTitle}
           </span>
         ),
@@ -98,18 +98,58 @@ function Rows({ rows }: { rows: DeliveryRow[] }) {
 function DeliveryAgent({ journey }: { journey: JourneyView }) {
   const check = deliveryAgentOf(journey);
   if (check) {
+    const name = AGENT_NAMES[check.agent];
+    const key = agentKey(name);
+    const tag = AGENT_TAGS[check.status === 'working' || check.status === 'done' || check.status === 'waiting' || check.status === 'stopped' ? check.status : 'done'];
+    const title = check.title ?? `${name}’s delivery check`;
     return (
-      <Panel kind="agent" as="aside" head={check.title ?? `${AGENT_NAMES[check.agent]}’s delivery check`} className="delivery__agent" aria-label={check.title ?? `${AGENT_NAMES[check.agent]}’s delivery check`}>
-        <AgentCard agent={{ name: AGENT_NAMES[check.agent], status: check.status, steps: check.steps }} />
-        {check.finishedAt && (
-          <p className="delivery__checked">
-            {TEXT.checked} <time dateTime={check.finishedAt}>{formatDayTime(check.finishedAt)}</time>
-          </p>
-        )}
-        <p>
+      <section className="psl-agent delivery__agent" aria-label={title}>
+        <div className="psl-agent__head">
+          {key && <AgentAvatar agent={key} size={32} />}
+          <span>
+            <strong>{title}</strong>
+            <small>
+              {name}
+              {AGENT_ROLES[check.agent] && ` · ${AGENT_ROLES[check.agent]}`} · {check.status}
+            </small>
+          </span>
+          <Tag tone={tag.tone}>{tag.text}</Tag>
+        </div>
+        <ol className="psl-steps">
+          {check.steps.map((step, i) => {
+            const kind = stepKind(step.status);
+            return (
+              <li key={i} className={`psl-step psl-step--${kind}`}>
+                <span className="psl-step__box" aria-hidden="true">
+                  {kind === 'next' ? i + 1 : kind === 'done' ? '✓' : null}
+                </span>
+                <span className="psl-step__text">
+                  <span>
+                    <span className="cmp-sr">{STEP_WORDS[kind]}: </span>
+                    {step.text}
+                  </span>
+                  {step.source && (
+                    <span className="psl-step__ref">
+                      <span className="cmp-sr">Read: </span>
+                      {step.source}
+                    </span>
+                  )}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+        <div className="psl-agent__foot">
+          <span>
+            {check.finishedAt && (
+              <>
+                {TEXT.checked} <time dateTime={check.finishedAt}>{formatDayTime(check.finishedAt)}</time>
+              </>
+            )}
+          </span>
           <Link href="/assistant">{TEXT.ask}</Link>
-        </p>
-      </Panel>
+        </div>
+      </section>
     );
   }
   const text = journey.agent_summary?.text;
@@ -135,11 +175,13 @@ export function DeliveryTab({ journey }: { journey: JourneyView }) {
             {rows.length === 0 ? <EmptyState title={TEXT.emptyTitle}>{TEXT.empty}</EmptyState> : <Rows rows={rows} />}
             {note && <p className="delivery__note">{note}</p>}
           </Panel>
+        </div>
+        <div className="delivery__aside">
+          <DeliveryAgent journey={journey} />
           <Panel head={TEXT.next} className="delivery__nextpanel">
             <p className="delivery__next">{journey.next}</p>
           </Panel>
         </div>
-        <DeliveryAgent journey={journey} />
       </div>
     </>
   );

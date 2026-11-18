@@ -212,7 +212,6 @@
         "emphasis": "primary",
         "applies_to": "workspace",
         "task_id": "T-2599",
-        "claim_required": true,
         "consequence": "Approving lets Tola prepare release readiness. It doesn’t deploy anything."
       },
       {

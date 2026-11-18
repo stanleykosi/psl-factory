@@ -139,6 +139,14 @@ describe('rows', () => {
   });
 });
 
+describe('tones come from the data', () => {
+  it('Hypercare Running is the amber tag, Handover the red one, as the board draws them', async () => {
+    await open();
+    expect(tags(rows()[2]).className).toContain('psl-tag--waiting');
+    expect(tags(rows()[0]).className).toContain('psl-tag--done');
+  });
+});
+
 describe('nothing ruled in the browser', () => {
   it('draws the line-order sentence only when delivery_summary.note is returned', async () => {
     await open();
@@ -157,13 +165,15 @@ describe('nothing ruled in the browser', () => {
 describe("Tola and Next", () => {
   it('with delivery_agent: its title, the steps with sources, the checked time and Ask Tola (a link, no write)', async () => {
     await open();
-    const card = screen.getByRole('complementary', { name: 'Checked where delivery stands' });
+    const card = screen.getByRole('region', { name: 'Checked where delivery stands' });
     const text = card.textContent!;
     for (const step of fixture().delivery_agent.steps) {
       expect(text).toContain(step.text);
       expect(text).toContain(step.source);
     }
     expect(text).toContain('Checked 12 Apr 09:00');
+    expect(text).toContain('Tola · PMO agent · done');
+    expect(card.parentElement!.querySelectorAll('.psl-agent')).toHaveLength(1);
     expect(within(card).getByRole('link', { name: 'Ask Tola' }).getAttribute('href')).toBe('/assistant');
     expect(calls.map((c) => c.method)).toEqual(['GET']);
   });
@@ -173,7 +183,7 @@ describe("Tola and Next", () => {
     delete body.delivery_agent;
     respond = () => json(200, body);
     await open();
-    expect(screen.queryByRole('complementary', { name: 'Checked where delivery stands' })).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Checked where delivery stands' })).toBeNull();
     expect(screen.getByRole('complementary', { name: 'Tola’s summary' }).textContent).toContain('Lagoon Health is moving.');
   });
 
@@ -199,6 +209,7 @@ describe('sub-nav (Conflicts 5)', () => {
     const nav = screen.getByRole('navigation', { name: 'Delivery lines' });
     expect([...nav.children].map((c) => c.textContent)).toEqual(['Overview', 'Release', 'Go-live', 'Hypercare', 'Archive', 'Handover', 'Closure']);
     expect(nav.querySelector('[aria-current="page"]')!.textContent).toBe('Overview');
+    expect(nav.querySelectorAll('.psl-tab')).toHaveLength(0);
     expect(within(nav).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
       ['Release', '/work/W-2503'],
       ['Go-live', '/work/W-2510'],
@@ -227,7 +238,7 @@ describe('empty and unknown', () => {
       await open();
       expect(main()).toContain('No delivery lines yet.');
       expect(rows()).toHaveLength(0);
-      expect(screen.queryByRole('complementary', { name: 'Checked where delivery stands' })).toBeNull();
+      expect(screen.queryByRole('region', { name: 'Checked where delivery stands' })).toBeNull();
     });
   }
 

@@ -97,6 +97,26 @@ describe('three states from data', () => {
   });
 });
 
+describe('layout of the task panel (F-32 UI-1-5)', () => {
+  it('W-2501 draws its task panel full width with no blank main column; a minutes item keeps its two columns', async () => {
+    const view = await open(item('W-2501'));
+    expect(document.querySelector('.work-columns--lone')).not.toBeNull();
+    view.unmount();
+    await open(item('W-2901'));
+    expect(document.querySelector('.work-columns--lone')).toBeNull();
+    expect(document.querySelector('.work-columns')).not.toBeNull();
+  });
+
+  it('the Planning decision gate carries one status, and W-2502 has no "Claim it first" hint', async () => {
+    const view = await open(item('W-2501'));
+    const gate = screen.getByText('Planning decision', { selector: 'span' }).closest('li')!;
+    expect(gate.textContent).not.toContain('In progress');
+    view.unmount();
+    await open(item('W-2502'));
+    expect(screen.queryByText('Claim it first')).toBeNull();
+  });
+});
+
 describe('decision controls only from you_can_act', () => {
   for (const [id, sentence] of [
     ['W-2504', 'This decision needs a PMO Lead.'],
