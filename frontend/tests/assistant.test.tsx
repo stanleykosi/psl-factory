@@ -1,12 +1,13 @@
 // @vitest-environment jsdom
 // F-24: the Assistant page against the real contract mocks, in process (PROPOSAL D-ASSISTANT-VIEW and
 // D-CONVERSATION-MODEL, contract mock only). Nothing here reaches a provider, a client or a backend.
-import { act, configure, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, configure, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { setCsrfToken } from '@/api/client';
 import { AssistantFrame } from '@/features/assistant/AssistantFrame';
 import { AssistantHome } from '@/features/assistant/AssistantHome';
+import { poseFor } from '@/features/assistant/SidePanel';
 import { ThreadPage } from '@/features/assistant/ThreadPage';
 import { AppShell } from '@/shell/AppShell';
 
@@ -456,6 +457,41 @@ describe('thread (SCR-05-desktop-thread)', () => {
     await thread();
     expect(screen.getByText('Individual pay is restricted to HR roles.')).toBeTruthy();
     expect(screen.getByText('Zainab can’t do that with your access.')).toBeTruthy();
+  });
+
+  it('CV-2404 shows the cant pose in the side panel and no phone pose card at 1440', async () => {
+    await open('/assistant/CV-2404');
+    await thread();
+    const pose = within(screen.getByRole('complementary', { name: 'Agent and context' })).getByAltText('Zainab pose');
+    expect(pose.getAttribute('src')).toBe('/agents/zainab-cant.png');
+    expect(screen.queryByAltText('Zainab, can’t do this')).toBeNull();
+    expect(screen.getByText('PMO · no payroll access')).toBeTruthy();
+    // text and reason are separate lines; no new control
+    expect(screen.getByText(/I can’t share an individual’s pay/)).not.toBe(screen.getByText('Individual pay is restricted to HR roles.'));
+    expect(screen.queryByRole('button', { name: /start this|edit draft|staff-cost|ask hr/i })).toBeNull();
+    expect(bridge.seen.filter((s) => s.method !== 'GET')).toEqual([]);
+  });
+
+  it('on a phone only the cannot_answer thread has the inline pose card', async () => {
+    phone();
+    await open('/assistant/CV-2404');
+    await thread();
+    expect(screen.getByAltText('Zainab, can’t do this').getAttribute('src')).toBe('/agents/zainab-cant.png');
+    expect(screen.queryByRole('complementary', { name: 'Agent and context' })).toBeNull();
+    cleanup();
+    for (const id of ['CV-2401', 'CV-2403']) {
+      await open(`/assistant/${id}`);
+      await thread();
+      expect(screen.queryByAltText(/can’t do this/)).toBeNull();
+      cleanup();
+    }
+  });
+
+  it('poseFor maps each status', () => {
+    expect(poseFor({ status: 'cannot_answer' })).toBe('cant');
+    expect(poseFor({ status: 'working' })).toBe('working');
+    expect(poseFor({ status: 'drafted' })).toBe('done');
+    expect(poseFor({ status: 'answered' })).toBe('idle');
   });
 
   it('CV-2406: an unknown amount is the amber "Unknown", never 0 or blank', async () => {
