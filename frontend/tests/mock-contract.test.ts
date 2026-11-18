@@ -97,7 +97,7 @@ const linkSchema = {
 };
 const validLinks = ajv.compile(linkSchema);
 function minutesProposalsStripped(body: unknown): unknown {
-  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { columns?: { date_format?: unknown }[]; items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; items_default?: unknown; starts_line?: unknown }[] } };
+  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { columns?: { date_format?: unknown }[]; items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; task_id?: string; items_default?: unknown; starts_line?: unknown; verdict?: unknown }[] } };
   const w = copy.workspace;
   if (w?.links !== undefined) {
     expect(validLinks(w.links), ajv.errorsText(validLinks.errors)).toBe(true);
@@ -136,6 +136,11 @@ function minutesProposalsStripped(body: unknown): unknown {
       const { line_key: line, prefill } = step.starts_line as { line_key?: unknown; prefill?: unknown };
       expect(typeof line === 'string' && line !== '' && typeof prefill === 'object' && prefill !== null, step.key).toBe(true);
       delete step.starts_line;
+    }
+    // PROPOSAL (F-33 G-C-1): `steps[].verdict`, a decision step decided in place; only on a step that carries a task id
+    if (step.verdict !== undefined) {
+      expect(typeof step.task_id === 'string' && typeof step.verdict === 'string', step.key).toBe(true);
+      delete step.verdict;
     }
     if (step.items_default === undefined) continue;
     expect(step.items_default, step.key).toBe('checked');
@@ -643,7 +648,8 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
         .filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name))
         .filter((name) => (key === 'links' ? 'links' in (JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}) : JSON.stringify(JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}).includes('"items_default"')));
     expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
-    expect(withKey('links').every((name) => /^W-23/.test(name))).toBe(true);
+    // F-33: the income schedule's investigating board (W-2701) draws Ask Chidi
+    expect(withKey('links').every((name) => /^W-23/.test(name) || name === 'W-2701.json')).toBe(true);
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
   });
 
