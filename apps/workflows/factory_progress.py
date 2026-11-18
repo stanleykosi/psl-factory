@@ -102,6 +102,10 @@ def inspect(work):
 def run_job(job):
     work = FactoryWork.objects.select_related('case', 'actor').get(pk=job.work_id)
     require_control(job.requested_by, work)
+    if work.definition == 'pmo-issues/v1':
+        from .factory_issues import sync_owner
+        if sync_owner(work.pk):
+            work.refresh_from_db()
     state = inspect(work)
     if state != 'ready':
         return ('waiting', job.observation) if state == 'busy' else (state, '')

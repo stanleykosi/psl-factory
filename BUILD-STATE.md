@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Issue-team follow-up under verification · 18 November 2026
+
+Building external team ownership and evidenced replies recorded by a separately authorised human. Typed versioned controls, immutable PostgreSQL records/guards, native source progression, UI and response adapters are implemented in the working tree. Current-role checks, actual responder/time/proof and exact native follow-up verification are required. Owner-save preserves pauses and used allowance, defers source changes across active/uncertain effects and adopts only its exact requested source. Operational values remain deferred.
+
+Final115 passed77 PostgreSQL tests in164.285 seconds and all checks/drift/fixture/final markers. Retained112 packaging error,113 source-label failure and114 incorrect draft-stage test assertion separately. Current permission, separate recorder, actual external mock-provider recovery and concurrency passed. Additive pmo0061/0062 applied to the isolated preview after tests. Hosted115 services started with1,676 exact matching paths each. Browser work100 showed missing external owner, saved the sample Engineering assignment and automatically adopted its exact source. Worker investigated it. The next follow-up is queued behind accumulated synthetic work. Improve the bounded eight-step worker batch, then finish the same browser reply/verification. Full262 remains incomplete.
+
 ## Current extended visibility controls · 18 November 2026
 
 Hosted111 adds the five wider design fields through explicit version2 source/need contracts, while version1 remains closed. Source declarations, exact proof family, typed validation and fresh native HR approval control private use. UI supports all twelve fields. HR Assistant reads current metadata with private payloads deferred and uses plain source citations.

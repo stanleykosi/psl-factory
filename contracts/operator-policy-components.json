@@ -2,6 +2,25 @@
   "classification": "Supplemental engineering operator/protection interfaces; no new process or consolidated D group, no default RPO/RTO or real appointments",
   "components": [
     {
+      "id": "OPS.issue_team_controls",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.issue_team_controls/v1",
+      "subject_scope": "Exact project external issue teams, human recorder roles and evidenced source clocks",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/issue-team-controls/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "OPS.costing_version_review",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.costing_version_review/v1",

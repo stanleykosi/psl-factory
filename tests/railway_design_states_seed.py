@@ -268,6 +268,26 @@ def prepare(key, operator):
             data=setup(missing=key=='commercial-information')
             factory.run_until_wait(data['work'].pk)
         return {'case':str(case.pk),'work':data['work'].pk,'head':data['head'].pk}
+    if key == 'issue-team-owner':
+        from tests import test_factory_issues, test_issue_teams
+        from apps.pmo import issue_teams
+        from apps.workflows import factory_issues, factory_progress
+        log_issue = test_factory_issues.log_issue
+        with (patch.object(test_factory_issues, 'setup_case', return_value=(operator, case)),
+              patch.object(test_factory_issues, 'log_issue', side_effect=lambda actor, case_id, reference, *args:
+                  log_issue(actor, case_id, 'SAMPLE-ISSUE-TEAM', *args))):
+            entry = test_factory_issues.FactoryIssueTests()
+            entry.setUp()
+        test_issue_teams.configure(entry)
+        issue_teams.assign(operator, case.pk, entry.state.issue_id, entry.state.pk, 'team', '',
+            operator.pk, '', entry.e['requirements'].pk, 'Synthetic external owner awaiting assignment', rev(case),
+            work_id=entry.work.pk, source_id=entry.work.source_head_id)
+        factory_issues.sync_owner(entry.work.pk)
+        factory.run_until_wait(entry.work.pk)
+        entry.work.refresh_from_db()
+        factory_progress.set_progress(operator, entry.work.pk, entry.work.revision, True)
+        return {'case': str(case.pk), 'work': entry.work.pk, 'issue': entry.state.issue_id,
+                'proof': entry.e['requirements'].pk}
     if key in {'issue-followup','issue-owner-access','issue-verified'}:
         from tests import test_factory_issues
         log_issue=test_factory_issues.log_issue
@@ -508,6 +528,8 @@ elif workflow == 'payroll-field-setup':
     fixtures = ('payroll-field-setup',)
 elif workflow == 'payroll-field-extended':
     fixtures = ('payroll-field-extended',)
+elif workflow == 'issue-team-states':
+    fixtures = ('issue-team-owner',)
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

@@ -8,10 +8,14 @@
 {% endif %}
 {% for i in issues %}<section class="card" id="issue-{{ i.pk }}">
 <h2>{{ i.current.title }}</h2><p>{{ i.current.status }} · {{ i.current.severity|default:'Awaiting severity assessment' }}</p>
-<dl class="workspace-summary"><div><dt>Responsible person</dt><dd>{{ i.current.owner.get_full_name|default:i.current.owner.username }}</dd></div><div><dt>Next action</dt><dd>{{ i.current.next_action }}</dd></div></dl>
+<dl class="workspace-summary"><div><dt>Responsible owner</dt><dd>{{ i.team.label }}</dd></div><div><dt>Next action</dt><dd>{{ i.current.next_action }}</dd></div></dl>
+{% if i.team.mode == 'team' %}<p>Follow-up coordinator · {% firstof i.team.assignment.recorder.get_full_name i.team.assignment.recorder.username %}</p>
+{% if i.team.finding %}<p role="status">{{ i.team.finding }}</p>{% endif %}
+<p><a href="{% url 'factory_create' %}?definition=pmo-issues/v1&amp;case={{ case.pk }}&amp;issue={{ i.pk }}">Open issue follow-up</a></p>{% endif %}
+{% if 'issue.manage' in issue_permissions %}<p><a class="button secondary" href="{% url 'issue_team_owner' case.pk i.pk %}">Review issue owner or external team</a></p>{% endif %}
 <p>Acknowledged {{ i.current.acknowledged_at|date:'d M Y, H:i T'|default:'not recorded' }} · Resolved {{ i.current.resolved_at|date:'d M Y, H:i T'|default:'not recorded' }}</p>
 {% if i.public_references.held %}<p>{{ i.public_references.held }}</p>{% else %}
-{% for reference in i.public_references.references %}<p>{{ reference.kind|readable }} {{ reference.source_ref }} · {{ reference.availability|readable }} · {{ reference.currentness|readable }}</p>{% empty %}<p>No external records linked.</p>{% endfor %}{% endif %}
+{% for reference in i.public_references.references %}<p>{{ reference.kind|readable }} {{ reference.source_ref }} · {{ reference.availability|readable }} · {{ reference.currentness|readable }}{% if reference.source_identity %}<br>Source · {{ reference.source_identity }}{% endif %}</p>{% empty %}<p>No external records linked.</p>{% endfor %}{% endif %}
 <details><summary>Issue reference</summary><p>{{ i.reference }} · revision {{ i.current.number }}</p></details>
 {% if 'issue.reference.observe' in issue_permissions or 'issue.manage' in issue_permissions %}
 <details><summary>Observe or correct external references</summary><p>Supplied or mock readback only. Security and Engineering keep their records and lifecycle decisions. Observation age is unknown unless configured.</p>

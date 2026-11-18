@@ -61,6 +61,8 @@ SCHEMAS[FACTORY_ARCHIVE]=(FACTORY_ARCHIVE_SCHEMA,FACTORY_ARCHIVE_VALUE)
 from .archive_transfer_validators import COMPONENT as ARCHIVE_TRANSFER, SCHEMA as ARCHIVE_TRANSFER_SCHEMA, VALUE as ARCHIVE_TRANSFER_VALUE
 SCHEMAS[ARCHIVE_TRANSFER] = (ARCHIVE_TRANSFER_SCHEMA, ARCHIVE_TRANSFER_VALUE)
 from .handover_reply_validators import COMPONENT as HANDOVER_REPLY, SCHEMA as HANDOVER_REPLY_SCHEMA, VALUE as HANDOVER_REPLY_VALUE
+from .issue_team_validators import COMPONENT as ISSUE_TEAM, SCHEMA as ISSUE_TEAM_SCHEMA, VALUE as ISSUE_TEAM_VALUE
+SCHEMAS[ISSUE_TEAM] = (ISSUE_TEAM_SCHEMA, ISSUE_TEAM_VALUE)
 from .costing_proposal_validators import COMPONENT as COSTING_PROPOSAL, SCHEMA as COSTING_PROPOSAL_SCHEMA, VALUE as COSTING_PROPOSAL_VALUE
 SCHEMAS[COSTING_PROPOSAL] = (COSTING_PROPOSAL_SCHEMA, COSTING_PROPOSAL_VALUE)
 SCHEMAS[HANDOVER_REPLY] = (HANDOVER_REPLY_SCHEMA, HANDOVER_REPLY_VALUE)
@@ -124,6 +126,9 @@ from .reminder_validators import COMPONENT as REMINDER, SCHEMA as REMINDER_SCHEM
 SCHEMAS[REMINDER]=(REMINDER_SCHEMA,REMINDER_VALUE)
 
 def validate_reference(component,target,case,runtime=False):
+    if component == ISSUE_TEAM:
+        from .issue_team_validators import validate_reference as validate_issue_team
+        return validate_issue_team(target, case)
     if component == COSTING_PROPOSAL:
         from .costing_proposal_validators import validate_reference as validate_costing_proposal
         return validate_costing_proposal(target, case)

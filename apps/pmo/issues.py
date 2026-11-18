@@ -64,7 +64,20 @@ def log_issue(actor,case_id,reference,title,kind,owner_id,next_action,evidence_i
 @transaction.atomic
 def update_issue(actor,case_id,issue_id,state_id,operation,evidence_id,note,expected,next_action=None,owner_id=None,severity=None,fix_id=None,root_cause_id=None):
     case=lock_case(actor,case_id,'issue.manage' if operation=='manage' else 'issue.work',expected)
-    issue=current_issue(case,issue_id,state_id);old=issue.current
+    issue=current_issue(case,issue_id,state_id)
+    if operation != 'manage':
+        from .issue_team_models import IssueTeamAssignment
+        assignment = IssueTeamAssignment.objects.filter(issue=issue).order_by('-number').first()
+        if assignment and assignment.mode == 'team':
+            raise ValidationError('Record the actual external team response with its source proof and reply time.')
+    return _update_state(actor, case, issue, operation, evidence_id, note, next_action,
+                         owner_id, severity, fix_id, root_cause_id)
+
+
+def _update_state(actor, case, issue, operation, evidence_id, note, next_action=None,
+                  owner_id=None, severity=None, fix_id=None, root_cause_id=None):
+    """Shared state construction after the public command has checked its source authority."""
+    old=issue.current
     if old.status=='Closed':raise ValidationError('Closed history is preserved; reopen policy is not configured')
     note_required(note)
     values={k:getattr(old,k) for k in ['title','kind','severity','owner','next_action','status','acknowledged_at','resolved_at','fix','root_cause','external_links']}

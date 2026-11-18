@@ -52,10 +52,12 @@ def workbench(request,case_id):
                 pass
     closure_entries=set(IssueClosureEntry.objects.filter(state_id__in=[item.current_id for item in items]).values_list('state_id','role'))
     owner_ids={owner.pk for owner in owners}
+    from .issue_teams import projection as team_projection
     for item in items:
         state=item.current
+        item.team = team_projection(request.user, item)
         item.operations=[]
-        if state.status in ['Open','In Progress'] and state.owner_id==request.user.pk and state.owner_id in owner_ids and 'issue.work' in permissions:
+        if item.team['mode'] != 'team' and state.status in ['Open','In Progress'] and state.owner_id==request.user.pk and state.owner_id in owner_ids and 'issue.work' in permissions:
             if not state.acknowledged_at:
                 item.operations.append(('acknowledge','Owner acknowledges'))
             else:

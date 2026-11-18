@@ -7,17 +7,34 @@
     <p>{{ row.issues.issue.reference }} · {{ row.issues.issue.current.title }}</p>
     <dl class="decision-facts"><div><dt>Status</dt><dd>{{ row.issues.issue.current.status }}</dd></div><div><dt>Severity</dt><dd>{{ row.issues.issue.current.severity|default:'Awaiting assessment' }}</dd></div><div><dt>Next action</dt><dd>{{ row.issues.issue.current.next_action }}</dd></div></dl>
     <p><a href="{% url 'escalations' case.pk %}">Escalation decisions</a> · <a href="{% url 'changes' case.pk %}">Related changes</a></p>
+    {% if row.issues.team.mode == 'team' %}<p>Follow-up coordinator · {% firstof row.issues.team.assignment.recorder.get_full_name row.issues.team.assignment.recorder.username %}</p>
+    {% if row.issues.team.finding %}<p role="status">{{ row.issues.team.finding }}</p>{% endif %}{% endif %}
+    {% if row.can_assign_team %}<a class="button secondary" href="{% url 'issue_team_owner' case.pk row.issues.issue.pk %}{% if row.can_manage %}?work={{ row.work.pk }}{% endif %}">Review issue owner</a>{% endif %}
     {% if not row.issues.owner_available %}<p role="status">The recorded owner needs current access before following up.</p><a href="{% url 'issues' case.pk %}">Review the responsible owner</a>{% endif %}
   </section>{% endif %}
   <section class="card"><h2>Investigation</h2>
     {% if row.issues.finding %}<p role="status">{{ row.issues.finding }}</p>{% endif %}
     {% if row.issues.native %}<ul>{% for gap in row.issues.native.gaps %}<li>{{ gap }}</li>{% empty %}<li>The selected source checks are complete.</li>{% endfor %}</ul>
-    <details><summary>Source observations and related records</summary><pre>{{ row.issues.native.references }}</pre></details>{% endif %}
+    <details><summary>Source observations and related records</summary>
+      {% for source in row.issues.native.references.references %}<article><h3>{{ source.kind|readable }} · {{ source.source_ref }}</h3>
+        {% if source.source_identity %}<p>Source · {{ source.source_identity }}</p>{% endif %}
+        <p>{{ source.availability|readable }} · {{ source.currentness|readable }} · Observation age {{ source.freshness|readable }}</p>
+        {% if source.observed_at %}<p>Observed {{ source.observed_at }}</p>{% endif %}
+        <dl>{% for field, value in source.fields.items %}<div><dt>{{ field|readable }}</dt><dd>{{ value }}</dd></div>{% endfor %}</dl>
+      </article>{% empty %}<p>No external source observations selected.</p>{% endfor %}
+    </details>{% endif %}
   </section>
-  <section class="card"><h2>Follow-up history</h2>{% for task in row.tasks %}<p>{{ task.status|readable }}</p>{% empty %}<p>No owner response requested yet.</p>{% endfor %}</section>
+  <section class="card"><h2>Follow-up history</h2>
+    {% for reply in team_history %}<article><h3>{{ reply.assignment.team_label }} · {{ reply.operation|readable }}</h3>
+      <p>{{ reply.party }} · {{ reply.channel|readable }} · {{ reply.responded_at|date:'d M Y H:i:s T' }}</p>
+      <p>{{ reply.state.note }}</p><p>Recorded by {% firstof reply.actor.get_full_name reply.actor.username %} on {{ reply.created_at|date:'d M Y H:i:s T' }}.</p>
+    </article>{% endfor %}
+    {% for task in row.tasks %}<p>{{ task.status|readable }}</p>{% empty %}<p>No owner response requested yet.</p>{% endfor %}</section>
 </div><aside class="factory-action-panel">
+  {% if team_reply_form %}<section class="card"><h2>Record the team reply</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="team_respond">{{ team_reply_form.as_p }}<button>Record owner reply</button></form></section>{% endif %}
   {% for task in row.tasks %}{% if task.status == 'open' %}<section class="card"><h2>Owner update</h2>
-    {% if row.issues.can_respond %}<form method="post">{% csrf_token %}
+    {% if row.issues.team.mode == 'team' %}<p>The configured coordinator records the actual external reply with its proof and time.</p>
+    {% elif row.issues.can_respond %}<form method="post">{% csrf_token %}
       <input type="hidden" name="action" value="respond"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="task" value="{{ task.pk }}"><input type="hidden" name="task_revision" value="{{ task.revision }}">
       <label>Update<select name="operation"><option value="acknowledge">Acknowledge issue</option><option value="start">Start work</option><option value="progress">Record progress</option></select></label>
       <label>Supporting evidence<select name="evidence" required>{% for source in evidence %}<option value="{{ source.pk }}">{{ source }}</option>{% endfor %}</select></label>
