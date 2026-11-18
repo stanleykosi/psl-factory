@@ -7,6 +7,7 @@ from apps.pmo.costing_proposal_models import CostingProposal
 from apps.identity.models import Grant
 from apps.policy.services import resolve
 from apps.policy.costing_validators import COMPONENT
+from adapters.costing import LocalCostingProposalAdapter
 from .models import AgentRun
 
 @transaction.atomic
@@ -38,6 +39,12 @@ def investigate(a,case_id,expected=None):
         for proposal in CostingProposal.objects.filter(base__case=c,decision__isnull=True).select_related('base__case','actor').order_by('-pk')[:20]:
             try:current(proposal);status='awaiting_independent_review'
             except (PermissionDenied,ValidationError):status='source_reassessment_required'
-            proposals.append({'proposal':proposal.pk,'base_version':proposal.base.version,'status':status})
+            item={'proposal':proposal.pk,'base_version':proposal.base.version,'status':status}
+            example_sets=list(CostingOracle.objects.filter(rule=proposal.base).values_list('pk',flat=True)[:2])
+            if len(example_sets)==1:
+                comparison=LocalCostingProposalAdapter().read(a,c.pk,proposal.pk,example_sets[0])
+                item['example_checks']=[{'example_index':index,'proposed_matches':example['after_matches']}
+                    for index,example in enumerate(comparison['examples'],1)]
+            proposals.append(item)
     e=add_evidence(a,c.pk,'agent_costing','Bounded P14 evidence/lineage investigation; no raw financial source or automatic model/case decision','local:deterministic-costing-v1')
     r=AgentRun.objects.create(case=c,actor=a,evidence=e,process_id='P14',provider='deterministic-costing-v1',result={'independent_comparisons':comparisons,'questions':questions,'pending_version_proposals':proposals,'studio_source':studio_source,'policy_status':resolve(COMPONENT,c).status,'source_body_read':False,'expected_outputs_generated':False,'case_cost_approved':False,'native_workbook_verified':False,'financial_execution':False});event(a,c,'agent.costing',run=r.pk);bump(c);return r

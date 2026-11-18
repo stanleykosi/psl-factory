@@ -1,4 +1,5 @@
 import copy
+import json
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import DatabaseError, connection, transaction
@@ -160,9 +161,60 @@ class CostingProposalTests(TestCase):
             self.decision(proposal)
         result = investigate(data['actor'], data['case'].pk)
         self.assertEqual(result.result['pending_version_proposals'], [{'proposal': proposal.pk,
-            'base_version': 1, 'status': 'awaiting_independent_review'}])
+            'base_version': 1, 'status': 'awaiting_independent_review',
+            'example_checks': [{'example_index': 1, 'proposed_matches': False},
+                               {'example_index': 2, 'proposed_matches': True},
+                               {'example_index': 3, 'proposed_matches': False}]}])
         self.assertNotIn('12.00', str(result.result))
         self.assertFalse(result.result['case_cost_approved'])
+
+    def test_example_comparison_keeps_supplied_expectations_and_original_versions(self):
+        from adapters.costing import LocalCostingProposalAdapter
+
+        data = self.data
+        proposal = self.proposal()
+        result = LocalCostingProposalAdapter().read(data['actor'], data['case'].pk,
+                                                   proposal.pk, data['oracle'].pk)
+        normal, unknown, rounding = result['examples']
+        self.assertEqual(normal['before']['values'][0]['value'], '20.00')
+        self.assertEqual(normal['after']['values'][0]['value'], '24.00')
+        self.assertEqual(normal['expected']['values'][0]['value'], '20.00')
+        self.assertTrue(normal['before_matches'])
+        self.assertFalse(normal['after_matches'])
+        self.assertIsNone(unknown['after']['values'][0]['value'])
+        self.assertTrue(unknown['after_matches'])
+        self.assertEqual(rounding['after']['values'][0]['value'], '1.21')
+        self.client.force_login(data['actor'])
+        url = reverse('costing_proposal', args=[data['case'].pk, proposal.pk])
+        page = self.client.get(url)
+        self.assertContains(page, 'Version 1 result')
+        self.assertContains(page, 'Proposed version 2 result')
+        self.assertContains(page, 'Differs from expected result')
+        self.assertContains(page, 'Next example')
+        page = self.client.get(url, {'examples': data['oracle'].pk, 'example': 'unknown'})
+        self.assertContains(page, 'Previous example')
+        self.assertContains(page, 'Next example')
+        self.assertContains(page, 'Unknown NGN')
+        self.assertEqual(self.client.get(url, {'examples': 999999}).status_code, 404)
+        Grant.objects.filter(case=data['case'], user=data['actor'],
+                             action='costing.source.read').update(active=False)
+        with self.assertRaises(PermissionDenied):
+            LocalCostingProposalAdapter().read(data['actor'], data['case'].pk, proposal.pk, data['oracle'].pk)
+
+    def test_proposed_input_changes_hold_comparison_without_rewriting_example_inputs(self):
+        data = self.data
+        value = json.loads(self.source.body)
+        value['inputs'][0]['key'] = 'minutes'
+        value['nodes'][0]['operands'][0] = 'input:minutes'
+        changed = evidence(data, 'p14_rule', value)
+        proposal = domain.propose(data['actor'], data['case'].pk, data['rule'].pk,
+            changed.pk, 'SAMPLE different project input definition', 'different-inputs')
+        result = domain.compare_examples(data['actor'], proposal, data['oracle'].pk)
+        self.assertIsNone(result['examples'][0]['after'])
+        self.assertEqual(result['examples'][0]['inputs'][0]['key'], 'hours')
+        self.client.force_login(data['actor'])
+        page = self.client.get(reverse('costing_proposal', args=[data['case'].pk, proposal.pk]))
+        self.assertContains(page, 'This proposed rule needs different inputs')
 
     def test_reviewed_source_continues_through_native_owners_examples_activation_and_calculation(self):
         data = self.data

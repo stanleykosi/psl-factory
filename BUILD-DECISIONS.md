@@ -1,5 +1,7 @@
 # Build decisions
 
+18 November 2026. Compare proposed calculators with independently supplied examples from their exact base rule. Preserve expected values and unknowns. Different proposed inputs display a comparison hold. The comparison grants no approval or revised expectation. Agent metadata receives bounded example identities and match flags under current source access. Reviewer selection remains typed and unset until configured.
+
 18 November 2026. Reuse the existing organization-scoped policy source lifecycle for a studio calculator. New commercial-costing-oracle/v2 pins that exact source and its original rule, independent examples and reviews. Project calculations retain local inputs and reference the original rule. Runtime checks require current original-source access and owner authority, and source revocation holds dependent calculation and evidence use. No implicit tenant fallback or source copying was added. Calculator proposal adoption also rechecks the exact independent reviewer authority during native use.
 
 18 November 2026. Read-only costing reports perform fresh scoped read checks and leave mutations in their existing commands. Requirement navigation selects each row's latest source-current suggestion and honours its latest undo review. In-app discard confirmation uses an accessible page dialog. Document workbench forms use distinct element IDs while retaining their existing POST field names and native service calls. The browser input issue recovered after making the in-app browser visible, with no confirmed visible native prompt.

@@ -1,5 +1,11 @@
 # PSL operations factory build state
 
+## Current comparison and bid performance work · 18 November 2026
+
+Package91 passed64 PostgreSQL tests in218.411s, checks/drift/fixtures. Matching web/worker91 hosted. Browser verified proposed worked-example comparison, supplied expectations, unknowns, rounding and navigation, including settled390px layout. Studio configuration893 produced20.00NGN as calculation2 from project-local inputs and original source7.
+
+Work97 completed response, commercial and final outward review. Its redirected read exposed a timeout. Package92 failed its new1,000-query limit at3,132queries, so further read-only consolidation is under PostgreSQL verification in93. Actual bid submission/outcome and corrected candidate32 release/go-live remain in progress. Full262-state acceptance remains open and HOD values deferred.
+
 Package90 web `2f103cd0` and worker `e59a46ef` are running with successful startup. Browser work93 reached verified release-evidence readiness at05:15:10WAT, native record209. Work97 retained its reviewed answers through the separate PMO Lead and Engineering Lead response approvals, with commercial review continuing. The broader201-state observation ledger remains open.
 
 ## Shared calculator and review recovery verified · 18 November 2026

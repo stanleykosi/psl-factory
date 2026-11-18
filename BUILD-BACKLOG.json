@@ -1,5 +1,17 @@
 {
   "design_consolidation_20261116": {
+    "proposed_examples_20261118": {
+      "status": "comparison_passed_bid_read_correction_pending",
+      "package_91": {"deployment": "6918342d-9230-4c84-9698-ef8ac49ae78c", "passed": 64, "seconds": 218.411, "final_exit": 0, "fixture_exit": 0},
+      "runtime_91": {"web": "0b532725-5e29-43e3-9129-61318e8f8555", "worker": "3264712a-9619-435c-b517-0151f0d37b09", "paths_per_service": 1661, "mismatches": 0},
+      "browser": {"normal": "20.00/24.00 against supplied20.00", "unknown": "preserved", "rounding": "1.01/1.21", "phone_width": 390, "body_width": 375, "studio_configuration": 893, "studio_calculation": 2, "bid_final_review": "recorded_redirect_read_timed_out"},
+      "package_92": {"deployment": "30fcf57b-2f52-4a5f-979b-9c893d37bb7c", "failed": 1, "not_run": 54, "seconds": 71.458, "queries": 3132, "query_limit": 1000, "final_exit": 1},
+      "package_93": {"deployment": "16a105da-ba28-48e5-87ee-6735f3cb9d07", "status": "pending", "tests": 55},
+      "current": ["Verify bid read correction", "Finish bid97 submission and outcome", "Finish corrected candidate32 release/go-live"],
+      "next": ["Reviewed past-answer reuse", "Team/no-login issue recording", "Remaining states and acceptance"],
+      "owner_policy": "Deferred",
+      "all_states_accepted": false
+    },
     "studio_calculator_and_browser_recovery_20261118": {
       "status": "postgresql_passed_runtime90_running_browser_acceptance_continuing",
       "runtime_90": {"web": "2f103cd0-4b4b-4042-a464-336ecb2ff138", "worker": "e59a46ef-054a-4f7d-9b91-20d6350ea3c6", "startup": "passed"},

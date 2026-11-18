@@ -1,13 +1,17 @@
 from django import forms
+from urllib.parse import urlencode
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_http_methods
+from django.urls import reverse
 from apps.core.views import accessible_case
 from . import costing, costing_proposals
 from .costing_proposal_models import CostingProposal
+from .costing_models import CostingOracle
 
 
 class DecisionForm(forms.Form):
@@ -33,6 +37,24 @@ def detail(request, case_id, pk):
     proposal = get_object_or_404(CostingProposal.objects.select_related(
         'base__case', 'actor', 'decision__actor', 'decision__rule'), base__case=case, pk=pk)
     context = costing_proposals.presentation(request.user, proposal)
+    example_sets = list(CostingOracle.objects.filter(rule=proposal.base).order_by('pk')[:25])
+    selected_set = next((row for row in example_sets if str(row.pk) == request.GET.get('examples')), None)
+    if request.GET.get('examples') and selected_set is None:
+        raise Http404
+    if selected_set is None and len(example_sets) == 1:
+        selected_set = example_sets[0]
+    comparison = costing_proposals.compare_examples(request.user, proposal, selected_set.pk) if selected_set else None
+    selected_example = None
+    if comparison:
+        example_rows = comparison['examples']
+        selected_index = next((index for index, row in enumerate(example_rows)
+            if row['key'] == request.GET.get('example')), 0)
+        selected_example = example_rows[selected_index]
+        page_url = reverse('costing_proposal', args=[case.pk, proposal.pk])
+        for row in example_rows:
+            row['url'] = page_url + '?' + urlencode({'examples': selected_set.pk, 'example': row['key']})
+        context.update(previous_example=example_rows[selected_index - 1] if selected_index > 0 else None,
+                       next_example=example_rows[selected_index + 1] if selected_index + 1 < len(example_rows) else None)
     form = DecisionForm(case, request.POST if request.method == 'POST' else None,
                         own=context['own'], initial={'revision': case.revision})
     if request.method == 'POST':
@@ -46,5 +68,6 @@ def detail(request, case_id, pk):
             return redirect('costing_proposal', case_id=case.pk, pk=proposal.pk)
         except ValidationError as exc:
             form.add_error(None, ' '.join(exc.messages))
-    context.update(case=case, form=form)
+    context.update(case=case, form=form, example_sets=example_sets, comparison=comparison,
+                   selected_example=selected_example, selected_set=selected_set)
     return render(request, 'pmo/costing_proposal.html', context)

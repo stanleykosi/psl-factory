@@ -1,5 +1,11 @@
 # Actual test execution ledger
 
+## Proposed examples and bid-page diagnostic · 18 November 2026
+
+Package91 `6918342d-9230-4c84-9698-ef8ac49ae78c` passed64 PostgreSQL tests in218.411s. Django/drift checks, fixtures and both final markers passed. Includes exact oracle/base/proposal hashes, current source access, wrong-set rejection, unknown preservation, input-schema holds and independent expected results. One local template test passed0.022s. Matching deployed runtime covered1,661 paths per service. Browser showed20.00/24.00 against supplied20.00, unknown/unknown and rounding1.01/1.21, plus navigation and settled390px/body375 layout. Studio893/calculation2 established original-source reuse with local inputs1817 and20.00NGN.
+
+Browser97 recorded three commercial decisions and final exact document approval. The following GET returned500 after Gunicorn timed out in repeated source checks. Successful action flash appeared on the next page. Package92 `30fcf57b-2f52-4a5f-979b-9c893d37bb7c` failed its first query test at3,132queries, page12.042s/test71.458s. Fifty-four tests and fixtures did not run, finalexitone. Further pure source-bound reads are consolidated for93 `16a105da`, pending. These later changes are unverified and undeployed.
+
 18 November 2026. Exact90 web `2f103cd0` booted Gunicorn successfully and returned authenticated browser GET200. Worker `e59a46ef` processed background steps with its agent queue available. Browser work93 reached verified release-evidence readiness record209 at05:15:10WAT. Work97 displayed both exact PMO Lead and Engineering Lead response approvals and all four reviewed requirement answers. Commercial and final submission acceptance remain in progress.
 
 ## Shared costing and current browser recovery composition · 18 November 2026

@@ -1,5 +1,6 @@
 """Reviewed preparation of a native P14 source successor."""
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from apps.core.services import bump, event
 from apps.documents.contracts import digest, validate
@@ -7,6 +8,7 @@ from apps.identity.services import require
 from apps.policy.services import active_component, decision_authority, reference_values
 from apps.policy.costing_proposal_validators import COMPONENT
 from adapters.costing import KEY, SuppliedCostingContractAdapter, graph
+from adapters.costing import calculate, compare
 from . import costing as native
 from .costing_models import CostingRule
 from .costing_proposal_models import CostingProposal, CostingProposalDecision
@@ -143,6 +145,12 @@ def presentation(actor, proposal):
     except (PermissionDenied, ValidationError):
         hold = 'The source, proposer access or current version needs reassessment.'
     own = actor.pk == proposal.actor_id
+    reviewer = None
+    try:
+        value = reference_values(active_component(COMPONENT, proposal.base.case))[0]
+        reviewer = get_user_model().objects.filter(pk=value['reviewer_id'], is_active=True).first()
+    except ValidationError:
+        pass
     review_hold = ''
     try:
         review_authority(actor, proposal)
@@ -151,4 +159,25 @@ def presentation(actor, proposal):
     except ValidationError:
         review_hold = 'Choose and confirm the independent calculator reviewer in business rules.'
     return {'proposal': proposal, 'parameters': rows, 'hold': hold,
-            'own': own, 'review_hold': review_hold}
+            'own': own, 'review_hold': review_hold, 'reviewer': reviewer}
+
+
+def compare_examples(actor, proposal, oracle_id):
+    native.readable(actor, proposal.base.case, True)
+    oracle = native.oracle_for(proposal.base, oracle_id)
+    if (oracle.sha256 != digest(oracle.payload) or proposal.sha256 != digest(proposal.payload)
+            or proposal.base.sha256 != digest(proposal.base.payload)):
+        raise ValidationError('The example or proposed source needs reassessment.')
+    examples = []
+    for scenario in oracle.payload['scenarios']:
+        before = calculate(proposal.base.payload, scenario['inputs'])
+        after = None
+        try:
+            after = calculate(proposal.payload, scenario['inputs'])
+        except ValidationError:
+            pass
+        examples.append({'key': scenario['key'], 'scenario': scenario['scenario'],
+            'inputs': scenario['inputs'], 'expected': scenario['expected'],
+            'before': before, 'after': after, 'before_matches': compare(before, scenario['expected']),
+            'after_matches': compare(after, scenario['expected']) if after else False})
+    return {'oracle': oracle, 'examples': examples}
