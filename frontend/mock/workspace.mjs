@@ -176,9 +176,11 @@ function handle({ req, url, raw, cookies, me, work, overrides, operationId }) {
 
   // F-28: a step that carries inputs.audience takes <id>.next.<audience> when one exists (internal minutes end filed); else <id>.next.
   const audience = typeof body.inputs?.audience === 'string' ? work[`${workId}.next.${body.inputs.audience}`] : undefined;
-  // F-41: a step with its own result takes <id>.next.<step> when one exists (the payment reminder's send, edit and set aside).
-  const next = audience ?? work[`${workId}.next.${body.step}`] ?? work[`${workId}.next`];
   const scripted = work[`${workId}.steps`]?.[body.step];
+  // F-31: a script's `serve` names another fixture to serve under this id (the registered engagement is served under the id that was registered).
+  const servedAs = scripted?.serve ? { ...structuredClone(work[scripted.serve]), id: workId } : undefined;
+  // F-41: a step with its own result takes <id>.next.<step> when one exists (the payment reminder's send, edit and set aside).
+  const next = servedAs ?? audience ?? work[`${workId}.next.${body.step}`] ?? work[`${workId}.next`];
   // A scripted failure that swaps in the next version (a redraft: 409) happens once; the step then succeeds on it.
   const replayed = scripted?.next === true && scripted.status !== 200 && next !== undefined && item.revision === next.revision;
   const script = !scripted || replayed ? { status: 200, body: { outcome: 'done' }, next: false } : scripted;

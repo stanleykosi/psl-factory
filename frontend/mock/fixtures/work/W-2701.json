@@ -1,0 +1,153 @@
+{
+  "id": "W-2701",
+  "title": "Income detail · October",
+  "line": "Income schedules",
+  "reference": "SCH-0021",
+  "state": "processing",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "current_agent"
+    },
+    {
+      "name": "Prepare",
+      "status": "not_started"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    },
+    {
+      "name": "Export (optional)",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Read the income detail",
+        "status": "done",
+        "source": "INCOME_DETAIL_OCT.XLSX · 38 ROWS"
+      },
+      {
+        "text": "Checked for income already in the accounts",
+        "status": "done",
+        "source": "2 ROWS MAY BE DUPLICATES"
+      },
+      {
+        "text": "Read the mapping note",
+        "status": "done",
+        "source": "MAPPING RUN MR-0044"
+      },
+      {
+        "text": "Hand to preparation",
+        "status": "not_started"
+      }
+    ],
+    "started_at": "2026-11-13T10:20:00Z"
+  },
+  "next_step": "Chidi is reading the income detail. A person prepares the schedule when Chidi hands it over.",
+  "sample": true,
+  "workspace": {
+    "line_key": "income_schedules",
+    "screen": "SCR-54",
+    "view": "investigating",
+    "status": {
+      "label": "CHIDI INVESTIGATING",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "income_detail",
+        "kind": "figures",
+        "title": "Income detail · 38 rows",
+        "items": [
+          {
+            "id": "R-1",
+            "label": "Disaggregation",
+            "value": "31 ROWS"
+          },
+          {
+            "id": "R-2",
+            "label": "Reclassification",
+            "value": "5 ROWS"
+          },
+          {
+            "id": "R-3",
+            "label": "Additive",
+            "value": "2 ROWS"
+          },
+          {
+            "id": "R-4",
+            "label": "Possible duplicates",
+            "value": "2",
+            "tag": {
+              "label": "CHIDI CHECKING",
+              "tone": "agent"
+            }
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "key": "ask_chidi",
+        "label": "Ask Chidi",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "SCH-0021",
+          "label": "SCH-0021"
+        }
+      ]
+    },
+    "revision": 3
+  }
+}

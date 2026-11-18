@@ -60,7 +60,7 @@ export function overdueText(row: InvoiceRow): string {
   return '—';
 }
 
-/** The phone card's line under the amount: "INV-0398 · overdue 9 days"; the reference alone when the backend says it is not overdue. */
+/** The phone card's line under the amount: "<reference> · overdue <n> days"; the reference alone when the backend says it is not overdue. */
 export function cardOverdue(row: InvoiceRow): 'none' | 'unknown' | string {
   const text = overdueText(row);
   if (text === '—') return 'none';

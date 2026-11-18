@@ -174,6 +174,21 @@ describe('send (AC 15)', () => {
     expect(document.body.textContent).not.toMatch(/\bSent\b|Delivered|Received/);
   });
 
+  it('TECH-1-1: no "Done: Send reminder." while the re-read is in flight; the notice comes only after it lands', async () => {
+    let land: (r: Response) => void = () => {};
+    const held = () => new Promise<Response>((resolve) => (land = resolve));
+    await open(item('W-3801'), held as unknown as () => Response, item('W-3801.next.send_reminder'));
+    fireEvent.click(button('Send reminder'));
+    await waitFor(() => expect(posts()).toHaveLength(1));
+    await waitFor(() => expect(sent.filter((r) => r.method === 'GET' && r.path === '/api/v1/work/W-3801').length).toBe(2));
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(document.body.textContent).not.toContain('Done: Send reminder.');
+    expect(statusTag()).not.toMatch(/SENT/);
+    await act(async () => land(json(200, item('W-3801.next.send_reminder'))));
+    await waitFor(() => expect(statusTag()).toBe('SENT · CHECKING DELIVERY'));
+    expect(screen.getByText('Done: Send reminder.')).toBeTruthy();
+  });
+
   it('W-3802: "Received" for each recipient only from receipt: received, with its time; the status is the backend’s DELIVERED', async () => {
     await open(item('W-3802'));
     expect(statusTag()).toBe('DELIVERED');

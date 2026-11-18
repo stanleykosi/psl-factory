@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-41",
   "outcome": "Payments and follow-up: Finance sees what each invoice was billed, received and still owes, and sends Chidi's drafted reminder for an overdue invoice (contract mock only)",
-  "state": "PLANNED",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-PAYMENTS"
   ],
@@ -61,7 +61,13 @@
     ],
     "blocking_decision_ids": [],
     "readiness_checked": true,
-    "explicit_exception": null
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -74,7 +80,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "ee7d652f59577f8005fa6587ffc5c0aca6253e48",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T09:52:25Z",
+      "seconds": 358.8,
+      "evidence_ref": "delivery/features/F-41/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -84,7 +103,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -100,7 +119,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-41/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -149,11 +168,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-PAYMENTS",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "b16a284a1fe4114c0fc578204fedc5bc9e2ed3df",
+    "task_branch": "fe-payments-payments-list-and-reminder",
+    "head_sha": "ee7d652f59577f8005fa6587ffc5c0aca6253e48",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-41",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -163,7 +182,64 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/payments.spec.ts",
+      "frontend/mock/fixtures/finance/invoices.board.json",
+      "frontend/mock/fixtures/finance/invoices.empty.json",
+      "frontend/mock/fixtures/finance/invoices.known.json",
+      "frontend/mock/fixtures/finance/invoices.unknown.json",
+      "frontend/mock/fixtures/response/W-3803.delivered.json",
+      "frontend/mock/fixtures/response/W-3803.not_delivered.json",
+      "frontend/mock/fixtures/response/W-3803.unknown.json",
+      "frontend/mock/fixtures/response/W-3804.delivered.json",
+      "frontend/mock/fixtures/response/W-3804.not_delivered.json",
+      "frontend/mock/fixtures/response/W-3804.unknown.json",
+      "frontend/mock/fixtures/response/W-3805.delivered.json",
+      "frontend/mock/fixtures/response/W-3805.not_delivered.json",
+      "frontend/mock/fixtures/response/W-3805.unknown.json",
+      "frontend/mock/fixtures/work/W-3801.json",
+      "frontend/mock/fixtures/work/W-3801.next.edit_draft.json",
+      "frontend/mock/fixtures/work/W-3801.next.send_reminder.json",
+      "frontend/mock/fixtures/work/W-3801.next.set_aside.json",
+      "frontend/mock/fixtures/work/W-3801.steps.json",
+      "frontend/mock/fixtures/work/W-3802.json",
+      "frontend/mock/fixtures/work/W-3803.json",
+      "frontend/mock/fixtures/work/W-3803.next.json",
+      "frontend/mock/fixtures/work/W-3803.steps.json",
+      "frontend/mock/fixtures/work/W-3804.json",
+      "frontend/mock/fixtures/work/W-3804.next.json",
+      "frontend/mock/fixtures/work/W-3804.steps.json",
+      "frontend/mock/fixtures/work/W-3805.json",
+      "frontend/mock/fixtures/work/W-3806.json",
+      "frontend/mock/fixtures/work/W-3807.json",
+      "frontend/mock/fixtures/work/W-3807.next.json",
+      "frontend/mock/fixtures/work/W-3807.steps.json",
+      "frontend/mock/fixtures/work/W-3808.json",
+      "frontend/mock/fixtures/work/W-3809.json",
+      "frontend/mock/fixtures/work/W-3810.json",
+      "frontend/mock/fixtures/work/W-3811.json",
+      "frontend/mock/fixtures/work/W-3811.steps.json",
+      "frontend/mock/fixtures/work/W-3812.json",
+      "frontend/mock/fixtures/work/W-3813.json",
+      "frontend/mock/invoices.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/app/finance/payments/page.tsx",
+      "frontend/src/features/finance/payments/PaymentsView.tsx",
+      "frontend/src/features/finance/payments/model.ts",
+      "frontend/src/features/finance/payments/payments.css",
+      "frontend/src/features/finance/payments/proposal.ts",
+      "frontend/src/features/finance/payments/usePayments.ts",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/proposals.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/payment-reminder.test.tsx",
+      "frontend/tests/payments-mock.test.ts",
+      "frontend/tests/payments.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -196,9 +272,34 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T08:14:50Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T08:14:50Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T09:52:38Z",
+      "round": 1,
+      "head": "ee7d652f59577f8005fa6587ffc5c0aca6253e48",
+      "reason": null
+    }
+  ],
   "routing": {
     "review": {
       "technical": "opus",
@@ -213,10 +314,10 @@
     ]
   },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 1,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "ee7d652f59577f8005fa6587ffc5c0aca6253e48"
   },
   "blocked": null
 }

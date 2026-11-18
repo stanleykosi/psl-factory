@@ -334,6 +334,19 @@ describe('search, filter and paging go to the server (AC 8)', () => {
     await waitFor(() => expect(screen.getAllByRole('row')).toHaveLength(2));
   });
 
+  it('Enter follows the same rule (TECH-1-3): one character sends nothing; two send q', async () => {
+    await open();
+    const box = screen.getByRole('searchbox', { name: 'Search' });
+    fireEvent.change(box, { target: { value: 'H' } });
+    fireEvent.submit(box.closest('form')!);
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    expect(reads()).toHaveLength(1);
+    fireEvent.change(box, { target: { value: 'Ha' } });
+    fireEvent.submit(box.closest('form')!);
+    await waitFor(() => expect(reads()).toHaveLength(2));
+    expect(reads()[1].params.get('q')).toBe('Ha');
+  });
+
   it('rows are never filtered by the browser: a reply whose rows do not match q is shown whole', async () => {
     serve(board());
     await open('q=zzz');

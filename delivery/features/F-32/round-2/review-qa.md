@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: qa
-COMMIT: 5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b
+COMMIT: 62ed73aa419d1e6a2bc990125bfd517422a778d3
 AUTHORITY: delivery integrated QA
 
 ## Summary
@@ -79,3 +79,9 @@ No QA findings were open from round 1. I checked these round-2 fixes for their b
 - UI-1-5 / UX-1-1 | verified | W-2501 is the only one of the tested items with `work-columns--lone`. W-2901, W-2411 and W-2201 keep `work-columns`.
 - UI-1-6 | verified | W-2501 shows "Waiting for PMO Lead" and "Only a PMO Lead can decide.", with no decision control.
 - UI-1-7(d) / UX-1-3 | verified | No "Claim it first" on W-2501 to W-2507. The F-16 page still claims once on open, before the decide (the request log above).
+
+## Update for head 62ed73aa (diff 5bab76ae..62ed73aa)
+- Read the diff 5bab76ae..62ed73aa on the shared files (Steps, Workspace, Sections, WorkItemView, AssignForm, workspace.mjs, mock-contract test): F-31 additions sit beside the F-32 release-gate paths without changing them.
+- Orphan-step rule checked: a step whose task is in tasks[] with you_can_act true still links to the decision page; only a missing task or you_can_act false is unavailable.
+- Ran engagement-planning, release-gates, delivery-*, workspace* and issue-detail tests in the worktree: 8 files, 230 tests passed.
+- Verdict unchanged.

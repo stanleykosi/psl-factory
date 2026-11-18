@@ -18,6 +18,7 @@ import {
   ListToolbar,
   PageTitle,
   RadioGroup,
+  SEARCH_MIN_CHARS,
   ShowMore,
   Table,
   Tag,
@@ -362,7 +363,9 @@ export function PaymentsView() {
             className="payments__toolbar"
             onSubmit={(event) => {
               event.preventDefault();
-              applySearch(text);
+              // Enter follows the same rule as typing: 2+ characters, or an empty box (TECH-1-3)
+              const typed = text.trim();
+              if (typed.length === 0 || typed.length >= SEARCH_MIN_CHARS) applySearch(text);
             }}
           >
             <ListToolbar

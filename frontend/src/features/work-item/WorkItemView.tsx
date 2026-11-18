@@ -239,7 +239,8 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   const view = item && presentationOf(item);
   // The phone bar's way back: the queue from the overview (and while loading or without access); the item from history.
   // F-30: an issue's work item goes back to its project (D-111 item 9); every other work item keeps the queue.
-  const projectId = item?.workspace?.line_key === 'issue_followup' ? item.workspace.context?.project?.case_id : undefined;
+  // F-31: the planning item does the same (D-113 item 9).
+  const projectId = item?.workspace?.line_key === 'issue_followup' || item?.workspace?.line_key === 'planning' ? item.workspace.context?.project?.case_id : undefined;
   usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : projectId ? { label: 'Project', href: `/projects/${encodeURIComponent(projectId)}` } : { label: 'Queue', href: '/my-work' });
 
   if (state.status === 'loading') return <LoadingState />;

@@ -1,0 +1,179 @@
+{
+  "id": "W-2702",
+  "title": "Income detail · October",
+  "line": "Income schedules",
+  "reference": "SCH-0021",
+  "state": "verified",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Prepare",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "done"
+    },
+    {
+      "name": "Verified",
+      "status": "verified"
+    },
+    {
+      "name": "Export (optional)",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-13T14:05:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-13T14:05:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-11-13T14:05:00Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-2702",
+      "kind": "decide",
+      "title": "Review the income schedule",
+      "required_role": "Schedules reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Schedule v1",
+          "number": 1,
+          "drafted_at": "2026-11-13T11:40:00Z"
+        },
+        "basis": "Approve the income detail for Service revenue, October. You didn't prepare it, so you can review it.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": false,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Schedules reviewer",
+              "status": "approved",
+              "is_you": false,
+              "person": "Ada Okafor",
+              "decided_at": "2026-11-13T14:05:00Z"
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the income detail",
+        "status": "done",
+        "source": "INCOME_DETAIL_OCT.XLSX · 38 ROWS"
+      },
+      {
+        "text": "Checked for income already in the accounts",
+        "status": "done",
+        "source": "2 ROWS MAY BE DUPLICATES"
+      },
+      {
+        "text": "Read the mapping note",
+        "status": "done",
+        "source": "MAPPING RUN MR-0044"
+      },
+      {
+        "text": "Hand to preparation",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-13T10:20:00Z"
+  },
+  "next_step": "Nothing more is needed. Exporting it as an adjustment is a separate step.",
+  "sample": true,
+  "workspace": {
+    "line_key": "income_schedules",
+    "screen": "SCR-54",
+    "view": "verified",
+    "status": {
+      "label": "VERIFIED",
+      "tone": "verified"
+    },
+    "sections": [
+      {
+        "key": "verified",
+        "kind": "facts",
+        "title": "Verified",
+        "items": [
+          {
+            "id": "V-1",
+            "label": "Approved by",
+            "value": "ADA OKAFOR · 13 NOV"
+          },
+          {
+            "id": "V-2",
+            "label": "Verification scope",
+            "value": "THESE 38 ROWS ONLY"
+          },
+          {
+            "id": "V-3",
+            "label": "Posted to the ledger",
+            "value": "NO"
+          }
+        ]
+      }
+    ],
+    "next": [
+      "Optional: export the 7 additive and reclassification rows as an accounting adjustment for October's accounts."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "SCH-0021",
+          "label": "SCH-0021"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

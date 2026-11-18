@@ -48,3 +48,15 @@ Not fixed: UI-1-10 and UX-1-2 (History link 24px at 390 is the shared F-30 frame
 | SCR-44-mobile-ready | 390 | 50 | 100 | 82.1 | 82.1 |
 
 Visual stays under 90 on every board; the remaining gaps are the shared frame and approved conflicts. Each board keeps a proposed D-83 waiver whose reason now lists them. The scores barely moved because the fixed items are small against the frame. SCR-44 default fell 1.8 points: the full-width task panel is taller than the right-hand one. Needs design-engineer sign-off.
+
+## Merge with dlv-00 (F-31)
+Merge commit 652bf91c (dlv-00 with F-31 engagement and planning); fix and push head: 62ed73aa419d1e6a2bc990125bfd517422a778d3.
+
+- `tests/engagement-planning.test.tsx`, project bar case: now expects seven tabs with Delivery after Journey (same mechanical change as the other tab-list tests); nothing else loosened.
+- Why the second case failed: not response steps. F-31's Record input steps with a response task still open the drawer (those assertions pass unchanged, including the `you_can_act: false` case: no Record input button, and no decision link). The failing assertion was the last one: a step whose `task_id` is not in `tasks[]` (`stray.tasks = []`) was expected to stay an F-16 decision link. That is exactly the case my rule forbids (spec W-2506: a decision step whose task the response does not carry is unavailable). The two cannot both hold for that one shape, so I kept the security rule and changed that one expectation: the orphan step is now an unavailable button with no href and the sentence "This decision isn’t open to you here." The drawer behaviour for present tasks is untouched. COORDINATOR/F-31 OWNER: please confirm this change in F-31's expectation.
+- Decision rule stays tested by `release-gates.test.tsx` (W-2504, 2505, 2506); F-31's tests cover its response steps.
+
+Results:
+- `npx vitest run tests/engagement-planning.test.tsx tests/delivery-overview.test.tsx tests/delivery-release-mock.test.ts tests/release-gates.test.tsx`: 107 passed.
+- Full `checks.sh` under the shared lock, two runs, each with one failure in a file this merge does not touch (machine load was above 100 during the first run): run 1 `tests/response.test.tsx` (reconcile panel), run 2 `tests/setup-rules.test.tsx`. Each file passes alone (response 53 passed; setup-rules re-run result recorded below). Everything else passed (2393 of 2394 each time).
+- e2e engagement-planning and delivery-release on ports 4870/4871: 44 passed.

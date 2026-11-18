@@ -1,0 +1,277 @@
+{
+  "exceptions": [
+    {
+      "role": "button",
+      "name": "Attach a file",
+      "category": "no field",
+      "reason": "Conflicts 3: the composer sends text and mentions only (readiness rule 2); E-MESSAGE has no file field, so the attach button is left out.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "button",
+      "name": "Create an invoice",
+      "category": "no field",
+      "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "button",
+      "name": "Draft a SOW",
+      "category": "no field",
+      "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "button",
+      "name": "Ask about a project",
+      "category": "no field",
+      "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "button",
+      "name": "Ask about pay",
+      "category": "no field",
+      "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "button",
+      "name": "Edit draft",
+      "category": "no field",
+      "reason": "Conflicts 2: no operation edits a draft (G-SCR05-2); the person edits the values in the Start work drawer the start button opens, so the button is left out.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "Started INV-0415 · now at its first review station. Open the work item",
+      "category": "no field",
+      "reason": "Conflicts 6: only draft.started{work_id, reference} exists; the page writes \"Started INV-0415.\" and the link \"Open the work item\". The rest of the board's line (first review station, Finance review, 'Chidi will tell you') is a claim the frontend cannot check. Contract proposal: draft.started.note (backend-composed).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "@Harmattan Bank ×",
+      "category": "no field",
+      "reason": "Conflicts 7: E-CONVERSATION has no mentions echo and no milestone kind (G-SCR05-4); the thread composer starts empty and shows chips only for mentions picked in this composer.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "#Milestone 2 ×",
+      "category": "no field",
+      "reason": "Conflicts 7: E-CONVERSATION has no mentions echo and no milestone kind (G-SCR05-4); the thread composer starts empty and shows chips only for mentions picked in this composer.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "link",
+      "name": "Create an invoice",
+      "category": "no field",
+      "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "link",
+      "name": "Draft a SOW",
+      "category": "no field",
+      "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "link",
+      "name": "Ask about a project",
+      "category": "no field",
+      "reason": "Conflicts 4: shortcut prompts open fixed threads and switch agent; no contract field carries them (readiness rule 8), so they are left out. Contract proposal: assistant_agents as objects with suggestions[] (G-SCR05-6).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "+",
+      "category": "no field",
+      "reason": "Conflicts 3: the composer sends text and mentions only (readiness rule 2); E-MESSAGE has no file field, so the attach button is left out.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "link",
+      "name": "← Assistant",
+      "category": "frame item",
+      "reason": "Conflicts 9: the back link is the app frame's phone bar (usePhoneBack \"← Assistant\" with the conversation title, one line with an ellipsis); the frame names the link for screen readers, so the tool cannot match the board text. The page draws the link.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "₦6,800,000.00 · Finance review next",
+      "category": "extra element",
+      "reason": "Conflicts 14: the draft card shows the same label and value rows at both widths, from data (Amount, To, Due terms, Template, Next), not the phone board's two-row summary.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "Started INV-0415. It's now at Finance review. Nothing goes to the client until a Finance Lead approves it.",
+      "category": "no field",
+      "reason": "Conflicts 6: only draft.started{work_id, reference} exists; the page writes \"Started INV-0415.\" and the link \"Open the work item\". The rest of the board's line (first review station, Finance review, 'Chidi will tell you') is a claim the frontend cannot check. Contract proposal: draft.started.note (backend-composed).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "Started INV-0415.",
+      "category": "no field",
+      "reason": "Conflicts 6: only draft.started{work_id, reference} exists; the page writes \"Started INV-0415.\" and the link \"Open the work item\". The rest of the board's line (first review station, Finance review, 'Chidi will tell you') is a claim the frontend cannot check. Contract proposal: draft.started.note (backend-composed).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "Chidi will tell you if Finance returns it.",
+      "category": "no field",
+      "reason": "Conflicts 6: only draft.started{work_id, reference} exists; the page writes \"Started INV-0415.\" and the link \"Open the work item\". The rest of the board's line (first review station, Finance review, 'Chidi will tell you') is a claim the frontend cannot check. Contract proposal: draft.started.note (backend-composed).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "· Finance agent",
+      "category": "wording",
+      "reason": "Conflicts 11 and 14: one wording per width-independent field. The page shows the hand-off note and answer the data carries (the desktop board's copy), not the phone board's shorter copy.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "Tola passed this to Chidi, who prepares invoices.",
+      "category": "wording",
+      "reason": "Conflicts 11 and 14: one wording per width-independent field. The page shows the hand-off note and answer the data carries (the desktop board's copy), not the phone board's shorter copy.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "The amount comes from the contract terms, not from me. Nothing goes to the client until a Finance Lead approves it.",
+      "category": "wording",
+      "reason": "Conflicts 11 and 14: one wording per width-independent field. The page shows the hand-off note and answer the data carries (the desktop board's copy), not the phone board's shorter copy.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "Amount ₦6,800,000.00",
+      "category": "extra element",
+      "reason": "Conflicts 14: the draft card shows the same label and value rows at both widths, from data (Amount, To, Due terms, Template, Next), not the phone board's two-row summary.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "TOLA",
+      "category": "no field",
+      "reason": "Conflicts 8 and 9: the phone header word and the task words (\"Building the planning packet\") are not fields; the card uses the conversation title as the task and the title is in the frame's phone bar.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "Building the planning packet",
+      "category": "no field",
+      "reason": "Conflicts 8 and 9: the phone header word and the task words (\"Building the planning packet\") are not fields; the card uses the conversation title as the task and the title is in the frame's phone bar.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "text",
+      "name": "Message Tola",
+      "category": "wording",
+      "reason": "Conflicts 11: one text per agent at both widths; the composer is labelled \"Message Tola\" (the phone board says \"Message\").",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "button",
+      "name": "Start this invoice",
+      "category": "missing on page",
+      "reason": "Conflicts 5: once draft.started exists the start button is hidden (a second start is a 409) and the started line is shown instead. Applies to the draft-started boards only. Tool false-miss: on SCR-05-desktop-thread the button is on the page, but the board label is a data binding, so the tool cannot match it by text and this entry covers it by name (software-factory backlog item, not a page gap).",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "link",
+      "name": "← Home",
+      "category": "frame vocabulary",
+      "reason": "Conflicts 9: the page draws \"← Home\" in the phone bar, but the frame (usePhoneBack) names the link \"Back to Home\", so the tool cannot match the board's text. The same words are on the page.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "role": "button",
+      "name": "Show staff-cost totals",
+      "category": "no field",
+      "reason": "Conflicts 6 (D-116): no field carries suggestion buttons (G-SCR05-5); not drawn. Proposal: typed suggestions[] on the message.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "button",
+      "name": "Ask HR Lead for access",
+      "category": "no field",
+      "reason": "Conflicts 6 (D-116): no field carries it (G-SCR05-5) and who receives an access request is an unproposed business decision; not drawn.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Payroll",
+      "category": "wording",
+      "reason": "Conflicts 5: the phone header shows the conversation title (E-CONVERSATION title), not the board's 'Payroll'.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "I can’t share an individual’s pay with you; that is restricted to HR roles. I can show staff-cost totals for your business unit, or you can ask the HR Lead for access if your work needs it.",
+      "category": "wording",
+      "reason": "Conflicts 3: contract carries text and cannot_reason as separate plain lines; the board's one paragraph differs from the two mock lines, never joined or rewritten.",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ],
+  "notes": [
+    "Held microphone (Conflicts 1): drawn, aria-disabled, \"Not available yet\", no handler; no coverage exception needed (D-SPEECH-INPUT, D-96).",
+    "Disabled Send is grey, not ink, while the text is blank (accessibility; visual difference only).",
+    "\"N earlier\" in the phone bar is underlined so it reads as tappable (UI-3-1); the board draws it without an underline. Signed with the other differences under D-100."
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-05-desktop 1440",
+      "visual": 88.1,
+      "category": "visual waiver",
+      "reason": "Visual is 70 or more but under 90 where the board draws fields the API lacks (attach, shortcut prompts, Edit draft, mention chips, started note, phone copy and header; Conflicts 1-16) and the frame (top bar, phone bar). Requested as a D-83-style waiver.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "board": "SCR-05-desktop-working 1440",
+      "visual": 89.4,
+      "category": "visual waiver",
+      "reason": "Visual is 70 or more but under 90 where the board draws fields the API lacks (attach, shortcut prompts, Edit draft, mention chips, started note, phone copy and header; Conflicts 1-16) and the frame (top bar, phone bar). Requested as a D-83-style waiver.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "board": "SCR-05-desktop-thread 1440",
+      "visual": 86.3,
+      "category": "visual waiver",
+      "reason": "Visual is 70 or more but under 90 where the board draws fields the API lacks (attach, shortcut prompts, Edit draft, mention chips, started note, phone copy and header; Conflicts 1-16) and the frame (top bar, phone bar). Requested as a D-83-style waiver.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "board": "SCR-05-desktop-draft-started 1440",
+      "visual": 85,
+      "category": "visual waiver",
+      "reason": "Visual is 70 or more but under 90 where the board draws fields the API lacks (attach, shortcut prompts, Edit draft, mention chips, started note, phone copy and header; Conflicts 1-16) and the frame (top bar, phone bar). Requested as a D-83-style waiver.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "board": "SCR-05-mobile-working 390",
+      "visual": 80.4,
+      "category": "visual waiver",
+      "reason": "Visual is 70 or more but under 90 where the board draws fields the API lacks (attach, shortcut prompts, Edit draft, mention chips, started note, phone copy and header; Conflicts 1-16) and the frame (top bar, phone bar). Requested as a D-83-style waiver.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "board": "SCR-05-mobile-thread 390",
+      "visual": 78.1,
+      "category": "visual waiver",
+      "reason": "Visual is 70 or more but under 90 where the board draws fields the API lacks (attach, shortcut prompts, Edit draft, mention chips, started note, phone copy and header; Conflicts 1-16) and the frame (top bar, phone bar). Requested as a D-83-style waiver.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    },
+    {
+      "board": "SCR-05-mobile-draft-started 390",
+      "visual": 82.8,
+      "category": "visual waiver",
+      "reason": "Visual is 70 or more but under 90 where the board draws fields the API lacks (attach, shortcut prompts, Edit draft, mention chips, started note, phone copy and header; Conflicts 1-16) and the frame (top bar, phone bar). Requested as a D-83-style waiver.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-100"
+    }
+  ]
+}

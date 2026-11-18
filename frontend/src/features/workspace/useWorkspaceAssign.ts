@@ -20,8 +20,14 @@ export type AssignNotice = { kind: 'done'; text: string } | { kind: 'stale'; rev
 
 export const ASSIGN_TEXT = {
   done: (owner: string) => `Owner set: ${owner}`,
+  // F-31: the engagement's PM confirmation (the form opened with the person the response names)
+  pmDone: (owner: string) => `PM confirmed: ${owner}`,
+  confirm: (role: string) => `Confirm ${role}`,
   unconfirmed: 'We couldn’t confirm the owner was set. Check the page before trying again.',
   unconfirmedHead: 'Not recorded',
+  // the engagement's PM confirmation (role "PM"): the spec's own words for a write that could not be confirmed
+  pmUnconfirmed: 'We couldn’t confirm the PM was set. Check the page before trying again.',
+  pmUnconfirmedHead: 'Not confirmed',
   stale: (revision: number | undefined) =>
     revision === undefined ? 'This changed while you were working, and we couldn’t reload it.' : `This changed while you were working. Showing version ${revision}.`,
   noCandidates: 'No one can be chosen yet.',
@@ -48,7 +54,7 @@ async function postAssign(id: string, body: AssignBody) {
   throw Object.assign(error, { fields: Array.isArray(fields) ? (fields as FieldMessage[]) : undefined });
 }
 
-export function useWorkspaceAssign({ id, revision, page }: { id: string; revision: number | undefined; page: WorkspacePage }) {
+export function useWorkspaceAssign({ id, revision, page, role }: { id: string; revision: number | undefined; page: WorkspacePage; role?: string }) {
   const [pending, setPending] = useState(false);
   const [notice, setNotice] = useState<AssignNotice | null>(null);
   const writing = useRef(false);
@@ -60,7 +66,7 @@ export function useWorkspaceAssign({ id, revision, page }: { id: string; revisio
       setPending(true);
       try {
         const result = await postAssign(id, { expected_revision: revision, ...request });
-        setNotice({ kind: 'done', text: ASSIGN_TEXT.done(result.assigned_to) });
+        setNotice({ kind: 'done', text: role === 'PM' ? ASSIGN_TEXT.pmDone(result.assigned_to) : ASSIGN_TEXT.done(result.assigned_to) });
         await page.reload();
         return { kind: 'done' };
       } catch (error) {
@@ -94,7 +100,7 @@ export function useWorkspaceAssign({ id, revision, page }: { id: string; revisio
         setPending(false);
       }
     },
-    [id, page, revision],
+    [id, page, revision, role],
   );
 
   return { submit, pending, notice, setNotice };

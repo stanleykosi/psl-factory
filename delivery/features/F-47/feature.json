@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-47",
   "outcome": "Start work: add the proof file in the drawer for minutes, a change, an income schedule and a ledger source, uploaded first and sent with the start (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-M2A-PROOF"
   ],
@@ -84,22 +84,38 @@
       "at": "2026-11-18T08:14:05Z",
       "seconds": 205.7,
       "evidence_ref": "delivery/features/F-47/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T08:46:18Z",
+      "seconds": 393.1,
+      "evidence_ref": "delivery/features/F-47/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -118,29 +134,568 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/start-work/useStartWork.ts:264-280 | `rereadCase` can resolve `undefined` in two cases: the fixed line is gone from E-LINES, or the chosen project is no longer served (the value is then cleared). F-09's hook treats that as \"use the item's revision\". After Try again, `run` still calls `send` with the captured `caseId` and the old revision prop (useEvidenceUpload.ts `revision.current ?? caseRevision`). That sends one upload to a case the drawer has just dropped, even though the uploader is already unmounted. The backend would most likely refuse it, and only a press triggers it. Expected: when there is no case to re-read, throw instead (for example the `not_found` ApiError), so the hook's re-read-failed path stops the upload.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "useStartWork.ts rereadCase throws not_found in all three no-case paths, and the hook's Try again path stops on not_found. Tests \"TECH-1-1: Try again sends nothing once the fixed case\u2026 / the chosen project\u2026\" assert exactly one upload."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "useStartWork.ts rereadCase throws not_found in all three no-case paths, and the hook's Try again path stops on not_found. Tests \"TECH-1-1: Try again sends nothing once the fixed case\u2026 / the chosen project\u2026\" assert exactly one upload."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/mock/server.mjs:264-271, frontend/mock/start-work.mjs:239-247 | The spec routes an upload to start-work only when its `kind` matches a served line's evidence kind *and* the `case_id` is a case that line can start on. `ownsUpload` checks only the kind; the case check comes later, inside `upload()`, as a 404. Nothing collides today: those kinds appear only in start-work fixtures, and F-09/F-11 routing tests pass. But a later F-09 work item that uses `meeting_notes` or `client_request` on its own case would get a 404 from start-work instead of reaching `response.mjs`. Expected: `ownsUpload` also checks `caseBase(...) !== undefined`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "start-work.mjs ownsUpload checks kind and caseBase per line. The routing test covers 9 kind/case/persona combinations. The changed C-FIN-SCHEDULES assertion now expects F-09's 422 with the start-work revision kept at 3, and the other 404s are kept."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "start-work.mjs ownsUpload checks kind and caseBase per line. The routing test covers 9 kind/case/persona combinations. The changed C-FIN-SCHEDULES assertion now expects F-09's 422 with the start-work revision kept at 3, and the other 404s are kept."
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "frontend/src/features/start-work/StartProof.tsx:131-136 | The 422 under Proof gets `id={`${id}-error`}`, but no control or group refers to it, and nothing sets `aria-invalid`. F-05's `IntakeField` links its error through `aria-describedby`. The drawer-level alert still announces the count, so this is minor. Expected: point the Proof group's `aria-describedby` at the error, or leave the id out.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "StartProof.tsx fieldset gets aria-describedby=\"${id}-error\" and aria-invalid only when error is set, and the error span carries that id. The test checks the attribute equals the .psl-error id."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "StartProof.tsx fieldset gets aria-describedby=\"${id}-error\" and aria-invalid only when error is set, and the error span carries that id. The test checks the attribute equals the .psl-error id."
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "delivery/BACKEND-HANDOFF.md | The builder added the F-47 backend section to `delivery/BACKEND-HANDOFF.md`. That file is outside the lane the spec lists, and build.md does not name it among the edits outside the lane. The content is correct and follows earlier features' \"Added during F-xx\" pattern. Expected: list it in build.md, or have the coordinator confirm that this file belongs to every feature.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "round-2/build.md records the round-1 BACKEND-HANDOFF.md edit (c3b03bfb) as an edit outside the lane. This round does not touch it."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "round-2/build.md records the round-1 BACKEND-HANDOFF.md edit (c3b03bfb) as an edit outside the lane. This round does not touch it."
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Upload failures are not announced. Spec criterion 18 requires \"Upload problems ... are announced (`role=\"status\"` or `alert`)\". With a `.exe` upload (422) the sentence \"EXE files can't be used as proof.\" sits in plain spans (SPAN < SPAN < DIV group < FIELDSET), with no `role` or `aria-live`. The only live region that exists at that moment is an empty `alert`. The project-changed line is announced correctly (`role=\"status\"`). A screen-reader user is not told the upload failed. Expected: a live region (the card's reason text or the shared ProofField error) so the failure is read when it appears. Seen on the minutes (pm) and ledger (finance_lead) drawers at 1440. Code: `frontend/src/features/start-work/StartProof.tsx:78` (ProofField is shared from F-09, so the fix may need a start-work wrapper rather than an edit to `features/response`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "8d7da0c4"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "StartProof.tsx adds a hidden role=\"alert\" per failed (non-403/404) file. The vitest \"UX-1-1: each upload failure is announced\u2026\" covers a 422 .exe, a 500, a 409 and a 200 without an id, and checks no alert is left after a fix. e2e \"ledger states\" asserts the alert text at 1440 and 390 with axe clean."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "8d7da0c4"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "StartProof.tsx adds a hidden role=\"alert\" per failed (non-403/404) file. The vitest \"UX-1-1: each upload failure is announced\u2026\" covers a 422 .exe, a 500, a 409 and a 200 without an id, and checks no alert is left after a fix. e2e \"ledger states\" asserts the alert text at 1440 and 390 with axe clean."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The disabled Start gives no reason. While a file is uploading or failed, the button is simply greyed out and nothing near it says \"remove it or try again first\". The card's \"Not uploaded\" text carries the cause, so this is a clarity issue only. Consider a short line above Start.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop the \u00d7 is 24x24 px. The spec asks for 44 px on phones only, and the phone \u00d7 is 44x44, so this meets the spec. It is small for pointer and touch laptops.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The file input has no accessible name that I could read from `aria-label` or `<label>`. It may be named through `aria-labelledby` on the group; I did not run axe, so criterion 18's \"file input is named\" is unconfirmed. QA's axe run should settle it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Signature needed. All 30 exceptions and the 6 D-83 visual waivers in `delivery/features/F-47/fidelity-exceptions.json` read `approved_by: \"builder proposal, pending design engineer\"`. Under D-114 this round accepts them provisionally. D-83 needs a waiver signed per board before the feature can merge. The items to sign are the waivers for minutes desktop (89.3), change desktop (86.3) and the four phone boards, plus Conflicts 2, 7, 9 and 11.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The saved scores are out of date. `round-1/fidelity/scores.txt` and the two Finance desktop `report.json` files still show 97.4% / pass False, because the \"Done 28\" exception was added after the run. The recomputation is correct, but the next scored run (a fix round, or the merge run) should regenerate them so the files on record match build.md.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T08:46:18Z",
+          "refs": [
+            "(factory file, no commit)"
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T08:59:01Z",
+          "refs": [
+            "scores.txt was rebuilt from the saved reports and the current exceptions. Coverage and visual per board match report.json, and with-exceptions is 100.0 on all 8 boards. The 6 D-83 waivers match fidelity-exceptions.json visual_waivers."
+          ],
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "(factory file, no commit)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "scores.txt was rebuilt from the saved reports and the current exceptions. Coverage and visual per board match report.json, and with-exceptions is 100.0 on all 8 boards. The 6 D-83 waivers match fidelity-exceptions.json visual_waivers."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Two boards were drawn with fallback fonts. On `SCR-04-desktop-change-1440` and `SCR-04-mobile-schedules-390` the tool warned that Google Fonts could not be reached. The board side was drawn in fallback fonts (the \"PSL FACTORY\" wordmark and the phone title are visibly different), so those two visual scores (86.3, 75.3) are somewhat pessimistic. Both are still above the D-83 floor of 70, so nothing changes. If those two boards are re-run, it should be with network access.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T08:24:27Z",
+          "head": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "An upload answering 413 or 415 shows \"Couldn't upload. Try again.\" with a Try again that will fail the same way, and the backend's message is lost. The contract lists only 401/403/404/409/422 for E-EVIDENCE-UPLOAD, and the spec has the backend send its limits as 422, so this is within spec. But a proxy or Django body-size limit will answer 413 before the view does. The backend handoff should confirm that size and type limits answer 422 with a message, and that the request-body limit is above the largest allowed file. `frontend/src/api/errors.ts:4-10` maps 413 and 415 to `server`, and `frontend/src/features/response/useEvidenceUpload.ts:104` then makes them retryable.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T09:17:21Z",
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A 403 or 404 on the start shows \"You can't start this here.\" followed by the backend's own message, word for word. The mock's messages are safe (\"Your role does not allow you to start this line.\" and \"We could not find that record.\"). A faked message holding a case id and a file name was shown in full, and the two messages tell 403 apart from 404. This is F-05 code that this head does not change (`frontend/src/features/start-work/useStartWork.ts:375-376`). The backend should keep 403/404 messages free of record and file names; or the frontend could show only the lead sentence in a later slice.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-47/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T09:17:21Z",
+          "head": "8d7da0c400b19e41356a0230e1328978452bc763"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+          "evidence_refs": [
+            "delivery/features/F-47/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-47/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+          "evidence_refs": [
+            "delivery/features/F-47/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+          "evidence_refs": [
+            "delivery/features/F-47/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+          "evidence_refs": [
+            "delivery/features/F-47/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -163,7 +718,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "29fff6e553b57ffa9b7d6f95e4a7dce45beee430",
     "task_branch": "fe-m2a-proof-start-work-proof-upload",
-    "head_sha": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+    "head_sha": "8d7da0c400b19e41356a0230e1328978452bc763",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-47",
     "pr_url": null,
     "pr_number": null,
@@ -232,7 +787,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:06Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -258,6 +813,46 @@
       "round": 1,
       "head": "438c350fe7fe79233604f2293b6812d10df6c1ee",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T08:24:27Z",
+      "round": 1,
+      "head": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T08:24:28Z",
+      "round": 2,
+      "head": "438c350fe7fe79233604f2293b6812d10df6c1ee",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T08:46:36Z",
+      "round": 2,
+      "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T08:59:01Z",
+      "round": 2,
+      "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T09:17:21Z",
+      "round": 2,
+      "head": "8d7da0c400b19e41356a0230e1328978452bc763",
+      "reason": null
     }
   ],
   "routing": {
@@ -274,10 +869,10 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 1,
     "verdict": "PASS",
-    "commit": "438c350fe7fe79233604f2293b6812d10df6c1ee"
+    "commit": "8d7da0c400b19e41356a0230e1328978452bc763"
   },
   "blocked": null
 }

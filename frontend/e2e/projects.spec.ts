@@ -155,7 +155,7 @@ for (const [label, viewport] of [
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
       const tabs = projectTabs(page);
       // Phones draw the tabs without counts.
-      await expect(tabs).toHaveText(phone ? ['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions'] : ['Journey', 'Milestones 4', 'Documents 6', 'Money', 'Registers 6', 'Actions 9'], {
+      await expect(tabs).toHaveText(phone ? ['Journey', 'Delivery', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions'] : ['Journey', 'Delivery', 'Milestones 4', 'Documents 6', 'Money', 'Registers 6', 'Actions 9'], {
         useInnerText: phone,
       });
       await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
@@ -211,18 +211,18 @@ for (const [label, viewport] of [
       await expectNoAxeViolations(page);
     });
 
-    test('project tab: Documents opens a coming-next panel under the same header', async ({ page }) => {
+    test('project tab: Documents shows the F-29 document list under the same header', async ({ page }) => {
       await page.goto('/projects/P-0101/documents');
       await journeyLoaded(page);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
-      await expect(projectTabs(page).nth(2)).toHaveAttribute('aria-selected', 'true');
-      await expect(page.getByRole('heading', { level: 2, name: 'Documents come next' })).toBeVisible();
+      await expect(projectTabs(page).nth(3)).toHaveAttribute('aria-selected', 'true');
+      await expect(page.getByText('Statement of work').first()).toBeVisible();
       await expect(lineLinks(page)).toHaveCount(0);
       expect(await page.title()).toBe('Project · PSL Factory');
       expect(await noHorizontalScroll(page)).toBe(true);
       await shot(page, `project-documents-${w}`);
       await expectNoAxeViolations(page);
-      await page.getByRole('link', { name: 'Open the journey' }).click();
+      await projectTabs(page).first().click();
       await expect(page).toHaveURL(/\/projects\/P-0101$/);
       await expect(lineLinks(page)).toHaveCount(8);
     });

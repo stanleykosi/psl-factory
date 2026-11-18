@@ -1,9 +1,9 @@
-board	width	coverage	with-exceptions	visual	pass
-SCR-04-desktop-minutes-1440	1440	73.7	100	89.3	False
-SCR-04-desktop-change-1440	1440	71.1	100	86.3	False
-SCR-04-desktop-schedules-1440	1440	86.8	97.4	95.8	False
-SCR-04-desktop-ledger-1440	1440	84.2	97.4	96.1	False
-SCR-04-mobile-minutes-390	390	69.2	100	78.6	False
-SCR-04-mobile-change-390	390	61.5	100	81	False
-SCR-04-mobile-schedules-390	390	61.5	100	75.3	False
-SCR-04-mobile-ledger-390	390	53.8	100	84.9	False
+board	width	coverage	with-exceptions	visual	pass	visual-waiver
+SCR-04-desktop-minutes-1440	1440	73.7	100.0	89.3	False	D-83
+SCR-04-desktop-change-1440	1440	71.1	100.0	86.3	False	D-83
+SCR-04-desktop-schedules-1440	1440	86.8	100.0	95.8	True	-
+SCR-04-desktop-ledger-1440	1440	84.2	100.0	96.1	True	-
+SCR-04-mobile-minutes-390	390	69.2	100.0	78.6	False	D-83
+SCR-04-mobile-change-390	390	61.5	100.0	81	False	D-83
+SCR-04-mobile-schedules-390	390	61.5	100.0	75.3	False	D-83
+SCR-04-mobile-ledger-390	390	53.8	100.0	84.9	False	D-83
