@@ -142,7 +142,7 @@ for (const [label, viewport, phone] of [
           await atLeast44(page, dialog(page).getByRole('button', { name: drawer.start }), 'Start');
           for (const control of await dialog(page).locator('.psl-seg__opt, .sw-picker > .psl-select').all()) expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(44);
           // the card fits: no sideways scroll in the sheet
-          const body = dialog(page).locator('.psl-drawer__body');
+          const body = dialog(page).locator('.psl-sheet__body');
           expect(await body.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
         }
         await expectNoAxeViolations(page, 'uploaded');
