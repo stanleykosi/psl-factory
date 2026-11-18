@@ -118,7 +118,8 @@ describe('the panel (criteria 1 to 5)', () => {
   it('opens over the list with the client and reference, and the list stays drawn behind it', async () => {
     const dialog = await open('W-3302');
     expect(within(dialog).getByText('Tamarind Loans · TL-RFP-2026-014')).toBeTruthy();
-    expect(screen.getAllByText(/loan origination RFP/).length).toBeGreaterThan(1);
+    // the list loads beside the panel: wait for its rows, not just for the panel
+    await waitFor(() => expect(screen.getAllByText(/loan origination RFP/).length).toBeGreaterThan(1));
     expect(screen.getByRole('tab', { name: /Unassigned/ })).toBeTruthy();
     // opening the panel changes the URL only: the list was read once
     expect(sent.filter((r) => r.path.startsWith('/api/v1/work?')).length).toBe(1);
