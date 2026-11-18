@@ -6,7 +6,7 @@
    "category": "frame",
    "conflicts": 11,
    "reason": "Conflicts 11: the frame draws workspace.context.crumbs as a list of plain items (F-17/F-22 frame as built), not one text line; the words come from the crumbs.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "link",
@@ -14,7 +14,7 @@
    "category": "frame",
    "conflicts": 11,
    "reason": "Conflicts 11: the phone bar's way back is the frame's (\"← Queue\" to My work, F-17/F-22 as built); the board's wording is not drawn.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -22,7 +22,7 @@
    "category": "frame",
    "conflicts": null,
    "reason": "Design decision 14 Nov 2026 (c), restated in D-92: the visible SAMPLE DATA tag is off in team builds. Every fixture is sample: true, and the shared tag shows when the build sets NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1 (component test on all fixtures). Not a spec Conflicts item.",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-117",
    "authority": "design decision 14 Nov 2026 (c), restated in D-92"
   },
   {
@@ -31,7 +31,7 @@
    "category": "sample data",
    "conflicts": 13,
    "reason": "Conflicts 13: the signed-in name comes from /me; the mock's Finance persona is Ada Okafor · Finance Lead on all four boards and no new persona is added.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -39,7 +39,7 @@
    "category": "component",
    "conflicts": 15,
    "reason": "Conflicts 15: the agent card is the existing AgentCard drawn from item.agent, which has no title field; the agent's name, steps, sources and WORKING are drawn.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -47,7 +47,7 @@
    "category": "component",
    "conflicts": 15,
    "reason": "Conflicts 15: the existing AgentCard draws the name, \"Cannot approve, send or pay.\" and \"step n of m\" (from the steps sent) on separate lines; item.agent carries no agent role.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -55,7 +55,7 @@
    "category": "component",
    "conflicts": 7,
    "reason": "Conflicts 7: the basis sentence is tasks[].decision.basis as returned, drawn whole with no bold; the page composes none of it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -63,7 +63,7 @@
    "category": "component",
    "conflicts": 7,
    "reason": "Conflicts 7: the note label names only the verdicts this panel offers that need a note: \"Note (needed to return or reject)\"; withdraw is part 2.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -71,7 +71,7 @@
    "category": "component",
    "conflicts": 7,
    "reason": "Conflicts 7: as above: the note label is \"Note (needed to return or reject)\".",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "link",
@@ -79,7 +79,7 @@
    "category": "component",
    "conflicts": 10,
    "reason": "Conflicts 10: the phone Decide bar uses the step's own label, \"Return with a note\", as desktop (D-111).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -87,7 +87,7 @@
    "category": "component",
    "conflicts": 10,
    "reason": "Conflicts 10: the phone shows the same returned sentence as desktop, as the backend sends it (\"Ada Okafor returned it on 13 Nov: …\").",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -95,7 +95,7 @@
    "category": "component",
    "conflicts": 12,
    "reason": "Conflicts 12: the correction step sits in the shared side panel headed \"Decide\" and its form opens on press (D-98 (2)); the board draws a panel titled with the step, open.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -103,7 +103,7 @@
    "category": "component",
    "conflicts": 12,
    "reason": "Conflicts 12: the step's form opens on press (D-98 (2)); the field is then the shared Segmented choice, with nothing pre-selected (Conflicts 2).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -111,7 +111,7 @@
    "category": "component",
    "conflicts": 12,
    "reason": "Conflicts 12: the board draws a select with the reviewer's suggestion chosen; the page draws a 3-option choice as the shared Segmented control with nothing chosen (Conflicts 2), on press.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -119,7 +119,7 @@
    "category": "component",
    "conflicts": 14,
    "reason": "Conflicts 14: the step's consequence is one returned sentence drawn whole (\"What happens next: the schedule is prepared again…\"); the page bolds none of it.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "text",
@@ -127,7 +127,7 @@
    "category": "component",
    "conflicts": 6,
    "reason": "Conflicts 6: a design note about D-RETURN, not words for Finance staff; not drawn and not in the fixture.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "link",
@@ -135,7 +135,7 @@
    "category": "held",
    "conflicts": 5,
    "reason": "Conflicts 5: Export as an adjustment is part 2 (G-54-5); the verified fixture sends no export step, so no button is drawn. The Next sentence is shown as returned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "role": "link",
@@ -143,7 +143,7 @@
    "category": "held",
    "conflicts": 5,
    "reason": "Conflicts 5: Withdraw approval (verdict revoke) is part 2 (G-54-4); no step is sent, so no button is drawn.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   }
  ],
  "visual_waivers": [
@@ -152,56 +152,56 @@
    "width": 1440,
    "visual": 88.1,
    "reason": "D-83: measured 88.1 in round 3 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with Overview, Setup and alerts, the name's position, crumbs as a list, the History link, the page width; spec item 11); the joined station strip with a status line under each name and 15px names (shared StationTrack; spec item 11); the AgentCard head with no title and the name and limits on their own lines, \"step 4 of 4\" from the steps sent (Conflicts 15); \"2\" plus a separate CHIDI CHECKING tag, as the fixture sends them. The card footer (Started 11:20, Ask Chidi) now matches (UI-2-2).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "board": "SCR-54-desktop-review",
    "width": 1440,
    "visual": 76.9,
    "reason": "D-83: measured 76.9 in round 3 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with Overview, Setup and alerts, the name's position, crumbs as a list, the History link, the page width; spec item 11); the joined station strip with a status line under each name and 15px names (shared StationTrack; spec item 11); the shared facts list with bold labels and taller rows; the basis drawn whole without bold (Conflicts 7); the note field 88px high (shared TextArea) instead of 66px; the Reject consequence line the backend now sends (UX-2-2). Note label and consequences now match (UI-2-3).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "board": "SCR-54-desktop-returned",
    "width": 1440,
    "visual": 73.3,
    "reason": "D-83: measured 73.3 in round 3 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with Overview, Setup and alerts, the name's position, crumbs as a list, the History link, the page width; spec item 11); the correction form opening on press in the side panel headed Decide instead of open in the main column (Conflicts 12, D-98 (2)); \"Correct and resubmit\" green (the F-22 rule that a Decide panel's primary is green, workspace.css) where the board draws signal orange; the stopped Review station plain white with red words inside the joined strip (work-item.css) where the board draws a dashed signal box; the D-RETURN design note not drawn (Conflicts 6). The quote is now the problem callout (UI-2-1).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "board": "SCR-54-desktop-verified",
    "width": 1440,
    "visual": 76.1,
    "reason": "D-83: measured 76.1 in round 3 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with Overview, Setup and alerts, the name's position, crumbs as a list, the History link, the page width; spec item 11); the joined station strip with a status line under each name and 15px names (shared StationTrack; spec item 11), which moves the Verified section down 39px; Export as an adjustment and Withdraw approval held to part 2 (Conflicts 5), so the Next panel is shorter.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "board": "SCR-54-mobile-investigating",
    "width": 390,
    "visual": 84.5,
    "reason": "D-83: measured 84.5 in round 3 on a production build. Remaining gaps: the frame's phone bar and \"← Queue\" (spec item 11); the work item title instead of \"Chidi investigating\" (Conflicts 9); the extra \"Income detail · 38 rows\" figures the phone board omits (Conflicts 10); the AgentCard head (Conflicts 15). The card footer now matches (UI-2-2).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "board": "SCR-54-mobile-review",
    "width": 390,
    "visual": 80.9,
    "reason": "D-83: measured 80.9 in round 3 on a production build. Remaining gaps: the frame's phone bar and \"← Queue\" (spec item 11); the title instead of \"Review schedule\" (Conflicts 9); \"₦12,400,000.00\" as returned instead of \"₦12.4M\" (Conflicts 3: no rounding in the browser); the extra fact rows, the basis and the consequences (Conflicts 10); \"Return with a note\" instead of \"Return\" in the pinned bar (Conflicts 10).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "board": "SCR-54-mobile-returned",
    "width": 390,
    "visual": 83.0,
    "reason": "D-83: measured 83 in round 3 on a production build. Remaining gaps: the frame's phone bar and \"← Queue\" (spec item 11); the title instead of \"Returned\" (Conflicts 9); the full returned sentence instead of the shorter quote (Conflicts 10); the consequence above the pinned button and the button green (F-22 Decide panel rule) where the board draws orange; the mini bar's stopped segment outlined (shared MiniStationBar, design system) where the board fills it. The quote is now the problem callout (UI-2-1).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   },
   {
    "board": "SCR-54-mobile-verified",
    "width": 390,
    "visual": 85.1,
    "reason": "D-83: measured 85.1 in round 3 on a production build. Remaining gaps: the frame's phone bar and \"← Queue\" (spec item 11); the title instead of \"Verified\" (Conflicts 9); the extra \"Verification scope\" row and the Next panel (Conflicts 10); Export held to part 2 (Conflicts 5).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-117"
   }
  ]
 }
