@@ -182,7 +182,13 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         return {'investigation':investigate(actor,case.pk),'planning_inputs':'Unknown requirements, contacts and estimates stay unknown; no plan or approval is fabricated'}
     if kind=='ACT07':
         old,_=planning_context(work,actor)
-        packet=old or planning.capture(actor,case.pk,empty_planning_payload())
+        if old:packet=old
+        elif source.data['route']=='A':
+            from apps.pmo import engagement_won
+            try:require(actor,case,'rfp.read')
+            except PermissionDenied:packet=planning.capture(actor,case.pk,empty_planning_payload())
+            else:packet=engagement_won.adopt(actor,case.pk)
+        else:packet=planning.capture(actor,case.pk,empty_planning_payload())
         return {'planning_packet':packet.pk,'unknowns_preserved':True,'plan_evidence_created':False}
     if kind=='ACT11':
         assignment=engagement.current_assignment(case)

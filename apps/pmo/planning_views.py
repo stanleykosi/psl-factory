@@ -19,6 +19,8 @@ def workbench(request,case_id):
     c=accessible_case(request.user,case_id);d.readable(request.user,c)
     grants=set(Grant.objects.filter(case=c,user=request.user,active=True).values_list('action',flat=True))
     report=d.report(request.user,c.pk)
+    from .engagement_won import projection as won_projection
+    won_sources=won_projection(request.user,c)
     ordinary=None
     capture_data=request.POST if request.method=='POST' and request.POST.get('action')=='capture_fields' else None
     preview=bool(capture_data is not None and request.POST.get('edit_rows') in ['add_question','add_correlation'])
@@ -54,17 +56,24 @@ def workbench(request,case_id):
         'compare':('Record signed-contract source comparison','planning.compare',{'packet_id':number(),'verdict':forms.ChoiceField(choices=[(k,k) for k in ['no_difference','difference_unresolved']]),'evidence_id':number()}),
         'prepare':('Prepare current referenced planning readiness','planning.prepare',{'packet_id':number()}),
         'bridge':('Link current readiness into delivery scope source','planning.prepare',{'readiness_id':number(),'dossier_id':number()}),
+        'adopt_won':('Use supplied sources from the winning proposal','planning.coordinate',{
+            'predecessor':forms.IntegerField(min_value=1,required=False,widget=forms.HiddenInput,
+                initial=report.get('current_packet_id'))}),
         'policy':('Draft planning/readiness criteria','policy.configure',{'content':forms.JSONField(widget=forms.Textarea),'evidence_id':number()}),
         'investigate':('Inspect current planning dependencies','agent.planning',{})}
     forms_out=[]
     for action,(title,grant,fields) in commands.items():
         if grant not in grants:continue
+        if action=='adopt_won' and (not won_sources or won_sources.get('held')):continue
         form=type('Planning'+action,(CommandForm,),fields)(request.POST if request.method=='POST' and request.POST.get('action')==action else None,initial={'action':action,'revision':c.revision},auto_id='id_'+action+'_%s')
         forms_out.append({'title':title,'form':form})
         if form.is_bound and form.is_valid():
             try:
                 v={k:x for k,x in form.cleaned_data.items() if k not in ['action','revision']}
-                if action in ['clarify_source','resolve_source']:
+                if action=='adopt_won':
+                    from .engagement_won import adopt
+                    adopt(request.user,c.pk,**v)
+                elif action in ['clarify_source','resolve_source']:
                     from . import planning_sources
                     if action=='clarify_source':v['owner_id']=v['owner_id'].pk if v['owner_id'] else None
                     getattr(planning_sources,'clarify' if action=='clarify_source' else 'resolve')(request.user,c.pk,**v)
@@ -77,5 +86,6 @@ def workbench(request,case_id):
             except (ValidationError,PermissionDenied) as exc:form.add_error(None,str(exc))
     from .engagement_details import planning_context
     response=render(request,'pmo/planning.html',{'case':c,'commands':forms_out,'ordinary':ordinary,'project_details':planning_context(request.user,c),
+        'won_sources':won_sources,
         'report':json.dumps(report,indent=2),'input_schema':json.dumps(INPUT,indent=2),'criteria_schema':json.dumps(VALUE,indent=2)})
     response['Cache-Control']='no-store';return response

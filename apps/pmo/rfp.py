@@ -154,10 +154,10 @@ def prepare_response(actor,case_id,evidence_id,matrix,sources,expected,public_te
     v=RFPResponse.objects.create(rfp=r,intake=r.current_intake,assignment=a,commercial=commercial,number=r.responses.count()+1,snapshot=snap,matrix=matrix,evidence=e,actor=actor)
     r.current_response=v;r.save(update_fields=['current_response']);event(actor,case,'rfp.response_prepared',response=v.pk);bump(case);return v
 
-def public_terms_for(v):
+def public_terms_for(v,*,metadata_only=False):
     source=subject(v.rfp.case,v.commercial.sources['sow'],'sow')
     try:
-        data=json.loads(source.body);terms=subject(v.rfp.case,data['public_terms_id'],'rfp_commercial_terms')
+        data=json.loads(source.body);terms=subject(v.rfp.case,data['public_terms_id'],'rfp_commercial_terms',metadata_only=metadata_only)
         if data['public_terms_sha256']!=terms.sha256:raise ValidationError('Public commercial terms source changed')
     except (KeyError,TypeError,ValueError):raise ValidationError('Select explicit public commercial terms in a new response; internal costing is not an outward quotation')
     return terms

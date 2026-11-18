@@ -3,9 +3,10 @@ import json
 import hashlib
 from django.core.exceptions import ValidationError,PermissionDenied
 from apps.core.models import Evidence
+from apps.core.evidence_access import public_evidence
 from apps.documents.contracts import digest
 from apps.documents.controlled import project_payload
-from apps.documents.models import Publication,PublicationReceipt
+from apps.documents.models import Publication,PublicationReceipt,Version
 from apps.policy.services import resolve,reference_values
 from apps.policy.rfp_outcome_validators import COMPONENT,METHOD
 from .models import (RFPCase,RFPSubmission,RFPDocumentBinding,RFPReview,RFPContribution,
@@ -14,6 +15,20 @@ from .services import subject
 
 SCHEMA='rfp-outcome-selection/v1'
 HISTORY_LIMIT=100
+
+
+def assert_public_submission_sources(case,submission):
+    """Metadata gate for reuse readers, before historical verification loads bodies."""
+    candidate=submission.response
+    version=Version.objects.only('id','source_manifest').filter(pk=submission.version_id,document__case=case).first()
+    if version is None:raise ValidationError('Exact same-project submitted source metadata is required.')
+    try:
+        cited={row['id'] for row in version.source_manifest}
+        body_sources={candidate.evidence_id,candidate.commercial.sources['sow']}
+        if any(type(pk) is not int or pk<1 for pk in cited|body_sources):raise ValueError
+    except (KeyError,TypeError,ValueError):raise ValidationError('Exact submitted source metadata is required.') from None
+    permitted=set(public_evidence(Evidence.objects.filter(case=case,pk__in=cited|body_sources)).values_list('pk',flat=True))
+    if permitted!=cited|body_sources:raise PermissionDenied('Submitted sources need their current domain permissions before reuse.')
 
 
 def exact_ids(values,count,label):
@@ -68,7 +83,7 @@ def _historical_submission(case,submission):
     if version.payload_sha256!=digest(version.payload) or version.payload!=project_payload(version.payload['title'],version.template.definition,version.audience,version.fields):
         raise ValidationError('Historical outward payload and projection hash differ')
     source_ids=sorted({pk for field in version.fields.values() for pk in field['evidence_ids']})
-    sources=list(Evidence.objects.filter(case=case,pk__in=source_ids).order_by('pk'))
+    sources=list(Evidence.objects.filter(case=case,pk__in=source_ids).only('id','version','sha256').order_by('pk'))
     if len(sources)!=len(source_ids) or version.source_manifest!=[{'id':e.pk,'version':e.version,'sha256':e.sha256} for e in sources]:
         raise ValidationError('Exact historical document source evidence required')
     source=response.snapshot
@@ -77,13 +92,13 @@ def _historical_submission(case,submission):
     from .rfp import TEAMS,REVIEW_ROLES,public_terms_for
     if set(source['inputs'])!=set(TEAMS):raise ValidationError('Historical RFP team input inventory required')
     for team,item in source['inputs'].items():
-        contribution=RFPContribution.objects.select_related('evidence').filter(pk=item['id'],intake_id=response.intake_id,team=team).first()
+        contribution=RFPContribution.objects.select_related('evidence').defer('evidence__body').filter(pk=item['id'],intake_id=response.intake_id,team=team).first()
         if not contribution or item!={'id':contribution.pk,'evidence':contribution.evidence_id,'sha256':contribution.evidence.sha256} or contribution.evidence.case_id!=case.pk or contribution.evidence.kind!=TEAMS[team]:
             raise ValidationError('Exact historical team input evidence required')
-    for kind,pk in response.commercial.sources.items():subject(case,pk,kind)
+    for kind,pk in response.commercial.sources.items():subject(case,pk,kind,metadata_only=True)
     if response.commercial.sources['engineering_estimate']!=source['inputs']['Engineering']['evidence'] or response.commercial.sources['security_estimate']!=source['inputs']['Security']['evidence']:
         raise ValidationError('Historical commercial estimates differ from reviewed response')
-    terms=public_terms_for(response)
+    terms=public_terms_for(response,metadata_only=True)
     try:draft=json.loads(subject(case,response.commercial.sources['sow'],'sow').body)
     except (ValueError,TypeError):raise ValidationError('Historical response draft provenance required') from None
     if draft.get('rfp_response')!=response.evidence_id or draft.get('body')!=response.evidence.body or draft.get('matrix')!=response.matrix:

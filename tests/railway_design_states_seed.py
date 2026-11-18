@@ -72,6 +72,20 @@ def prepare(key, operator):
         existing = FactoryWork.objects.filter(case=case).first()
         return {'case': str(case.pk), 'work': existing.pk if existing else None}
     Grant.objects.bulk_create([Grant(case=case, user=operator, action=action) for action in dict.fromkeys(ACTIONS)])
+    if key=='engagement-won-sources':
+        from tests import test_commercial_changes as commercial_seed
+        from tests.test_engagement_won_sources import fixture as won_fixture
+        from tests.test_engagement_intake import activate
+        with patch.object(commercial_seed,'setup_case',return_value=(operator,case)):
+            data=won_fixture(create_work=False,reference='SAMPLE-WON-PLANNING-SOURCES')
+        rules=json.loads(Path('fixtures/engagement-intake.json').read_text())
+        activate(operator,case,'D11.project_identifiers',rules['registration'],data['policy'])
+        profile=json.loads(Path('fixtures/factory-planning.json').read_text());profile.pop('classification')
+        activate(operator,case,'OPS.factory_planning_execution',profile,data['policy'])
+        return {'case':str(case.pk),'source':data['e']['rfp_outcome'].pk,'plan':data['e']['plan'].pk,
+            'proof':data['policy'].pk,'disposition':data['disposition'].pk,'response':data['response'].pk,
+            'submission':data['submission'].pk,'work':None,'expected_identifier':'SAMPLE-WON-ENGAGEMENT',
+            'expected_sources':{k:data['e'][k].pk for k in ['requirements','plan','engineering_estimate','security_estimate']}}
     if key in {'engagement-registration','engagement-background-refresh','engagement-details'}:
         from tests.helpers import roles
         from tests.test_engagement_intake import activate
@@ -632,6 +646,8 @@ elif workflow == 'engagement-background-refresh':
     fixtures = ('engagement-background-refresh',)
 elif workflow == 'engagement-details':
     fixtures = ('engagement-details',)
+elif workflow == 'engagement-won-sources':
+    fixtures = ('engagement-won-sources',)
 else:
     fixtures = ('delegation', 'minutes', 'weekly', 'outward-minutes', 'changed-milestone', 'assistant-draft', 'signed-money', 'minutes-uncertain')
 failed = False

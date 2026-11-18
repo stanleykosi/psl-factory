@@ -75,14 +75,16 @@ def won_rfp_manager(actor,case):
     """A current authorised suggestion, never a new appointment or permission."""
     from .models import RFPDisposition
     from .rfp import current_assignment as rfp_assignment
-    from .rfp_outcomes import historical_submission
+    from .rfp_outcomes import historical_submission,assert_public_submission_sources
     require(actor,case,'engagement.read')
     source=current_capture(case)
+    for action in ['case.read','engagement.read','engagement.capture']:require(source.actor,case,action)
     if source.data['route']!='A':return None
     require(actor,case,'rfp.read')
     disposition=RFPDisposition.objects.select_related('rfp__current_intake','outcome__submission__response').filter(
         pk=source.data['rfp_disposition'],rfp__case=case,kind='route_a',outcome__result='won').first()
     if not disposition:raise ValidationError('The winning proposal needs source review.')
+    assert_public_submission_sources(case,disposition.outcome.submission)
     response=historical_submission(case,disposition.outcome.submission)
     assignment=rfp_assignment(disposition.rfp)
     if (disposition.snapshot.get('response')!=response.pk or assignment.pk!=response.assignment_id

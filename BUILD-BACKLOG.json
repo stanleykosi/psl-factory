@@ -1,5 +1,37 @@
 {
   "design_consolidation_20261116": {
+    "staff_global_design_gap_20261118":{
+      "status":"source_and_native_code_inspected_not_implemented",
+      "states":["SCR-21","SCR-21-deactivate"],
+      "source":"design/canvas/project/SCR-21-desktop.dc.html; SCR-21-desktop-deactivate.dc.html",
+      "existing":"Native staff invitations and departures use exact workspace technical delegation, single-use invitations, per-project action successors and current role checks",
+      "actual_gaps":["Staff roster across permitted scopes with roles, current account state and last sign-in","Whole-account departure across all permitted project scopes; current service only removes one workspace and disables an admitted account only if it has no other grants","Design's explicit Owner needed path when no successor is chosen; current departure requires all action successors","Role-profile invitations/editing and reactivation with fresh role allocation rather than implied inherited authority"],
+      "proposed_engineering":"Reuse versioned TenantAuthority/staff lifecycle and native factory recovery; require explicit coverage of all affected scopes, preserve original starters/approvals/records, reconcile unresolved effects before replacement, keep account management separate from business approval authority",
+      "owner_decisions":["Who may manage accounts and their delegation scope","Allowed human login roles and role-to-record-action profiles","Any operational reactivation authority"],
+      "next":"Build after won-proposal checkpoint; implement typed policy/validators/UI/fixtures/PostgreSQL and synthetic browser journey, not just another workspace invitation",
+      "all_states_accepted":false
+    },
+    "won_planning_sources_20261118":{
+      "status":"146_pg_hosted_browser_won_engagement_handoff_verified",
+      "base_checkpoint":"5ae8d294",
+      "process_ids":["P03","P16","P17","P21","P25"],
+      "engineering_mapping":"Actual submitted requirements/plan/Engineering/Security references populate existing draft field aliases; fresh native Planning interpretation/owner decisions remain required",
+      "historical_authority_reused":false,
+      "canonical_planning_protocol_changed":false,
+      "migrations":[],
+      "failed_upload_142":{"deployment":"caafe3e5-805e-4fc2-90d0-61a0d5218d55","status":"FAILED","cause":"CLI upload request timed out; deployment has no associated build","tests_run":false},
+      "failed_143":{"deployment":"71b47760-a259-425a-9b71-cdfeb5a42052","passed":88,"errors":1,"not_run":10,"seconds":330.393,"final_exit":1,"reason":"UI fixture omitted explicit D11 assignment criteria, so native authority correctly hid manager form; fixture corrected"},
+      "package_144":{"deployment":"f579fc36-4aad-426a-89c9-971fc0833ed6","passed":99,"seconds":465.510,"test_exit":0,"fixture_exit":1,"final_exit":1,"fixture_error":"Unscoped publication helper did not establish exact fresh submission receipts; new preview case transaction rolled back"},
+      "failed_145":{"deployment":"4d554982-c0db-4ada-9b22-24d75ebc3237","passed":44,"errors":1,"not_run":13,"seconds":450.692,"final_exit":1,"reason":"New fixture incorrectly required done instead of native confirmed publication status; removed label assertion and retained actual receipt verification"},
+      "package_146":{"deployment":"5ae46a5e-f5b3-4625-b20e-6314d0152ae8","passed":58,"seconds":657.028,"checks_exit":0,"drift_exit":0,"final_exit":0,"preview_migrated":false,"fixture_succeeded":true,"fixture_case":"6cb3da61-9922-49e3-9e32-37803cc45be6"},
+      "pg_verified":["Metadata-only historical manifests and cost-kind checks","Current reader/public classification before proposal body loading","Actual source adoption with unknowns, stale predecessor and conflict controls","Private quote/coverage UI and one-tap manager source","No Planning approval or signature inferred"],
+      "runtime_146":{"web":"efccb122-27b0-4116-9248-06e82ce61f9a","worker":"0cc73142-ace5-49d3-83ec-b257e32edbb4","status":"SUCCESS","paths_per_service":1705,"mismatches":0},
+      "browser_146":{"work":115,"planning_work":116,"packet":2031,"source":2024,"disposition":7,"reference":"SAMPLE-WON-ENGAGEMENT","verified_observed":"2026-11-18T20:36:08+01:00","actual_sources":{"requirements":2011,"plan":2014,"engineering_estimate":2012,"security_estimate":2013},"quote":{"amount":"100.00","currency":"NGN","basis":"whole_contract"},"fresh_planning_decisions_held":true,"desktop_body_client":[1265,1265],"phone_body_client":[375,375],"viewport_reset":true,"handoff_marked":true},
+      "acceptance":{"observed":205,"observed_with_open_checks":184,"unseen":57,"completed_scoped_journeys":21},
+      "next":["Push tested checkpoint without main merge","Reconcile legacy extra-test notes and continue staff/answer-reuse/client/remaining states"],
+      "owner_policy":"Deferred; no new owner values, financial rules or live provider access",
+      "all_states_accepted":false
+    },
     "registration_details_20261118": {
       "status":"pg137_138_140_141_passed_hosted141_browser113_verified_checkpoint4efb8408_pushed",
       "base_checkpoint":"b76cdbef",

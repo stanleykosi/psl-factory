@@ -14,7 +14,7 @@ from apps.core.templatetags.studio_ui import role_name
 from apps.identity.models import Grant
 from apps.pmo.models import RFPDisposition
 from apps.pmo import engagement
-from apps.pmo import engagement_forms as ef,engagement_details as ed
+from apps.pmo import engagement_forms as ef,engagement_details as ed,engagement_won as ew
 from apps.policy.engagement_validators import ASSIGN,REGISTER
 from apps.policy.services import active_component,reference_values
 from . import factory_engagement as d
@@ -94,7 +94,7 @@ def human_forms(actor,work,data=None):
         fields={'operation':forms.CharField(initial=operation,widget=forms.HiddenInput),
             'key':forms.CharField(initial=uuid4().hex,max_length=100,widget=forms.HiddenInput),
             'role':forms.ChoiceField(label='Your decision role',choices=[(r,role_name(r)) for r in roles]),
-            'evidence_id':ef.evidence_field(work.case,data)}
+            'evidence_id':ef.evidence_field(work.case,data,initial=engagement.current_capture(work.case).evidence_id)}
         if operation=='assign':
             fields['pm_id']=forms.ModelChoiceField(engagement.pm_candidates(work.case),label='Appointed project manager')
             try:carried=engagement.won_rfp_manager(actor,work.case)
@@ -160,5 +160,6 @@ def detail(request,work):
     response=render(request,'factory/engagement_detail.html',{'case':work.case,'row':row,'source':source,'activities':activities,'human_forms':forms_out,
         'show_controls':show_controls,'action_panel_active':action_panel_active,
         'project_details':details_projection,
+        'won_sources':ew.projection(request.user,work.case),
         'queue':queue,'q':q,'can_configure':permitted(request.user,work,'policy.configure'),'as_of':timezone.now()})
     response['Cache-Control']='no-store';return response

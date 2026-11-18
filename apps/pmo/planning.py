@@ -30,8 +30,10 @@ def locked(a,case_id,purpose):
     list(get_user_model().objects.select_for_update().filter(pk=a.pk));list(Grant.objects.select_for_update().filter(case=c).order_by('pk'))
     active(a);return c
 
-def proof(c,pk,kinds=None):
-    e=public_evidence(c.evidence.all()).filter(pk=pk).first()
+def proof(c,pk,kinds=None,*,metadata_only=False):
+    query=public_evidence(c.evidence.all()).filter(pk=pk)
+    if metadata_only:query=query.defer('body')
+    e=query.first()
     if not e or kinds and e.kind not in kinds:raise ValidationError('Exact same-case public source of the required kind required')
     return e
 
@@ -51,16 +53,16 @@ def payload_context(c,payload):
     validate(INPUT,payload)
     if {x['team'] for x in payload['stakeholders']}!=set(TEAMS) or len({x['key'] for x in payload['questions']})!=len(payload['questions']):raise ValidationError('Map all four distinct teams and distinct question keys')
     for key,kinds in SOURCE_KINDS.items():
-        if payload[key] is not None:proof(c,payload[key],kinds)
+        if payload[key] is not None:proof(c,payload[key],kinds,metadata_only=True)
     for row in payload['stakeholders']:
-        if row['evidence_id'] is not None:proof(c,row['evidence_id'])
+        if row['evidence_id'] is not None:proof(c,row['evidence_id'],metadata_only=True)
         if row['contact_id'] is not None:
             person=get_user_model().objects.filter(pk=row['contact_id'],is_active=True).first()
             if not person:raise ValidationError('Actual current stakeholder contact required')
             require(person,c,'planning.participate')
     heads={}
     for q in payload['questions']:
-        if q['evidence_id'] is not None:proof(c,q['evidence_id'])
+        if q['evidence_id'] is not None:proof(c,q['evidence_id'],metadata_only=True)
         if q['action_id'] is not None:
             item=ActionItem.objects.filter(case=c,pk=q['action_id'],current__isnull=False).first()
             if not item:raise ValidationError('Exact same-case current action required')
