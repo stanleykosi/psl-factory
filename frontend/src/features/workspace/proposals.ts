@@ -1,6 +1,7 @@
 // PROPOSAL (D-LINE-WORKSPACE, contract mock only): two fields the frame reads ahead of the contract. They live in the
 // mock fixtures and in this one typed reader; the generated types and openapi.json do not carry them, and the backend
 // developer may change or refuse either (G-SCR28-1, G-SCR28-3). An absent or malformed value reads as "not supplied".
+import type { Verdict } from '@/features/decide/format';
 import { PROJECT_TABS } from '@/features/projects/model';
 
 import { RECORD_ID } from './labels';
@@ -65,3 +66,12 @@ export const assignCandidateKind = (candidate: object): 'person' | 'team' | 'out
   const kind = (candidate as { kind?: unknown }).kind;
   return kind === 'person' || kind === 'team' || kind === 'outside_party' ? kind : undefined;
 };
+
+/** PROPOSAL (`steps[].verdict`, F-33 G-C-1): a decision step's verdict, decided in place through E-TASK-CLAIM and E-TASK-DECIDE.
+ *  Read only on a step with `task_id`. `undefined`: no proposal (the existing decision-page link); `null`: a value the
+ *  page does not offer (e.g. `revoke`), so the step is not drawn. */
+export function stepVerdict(step: Step): Verdict | null | undefined {
+  if (!step.task_id || !Object.hasOwn(step, 'verdict')) return undefined;
+  const value = (step as { verdict?: unknown }).verdict;
+  return value === 'approve' || value === 'return' || value === 'reject' ? value : null;
+}
