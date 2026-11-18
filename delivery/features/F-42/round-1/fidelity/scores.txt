@@ -1,0 +1,9 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-55-desktop-investigating-1440	1440	84.8	100	84.1	False
+SCR-55-desktop-register-review-1440	1440	86.3	94.1	75	False
+SCR-55-desktop-date-review-1440	1440	90.4	96.2	74.5	False
+SCR-55-desktop-calculating-1440	1440	89.7	100	74.6	False
+SCR-55-mobile-investigating-390	390	77.8	100	82.4	False
+SCR-55-mobile-register-review-390	390	75	100	84.4	False
+SCR-55-mobile-date-review-390	390	75	100	87.1	False
+SCR-55-mobile-calculating-390	390	80	100	89.1	False

@@ -32,8 +32,8 @@
 .ws-decide .ws-steps__buttons { flex-direction: column; align-items: stretch; gap: var(--space-2); }
 .ws-decide .ws-steps__buttons > span, .ws-decide .ws-control { display: flex; flex-direction: column; align-items: stretch; }
 .ws-decide .psl-btn { width: 100%; min-height: var(--control-lg); white-space: nowrap; }
-.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject) { background: var(--verified); }
-.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):hover { background: var(--verified-strong); }
+.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):not([aria-disabled="true"]) { background: var(--verified); }
+.ws-decide:not(.ws-decide--next) .psl-btn:not(.psl-btn--secondary):not(.psl-btn--reject):not([aria-disabled="true"]):hover { background: var(--verified-strong); }
 .ws-hint { margin: 0; }
 /* a suggestion is the board's card: a mono reference, the answer in a tinted box, the source beneath */
 .ws-sugg { gap: var(--space-6px); }
@@ -216,4 +216,55 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-section--strip .ws-fact dd { text-align: left; font-family: var(--font-display); font-size: var(--text-body-size); font-weight: 700; color: var(--ink-subtle); }
   .ws-section--strip .ws-fact--blocked { background: var(--signal-tint); }
   .ws-section--strip .ws-fact--blocked dd, .ws-section--strip .ws-fact--blocked dt { color: var(--signal-ink); }
+}
+
+/* F-31: the engagement's Confirm PM form sits in the side panel with no box of its own; the department input form fills the Drawer */
+.ws-form--bare { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.ws-respdrawer { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+
+/* F-31 round 2 (UI-1-1 to UI-1-9, UI-1-13) */
+/* the engagement's Register form replaces the Decide panel while it is open (its consequence and button were drawn twice) */
+.ws[data-line="engagement"] .ws-decide[data-form-open] { display: none; }
+/* planning table: the estimate stays on one line and the department is the row's name */
+.ws[data-line="planning"] .ws-table td:first-child { font-weight: 600; }
+.ws[data-line="planning"] .ws-table td:nth-child(4) { white-space: nowrap; }
+/* a form in a Drawer is the Drawer's own: no second box or repeated title; its actions stay at the bottom of the sheet */
+.cmp-panel .ws-form { border: none; background: none; padding: 0; }
+.cmp-panel .ws-form > .ws-form__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; }
+.cmp-panel .ws-form__body { padding: 0; }
+.cmp-panel .ws-form__actions { position: sticky; bottom: 0; background: var(--surface); padding: var(--space-3) 0; }
+/* department input: one column, no page box, F-18's Record bar pinned in the Drawer, 44px+ targets on a phone */
+.ws-respdrawer .resp-form { border: none; background: none; padding: 0; }
+@media (min-width: 720px) { .ws-respdrawer .resp-phonebar { position: sticky; left: auto; right: auto; bottom: 0; background: var(--surface); padding: var(--space-3) 0; } }
+.ws-respdrawer .psl-seg__opt, .ws-respdrawer .resp-filebtn { min-height: var(--control-phone); }
+@media (max-width: 719.98px) {
+  .ws-form--bare { border: none; background: none; padding: 0; }
+  .ws[data-line="engagement"] .ws-ref { display: inline-flex; align-items: center; min-height: var(--control-phone); }
+}
+/* a phone sheet's form fills it, so its actions sit at the bottom as the board pins them */
+@media (max-width: 719.98px) {
+  .cmp-panel--full .psl-sheet__body:has(> .ws-form) { display: flex; flex-direction: column; }
+  .cmp-panel--full .psl-sheet__body > .ws-form { flex: 1; display: flex; flex-direction: column; }
+  .cmp-panel--full .ws-form > .ws-form__body { flex: 1; display: flex; flex-direction: column; }
+  .cmp-panel--full .ws-form__actions { margin-top: auto; }
+}
+/* QA-2-1: the uploaded file chip's remove button is a 44px target inside a Drawer (F-18's own page is unchanged) */
+.cmp-panel .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }
+
+/* F-33: the income schedule boards: the stations in the main column, the working agent's card beside the sections,
+   and the decision steps decided in place (InlineDecide) in the side column */
+.ws-lineagent { display: flex; flex-direction: column; gap: var(--space-2); }
+.ws-lineagent .ws-detail { margin: 0; }
+.ws-ministations .psl-mini__text { font-family: var(--font-mono); font-size: var(--text-small-size); text-transform: uppercase; color: var(--ink-muted); }
+.ws-idecide__buttons { display: flex; flex-direction: column; gap: var(--space-2); }
+.ws-idecide__words { display: flex; flex-direction: column; gap: var(--space-2); }
+.ws-idecide__loading { align-self: flex-start; }
+.ws-idecide__after { display: flex; flex-direction: column; gap: var(--space-1); }
+.ws-idecide__after .ws-consequence { font-size: var(--text-hint-size); color: var(--ink-muted); }
+.ws-lineagent .psl-agent__foot .psl-link { font-weight: 600; white-space: nowrap; }
+@media (max-width: 719.98px) {
+  .ws-ministations { flex-direction: column; align-items: flex-start; }
+  .ws-idecide__buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ws-idecide__buttons > :first-child { grid-column: 1 / -1; }
+  .ws-lineagent .psl-agent__foot .psl-link { display: inline-flex; align-items: center; min-height: var(--control-md); }
 }

@@ -1,0 +1,71 @@
+{
+  "$comment": "F-32 contract overlay (mock only). project_extra holds the PROPOSED optional keys the mock adds to E-PROJECT beyond the generated type: delivery[].reference, .at {date?, unknown}, .detail, .short_title (G-43-2, G-F32-1); delivery_agent (G-43-3); delivery_summary.note (G-43-5). work_link is the PROPOSED workspace.links[] target kind 'work' (G-44-2). Not built, recorded only: G-43-1 delivery_summary {reference, done, total}, G-43-4 next_action, G-44-1 notices[], G-44-3 context on E-CONVERSATION-NEW, G-44-4 agent.finished_at, G-43-6 starting a delivery line. The backend developer may change or refuse any of them.",
+  "project_extra": {
+    "type": "object",
+    "properties": {
+      "delivery": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "reference": { "type": "string", "minLength": 1 },
+            "short_title": { "type": "string", "minLength": 1 },
+            "detail": { "type": "string", "minLength": 1 },
+            "at": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["unknown"],
+              "properties": { "date": { "type": "string", "format": "date" }, "unknown": { "type": "boolean" } }
+            }
+          }
+        }
+      },
+      "delivery_agent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["agent", "status", "steps"],
+        "properties": {
+          "agent": { "enum": ["tola", "chidi", "zainab"] },
+          "title": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["working", "done", "waiting", "stopped"] },
+          "finished_at": { "type": "string", "format": "date-time" },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["text", "status"],
+              "properties": {
+                "text": { "type": "string", "minLength": 1 },
+                "status": { "type": "string", "minLength": 1 },
+                "source": { "type": "string", "minLength": 1 },
+                "at": { "type": "string", "format": "date-time" }
+              }
+            }
+          }
+        }
+      },
+      "delivery_summary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["note"],
+        "properties": { "note": { "type": "string", "minLength": 1 } }
+      }
+    }
+  },
+  "work_link": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["key", "label", "target"],
+    "properties": {
+      "key": { "type": "string", "minLength": 1 },
+      "label": { "type": "string", "minLength": 1 },
+      "target": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "work_id"],
+        "properties": { "kind": { "const": "work" }, "work_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$" } }
+      }
+    }
+  }
+}

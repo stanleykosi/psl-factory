@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-31",
   "outcome": "Engagement and planning, part 1: a won RFP becomes a registered engagement, and the planning page shows what each department owes and records what one sent (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "DONE",
   "task_ids": [
     "FE-ENGAGEMENT-PLANNING"
   ],
@@ -119,27 +119,33 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "evidence_refs": [
+        "delivery/features/F-31/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "evidence_refs": [
+        "delivery/features/F-31/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-31/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 19 Nov 2026 \u2014 D-117",
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "evidence_refs": [
+        "delivery/features/F-31/round-3/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -1238,7 +1244,7 @@
         "delivery/features/F-31/round-2/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "VERIFIED",
+      "state": "OPEN",
       "history": [
         {
           "action": "add",
@@ -1265,6 +1271,14 @@
           ],
           "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
           "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "qa",
+          "at": "2026-11-18T08:05:45Z",
+          "refs": [],
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+          "reason": "J5: 5xx, network and `uncertain` read \"Not confirmed / \u2026 the PM was set\u2026\". J7: F-30's W-2413 still reads \"Not recorded\". J6: `uncertain_written` still reads \"Not recorded / \u2026 the owner\u2026\", now QA-3-1 (non-blocking)."
         }
       ],
       "fix_by": "builder",
@@ -1325,6 +1339,98 @@
       "verified_by": "reviewer-technical",
       "verification_refs": [
         "sentNoRefresh text, no \"recorded\" state set"
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When the PM assignment is written but the response fails (`psl_mock_assign=uncertain_written`), the notice still reads \"Not recorded / We couldn't confirm the owner was set\u2026\", while the re-read page shows PM Sola Martins. Expected: \"Not confirmed / \u2026 the PM was set\u2026\", as in the other failure modes (QA-2-4). Cause: `Workspace.tsx:518-519` picks the wording from `assign?.role` on the re-read item, and the re-read no longer has `assign` once it is written. Fix: keep the role from the time of the press, for example in `useWorkspaceAssign` (which already receives `role`, `Workspace.tsx:124`), and store it on the `unconfirmed` notice. The meaning is still safe: nothing says \"confirmed\" and nothing is resent.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T08:05:45Z",
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Scope note: `frontend/src/features/response/useResponse.ts` (+3/-2, additive `Notice.problem.forbidden`) changed, against spec AC20 (\"no change in src/features/response/**\") and the read-only lane. It is disclosed in round-1 build.md:21, F-18 tests stay green and unchanged, and QA J24 confirmed it is the only shared edit. Expected: either accept it explicitly or amend AC20. Actual: accepted here as a disclosed, additive exception; the approver should see it when reading the diff.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-18T09:17:36Z",
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Open findings carried forward, none blocking, each with an owner. Spec contradiction QA-2-2 (AC10 \"messages under the fields\" against F-18's server message; owner product: amend AC10 or plan field mapping). Frame History link 42x24 at 390, QA-2-3 (owner frontend, a frame pass). QA-3-1 wording \"Not recorded\" on `uncertain_written` for the PM (owner frontend; QA-2-4 was reopened for it). UI-1-10 status tag tone, blue where the board draws amber (owner product, design engineer chooses). TECH-2-1 and UX-2-1, the phone Cancel wording: the record Drawer has no Cancel on a phone (Close and Escape work), which differs from spec AC15 \"Escape and Cancel\" (amend AC15 or design engineer confirms). Also TECH-1-2..4, TECH-2-2, UX-1-3..5, which are low and unchanged. Record all in the backlog; none needs a round 4.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-18T09:17:36Z",
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Feature record: `feature.json` `completion` still reads \"blocked\" with the reason \"evidence has not been supplied\", and `git.pr_url`, `ci_status` and `merge_policy` are unset. This is process state, not delivery content; the coordinator should refresh it when the PR is opened. No claim of merge or release is made.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-31/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-18T09:17:36Z",
+          "head": "9b73aacf87069a93f583f69053dacf3151e3ae68"
+        }
       ]
     }
   ],
@@ -1450,9 +1556,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -1466,14 +1572,14 @@
     "task_branch": "fe-engagement-planning-register-engagement-and-record-input",
     "head_sha": "9b73aacf87069a93f583f69053dacf3151e3ae68",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-31",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/62",
+    "pr_number": 62,
     "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "designated_approver": "design engineer (hunchoweb), D-117",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "5f12e76332e9100a933e3b66b3ed71d9e47c46c9",
     "merge_policy": "not_configured",
     "changed_paths": [
       "delivery/BACKEND-HANDOFF.md",
@@ -1525,12 +1631,20 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-31/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "29 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "9b73aacf87069a93f583f69053dacf3151e3ae68",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1625,6 +1739,54 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-18T04:53:31Z",
+      "round": 3,
+      "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-18T08:05:45Z",
+      "round": 3,
+      "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-18T09:17:36Z",
+      "round": 3,
+      "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-18T09:18:18Z",
+      "round": 3,
+      "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-18T09:18:19Z",
+      "round": 3,
+      "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-18T09:18:19Z",
+      "round": 3,
+      "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-18T09:18:20Z",
       "round": 3,
       "head": "9b73aacf87069a93f583f69053dacf3151e3ae68",
       "reason": null

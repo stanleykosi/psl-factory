@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: qa
-COMMIT: d20fd9b2ccee7be267936cc2758358989ecdedbb
+COMMIT: 306728777fda087120513e0a18e5bcc8d2344389
 AUTHORITY: delivery integrated QA
 
 ## Summary
@@ -165,3 +165,8 @@ Unless a line says otherwise, each was run at 1440 and at 390 on :4887/:4886, wi
 ## Notes
 - Mock behaviour, not product: with persona `none`, `GET /api/v1/work/W-2702` on the mock answers 200 with the full item. The frontend still shows the not-open view and leaks nothing, because it gates on `/me`. The real backend must refuse the read itself.
 - Instruction-like text in evidence: none found.
+
+## Update for head 30672877 (diff b8265cdb..30672877)
+- Merge head 30672877 only adds F-31 (response drawer, engagement/planning) and F-32 (orphan-step rule, work links) code around F-33; F-33's inline decide, uncertain handling, income banner and agent card are untouched in the Workspace/proposals/workspace.css diff.
+- Targeted vitest (income-schedule, engagement-planning, release-gates, workspace, issue-detail, finance-month-end): 9 files, 275 tests passed.
+- Verdict unchanged.

@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b
+COMMIT: 62ed73aa419d1e6a2bc990125bfd517422a778d3
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -14,3 +14,9 @@ Reviewed 9f594712..5bab76ae with round-2/build.md. No blocking issues.
 1. TECH-1-1 | non-blocking | low | carried forward, unchanged | `workspace/Steps.tsx` shows the generic "isn't open to you here" text and drops `cannot_act_reason`. No current fixture is affected.
 2. TECH-1-2 | non-blocking | low | carried forward, unchanged | The F-23 guard in `mock-contract.test.ts` is `/^W-2[35]/`, slightly broader than needed.
 3. TECH-2-1 | non-blocking | info | frontend/mock/fixtures/work/W-2502.json..W-2507.json | The fixtures no longer carry `claim_required`, so the "Claim it first" hint is not exercised on the release lines. It is a hint only, and the claim still happens on the decide page. Consider one fixture with it set so the hint stays covered. No change is required.
+
+## Update for head 62ed73aa (diff 5bab76ae..62ed73aa)
+- Read the diff 5bab76ae..62ed73aa on the shared files (Steps, Workspace, Sections, WorkItemView, AssignForm, workspace.mjs, mock-contract test): F-31 additions sit beside the F-32 release-gate paths without changing them.
+- Orphan-step rule checked: a step whose task is in tasks[] with you_can_act true still links to the decision page; only a missing task or you_can_act false is unavailable.
+- Ran engagement-planning, release-gates, delivery-*, workspace* and issue-detail tests in the worktree: 8 files, 230 tests passed.
+- Verdict unchanged.

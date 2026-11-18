@@ -168,11 +168,16 @@ function FactsList({ section, strip }: { section: Section; strip?: boolean }) {
 }
 
 function CellValue({ cell, column }: { cell: Cell | undefined; column: Column }) {
-  if (!cell) return null;
-  if (cell.restricted) return <>{WS_TEXT.restricted}</>;
   const kind = column.kind ?? 'text';
+  // F-31: a state tag the row does not carry reads Unknown, never a blank
+  if (!cell) return kind === 'tag' ? <Unknown /> : null;
+  if (cell.restricted) return <>{WS_TEXT.restricted}</>;
   let value: ReactNode = cell.text;
-  if (kind === 'money') value = cell.money ? <MoneyValue money={cell.money} /> : <Unknown />;
+  // F-31: an estimate or other value the response leaves out reads Unknown (a cell that exists and carries nothing)
+  if ((kind === 'text' || kind === 'integer' || kind === 'tag') && !hasValue(cell.text) && !cell.money && !cell.tag && !cell.link && !cell.date) value = <Unknown />;
+  // F-31 (G-41-3): a text cell that also carries a typed amount reads "text · amount", the amount in the table's money format
+  else if (kind === 'text' && hasValue(cell.text) && cell.money) value = `${cell.text} · ${moneyText(cell.money) ?? WS_TEXT.unknown}`;
+  else if (kind === 'money') value = cell.money ? <MoneyValue money={cell.money} /> : <Unknown />;
   else if (kind === 'date') value = cell.date ? <DateText value={cell.date} short={columnDayMonth(column)} /> : <Unknown />;
   else if (kind === 'tag' && cell.tag) value = <Tag tone={tagTone(cell.tag.tone)}>{cell.tag.label}</Tag>;
   else if (kind === 'reference' && cell.link && !cell.text) return <RefView value={cell.link} />;
@@ -354,7 +359,11 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 <span>{item.label ?? item.text}</span>
                 <Detail text={item.detail} />
               </span>,
-              item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? <span className="ws-value">{item.value}</span> : <Unknown />,
+              <>
+                {item.money ? <MoneyValue money={item.money} /> : hasValue(item.value) ? <span className="ws-value">{item.value}</span> : <Unknown />}
+                {/* F-33: the tag the backend sends with a figure ("CHIDI CHECKING") is drawn beside its value */}
+                {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}
+              </>,
             );
           case 'timeline':
             return row(

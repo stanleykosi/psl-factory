@@ -100,6 +100,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
     expect(projectTabs().map((t) => [t.textContent, t.getAttribute('href'), t.getAttribute('aria-selected')])).toEqual([
       ['Journey', '/projects/P-0101', 'true'],
+      ['Delivery', '/projects/P-0101/delivery', 'false'],
       ['Milestones 4', '/projects/P-0101/milestones', 'false'],
       ['Documents 6', '/projects/P-0101/documents', 'false'],
       ['Money', '/projects/P-0101/money', 'false'],
@@ -161,7 +162,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
       json(200, { case_id: 'P-7', title: 'Kora Logistics · fleet tracker', lines: [{ line: 'RFP response', state: 'verified', work_id: 'W-9' }], next: 'Next.' });
     await open('P-7');
     expect(screen.getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe('Projects / Kora Logistics');
-    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
+    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Delivery', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
     expect(document.querySelector('.projects__route')!.textContent).toBe('1 piece of work across 1 line');
     expect(document.querySelector('.projects__phoneline')!.textContent).toBe('1 piece of work');
     expect(facts().map(([, value, cls]) => [value, cls])).toEqual(Array(6).fill(['Unknown', 'psl-fact psl-fact--unknown']));
@@ -189,7 +190,7 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     expect(document.querySelector('.projects__route')!.textContent).toBe('1 piece of work across 1 line');
     expect(facts().map(([, value]) => value)).toEqual(Array(6).fill('Unknown'));
     expect(lineItems()[0].textContent).toBe('Prepare an invoiceStation 4 of 7 · Finance reviewWaiting');
-    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Milestones', 'Documents 2', 'Money', 'Registers', 'Actions']);
+    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Delivery', 'Milestones', 'Documents 2', 'Money', 'Registers', 'Actions']);
     expect(screen.getByRole('complementary').textContent).toContain('Tola has not summarised this project yet.');
     expect(document.querySelector('main')!.textContent).not.toMatch(/undefined|object Object/);
   });
@@ -231,8 +232,8 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     fireEvent.keyDown(projectTabs()[0], { key: 'ArrowRight' });
     expect(document.activeElement).toBe(projectTabs()[1]);
     fireEvent.keyDown(projectTabs()[1], { key: 'End' });
-    expect(document.activeElement).toBe(projectTabs()[5]);
-    fireEvent.keyDown(projectTabs()[5], { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(projectTabs()[6]);
+    fireEvent.keyDown(projectTabs()[6], { key: 'ArrowRight' });
     expect(document.activeElement).toBe(projectTabs()[0]);
   });
 });
