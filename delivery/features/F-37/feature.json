@@ -82,6 +82,18 @@
       "at": "2026-11-19T03:39:11Z",
       "seconds": 461.8,
       "evidence_ref": "delivery/features/F-37/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:00:39Z",
+      "seconds": 629.3,
+      "evidence_ref": "delivery/features/F-37/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -144,14 +156,28 @@
         "delivery/features/F-37/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T03:44:20Z",
           "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "desktop RFP page hides only the team-input task panel"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "desktop RFP page hides only the team-input task panel"
       ]
     },
     {
@@ -167,14 +193,28 @@
         "delivery/features/F-37/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T03:44:20Z",
           "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "\"Suggested by\" rule restored to the original, no longer widened for all lines"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "\"Suggested by\" rule restored to the original, no longer widened for all lines"
       ]
     },
     {
@@ -213,14 +253,28 @@
         "delivery/features/F-37/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T03:44:20Z",
           "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "Team input is plain text when no actionable task exists on the requirements page"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Team input is plain text when no actionable task exists on the requirements page"
       ]
     },
     {
@@ -374,14 +428,28 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T03:44:20Z",
           "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "Accept selected is secondary in the review, edit and reject fixtures"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Accept selected is secondary in the review, edit and reject fixtures"
       ]
     },
     {
@@ -397,14 +465,28 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T03:44:20Z",
           "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "Tola's note moved to directly after Progress in the side column"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Tola's note moved to directly after Progress in the side column"
       ]
     },
     {
@@ -420,14 +502,28 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T03:44:20Z",
           "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "review, edit and reject fixtures no longer return the note or Before review checklist"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "review, edit and reject fixtures no longer return the note or Before review checklist"
       ]
     },
     {
@@ -443,14 +539,28 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T03:44:20Z",
           "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "one Tola in the review panel; Status exception relabelled honestly (missing control on review boards)"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "one Tola in the review panel; Status exception relabelled honestly (missing control on review boards)"
       ]
     },
     {
@@ -466,14 +576,28 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T03:44:20Z",
           "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:00:39Z",
+          "refs": [
+            "phone stacked-table tags at natural width (justify-items: start)"
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "phone stacked-table tags at natural width (justify-items: start)"
       ]
     }
   ],
@@ -556,7 +680,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "006599ef8c8f55c13ad73a5c23a16ce774106e83",
     "task_branch": "fe-rfp-response-requirements-answers",
-    "head_sha": "089037b2cde16d3877db4e4aed27068017c50a35",
+    "head_sha": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-37",
     "pr_url": null,
     "pr_number": null,
@@ -683,9 +807,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
   },
   "blocked": null
 }
