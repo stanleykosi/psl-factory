@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 8779c5f30c05ed760fc1cbfe3a2dddf790daca1e
+COMMIT: 8d59b2422e06f960853993435c2935b7b9805046
 BUILDER: builder
 LANE: full
 
@@ -86,3 +86,25 @@ Round 1's evidence stands for criteria 1–17 and 19–24, and the round-2 tests
 
 ## Blocked
 None.
+
+## Merge with dlv-00 (F-47, F-41, #65)
+- Merged `origin/dlv-00-delivery-setup` at 6a46d178 (PR #67, which includes F-47 #66 and #65) into the branch head c972854d.
+- New head: 8d59b2422e06f960853993435c2935b7b9805046, pushed. It is a merge commit and carries no AI trailer.
+- Conflicts and how I resolved them:
+  - `frontend/src/features/workspace/Workspace.tsx`:
+    - F-41's `REMINDER_LINE` is kept.
+    - F-33's `INCOME_LINE` stays replaced by F-42's `scheduleLine()`, which covers both income_schedules and fixed_assets.
+    - The phone Drawer list is now `ISSUE_LINE || ENGAGEMENT_LINE || scheduleLine(...) || REMINDER_LINE`.
+    - No `INCOME_LINE` or `incomeLine` reference is left.
+  - `delivery/BACKEND-HANDOFF.md`: both sections are kept, in merge order F-47, F-41, F-42, after F-33's.
+- These merged on their own, and I checked them:
+  - `Sections.tsx` and `workspace.css`: F-41's `Attachment` and `.ws-attachment` draw only for an item that carries `attachment`. F-42's proof row is a `cites` item styled by `.ws[data-line="fixed_assets"] .ws-rows--text` rules, so the two stay separate.
+  - `mock-contract.test.ts`: F-41's lists and F-42's W-39xx block and links entry are both present.
+  - `proposals.ts`, `useWorkspaceStep.ts` and `workspace.mjs` are F-41's as merged. F-42 has no step scripts, and its decide sidecars are untouched.
+  - `income-schedule-mock.test.ts` still allows `W-(27|39)`.
+- Results on the merge head:
+  - `tsc --noEmit`: clean.
+  - `vitest` for asset-schedule, asset-schedule-mock, income-schedule, income-schedule-mock and mock-contract: 406 passed.
+  - `bash delivery/checks.sh`, under the shared lock entered at 1-minute load 12.72: exit 0. The Django check was clean, lint and typecheck passed, Vitest passed 114/114 files and 2655/2655 tests, and the build succeeded. The lock was released.
+  - e2e with `E2E_PORT=4970 MOCK_PORT=4971 npx playwright test e2e/asset-schedule.spec.ts e2e/income-schedule.spec.ts e2e/payments.spec.ts e2e/start-work-proof.spec.ts e2e/workspace.spec.ts`: 142 passed (8.8 min). `frontend/test-results` was deleted.
+  - No layout change in F-42, so there was no fidelity run, and the round-2 scores stand.

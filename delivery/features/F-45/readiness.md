@@ -1,4 +1,4 @@
-DECISION: NOT-READY
+DECISION: READY
 RISK: high
 SURFACES: ui, api, security, contract-change, product-decision
 PRODUCT-ACCEPTANCE: required
@@ -101,3 +101,19 @@ None for the client in part 1. These go to the backend developer and Finance. Th
 1. Does the backend enforce three separate people (capture, observation, review) for every ledger source, and with which `cannot_act_reason` (G-58-4)?
 2. What state follows an Unknown or More than one observation, and who is told (G-58-3)? Which station does "Verification rules" hold when it is unset?
 3. Part 2: what `state` does a refused duplicate take, and does E-WORK-START return its `work_id` (G-58-1)? Does `continues` go on the correction (G-58-2)?
+
+## Re-check 19 Nov
+**Verdict changed: NOT-READY to READY.** The F-33 dependency is cleared. Risk (high) and surfaces unchanged. The Summary bullet above that says "NOT-READY" is the earlier analysis, kept for the record.
+
+What changed:
+- F-33 (PR #64) is merged into dlv-00. `frontend/src/features/workspace/InlineDecide.tsx` exists, and `stepVerdict` is in `features/workspace/proposals.ts` and used by `Workspace.tsx` and `InlineDecide.tsx`.
+- F-33's last approved head was d20fd9b2 (round 3, ESCALATE). The spec was written against that head.
+
+Spec re-check needed (the builder verifies before coding):
+- Compare the merged `InlineDecide.tsx`, `proposals.ts` `stepVerdict`, the `steps[].verdict` overlay, the `mock-contract` strip and the "reviewer not set" fixture (W-2706) with what `spec.md` quotes from d20fd9b2. Fix any drift in the spec.
+- Confirm F-33's two `line_key === 'income_schedules'` checks in `WorkItemView.tsx` / `WorkItemOverview.tsx` (around :698-728) are on dlv-00, and add the `ledger_sources` case beside them; do not duplicate.
+- F-33's D-83 waivers and PMO acceptance were pending at ESCALATE. Treat merged behaviour as the baseline; if the merge changed copy, re-read the SCR-54 conflicts list.
+- Fixture ids: W-4201 upward, T-42xx. Check for collisions with merged F-34/F-42/F-47 fixtures. F-34's mock upload `kind` fix may already be in: reuse it, do not redo it.
+- Run `design.py check` first.
+
+Follow-up risk (not blocking): the shared InlineDecide has a stale-409 gap, being fixed in F-39 round 4. F-45 inherits it until that lands. The builder must not patch InlineDecide in this PR. After F-39 merges, F-45 re-verifies the stale-409 path (409 on approve/reject reloads and never resubmits) in its own tests. Note this in build.md.

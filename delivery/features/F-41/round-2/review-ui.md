@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-ui
-COMMIT: 2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4
+COMMIT: a6c95d30225f2a01c632cda4dd65c23d4144f726
 AUTHORITY: delivery UI review
 
 ## Summary
@@ -21,3 +21,11 @@ None.
 - SCR-32 desktop 1440 (76.7, was 76.9): **waived**. The remaining difference is the F-17 frame (D-83, D-69). The attachment now matches the board. The 0.2 drop is the bordered box with its icon replacing a flat tile against the tool's pairing, not a fidelity loss.
 - SCR-32 phone 390 (79.2, unchanged): **waived**. Same frame basis as desktop. The attachment fix is in.
 - All exceptions and waivers are still "builder proposal, pending design engineer".
+
+## Update for head a6c95d30 (diff 85d04ad7..a6c95d30)
+
+- The head moved by merging dlv-00 (F-47 Start work proof upload, #65 test settings). No payments, reminder, phone drawer or attachment file is in the frontend diff.
+- F-47 additions in mock/server.mjs (a third E-EVIDENCE-UPLOAD owner, gated to start-work lines) and me.finance_lead.json (more startable lines) sit beside F-41 code without changing it. mock-contract.test.ts is not in this diff.
+- No money rule changed. Vitest on payments, start-work, mock-contract and workspace tests: 12 files, 621 tests passed. checks.sh 2606 and e2e 98 passed.
+
+Verdict unchanged.

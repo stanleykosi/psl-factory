@@ -4,7 +4,7 @@
 // `required` as aria-required ("(optional)" on the label otherwise). A 422 message sits under the control with
 // aria-invalid and aria-describedby. Values are kept as typed; intake.ts turns them into the submitted shapes.
 // As the boards draw them: a date range is one field box, a display value and a 422 for a field this drawer does
-// not render are read-only boxes, and an optional proof field is its dashed box, disabled until FE-M2A-PROOF.
+// not render are read-only boxes. Proof (evidence) fields are StartProof's.
 import { useId, type ReactNode } from 'react';
 
 import { DateField, Icon, Segmented, Select, TextArea, TextField } from '@/components';
@@ -37,7 +37,7 @@ function Label({ id, field, as = 'span' }: { id: string; field: Field; as?: 'spa
   const Tag = as;
   return (
     <Tag className="psl-label" id={id}>
-      {!field.required && field.type !== 'display' && field.type !== 'evidence' ? `${field.label} (optional)` : field.label}
+      {!field.required && field.type !== 'display' ? `${field.label} (optional)` : field.label}
     </Tag>
   );
 }
@@ -203,17 +203,6 @@ export function IntakeField({ lineKey, field, value, onChange, parent, parentLab
         <>
           <Label id={labelId} field={field} />
           <span className="psl-input sw-display">{field.value}</span>
-          {under}
-        </>,
-      );
-    case 'evidence':
-      return frame(
-        <>
-          <Label id={labelId} field={field} />
-          <span className="sw-proof" aria-disabled="true">
-            <Icon name="clip" />
-            Proof upload comes next
-          </span>
           {under}
         </>,
       );

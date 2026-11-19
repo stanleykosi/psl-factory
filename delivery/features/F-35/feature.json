@@ -3,26 +3,72 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-35",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Leadership report: a PMO Lead follows Tola's draft, a leadership reviewer approves and sends it or returns it, and each recipient's delivery shows, with the Tuesday report published without review (contract mock only)",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-LEADERSHIP-REPORT"
   ],
-  "operation_ids": [],
-  "acceptance_criteria": [],
+  "operation_ids": [
+    "E-WORK-ITEM",
+    "E-TASK-CLAIM",
+    "E-TASK-DECIDE",
+    "E-WORK-STEP"
+  ],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-3201`\u2026`W-3204` show their fixture's status label and tone, sections, agent card, recipients and Next, and nothing else. No board string is in `src` (`grep -rn \"YOUR REVIEW\\|PUBLISHED \u00b7 NO REVIEW\\|RECEIVED BY EVERY RECIPIENT\\|PMO staff\\|Leadership reviewer\\|paid is reported by Finance\" frontend/src` returns nothing). \u2014 verify: `cd frontend && npx vitest run tests/leadership-report.test.tsx`; the pages at 1440 and 390.",
+    "**The page computes nothing.** Changing W-3202's \"5 OF 5\" to \"4 OF 5\" changes only that value. Changing W-3203's \"5 PMO staff\" row receipt changes neither the note sentence nor the header. No new or changed file under `frontend/src/features/workspace/` adds `parseFloat`, `Number(`, `reduce(` or a count of recipients or projects. \u2014 verify: component tests on modified copies; `git diff -U0 frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(\"` returns nothing.",
+    "**Unknown is never 0, blank or a dash; hidden projects are never named.** W-3210 shows \"Unknown\" for Open escalations, with no \"0\", empty cell, \"-\" or \"\u2014\" in its place. It shows the backend's coverage line \"2 projects are left out because you can't see them.\" and \"3 OF 5\". The page contains no project name. \u2014 verify: component test on W-3210; `document.body.textContent` checked against every name in `mock/fixtures/projects/list.json` (absent).",
+    "**Sample-marked.** Every fixture page shows the shared `SampleLabel` because the record says `sample: true`; a copy with `sample: false` does not. \u2014 verify: component test.",
+    "**Reviewer not set is a hold.** W-3207 shows the backend's status, the \"Leadership reviewer \u00b7 NOT SET\" fact and its `next` sentence. There is no Decide panel, no button, no claim or decide request, and no reviewer's name or role anywhere on the page (\"Ifeoma\", \"Leadership reviewer\" as a panel title and \"Approve and send\" are absent). \u2014 verify: component test with a recording `fetch` (zero POSTs) and a text check.",
+    "**Decide controls only from `you_can_act` and the steps.** W-3202 and W-3210 show \"Approve and send\" and \"Return with a note\" under \"Decide \u00b7 Leadership reviewer\", with the basis sentence as returned. W-3206 shows the `prepared_by_you` copy and W-3208 the `not_your_role` copy, each with no button and no claim sent. W-3201, W-3203, W-3204 and W-3211 show no decide control. Personas `ceo`, `pm` and `finance_lead` see the same controls on the same page. The changed files do not read `/me` (`git diff frontend/src | grep -n \"useMe\\|/me\\b\"` returns nothing). \u2014 verify: component tests with three personas and a recording `fetch`.",
+    "**Agent work is not an output.** On W-3201, Tola's steps, sources and \"WORKING\" render in the agent card in the side column at 1440. \"Send for leadership review\" is the agent's fourth step there, not a button, and no write is possible. \"Ask Tola\" links to `/assistant`. \"Started 01 Nov 08:00\" shows in Lagos time. The agent pulse does not animate under `reducedMotion: 'reduce'`. \u2014 verify: component test; e2e link href and computed style.",
+    "**Nothing says sent, delivered or received unless the response says so.**",
+    "**No resend, no confirm, no action write.** On W-3203, W-3209 (after approve), W-3211 and W-3212 there is no \"Resend\", \"Send again\", \"Try sending\" or \"Confirm what happened\" control. The page sends no request to `/api/v1/work/<id>/actions`. \u2014 verify: e2e request log; component test.",
+    "**No report link yet.** W-3202 and W-3204 draw no \"Open the full report\" or \"Open the report\" link and no link to `/reports/`. W-3204 shows \"Read it any time on Overview.\" as returned. \u2014 verify: component test.",
+    "**Approve and send.** On W-3202 the page sends one E-TASK-CLAIM to `/api/v1/tasks/T-3202/claim`. Pressing \"Approve and send\" then sends exactly one POST `/api/v1/tasks/T-3202/decision` with the CSRF header and `{verdict: \"approve\", expected_revision: 1}`. The body validates against the generated request schema, with no note and no extra keys. A double press sends one. The re-read shows \"SENT \u00b7 CHECKING DELIVERIES\" with four \"Not yet\" rows, and the notice \"Monthly report v1 is approved\" appears only after that re-read. \u2014 verify: component test; e2e request log.",
+    "**Return needs a note.** Pressing \"Return with a note\" with an empty or blank note sends nothing and shows \"Add a note to return it.\" under the field, announced, with focus on it. A note over 2000 characters is refused before sending. With a note, one POST with `verdict: \"return\"` and the trimmed note is sent, and the re-read shows \"DRAFTING \u00b7 RETURNED\" with the returned sentence. \u2014 verify: component tests; the e2e request log shows no decision POST without a note.",
+    "**No write when the person cannot act.** On W-3206, W-3207 and W-3208, no claim and no decision is sent, whatever is pressed or typed. \u2014 verify: e2e request log (zero task POSTs).",
+    "**Backend refusals are shown.** With `psl_mock_scenario` set to 403, the decide shows the read-only view and no \"approved\". With 409 it shows the stale view, keeps the note, and sends again only on a new press with the new revision. With 422 it shows the message under the note. \u2014 verify: component tests; `tests/leadership-report-mock.test.ts`.",
+    "**An uncertain decide never reads as success.** On W-3209, \"Approve and send\" answers `work_state: effect_uncertain`. The page re-reads, shows \"Monthly report v1: result not confirmed\" (never \"is approved\", \"sent\" or \"received\"), and shows the backend's \"SENT \u00b7 DELIVERY NOT CONFIRMED\" with Finance Lead \"CHECKING\". On W-3202, a network failure, timeout or 500 on decide re-reads the item before anything else, shows `UncertainNotice`, and sends no second decision automatically. \u2014 verify: component tests with fake timers (one POST after 60 s); e2e on W-3209, and with a routed abort on W-3202.",
+    "**Send for leadership review, only where offered.** W-3205 shows \"Send for leadership review\" with its consequence. One press sends one POST `/api/v1/work/W-3205/steps` with CSRF, `expected_revision`, `step: \"send_for_review\"`, a UUID `idempotency_key` and no `inputs`, reviewer or audience. A retry after a 500 reuses the same key. On 200 the re-read shows \"AWAITING LEADERSHIP REVIEW\" with the `prepared_by_you` copy. On W-3212 the `effect_uncertain` answer shows the uncertain notice after a re-read, never \"sent for review\", and sends no second POST. \u2014 verify: component tests; e2e request log.",
+    "**Access.** A 401 on read or write \u2192 signed-out with `next=/work/<id>`. A 403 or 404 on read looks the same and shows no title, figure, recipient or sentence. Persona `none` gets the same not-open view with no further call. \u2014 verify: component tests with a recording `fetch` for 401, 403 and 404.",
+    "**Phone.** At 390 each state is one column with the same sections, words and values as desktop (W-3201 includes the access note; W-3203 includes the recipients and Next).",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 8 boards, on a production build at `--width 1440` and `--width 390`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on:",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in `features/workspace/*.css`. It adds no local copy of a component that `@/components` exports (`Button`, `Drawer`, `TextArea`, `Callout`, `Panel`, `Tag`). The banner is the shared `Callout` `info`. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `tests/leadership-report-mock.test.ts` checks that:",
+    "**Contract not extended.** `git diff --stat` against the base (with F-33 merged) shows no change in any of these:",
+    "**Existing tests green.** `delivery/checks.sh` passes. The tests listed under Context pass unchanged, including F-33's income schedule tests after the line-set refactor and `tests/response.test.tsx:761`. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** build.md records:"
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. Approving sends one version of a cross-project report to leaders whose grants may differ from the author's. A wrong control or a figure computed in the browser could disclose records (G-SCR52-3, INV-ACCESS) or claim a delivery that has not happened, and the approver and audience are unset Setup values. The work itself is contained: a view on the F-17 frame with the existing decide, step and reconcile writes, on the mock, with nothing sent. SURFACES: ui (8 boards); api (E-WORK-ITEM, E-TASK-CLAIM/DECIDE, E-WORK-STEP, E-WORK-ACTION); security (an authority-bearing approve-and-send plus record visibility in an aggregate); contract-change (G-SCR52-3..7, X-VERDICTS, X-LINKS, the `leadership_report` workspace under D-LINE-WORKSPACE); external-messaging (email to internal recipients; channel undecided, D-REPORT-DELIVERY suggested); product-decision (reviewer, audience and the review-skip rule are unset). PRODUCT-ACCEPTANCE is required: it is a new flow and new wording, including the review-skip rule, and the client has not seen it working."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-35/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,41 +81,762 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T18:45:10Z",
+      "seconds": 337.2,
+      "evidence_ref": "delivery/features/F-35/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T19:46:54Z",
+      "seconds": 389.1,
+      "evidence_ref": "delivery/features/F-35/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T01:29:57Z",
+      "seconds": 476.9,
+      "evidence_ref": "delivery/features/F-35/round-3/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "required": true,
+      "assessment_reason": "delivery/features/F-35/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 19 Nov 2026 \u2014 D-121",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ui.md"
+      ]
+    },
+    "security": {
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-security.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "owner": "backend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The `sends` flag (FLAG judgement). The spec's table puts `sends: true` on `approve_send`. The builder left it off (build.md:23), and the deviation is listed in BACKEND-HANDOFF.md. On a decision step `sends` changes only the wording: the write goes through InlineDecide, not `useWorkspaceStep`'s lock-on-failure path. So the mock's rendered behaviour is honest. It is not honest about the shape the real backend will most likely send for \"Approve and send\". Shared `Consequence` (frontend/src/features/workspace/Steps.tsx:18-21) adds `STEP_TEXT.sends` \"This sends to the client.\" whenever `sends` is true and the step's own `consequence` does not contain \"send\". A real `sends: true` with no consequence would therefore print a false sentence on an internal report (leadership-report.test.tsx:155 would catch it only on the fixture as it stands). Recommendation: keep this fixture as built for round 1, and settle it as a contract rule rather than with a frontend audience guess. Whenever a step has `sends: true`, the backend also sends a `consequence` that names who receives it (for example \"Approving sends this exact version to the leadership audience.\"). The existing regex already suppresses the client sentence in that case. When that is confirmed, the fixture should carry `sends: true` with that consequence. Follow-up outside this lane (Steps.tsx is read-only here): the shared fallback should not say \"client\" on a line it does not know. It could use audience-neutral wording, or omit the sentence when no consequence is given. Add a test that a `sends: true` copy of W-3202 never renders \"client\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T18:48:16Z",
+          "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T19:46:54Z",
+          "refs": [
+            "15db6f7c"
+          ],
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-18T19:58:28Z",
+          "refs": [
+            "`delivery/BACKEND-HANDOFF.md` F-35 \"Approve and send\" bullet now states the contract rule (TECH-1-1, SEC-1-2): whenever a step sets `sends: true`, the backend also sends a `consequence` naming who receives it, for example \"Approving sends this exact version to the leadership audience.\". Fixtures carry `sends: true` only once that is confirmed. The shared `Steps.tsx` fallback naming the client is recorded as a follow-up outside this lane. Approve steps still carry no `sends`, as agreed."
+          ],
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "15db6f7c"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`delivery/BACKEND-HANDOFF.md` F-35 \"Approve and send\" bullet now states the contract rule (TECH-1-1, SEC-1-2): whenever a step sets `sends: true`, the backend also sends a `consequence` naming who receives it, for example \"Approving sends this exact version to the leadership audience.\". Fixtures carry `sends: true` only once that is confirmed. The shared `Steps.tsx` fallback naming the client is recorded as a follow-up outside this lane. Approve steps still carry no `sends`, as agreed."
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "INV-ACCESS (G-SCR52-3) in the agent's text. W-3210 is the partial-visibility fixture: figures \"Projects covered 3 OF 5\" and coverage \"2 projects are left out because you can't see them.\" Its `agent.steps` were copied from the full fixture: \"Gathered October's records\" with source \"5 PROJECTS \u00b7 41 MEETINGS \u00b7 12 ISSUES\", \"3 MILESTONES COMPLETE \u00b7 2 INVOICES VERIFIED\", and \"Drafted the escalations section\" citing \"ESC-0011 \u00b7 ESC-0012\", while \"Open escalations\" is Unknown. On the page this tells a viewer who can see 3 projects that Tola read 5 projects and how many meetings and issues they have, and it shows escalation ids that may belong to hidden projects. The spec allows only a count of left-out projects. This fixture is also the contract the backend is asked to build to. Expected: on W-3210, Tola's step sources describe only the records the viewer can see (for example \"3 PROJECTS \u00b7 \u2026\", escalation ids only from visible projects or none), or no source at all. The partial-visibility checks should also look at `agent.steps[].source` and text, not only at project titles. Actual: `frontend/mock/fixtures/work/W-3210.json` (agent steps); the tests `frontend/tests/leadership-report-mock.test.ts:113-123` and `frontend/tests/leadership-report.test.tsx:240-248` check only project titles, so they pass.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-18T18:48:16Z",
+          "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T19:46:54Z",
+          "refs": [
+            "15db6f7c"
+          ],
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-security",
+          "at": "2026-11-18T19:58:28Z",
+          "refs": [
+            "W-3210 is the only W-3210 file; there are no sidecars, and no mock or src file references it. A grep of it finds no `ESC-`, `P-nnnn`, \"5 PROJECTS\", \"41 MEETINGS\", \"12 ISSUES\", \"3 MILESTONES\", \"2 INVOICES\", \"5 OF 5\", `case_id` or `work_id`. A script check against `mock/fixtures/projects/list.json` finds no project title, client name or case id in it. Agent steps now read \"3 PROJECTS \u00b7 24 MEETINGS \u00b7 7 ISSUES\" and \"2 MILESTONES COMPLETE \u00b7 1 INVOICE VERIFIED\". The escalations step has no source. Figures 2/1 agree with the visible scope. \"Open escalations\" is still Unknown, and coverage is a count only. New tests: `leadership-report.test.tsx` checks the whole rendered body, including agent text, for hidden totals, ESC ids, project titles and case ids, `/projects/` links, and exactly one \"left out\". `leadership-report-mock.test.ts` checks the fixture JSON. Re-ran both files: 45/45 pass. Both new assertions fail against the round-1 strings, for example \"5 PROJECTS\" and \"ESC-0011\". No page code changed, and the page draws only the response's sections and agent steps (unchanged since round 1), so nothing is joined across projects on the client. BACKEND-HANDOFF's coverage bullet now says the viewer's visibility applies to agent step text and sources, and that a left-out project is only a count."
+          ],
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "15db6f7c"
+      ],
+      "verified_by": "reviewer-security",
+      "verification_refs": [
+        "W-3210 is the only W-3210 file; there are no sidecars, and no mock or src file references it. A grep of it finds no `ESC-`, `P-nnnn`, \"5 PROJECTS\", \"41 MEETINGS\", \"12 ISSUES\", \"3 MILESTONES\", \"2 INVOICES\", \"5 OF 5\", `case_id` or `work_id`. A script check against `mock/fixtures/projects/list.json` finds no project title, client name or case id in it. Agent steps now read \"3 PROJECTS \u00b7 24 MEETINGS \u00b7 7 ISSUES\" and \"2 MILESTONES COMPLETE \u00b7 1 INVOICE VERIFIED\". The escalations step has no source. Figures 2/1 agree with the visible scope. \"Open escalations\" is still Unknown, and coverage is a count only. New tests: `leadership-report.test.tsx` checks the whole rendered body, including agent text, for hidden totals, ESC ids, project titles and case ids, `/projects/` links, and exactly one \"left out\". `leadership-report-mock.test.ts` checks the fixture JSON. Re-ran both files: 45/45 pass. Both new assertions fail against the round-1 strings, for example \"5 PROJECTS\" and \"ESC-0011\". No page code changed, and the page draws only the response's sections and agent steps (unchanged since round 1), so nothing is joined across projects on the client. BACKEND-HANDOFF's coverage bullet now says the viewer's visibility applies to agent step text and sources, and that a left-out project is only a count."
+      ]
+    },
+    {
+      "id": "SEC-1-2",
+      "round": 1,
+      "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "What approving sends. The builder left `sends: true` off `approve_send` in W-3202, W-3209 and W-3210, which the spec table asked for. The reason given is that `Consequence` (`frontend/src/features/workspace/Steps.tsx:17-25`) turns `sends` into \"This sends to the client.\" The person deciding is not misled on the mock: the button label \"Approve and send\" and `decision.basis` \"Approving sends this exact version to the audience.\" both come from the backend and show in the panel (`InlineDecide.tsx:307-361`). The gap is with a real backend. If it sets `sends: true` on this line with no step `consequence`, the panel would say the report goes to the client, which is the wrong audience for an internal send. If it sends no `basis`, nothing but the button label says a send happens. `delivery/BACKEND-HANDOFF.md` already asks for audience wording for `sends` on a decision step. Keep that question open, and require that an approve step that sends carries a backend sentence saying who receives it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-18T18:48:16Z",
+          "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Approve and send does not name who receives the report before it is sent. The only audience cue is \"Approving sends this exact version to the audience\", because the approve step carries no `sends` or `consequence` naming recipients. This matches the board and the spec's open D-REPORT-DELIVERY. When the backend supplies a recipient-naming consequence, the page should show it (BACKEND-HANDOFF already records this).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The uncertain notice on W-3209 and W-3211 at 390 puts the \"Reload\" button inline beside wrapped text (\"...Nothing was sent again. [Reload]\"), which looks cramped. Give it its own line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-3",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The W-3203 note (\"5 deliveries confirmed, 1 still checking\") sits in a green banner with a check icon. The wording is honest and the recipient row is amber, but the banner colour reads as full success. Consider a neutral or amber tone while any receipt is uncertain. The board uses green, so this is a suggestion only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The card's \"Ask Tola\" link measures 51x20 px at 1440 (it reaches 44 at 390). The spec needs 44px (D-92 (c)); this is not a link inside a sentence. It is inherited unchanged from F-33's LineAgent footer: \"Ask Chidi\" on W-2701 measures 57x20 at 1440. Fix it once in the shared `ws-asklink` (frontend/src/features/workspace/Workspace.tsx:140), not in this feature.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "When the revision really goes stale, the reviewer is not told their decision was not recorded, and their note is lost. Spec Writes/E-TASK-DECIDE \"409 \u2192 the existing stale view; the note is kept and nothing is resent automatically\" (criterion 14). Repro: reset; tab A (`ceo`) and tab B (`pm`) open `/work/W-3202`; A presses \"Approve and send\" (200); B opens \"Return with a note\", types \"Stale tab note\" and presses it. B's log: `POST /api/v1/tasks/T-3202/claim {\"expected_revision\":1}` 200, then `POST \u2026/decision {\"expected_revision\":1,\"verdict\":\"return\",\"note\":\"Stale tab note\"}` 409, then a re-read. Expected: the stale sentence (\"This review changed while you were reading it, so nothing was recorded.\") and the note kept. Actual: B's page silently becomes \"SENT \u00b7 CHECKING DELIVERIES\". The page contains no stale, \"changed\" or \"not recorded\" text, has no textarea, and the note is gone. Cause: the re-read item has no decide steps, so `decideTasks` is empty (`frontend/src/features/workspace/Workspace.tsx:225-228`). The `InlineDecide` that held the stale view (`InlineDecide.tsx:265-269`) unmounts at `Workspace.tsx:677-678`. The scenario-cookie 409 passes only because the task is still actionable after the re-read. Fix: keep the stale notice, and the typed note, visible at page level when the decided task drops out on re-read, the way `assignFlow.notice` stale is kept (`Workspace.tsx:608-612`). Add an e2e for the two-tab race.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T20:15:48Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T01:29:57Z",
+          "refs": [
+            "a 409 decide keeps the stale notice and unsent note after the task closes"
+          ],
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:32:24Z",
+          "refs": [
+            "Re-ran `npx vitest run tests/leadership-report.test.tsx -t QA-2-1`: 2/2 pass. Both tests assert the sent or returned re-read state, the stale sentence, the unsent note (return only), no `.ws-idecide` panel and exactly one `/decision` POST. The same tests fail 2/2 against the round-2 `Workspace.tsx` and `InlineDecide.tsx`. The e2e reproduces QA's two-tab race at both viewports. I did not re-run it; `checks.sh` exit 0 covers it."
+          ],
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a 409 decide keeps the stale notice and unsent note after the task closes"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Re-ran `npx vitest run tests/leadership-report.test.tsx -t QA-2-1`: 2/2 pass. Both tests assert the sent or returned re-read state, the stale sentence, the unsent note (return only), no `.ws-idecide` panel and exactly one `/decision` POST. The same tests fail 2/2 against the round-2 `Workspace.tsx` and `InlineDecide.tsx`. The e2e reproduces QA's two-tab race at both viewports. I did not re-run it; `checks.sh` exit 0 covers it."
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 390 the workspace header link \"History\" is 42x24 px on every leadership page (W-3201, W-3202, W-3203, W-3205, W-3209). Criterion 18 asks for at least 44x44, and this link is not inside a sentence. F-33's W-2701 has the same 42x24, so this is the shared header: fix it once, alongside UI-2-1.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T20:15:48Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Criterion 8 says \"received\" appears nowhere on W-3203 and W-3211. The spec's own fixture text puts it there twice: the station name \"Received\" and the `next` sentence \"\u2026before marking it received. It won't resend until it knows.\". Neither claims receipt, and both are backend text. The criterion should read \"never claims received\", or the fixture wording should change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T20:15:48Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-4",
+      "round": 2,
+      "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Product input, as asked (UX-2-3). W-3203 draws the note \"\u20265 deliveries confirmed, 1 still checking.\" in a green `psl-callout--success` banner, because the backend status tone is `verified` (`bannerTone`, `Workspace.tsx:162-171`). The recipient row is correctly amber. This breaks no spec criterion: the tone comes from the response and the board draws green. Whether a partial delivery should ever carry a success tone is a product and backend question.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-18T20:15:48Z",
+          "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "TECH-3-1",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`staleDecide` is cleared only by `onDeciding`. Unlike `decided`, it is not tied to `workspace.revision`, so the stale notice would stay through a later re-read that moves the item on again. Expected: it goes when the item moves on, like `decidedShown`. Actual: it stays until the next decide on this page. `frontend/src/features/workspace/Workspace.tsx:244`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:32:24Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-1",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The notice does not say what happened instead or what to do. It never says the report was already approved and sent, and the Next card talks only about delivery. A line such as \"Another reviewer already approved it. Copy your note and tell them if it still matters.\" would make the next step obvious.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T01:32:24Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-2",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The notice is lasting only until reload. After reload it and the note are gone (checked). This is acceptable for a page-state notice, but the note is not copyable-by-design beyond that. Fold into UX-3-1 if the copy is revisited.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T01:32:24Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-3",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Focus stays on body after the dialog closes at 390. The alert role announces the notice, but moving focus to it would help keyboard users.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T01:32:24Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` `operation_ids` is empty. From spec.md and readiness.md the in-scope operations are E-WORK-ITEM (GET), E-TASK-CLAIM, E-TASK-DECIDE and E-WORK-STEP (`send_for_review`). E-WORK-ACTION is in the contract, but the page never sends it, and E-REPORT is reference only. Coordinator to fill `operation_ids` with these. I did not edit `feature.json`, because my contract allows one file. All four are in `frontend/src/api/schema.d.ts` per readiness.md.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T01:44:49Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The record still shows SEC-1-2 as OPEN, although `review-security.md` (round 2 and round 3) verifies it via the BACKEND-HANDOFF contract rule. The coordinator should close it in `feature.json`. The same rule answers UX-2-1, which stays open as a backend wait.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T01:44:49Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Open product items for the design engineer, listed and not waived:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T01:44:49Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Other non-blocking items, still open: UX-2-1 (the recipients are not named before approval, which waits on D-REPORT-DELIVERY and the unset audience); UX-2-2 (the Reload button at 390); UI-2-1 and QA-2-2 (shared Ask Tola and History target sizes, fix once in the shared frame); QA-2-3 (the spec wording for \"received\" in criterion 8).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T01:44:49Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+          "evidence_refs": [
+            "delivery/features/F-35/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-35/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ui": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "security": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+          "evidence_refs": [
+            "delivery/features/F-35/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-35/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+          "evidence_refs": [
+            "delivery/features/F-35/round-2/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -89,11 +856,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-LEADERSHIP-REPORT",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "6f14afbf81207d0c520572ba012a4684f59da2ba",
+    "task_branch": "fe-leadership-report-drafting-review-tuesday",
+    "head_sha": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-35",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +870,37 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/leadership-report.spec.ts",
+      "frontend/mock/fixtures/work/W-3201.json",
+      "frontend/mock/fixtures/work/W-3202.approve.json",
+      "frontend/mock/fixtures/work/W-3202.json",
+      "frontend/mock/fixtures/work/W-3202.return.json",
+      "frontend/mock/fixtures/work/W-3203.json",
+      "frontend/mock/fixtures/work/W-3204.json",
+      "frontend/mock/fixtures/work/W-3205.json",
+      "frontend/mock/fixtures/work/W-3205.next.json",
+      "frontend/mock/fixtures/work/W-3205.steps.json",
+      "frontend/mock/fixtures/work/W-3206.json",
+      "frontend/mock/fixtures/work/W-3207.json",
+      "frontend/mock/fixtures/work/W-3208.json",
+      "frontend/mock/fixtures/work/W-3209.approve.json",
+      "frontend/mock/fixtures/work/W-3209.json",
+      "frontend/mock/fixtures/work/W-3210.json",
+      "frontend/mock/fixtures/work/W-3211.json",
+      "frontend/mock/fixtures/work/W-3212.json",
+      "frontend/mock/fixtures/work/W-3212.steps.json",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/leadership-report-mock.test.ts",
+      "frontend/tests/leadership-report.test.tsx",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -123,9 +920,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-35/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -136,15 +935,124 @@
     }
   },
   "created_at": "2026-11-18T05:12:22Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 3,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T17:34:01Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T17:34:01Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T18:45:38Z",
+      "round": 1,
+      "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T18:48:16Z",
+      "round": 1,
+      "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T18:48:17Z",
+      "round": 2,
+      "head": "d12c2769dbd23763f89f3e176de2f5f1d8d94417",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T19:47:33Z",
+      "round": 2,
+      "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-18T19:58:28Z",
+      "round": 2,
+      "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T20:15:48Z",
+      "round": 2,
+      "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T20:15:49Z",
+      "round": 3,
+      "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T01:29:58Z",
+      "round": 3,
+      "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T01:32:25Z",
+      "round": 3,
+      "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-19T01:45:31Z",
+      "round": 3,
+      "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-35/readiness.md",
+      "delivery/features/F-35/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 3,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
   },
   "blocked": null
 }

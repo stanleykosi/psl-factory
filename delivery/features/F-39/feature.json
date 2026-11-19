@@ -3,26 +3,63 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-39",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Escalation: Tola checks a raised escalation, the PMO Lead decides \"Escalate to the client\" or \"Don't escalate\", and Tola drafts Message v1 for internal review, in four states (contract mock only)",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-EMERGENCY-ESCALATION"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-3601` to `W-3604` show their fixture's status label and tone, facts, Tola's card, decide panel, quote, Message v1, Next line and links, and nothing else. No board string is in `src`: `grep -rn \"INVESTIGATING\\|YOUR DECISION\\|NOT ESCALATED\\|MESSAGE DRAFTED\\|Escalate to the client\\|Don't escalate\\|FACTS AND DATES\" frontend/src` returns nothing. \u2014 verify: `cd frontend && npx vitest run tests/escalation.test.tsx`; pages at 1440 and 390.",
+    "**Tola's work is shown, never a decision.** On W-3601 the card shows \"Tola\", \"step 3 of 4\", WORKING, the four steps with their details as returned, \"Started 13 Nov 11:00\" and \"Ask Tola\" (href `/assistant`). There is no decide control. On W-3604 the card shows DONE and the three done details. On W-3602 and W-3603 no visible card is drawn. Changing a fixture step's `source` changes only that text. \u2014 verify: component tests on the fixtures and modified copies.",
+    "**Unknown is never 0.** W-3606 shows \"Unknown\" for \"Delays\" and \"Already asked the client\". The page has no \"0\", \"0 TIMES\", empty value cell or \"-\" or \"\u2014\" in their place. \u2014 verify: component test on W-3606.",
+    "**The page counts and dates nothing.** Changing \"3 TIMES\" to \"4 TIMES\", or \"15 DAYS LATE\" in the facts, changes only that value; Message v1's dates are not reread or reformatted. `git diff -U0 frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(|new Date\\(\"` adds nothing. \u2014 verify: component tests on modified copies; the grep.",
+    "**Sample-marked.** Every fixture page shows `SampleLabel` because `sample: true`; a copy with `sample: false` does not. \u2014 verify: component test.",
+    "**Controls only from `you_can_act` and `required_role`; nothing from `/me`.**",
+    "**Escalate.** On W-3602 the page sends one claim to `/api/v1/tasks/T-3602/claim`. \"Escalate to the client\" then sends exactly one POST `/api/v1/tasks/T-3602/decision` with CSRF and `{verdict: \"approve\", expected_revision: 1}`: no note, no extra keys, valid against the generated schema. A double press sends one. The re-read shows MESSAGE DRAFTED from `W-3602.approve.json`. \u2014 verify: component test; e2e request log.",
+    "**Don't escalate needs a note.** An empty or blank note, or one over 2000 characters, sends nothing; \"Add a note to reject it.\" appears under the note, announced, with focus on the note. With a note, one POST with `verdict: \"reject\"` and the trimmed note follows. The re-read shows NOT ESCALATED with the quote and \"Back to the issue\" linking to `/work/W-3609`, which opens ISS-0241. On the phone, \"Don't escalate\" opens the full-height `Drawer` with the note. \u2014 verify: component tests; e2e at 390.",
+    "**No success before the re-read.** With the decide answering 200 and a test double still serving the decide state on re-read, the page shows neither MESSAGE DRAFTED, NOT ESCALATED nor \"is approved\". The buttons follow the re-read task. \u2014 verify: component test with a recording `fetch`.",
+    "**An uncertain decide never reads as success.**",
+    "**Backend refusals are shown.** With `psl_mock_scenario` 403 the decide shows the read-only view; 409 shows the stale view, keeps the note and resends only on a new press; 422 shows the message under the note. \u2014 verify: component tests; `tests/escalation-mock.test.ts`.",
+    "**Send for review.** On W-3604, \"Send for review\" sends one POST `/api/v1/work/W-3604/steps` with CSRF, `expected_revision`, `step: \"send_for_review\"`, `inputs: {}` and a UUID `idempotency_key`. A retry after a 500 reuses the key. On 200 the re-read shows WAITING FOR REVIEW, with no Approve, Send or Return control for `pm`. The page never shows \"sent for review\" before the re-read. \u2014 verify: component test; e2e request log.",
+    "**A missing reviewer is a hold.** On W-3608 \"Send for review\" is unavailable with the returned `disabled_reason`, no POST is sent whatever is pressed, and no reviewer's name appears. \u2014 verify: component test with a recording `fetch`.",
+    "**Nothing says sent to the client.** On every fixture, sidecar and notice in this feature, `document.body.textContent` contains none of: \"sent to\", \"was sent\", \"has been sent\", \"delivered\", \"received\", \"This sends to the client\". No new fixture step sets `sends`. Message v1 has no Send, Approve and send, or Edit control. \u2014 verify: component test over W-3601 to W-3609 and the sidecars; `grep -n '\"sends\"' frontend/mock/fixtures/work/W-36*` returns nothing.",
+    "**Access 401, 403, 404.**",
+    "**Frame.** The crumbs read Projects / Lagoon Health / Registers / Escalations / ESC-0012 as returned. The project tab bar links every tab and marks none current. The phone bar shows \"\u2190 Project\" to `/projects/P-0101` and \"ESC-0012\" on all four states. F-30's issue pages and F-33's income pages draw as before. \u2014 verify: component tests; e2e.",
+    "**Phone.**",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 8 boards, on a production build at `--width 1440` and `--width 390`.",
+    "**Accessibility.** There are no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390. This covers W-3601 to W-3604 and W-3608, the open Drawer, the note error, the uncertain notice and the not-open view. Also:",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in any `.css`. It adds no local copy of an `@/components` export (`Button`, `Drawer`, `TextArea`, `Callout`, `Panel`, `Tag`). \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** In `tests/escalation-mock.test.ts`:",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `frontend/src/features/decide/**`, `InlineDecide.tsx`, `proposals.ts`, `src/shell/**`, `mock/server.mjs`, `mock/workspace.mjs`, any existing fixture, `apps/**`, `architecture/**`, `design/**` or the protected paths. No new overlay field is added; every reused or recorded one is listed in build.md. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing tests green.** `delivery/checks.sh` passes, and the tests listed under Context pass unchanged. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** It records the commands and results, the 8 scores and waivers, every exception with its Conflicts number, the overlay and backend list, and the held list. It states that nothing reaches the client in part 1. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. Part 1 has several behaviours on the shared workspace block (F-17): an agent checklist, a claim-and-decide with a required note on refusal, and a step write. It also adds additive contract proposals (X-VERDICTS, the escalations enum, cites, links), so SURFACES are ui, api and contract-change. It is not high and has no external-messaging surface, because nothing reaches the client in part 1. The decision only allows a draft that still faces review in part 2. Authority is never decided in the browser, only rendered from `you_can_act` and `required_role` (schema.d.ts:1364-1365), so the auth surface is not ticked. PRODUCT-ACCEPTANCE is required because the escalate and don't-escalate decision, its wording and the drafted client message are new flows the client must see."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-39/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,17 +72,68 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T19:39:23Z",
+      "seconds": 383.2,
+      "evidence_ref": "delivery/features/F-39/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T20:37:08Z",
+      "seconds": 219.6,
+      "evidence_ref": "delivery/features/F-39/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T21:01:49Z",
+      "seconds": 317.9,
+      "evidence_ref": "delivery/features/F-39/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 4,
+      "attempt": 1,
+      "commit": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T01:52:10Z",
+      "seconds": 403.0,
+      "evidence_ref": "delivery/features/F-39/round-4/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,17 +147,944 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-39/readiness.md",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
       "evidence_refs": []
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-ui.md"
+      ]
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Desktop NOT ESCALATED (W-3603, and after deciding on W-3602) is laid out badly and differs from SCR-51-desktop-not-escalated. The board has the quote (info tone) on the left and one NEXT panel on the right holding \"Back to the issue\". The build draws a right-hand \"Decide whether to escalate / Only a PMO Lead can decide\" panel on a finished decision, leaves a blank hole in the left column, pushes the quote (warning tone) and a loose \"Back to the issue\" button below it, and butts the NEXT panel against the decide panel with no gap. After a live decide a green \"Escalation ESC-0012 was rejected\" bar also sits flush against the panel. Expected the board layout; the exceptions file covers score gaps, not this. Evidence: round-1 screenshots /private/tmp/claude-501/s/pm-1440-3603.png and d-after.png. Phone is acceptable.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T20:37:08Z",
+          "refs": [
+            "desktop NOT ESCALATED layout now board-like (consequence of UI-1-1 and UI-1-3)"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "d-W-3603 and d-after screenshots at 1440: quote left, NEXT right, no decide panel, no blank hole; the success notice now has a gap above."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "desktop NOT ESCALATED layout now board-like (consequence of UI-1-1 and UI-1-3)"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "d-W-3603 and d-after screenshots at 1440: quote left, NEXT right, no decide panel, no blank hole; the success notice now has a gap above."
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "W-3604 and W-3608 (MESSAGE V1) show \"Nothing here yet.\" above the drafted message, which contradicts it. The board has no such line (empty copy from features/workspace/labels.ts:76 shown with content present).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T20:37:08Z",
+          "refs": [
+            "same change as UI-1-2 (W-3604, W-3608)"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "W-3604 and W-3608 show Message V1 with the message text and no \"Nothing here yet.\" (1440 and 390)."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "same change as UI-1-2 (W-3604, W-3608)"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-3604 and W-3608 show Message V1 with the message text and no \"Nothing here yet.\" (1440 and 390)."
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The success notice after \"Don't escalate\" says \"was rejected\"; the product word is \"not escalated\". Suggest \"Escalation ESC-0012 was not escalated\" style plain wording or drop the notice.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The shared uncertain notice reads \"Nothing was sent again.\" That uses \"sent\" in a feature that promises nothing reaches the client (build.md already flags it). On the phone the Reload button sits inline mid-sentence.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The no-reviewer hold (W-3608) has one visibly unavailable \"Send for review\" button (aria-disabled, described by the reason, no POST on click). This matches spec.md, but if \"no buttons\" was intended it differs.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On the phone decide screen \"Don't escalate\" is not full width like \"Escalate to the client\". The \"Back to the issue\" page (W-3609) shows crumbs ESCALATIONS / ESC-0012 on desktop (mock frame), while the phone bar says ISS-0241.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Extra decide panel on investigating and not escalated. Expected (SCR-51-desktop/mobile-investigating, -not-escalated): no decision panel. Investigating shows the facts and Tola's card side by side; not-escalated shows the quote and the Next panel. Actual: W-3601 and W-3603 draw the shared `TaskPanels` card \"DECIDE WHETHER TO ESCALATE\" with \"Only a PMO Lead can decide.\", Basis, Version and Prepared by, at 1440 and 390. At 1440 it pushes the facts and the card down about 230px. On the closed W-3603 it wrongly suggests a decision is still open. Cause: the decide task has no linked step, and the \"settled\" rule hides decided tasks only on `income_schedules` (frontend/src/features/work-item/WorkItemOverview.tsx:727-728). The tool still scored investigating 90.1. Fix: keep the escalation line's decide task out of `TaskPanels` when the task is `already_decided` or has no steps on the page. Then re-score investigating and not-escalated.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T20:37:08Z",
+          "refs": [
+            "extra decide TaskPanels card removed on W-3601/W-3603"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "W-3601 and W-3603 show no \"Decide whether to escalate\" card at 1440 or 390 (no matching heading in the DOM; screenshots). On investigating, the facts and Tola's card sit side by side at the board's height. On not-escalated, the callout is at the top of the main column with Next beside it. WorkItemOverview.tsx:727-730 adds the `escalation` rule. W-3602 still decides in place with InlineDecide, and no second card appears."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "extra decide TaskPanels card removed on W-3601/W-3603"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-3601 and W-3603 show no \"Decide whether to escalate\" card at 1440 or 390 (no matching heading in the DOM; screenshots). On investigating, the facts and Tola's card sit side by side at the board's height. On not-escalated, the callout is at the top of the main column with Next beside it. WorkItemOverview.tsx:727-730 adds the `escalation` rule. W-3602 still decides in place with InlineDecide, and no second card appears."
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Message v1 reads as empty and as a warning. Expected (SCR-51-desktop-draft, mobile-draft): the MESSAGE V1 panel shows Tola's draft as the message body, in the board's blue outlined box. Actual: the panel says \"Nothing here yet.\" and then draws the message as an amber warning callout with a warning icon, at both widths. Cause: the fixture sends the message as `note` with `items: []` (frontend/mock/fixtures/work/W-3604.json, also W-3604.next.json and W-3602.approve.json), so SectionView draws the empty line and the warning note (frontend/src/features/workspace/Sections.tsx:487, 497-500). Fix in data: send the message as the section's item `text`. Draw the board's box, or list the box styling as an exception for the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T20:37:08Z",
+          "refs": [
+            "message sent as item text, no \"Nothing here yet.\" or warning"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "W-3604 shows no \"Nothing here yet.\" and no amber callout at either width. The message is the section's item text (fixtures W-3604, W-3604.next, W-3602.approve, W-3608). The missing box styling is raised as UI-2-2."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "message sent as item text, no \"Nothing here yet.\" or warning"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-3604 shows no \"Nothing here yet.\" and no amber callout at either width. The message is the section's item text (fixtures W-3604, W-3604.next, W-3602.approve, W-3608). The missing box styling is raised as UI-2-2."
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The not-escalated sentence uses the warning tone. Expected (SCR-51-desktop/mobile-not-escalated): a blue info callout (info icon) at the top of the main column. Actual: an amber warning callout with a warning icon, below an empty row (the empty row comes from UI-1-1). Cause: `bannerTone` gives every line other than issue and income `warning` (frontend/src/features/workspace/Workspace.tsx:165-172). `Callout` has an `info` kind. Fix: choose the banner tone for the escalation line from the status tone (the F-30/F-33 pattern), or record an exception. Recheck the position once UI-1-1 is fixed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T20:37:08Z",
+          "refs": [
+            "not-escalated banner uses the info tone"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "The W-3603 banner is `psl-callout--info` with the info icon at 1440 and 390, and matches the board's blue callout. bannerTone, Workspace.tsx:166-173, keys it to the escalation line's status tone (neutral gives info)."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "not-escalated banner uses the info tone"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The W-3603 banner is `psl-callout--info` with the info icon at 1440 and 390, and matches the board's blue callout. bannerTone, Workspace.tsx:166-173, keys it to the escalation line's status tone (neutral gives info)."
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Status tag tones differ from the boards. MESSAGE DRAFTED: blue `agent` on the board, rust `person` on the page. NOT ESCALATED: grey `neutral` on the board, rust on the page (`stopped` maps to `person`, labels.ts:25). The spec's state table chose `person` and `stopped` without a Conflicts item, and no exception lists the difference. Fix: send the board's tones in W-3604/W-3602.approve and W-3603/W-3602.reject, or add exceptions that cite a design-engineer decision. A tag that differs without either is not allowed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T20:37:08Z",
+          "refs": [
+            "MESSAGE DRAFTED agent, NOT ESCALATED neutral"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "MESSAGE DRAFTED is `psl-tag--agent` (blue, as on the board). NOT ESCALATED is `psl-tag--neutral` (grey, as on the board). Live DOM and side-by-sides at both widths."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "MESSAGE DRAFTED agent, NOT ESCALATED neutral"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "MESSAGE DRAFTED is `psl-tag--agent` (blue, as on the board). NOT ESCALATED is `psl-tag--neutral` (grey, as on the board). Live DOM and side-by-sides at both widths."
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Some differences are covered only by the free text of a waiver, or not at all. \"Back to the issue\" sits under the quote in the main column; the board puts it as a full-width button inside the Next panel. The not-escalated waiver cites Conflicts 10 for this, but Conflicts 10 does not cover the link's position. The decide board's \"15 DAYS LATE\" tag (person tone) is drawn as plain text, because the shared facts list has no per-value tag. Neither is in fidelity-exceptions.json or the backend list. Add each as its own exception with a reason (and the facts tag to the backend/component list), so the design engineer signs each one explicitly.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T19:58:28Z",
+          "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T20:37:08Z",
+          "refs": [
+            "proposed exceptions added (see below)"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "The \"Back to the issue\" position and the \"15 DAYS LATE\" tag now each have their own proposed exception, both marked \"not signed\". The desktop not-escalated side-by-side confirms that the link-position exception describes what the page actually draws."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "proposed exceptions added (see below)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The \"Back to the issue\" position and the \"15 DAYS LATE\" tag now each have their own proposed exception, both marked \"not signed\". The desktop not-escalated side-by-side confirms that the link-position exception describes what the page actually draws."
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop NOT ESCALATED \"Back to the issue\" sits as a loose button under the quote, not inside the NEXT panel as on the board (builder lists it as a proposed exception, unsigned). Layout is otherwise clean.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T20:39:59Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Desktop investigating is below 90 and has no waiver. round-2/fidelity/scores.txt gives SCR-51-desktop-investigating-1440 a visual score of 87.1, pass False. It was 90.1 in round 1 and dropped once the extra decide card was removed. fidelity-exceptions.json `visual_waivers` lists the other seven boards but not this one. Expected: a D-83 waiver for this board, with its own reason and \"pending design engineer\". The reason should cite the shared frame (D-99, D-110), the AgentCard head and footer (Conflicts 7), and the untitled facts section, which the board draws with \"RAISED BY YOU\" as its heading row (Conflicts 9).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T21:01:49Z",
+          "refs": [
+            "waiver added for desktop investigating"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T01:05:58Z",
+          "refs": [
+            "fidelity-exceptions.json `visual_waivers` now has SCR-51-desktop-investigating at 1440, visual 87.1. This matches round-2/fidelity/scores.txt (87.1, False). The reason is its own and cites D-83, the shared frame (D-99, D-110), the AgentCard head and footer (Conflicts 7) and the untitled facts section headed \"RAISED BY YOU\" (Conflicts 9). It is marked \"builder proposal, pending design engineer\"."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "waiver added for desktop investigating"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "fidelity-exceptions.json `visual_waivers` now has SCR-51-desktop-investigating at 1440, visual 87.1. This matches round-2/fidelity/scores.txt (87.1, False). The reason is its own and cites D-83, the shared frame (D-99, D-110), the AgentCard head and footer (Conflicts 7) and the untitled facts section headed \"RAISED BY YOU\" (Conflicts 9). It is marked \"builder proposal, pending design engineer\"."
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The draft board's message box is a difference with no exception. SCR-51-desktop-draft draws Message v1 inside a blue outlined, tinted box. The page draws the text as a plain shared list row with a divider (W-3604 at 1440 and at 390). The only related exception covers the message text as a tool artefact, not the box styling, and the draft waiver reason does not mention it. The round-1 instruction was to draw the box or list its styling as an exception. Expected: either draw the box, or add its own proposed exception (category component or styling) and name it in the desktop-draft waiver.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T21:01:49Z",
+          "refs": [
+            "waiver added for draft message box"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T01:05:58Z",
+          "refs": [
+            "A new exception \"Message v1 box\" (category \"component styling\", PROPOSED, UI-2-2) describes the blue outlined, tinted box drawn as a plain shared list row. The SCR-51-desktop-draft 1440 waiver names it, and the desktop draft board does draw the box (board.rendered.html contains Message v1). It is marked \"pending design engineer signature (not signed)\"."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "waiver added for draft message box"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "A new exception \"Message v1 box\" (category \"component styling\", PROPOSED, UI-2-2) describes the blue outlined, tinted box drawn as a plain shared list row. The SCR-51-desktop-draft 1440 waiver names it, and the desktop draft board does draw the box (board.rendered.html contains Message v1). It is marked \"pending design engineer signature (not signed)\"."
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "record",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mobile-draft waiver mentions a box the phone board does not draw. The SCR-51-mobile-draft-390 waiver ends with \"Also the message box styling (blue outlined, tinted box ... proposed exception UI-2-2)\". The phone board does not draw the message at all. round-2/fidelity/SCR-51-mobile-draft-390/board.png shows only the heading, Tola's card and the pinned Send for review button. board.rendered.html has no \"Message v1\" and no message text (0 matches; the desktop-draft board has 1). Expected: remove that sentence from the mobile-draft waiver. The page's extra Message v1 on the phone is already covered by Conflicts 6 (phone extras). Also still open from the round-2 notes: the same waiver says \"Send for review placed in the page rather than pinned\", but the page pins it at the bottom.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T01:05:58Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "A stale decide by a second reviewer is not shown honestly, and the typed note is lost without warning. Steps (`qa/stale.cjs`, reproduced 3 times at 1440 and 390): reset; context A (persona pm) and context B (persona ceo) both open /work/W-3602, and both claim (200). B types \"Second reviewer: wait for their reply first.\" in the note (on the phone, inside the Drawer). A presses \"Escalate to the client\", and A's page shows MESSAGE DRAFTED. B presses \"Don't escalate\". The mock answers B's `POST /api/v1/tasks/T-3602/decision` with 409 stale_revision. Expected (spec AC 11, and the brief): B sees a stale message that stays until B acts on it, and B's note is kept or shown back to B; B is never left looking at an outcome they did not choose. Actual: B's DOM timeline at 1440 is +307 ms \"This review changed while you were reading it, so nothing was recorded. Review the latest\", then at +411 ms the stale alert is gone and the status tag reads MESSAGE DRAFTED. There is no alert, no live region and no textarea. At 390 the Drawer closes and the stale message never renders: +145 ms goes straight to MESSAGE DRAFTED. B pressed \"Don't escalate\" and now sees MESSAGE DRAFTED with a \"Send for review\" button, with nothing saying that someone else escalated it or that B's note was not sent. The second variant (B presses \"Escalate to the client\") also loses the stale message, though the outcome happens to match. Cause: on `view.kind === 'stale'` InlineDecide reloads the page at once (frontend/src/features/workspace/InlineDecide.tsx:97-104). The re-read item has T-3602 `already_decided`, so the escalation rule removes the panel (frontend/src/features/work-item/WorkItemOverview.tsx:730). The stale view (InlineDecide.tsx:265-276) and the note state unmount with it. Note: with the scenario cookie 409 (where the re-read still serves the decide state), the stale view does stay, and \"Review the latest\" brings the note back (desktop textarea; phone, when the Drawer is reopened). So the existing component tests and the mock 409 test do not catch the real two-reviewer case. Fix direction: keep a page-level notice after a stale decide whose re-read removes the panel. For example: \"Someone else decided this while you were reading it. Your decision and note were not recorded.\" Show the unsent note text, or keep it copyable. Add an e2e test with two contexts.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T01:19:58Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T01:52:10Z",
+          "refs": [
+            "the stale notice and the unsent note stay on the page after a 409 whose re-read removes the decide panel (shared InlineDecide `onStale` plus a Workspace alert, the same as F-35's 971bf73a)"
+          ],
+          "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:58:22Z",
+          "refs": [
+            "The `onStale` call (InlineDecide.tsx, stale branch before `reload()`) and `staleDecide`/`staleShown` (Workspace.tsx:236-246, 615-624) keep the stale sentence and the unsent note in a `role=\"alert\"` warning once the re-read closes T-3602. It clears on the next decide (`onDeciding`) and stays hidden while a step is pending or has a notice. The new unit tests serve the decided fixture from inside the 409 handler, so the panel really goes: desktop reject, phone Drawer reject, and escalate naming no note, each with one POST. The e2e uses two pages on the live mock's own 409 at 1440 and 390, checks the notice is still visible after 1.5 s, and checks that one decision body was sent and axe is clean. 76/76 tests pass on head. The fix is identical to F-35 971bf73a."
+          ],
+          "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "the stale notice and the unsent note stay on the page after a 409 whose re-read removes the decide panel (shared InlineDecide `onStale` plus a Workspace alert, the same as F-35's 971bf73a)"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The `onStale` call (InlineDecide.tsx, stale branch before `reload()`) and `staleDecide`/`staleShown` (Workspace.tsx:236-246, 615-624) keep the stale sentence and the unsent note in a `role=\"alert\"` warning once the re-read closes T-3602. It clears on the next decide (`onDeciding`) and stays hidden while a step is pending or has a notice. The new unit tests serve the decided fixture from inside the 409 handler, so the panel really goes: desktop reject, phone Drawer reject, and escalate naming no note, each with one POST. The e2e uses two pages on the live mock's own 409 at 1440 and 390, checks the notice is still visible after 1.5 s, and checks that one decision body was sent and axe is clean. 76/76 tests pass on head. The fix is identical to F-35 971bf73a."
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec's 404 journey (`/work/W-3699`, no fixture) cannot be run on the live mock. `curl -H 'Cookie: psl_mock_persona=pm' http://127.0.0.1:4936/api/v1/work/W-3699` returns 200 with the default fixture W-1001 (\"Lagoon Health \u00b7 Milestone 2 invoice\"), and the page draws that item. This is existing mock behaviour (mock/server.mjs header: \"else the default fixture\"), not F-39 code. I proved 403 = 404 by routing the item read to 404 and to 403: both show \"You can't open this work item\" and no item data, at 1440 and 390. Correct the spec or the mock in a later round.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T01:19:58Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-3",
+      "round": 3,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried from UX-1-3: after \"Don't escalate\" the notice still reads \"Escalation ESC-0012 was rejected\" (seen live at 1440 and 390). Plain wording would be \"not escalated\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T01:19:58Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
+      ]
+    },
+    {
+      "id": "TECH-4-1",
+      "round": 4,
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Merging F-35 and F-39 adds one trivial conflict beyond the 4 Workspace.tsx conflicts that already existed between c706d6a7 and F-35: the `./labels` import line (Workspace.tsx:19). Git puts it in the same hunk as the identical `DECIDE_TEXT, InlineDecide` import change on the next line. Resolve it by taking F-35's import (`AGENT_BESIDE_LINES`, `STATION_LINES`) plus any name F-39 still uses. The stale-fix lines themselves merge cleanly (merge-tree result: lines 23, 261, 269, 642-647 and 722 come through once).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:58:22Z",
+          "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-4-2",
+      "round": 4,
+      "snapshot_ref": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "F-33 (income_schedules) gets the new notice but has no two-reviewer test (the builder's follow-up). Neither does F-16's separate decide page (`useDecision` views), which this change does not touch. Add an income-schedule lost-race test when F-33 is next opened.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-4/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:58:22Z",
+          "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+          "evidence_refs": [
+            "delivery/features/F-39/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-39/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+          "evidence_refs": [
+            "delivery/features/F-39/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+          "evidence_refs": [
+            "delivery/features/F-39/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-39/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-2/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-3/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-3/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-39/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-3/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-3/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -89,11 +1104,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-EMERGENCY-ESCALATION",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "6f14afbf81207d0c520572ba012a4684f59da2ba",
+    "task_branch": "fe-emergency-escalation-escalate-or-not",
+    "head_sha": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-39",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +1118,33 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/escalation.spec.ts",
+      "frontend/mock/fixtures/work/W-3601.json",
+      "frontend/mock/fixtures/work/W-3602.approve.json",
+      "frontend/mock/fixtures/work/W-3602.json",
+      "frontend/mock/fixtures/work/W-3602.reject.json",
+      "frontend/mock/fixtures/work/W-3603.json",
+      "frontend/mock/fixtures/work/W-3604.json",
+      "frontend/mock/fixtures/work/W-3604.next.json",
+      "frontend/mock/fixtures/work/W-3604.steps.json",
+      "frontend/mock/fixtures/work/W-3605.json",
+      "frontend/mock/fixtures/work/W-3606.json",
+      "frontend/mock/fixtures/work/W-3607.approve.json",
+      "frontend/mock/fixtures/work/W-3607.json",
+      "frontend/mock/fixtures/work/W-3608.json",
+      "frontend/mock/fixtures/work/W-3609.json",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/tests/escalation-mock.test.ts",
+      "frontend/tests/escalation.test.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +1177,139 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 4,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T17:35:06Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T17:35:07Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T19:43:34Z",
+      "round": 1,
+      "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T19:58:28Z",
+      "round": 1,
+      "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T19:58:29Z",
+      "round": 2,
+      "head": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T20:37:17Z",
+      "round": 2,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T20:39:59Z",
+      "round": 2,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T20:40:00Z",
+      "round": 3,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T21:01:50Z",
+      "round": 3,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T01:06:10Z",
+      "round": 3,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T01:19:58Z",
+      "round": 3,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T01:19:59Z",
+      "round": 4,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T01:52:10Z",
+      "round": 4,
+      "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T01:58:22Z",
+      "round": 4,
+      "head": "45ae7b660519ea32d5a7d5f08eff2817230ec33a",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "haiku"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-39/readiness.md",
+      "delivery/features/F-39/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 4,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "45ae7b660519ea32d5a7d5f08eff2817230ec33a"
   },
   "blocked": null
 }

@@ -42,14 +42,14 @@ function CardBar({ item }: { item: WorkItem }) {
   );
 }
 
-const COLUMNS: Column<WorkItem>[] = [
+const COLUMNS = (hrefFor: HrefFor): Column<WorkItem>[] => [
   {
     key: 'work',
     header: 'WORK',
     cell: (item) => (
       <>
         <KindTag kind={item.kind} />
-        <Link href={`/work/${item.id}`} className="my-work__title" data-work-link="">
+        <Link href={hrefFor(item)} className="my-work__title" data-work-link="">
           {item.title}
         </Link>
         <span className="my-work__meta">
@@ -75,18 +75,22 @@ const COLUMNS: Column<WorkItem>[] = [
   { key: 'age', header: 'AGE', cell: (item) => formatAge(item.age_seconds), mono: true },
 ];
 
+/** Where a row's link goes: the work item, or (F-36) on the Unassigned tab the panel over the list. */
+export type HrefFor = (item: WorkItem) => string;
+const toItem: HrefFor = (item) => `/work/${item.id}`;
+
 /** Desktop (SCR-01-desktop): Work, Where on its line, State, Age. */
-export function WorkTable({ items }: { items: WorkItem[] }) {
-  return <Table caption="Your work" columns={COLUMNS} rows={items} rowKey={(item) => item.id} empty="Nothing to show." className="my-work__tablewrap" />;
+export function WorkTable({ items, hrefFor = toItem }: { items: WorkItem[]; hrefFor?: HrefFor }) {
+  return <Table caption="Your work" columns={COLUMNS(hrefFor)} rows={items} rowKey={(item) => item.id} empty="Nothing to show." className="my-work__tablewrap" />;
 }
 
 /** Phone (SCR-01-mobile): each card is one link to the work item. */
-export function WorkCards({ items }: { items: WorkItem[] }) {
+export function WorkCards({ items, hrefFor = toItem }: { items: WorkItem[]; hrefFor?: HrefFor }) {
   return (
     <ul className="my-work__cards">
       {items.map((item) => (
         <li key={item.id}>
-          <Link href={`/work/${item.id}`} className="my-work__card" data-work-link="">
+          <Link href={hrefFor(item)} className="my-work__card" data-work-link="">
             <span className="my-work__cardtop">
               <span className="my-work__cardwork">
                 <KindTag kind={item.kind} />

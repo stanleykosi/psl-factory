@@ -17,6 +17,7 @@ import { api, call } from '@/api/client';
 import { Button, Callout, MoneyField as MoneyInput, ValidationSummary, type ButtonKind, type FieldProblem } from '@/components';
 
 import type { Step } from './labels';
+import { stepSubmitLabel } from './proposals';
 import type { StepBody, SubmitResult } from './useWorkspaceStep';
 
 import '@/features/response/response.css';
@@ -322,7 +323,11 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
                 caseRevision={caseRevision}
                 field={field}
                 error={errors[field.name]}
-                onIds={(ids) => setEvidence((current) => ({ ...current, [field.name]: ids }))}
+                onIds={(ids) => {
+                  setEvidence((current) => ({ ...current, [field.name]: ids }));
+                  // a file now uploaded answers the "add proof" message
+                  if (ids.length > 0) setErrors((current) => (current[field.name] === undefined ? current : Object.fromEntries(Object.entries(current).filter(([name]) => name !== field.name))));
+                }}
                 onAccessError={onAccessError}
               />
             );
@@ -345,7 +350,7 @@ export function StepForm({ workId, lineKey, step, caseId, caseRevision, pending,
         {step.confirm && <p className="ws-confirm">{step.confirm}</p>}
         <div className="ws-form__actions">
           <Button type="submit" kind={step.emphasis === 'danger' ? 'reject' : 'primary'} busy={pending} busyLabel={`${step.label}…`} aria-disabled={pending || off || undefined}>
-            {submitLabel ?? step.label}
+            {submitLabel ?? stepSubmitLabel(step) ?? step.label}
           </Button>
           <Button kind="secondary" onClick={onClose}>
             {FORM_TEXT.cancel}

@@ -1,0 +1,170 @@
+{
+  "id": "W-3104",
+  "title": "Lagoon Health · patient app",
+  "line": "Hypercare",
+  "reference": "HYP-0062",
+  "state": "verified",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Go-live",
+      "status": "done"
+    },
+    {
+      "name": "Hypercare",
+      "status": "done"
+    },
+    {
+      "name": "Archive",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-04-01T22:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-05-01T09:00:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-05-01T09:05:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-05-01T09:10:00Z"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Checked the observations so far",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "delivery_hypercare",
+    "screen": "SCR-46",
+    "view": "hypercare",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "HYP-0062",
+          "label": "HYP-0062"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 1,
+    "status": {
+      "label": "Hypercare qualified",
+      "tone": "verified"
+    },
+    "sections": [
+      {
+        "key": "note",
+        "kind": "text",
+        "items": [],
+        "note": "Hypercare qualified on 01 May, verified. All three criteria were met over the 30-day window."
+      },
+      {
+        "key": "criteria",
+        "kind": "checklist",
+        "title": "Criteria",
+        "items": [
+          {
+            "id": "C-1",
+            "text": "Window",
+            "tag": {
+              "label": "30 days · from Setup",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "C-2",
+            "text": "No open high-severity issues",
+            "tag": {
+              "label": "Met",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "C-3",
+            "text": "No unresolved incidents",
+            "tag": {
+              "label": "Met",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "C-4",
+            "text": "Medium issues have an owner",
+            "tag": {
+              "label": "Met",
+              "tone": "verified"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "Closure needs this. Remaining before closure: handover and retrospective."
+    ],
+    "links": [
+      {
+        "key": "closure_needs",
+        "label": "See what closure needs",
+        "target": {
+          "kind": "work",
+          "work_id": "W-3120"
+        }
+      }
+    ]
+  }
+}

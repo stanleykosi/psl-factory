@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: qa
-COMMIT: 8d7da0c400b19e41356a0230e1328978452bc763
+COMMIT: cfd8a916060e08c73e7217af956fe4d3b98f41a1
 AUTHORITY: delivery integrated QA
 
 ## Summary
@@ -42,3 +42,11 @@ AUTHORITY: delivery integrated QA
 - TECH-1-1 | verified | The two "TECH-1-1: Try again sends nothing once…" vitest cases pass, each with one upload in total.
 - TECH-1-2 | verified | The routing test in `tests/start-work-proof-mock.test.ts` passes. Direct curl checks: as `pm`, a `ledger_source` upload to C-FIN-LEDGER goes to the F-09 owner (422, kind). As `finance_lead`, an upload to C-0102 answers 404.
 - TECH-1-4, UI-1-2 | verified | These change only factory files and do not affect the running stack. I checked that round-2/build.md records them.
+
+## Update for head cfd8a916 (diff 8d7da0c4..cfd8a916)
+
+- None of F-47's files (start-work intake, ProofField, useEvidenceUpload, server.mjs, me.finance_lead.json) changed in 8d7da0c4..cfd8a916; the only F-47 file touched is tests/mock-contract.test.ts, which gained F-31, F-32 and F-33 proposal checks.
+- Re-run on the worktree: start-work, response and mock-contract tests, 9 files, 571 passed. checks.sh passed (2552) and e2e passed (99) per build.md.
+- F-31 response Drawer and F-33 lines are untouched by F-47 and their tests pass.
+
+Verdict unchanged.

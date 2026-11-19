@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: qa
-COMMIT: 2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4
+COMMIT: a6c95d30225f2a01c632cda4dd65c23d4144f726
 AUTHORITY: delivery integrated QA
 
 ## Summary
@@ -146,3 +146,11 @@ Unless a line says otherwise, each line below was run at both 1440 and 390. "POS
   - W-3802's per-recipient word is F-28's "Received", not "Delivered";
   - TECH-1-2: a hung send never times out.
 - The contract mock accepts a second send while delivery is uncertain if a new key arrives after a reload during a hang or a routed failure. In the browser, the lock holds only within the session, or when the backend marks the item uncertain. The real guard is the backend (BACKEND-HANDOFF priority 1), and it must be proved before any live provider is used.
+
+## Update for head a6c95d30 (diff 85d04ad7..a6c95d30)
+
+- The head moved by merging dlv-00 (F-47 Start work proof upload, #65 test settings). No payments, reminder, phone drawer or attachment file is in the frontend diff.
+- F-47 additions in mock/server.mjs (a third E-EVIDENCE-UPLOAD owner, gated to start-work lines) and me.finance_lead.json (more startable lines) sit beside F-41 code without changing it. mock-contract.test.ts is not in this diff.
+- No money rule changed. Vitest on payments, start-work, mock-contract and workspace tests: 12 files, 621 tests passed. checks.sh 2606 and e2e 98 passed.
+
+Verdict unchanged.

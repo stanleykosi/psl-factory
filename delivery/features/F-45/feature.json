@@ -3,26 +3,69 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-45",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Ledger source LED-0052: a Finance person records what they found in QuickBooks with proof, and an independent reviewer approves or rejects it as a reference, in four states (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-FIN-LEDGER"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-4201`\u2026`W-4204` show their fixture's status label and tone, stations, sections, agent card, facts and text, and nothing else. No board string is in `src`: `grep -rn \"CHIDI INVESTIGATING\\|RECORD WHAT YOU FOUND\\|JE-7741\\|NO PREDECESSOR\\|Ledger reviewer\\|re-check reopens\" frontend/src` returns nothing. \u2014 verify: `cd frontend && npx vitest run tests/ledger-source.test.tsx`; the four pages at 1440 and 390.",
+    "**No amount and no computing.** No page or sidecar of this feature shows a currency sign or an amount. Changing a fact value in a fixture copy changes only that text. The diff under `frontend/src` adds no `parseFloat`, `Number(`, `.reduce(` or `compactAmount`. \u2014 verify: component test over every fixture (`document.body.textContent` has no \"\u20a6\" and no digit-group amount); `git diff -U0 dlv-00-delivery-setup -- frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(|compactAmount\"` returns nothing.",
+    "**Unknown is never 0, blank or a dash.** W-4211 shows \"Unknown\" for Treatment and draws the third agent step with no invented source. The Treatment cell is never empty, \"0\", \"-\" or \"\u2014\". \u2014 verify: component test on W-4211.",
+    "**Sample-marked.** Every fixture page shows the shared `SampleLabel` (\"SAMPLE DATA\") because the record says `sample: true`; a copy with `sample: false` does not. \u2014 verify: component test.",
+    "**Reviewer not set is a hold.** W-4205 shows the backend's status, the \"Who reviews ledger sources \u00b7 NOT SET\" fact and its `next` sentence. There is no Decide panel, no button and no claim or decide request, and no reviewer's name or role appears anywhere on the page. No page of this feature draws a control for any of the three ledger keys. \u2014 verify: component test with a recording `fetch` (zero POSTs); `document.body.textContent` checked for \"Ada Okafor\" and \"Ledger reviewer\" (both absent).",
+    "**Unknown or More than one is the backend's hold.** On W-4208, choosing Unknown with proof and pressing \"Record observation\" sends one step with `inputs.found: \"unknown\"`. The re-read shows W-4209's \"CHECK HELD\", station 3 stopped, its facts and `next`, with no step and no Decide panel. The page draws the hold only from the re-read: with a test double whose re-read still serves the observe state, it shows no hold. \u2014 verify: component tests with a recording `fetch`.",
+    "**Controls only from `you_can_act`, `disabled_reason` and the steps.**",
+    "**Agent work is not a decision.**",
+    "**Verified only when the re-read says so.**",
+    "**Observation with proof.** On W-4202, pressing \"Record observation\" opens the step form. \"What you found\" is a required choice of four with nothing selected, and \"Proof\" is required. Submitting with either empty sends nothing and shows the field message, announced, with focus on the first. Then:",
+    "Choosing a file sends one E-EVIDENCE-UPLOAD to `/api/v1/cases/C-LED-0052/evidence` with `kind: \"ledger_observation\"`, `case_revision: 4` and CSRF. It validates against the generated request schema.",
+    "Submitting sends exactly one POST `/api/v1/work/W-4202/steps` with CSRF, `expected_revision`, `step: \"record_observation\"`, `inputs: {found: \"found\"}`, `evidence_ids: [\"EV-C-LED-0052-1\"]` and a UUID `idempotency_key`, and no other keys. A double press sends one.",
+    "The re-read shows the review station with the `prepared_by_you` copy and no Decide button.",
+    "**Upload failures keep the step unsent.**",
+    "**Reject needs a note.** Pressing \"Reject\" with an empty or blank note sends nothing and shows \"Add a note to reject it.\" under the field, announced, with focus on it. A note over 2000 characters is refused before sending. With a note, the page sends one POST with `verdict: \"reject\"` and the trimmed note, and the re-read shows \"REJECTED\" read-only with no \"Correct\" step. Approve sends `{verdict: \"approve\", expected_revision: 1}` with no note, after one claim to `/api/v1/tasks/T-4203/claim`. \u2014 verify: component tests; e2e request log.",
+    "**No write when the person cannot act.** On W-4201, W-4204, W-4205, W-4206, W-4207, W-4209 and W-4210, no claim, decide, upload or step is sent, whatever is pressed or typed. \u2014 verify: e2e request log (zero POSTs).",
+    "**Backend refusals are shown.**",
+    "**Uncertain decide.**",
+    "**Uncertain observation.** On W-4213, the step answers 500 after it is written. The page re-reads first, draws the re-read review state and shows `STEP_TEXT.failed`, never \"Observation recorded.\" A Try again (if still offered) reuses the same key, and the mock log shows one applied step. \u2014 verify: component test; `GET /__mock/workspace-log` in `tests/ledger-source-mock.test.ts`.",
+    "**Access.** 401 on read or write shows the signed-out state with `next=/work/<id>`. 403 and 404 on read look the same and show no title, fact or agent step. Persona `none` gets the same not-open view with no further call. \u2014 verify: component tests with a recording `fetch`.",
+    "**Phone (D-92c).** At 390 each state is one column with the same sections, words and values as desktop.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 8 boards, on a production build at `--width 1440` and `--width 390`, with observe driven as in Boards.",
+    "**Accessibility.** There are no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on:",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in `features/workspace/*.css`. It adds no local copy of a component that `@/components` exports (`Button`, `Drawer`, `Select`, `TextArea`, `Callout`, `Panel`, `Tag`, `Segmented`) or of `ProofField`. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `tests/ledger-source-mock.test.ts` checks that:",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `frontend/src/features/decide/**`, `frontend/src/features/response/**`, `frontend/src/features/start-work/**`, `frontend/src/shell/**`, `frontend/mock/server.mjs`, `frontend/mock/workspace.mjs`, `frontend/mock/start-work.mjs`, any existing fixture, `apps/**`, `architecture/**`, `design/**` or the protected paths. The only allowed exception is the F-47 repoint, if F-45 merges second. `mock/response.mjs` changes only in `upload`, additively. Every overlay field is listed as a contract proposal in build.md. \u2014 verify: `git diff --stat`; `git diff frontend/mock/response.mjs`; build.md.",
+    "**Existing tests green.** `delivery/checks.sh` passes, and the tests listed under Context pass unchanged. This includes F-33's income schedule tests (the line layout is shared now) and `tests/response-mock.test.ts`. If F-45 merges second it also includes F-47's start tests, with the landing assertion on `W-4201`. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** It records:"
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. This is a Finance approval that records a ledger source as a reference, which is an authority-bearing write. The proof upload is append-only on a back-office case, so it is hard to undo. Three separate people (the capturer, the observer and the reviewer) must be kept apart by the backend. A wrong control would make a source look approved, or a hold look cleared, without the human decision. The work stays contained: on the F-17 frame with F-33's inline Decide, on the mock, and nothing is posted. The SURFACES are these: - ui: 8 boards. - api: E-WORK-ITEM, E-WORK-STEP, E-EVIDENCE-UPLOAD, E-TASK-CLAIM/DECIDE. - security: the approval write and the upload grant. - contract-change: the `ledger_sources` line, `steps[].verdict` and the mock upload grant. - product-decision: the three ledger policy values, which are NOT SET. PRODUCT-ACCEPTANCE is required, because this is a new Finance flow the client has not seen working."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-45/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +88,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +102,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-45/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +153,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-FIN-LEDGER",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "ca3d889696f6d84bcfe4c0b54eeb685e9d429ebe",
+    "task_branch": "fe-fin-ledger-source-recorded-reference",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-45",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -136,12 +200,41 @@
     }
   },
   "created_at": "2026-11-18T05:16:06Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-19T01:35:19Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T01:36:38Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-45/readiness.md",
+      "delivery/features/F-45/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

@@ -1,0 +1,280 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "FINANCE / LEDGER SOURCES / LED-0052",
+      "category": "frame",
+      "conflicts": 12,
+      "reason": "Conflicts 12: the frame draws workspace.context.crumbs as a list of plain items (F-17/F-22/F-33/F-42 frame as built), not one text line; the words come from the crumbs.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "← My work",
+      "category": "frame",
+      "conflicts": 12,
+      "reason": "Conflicts 12: the phone bar's way back is the frame's (F-17/F-22/F-33/F-42 as built); the board's wording is not drawn.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "SAMPLE DATA",
+      "category": "frame",
+      "conflicts": null,
+      "reason": "Design decision 14 Nov 2026 (c), restated in D-92: the visible SAMPLE DATA tag is off in team builds. Every fixture is sample: true, and the shared tag shows when the build sets NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1 (component test on all 13 fixtures). Not a spec Conflicts item.",
+      "approved_by": "builder proposal, pending design engineer",
+      "authority": "design decision 14 Nov 2026 (c), restated in D-92"
+    },
+    {
+      "role": "text",
+      "name": "Bisi Ade · Finance",
+      "category": "sample data",
+      "conflicts": 12,
+      "reason": "Conflicts 12: the signed-in name comes from /me; the mock's Finance persona is Ada Okafor · Finance Lead on all four boards and no persona is added.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Chuka Eze · Finance",
+      "category": "sample data",
+      "conflicts": 12,
+      "reason": "Conflicts 12: the signed-in name comes from /me; the mock's Finance persona is Ada Okafor · Finance Lead and no persona is added. The observer appears only as the backend's fact value \"CHUKA EZE · FOUND\".",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Investigating JE-7741",
+      "category": "component",
+      "conflicts": 14,
+      "reason": "Conflicts 14: the agent card is the existing AgentCard drawn from item.agent, which has no title field; the agent's name, steps, sources, WORKING and the footer are drawn.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Investigating",
+      "category": "component",
+      "conflicts": 14,
+      "reason": "Conflicts 14: the phone agent card's title; AgentCard has no title field (item.agent carries none).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Chidi · Finance agent · step 3 of 4",
+      "category": "component",
+      "conflicts": 14,
+      "reason": "Conflicts 14: the existing AgentCard draws the name, \"Cannot approve, send or pay.\" and \"step n of m\" on separate lines; item.agent carries no agent role, and with three steps done it reads \"step 4 of 4\" from the steps sent.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Look up JE-7741 in QuickBooks",
+      "category": "component",
+      "conflicts": 10,
+      "reason": "Conflicts 10: the step form's heading and its submit button are the step's label, \"Record observation\"; the board heading is not drawn (Option B is a backend label change).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Not found",
+      "category": "component",
+      "conflicts": 3,
+      "reason": "Conflicts 3: \"What you found\" is the shared Select (a choice of more than three, IntakeField), so the four answers are in its closed list; the chosen one (\"Found\") shows in the field.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "category": "component",
+      "conflicts": 3,
+      "reason": "Conflicts 3: one of the four answers in the shared Select's closed list.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "More than one",
+      "category": "component",
+      "conflicts": 3,
+      "reason": "Conflicts 3: one of the four answers in the shared Select's closed list.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Many",
+      "category": "component",
+      "conflicts": 9,
+      "reason": "Conflicts 3 and 9: the phone shows the desktop words, \"More than one\", in the same Select; the board's short \"Many\" is not drawn.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Uploaded · 310 KB",
+      "category": "component",
+      "conflicts": 11,
+      "reason": "Conflicts 11: StepForm's EvidenceField draws ProofField's drop layout, a chip \"qb-screenshot-je7741.png · 310 KB\" with \"×\" (as F-34), not the board's card.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "What happens next:",
+      "category": "component",
+      "conflicts": 7,
+      "reason": "Conflicts 7: the step's consequence is drawn whole as returned (\"What happens next: an independent reviewer … decides.\"), with no bold lead-in of the page's own.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Note (needed to return, reject or withdraw)",
+      "category": "component",
+      "conflicts": 7,
+      "reason": "Conflicts 7: the note label lists only the verdicts offered that need a note, \"Note (needed to reject)\"; Return and Withdraw are not offered on a ledger review.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "(needed to return, reject or withdraw)",
+      "category": "component",
+      "conflicts": 7,
+      "reason": "Conflicts 7: as above, \"(needed to reject)\".",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Chidi investigating",
+      "category": "frame item",
+      "conflicts": 8,
+      "reason": "Conflicts 8: the phone title is the work item's title at both widths (D-111); the status tag carries the state.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Record what you found",
+      "category": "frame item",
+      "conflicts": 8,
+      "reason": "Conflicts 8: the phone title is the work item's title at both widths (D-111); the status tag carries the state.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Independent review",
+      "category": "frame item",
+      "conflicts": 8,
+      "reason": "Conflicts 8: the phone title is the work item's title at both widths (D-111); the station name \"Independent review\" is drawn in the station bar text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Verified",
+      "category": "frame item",
+      "conflicts": 8,
+      "reason": "Conflicts 8: the phone title is the work item's title at both widths (D-111); the status tag reads VERIFIED from the data.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Observed",
+      "category": "extra element",
+      "conflicts": 9,
+      "reason": "Conflicts 9: the phone shows the desktop facts as returned (\"Observed by\" · \"CHUKA EZE · FOUND\"), not the board's short \"Observed · FOUND\".",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "FOUND",
+      "category": "extra element",
+      "conflicts": 9,
+      "reason": "Conflicts 9: the value is the backend's whole fact value \"CHUKA EZE · FOUND\" at both widths.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Reference",
+      "category": "extra element",
+      "conflicts": 9,
+      "reason": "Conflicts 9: the phone shows the desktop Recorded facts as returned (\"Reference recorded\" · \"YES · 14 NOV\"), not the board's short \"Reference · RECORDED\".",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "RECORDED",
+      "category": "extra element",
+      "conflicts": 9,
+      "reason": "Conflicts 9: as above; the value is the backend's \"YES · 14 NOV\".",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Posted",
+      "category": "extra element",
+      "conflicts": 9,
+      "reason": "Conflicts 9: the phone shows the desktop fact label \"Posting performed\" as returned, not the board's short \"Posted\".",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "complementary",
+      "name": "(side panel)",
+      "category": "layout",
+      "conflicts": 13,
+      "reason": "Conflicts 13 (sentence as data): the verified board draws the re-check sentence as an info note in a side column; the spec sends it as an untitled `text` section, which the shared workspace draws in the main column under the Recorded facts. The words are drawn as returned. Option B for the design engineer: the backend sends it as `workspace.next`, which the frame draws in the side column under a \"Next\" head.",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-58-desktop-investigating",
+      "width": 1440,
+      "visual": 80.1,
+      "reason": "D-83: measured 80.1 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with the alerts bell and the name's position, crumbs as a list, the History link, the page width; Conflicts 12); the shared StationTrack with a status line under each name and taller boxes; the AgentCard head with no title and the name and limits on their own lines, \"step 4 of 4\" from the steps sent (Conflicts 14); the shared facts list with bold labels and taller rows. None is a value the data could supply.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-58-desktop-review",
+      "width": 1440,
+      "visual": 68.7,
+      "reason": "D-83: measured 68.7 in round 1 on a production build. Remaining gaps: the shared frame (top bar, crumbs as a list, the History link, the wider page; Conflicts 12); the shared StationTrack with a status line under each name, which makes the station row about twice as tall and moves everything below it down; the shared facts list with bold labels and taller rows; the note field 88px high (shared TextArea); the panel content as F-33's InlineDecide draws it. None is a value the data could supply. Below the D-83 floor of 70, so this needs its own one-board floor exception (as D-112 did for SCR-08-mobile and SCR-30-mobile-verified): board and page draw the same content in the same places (side-by-side.png); the shortfall is the taller shared station row and the wider page shifting every square below the header.",
+      "approved_by": "builder proposal, pending design engineer",
+      "floor_exception": true
+    },
+    {
+      "board": "SCR-58-desktop-verified",
+      "width": 1440,
+      "visual": 74.1,
+      "reason": "D-83: measured 74.1 in round 1 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the shared facts list with bold labels and taller rows; the re-check sentence drawn in the main column as an untitled text section, not as the board's side note (see the \"(side panel)\" exception). None is a value the data could supply.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-58-mobile-investigating",
+      "width": 390,
+      "visual": 83.2,
+      "reason": "D-83: measured 83.2 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with the alerts bell and the name's position, crumbs as a list, the History link, the page width; Conflicts 12); the shared StationTrack with a status line under each name and taller boxes; the AgentCard head with no title and the name and limits on their own lines, \"step 4 of 4\" from the steps sent (Conflicts 14); the shared facts list with bold labels and taller rows. On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-58-mobile-review",
+      "width": 390,
+      "visual": 82.9,
+      "reason": "D-83: measured 82.9 in round 1 on a production build. Remaining gaps: the shared frame (top bar, crumbs as a list, the History link, the wider page; Conflicts 12); the shared StationTrack with a status line under each name, which makes the station row about twice as tall and moves everything below it down; the shared facts list with bold labels and taller rows; the note field 88px high (shared TextArea); the panel content as F-33's InlineDecide draws it. On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-58-mobile-verified",
+      "width": 390,
+      "visual": 75.9,
+      "reason": "D-83: measured 75.9 in round 1 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the shared facts list with bold labels and taller rows; the re-check sentence drawn in the main column as an untitled text section, not as the board's side note (see the \"(side panel)\" exception). On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-58-desktop-observe",
+      "width": 1440,
+      "visual": 71.8,
+      "reason": "D-83: measured 71.8 in round 1 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the step form opened on press with its own heading \"Record observation\" (Conflicts 10); the shared Select instead of the radio segments (Conflicts 3); ProofField's chip instead of the card (Conflicts 11); the consequence drawn whole. None is a value the data could supply.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "board": "SCR-58-mobile-observe",
+      "width": 390,
+      "visual": 77.8,
+      "reason": "D-83: measured 77.8 in round 1 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the step form opened on press with its own heading \"Record observation\" (Conflicts 10); the shared Select instead of the radio segments (Conflicts 3); ProofField's chip instead of the card (Conflicts 11); the consequence drawn whole. On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ]
+}

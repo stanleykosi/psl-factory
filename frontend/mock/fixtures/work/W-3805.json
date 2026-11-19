@@ -1,0 +1,259 @@
+{
+  "id": "W-3805",
+  "title": "Payment reminder · Harmattan Bank",
+  "line": "Payment reminder",
+  "reference": "INV-0391",
+  "state": "effect_uncertain",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "done"
+    },
+    {
+      "name": "Send",
+      "status": "stopped"
+    },
+    {
+      "name": "Verify",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-12T08:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned"
+    },
+    {
+      "name": "approved",
+      "status": "earned"
+    },
+    {
+      "name": "sent",
+      "status": "unknown"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted the reminder from the invoice and the SOW payment terms",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person confirms what happened before anything is sent again.",
+  "sample": true,
+  "case_id": "P-0102",
+  "case_revision": 1,
+  "workspace": {
+    "line_key": "payment_reminder",
+    "screen": "SCR-32",
+    "view": "draft",
+    "status": {
+      "label": "DELIVERY UNCERTAIN",
+      "tone": "uncertain"
+    },
+    "subtitle": "Delivery of this reminder couldn't be confirmed. Nothing is sent again until a person confirms what happened.",
+    "version": {
+      "label": "Draft v1",
+      "number": 1
+    },
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "payments",
+          "label": "PAYMENTS"
+        },
+        {
+          "value": "INV-0391",
+          "label": "INV-0391 · REMINDER"
+        }
+      ]
+    },
+    "agent_note": {
+      "agent": "chidi",
+      "lines": [
+        "I couldn't confirm whether the reminder reached Harmattan Bank. I won't send it again."
+      ]
+    },
+    "sections": [
+      {
+        "key": "message_to",
+        "kind": "facts",
+        "items": [
+          {
+            "id": "to",
+            "label": "To",
+            "value": "finance@harmattanbank.example"
+          },
+          {
+            "id": "copy",
+            "label": "Copy",
+            "value": "Kunle Ade (PM)"
+          },
+          {
+            "id": "subject",
+            "label": "Subject",
+            "value": "Reminder: invoice INV-0391 is 21 days overdue"
+          }
+        ]
+      },
+      {
+        "key": "message",
+        "kind": "text",
+        "items": [
+          {
+            "id": "P-1",
+            "text": "Dear Harmattan Bank Finance team,"
+          },
+          {
+            "id": "P-2",
+            "text": "Our records show invoice INV-0391 for ₦6,800,000.00 (Milestone 1, mobile onboarding) was due on 22 Oct and hasn't been paid yet. The invoice is attached again for convenience."
+          },
+          {
+            "id": "P-3",
+            "text": "If you've already paid, please send the payment reference so we can match it. If something is holding it up, reply and we'll help."
+          },
+          {
+            "id": "P-4",
+            "text": "Kind regards,\nPSL Product Studio Finance",
+            "attachment": {
+              "label": "INV-0391.pdf",
+              "size_bytes": 86016
+            }
+          }
+        ]
+      },
+      {
+        "key": "invoice",
+        "kind": "facts",
+        "title": "This invoice",
+        "items": [
+          {
+            "id": "amount",
+            "label": "Amount",
+            "money": {
+              "amount": "6800000.00",
+              "currency": "NGN",
+              "unknown": false
+            }
+          },
+          {
+            "id": "due",
+            "label": "Due",
+            "value": "22 Oct 2026"
+          },
+          {
+            "id": "overdue",
+            "label": "Overdue by",
+            "value": "21 days"
+          },
+          {
+            "id": "reminders",
+            "label": "Reminders sent",
+            "value": "Unknown"
+          },
+          {
+            "id": "last_payment",
+            "label": "Last payment",
+            "value": "None"
+          }
+        ]
+      },
+      {
+        "key": "delivery",
+        "kind": "recipients",
+        "title": "Delivery",
+        "items": [
+          {
+            "id": "r1",
+            "text": "finance@harmattanbank.example",
+            "channel": "Email",
+            "receipt": "uncertain"
+          },
+          {
+            "id": "r2",
+            "text": "Kunle Ade (PM)",
+            "channel": "Email",
+            "receipt": "uncertain"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "send_reminder",
+        "label": "Send reminder",
+        "emphasis": "primary",
+        "sends": true
+      },
+      {
+        "key": "edit_draft",
+        "label": "Edit",
+        "emphasis": "secondary",
+        "submit_label": "Save draft",
+        "fields": [
+          {
+            "name": "subject",
+            "label": "Subject",
+            "type": "text",
+            "required": true,
+            "value": "Reminder: invoice INV-0391 is 21 days overdue"
+          },
+          {
+            "name": "message",
+            "label": "Message",
+            "type": "long_text",
+            "required": true,
+            "value": "Dear Harmattan Bank Finance team,\n\nOur records show invoice INV-0391 for ₦6,800,000.00 (Milestone 1, mobile onboarding) was due on 22 Oct and hasn't been paid yet. The invoice is attached again for convenience.\n\nIf you've already paid, please send the payment reference so we can match it. If something is holding it up, reply and we'll help.\n\nKind regards,\nPSL Product Studio Finance"
+          }
+        ]
+      },
+      {
+        "key": "set_aside",
+        "label": "Not now",
+        "emphasis": "secondary",
+        "consequence": "Nothing is sent. The draft is kept here."
+      }
+    ],
+    "revision": 1
+  },
+  "allowed_actions": [
+    "reconcile"
+  ],
+  "reconcile": {
+    "what": "Payment reminder for INV-0391 to Harmattan Bank",
+    "sent_at": "2026-11-12T10:05:00Z",
+    "outcomes": [
+      "delivered",
+      "not_delivered",
+      "unknown"
+    ],
+    "evidence_kind": "delivery_receipt",
+    "unknown_note": "Keep it held and check again tomorrow"
+  }
+}

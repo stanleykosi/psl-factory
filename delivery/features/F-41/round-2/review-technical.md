@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 2e9e42e3313d5a5318aa01fc8b585c2d47c5bcb4
+COMMIT: a6c95d30225f2a01c632cda4dd65c23d4144f726
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -15,3 +15,11 @@ None.
 
 ## Verified
 - Round 1 had no technical findings. The round-1 conclusions about the TECH-1-1 hook order and the reminder lock still hold, because this diff does not touch `useWorkspaceStep.ts`, `Workspace.tsx` or the mock server.
+
+## Update for head a6c95d30 (diff 85d04ad7..a6c95d30)
+
+- The head moved by merging dlv-00 (F-47 Start work proof upload, #65 test settings). No payments, reminder, phone drawer or attachment file is in the frontend diff.
+- F-47 additions in mock/server.mjs (a third E-EVIDENCE-UPLOAD owner, gated to start-work lines) and me.finance_lead.json (more startable lines) sit beside F-41 code without changing it. mock-contract.test.ts is not in this diff.
+- No money rule changed. Vitest on payments, start-work, mock-contract and workspace tests: 12 files, 621 tests passed. checks.sh 2606 and e2e 98 passed.
+
+Verdict unchanged.
