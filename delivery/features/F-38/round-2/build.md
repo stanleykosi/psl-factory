@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: a1f2c7c1b845843a4b6a278db057ce7ba88d5a18
+COMMIT: 273d81b5b7cb2d146cd010383cb6f5a40e9e6b96
 BUILDER: builder
 LANE: full
 
@@ -47,3 +47,4 @@ LANE: full
   coverage with exceptions 100 on all 8. Visual: desktop draft 89, review 76.7, submitted 84.7, submitted-portal 79.5; phone draft 78.4, review 79.3, submitted 83.6, submitted-portal 81.3. All under 90 and at or above 70: 8 waivers in `fidelity-exceptions.json`, unsigned. Raw coverage 66.7 to 85.7.
 - `fidelity-exceptions.json`: no exception removed (every missing-type one is still hit in the run); the 8 waivers re-measured with new reasons.
 - Demo left running: app 4985, mock 4984. Worktree clean and pushed.
+- Coordinator: merged dlv-00 (273d81b5b7cb2d146cd010383cb6f5a40e9e6b96) to take test-reliability fix #80; base_sha 26d06343cbf753403427f76b492a592f01ea9fb2.
