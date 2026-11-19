@@ -3129,3 +3129,6 @@
 {"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"UX-3-2","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
 {"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"UX-3-3","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
 {"at":"2026-11-19T01:32:25Z","feature":"F-35","round":3,"kind":"transition","head":"971bf73adfb9","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-19T01:35:16Z","feature":"F-45","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-19T01:35:19Z","feature":"F-45","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-19T01:36:38Z","feature":"F-45","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
