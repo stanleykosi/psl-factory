@@ -70,6 +70,11 @@ export const agentName = (agent: string) => word(AGENT_NAMES, agent);
  *  the sections, the phone Drawer, the stopped-station banner and no card for a decided task. Other lines are unchanged. */
 const SCHEDULE_LINES: ReadonlySet<string> = new Set(['income_schedules', 'fixed_assets']);
 export const scheduleLine = (lineKey: string | undefined) => lineKey !== undefined && SCHEDULE_LINES.has(lineKey);
+/** F-33, F-35, F-42: the lines whose boards draw the working agent's card beside the sections, with the assistant link in the card;
+ *  a task decided there has nothing left to open. The leadership report (F-35) draws it too, with no stations. */
+export const AGENT_BESIDE_LINES: ReadonlySet<string> = new Set([...SCHEDULE_LINES, 'leadership_report']);
+/** F-33, F-42: the lines whose boards draw the stations in the workspace itself. */
+export const STATION_LINES: ReadonlySet<string> = SCHEDULE_LINES;
 
 // Frontend-owned neutral sentences (spec Assumptions); none of them is a business rule.
 export const WS_TEXT = {
