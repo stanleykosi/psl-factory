@@ -66,7 +66,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "0a7196f6eaf9b82b7193ea7139b2e0b72cb9aeb9",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T11:03:30Z",
+      "seconds": 396.7,
+      "evidence_ref": "delivery/features/F-48/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -137,7 +150,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "c2d4d873009ea69514798ff4698f1e6168c5f5ce",
     "task_branch": "fe-assistant-cant-state",
-    "head_sha": null,
+    "head_sha": "0a7196f6eaf9b82b7193ea7139b2e0b72cb9aeb9",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-48",
     "pr_url": null,
     "pr_number": null,
@@ -148,7 +161,16 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/assistant.spec.ts",
+      "frontend/public/agents/chidi-cant.png",
+      "frontend/public/agents/tola-cant.png",
+      "frontend/public/agents/zainab-cant.png",
+      "frontend/src/features/assistant/SidePanel.tsx",
+      "frontend/src/features/assistant/Thread.tsx",
+      "frontend/src/features/assistant/assistant.css",
+      "frontend/tests/assistant.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -215,9 +237,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "0a7196f6eaf9b82b7193ea7139b2e0b72cb9aeb9"
   },
   "blocked": null
 }
