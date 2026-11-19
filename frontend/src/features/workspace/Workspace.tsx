@@ -16,7 +16,7 @@ import { AgentCard, StationTrack } from '@/features/work-item/WorkItemOverview';
 
 import { AssignForm } from './AssignForm';
 import { agentName, scheduleLine, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
-import { InlineDecide, type DecidedNotice } from './InlineDecide';
+import { DECIDE_TEXT, InlineDecide, type DecidedNotice } from './InlineDecide';
 import { WorkspaceLinks } from './Links';
 import { assignDefault, itemsDefaultChecked, itemTeamKey, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks, type WorkspaceLink } from './proposals';
 import type { Recorded } from '@/features/response/contract';
@@ -108,6 +108,8 @@ const ENGAGEMENT_LINE = 'engagement';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
 /** F-41: the payment reminder's line key (SCR-32); read only to open its Edit form in the phone Drawer. */
 const REMINDER_LINE = 'payment_reminder';
+/** F-45: the ledger source's line key (SCR-58); read only to keep a stale decide's notice once its panel has gone. */
+const LEDGER_LINE = 'ledger_sources';
 
 /** The stations as the schedule boards (income F-33, fixed assets F-42) draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
@@ -220,12 +222,18 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const onDecided = useCallback((notice: DecidedNotice) => setDecided(notice), []);
   // TECH-2-1: a decide starting clears the last step's notice and the last decision's, so its own outcome always shows
   const { setNotice } = flow;
+  // QA-2-1 (F-35, F-39), F-45: a decide refused as stale, with its unsent note. While the task's panel is still drawn it shows the stale
+  // view itself; once the re-read closes the task (someone else decided), the page says nothing was recorded and keeps the note.
+  // Drawn on the ledger source line only in F-45; F-35 and F-39 carry the same notice for their lines.
+  const [staleDecide, setStaleDecide] = useState<{ taskId: string; note: string } | null>(null);
   const onDeciding = useCallback(() => {
     setNotice(null);
     setDecided(null);
+    setStaleDecide(null);
   }, [setNotice]);
   // The decision's notice belongs to the item as re-read after it: it goes when the item moves on or another step is sent.
   const decidedShown = decided !== null && decided.revision === workspace.revision && flow.pending === null && flow.notice === null ? decided : null;
+  const staleShown = workspace.line_key === LEDGER_LINE && staleDecide !== null && !decideTasks.has(staleDecide.taskId) && flow.pending === null && flow.notice === null ? staleDecide : null;
   const hasDecide = workspaceSteps.length > 0;
   useEffect(() => {
     const bar = decideRef.current;
@@ -594,6 +602,16 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             </Callout>
           </div>
         )}
+        {staleShown && (
+          <div role="alert">
+            <Callout kind="warning" className="ws-notice">
+              <span className="ws-stack">
+                <span>{DECIDE_TEXT.stale}</span>
+                {staleShown.note && <span>{DECIDE_TEXT.noteNotSent(staleShown.note)}</span>}
+              </span>
+            </Callout>
+          </div>
+        )}
         {assignFlow.notice?.kind === 'stale' && (
           <div role="alert">
             <Callout kind="warning" className="ws-notice">
@@ -664,7 +682,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             ))}
             {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} />}
             {[...decideTasks].map(([taskId, taskSteps]) => (
-              <InlineDecide key={taskId} id={id} taskId={taskId} steps={taskSteps} page={page} off={flow.pending !== null || flow.allLocked || page.refreshFailed} onDecided={onDecided} onDeciding={onDeciding} />
+              <InlineDecide key={taskId} id={id} taskId={taskId} steps={taskSteps} page={page} off={flow.pending !== null || flow.allLocked || page.refreshFailed} onDecided={onDecided} onDeciding={onDeciding} onStale={(note) => setStaleDecide({ taskId, note })} />
             ))}
             {showPanel && (
               <section ref={decideRef} className={`psl-panel ${hasNext ? 'ws-decide--next' : 'psl-panel--decide'} ws-decide${workspaceSteps.length === 0 && (preset || !(assign && assign.candidates.length > 0)) ? ' ws-decide--info' : ''}${flow.allLocked && hasReconcile ? ' ws-decide--flow' : ''}`} aria-labelledby={`${decideId}-head`} data-form-open={open?.token.startsWith('ws:') || undefined}>
