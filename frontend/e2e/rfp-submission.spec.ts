@@ -117,7 +117,9 @@ for (const [label, viewport] of [
       await expectNoAxeViolations(page);
       await page.getByRole('link', { name: 'Record the outcome' }).click();
       await expect(page).toHaveURL(/\/work\/W-3502\/outcome/);
-      await expect(page.getByText(/Submission pack v1/).first()).toBeVisible();
+      // the phone outcome page asks for the result first; the returned submission line is on the desktop form
+      if (phone) await expect(page.getByRole('heading', { name: 'Record the outcome', level: 1 })).toBeVisible();
+      else await expect(page.getByText(/Submission pack v1/).first()).toBeVisible();
     });
 
     test('Return needs a note: none sends nothing, the note is announced and focused; with a note it re-reads to RETURNED TO PM', async ({ page }) => {
