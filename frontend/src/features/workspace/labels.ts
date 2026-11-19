@@ -66,9 +66,9 @@ export function word<K extends string>(words: Record<K, string>, value: string):
 
 export const agentName = (agent: string) => word(AGENT_NAMES, agent);
 
-/** F-33, F-42: the Finance schedule lines whose boards draw the stations in the workspace, the working agent's card beside
+/** F-33, F-42, F-45: the Finance lines whose boards draw the stations in the workspace, the working agent's card beside
  *  the sections, the phone Drawer, the stopped-station banner and no card for a decided task. Other lines are unchanged. */
-const SCHEDULE_LINES: ReadonlySet<string> = new Set(['income_schedules', 'fixed_assets']);
+const SCHEDULE_LINES: ReadonlySet<string> = new Set(['income_schedules', 'fixed_assets', 'ledger_sources']);
 export const scheduleLine = (lineKey: string | undefined) => lineKey !== undefined && SCHEDULE_LINES.has(lineKey);
 
 // Frontend-owned neutral sentences (spec Assumptions); none of them is a business rule.

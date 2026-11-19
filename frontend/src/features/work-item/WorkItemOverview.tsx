@@ -715,8 +715,8 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
       </div>
     );
     // F-30: the issue follow-up boards draw no exceptions button above the workspace; F-42: nor do the fixed asset boards,
-    // whose holds are a status, a reason and a Next sentence with no button (the button also sat on the phone station bar)
-    after = hasExceptionsLink(item) && item.workspace.line_key !== 'issue_followup' && item.workspace.line_key !== 'fixed_assets' ? (
+    // whose holds are a status, a reason and a Next sentence with no button (the button also sat on the phone station bar); F-45: nor do the ledger source holds
+    after = hasExceptionsLink(item) && item.workspace.line_key !== 'issue_followup' && item.workspace.line_key !== 'fixed_assets' && item.workspace.line_key !== 'ledger_sources' ? (
       <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
         See all exceptions
       </Link>
