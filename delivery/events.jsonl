@@ -3155,3 +3155,11 @@
 {"at":"2026-11-19T01:58:22Z","feature":"F-39","round":4,"kind":"transition","head":"45ae7b660519","from":"IN_REVIEW","to":"INTEGRATED_QA"}
 {"at":"2026-11-19T02:11:14Z","feature":"F-39","round":4,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"45ae7b660519","findings":{"QA-4-1":"low","QA-4-2":"low"},"written_at":"2026-11-19T02:10:41Z"}
 {"at":"2026-11-19T02:11:29Z","feature":"F-35","round":3,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"971bf73adfb9","written_at":"2026-11-19T02:11:28Z"}
+{"at":"2026-11-19T02:12:19Z","feature":"F-39","round":4,"kind":"finding","action":"add","finding":"QA-4-1","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-19T02:12:19Z","feature":"F-39","round":4,"kind":"finding","action":"add","finding":"QA-4-2","by":"qa","severity":"low","owner":"pmo","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-19T02:13:33Z","feature":"F-39","round":4,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"45ae7b660519","findings":{"PMO-4-1":"low","PMO-4-2":"low","PMO-4-3":"low"},"written_at":"2026-11-19T02:13:22Z"}
+{"at":"2026-11-19T02:13:37Z","feature":"F-39","round":4,"kind":"finding","action":"add","finding":"PMO-4-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-19T02:13:37Z","feature":"F-39","round":4,"kind":"finding","action":"add","finding":"PMO-4-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-19T02:13:37Z","feature":"F-39","round":4,"kind":"finding","action":"add","finding":"PMO-4-3","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-19T02:14:21Z","feature":"F-39","round":4,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-19T02:14:21Z","feature":"F-39","round":4,"kind":"transition","head":"45ae7b660519","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
