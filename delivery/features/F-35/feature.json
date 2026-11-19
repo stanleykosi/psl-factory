@@ -125,11 +125,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",

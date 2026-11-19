@@ -3132,3 +3132,7 @@
 {"at":"2026-11-19T01:35:16Z","feature":"F-45","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","contract-change","product-decision"],"reviewers":["technical","ux","ui","security"]}
 {"at":"2026-11-19T01:35:19Z","feature":"F-45","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-19T01:36:38Z","feature":"F-45","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-19T01:42:06Z","feature":"F-40","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-19T01:42:06Z","feature":"F-40","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-19T01:42:27Z","feature":"F-35","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"971bf73adfb9","written_at":"2026-11-19T01:42:20Z"}
+{"at":"2026-11-19T01:42:54Z","feature":"F-40","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
