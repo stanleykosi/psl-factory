@@ -104,6 +104,30 @@
       "at": "2026-11-19T13:39:15Z",
       "seconds": 669.4,
       "evidence_ref": "delivery/features/F-48/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T15:46:33Z",
+      "seconds": 439.2,
+      "evidence_ref": "delivery/features/F-48/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T16:05:19Z",
+      "seconds": 350.7,
+      "evidence_ref": "delivery/features/F-48/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -166,14 +190,28 @@
         "delivery/features/F-48/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T13:41:53Z",
           "head": "8a9755d4f598464231786ff2100fd420a93b31a4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T15:46:33Z",
+          "refs": [
+            "restricted label no longer drawn in the CV-2404 step"
+          ],
+          "head": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "restricted label no longer drawn in the CV-2404 step"
       ]
     },
     {
@@ -189,14 +227,28 @@
         "delivery/features/F-48/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T13:41:53Z",
           "head": "8a9755d4f598464231786ff2100fd420a93b31a4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T15:46:33Z",
+          "refs": [
+            "CV-2404 wrong-user, unknown-id and cannot_reason markup tests"
+          ],
+          "head": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "CV-2404 wrong-user, unknown-id and cannot_reason markup tests"
       ]
     },
     {
@@ -212,14 +264,28 @@
         "delivery/features/F-48/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T13:41:53Z",
           "head": "8a9755d4f598464231786ff2100fd420a93b31a4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T15:46:33Z",
+          "refs": [
+            "Conflicts numbers on every exception; restricted-label wording corrected"
+          ],
+          "head": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Conflicts numbers on every exception; restricted-label wording corrected"
       ]
     },
     {
@@ -235,14 +301,28 @@
         "delivery/features/F-48/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T13:41:53Z",
           "head": "8a9755d4f598464231786ff2100fd420a93b31a4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T15:46:33Z",
+          "refs": [
+            "reason asserted in its own .cmp-chat__cannot element"
+          ],
+          "head": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "reason asserted in its own .cmp-chat__cannot element"
       ]
     }
   ],
@@ -325,7 +405,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "a9bfa180bbb86754f4d9739419127e596b94b8b2",
     "task_branch": "fe-assistant-cant-state",
-    "head_sha": "8a9755d4f598464231786ff2100fd420a93b31a4",
+    "head_sha": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-48",
     "pr_url": null,
     "pr_number": null,
@@ -344,6 +424,7 @@
       "frontend/src/features/assistant/SidePanel.tsx",
       "frontend/src/features/assistant/Thread.tsx",
       "frontend/src/features/assistant/assistant.css",
+      "frontend/src/features/assistant/model.ts",
       "frontend/tests/assistant.test.tsx"
     ]
   },
@@ -436,9 +517,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 2,
+    "verdict": "FAIL",
+    "commit": "d28b8b98fe3f84c959c01d24d5f7aff07497916c"
   },
   "blocked": null
 }
