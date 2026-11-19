@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-35",
   "outcome": "Leadership report: a PMO Lead follows Tola's draft, a leadership reviewer approves and sends it or returns it, and each recipient's delivery shows, with the Tuesday report published without review (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-LEADERSHIP-REPORT"
   ],
@@ -100,15 +100,29 @@
       "at": "2026-11-18T19:46:54Z",
       "seconds": 389.1,
       "evidence_ref": "delivery/features/F-35/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T01:29:57Z",
+      "seconds": 476.9,
+      "evidence_ref": "delivery/features/F-35/round-3/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -134,25 +148,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -386,14 +406,42 @@
         "delivery/features/F-35/round-2/review-qa.md"
       ],
       "raised_by": "qa",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "qa",
           "at": "2026-11-18T20:15:48Z",
           "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T01:29:57Z",
+          "refs": [
+            "a 409 decide keeps the stale notice and unsent note after the task closes"
+          ],
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:32:24Z",
+          "refs": [
+            "Re-ran `npx vitest run tests/leadership-report.test.tsx -t QA-2-1`: 2/2 pass. Both tests assert the sent or returned re-read state, the stale sentence, the unsent note (return only), no `.ws-idecide` panel and exactly one `/decision` POST. The same tests fail 2/2 against the round-2 `Workspace.tsx` and `InlineDecide.tsx`. The e2e reproduces QA's two-tab race at both viewports. I did not re-run it; `checks.sh` exit 0 covers it."
+          ],
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "a 409 decide keeps the stale notice and unsent note after the task closes"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Re-ran `npx vitest run tests/leadership-report.test.tsx -t QA-2-1`: 2/2 pass. Both tests assert the sent or returned re-read state, the stale sentence, the unsent note (return only), no `.ws-idecide` panel and exactly one `/decision` POST. The same tests fail 2/2 against the round-2 `Workspace.tsx` and `InlineDecide.tsx`. The e2e reproduces QA's two-tab race at both viewports. I did not re-run it; `checks.sh` exit 0 covers it."
       ]
     },
     {
@@ -462,6 +510,98 @@
           "by": "qa",
           "at": "2026-11-18T20:15:48Z",
           "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e"
+        }
+      ]
+    },
+    {
+      "id": "TECH-3-1",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`staleDecide` is cleared only by `onDeciding`. Unlike `decided`, it is not tied to `workspace.revision`, so the stale notice would stay through a later re-read that moves the item on again. Expected: it goes when the item moves on, like `decidedShown`. Actual: it stays until the next decide on this page. `frontend/src/features/workspace/Workspace.tsx:244`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T01:32:24Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-1",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The notice does not say what happened instead or what to do. It never says the report was already approved and sent, and the Next card talks only about delivery. A line such as \"Another reviewer already approved it. Copy your note and tell them if it still matters.\" would make the next step obvious.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T01:32:24Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-2",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The notice is lasting only until reload. After reload it and the note are gone (checked). This is acceptable for a page-state notice, but the note is not copyable-by-design beyond that. Fold into UX-3-1 if the copy is revisited.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T01:32:24Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-3",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Focus stays on body after the dialog closes at 390. The alert role announces the notice, but moving focus to it would help keyboard users.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T01:32:24Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
         }
       ]
     }
@@ -616,7 +756,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "6f14afbf81207d0c520572ba012a4684f59da2ba",
     "task_branch": "fe-leadership-report-drafting-review-tuesday",
-    "head_sha": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
+    "head_sha": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-35",
     "pr_url": null,
     "pr_number": null,
@@ -649,6 +789,7 @@
       "frontend/mock/fixtures/work/W-3212.json",
       "frontend/mock/fixtures/work/W-3212.steps.json",
       "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
       "frontend/src/features/workspace/Sections.tsx",
       "frontend/src/features/workspace/Workspace.tsx",
       "frontend/src/features/workspace/labels.ts",
@@ -763,6 +904,22 @@
       "round": 3,
       "head": "15db6f7ce238dc53c4d352ae8bd327bca6f13c8e",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T01:29:58Z",
+      "round": 3,
+      "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T01:32:25Z",
+      "round": 3,
+      "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "reason": null
     }
   ],
   "routing": {
@@ -780,9 +937,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
   },
   "blocked": null
 }

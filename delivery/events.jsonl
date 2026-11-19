@@ -3119,3 +3119,13 @@
 {"at":"2026-11-19T01:31:31Z","feature":"F-36","round":3,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"6e870170b8bd132cd95b60ea26272b5a20146912"}}
 {"at":"2026-11-19T01:31:31Z","feature":"F-36","round":3,"kind":"transition","head":"ba1ee621c715","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-19T01:31:32Z","feature":"F-36","round":3,"kind":"transition","head":"ba1ee621c715","from":"MERGED","to":"DONE"}
+{"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"971bf73adfb9","findings":{"TECH-3-1":"low"},"written_at":"2026-11-19T01:31:57Z"}
+{"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"971bf73adfb9","findings":{"UX-3-1":"low","UX-3-2":"low","UX-3-3":"low"},"written_at":"2026-11-19T01:31:34Z"}
+{"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"971bf73adfb9","findings":{"UI-2-1":"low"},"written_at":"2026-11-19T01:32:24Z"}
+{"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"971bf73adfb9","written_at":"2026-11-19T01:32:24Z"}
+{"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"finding","action":"verify","finding":"QA-2-1","by":"reviewer-technical"}
+{"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"TECH-3-1","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"UX-3-1","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"UX-3-2","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-19T01:32:24Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"UX-3-3","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-19T01:32:25Z","feature":"F-35","round":3,"kind":"transition","head":"971bf73adfb9","from":"IN_REVIEW","to":"INTEGRATED_QA"}
