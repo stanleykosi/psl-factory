@@ -202,6 +202,9 @@ urlpatterns += [path('cases/<uuid:case_id>/hr/payroll-corrections/', payroll_cor
                 path('cases/<uuid:case_id>/hr/payroll-corrections/<int:followup_id>/', payroll_correction_views.desk,
                      name='design_hr_payroll_correction')]
 urlpatterns += [path('cases/<uuid:case_id>/finance/payroll/row-controls/', payroll_row_controls.settings,name='payroll_row_controls')]
+from apps.finance import payroll_question_views
+urlpatterns += [path('cases/<uuid:case_id>/finance/payroll/questions/',payroll_question_views.desk,name='payroll_questions'),
+                path('cases/<uuid:case_id>/finance/payroll/question-routing/',payroll_question_views.routing,name='payroll_question_routing')]
 urlpatterns += [path('cases/<uuid:case_id>/staff/invitations/', staff_views.invites, name='staff_invites'),
                 path('cases/<uuid:case_id>/staff/invitations/<int:invitation_id>/renew/', staff_views.invites, name='staff_renew_invite'),
                 path('cases/<uuid:case_id>/staff/<int:person_id>/remove-access/', staff_views.departure, name='staff_departure'),

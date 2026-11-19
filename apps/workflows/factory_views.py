@@ -640,7 +640,9 @@ def index(request):
         if queue=='decisions' and (row.get('review_needs_update') or row.get('review_ready') or not (row.get('department_wait') or any(t.status=='open' and t.kind=='factory_review' for t in row['tasks']))):continue
         if queue=='unassigned' and row['owner']!='Unassigned':continue
         items.append(row)
-    response=render(request,'factory/queue.html',{'rows':items,'candidates':candidates,'deferred':deferred,
+    from apps.finance.payroll_questions import queue_cards as payroll_question_cards
+    questions=payroll_question_cards(request.user,queue,q,line)
+    response=render(request,'factory/queue.html',{'rows':items,'candidates':candidates,'deferred':deferred,'payroll_questions':questions,
         'queue':queue,'queues':QUEUES,'q':q,'line':line,'line_choices':line_choices,
         'line_title':DEFINITIONS[line]['title'] if line else '', 'as_of':timezone.now(),
         'evaluated':evaluated,'limited':bool(deferred),'sample_mode':bool(items) and all(r['work'].case.synthetic for r in items)})

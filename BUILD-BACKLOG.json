@@ -1,5 +1,21 @@
 {
   "design_consolidation_20261116": {
+    "payroll_hr_questions_20261119":{
+      "status":"postgresql171_172_173_174_hosted_browser_closed_question_flow_verified",
+      "states":["SCR-18-permission"],
+      "process_ids":["F17","F18","F35"],
+      "implemented":["Exact current report metadata-only A04 question intake","Separate nullable versioned routing with draft UI","Human dispatch, HR response, acknowledgement and cancellation","Original source/recipient/HR authority checks and stale-source holds","Participant-only bounded list and shared My Work waits","Append-only PostgreSQL metadata/scope guards","Exact literal currency header preservation"],
+      "failed_170":{"deployment":"2ff09066-c093-42dd-a55f-1e369d8be1ee","passed":3,"failed":1,"not_run":8,"seconds":76.155,"final_exit":1,"queries":957,"predicted_budget":650},
+      "passed_171":{"deployment":"16fe0f04-3289-4261-a972-9988e76bbc9f","passed":14,"seconds":203.409,"final_exit":0,"list_queries_one":861,"list_queries_25":957},
+      "passed_172":{"deployment":"721806db-6318-429a-92f3-fff134089227","passed":13,"seconds":124.591,"final_exit":0,"preview_migration_and_guarded_fixture":true},
+      "passed_173":{"deployment":"bae97b18-c867-4162-b4b8-a7fa5516b89a","passed":15,"seconds":170.830,"final_exit":0,"primary_queue_and_factory_layout_regressions":true},
+      "passed_174":{"deployment":"f24c85a9-dea8-4cb0-9d7a-9d072b242ced","passed":15,"seconds":189.824,"final_exit":0},
+      "runtime_174":{"web":"9d936adf-0445-474a-b547-a27e1d2873d4","worker":"70cb188e-2554-457d-b043-67bc690245c6","status":"SUCCESS","paths_per_service":1740,"root_paths":1739,"mismatches":0},
+      "browser":{"recipient_case":"98062db1-c82a-412c-8168-f31557830077","recipient_report":4,"actual_record_review_send_and_cancel":true,"primary_waiting_view_verified":true,"recipient_private_or_hr_access_added":false,"hr_case":"1d0bb4af-7de5-4e75-a554-68262f1294d6","hr_report":5,"hr_question":1,"actual_hr_reply":"source_review_needed","primary_needs_me_discovery_and_removal_verified":true,"seeded_reviews_and_dispatch":"Explicitly simulated native setup","recipient_acknowledgement":"PostgreSQL passed; separate HR fixture browser acknowledgement pending","phone_body_client":[375,375],"viewport_reset":true,"live_model_evaluation":false},
+      "migration_preserve":"finance0080/0081 applied to retained testDB and preview; preserve bytes",
+      "hod_deferred":["Actual HR respondent and approved routing","Any broader question or private-disclosure contract"],
+      "remaining":"Bound many-distinct-report desk reads and high native baseline, connect actual aggregate-only Assistant through reviewed egress, and complete the separate recipient browser acknowledgement without manufacturing it. Closed-topic questions are verified, not unrestricted chat."
+    },
     "staff_reactivation_20261118":{
       "status":"pg159_160_hosted_browser_restoration_and_fresh_access_verified",
       "states":["SCR-21"],
@@ -29,11 +45,11 @@
       "all_states_accepted":false
     },
     "payroll_row_progress_20261118":{
-      "status":"169_pg_hosted_browser_row_contract_and_recipient_privacy_verified_hr_question_and_staff_fact_interfaces_remain",
+      "status":"169_row_contract_and174_closed_hr_question_verified_assistant_bridge_and_staff_fact_interfaces_remain",
       "states":["SCR-09","SCR-09-error","SCR-18","SCR-18-permission"],
       "source":"design/canvas/finance/project/SCR-09-desktop.dc.html; SCR-18-desktop.dc.html; SCR-18-desktop-permission.dc.html",
       "existing":"Configured CSV/Excel uploads, exact restricted imports, provider reviews, staff matching, HR corrections and aggregate publication exist. Native combine/match/aggregate already retain good rows and propagate parent holds. The former note incorrectly implied that native draft calculations stop.",
-      "actual_gap":"The prior factory/row/currency gaps are implemented and verified in167–169. Remaining SCR18 functions are safe aggregate-recipient→HR questions and explicitly authorised optional staff-name/employment evidence. Current HR contract supplies employee ID, BU and membership dates; do not infer employment departure from membership end or copy design examples as facts. Preserve strict extra-field rejection until an explicit successor source contract is configured.",
+      "actual_gap":"167–169 row/currency and174 closed-topic HR question flows are verified. Remaining SCR18 functions include the actual report-aware Assistant bridge and explicitly authorised optional staff-name/employment evidence. Current HR contract supplies employee ID, BU and membership dates; do not infer employment departure or copy design examples as facts. Preserve strict extra-field rejection until an explicit successor contract is configured. See payroll_hr_questions_20261119 for current evidence and limits.",
       "verification_161":{"deployment":"1b9313d3-5fde-4250-bdd0-c1071081fee2","state":"interrupted_not_passed","observed_passes":45,"observed_failures":1,"in_progress":1,"not_started":44,"final_exit":null,"preview_changes":false},
       "verification_162":{"deployment":"21a5b9a5-e556-45da-9ab2-f500103c9175","passed":5,"seconds":50.242,"final_exit":0,"source_only_fixture":true},
       "verification_163":{"deployment":"574946d3-43ae-4ddf-a99d-b646025a641d","passed":5,"seconds":91.204,"final_exit":0,"preview_changes":false},

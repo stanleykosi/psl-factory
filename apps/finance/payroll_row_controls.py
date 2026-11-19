@@ -65,7 +65,7 @@ def draft(actor,case_id,expected,command,evidence_id):
     position=0
     for provider in source['providers']:
         for layout in provider.get('spreadsheet_layouts',[]):
-            header=command['headers'][str(position)].strip();position+=1
+            header=command['headers'][str(position)];position+=1
             if header:layout['columns']['currency']=header
             else:layout['columns'].pop('currency',None)
     rules.update(format='psl.payroll-merge/v2',duplicate_within_source={
@@ -124,7 +124,7 @@ class RowControlsForm(forms.Form):
         self.fields['evidence'].queryset=Evidence.objects.defer('body').filter(pk__in=proofs).order_by('-pk')
         for item in prepared['headers']:
             name='currency_header_'+item['key']
-            self.fields[name]=forms.CharField(required=False,max_length=100,label=item['provider']+' '+item['format'].upper()+' currency column',
+            self.fields[name]=forms.CharField(required=False,max_length=100,strip=False,label=item['provider']+' '+item['format'].upper()+' currency column',
                 initial=item['value'],help_text='Use the exact source header for a row-currency layout. Leave blank for export-level currency.')
             self.headers.append((item['key'],name))
 

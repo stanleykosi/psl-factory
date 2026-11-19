@@ -94,3 +94,4 @@ from .obligation_models import ObligationNamespace, ObligationClaim, ObligationL
 from .obligation_models import ObligationLegacyAttempt, ObligationLegacyObservation
 from .reminder_models import PaymentReminderDraft, PaymentReminderDispatch, PaymentReminderReceipt, PaymentReminderSetAside
 from .reminder_models import PaymentReminderMailboxMessage
+from .payroll_question_models import PayrollReportQuestion,PayrollReportQuestionEvent

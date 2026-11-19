@@ -151,5 +151,13 @@ def work(actor,limit=25):
         except (PermissionDenied,ValidationError,get_user_model().DoesNotExist):continue
         rows.append(_row('received_department_request',request.case,receipt.pk,request.reference,finding['status'],'approvals',finding='source_verification_required' if finding['status']=='unavailable' else ''));count+=1
         if count>=limit:break
-    return {'rows':rows,'coverage':'Bounded current accessible recorded assignments, delivered department requests, role-eligible reviews and initiated operational work; not an exhaustive task or approval claim',
+    from apps.finance.payroll_questions import inbox as payroll_question_inbox
+    for case,question in payroll_question_inbox(actor,limit):
+        rows.append({'kind':'payroll_hr_question','label':'Staff-cost question for HR','case_id':str(case.pk),
+            'case_title':case.title,'synthetic':case.synthetic,'record_id':question['id'],
+            'reference':question['question'],'status':question['state'],'display_status':{
+                'owner_needed':'HR owner needed','dispatched':'Waiting for HR','answered':'HR reply ready',
+                'recorded':'Ready for your review','held':'Needs current source or authority checks'}.get(question['state'],question['state']),
+            'url':f'/cases/{case.pk}/finance/payroll/questions/'})
+    return {'rows':rows,'coverage':'Bounded current accessible recorded assignments, delivered department requests, role-eligible reviews, HR report questions and initiated operational work; not an exhaustive task or approval claim',
         'authority_from_discovery':False,'effect_tools':[]}

@@ -8,6 +8,7 @@
 <table><thead><tr><th>Business unit</th><th>Staff cost</th></tr></thead><tbody>{% for bu,total in value.by_bu.items %}<tr><td>{{ bu }}</td><td>{{ total|default_if_none:'Unknown' }}</td></tr>{% endfor %}</tbody></table>
 <p>Eligible total: {{ value.eligible_total|default_if_none:'Unknown' }}. Destination: {{ value.destination }}. Source aggregate #{{ value.source_run }}.</p>
 <p>Aggregate disclosure only. This report creates no payroll payment, HR edit or accounting posting.</p>
+<p><a href="{% url 'payroll_questions' case.pk %}?report={{ record_id }}">Ask HR a question</a></p>
 {% else %}
 <p>Restricted source and working values are shown only to current named readers. Unknown values remain unknown. Review exact controls and holds before deciding.</p>
 {% include 'finance/payroll_working_rows.html' %}

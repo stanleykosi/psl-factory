@@ -15,6 +15,7 @@ MERGE='F16.merge_rules'
 MATCH='F17.match_rules'
 REPORT='F18.reporting_rules'
 AUTH='F18.review_authority'
+QUESTION_ROUTE='F18.hr_question_route'
 DEC={'anyOf':[{'type':'string','pattern':r'^-?(0|[1-9][0-9]{0,23})(\.[0-9]{1,8})?$'},{'type':'null'}]}
 KEYS={'type':'array','minItems':1,'maxItems':50,'uniqueItems':True,'items':KEY}
 HEADER={'type':'string','minLength':1,'maxLength':100}
@@ -31,6 +32,10 @@ SCHEMAS={
  MATCH:('schema:psl/payroll-match/v1',obj({'employee_key':{'const':'opaque_exact_case_sensitive'},'hr_purpose':{'const':'payroll_matching'},'membership':{'enum':['whole_period_only','as_of_snapshot']},'multiple_memberships':{'const':'hold'},'missing_membership':{'const':'hold'},'unknown_bu':{'const':'hold'},'hr_write':{'const':False}})),
  REPORT:('schema:psl/payroll-report/v1',obj({'components':{'type':'array','minItems':1,'maxItems':50,'items':obj({'component':KEY,'coefficient':{'type':'string'}})},'decimal_places':{'type':'integer','minimum':0,'maximum':8},'rounding':{'enum':['half_even','half_up','down']},'minimum_employees':{'type':'integer','minimum':1},'small_groups':{'const':'hold_all_publication'},'recipient_ids':IDS,'destination':KEY,'disclosure':{'const':'aggregate_only'},'oracles':{'type':'array','minItems':2,'maxItems':20,'items':obj({'amounts':{'type':'array','minItems':1,'maxItems':50,'items':obj({'component':KEY,'amount':DEC})},'expected':DEC})}})),
  AUTH:('schema:psl/payroll-authority/v1',obj({'human_only':{'const':True},'assignments':{'type':'array','minItems':1,'maxItems':100,'items':obj({'user_id':ID,'role':{'const':'Finance'},'purposes':{'type':'array','minItems':1,'uniqueItems':True,'items':{'enum':['input','combine','match','aggregate','publish']}}})},'independent_reviewer':{'type':'boolean'}}))}
+
+SCHEMAS[QUESTION_ROUTE]=('schema:psl/payroll-hr-question-route/v1',obj({
+ 'owner_id':{'anyOf':[ID,{'type':'null'}]},'action':{'const':'answer_aggregate_question'},
+ 'disclosure':{'const':'report_identity_and_topic_only'},'reply':{'const':'closed_codes_only'}}))
 
 # Explicit successors. Existing reference IDs and v1 source behavior stay intact.
 ACCESS_V2=deepcopy(SCHEMAS[ACCESS][1])
@@ -73,7 +78,13 @@ def report_amount(rows,rules):
 
 def validate_reference(component,target,case,runtime=False):
  v=typed(target,*schema_for(component,target.content))
- if component==ACCESS:
+ if component==QUESTION_ROUTE:
+  if v['owner_id'] is not None:
+   from apps.finance.hr_scope import owner_access
+   owner=get_user_model().objects.filter(pk=v['owner_id'],is_active=True).first()
+   if owner is None:raise ValidationError('A current HR response owner is required')
+   owner_access(owner,case)
+ elif component==ACCESS:
   if v['from_period']>v['to_period'] or len({r['provider'] for r in v['providers']})!=2:raise ValidationError('Two distinct providers and ordered periods required')
   for provider in v['providers']:
    layouts=provider.get('spreadsheet_layouts',[])

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<a href="{% url 'case' case.pk %}">Back to workspace</a>
+<h1>Questions for HR</h1><p>{{ case|workspace_name }}</p>
+<p>Ask about the staff information behind a reviewed report. Individual names and pay stay in the restricted HR view.</p>
+{% if held %}<p role="alert">{{ held }}</p>{% endif %}
+{% if create_form %}<section class="card"><h2>Ask HR a question</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="record">{{ create_form.as_p }}<button>Record question for review</button></form></section>{% endif %}
+{% for card in cards %}<section class="card"><h2>{{ card.question }}</h2><p>Period {{ card.period }} · Report {{ card.publication }}</p>
+{% if card.state == 'recorded' %}<p>Ready for your review. Sending creates an internal wait for the configured HR owner.</p>
+{% elif card.state == 'owner_needed' %}<p>Question recorded. Select and activate an HR response owner before sending.</p>
+{% elif card.state == 'dispatched' %}<p>Waiting for the assigned HR owner.</p>
+{% elif card.state == 'answered' %}<p>HR has responded. Read the reply and acknowledge it.</p>
+{% elif card.state == 'received' %}<p>Reply acknowledged. This question is complete.</p>
+{% elif card.state == 'cancelled' %}<p>Question cancelled. Its history is retained.</p>
+{% else %}<p>The source report or authority changed. Its previous reply is unavailable. Record a fresh question against a current report.</p>{% endif %}
+{% if card.reply %}<p>{{ card.reply }}</p>{% endif %}
+{% if card.owner_name %}<p>HR response owner: {{ card.owner_name }}</p>{% endif %}
+{% if card.can_send or card.can_answer or card.can_receive or card.can_cancel %}
+<form method="post">{% csrf_token %}<input type="hidden" name="revision" value="{{ case.revision }}"><input type="hidden" name="head" value="{{ card.head }}"><input type="hidden" name="question" value="{{ card.id }}">
+{% if card.can_answer %}<label>Your response<select name="reply" required><option value="">Choose a response</option>{% for key,label in reply_choices %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select></label><button name="action" value="answered">Record HR response</button>{% endif %}
+{% if card.can_send %}<button name="action" value="dispatched">Send to HR</button>{% endif %}
+{% if card.can_receive %}<button name="action" value="received">Acknowledge reply</button>{% endif %}
+{% if card.can_cancel %}<button name="action" value="cancelled" formnovalidate>Cancel question</button>{% endif %}
+</form>{% endif %}</section>{% empty %}<p>No question is recorded for your current access. Open a current reviewed report to ask HR.</p>{% endfor %}
+<nav aria-label="Question pages">{% if page > 1 %}<a href="?page={{ previous_page }}">Previous</a>{% endif %}{% if has_next %}<a href="?page={{ next_page }}">Next</a>{% endif %}</nav>
+{% endblock %}

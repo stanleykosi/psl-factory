@@ -2,6 +2,25 @@
   "classification": "Supplemental engineering interfaces for unresolved F16/F17/F18 choices; not actual payroll policy or new D groups",
   "components": [
     {
+      "id": "F18.hr_question_route",
+      "parent_decision_id": "PAYROLL",
+      "schema_ref": "schema:psl/policy-component/F18.hr_question_route/v1",
+      "subject_scope": "Exact case; nullable current HR response owner; aggregate identity and closed topic only",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "F16.input_access_rules",
       "parent_decision_id": "PAYROLL",
       "schema_ref": "schema:psl/policy-component/F16.input_access_rules/v1",
@@ -183,6 +202,10 @@
     }
   ],
   "operation_dependencies": [
+    {
+      "operation": "payroll.question.dispatch",
+      "required_components": ["F18.hr_question_route"]
+    },
     {
       "operation": "payroll.capture",
       "required_components": [

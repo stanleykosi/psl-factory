@@ -188,6 +188,26 @@ class PayrollRowContractTests(TestCase):
 
 
 class PayrollRowConfigurationTests(TestCase):
+    def test_literal_currency_header_survives_form_draft_activation_and_native_import(self):
+        f=fixture(payroll_layouts=[{'format':'csv','delimiter':',','columns':COLUMNS}])
+        prepared=controls.prepare(f['owner'],f['case'])
+        data={'revision':rev(f['case']),'access_id':prepared['access'].pk,'merge_id':prepared['merge'].pk,
+              'access_head':prepared['access_head'],'merge_head':prepared['merge_head'],
+              'row_handling':'hold_conflicting_rows','currency_mode':'row_currency',
+              'currency_header_0':' Currency ','currency_header_1':' Currency ',
+              'evidence':f['e']['policy_decision'].pk}
+        form=controls.RowControlsForm(f['case'],prepared,data)
+        self.assertTrue(form.is_valid(),form.errors)
+        drafts=controls.draft(f['owner'],f['case'].pk,data['revision'],form.command(),f['e']['policy_decision'].pk)
+        for draft in drafts:
+            transition(f['owner'],draft.pk,'validated');transition(f['owner'],draft.pk,'active')
+        self.assertEqual(controls.prepare(f['owner'],f['case'])['headers'][0]['value'],' Currency ')
+        declared={'source_version':'literal-header','extracted_at':(timezone.now()-timedelta(seconds=1)).isoformat(),
+                  'completeness':'complete','control_total':'150'}
+        source=native.capture(f['owner'],f['case'].pk,f['request'].pk,'PAY-B','literal-header','',rev(f['case']),
+            spreadsheet=('csv',b'Ref,Staff ID,Pay code,Total, Currency \nB1,E002,BASIC,150,TEST\n',declared))
+        self.assertTrue(source.metadata['accepted']);self.assertEqual(source.payload['rows'][0]['amount'],'150')
+
     def test_isolated_preview_fixture_preserves_source_work_and_recipient_privacy(self):
         import runpy
         get_user_model().objects.create_user('psl-agent-trial')

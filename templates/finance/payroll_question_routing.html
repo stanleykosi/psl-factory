@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block content %}
+<a href="{% url 'policy' case.pk %}">Back to business rule settings</a><h1>Who receives report questions?</h1>
+<p>Only report identity and the selected question reach HR. This setting grants no access to individual staff records and changes no Finance approval.</p>
+{% if latest %}<p>Latest routing version: {{ latest.revision }}. A saved draft is separate from the active routing rule.</p>{% endif %}
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Save routing draft</button></form>
+<p><a href="{% url 'policy' case.pk %}">Review, validate and activate routing</a></p>
+{% endblock %}

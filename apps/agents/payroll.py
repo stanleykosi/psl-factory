@@ -5,6 +5,23 @@ from apps.finance.payroll_models import PayrollRequest,PayrollInput,PayrollRun
 from apps.policy.payroll_validators import SCHEMAS
 from apps.policy.services import resolve
 from .models import AgentRun
+
+
+def prepare_report_question(actor,publication,topic):
+ """A04's closed metadata tool; no HR/payroll payload or model egress."""
+ from adapters.payroll_questions import command,PACKET
+ from apps.documents.contracts import validate
+ from apps.finance.payroll import read_publication
+ command('record',{'topic':topic})
+ # Native current recipient/source checks precede even the metadata projection.
+ read_publication(actor,publication.pk)
+ run=PayrollRun.objects.only('sha256').get(pk=publication.run_id)
+ packet={'format':'psl.payroll-report-question/v1','publication_id':publication.pk,
+         'report_version':publication.version,'source_run_id':publication.run_id,'source_sha256':run.sha256,
+         'period':publication.request.metadata['period'],'topic':topic,'private_payloads_read':False}
+ validate(PACKET,packet)
+ return packet
+
 @transaction.atomic
 def investigate(actor,case_id,expected):
  c=locked(actor,case_id,'agent.payroll',expected);findings=[]
