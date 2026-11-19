@@ -18,7 +18,7 @@ export default async function (page) {
   await dlg.getByLabel('Received').fill('2026-11-12T09:40');
   await dlg.getByRole('radiogroup', { name: 'How the client wants it submitted' }).getByRole('radio', { name: 'Email' }).click();
   await dlg.getByLabel('Submit to (optional)').fill('procurement@tamarindloans.example');
-  await dlg.getByRole('radiogroup', { name: 'Submission deadline' }).getByRole('radio', { name: 'Stated' }).click();
+  await dlg.getByRole('radiogroup', { name: 'Submission deadline' }).getByRole('radio', { name: 'Stated', exact: true }).click();
   await dlg.getByLabel('Deadline (optional)').fill('2026-11-28T17:00');
   await dlg.getByLabel('Note (optional)').fill('Received from their procurement lead by email.');
   await page.mouse.move(0, 899);
