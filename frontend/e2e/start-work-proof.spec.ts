@@ -101,7 +101,7 @@ const DRAWERS = [
     persona: 'finance_lead',
     file: ['qb_export_je7741.pdf', 45056, '44 KB'],
     start: 'Record source',
-    work: 'W-4402',
+    work: 'W-4201',
     fill: async (page: Page) => {
       await dialog(page).getByLabel('Key').fill('QB-JE-7741');
     },
@@ -207,7 +207,7 @@ for (const [label, viewport, phone] of [
       await expect(dialog(page).getByText('If it started, it will appear in My work.')).toBeVisible();
       await expectNoAxeViolations(page, 'Check again');
       await dialog(page).getByRole('button', { name: 'Check again' }).click();
-      await page.waitForURL('**/work/W-4402');
+      await page.waitForURL('**/work/W-4201');
       const [uncertain, again] = log.starts().slice(-2);
       expect(again.body).toEqual(uncertain.body);
     });
@@ -223,7 +223,7 @@ for (const [label, viewport, phone] of [
       await proof(page).getByRole('button', { name: 'Try again' }).click();
       await expect(proof(page).getByText('Uploaded · 44 KB')).toBeVisible();
       await dialog(page).getByRole('button', { name: 'Record source' }).click();
-      await page.waitForURL('**/work/W-4402');
+      await page.waitForURL('**/work/W-4201');
       expect(log.uploads().map((u) => u.body.case_revision)).toEqual([2, 3]);
       expect([log.starts()[0].body.case_revision, log.starts()[0].body.intake!.proof]).toEqual([4, 'EV-SW-C-FIN-LEDGER-2']);
     });

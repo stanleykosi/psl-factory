@@ -696,9 +696,9 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
         .filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name))
         .filter((name) => (key === 'links' ? 'links' in (JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}) : JSON.stringify(JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}).includes('"items_default"')));
     expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
-    // F-31 (W-26xx), F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) and F-34 hypercare (W-31xx) carry links too; F-33's investigating board (W-2701) and F-42's (W-3901) and F-43's (W-4001) draw Ask Chidi;
+    // F-31 (W-26xx), F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) and F-34 hypercare (W-31xx) carry links too; F-33's investigating board (W-2701) and F-42's (W-3901) F-43's (W-4001) and F-45's (W-4201, W-4211) draw Ask Chidi;
     // F-35's drafting board (W-3201) draws Ask Tola; F-39's escalation boards (W-36xx) draw their links too
-    expect(withKey('links').every((name) => /^W-(23|25|26|31|36)/.test(name) || name === 'W-2701.json' || name === 'W-3201.json' || name === 'W-3901.json' || name === 'W-4001.json')).toBe(true);
+    expect(withKey('links').every((name) => /^W-(23|25|26|31|36)/.test(name) || name === 'W-2701.json' || name === 'W-3201.json' || name === 'W-3901.json' || name === 'W-4001.json' || name === 'W-4201.json' || name === 'W-4211.json')).toBe(true);
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
   });
 
@@ -758,6 +758,22 @@ describe('F-42 fixed asset schedule fixtures (W-3901 to W-3912)', () => {
       expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(body));
       expect(body.sample, name).toBe(true);
       expect(body.workspace.line_key, name).toBe('fixed_assets');
+    }
+  });
+});
+
+describe('F-45 ledger source fixtures (W-4201 to W-4213)', () => {
+  const dir = join(__dirname, '../mock/fixtures/work');
+  const names = readdirSync(dir).filter((name) => /^W-42\d\d(\.[a-z]+)?\.json$/.test(name) && !name.includes('.steps'));
+
+  it('every item and sidecar is schema-valid and marked sample once steps[].verdict and the links are removed', () => {
+    expect(names.filter((name) => /^W-\d+\.json$/.test(name))).toHaveLength(13);
+    expect(names).toHaveLength(20);
+    for (const name of names) {
+      const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
+      expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(body));
+      expect(body.sample, name).toBe(true);
+      expect(body.workspace.line_key, name).toBe('ledger_sources');
     }
   });
 });

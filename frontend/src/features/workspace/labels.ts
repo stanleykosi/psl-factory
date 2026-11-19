@@ -67,9 +67,9 @@ export function word<K extends string>(words: Record<K, string>, value: string):
 
 export const agentName = (agent: string) => word(AGENT_NAMES, agent);
 
-/** F-33, F-42, F-43: the Finance board lines whose boards draw the stations in the workspace, the working agent's card beside
+/** F-33, F-42, F-43, F-45: the Finance board lines whose boards draw the stations in the workspace, the working agent's card beside
  *  the sections, the phone Drawer, the stopped-station banner and no card for a decided task. Other lines are unchanged. */
-const SCHEDULE_LINES: ReadonlySet<string> = new Set(['income_schedules', 'fixed_assets', INTERNAL_RECONCILE_LINE]);
+const SCHEDULE_LINES: ReadonlySet<string> = new Set(['income_schedules', 'fixed_assets', 'ledger_sources', INTERNAL_RECONCILE_LINE]);
 export const scheduleLine = (lineKey: string | undefined) => lineKey !== undefined && SCHEDULE_LINES.has(lineKey);
 /** F-43: the cash forecast line. Its workspace draws the record-what-happened control (in the side column above Next on desktop,
  *  after Next on a phone), so the work item page draws none of its own; its untitled figures are the board's strip and a one-sentence note a caption

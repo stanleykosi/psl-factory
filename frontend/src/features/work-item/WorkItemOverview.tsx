@@ -716,9 +716,9 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
         <NextStep item={item} quiet />
       </div>
     );
-    // F-30: the issue follow-up boards draw no exceptions button above the workspace; F-42, F-43: nor do the fixed asset and
-    // cash forecast boards, whose holds are a status, a reason and a Next sentence with no button (the button also sat on the phone station bar)
-    after = hasExceptionsLink(item) && !['issue_followup', 'fixed_assets', INTERNAL_RECONCILE_LINE].includes(item.workspace.line_key) ? (
+    // F-30: the issue follow-up boards draw no exceptions button above the workspace; F-42, F-43, F-45: nor do the fixed asset,
+    // cash forecast and ledger source boards, whose holds are a status, a reason and a Next sentence with no button (the button also sat on the phone station bar)
+    after = hasExceptionsLink(item) && !['issue_followup', 'fixed_assets', 'ledger_sources', INTERNAL_RECONCILE_LINE].includes(item.workspace.line_key) ? (
       <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
         See all exceptions
       </Link>

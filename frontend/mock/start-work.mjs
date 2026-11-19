@@ -46,7 +46,8 @@ const WORK_IDS = {
   escalation: 'W-1407',
   leadership_report: 'W-1408',
   income_schedules: 'W-4401',
-  ledger_sources: 'W-4402',
+  // F-45: the ledger start lands on the ledger source's investigating page (W-4201, spec Lanes); W-4402 stays as a fixture
+  ledger_sources: 'W-4201',
 };
 const KIND_WORDS = { date: 'date', date_range: 'date range', period: 'period', datetime: 'date and time', integer: 'whole number' };
 
