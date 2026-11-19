@@ -4,11 +4,14 @@
   "project_id": "psl-factory",
   "feature_id": "F-48",
   "outcome": "The Assistant \"can't\" state: a person asks for something their access does not allow and sees that the agent cannot do it, why, and what it checked (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-ASSISTANT"
   ],
-  "operation_ids": ["E-CONVERSATION", "E-CONVERSATIONS"],
+  "operation_ids": [
+    "E-CONVERSATION",
+    "E-CONVERSATIONS"
+  ],
   "acceptance_criteria": [
     "**Desktop board at 1440.** `SCR-05-desktop-cant` reports `pass: true`, `scores.coverageWithExceptions` = 100 and `scores.visual` >= 70 (the D-64/D-83 floor), or a D-83 waiver signed per board by the design engineer where the gap is a field the API lacks. \u2014 verify: the command exits 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass.",
     "**Phone board at 390.** `SCR-05-mobile-cant` passes at `--width 390` with the same thresholds. \u2014 verify: same, a row in `scores.txt`.",
@@ -162,11 +165,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "evidence_refs": [
+        "delivery/features/F-48/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -545,9 +550,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-48/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -613,6 +620,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-19T17:34:51Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-19T17:38:31Z",
       "round": 2,
       "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
       "reason": null

@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: e8ec75b5f15ce7cef13a330e539d9ced0639e366
+COMMIT: 32c97d3df9f2b6f5ae78bf523744c57ee74d83b4
 BUILDER: builder
 LANE: full
 
@@ -77,3 +77,6 @@ Scores in `round-1/fidelity/scores.txt`. Visual: desktop draft 89, review 80.2, 
 - Backend: items listed in the BACKEND-HANDOFF section (G-40-1..9, G-23-4, G-26-1, G-26-3, PMO-3-1, `rfp` omitted on reviewer read, D-RETURN).
 - PSL questions 11 to 15 (test-template pack, submit-by lead time, what "delivered" means, what Return/Reject do, whether the publisher is the reviewer).
 - Demo left running: app 4985 (build predates the last e2e-only commit but contains all source) and mock 4984. The 4985 build directory was rebuilt by the e2e and checks runs; the server was started before that and still answers 200.
+
+## Merge note
+- Merged origin/dlv-00-delivery-setup (F-40 handover, PRs #75/#78) into this branch as 32c97d3d. Conflicts in WorkItemView.tsx, Workspace.tsx and mock-contract.test.ts resolved keeping both sides: screenHeading now also gates titleShown, phone back handles deliveryId then rfpBack, links allow-list is W-(23|25|26|31|35|36|37). checks.sh passed (130 files, 3171 tests, build); tsc and eslint clean.
