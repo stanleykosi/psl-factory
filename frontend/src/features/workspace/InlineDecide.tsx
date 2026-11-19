@@ -330,7 +330,13 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
 
   const basis = task.decision.basis;
   // F-38: where the approved output goes, only when the response says (a sent version names its recipient)
-  const recipient = task.decision.recipient?.trim() ? <p className="ws-consequence">{DECIDE_TEXT.goesTo(task.decision.recipient)}</p> : null;
+  // and the exact version being decided on (decision.version.label) is named with it (TECH-1-1)
+  const recipient = task.decision.recipient?.trim() ? (
+    <>
+      {task.decision.version?.label && <p className="ws-consequence">{task.decision.version.label}</p>}
+      <p className="ws-consequence">{DECIDE_TEXT.goesTo(task.decision.recipient)}</p>
+    </>
+  ) : null;
   // the steps' consequences close the panel as its small print (muted, hint size), as the board draws them
   const consequences = (
     <div className="ws-idecide__after">

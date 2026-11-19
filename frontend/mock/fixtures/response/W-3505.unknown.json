@@ -12,11 +12,11 @@
     },
     {
       "name": "Document review",
-      "status": "current_person"
+      "status": "done"
     },
     {
       "name": "Submission",
-      "status": "not_started"
+      "status": "current_person"
     },
     {
       "name": "Outcome",
@@ -31,15 +31,17 @@
     },
     {
       "name": "reviewed",
-      "status": "current"
+      "status": "earned",
+      "at": "2026-11-26T13:58:00Z"
     },
     {
       "name": "approved",
-      "status": "not_yet"
+      "status": "earned",
+      "at": "2026-11-26T13:58:00Z"
     },
     {
       "name": "sent",
-      "status": "not_yet"
+      "status": "current"
     },
     {
       "name": "receipt_recorded",
@@ -85,7 +87,7 @@
     "name": "Tola",
     "status": "none"
   },
-  "next_step": "A document reviewer approves, returns or rejects this exact pack.",
+  "next_step": "Someone checks with Tamarind Loans before anything is sent again.",
   "sample": true,
   "case_id": "C-2102",
   "case_revision": 3,

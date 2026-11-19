@@ -269,6 +269,7 @@ describe('controls only from you_can_act and the steps sent (AC 8)', () => {
     expect(buttons()).toEqual(['Approve and submit', 'Return', 'Reject']);
     expect(ws().getByText('Approving lets the factory submit this exact pack. If anything in it changes, it comes back to you.', { exact: false })).toBeTruthy();
     expect(ws().getByText('Goes to procurement@tamarindloans.example')).toBeTruthy();
+    expect(ws().getByText('Submission pack v1')).toBeTruthy();
     expect(posts('/api/v1/tasks/T-3502/claim')).toHaveLength(1);
     expect(screen.queryByRole('navigation', { name: 'RFP' })).toBeNull();
     expect(document.querySelector('.work-crumbrow')!.textContent).toContain('DECISION');
@@ -532,6 +533,7 @@ describe('the pack changed (AC 13) and another reviewer decided first (checklist
     onDecide = () => decided('approve', 'T-3506');
     await click('Review the latest');
     await ready();
+    expect(ws().getByText('Submission pack v2')).toBeTruthy();
     await click('Approve and submit');
     await waitFor(() => expect(posts('/decision')).toHaveLength(2));
     expect(posts('/decision')[1].body).toEqual({ verdict: 'approve', expected_revision: 2 });
@@ -551,6 +553,28 @@ describe('the pack changed (AC 13) and another reviewer decided first (checklist
     expect(await screen.findByText(/Your note wasn.t sent: .Wait for the forms\..*/)).toBeTruthy();
     expect(buttons()).not.toContain('Approve and submit');
     expect(posts('/decision')).toHaveLength(1);
+  });
+});
+
+describe('the facts and next step match the state (UX-1-1, UX-1-2)', () => {
+  const approved = '2026-11-26T13:58:00Z';
+  const timeOf = (w: WorkItem, name: string) => w.facts.find((f) => f.name === name);
+  it('submitted pages carry the timeline times, never the draft time', () => {
+    for (const w of [item('W-3502.approve'), item('W-3503'), item('W-3504'), sidecar('W-3505.delivered')]) {
+      expect(timeOf(w, 'approved')?.at).toBe(approved);
+      expect(timeOf(w, 'sent')?.at).toBe('2026-11-26T14:42:00Z');
+      expect(timeOf(w, 'receipt_recorded')?.at).toBe('2026-11-26T14:43:00Z');
+      expect(timeOf(w, 'verified')?.at).toBe('2026-11-26T14:43:00Z');
+    }
+  });
+  it('uncertain and not-delivered pages say the review is done: approved earned, no review pending', () => {
+    for (const w of [item('W-3505.approve'), sidecar('W-3505.not_delivered'), sidecar('W-3505.unknown')]) {
+      expect(timeOf(w, 'approved')?.status).toBe('earned');
+      expect(timeOf(w, 'reviewed')?.status).toBe('earned');
+      expect(timeOf(w, 'sent')?.status).not.toBe('earned');
+      expect(w.stations.find((s) => s.name === 'Document review')?.status).toBe('done');
+      expect(w.next_step).not.toMatch(/approves, returns or rejects/);
+    }
   });
 });
 
