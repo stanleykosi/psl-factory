@@ -3136,3 +3136,10 @@
 {"at":"2026-11-19T01:42:06Z","feature":"F-40","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-19T01:42:27Z","feature":"F-35","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"971bf73adfb9","written_at":"2026-11-19T01:42:20Z"}
 {"at":"2026-11-19T01:42:54Z","feature":"F-40","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-19T01:44:43Z","feature":"F-35","round":3,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"971bf73adfb9","findings":{"PMO-3-1":"low","PMO-3-2":"low","PMO-3-3":"medium","PMO-3-4":"low"},"written_at":"2026-11-19T01:44:33Z"}
+{"at":"2026-11-19T01:44:49Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-19T01:44:49Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"PMO-3-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-19T01:44:49Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"PMO-3-3","by":"pmo-acceptance","severity":"medium","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-19T01:44:49Z","feature":"F-35","round":3,"kind":"finding","action":"add","finding":"PMO-3-4","by":"pmo-acceptance","severity":"low","owner":"product","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-19T01:45:31Z","feature":"F-35","round":3,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-19T01:45:31Z","feature":"F-35","round":3,"kind":"transition","head":"971bf73adfb9","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

@@ -4,11 +4,16 @@
   "project_id": "psl-factory",
   "feature_id": "F-35",
   "outcome": "Leadership report: a PMO Lead follows Tola's draft, a leadership reviewer approves and sends it or returns it, and each recipient's delivery shows, with the Tuesday report published without review (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-LEADERSHIP-REPORT"
   ],
-  "operation_ids": [],
+  "operation_ids": [
+    "E-WORK-ITEM",
+    "E-TASK-CLAIM",
+    "E-TASK-DECIDE",
+    "E-WORK-STEP"
+  ],
   "acceptance_criteria": [
     "**Four states from data.** `/work/W-3201`\u2026`W-3204` show their fixture's status label and tone, sections, agent card, recipients and Next, and nothing else. No board string is in `src` (`grep -rn \"YOUR REVIEW\\|PUBLISHED \u00b7 NO REVIEW\\|RECEIVED BY EVERY RECIPIENT\\|PMO staff\\|Leadership reviewer\\|paid is reported by Finance\" frontend/src` returns nothing). \u2014 verify: `cd frontend && npx vitest run tests/leadership-report.test.tsx`; the pages at 1440 and 390.",
     "**The page computes nothing.** Changing W-3202's \"5 OF 5\" to \"4 OF 5\" changes only that value. Changing W-3203's \"5 PMO staff\" row receipt changes neither the note sentence nor the header. No new or changed file under `frontend/src/features/workspace/` adds `parseFloat`, `Number(`, `reduce(` or a count of recipients or projects. \u2014 verify: component tests on modified copies; `git diff -U0 frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(\"` returns nothing.",
@@ -134,11 +139,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -606,6 +613,98 @@
           "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
         }
       ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` `operation_ids` is empty. From spec.md and readiness.md the in-scope operations are E-WORK-ITEM (GET), E-TASK-CLAIM, E-TASK-DECIDE and E-WORK-STEP (`send_for_review`). E-WORK-ACTION is in the contract, but the page never sends it, and E-REPORT is reference only. Coordinator to fill `operation_ids` with these. I did not edit `feature.json`, because my contract allows one file. All four are in `frontend/src/api/schema.d.ts` per readiness.md.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T01:44:49Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The record still shows SEC-1-2 as OPEN, although `review-security.md` (round 2 and round 3) verifies it via the BACKEND-HANDOFF contract rule. The coordinator should close it in `feature.json`. The same rule answers UX-2-1, which stays open as a backend wait.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T01:44:49Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-3",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Open product items for the design engineer, listed and not waived:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T01:44:49Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-4",
+      "round": 3,
+      "snapshot_ref": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Other non-blocking items, still open: UX-2-1 (the recipients are not named before approval, which waits on D-REPORT-DELIVERY and the unset audience); UX-2-2 (the Reload button at 390); UI-2-1 and QA-2-2 (shared Ask Tola and History target sizes, fix once in the shared frame); QA-2-3 (the spec wording for \"received\" in criterion 8).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-35/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T01:44:49Z",
+          "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -819,9 +918,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-35/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -919,6 +1020,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-19T01:32:25Z",
+      "round": 3,
+      "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-19T01:45:31Z",
       "round": 3,
       "head": "971bf73adfb922d5edd856bb0ce5f051b5b91f1e",
       "reason": null
