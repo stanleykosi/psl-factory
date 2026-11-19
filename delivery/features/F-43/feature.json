@@ -3,26 +3,68 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-43",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Cash forecast \u00b7 base case, Nov\u2013Apr: Finance reviews the six-month forecast, approves, returns or rejects it in place, and records what happened to an uncertain delivery, in four states (contract mock only)",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-FIN-FORECAST"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-4001`\u2026`W-4004` show the status label and tone, stations, sections, agent card, banner, facts, figures, table, note and \"Next\" of their fixture and nothing else; no board string is in `src` (`grep -rn \"CHIDI INVESTIGATING\\|AWAITING FINANCE DECISION\\|EFFECT UNCERTAIN\\|Forecast reviewer\\|CEO's office\\|Kola Foods\\|never moves cash\\|base case\" frontend/src --exclude=schema.d.ts` returns nothing). \u2014 verify: `cd frontend && npx vitest run tests/cash-forecast.test.tsx`; pages at 1440 and 390.",
+    "**Amounts as returned.** On W-4002 the Nov OPENING cell reads \"\u20a622,600,000.00\" at 1440 and at 390 and no cell reads \"\u20a622.6M\" or any \"M\" form; changing the fixture's amount to `\"22600000.10\"` shows \"\u20a622,600,000.10\" exactly, and a 17-digit amount is shown digit for digit. \u2014 verify: component test at both widths.",
+    "**The page computes no forecast, total or variance.** Changing W-4002's Nov IN to `\"1.00\"` leaves Nov CLOSING and Dec OPENING exactly as sent; making Dec CLOSING `unknown: true` leaves Jan OPENING as sent; no total, sum, difference or variance row or figure appears anywhere; no new or changed file under `frontend/src/` adds `parseFloat`, `Number(`, `reduce(`, `compactAmount`, `toFixed` or arithmetic on an amount. \u2014 verify: component tests on modified copies; `git diff -U0 origin/dlv-00-delivery-setup -- frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(|compactAmount|toFixed\"` returns nothing.",
+    "**Unknown is never 0.** On W-4002 Jan IN, Jan CLOSING and the Feb\u2013Apr OPENING and CLOSING cells read \"Unknown\" at both widths; none reads \"\u20a60\", \"\u20a60.00\", \"0\", blank, \"-\" or \"\u2014\"; the table note reads exactly as sent. A real `\"0.00\"` in a modified copy reads \"\u20a60.00\". \u2014 verify: component test.",
+    "**Sample-marked.** Every fixture and sidecar has `sample: true`; with `NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1` every fixture page shows the shared `SampleLabel` (\"SAMPLE DATA\"), and a copy with `sample: false` does not. \u2014 verify: `tests/cash-forecast-mock.test.ts` (every file) and a component test.",
+    "**Unset preparer and inclusion rule are holds with no controls.** W-4006 and W-4007 show the backend's status, the \"NOT SET\" fact and its `next` sentence; there is no Decide panel, no button, no reconcile panel, no claim, decide or action request, and no \"Forecast reviewer\", \"Bisi Ade\" or \"Ada Okafor\" in the workspace. \u2014 verify: component test with a recording `fetch` (zero POSTs); `document.querySelector('.ws-\u2026')` text checked for the names (absent).",
+    "**No invented reviewer.** \"Decide \u00b7 Forecast reviewer\" appears only because W-4002's `required_role` says so: a copy with `required_role: \"Finance Lead\"` shows \"Decide \u00b7 Finance Lead\", and a copy with no `required_role` shows no role name and invents none. \u2014 verify: component tests on modified copies; criterion 1's grep.",
+    "**Decide controls only from `you_can_act` and the steps.** W-4002 shows \"Approve forecast\", \"Return with a note\" and \"Reject\" under \"Decide \u00b7 Forecast reviewer\" with the basis as returned and the label \"Note (needed to return or reject)\"; W-4009 shows only Approve and Return; W-4011 shows neither the `revoke` nor the `post` step; W-4010 draws its step as the existing link to `/work/W-4010/decide?task=T-4010`. W-4005 shows the `prepared_by_you` copy and W-4008 the `not_your_role` copy, each with no button and no claim sent. The same pages for personas `finance_lead`, `ceo` and `pm` draw the same controls; no new or changed code reads `/me` (`git diff origin/dlv-00-delivery-setup -- frontend/src | grep -n \"useMe\\|/api/v1/me\"` returns nothing). \u2014 verify: component tests with three personas and a recording `fetch`.",
+    "**Agent work is not a decision.** On W-4001 Chidi's steps, sources, \"WORKING\" and \"Started 08:40\" render in the agent style with \"Ask Chidi\" (href `/assistant`) in the card footer; the Sources facts show \"ACCEPTED\" as returned; there is no decide control and no forecast figure. \u2014 verify: component test; link href.",
+    "**The uncertain board is drawn only from the response.** W-4003 shows its banner, \"Sent 14 NOV 09:00\", \"Confirmation UNKNOWN\" and its one `next` sentence exactly as sent, and the reconcile panel \"Record what happened\"; changing any of those fixture strings changes only that text; removing `reconcile` and `allowed_actions` from a copy removes the panel and shows the existing \"We are checking what happened. Nothing was sent again.\" lock. There is no \"Cancel delivery\", \"Send again\", \"Resend\", \"Retry\" or send control at either width. \u2014 verify: component tests on modified copies.",
+    "**Reconcile only with the grant.** W-4012 (`reconcile` present, `allowed_actions: []`) shows no reconcile panel and sends no action whatever is pressed; W-4004 and W-4002 have no panel. \u2014 verify: component test with a recording `fetch`.",
+    "**Verified only after the re-read.** W-4004 shows \"VERIFIED\", its six figures, \"The forecast never moves cash or authorises a payment.\" and its `next` from the fixture, with no Record actuals button. Pressing Approve on W-4002 re-reads to \"APPROVED\" and never shows \"Verified\". On W-4003, recording \"It arrived\" shows \"Verified\" only after the re-read serves `W-4003.delivered.json`; with the action answering 200 but the re-read still serving W-4003 (test double), the page does not say \"Verified\", \"Delivered\" or \"received\". \u2014 verify: component tests with a recording `fetch`.",
+    "**Approve.** On W-4002 the page sends one E-TASK-CLAIM to `/api/v1/tasks/T-4002/claim`, then pressing \"Approve forecast\" sends exactly one POST `/api/v1/tasks/T-4002/decision` with the CSRF header and `{verdict: \"approve\", expected_revision: 1}` (valid against the generated request schema, no note, no extra keys); a double press sends one. \u2014 verify: component test; e2e request log.",
+    "**Return and reject need a note.** \"Return with a note\" or \"Reject\" with an empty or blank note sends nothing and shows the note message under the field, announced, focus on it; a note over 2000 characters is refused before sending. With a note, one POST with `verdict: \"return\"` (or `\"reject\"`) and the trimmed note; the re-read shows \"RETURNED\" (or \"REJECTED\"). \u2014 verify: component tests; e2e request log shows no decision POST without a note.",
+    "**No write when the person cannot act.** On W-4005, W-4006, W-4007 and W-4008 no claim, decision or action is sent, whatever is pressed or typed. \u2014 verify: e2e request log (zero task and action POSTs).",
+    "**Backend refusals are shown.** With `psl_mock_scenario` 403 the decide shows the read-only view and no \"approved\"; 409 shows the stale view, keeps the note and sends again only on a new press with the new revision; 422 shows the message under the note. \u2014 verify: component tests; `tests/cash-forecast-mock.test.ts`.",
+    "**Uncertain decide.** A network failure, timeout or 500 on decide re-reads the item before anything else, shows `UncertainNotice`, never shows \"approved\", \"returned\" or \"rejected\" from the click, and sends no second decision automatically; on W-4013 every verdict ends on the re-read \"DECISION NOT CONFIRMED\" with no success words. \u2014 verify: component test with fake timers (one POST after 60 s); e2e with a routed abort.",
+    "**Record what happened.** On W-4003, pressing \"Record and continue\" with no choice sends nothing and shows \"Choose what happened to continue.\"; \"It arrived\" keeps the button off until a proof is uploaded through `ProofField`, then sends one POST `/api/v1/work/W-4003/actions` with CSRF and `{expected_revision, action: \"reconcile\", outcome: \"delivered\", evidence_id, case_revision}`; \"It didn't arrive\" and \"I can't tell yet\" send one POST with that `outcome` and no evidence; a double press sends one; no POST goes to `/steps`, `/claim` or `/decision`. The panel's words are the line-scoped ones (Conflicts 4) and contain no \"client\" or \"invoiced\". \u2014 verify: component tests; e2e request log; `grep -c \"invoiced twice\" frontend/src/features/response/ReconcilePanel.tsx` still 1 (other lines unchanged).",
+    "**Reconcile failures never resend.** A 500, network failure or timeout on the action shows \"We couldn't confirm your answer\u2026\" with Reload and sends nothing again; 409 shows the stale sentence; 403 and 422 show the backend message; after a reload the item's own `reconcile` keeps the lock. \u2014 verify: component tests with a recording `fetch`; `tests/cash-forecast-mock.test.ts` (outcome not in `outcomes` is 422, delivered without issued proof is 422, stale revision 409).",
+    "**Access.** 401 on any read or write \u2192 signed-out with `next=/work/<id>`; 403 and 404 on read look the same and show no title, amount, fact or figure; persona `none` gets the same not-open view with no further call. \u2014 verify: component tests with a recording `fetch`.",
+    "**Phone.** At 390 each state is one column with the same sections, words and values as desktop; the forecast table keeps full amounts and scrolls only inside its focusable region, and the page itself has no sideways scroll; the Decide bar is pinned with the three desktop step labels; \"Return with a note\" and \"Reject\" open the full-height `Drawer` with the note; Escape and Cancel close it and return focus to the button; every button, link, tab, radio row and segment is at least 44 by 44 px (D-92c; links inside sentences exempt, D-95). \u2014 verify: e2e at 390 measuring bounding boxes and `document.documentElement.scrollWidth <= 390`.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 8 boards on a production build at `--width 1440` and `--width 390`; every board's element coverage after approved exceptions is 100%; visual is at least 90, or a board-level waiver citing D-83 in `fidelity-exceptions.json` with visual at least 70 (lower only with a signed one-board floor exception); every exception has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number; none covers a value the data can supply (an amount, a name, a date, a tag, a count, a sentence). The UI reviewer's side-by-side reading finds no fixable gap. \u2014 verify: the fidelity command per board; `round-<N>/fidelity/scores.txt`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on W-4001\u2026W-4007, the open Drawer, the note error, the reconcile panel with its \"choose\" message, the uncertain notice and the not-open view; the table has real column headers and its scroll region a name; every field and radio group labelled; errors announced; Unknown and status words in text, not colour only; visible focus; the agent pulse does not animate under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/cash-forecast.spec.ts`.",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in any `.css`, and no local copy of a component `@/components` exports (`Button`, `Drawer`, `TextArea`, `Callout`, `Panel`, `Tag`, `Segmented`); the decide UI is F-33's `InlineDecide` and the reconcile UI is `ReconcilePanel`, not new copies. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `tests/cash-forecast-mock.test.ts`: every new fixture and sidecar validates against the generated E-WORK-ITEM schema with `steps[].verdict` stripped and every id is in W-4001\u2026W-4099 / T-4001\u2026T-4099; claim then approve on W-4002 serves `W-4002.approve.json` (not verified); return without a note is 422; a stale revision is 409; W-4005's decide is 403; each W-4003 reconcile outcome serves its sidecar; W-4012's reconcile is 403; reset clears. \u2014 verify: `cd frontend && npx vitest run tests/cash-forecast.test.tsx tests/cash-forecast-mock.test.ts tests/mock-contract.test.ts`.",
+    "**Contract not extended.** `git diff --stat origin/dlv-00-delivery-setup` shows no change in `frontend/src/api/**`, `frontend/src/features/decide/**`, `frontend/src/shell/**`, `frontend/src/features/workspace/InlineDecide.tsx`, `proposals.ts`, `frontend/mock/server.mjs`, `frontend/mock/workspace.mjs`, `frontend/mock/response.mjs`, any existing fixture (including `W-1605`, `E-MONTH-END.json`, `mock/fixtures/finance/**`, F-33's `W-27xx`), `apps/**`, `architecture/**`, `design/**` or the protected paths; in `src/features/response/` only the line-scoped words of Conflicts 4 change; every overlay field is listed as a contract proposal in build.md. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing tests green.** `delivery/checks.sh` passes, and the tests listed under Context pass unchanged, including `tests/response.test.tsx` (the client reconcile words and W-1605), `tests/income-schedule*.test.ts(x)` and the month-end link assertions. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md and handoff evidence.** build.md lists commands and results, the 8 scores and waivers, every exception with its Conflicts number, every proposal and backend item, and the held list from \"What is sent\"; `delivery/BACKEND-HANDOFF.md` has an \"Added during F-43\" section with the backend questions under Lanes, including the missing E-TASK-DECIDE idempotency key. \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. This is an approval write on a money figure (E-TASK-DECIDE through F-33's panel) plus a reconcile record on an uncertain internal delivery (E-WORK-ACTION). Both are hard to undo and are audit-bearing. The forecast table carries Unknown amounts that must never read as 0. SURFACES: ui (8 SCR-56 boards); api (the decide, claim and reconcile writes); security (authority only from `you_can_act`, CSRF, 403 and 404 alike, policy holds with no invented approver); contract-change (consumer of F-33's `steps[].verdict` overlay and the G-C-1, G-C-2 proposals). I did not tick payments, because the forecast moves no cash and the actuals are out. I did not tick external-messaging, because the page sends nothing; delivery is the backend's and is held by G-C-7. PRODUCT-ACCEPTANCE is required because the forecast review, its wording and the uncertain-delivery record are new to the client."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-43/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +87,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +101,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-43/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +152,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-FIN-FORECAST",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "006599ef8c8f55c13ad73a5c23a16ce774106e83",
+    "task_branch": "fe-fin-forecast-cash-forecast-review",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-43",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -136,12 +199,41 @@
     }
   },
   "created_at": "2026-11-18T05:16:06Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-18T19:48:54Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T19:48:54Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-43/readiness.md",
+      "delivery/features/F-43/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
