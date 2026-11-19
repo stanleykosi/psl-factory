@@ -1,0 +1,7 @@
+Merge of origin/dlv-00-delivery-setup into fe-leadership-report-drafting-review-tuesday
+Head: eefaf6c5e7f37793673e3d57fce297a55358fad1 (merge d82570ec + fix eefaf6c5)
+Conflicts resolved: BACKEND-HANDOFF.md (both sections kept), mock-contract.test.ts (union), plus WorkItemOverview.tsx, Workspace.tsx, labels.ts, income-schedule-mock.test.ts (scheduleLine from F-42 kept; AGENT_BESIDE_LINES/STATION_LINES now derive from it plus leadership_report).
+Post-merge fixes: mock-contract links guard and income-schedule-mock overlay guard now allow W-3201 / W-32xx.
+Checks (1st run on d82570ec): exit 1, 2 failed / 2861 passed (the two guards above, fixed in eefaf6c5).
+Checks (2nd run on eefaf6c5): exit 1, 2 failed / 2861 passed of 2863; both in rfp-assign.test.tsx (422 acting_role focus), under load ~20-110. Re-run alone: 35/35 pass. Treated as load flake; full gate not re-run a third time.
+E2E (leadership-report, delivery-hypercare, rfp-assign specs): 85 passed.
