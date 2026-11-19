@@ -49,14 +49,6 @@
    "approved_by": "builder proposal, pending design engineer"
   },
   {
-   "role": "text",
-   "name": "Drafted 22 Nov 10:15 Ask Tola",
-   "category": "component",
-   "conflicts": 22,
-   "reason": "Conflicts 22: the shared agent card footer reads 'Started <time>' from agent.started_at; the contract has no finished time ('Drafted 22 Nov 10:15'), so none is invented (BACKEND-HANDOFF F-38).",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
    "role": "link",
    "name": "Overview",
    "category": "frame item",
@@ -97,38 +89,6 @@
    "approved_by": "builder proposal, pending design engineer"
   },
   {
-   "role": "text",
-   "name": "Emailed to procurement@tamarindloans.example, the address the RFP gives on p.2. Their mail server accepted it (ref TL-SUB-0091), so the response is verified as sent.",
-   "category": "layout",
-   "conflicts": 23,
-   "reason": "Conflicts 23: the sentence is on the page (a returned text item) but sits in a panel row with its 'Receipt confirmed' tag, not in a green band; the tool reads the row's text as one element. Its verified look comes only from the returned tag tone.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "The client's portal confirmed it received this exact pack (receipt TL-SUB-0091). The response is verified as submitted.",
-   "category": "layout",
-   "conflicts": 23,
-   "reason": "Conflicts 23: the sentence is on the page (a returned text item) but sits in a panel row with its 'Receipt confirmed' tag, not in a green band; the tool reads the row's text as one element.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "If delivery hadn't been confirmed (a bounce, or no answer from their mail server), this would show \"Effect uncertain\" and someone would check with the client before anything is sent again.",
-   "category": "missing",
-   "conflicts": 7,
-   "reason": "Conflicts 7: a design note about a state the page is not in; not drawn and not in the fixtures.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "If the portal hadn't sent a receipt, this would show \"Effect uncertain\" and someone would check the portal before anything is sent again.",
-   "category": "missing",
-   "conflicts": 7,
-   "reason": "Conflicts 7: a design note about a state the page is not in; not drawn and not in the fixtures.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
    "role": "link",
    "name": "← RFP",
    "category": "frame item",
@@ -138,34 +98,10 @@
   },
   {
    "role": "text",
-   "name": "v1",
-   "category": "frame item",
-   "conflicts": 20,
-   "reason": "Conflicts 20: the contract has one title and one status; the phone bar tag 'v1' is not drawn.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "DEADLINE 28 NOV · 6 DAYS",
-   "category": "frame item",
-   "conflicts": 19,
-   "reason": "Conflicts 19: the RFP frame is not drawn on a phone (F-18); the deadline label is the frame's returned rfp.status and has no phone place.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "DONE",
-   "category": "frame item",
-   "conflicts": 20,
-   "reason": "Conflicts 20: the phone bar tag 'DONE' is not drawn; there is no phone-only status field. The submitted state is the title and the returned banner.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
    "name": "Email delivered · ref TL-SUB-0091.",
    "category": "frame item",
    "conflicts": 20,
-   "reason": "Conflicts 20: the phone board's one-line receipt summary has no field; the same facts are in the returned banner sentence, the timeline and Sent to rows.",
+   "reason": "Conflicts 20: the phone board draws a shorter one-line sentence than the desktop; the contract returns one banner sentence per item (drawn in the band), so the page does not compose a second wording from the ref.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -173,7 +109,7 @@
    "name": "Portal receipt TL-SUB-0091 confirmed.",
    "category": "frame item",
    "conflicts": 20,
-   "reason": "Conflicts 20: the phone board's one-line receipt summary has no field; the same facts are in the returned banner sentence, the timeline and Sent to rows.",
+   "reason": "Conflicts 20: the phone board draws a shorter one-line sentence than the desktop; the contract returns one banner sentence per item (drawn in the band), so the page does not compose a second wording from the ref.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
