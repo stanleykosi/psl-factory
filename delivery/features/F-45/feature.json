@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-45",
   "outcome": "Ledger source LED-0052: a Finance person records what they found in QuickBooks with proof, and an independent reviewer approves or rejects it as a reference, in four states (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-FIN-LEDGER"
   ],
@@ -94,11 +94,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -124,28 +126,150 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-security.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Merge-conflict risk with F-35 and F-39. `git merge-tree` of 4dba97ab against `fe-leadership-report-drafting-review-tuesday` (eefaf6c5) conflicts in four places in `frontend/src/features/workspace/Workspace.tsx`: the labels import, the `LEDGER_LINE`/`REPORT_LINE` constants, the `decidedNow`/`staleShown` block (:233-241) and the `<InlineDecide \u2026>` line (:690). It also conflicts in the allowlists in `tests/income-schedule-mock.test.ts` and `tests/mock-contract.test.ts`. Against `fe-emergency-escalation-escalate-or-not` (45ae7b66) it also conflicts in `WorkItemOverview.tsx` (the exceptions-button condition, :719) and `delivery/BACKEND-HANDOFF.md`. InlineDecide.tsx auto-merges with both, because the hunks are byte-identical. The guidance under Pending in build.md (\"keep the general hunk and drop the LEDGER_LINE gate\") is incomplete. When resolving, drop the gate on `staleShown` only. Keep `notMovedOn`/`decidedLabel`/`decidedShown` and the ledger `onDecided={\u2026 setDecided({ ...notice, taskId })}` wrapper, or AC 9 regresses (coordinator decision 1). Then keep each side's lines in the allowlists and line constants.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Workspace.tsx:240` composes the fallback `'This decision'` inline, as `DECIDE_TEXT.notConfirmed(decidedLabel ?? 'This decision')`. Every other frontend sentence lives in `DECIDE_TEXT`/`WS_TEXT`. Expected: put the fallback in `DECIDE_TEXT`, or reuse the label the InlineDecide notice already carries. Fixtures always send `decision.version.label`, so the fallback cannot be reached today.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`workspace.css:295` hides each desktop station's status word visually and keeps it for screen readers. A sighted user then tells done, current and to-do stations apart only by fill and border (stopped is dashed). The header status tag still gives the state in text, and the design engineer is to review this styling (build.md Pending). Raised for the UX and UI reviewers against AC 20 (\"status words in text, not colour only\"). This finding is not technical.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock's step-evidence upload grant (F-31, `mock/response.mjs:116-133`) does not exclude a step that has a `disabled_reason`. On the mock, the W-4210 capturer can still upload to C-LED-0052. The spec's seam asked for that exclusion. The page sends nothing on W-4210 (tested), and the gap is recorded in BACKEND-HANDOFF, so the real guard is the backend's. The fix belongs to the F-31 seam owner, not this PR (`response.mjs` stays unchanged here, per AC 23).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Every ledger page shows the shared work-item milestone strip \"DRAFTED / REVIEWED / APPROVED / SENT / RECEIPT RECORDED Unknown / VERIFIED\" with \"Earned 14 Nov 16:30\". The SCR-58 boards do not draw it, and \"SENT\" and \"RECEIPT\" are invoice words that mean nothing for a ledger reference. It comes from shared work-item code, not from the F-45 fixtures. It never claims approval early (APPROVED reads \"Not yet\" until the re-read). Suggest that the coordinator decide whether ledger_sources should hide it, as a shared change outside F-45.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -275,6 +399,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-19T03:55:36Z",
+      "round": 1,
+      "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T09:16:41Z",
       "round": 1,
       "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
       "reason": null

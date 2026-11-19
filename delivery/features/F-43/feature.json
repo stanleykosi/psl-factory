@@ -114,11 +114,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -201,7 +203,7 @@
         "delivery/features/F-43/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -218,11 +220,25 @@
           ],
           "head": "5020a86be7320090efa1b2888295f52e205e761a",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-19T09:18:46Z",
+          "refs": [
+            "W-4003 at 1440: the \"Record what happened\" region is reachable, with no nested complementary."
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "89a5caf4"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "W-4003 at 1440: the \"Record what happened\" region is reachable, with no nested complementary."
       ]
     },
     {
@@ -743,6 +759,75 @@
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T03:28:56Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Known shared stale-409 gap (TECH-1-1, F-43 picks it up from dlv-00 before merge). A decide answered 409 (checked through the `x-mock-scenario: 409` header on the decision POST) shows \"This review changed while you were reading it, so nothing was recorded\", but the typed note is gone at 1440 and 390. Spec AC 16 wants the note kept. Same cause as the second reviewer acting after the task closes. Re-test after the dlv-00 merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T09:18:46Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Mock limit: persona `pm` can open W-4002 and sees Approve, Return and Reject. It also sends a claim. Fixtures are not persona-scoped, so the wrong-role journey is proved only by W-4005 (`prepared_by_you`) and W-4008 (`not_your_role`), which show no buttons and send 0 POSTs. The real backend must refuse it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T09:18:46Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A 403 on decide (header scenario) draws the \"This decision needs a Forecast reviewer. You can't approve, return or reject it.\" read-only view and no success words, but the status stays AWAITING FINANCE DECISION until a reload. This matches the spec's \"keyed on the re-read cannot_act_reason\". Noted because the mock's re-read still says the user can act.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T09:18:46Z",
           "head": "5020a86be7320090efa1b2888295f52e205e761a"
         }
       ]

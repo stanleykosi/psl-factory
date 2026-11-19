@@ -1,4 +1,5 @@
-VERDICT: PASS (conditional on design engineer signing the exceptions and waivers; no blocking finding)
+VERDICT: PASS
+NOTE: no blocking finding; the exceptions and waivers wait for the design engineer's signature.
 REVIEWER: reviewer-ui
 COMMIT: 4dba97ab6ee7dd7c97f33f51a63d28750636cb58
 AUTHORITY: delivery UI review
