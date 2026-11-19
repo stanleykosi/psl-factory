@@ -3539,3 +3539,4 @@
 {"at":"2026-11-19T17:44:25Z","feature":"F-49","round":0,"kind":"created","tasks":["FE-RFP-INTAKE"]}
 {"at":"2026-11-19T17:44:25Z","feature":"F-50","round":0,"kind":"created","tasks":["FE-MILESTONE-COMPLETE"]}
 {"at":"2026-11-19T17:44:25Z","feature":"F-51","round":0,"kind":"created","tasks":["FE-M2A-PROOF"]}
+{"at":"2026-11-19T17:46:16Z","feature":"F-50","round":0,"kind":"transition","reason":"NOT-READY: the completion write waits on a PSL decision (who may press 'Mark complete' and whether it auto-starts the invoice draft; PSL-DECISIONS pack) and the completion endpoint is missing from schema.d.ts (backend).","from":"PLANNED","to":"BLOCKED"}

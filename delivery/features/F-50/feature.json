@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-50",
   "outcome": null,
-  "state": "PLANNED",
+  "state": "BLOCKED",
   "task_ids": [
     "FE-MILESTONE-COMPLETE"
   ],
@@ -138,7 +138,16 @@
   "created_at": "2026-11-19T17:44:25Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "BLOCKED",
+      "at": "2026-11-19T17:46:16Z",
+      "round": 0,
+      "head": null,
+      "reason": "NOT-READY: the completion write waits on a PSL decision (who may press 'Mark complete' and whether it auto-starts the invoice draft; PSL-DECISIONS pack) and the completion endpoint is missing from schema.d.ts (backend)."
+    }
+  ],
   "routing": null,
   "gate": {
     "round": 0,
@@ -146,5 +155,9 @@
     "verdict": null,
     "commit": null
   },
-  "blocked": null
+  "blocked": {
+    "from": "PLANNED",
+    "reason": "NOT-READY: the completion write waits on a PSL decision (who may press 'Mark complete' and whether it auto-starts the invoice draft; PSL-DECISIONS pack) and the completion endpoint is missing from schema.d.ts (backend).",
+    "at": "2026-11-19T17:46:16Z"
+  }
 }
