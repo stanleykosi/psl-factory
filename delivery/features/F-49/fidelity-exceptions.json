@@ -66,7 +66,7 @@
   },
   {
    "role": "text",
-   "name": "×",
+   "name": "\u00d7",
    "category": "component",
    "conflicts": 8,
    "reason": "Conflicts 8: the close control is a button named Close, not text.",
@@ -82,7 +82,7 @@
   },
   {
    "role": "text",
-   "name": "New client · they'll be added to the client register",
+   "name": "New client \u00b7 they'll be added to the client register",
    "category": "claim",
    "conflicts": 1,
    "reason": "Conflicts 1: not drawn; no operation creates a client (G-23-1).",
@@ -122,7 +122,7 @@
   },
   {
    "role": "text",
-   "name": "Tamarind Loans Ltd ▾",
+   "name": "Tamarind Loans Ltd \u25be",
    "category": "sample data",
    "conflicts": 11,
    "reason": "Conflicts 11: text inside the client picker, matched by control; the page starts empty.",
@@ -153,56 +153,8 @@
    "approved_by": "builder proposal, pending design engineer"
   },
   {
-   "role": "text",
-   "name": "Client or prospect",
-   "category": "scroll-capture",
-   "conflicts": 9,
-   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "RFP reference",
-   "category": "scroll-capture",
-   "conflicts": 9,
-   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "Received",
-   "category": "scroll-capture",
-   "conflicts": 9,
-   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "Submit to",
-   "category": "scroll-capture",
-   "conflicts": 9,
-   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit. Page label reads 'Submit to (optional)'.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "Deadline",
-   "category": "scroll-capture",
-   "conflicts": 9,
-   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit. Page label reads 'Deadline (optional)'.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "Note",
-   "category": "scroll-capture",
-   "conflicts": 9,
-   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit. Page label reads 'Note (optional)'.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
    "role": "link",
-   "name": "← My work",
+   "name": "\u2190 My work",
    "category": "frame",
    "conflicts": 8,
    "reason": "Conflicts 8: the phone form is a bottom sheet; the page bar is not drawn.",
@@ -213,7 +165,7 @@
    "name": "Opens a new pre-engagement workspace",
    "category": "claim",
    "conflicts": 2,
-   "reason": "Conflicts 2: not drawn; the sheet keeps 'Step 2 of 2 · change line'.",
+   "reason": "Conflicts 2: not drawn; the sheet keeps 'Step 2 of 2 \u00b7 change line'.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
