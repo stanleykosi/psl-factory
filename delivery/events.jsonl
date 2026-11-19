@@ -3408,3 +3408,5 @@
 {"at":"2026-11-19T10:50:23Z","feature":"F-45","round":1,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"9fd0dfa6d72f381f68afd30c29c4f8e8fb5f53fb"}}
 {"at":"2026-11-19T10:50:24Z","feature":"F-45","round":1,"kind":"transition","head":"af1d1c8d3629","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-19T10:50:24Z","feature":"F-45","round":1,"kind":"transition","head":"af1d1c8d3629","from":"MERGED","to":"DONE"}
+{"at":"2026-11-19T11:03:30Z","feature":"F-48","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":396.7,"commit":"0a7196f6eaf9"}
+{"at":"2026-11-19T11:11:14Z","feature":"F-46","round":0,"kind":"transition","reason":"Duplicate of F-12 (FE-ALERTS delivered in PR #18, merge 537607ea); the other SCR-15 boards belong to FE-ALERTS-MENU part 2 (D-SIGNIN) and T-ALERTS (D-ALERT-PROVIDERS). Closed on the design engineer's instruction, 19 Nov.","from":"BLOCKED","to":"CLOSED"}
