@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-37",
   "outcome": "RFP response, part 1: the PM works through the RFP's requirements inside the RFP frame, and accepts, edits or replaces each of Tola's suggested answers (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-RFP-RESPONSE"
   ],
@@ -130,8 +130,410 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`WorkItemOverview.tsx` (`rfpPage`) drops every task panel on desktop for any `rfp_response` item that has `rfp`, not just the team-input task the tab and Record reach. An actionable task of another kind (a decision task) would have no entry point. Expected: hide only tasks with `response.variant === 'team_input'` that the frame links to, as `RfpFrame` already selects them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Sections.tsx` changes \"Suggested by <agent>\" for every line: it now shows whenever a tag label lacks the agent's name, where before any tag hid it. Only W-2002 is affected today and it still hides it, but this is not scoped to rfp_response. Gate it on the line, or note it for the F-30 and F-31 owners.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`StepForm.tsx` choice prefill from `initial` applies to every line that passes `itemValues` (F-23, F-30, F-31). It is correct, but unscoped, and no other line has a test for it. The same goes for `inSide` moving figures and checklist to the side column: it applies to W-2002 and W-2006, and their tests pass.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`RfpFrame.tsx`: when the person has no actionable team-input task (for example W-3404), Team input falls back to `work(target)`, a link to the page you are already on. Draw it as plain text, or leave it as the page did before.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Workspace.tsx` `sideNote` and the `ws-side` condition repeat `RFP_LINE && !phone` four times. One local `rfpDesktop` would be simpler.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Record team input drawer at 1440 (height 844): the \"Record input\" button sits over the Note field, so the field is cut off until you scroll. Shared F-18/F-31 drawer, not part-1 code. Seen in a screenshot, not confirmed at other heights.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Add requirement empty-field message reads \"Add rfp page to continue.\" (lowercase \"rfp\", built from the field label). Expected \"Add the RFP page to continue.\" Shared StepForm.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone, W-3402: a red \"RECORD TEAM INPUT\" card says \"Only a PM can decide. You are PM.\" above the table, which desktop does not draw. It repeats the Record buttons and the wording is unhelpful. The phone header also shows \"revision 7\", a technical detail.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone: the select-all row is an empty bordered box with a lone checkbox, with no visible label. The accessible name is \"Select all shown rows\". A visible \"Select all\" would be clearer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After \"Accept selected\" or a single accept, the \"N selected\" count carries over (4 selected, then 3 selected after R-07 is accepted) while the accepted row stays in the list. Fixture-driven but could confuse. Clearing the ticks after a successful write would be safer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "\"Accept selected\" is drawn as a second blue primary button on the review, edit and reject pages. The board draws it as an outlined secondary button beside \"1 selected\", and spec.md line 92 does not mark `accept_selected` as primary (only `accept` is). Expected: `emphasis: \"secondary\"` (or no emphasis), so \"Accept answer\" is the only primary in view. Actual: `frontend/mock/fixtures/work/W-3402.json:181` (and the same step in W-3403/W-3404) has `\"emphasis\": \"primary\"`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "On the desktop default board Tola's note is in the wrong place and below the fold. The board draws Progress, then Tola's note, then Before review and Send for review in the right column. The page draws Progress, Before review, Decide, and only then Tola's note, at y\u22481490 against y\u2248506 on the board (report.json \"misplaced\": Text \"Tola\"). Expected: the note directly after the Progress section in the side column. Actual: `frontend/src/features/workspace/Workspace.tsx:~822` appends `<AgentNote>` after all the side sections.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The review, edit and reject boards draw only the filtered table and the \"Review Tola's suggestion\" panel, and spec.md line 92 (W-3402) lists only `table` and `suggestions`. The fixtures also return Tola's note and the \"Before review\" checklist, which add about 800px to the side column on desktop and two more sections on phones. These are the \"extra\" items in the three desktop review-state reports and a large part of their visual gap (71.0, 71.0, 70.5). Expected: those sections left out of W-3402, W-3403 and W-3404, or Conflicts updated to say they are wanted. Actual: `frontend/mock/fixtures/work/W-3402.json:170` (`agent_note`) and `:466` (`before_review`); W-3403 `:170`, `:466`; W-3404 `:170`, `:394`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The review panel shows \"Tola\" twice and its \"Status\" exception has the wrong reason. (a) The panel's name line shows \"Tola\" (`Sections.tsx:500`, `section.agent`). This round's change at `Sections.tsx:354` adds \"Suggested by Tola\" under the item whenever the tag label does not contain the agent's name, so \"Tola\" appears twice. The board shows neither line; it shows a \"Tola's suggested answer\" heading above the answer box. Expected: one attribution only. (b) On SCR-26-desktop-review and SCR-26-mobile-review, the board draws a \"Status\" control in the panel before any form opens (Addressed / Clarify / Out of scope). The page draws a returned \"ADDRESSED\" tag instead. The exception's reason (\"field labels are drawn by the shared step form\") is only true on the edit and reject boards. Expected: a separate exception under its own Conflicts item that names the missing status control on the review panel, so the design engineer signs it knowingly.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone stacked table: status tags stretch across the value column (measured 204px live at 390, against compact tags on the board and 136px on desktop). The select-box cell also leaves a short loose rule under each checkbox. Cause: `.ws-table--stack td[data-label] { display: grid; \u2026 }` at `frontend/src/features/workspace/workspace.css:169` stretches the tag. Expected: tags at their natural width (for example, `justify-items: start` on the value cell) and no loose rule. This rule is shared, so check the F-30 and F-31 stacked tables after the change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:44:20Z",
+          "head": "089037b2cde16d3877db4e4aed27068017c50a35"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+          "evidence_refs": [
+            "delivery/features/F-37/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-37/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+          "evidence_refs": [
+            "delivery/features/F-37/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
+          "evidence_refs": [
+            "delivery/features/F-37/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -223,7 +625,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -249,6 +651,22 @@
       "round": 1,
       "head": "089037b2cde16d3877db4e4aed27068017c50a35",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T03:44:21Z",
+      "round": 1,
+      "head": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T03:44:22Z",
+      "round": 2,
+      "head": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "reason": null
     }
   ],
   "routing": {
@@ -264,10 +682,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "089037b2cde16d3877db4e4aed27068017c50a35"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
