@@ -1,0 +1,168 @@
+{
+  "id": "W-4001",
+  "title": "Cash forecast · base case, Nov–Apr",
+  "line": "Cash forecast",
+  "reference": "FC-0014",
+  "state": "processing",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "current_agent"
+    },
+    {
+      "name": "Calculate",
+      "status": "not_started"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Group rows",
+      "status": "not_started"
+    },
+    {
+      "name": "Group review",
+      "status": "not_started"
+    },
+    {
+      "name": "Chidi drafts",
+      "status": "not_started"
+    },
+    {
+      "name": "Publish",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Read opening balances",
+        "status": "done",
+        "source": "3 BANK ACCOUNTS · 31 OCT"
+      },
+      {
+        "text": "Aged open invoices",
+        "status": "done",
+        "source": "9 INVOICES · ₦31.4M"
+      },
+      {
+        "text": "Carried over last forecast's assumptions",
+        "status": "done",
+        "source": "FC-0013"
+      },
+      {
+        "text": "Hand to calculation",
+        "status": "not_started"
+      }
+    ],
+    "started_at": "2026-11-12T07:40:00Z"
+  },
+  "next_step": "Chidi is reading the opening balances, open invoices and last assumptions. The forecast is calculated when Chidi hands it over.",
+  "sample": true,
+  "workspace": {
+    "line_key": "cash_forecast",
+    "screen": "SCR-56",
+    "view": "investigating",
+    "status": {
+      "label": "CHIDI INVESTIGATING",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "sources",
+        "kind": "facts",
+        "title": "Sources",
+        "items": [
+          {
+            "id": "S-1",
+            "label": "Opening balances",
+            "value": "ACCEPTED",
+            "tag": {
+              "label": "ACCEPTED",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "S-2",
+            "label": "Assumptions workbook",
+            "value": "ACCEPTED",
+            "tag": {
+              "label": "ACCEPTED",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "S-3",
+            "label": "Payroll estimate",
+            "value": "ACCEPTED",
+            "tag": {
+              "label": "ACCEPTED",
+              "tone": "verified"
+            }
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "key": "ask_chidi",
+        "label": "Ask Chidi",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "forecasts",
+          "label": "FORECASTS"
+        },
+        {
+          "value": "FC-0014",
+          "label": "FC-0014"
+        }
+      ]
+    },
+    "revision": 3
+  }
+}

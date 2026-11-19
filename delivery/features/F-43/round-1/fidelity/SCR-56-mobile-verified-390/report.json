@@ -1,0 +1,494 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T01:46:06.805Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-43/design/canvas/finance/project/SCR-56-mobile-verified.dc.html",
+  "boardName": "SCR-56-mobile-verified.dc.html",
+  "pageUrl": "http://localhost:4895/work/W-4004",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-43/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "12 board item(s) are missing from the page and are not approved exceptions (coverage 29.4% with exceptions, needs 100%).",
+    "Visual match 72.6 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 29.4,
+    "coverageWithExceptions": 29.4,
+    "visual": 72.6
+  },
+  "visual": {
+    "score": 72.6,
+    "allCellsScore": 82.2,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 1527,
+    "mismatchedCells": 418
+  },
+  "coverage": {
+    "total": 17,
+    "found": 5,
+    "coverage": 29.4,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FC-0014",
+        "pageName": "FC-0014",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 231,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 182,
+          "y": 0,
+          "w": 50,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Received",
+        "pageName": "Cash forecast · base case, Nov–Apr",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Received\" on the board, \"Cash forecast · base case, Nov–Apr\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "STATION 8 OF 8 · VERIFIED",
+        "pageName": "STATION 8 OF 8 · VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 118,
+          "w": 358,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 181,
+          "w": 180,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "pageName": "VERIFIED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Mono on the board, IBM Plex Sans on the page",
+          "text size 10px on the board, 12px on the page",
+          "weight 400 on the board, 600 on the page",
+          "text colour #FFFFFF on the board, #16502F on the page",
+          "background none on the board, #DDEFE3 on the page"
+        ],
+        "boardBox": {
+          "x": 262,
+          "y": 205,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 73,
+          "h": 23
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← My work",
+        "key": "link: ← My work",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CALC",
+        "key": "text: CALC",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 155,
+          "w": 100,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "12 Nov",
+        "key": "text: 12 Nov",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 168,
+          "w": 49,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEW",
+        "key": "text: REVIEW",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 155,
+          "w": 100,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "13 Nov",
+        "key": "text: 13 Nov",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 168,
+          "w": 49,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFT",
+        "key": "text: DRAFT",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 155,
+          "w": 102,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "13 Nov",
+        "key": "text: 13 Nov",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 168,
+          "w": 49,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PUBLISHED",
+        "key": "text: PUBLISHED",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 205,
+          "w": 100,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "14 Nov",
+        "key": "text: 14 Nov",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 218,
+          "w": 49,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPTS",
+        "key": "text: RECEIPTS",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 205,
+          "w": 100,
+          "h": 13
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2/2",
+        "key": "text: 2/2",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 218,
+          "w": 25,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "14 Nov",
+        "key": "text: 14 Nov",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 218,
+          "w": 49,
+          "h": 19
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"FC-0014\"",
+        "kind": "Text",
+        "name": "FC-0014",
+        "boardBox": {
+          "x": 231,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 182,
+          "y": 0,
+          "w": 50,
+          "h": 56
+        },
+        "reasons": [
+          "across the page: right on the board (66% across), middle on the page (53% across)"
+        ]
+      },
+      {
+        "label": "Text \"STATION 8 OF 8 · VERIFIED\"",
+        "kind": "Text",
+        "name": "STATION 8 OF 8 · VERIFIED",
+        "boardBox": {
+          "x": 16,
+          "y": 118,
+          "w": 358,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 181,
+          "w": 180,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Heading \"Received\"; on the page it comes after Text \"VERIFIED\""
+        ]
+      },
+      {
+        "label": "Text \"VERIFIED\"",
+        "kind": "Text",
+        "name": "VERIFIED",
+        "boardBox": {
+          "x": 262,
+          "y": 205,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 73,
+          "h": 23
+        },
+        "reasons": [
+          "across the page: right on the board (80% across), left on the page (13% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "heading",
+        "name": "NEXT",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 545,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As months close, record actual cash against the forecast.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 582,
+          "w": 326,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 12
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-43/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

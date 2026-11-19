@@ -212,3 +212,23 @@ Answered "Sign-off list 2" in delivery/NIGHT-LOG-2026-11-18.md. F-34 hypercare p
 
 ## D-120 · F-36 waiver, exceptions and product acceptance signed (18 Nov 2026, design engineer: "i have signed off f36. go ahead")
 F-36 RFP intake, assign the accountable PM (Sign-off list 3): the SCR-24 phone waiver (75.6), the 18 exceptions, product acceptance (the panel over My work's Unassigned list; the PM only from the backend's candidates; the mock-only `pmo_lead` persona). QA-2-2 (shared ValidationSummary) left as a follow-up. Merge into dlv-00 approved.
+
+## D-121 · F-35 waivers, exceptions and product acceptance signed (19 Nov 2026, design engineer: "go on with f35 sign off")
+F-35 leadership report (Sign-off list 3): the 8 visual waivers (71.9–86.6) and 23 exceptions, and product acceptance on the contract mock. Read as signing everything as presented. UX-2-3: the partial-delivery banner stays green as the board draws it. The stale-decision notice is accepted as built; its polish (UX-3-1..3: no next-step hint, gone on reload, focus not moved; TECH-3-1: not tied to the revision) is left as a follow-up. If the design engineer meant either differently, it's a small revertible change. Merge into dlv-00 approved.
+
+## D-122 · F-39 waivers, exceptions, shared fix and product acceptance signed (19 Nov 2026, design engineer: "Sign F-39")
+F-39 emergency escalation (Sign-off list 3): the 8 visual waivers (75.5–87.1) and 34 exceptions; the shared stale-decision fix in InlineDecide/Workspace, which also changes F-33's income line and goes beyond spec AC 22 (PMO-4-2); the round-1 coordinator decisions (the backend's question drawn, no empty inputs, the time-only footer exception, the F-16 eyebrow wording); and product acceptance on the contract mock (part 2 and the CTO pre-authorisation held). Follow-ups: F-33 two-reviewer test; W-3602 send-for-review fixture (QA-4-1). Merge into dlv-00 approved.
+
+## D-123 · Cost plan adopted (19 Nov 2026, design engineer: "Adopt all five")
+After the weekly usage limit ran out (reset Sun 22 Nov 03:00), five changes. They replace D-64's model choices and keep every gate and the user's sign-off.
+1. Builders run on Sonnet. Use Opus only after a fix has failed twice.
+2. Reviewers: UI and QA on Sonnet. Opus only for security and technical review on high-risk (money/security) features. PMO acceptance and the approver run as one Sonnet pass; the coordinator writes decision.md from it.
+3. One fidelity run per round, strictly. At 70 or above, write a waiver; don't iterate on the score.
+4. Builders work through delivery/builder-checklist.md before handing in. A bug that recurs across features is fixed once in shared code.
+5. 2–3 builds at a time, not 4. Features that change the same shared files (Workspace.tsx, InlineDecide.tsx, WorkItemOverview.tsx, labels.ts, Sections.tsx, mock-contract tests) go one after another.
+
+## D-124 · F-43 waivers, floor exceptions, wording and product acceptance signed (19 Nov 2026, design engineer: "Sign F-43 as is")
+F-43 Finance cash forecast review, part 1 (Sign-off list 3): the 8 visual waivers, including the two floor exceptions on the verified boards (55.6, 51.9; frame offset), and the 28 exceptions. The approved option wording "It arrived… received" is kept as the board draws it, and spec AC 12's ban on "received" is relaxed for that option label. The shared facts-tag change on the income and fixed-asset "NOT SET" facts (TECH-2-1) is accepted. Product acceptance is given on the contract mock. Before merging: take in dlv-00 (the shared stale fix) and add a two-reviewer test.
+
+## D-125 · F-45 signed; Option B chosen for the re-check sentence (19 Nov 2026, design engineer: "Sign, choose Option B")
+F-45 ledger source, part 1 (Sign-off list 3): the 7 visual waivers and the exceptions, except the Conflicts 13 side-note exception. For that one the design engineer chose Option B: the backend sends the re-check sentence as `workspace.next`, and the frame draws it in the side column as the board does. That changes the mock fixture plus the backend handoff, and the exception is removed once the builder makes the change. The ledger-only "approved only after the re-read confirms it" behaviour is accepted (F-33's income line stays a follow-up). Product acceptance is given on the contract mock. Merge into dlv-00 approved after the Option B change and the dlv-00 merge.

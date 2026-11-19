@@ -3,26 +3,75 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-45",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Ledger source LED-0052: a Finance person records what they found in QuickBooks with proof, and an independent reviewer approves or rejects it as a reference, in four states (contract mock only)",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-FIN-LEDGER"
   ],
-  "operation_ids": [],
-  "acceptance_criteria": [],
+  "operation_ids": [
+    "E-WORK-ITEM",
+    "E-WORK-STEP",
+    "E-EVIDENCE-UPLOAD",
+    "E-TASK-CLAIM",
+    "E-TASK-DECIDE"
+  ],
+  "acceptance_criteria": [
+    "**Four states from data.** `/work/W-4201`\u2026`W-4204` show their fixture's status label and tone, stations, sections, agent card, facts and text, and nothing else. No board string is in `src`: `grep -rn \"CHIDI INVESTIGATING\\|RECORD WHAT YOU FOUND\\|JE-7741\\|NO PREDECESSOR\\|Ledger reviewer\\|re-check reopens\" frontend/src` returns nothing. \u2014 verify: `cd frontend && npx vitest run tests/ledger-source.test.tsx`; the four pages at 1440 and 390.",
+    "**No amount and no computing.** No page or sidecar of this feature shows a currency sign or an amount. Changing a fact value in a fixture copy changes only that text. The diff under `frontend/src` adds no `parseFloat`, `Number(`, `.reduce(` or `compactAmount`. \u2014 verify: component test over every fixture (`document.body.textContent` has no \"\u20a6\" and no digit-group amount); `git diff -U0 dlv-00-delivery-setup -- frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(|compactAmount\"` returns nothing.",
+    "**Unknown is never 0, blank or a dash.** W-4211 shows \"Unknown\" for Treatment and draws the third agent step with no invented source. The Treatment cell is never empty, \"0\", \"-\" or \"\u2014\". \u2014 verify: component test on W-4211.",
+    "**Sample-marked.** Every fixture page shows the shared `SampleLabel` (\"SAMPLE DATA\") because the record says `sample: true`; a copy with `sample: false` does not. \u2014 verify: component test.",
+    "**Reviewer not set is a hold.** W-4205 shows the backend's status, the \"Who reviews ledger sources \u00b7 NOT SET\" fact and its `next` sentence. There is no Decide panel, no button and no claim or decide request, and no reviewer's name or role appears anywhere on the page. No page of this feature draws a control for any of the three ledger keys. \u2014 verify: component test with a recording `fetch` (zero POSTs); `document.body.textContent` checked for \"Ada Okafor\" and \"Ledger reviewer\" (both absent).",
+    "**Unknown or More than one is the backend's hold.** On W-4208, choosing Unknown with proof and pressing \"Record observation\" sends one step with `inputs.found: \"unknown\"`. The re-read shows W-4209's \"CHECK HELD\", station 3 stopped, its facts and `next`, with no step and no Decide panel. The page draws the hold only from the re-read: with a test double whose re-read still serves the observe state, it shows no hold. \u2014 verify: component tests with a recording `fetch`.",
+    "**Controls only from `you_can_act`, `disabled_reason` and the steps.**",
+    "**Agent work is not a decision.**",
+    "**Verified only when the re-read says so.**",
+    "**Observation with proof.** On W-4202, pressing \"Record observation\" opens the step form. \"What you found\" is a required choice of four with nothing selected, and \"Proof\" is required. Submitting with either empty sends nothing and shows the field message, announced, with focus on the first. Then:",
+    "Choosing a file sends one E-EVIDENCE-UPLOAD to `/api/v1/cases/C-LED-0052/evidence` with `kind: \"ledger_observation\"`, `case_revision: 4` and CSRF. It validates against the generated request schema.",
+    "Submitting sends exactly one POST `/api/v1/work/W-4202/steps` with CSRF, `expected_revision`, `step: \"record_observation\"`, `inputs: {found: \"found\"}`, `evidence_ids: [\"EV-C-LED-0052-1\"]` and a UUID `idempotency_key`, and no other keys. A double press sends one.",
+    "The re-read shows the review station with the `prepared_by_you` copy and no Decide button.",
+    "**Upload failures keep the step unsent.**",
+    "**Reject needs a note.** Pressing \"Reject\" with an empty or blank note sends nothing and shows \"Add a note to reject it.\" under the field, announced, with focus on it. A note over 2000 characters is refused before sending. With a note, the page sends one POST with `verdict: \"reject\"` and the trimmed note, and the re-read shows \"REJECTED\" read-only with no \"Correct\" step. Approve sends `{verdict: \"approve\", expected_revision: 1}` with no note, after one claim to `/api/v1/tasks/T-4203/claim`. \u2014 verify: component tests; e2e request log.",
+    "**No write when the person cannot act.** On W-4201, W-4204, W-4205, W-4206, W-4207, W-4209 and W-4210, no claim, decide, upload or step is sent, whatever is pressed or typed. \u2014 verify: e2e request log (zero POSTs).",
+    "**Backend refusals are shown.**",
+    "**Uncertain decide.**",
+    "**Uncertain observation.** On W-4213, the step answers 500 after it is written. The page re-reads first, draws the re-read review state and shows `STEP_TEXT.failed`, never \"Observation recorded.\" A Try again (if still offered) reuses the same key, and the mock log shows one applied step. \u2014 verify: component test; `GET /__mock/workspace-log` in `tests/ledger-source-mock.test.ts`.",
+    "**Access.** 401 on read or write shows the signed-out state with `next=/work/<id>`. 403 and 404 on read look the same and show no title, fact or agent step. Persona `none` gets the same not-open view with no further call. \u2014 verify: component tests with a recording `fetch`.",
+    "**Phone (D-92c).** At 390 each state is one column with the same sections, words and values as desktop.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 8 boards, on a production build at `--width 1440` and `--width 390`, with observe driven as in Boards.",
+    "**Accessibility.** There are no axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on:",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens in `features/workspace/*.css`. It adds no local copy of a component that `@/components` exports (`Button`, `Drawer`, `Select`, `TextArea`, `Callout`, `Panel`, `Tag`, `Segmented`) or of `ProofField`. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `tests/ledger-source-mock.test.ts` checks that:",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `frontend/src/features/decide/**`, `frontend/src/features/response/**`, `frontend/src/features/start-work/**`, `frontend/src/shell/**`, `frontend/mock/server.mjs`, `frontend/mock/workspace.mjs`, `frontend/mock/start-work.mjs`, any existing fixture, `apps/**`, `architecture/**`, `design/**` or the protected paths. The only allowed exception is the F-47 repoint, if F-45 merges second. `mock/response.mjs` changes only in `upload`, additively. Every overlay field is listed as a contract proposal in build.md. \u2014 verify: `git diff --stat`; `git diff frontend/mock/response.mjs`; build.md.",
+    "**Existing tests green.** `delivery/checks.sh` passes, and the tests listed under Context pass unchanged. This includes F-33's income schedule tests (the line layout is shared now) and `tests/response-mock.test.ts`. If F-45 merges second it also includes F-47's start tests, with the landing assertion on `W-4201`. \u2014 verify: `delivery/checks.sh`; `cd frontend && npx vitest run` and the e2e command under Lanes, pasted in build.md.",
+    "**build.md evidence.** It records:"
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. This is a Finance approval that records a ledger source as a reference, which is an authority-bearing write. The proof upload is append-only on a back-office case, so it is hard to undo. Three separate people (the capturer, the observer and the reviewer) must be kept apart by the backend. A wrong control would make a source look approved, or a hold look cleared, without the human decision. The work stays contained: on the F-17 frame with F-33's inline Decide, on the mock, and nothing is posted. The SURFACES are these: - ui: 8 boards. - api: E-WORK-ITEM, E-WORK-STEP, E-EVIDENCE-UPLOAD, E-TASK-CLAIM/DECIDE. - security: the approval write and the upload grant. - contract-change: the `ledger_sources` line, `steps[].verdict` and the mock upload grant. - product-decision: the three ledger policy values, which are NOT SET. PRODUCT-ACCEPTANCE is required, because this is a new Finance flow the client has not seen working."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-45/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,40 +84,365 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T03:55:35Z",
+      "seconds": 352.7,
+      "evidence_ref": "delivery/features/F-45/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "not_run",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "required": true,
+      "assessment_reason": "delivery/features/F-45/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 19 Nov 2026 \u2014 D-125",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-ui.md"
+      ]
+    },
+    "security": {
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-security.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Merge-conflict risk with F-35 and F-39. `git merge-tree` of 4dba97ab against `fe-leadership-report-drafting-review-tuesday` (eefaf6c5) conflicts in four places in `frontend/src/features/workspace/Workspace.tsx`: the labels import, the `LEDGER_LINE`/`REPORT_LINE` constants, the `decidedNow`/`staleShown` block (:233-241) and the `<InlineDecide \u2026>` line (:690). It also conflicts in the allowlists in `tests/income-schedule-mock.test.ts` and `tests/mock-contract.test.ts`. Against `fe-emergency-escalation-escalate-or-not` (45ae7b66) it also conflicts in `WorkItemOverview.tsx` (the exceptions-button condition, :719) and `delivery/BACKEND-HANDOFF.md`. InlineDecide.tsx auto-merges with both, because the hunks are byte-identical. The guidance under Pending in build.md (\"keep the general hunk and drop the LEDGER_LINE gate\") is incomplete. When resolving, drop the gate on `staleShown` only. Keep `notMovedOn`/`decidedLabel`/`decidedShown` and the ledger `onDecided={\u2026 setDecided({ ...notice, taskId })}` wrapper, or AC 9 regresses (coordinator decision 1). Then keep each side's lines in the allowlists and line constants.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Workspace.tsx:240` composes the fallback `'This decision'` inline, as `DECIDE_TEXT.notConfirmed(decidedLabel ?? 'This decision')`. Every other frontend sentence lives in `DECIDE_TEXT`/`WS_TEXT`. Expected: put the fallback in `DECIDE_TEXT`, or reuse the label the InlineDecide notice already carries. Fixtures always send `decision.version.label`, so the fallback cannot be reached today.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`workspace.css:295` hides each desktop station's status word visually and keeps it for screen readers. A sighted user then tells done, current and to-do stations apart only by fill and border (stopped is dashed). The header status tag still gives the state in text, and the design engineer is to review this styling (build.md Pending). Raised for the UX and UI reviewers against AC 20 (\"status words in text, not colour only\"). This finding is not technical.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock's step-evidence upload grant (F-31, `mock/response.mjs:116-133`) does not exclude a step that has a `disabled_reason`. On the mock, the W-4210 capturer can still upload to C-LED-0052. The spec's seam asked for that exclusion. The page sends nothing on W-4210 (tested), and the gap is recorded in BACKEND-HANDOFF, so the real guard is the backend's. The fix belongs to the F-31 seam owner, not this PR (`response.mjs` stays unchanged here, per AC 23).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Every ledger page shows the shared work-item milestone strip \"DRAFTED / REVIEWED / APPROVED / SENT / RECEIPT RECORDED Unknown / VERIFIED\" with \"Earned 14 Nov 16:30\". The SCR-58 boards do not draw it, and \"SENT\" and \"RECEIPT\" are invoice words that mean nothing for a ledger reference. It comes from shared work-item code, not from the F-45 fixtures. It never claims approval early (APPROVED reads \"Not yet\" until the re-read). Suggest that the coordinator decide whether ledger_sources should hide it, as a shared change outside F-45.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock still accepts an upload to C-LED-0052 for the capturer on W-4210, because the F-31 grant ignores the step's `disabled_reason`. The page sends nothing (0 POSTs on W-4210 at both widths). The builder already put this in BACKEND-HANDOFF; a real backend must refuse it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T09:25:22Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After the W-4213 500 the page re-reads and shows \"We couldn't confirm this step. Check the page before trying again.\" with status \"AWAITING FINANCE DECISION\". No Try again is offered (the spec allows this: \"if still offered\"). The mock log has one 500, no replay and no second step. The observer sees the review state and the `prepared_by_you` copy.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T09:25:22Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "feature.json `operation_ids` is empty. Set it to exactly: E-WORK-ITEM, E-WORK-STEP, E-EVIDENCE-UPLOAD, E-TASK-CLAIM, E-TASK-DECIDE.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "AC 22 (fidelity) is not fully met until the design engineer signs the 7 visual waivers (76.4 to 91), the 27 exceptions (all \"builder proposal, pending design engineer\") and the verified side-note choice (Conflicts 13, Option B). The UI review prefers Option B.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-3",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Ledger-only behaviour differs from F-33: after a decide 200 whose re-read still offers the task, the ledger page shows \"result not confirmed\", while the income line still says \"<label> is approved\". The design engineer should accept the difference or ask for F-33 to be aligned.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-4",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "AC 26 lists `mock/start-work.mjs` as unchanged. It changed by 2 lines, as the spec's own Conflicts line (spec.md:223) requires. Accepted.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-5",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Product acceptance is required (readiness) and still pending. It covers the three NOT SET ledger policy values, the three-person separation, what Unknown or More than one does, and the verdict set.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -89,11 +463,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-FIN-LEDGER",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "ca3d889696f6d84bcfe4c0b54eeb685e9d429ebe",
+    "task_branch": "fe-fin-ledger-source-recorded-reference",
+    "head_sha": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-45",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +477,46 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/ledger-source.spec.ts",
+      "frontend/e2e/start-work-proof.spec.ts",
+      "frontend/mock/fixtures/work/W-4201.json",
+      "frontend/mock/fixtures/work/W-4202.json",
+      "frontend/mock/fixtures/work/W-4202.next.json",
+      "frontend/mock/fixtures/work/W-4202.steps.json",
+      "frontend/mock/fixtures/work/W-4203.approve.json",
+      "frontend/mock/fixtures/work/W-4203.json",
+      "frontend/mock/fixtures/work/W-4203.reject.json",
+      "frontend/mock/fixtures/work/W-4204.json",
+      "frontend/mock/fixtures/work/W-4205.json",
+      "frontend/mock/fixtures/work/W-4206.json",
+      "frontend/mock/fixtures/work/W-4207.json",
+      "frontend/mock/fixtures/work/W-4208.json",
+      "frontend/mock/fixtures/work/W-4208.next.json",
+      "frontend/mock/fixtures/work/W-4208.steps.json",
+      "frontend/mock/fixtures/work/W-4209.json",
+      "frontend/mock/fixtures/work/W-4210.json",
+      "frontend/mock/fixtures/work/W-4211.json",
+      "frontend/mock/fixtures/work/W-4212.approve.json",
+      "frontend/mock/fixtures/work/W-4212.json",
+      "frontend/mock/fixtures/work/W-4212.reject.json",
+      "frontend/mock/fixtures/work/W-4213.json",
+      "frontend/mock/fixtures/work/W-4213.next.json",
+      "frontend/mock/fixtures/work/W-4213.steps.json",
+      "frontend/mock/start-work.mjs",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/ledger-source-mock.test.ts",
+      "frontend/tests/ledger-source.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/start-work-proof-mock.test.ts",
+      "frontend/tests/start-work-proof.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -123,9 +536,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-45/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -136,15 +551,68 @@
     }
   },
   "created_at": "2026-11-18T05:16:06Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-19T01:35:19Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T01:36:38Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T03:55:36Z",
+      "round": 1,
+      "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T09:16:41Z",
+      "round": 1,
+      "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-19T09:27:05Z",
+      "round": 1,
+      "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "haiku",
+      "security": "opus"
+    },
+    "qa": "opus",
+    "planned_from": [
+      "delivery/features/F-45/readiness.md",
+      "delivery/features/F-45/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 1,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
   },
   "blocked": null
 }

@@ -1,0 +1,179 @@
+{
+  "id": "W-3202",
+  "title": "Monthly leadership report · October",
+  "line": "Leadership report",
+  "reference": "RPT-M-2026-10",
+  "state": "processing",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Gather",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Leadership review",
+      "status": "done"
+    },
+    {
+      "name": "Send",
+      "status": "current_agent"
+    },
+    {
+      "name": "Received",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-02T08:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-03T08:10:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-03T08:10:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "current"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3202",
+      "kind": "decide",
+      "title": "Review the monthly leadership report",
+      "required_role": "Leadership reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Monthly report v1",
+          "number": 1,
+          "drafted_at": "2026-11-02T08:30:00Z"
+        },
+        "basis": "Approving sends this exact version to the audience. Who reviews is set in Setup › Rules.",
+        "prepared_by": {
+          "name": "Kemi Adebayo",
+          "role": "PMO Lead",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Leadership reviewer",
+              "status": "approved",
+              "is_you": false,
+              "person": "Ifeoma Nwosu",
+              "decided_at": "2026-11-03T08:10:00Z"
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Gathered October's records",
+        "status": "done",
+        "source": "5 PROJECTS · 41 MEETINGS · 12 ISSUES"
+      },
+      {
+        "text": "Summarised milestones and money",
+        "status": "done",
+        "source": "3 MILESTONES COMPLETE · 2 INVOICES VERIFIED"
+      },
+      {
+        "text": "Drafted the escalations section",
+        "status": "done",
+        "source": "ESC-0011 · ESC-0012"
+      }
+    ],
+    "started_at": "2026-11-01T07:00:00Z"
+  },
+  "next_step": "The factory is checking each delivery of monthly report v1.",
+  "sample": true,
+  "workspace": {
+    "line_key": "leadership_report",
+    "screen": "SCR-52",
+    "view": "sent",
+    "status": {
+      "label": "SENT · CHECKING DELIVERIES",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "recipients",
+        "kind": "recipients",
+        "title": "Recipients",
+        "items": [
+          {
+            "id": "R-1",
+            "text": "CEO",
+            "receipt": "not_yet"
+          },
+          {
+            "id": "R-2",
+            "text": "CTO",
+            "receipt": "not_yet"
+          },
+          {
+            "id": "R-3",
+            "text": "PMO Lead",
+            "receipt": "not_yet"
+          },
+          {
+            "id": "R-4",
+            "text": "Finance Lead",
+            "receipt": "not_yet"
+          }
+        ]
+      }
+    ],
+    "next": [
+      "The factory marks it received when every delivery is confirmed."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "overview",
+          "label": "OVERVIEW"
+        },
+        {
+          "value": "leadership_reports",
+          "label": "LEADERSHIP REPORTS"
+        },
+        {
+          "value": "RPT-M-2026-10",
+          "label": "RPT-M-2026-10"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

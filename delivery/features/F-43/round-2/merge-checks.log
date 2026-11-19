@@ -1,0 +1,15 @@
+F-43 merge of origin/dlv-00-delivery-setup
+Head: ee8fe64afa47a84ad9599e9f70820ec5fdacaae6 (merge 4d324339, then test commit ee8fe64a)
+
+Conflicts and resolution (both sides kept):
+- delivery/BACKEND-HANDOFF.md: kept every section (F-36, F-39, then F-43).
+- WorkItemOverview.tsx imports: INTERNAL_RECONCILE_LINE plus AGENT_BESIDE_LINES, forecastLine, STATION_LINES (scheduleLine dropped as unused).
+- Sections.tsx SectionView: banner union includes 'info' (dlv-00) and caption prop (F-43).
+- Workspace.tsx: imports of both sides (ReconcilePanel/asResponseItem, formatDayTime, AGENT_BESIDE_LINES, STATION_LINES, forecastLine, DECIDE_TEXT); removed unused 'schedule' const, kept forecast/beside; side column keeps ReconcilePanel and LineAgent with day=REPORT_LINE.
+- labels.ts: kept dlv-00 AGENT_BESIDE_LINES/STATION_LINES and F-43 forecastLine. bannerTone branches (leadership_report, escalation) unchanged.
+- income-schedule-mock.test.ts, mock-contract.test.ts: union of fixture allow-lists (W-(27|32|36|39|40) verdict overlay; links add W-4001).
+New test: tests/cash-forecast.test.tsx, second reviewer 409 after the task closed: stale notice, unsent note, no decide buttons. Passes with the shared fix (InlineDecide/Workspace, 45ae7b66). Without it, the re-read to the closed task removes the panel that held the notice and note (by reasoning, not run).
+
+tsc --noEmit: clean. eslint: clean (0 warnings after removing the unused import).
+checks.sh (shared lock): exit 0; 124 test files, 2962 tests passed.
+e2e (cash-forecast, escalation, leadership-report, income-schedule): 138 passed, exit 0.
