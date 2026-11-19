@@ -103,11 +103,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -265,6 +267,52 @@
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-19T09:16:41Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock still accepts an upload to C-LED-0052 for the capturer on W-4210, because the F-31 grant ignores the step's `disabled_reason`. The page sends nothing (0 POSTs on W-4210 at both widths). The builder already put this in BACKEND-HANDOFF; a real backend must refuse it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T09:25:22Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After the W-4213 500 the page re-reads and shows \"We couldn't confirm this step. Check the page before trying again.\" with status \"AWAITING FINANCE DECISION\". No Try again is offered (the spec allows this: \"if still offered\"). The mock log has one 500, no replay and no second step. The observer sees the review state and the `prepared_by_you` copy.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T09:25:22Z",
           "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
         }
       ]

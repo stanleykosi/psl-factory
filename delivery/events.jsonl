@@ -3306,3 +3306,6 @@
 {"at":"2026-11-19T09:22:42Z","feature":"F-40","round":1,"kind":"transition","head":"b051cfa790dc","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-19T09:22:42Z","feature":"F-40","round":2,"kind":"transition","head":"b051cfa790dc","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
 {"at":"2026-11-19T09:24:07Z","feature":"F-43","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (recorded by the coordinator)","commit":"5020a86be732","written_at":"2026-11-19T09:24:07Z"}
+{"at":"2026-11-19T09:25:22Z","feature":"F-45","round":1,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"4dba97ab6ee7","findings":{"QA-1-1":"low","QA-1-2":"low"},"written_at":"2026-11-19T09:25:13Z"}
+{"at":"2026-11-19T09:25:22Z","feature":"F-45","round":1,"kind":"finding","action":"add","finding":"QA-1-1","by":"qa","severity":"low","owner":"backend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-19T09:25:22Z","feature":"F-45","round":1,"kind":"finding","action":"add","finding":"QA-1-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
