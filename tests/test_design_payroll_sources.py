@@ -47,6 +47,45 @@ class PayrollSourceTests(TestCase):
     def setUpTestData(cls):
         cls.f = fixture()
 
+    def test_plain_export_fields_use_native_csv_and_excel_capture_without_approval(self):
+        f=self.f;case=f['case'];rules=deepcopy(f['config']['access'])
+        rules['providers'][1]['spreadsheet_layouts']=[{'format':'csv','delimiter':',','columns':COLUMNS},
+                                                    {'format':'xlsx','sheet':'Payroll','columns':COLUMNS}]
+        policy(f,ACCESS,rules);self.client.force_login(f['owner'])
+        url=reverse('design_payroll_inputs',args=[case.pk]);page=self.client.get(url)
+        self.assertContains(page,'Source export version');self.assertContains(page,'Export prepared at')
+        for format_,content in [('csv',CSV),('xlsx',worksheet())]:
+            data={'action':'capture','revision':rev(case),'request_record':f['request'].pk,'provider':'PAY-B',
+                  'operation_key':'plain-'+format_,'source_version':'plain-'+format_,
+                  'extracted_at':(timezone.now()-timedelta(seconds=1)).isoformat(),
+                  'completeness':'complete','control_total':'150',
+                  'file':SimpleUploadedFile('source.'+format_,content)}
+            self.assertContains(self.client.post(url,data,follow=True),'Payroll history updated')
+            row=PayrollInput.objects.get(request=f['request'],operation_key='plain-'+format_)
+            self.assertEqual(row.source_sha256,sha256(content).hexdigest())
+            self.assertEqual(row.payload['rows'][0]['amount'],'150')
+            self.assertFalse(row.reviews.exists())
+        unknown=b'Ref,Staff ID,Pay code,Total\nB1,E002,BASIC,\n'
+        data.update(revision=rev(case),operation_key='plain-unknown',source_version='plain-unknown',control_total='',
+                    file=SimpleUploadedFile('unknown.csv',unknown))
+        self.assertContains(self.client.post(url,data,follow=True),'Payroll history updated')
+        row=PayrollInput.objects.get(request=f['request'],operation_key='plain-unknown')
+        self.assertIsNone(row.payload['control_total']);self.assertIsNone(row.payload['rows'][0]['amount'])
+        self.assertEqual(row.metadata['status'],'held');self.assertFalse(row.reviews.exists())
+
+    def test_plain_export_fields_refuse_conflicting_missing_or_nonspreadsheet_details(self):
+        f=self.f;self.client.force_login(f['owner']);url=reverse('design_payroll_inputs',args=[f['case'].pk])
+        base={'action':'capture','request_record':f['request'].pk,'provider':'PAY-B','operation_key':'ambiguous-file',
+              'source_version':'plain-v2','extracted_at':(timezone.now()-timedelta(seconds=1)).isoformat(),
+              'completeness':'complete','control_total':'150'}
+        for changes in [{'extraction':json.dumps({key:base[key] for key in ['source_version','extracted_at','completeness','control_total']})},
+                        {'source_version':''},{'extracted_at':'not-a-time'}]:
+            data={**base,**changes,'revision':rev(f['case']),'file':SimpleUploadedFile('source.csv',CSV)}
+            self.assertContains(self.client.post(url,data,follow=True),'The upload could not be accepted')
+        data={**base,'revision':rev(f['case']),'file':SimpleUploadedFile('source.json',b'{}')}
+        self.assertContains(self.client.post(url,data,follow=True),'The upload could not be accepted')
+        self.assertEqual(PayrollInput.objects.filter(request=f['request']).count(),2)
+
     def test_spreadsheet_upload_requires_configured_layout_and_preserves_bytes(self):
         f = self.f
         case = f['case']

@@ -1,5 +1,6 @@
 from django import forms
 from pathlib import PurePath
+from uuid import uuid4
 from apps.identity.models import Grant
 from apps.policy.payroll_validators import SCHEMAS
 from .forms import CommandForm
@@ -8,24 +9,44 @@ from .hrfinance_models import HRReadSnapshot
 
 class PayrollCaptureForm(CommandForm):
  file = forms.FileField(required=False, label='Payroll export file', widget=forms.ClearableFileInput(attrs={'accept':'.json,.csv,.xlsx'}))
- extraction = forms.JSONField(required=False, label='Spreadsheet extraction details', widget=forms.Textarea(attrs={'rows':4}),
-  help_text='For a configured spreadsheet, enter source_version, extracted_at, completeness and control_total. Leave blank for JSON.')
+ source_version = forms.CharField(required=False,max_length=100,label='Source export version',
+  help_text='For a CSV or Excel file, use the version recorded by its source owner.')
+ extracted_at = forms.DateTimeField(required=False,label='Export prepared at',
+  widget=forms.DateTimeInput(format='%Y-%m-%dT%H:%M:%S',attrs={'type':'datetime-local','step':'1'}))
+ completeness = forms.ChoiceField(required=False,label='Does the file contain the full export?',
+  choices=[('','Choose for CSV or Excel'),('complete','Complete export'),('partial','Part of the export'),('unknown','Not confirmed')])
+ control_total = forms.CharField(required=False,max_length=600,label='Source control total',
+  help_text='Leave blank when the source does not provide a total. Unknown amounts stay unknown.')
+ # Existing integrations may still submit the exact structured envelope. It is
+ # secondary to the human fields and cannot be combined with conflicting input.
+ extraction = forms.JSONField(required=False,widget=forms.HiddenInput)
 
  def clean(self):
   values=super().clean()
   file,body=values.get('file'),values.get('body')
+  human_fields=['source_version','extracted_at','completeness','control_total']
+  supplied=any(values.get(name) not in [None,''] for name in human_fields)
   if bool(file)==bool(body):raise forms.ValidationError('Choose one export file or paste its contents.')
   if file:
    if file.size>256000:raise forms.ValidationError('Choose an export up to 256,000 bytes.')
    suffix=PurePath(file.name).suffix.lower()
    content=file.read(256001)
-   if suffix in {'.csv','.xlsx'} and isinstance(values.get('extraction'),dict):
-    values['spreadsheet']=(suffix[1:],content,values['extraction'])
+   if suffix in {'.csv','.xlsx'}:
+    details=values.get('extraction')
+    if supplied:
+     if details is not None:raise forms.ValidationError('Use one set of export details.')
+     if not all(values.get(name) for name in human_fields[:3]):
+      raise forms.ValidationError('For CSV or Excel, provide the source version, preparation time and export completeness.')
+     details={name:values.get(name) for name in human_fields}
+     details['extracted_at']=details['extracted_at'].isoformat()
+     details['control_total']=details['control_total'] or None
+    if not isinstance(details,dict):raise forms.ValidationError('Provide the source version, preparation time and export completeness.')
+    values['spreadsheet']=(suffix[1:],content,details)
     return values
    if suffix!='.json':raise forms.ValidationError('Choose JSON or a mapped CSV or Excel export.')
    try:values['body']=content.decode('utf-8-sig')
    except UnicodeDecodeError as exc:raise forms.ValidationError('Choose a UTF-8 JSON export.') from exc
-  if values.get('extraction') is not None:raise forms.ValidationError('Extraction details are for spreadsheets.')
+  if supplied or values.get('extraction') is not None:raise forms.ValidationError('Export details are for CSV or Excel files.')
   return values
 
 
@@ -60,6 +81,10 @@ def commands(actor,case,data=None,files=None):
   if permission not in grants:continue
   bound=data is not None and data.get('action')==action
   base=PayrollCaptureForm if action=='capture' else CommandForm
+  if action=='capture':
+   fields['request_record'].label='Payroll period'
+   fields['provider'].label='Payroll source'
+   fields['operation_key']=forms.CharField(max_length=100,widget=forms.HiddenInput,initial='payroll-upload-'+uuid4().hex)
   f=type('Payroll'+action,(base,),fields)(data if bound else None,files if bound else None,
      initial={'action':action,'revision':case.revision},auto_id='id_'+action+'_%s')
   result.append({'action':action,'title':title,'form':f})
