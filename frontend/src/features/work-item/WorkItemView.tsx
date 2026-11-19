@@ -146,6 +146,8 @@ function ProjectBar({ caseId }: { caseId: string }) {
 
 /** F-37: the line key of the RFP requirements workspace; read only to draw the RFP frame and its status tag. */
 const RFP_RESPONSE_LINE = 'rfp_response';
+/** F-38: the line key of the RFP submission workspace; read only to draw the RFP frame, its status and the phone's way back. */
+const RFP_SUBMISSION_LINE = 'rfp_submission';
 
 function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boolean; historyHref: string }) {
   const ws = item.workspace;
@@ -160,7 +162,14 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
   // F-30: a severity the workspace's facts carry is drawn beside the status, as the issue boards do
   const severity = ws?.sections.flatMap((section) => (section.kind === 'facts' && !section.restricted ? section.items : [])).find((i) => i.severity !== undefined)?.severity;
   // F-37: an RFP's requirements page reads the RFP's own status (the frame's tag), as the RFP pages do
-  const tag = item.rfp && ws?.line_key === RFP_RESPONSE_LINE ? (
+  const tag = ws?.line_key === RFP_SUBMISSION_LINE ? (
+    // F-38: the submission boards draw only the status the workspace returns; no state tag stands in for a missing one
+    status ? (
+      <Tag tone={tagTone(status.tone)} className="work-state">
+        {status.label}
+      </Tag>
+    ) : null
+  ) : item.rfp && ws?.line_key === RFP_RESPONSE_LINE ? (
     <span className={`psl-tag ${statusTone(item.rfp.status.kind)} work-state`}>{item.rfp.status.label}</span>
   ) : status ? (
     <Tag tone={tagTone(status.tone)} className="work-state">
@@ -249,7 +258,9 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   // F-30: an issue's work item goes back to its project (D-111 item 9); every other work item keeps the queue.
   // F-31: the planning item does the same (D-113 item 9). F-39: so does the escalation.
   const projectId = item?.workspace?.line_key === 'issue_followup' || item?.workspace?.line_key === 'planning' || item?.workspace?.line_key === 'escalation' ? item.workspace.context?.project?.case_id : undefined;
-  usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : projectId ? { label: 'Project', href: `/projects/${encodeURIComponent(projectId)}` } : { label: 'Queue', href: '/my-work' });
+  // F-38: the submission item goes back to the RFP, its first other tab that has a page of its own
+  const rfpBack = item?.workspace?.line_key === RFP_SUBMISSION_LINE ? item.rfp?.tabs?.find((t) => t.work_id && !t.current) : undefined;
+  usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : projectId ? { label: 'Project', href: `/projects/${encodeURIComponent(projectId)}` } : rfpBack?.work_id ? { label: 'RFP', href: `/work/${encodeURIComponent(rfpBack.work_id)}` } : { label: 'Queue', href: '/my-work' });
 
   if (state.status === 'loading') return <LoadingState />;
   if (state.status === 'error') {
@@ -276,13 +287,13 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   const tabs = <WorkItemTabs base={base} tab={tab} count={view?.history_counts?.all} />;
   return (
     <>
-      {line && !phone && shown.rfp && shown.workspace?.line_key === RFP_RESPONSE_LINE ? (
+      {line && !phone && shown.rfp && (shown.workspace?.line_key === RFP_RESPONSE_LINE || shown.workspace?.line_key === RFP_SUBMISSION_LINE) ? (
         <RfpFrame
           id={id}
           item={shown}
           rfp={shown.rfp}
           fallback={shown.title}
-          current="requirements"
+          current={shown.workspace?.line_key === RFP_SUBMISSION_LINE ? 'submission' : 'requirements'}
           end={
             <Link className="psl-link rfp-history" href={`${base}/history`}>
               History

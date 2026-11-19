@@ -1,0 +1,55 @@
+{
+  "document_id": "D-3501",
+  "version": "1",
+  "title": "Submission pack · Tamarind Loans",
+  "status": "In review",
+  "template": "Company forms · test template v1",
+  "body_url": "https://files.example.test/submission-pack-d-3501-v1.pdf",
+  "test_template": true,
+  "case_id": "C-2102",
+  "project_title": "Tamarind Loans · loan origination RFP",
+  "reference": "TL-RFP-2026-014",
+  "drafted_by": {
+    "agent": "tola",
+    "from": [
+      "the approved response",
+      "the approved costing"
+    ]
+  },
+  "sections": [
+    {
+      "key": "response",
+      "heading": "Response document",
+      "text": "64 requirements, v3 approved 18 Nov."
+    },
+    {
+      "key": "proposal",
+      "heading": "Commercial proposal",
+      "text": "Costing v2, all 3 approvals."
+    },
+    {
+      "key": "letter",
+      "heading": "Cover letter",
+      "text": "Drafted by Tola."
+    },
+    {
+      "key": "forms",
+      "heading": "Company forms",
+      "text": "From the template."
+    }
+  ],
+  "checks": [
+    {
+      "key": "template",
+      "label": "Uses the current template",
+      "status": "held",
+      "detail": "TEST TEMPLATE v1 · until PSL supplies the real one"
+    }
+  ],
+  "audience": {
+    "label": "Client · Tamarind Loans"
+  },
+  "review": {
+    "role_label": "document reviewer"
+  }
+}

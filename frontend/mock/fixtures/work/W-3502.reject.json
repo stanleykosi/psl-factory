@@ -1,0 +1,210 @@
+{
+  "id": "W-3502",
+  "title": "Review the submission pack · v1",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "state": "action_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Tola assembles the pack",
+      "status": "done"
+    },
+    {
+      "name": "Document review",
+      "status": "current_person"
+    },
+    {
+      "name": "Submission",
+      "status": "not_started"
+    },
+    {
+      "name": "Outcome",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-22T09:15:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3502",
+      "kind": "decide",
+      "title": "Review the submission pack",
+      "required_role": "document reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Submission pack v1",
+          "number": 1,
+          "document_id": "D-3501"
+        },
+        "recipient": "procurement@tamarindloans.example",
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "document reviewer",
+              "status": "current",
+              "is_you": true
+            }
+          ],
+          "step_count": 1,
+          "your_step": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "none"
+  },
+  "next_step": "A document reviewer approves, returns or rejects this exact pack.",
+  "sample": true,
+  "case_id": "C-2102",
+  "case_revision": 3,
+  "workspace": {
+    "line_key": "rfp_submission",
+    "screen": "SCR-40",
+    "view": "default",
+    "title": "Review the submission pack · v1",
+    "subtitle": "Tamarind Loans · loan origination RFP · submit by 28 Nov",
+    "status": {
+      "label": "REJECTED",
+      "tone": "stopped"
+    },
+    "context": {
+      "crumbs": [
+        {
+          "value": "decision",
+          "label": "DECISION"
+        },
+        {
+          "value": "TL-RFP-2026-014",
+          "label": "TL-RFP-2026-014"
+        },
+        {
+          "value": "submission",
+          "label": "SUBMISSION"
+        }
+      ]
+    },
+    "sections": [
+      {
+        "key": "pack",
+        "kind": "checklist",
+        "title": "Pack",
+        "items": [
+          {
+            "id": "p1",
+            "text": "Response document",
+            "detail": "64 requirements, v3 approved 18 Nov",
+            "tag": {
+              "label": "IN",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "p2",
+            "text": "Commercial proposal",
+            "detail": "costing v2, all 3 approvals",
+            "tag": {
+              "label": "IN",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "p3",
+            "text": "Cover letter",
+            "detail": "drafted by Tola",
+            "tag": {
+              "label": "DRAFT",
+              "tone": "person"
+            }
+          },
+          {
+            "id": "p4",
+            "text": "Company forms",
+            "tag": {
+              "label": "TEST TEMPLATE",
+              "tone": "uncertain"
+            },
+            "detail": "from the template"
+          }
+        ]
+      },
+      {
+        "key": "checks",
+        "kind": "checklist",
+        "title": "Checks",
+        "items": [
+          {
+            "id": "c1",
+            "text": "Every requirement answered or marked",
+            "status": "done"
+          },
+          {
+            "id": "c2",
+            "text": "Costing approved in order, same version as the proposal",
+            "status": "done"
+          },
+          {
+            "id": "c3",
+            "text": "Client's format: one PDF, under 20 MB",
+            "status": "done"
+          },
+          {
+            "id": "c4",
+            "text": "Send to: email · procurement@tamarindloans.example",
+            "status": "done",
+            "cite_label": "FROM THE RFP, P.2"
+          },
+          {
+            "id": "c5",
+            "text": "Deadline 28 Nov · submit by 26 Nov leaves 2 days",
+            "status": "done"
+          }
+        ]
+      }
+    ],
+    "steps": [],
+    "links": [
+      {
+        "key": "pack",
+        "label": "Open the full pack (PDF, 6.1 MB)",
+        "target": {
+          "kind": "document",
+          "document_id": "D-3501",
+          "version": 1
+        }
+      }
+    ],
+    "revision": 2
+  }
+}

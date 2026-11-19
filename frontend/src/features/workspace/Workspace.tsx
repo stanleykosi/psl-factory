@@ -9,14 +9,14 @@ import { Fragment, useCallback, useEffect, useId, useRef, useState, type ReactNo
 
 import Link from 'next/link';
 
-import { Button, buttonClass, Callout, Drawer, formatClock, formatDayTime, MiniStationBar, useIsPhone, type StationStatus } from '@/components';
+import { Button, buttonClass, Callout, Drawer, formatClock, formatDayTime, MiniStationBar, Tag, useIsPhone, type StationStatus } from '@/components';
 import { asResponseItem, ReconcilePanel } from '@/features/response';
 import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
 import { currentStationIndex, STATIONS, type WorkItem } from '@/features/work-item/labels';
 import { AgentCard, StationTrack } from '@/features/work-item/WorkItemOverview';
 
 import { AssignForm } from './AssignForm';
-import { AGENT_BESIDE_LINES, agentName, forecastLine, scheduleLine, STATION_LINES, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
+import { AGENT_BESIDE_LINES, agentName, forecastLine, scheduleLine, STATION_LINES, tagTone, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { DECIDE_TEXT, InlineDecide, type DecidedNotice } from './InlineDecide';
 import { WorkspaceLinks } from './Links';
 import { assignDefault, itemsDefaultChecked, itemTeamKey, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks, type WorkspaceLink } from './proposals';
@@ -72,16 +72,24 @@ const noteBeside = (item: WorkItem) => item.agent.status === 'working' && (item.
 /** F-30: the issue follow-up's board draws the agent note in the side column, under the panel; its facts as a strip under the title. */
 const issueLine = (workspace: WorkspaceData) => workspace.line_key === 'issue_followup';
 
-function WorkspaceHeader({ workspace, itemTitle, beside }: { workspace: WorkspaceData; itemTitle: string; beside: boolean }) {
+/** F-38: the RFP submission line. Its draft board draws Tola's card beside the sections once she has assembled the pack, and on desktop the RFP
+ *  frame holds the h1, so the item's title is the workspace's h2 (Conflicts 16). */
+const SUBMISSION_LINE = 'rfp_submission';
+const framedSubmission = (item: WorkItem, workspace: WorkspaceData, phone: boolean) => !phone && item.rfp !== undefined && workspace.line_key === SUBMISSION_LINE;
+const titleShown = (item: WorkItem, workspace: WorkspaceData, phone: boolean) =>
+  workspace.title !== undefined && (workspace.title !== item.title || framedSubmission(item, workspace, phone));
+
+function WorkspaceHeader({ workspace, showTitle, beside, status }: { workspace: WorkspaceData; showTitle: boolean; beside: boolean; status?: WorkspaceData['status'] }) {
   const { title, byline, version } = workspace;
   const note = beside ? undefined : workspace.agent_note;
-  const showTitle = title !== undefined && title !== itemTitle;
   if (!showTitle && !byline && !version && !note) return null;
   return (
     <header className="ws-header">
       {showTitle && (
         <div className="ws-titleline">
           <h2 className="ws-title">{title}</h2>
+          {/* F-38: the frame draws the RFP's own status; the workspace's status (in review, effect uncertain) ends the title line */}
+          {status && <Tag tone={tagTone(status.tone)}>{status.label}</Tag>}
         </div>
       )}
       {(byline || version) && (
@@ -125,7 +133,7 @@ const ESCALATION_LINE = 'escalation';
 
 /** Whether the workspace draws the agent's card itself (WorkItemOverview then keeps its copy for screen readers only). */
 export const drawsAgentCard = (lineKey: string, status: string) =>
-  (AGENT_BESIDE_LINES.has(lineKey) && status === 'working') || (lineKey === ESCALATION_LINE && (status === 'working' || status === 'done'));
+  (AGENT_BESIDE_LINES.has(lineKey) && status === 'working') || (lineKey === ESCALATION_LINE && (status === 'working' || status === 'done')) || (lineKey === SUBMISSION_LINE && status === 'done');
 
 /** The stations as the schedule boards (income F-33, fixed assets F-42) draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
@@ -177,7 +185,13 @@ const splitAsk = (links: WorkspaceLink[], inCard: boolean) => {
  *  agent or neutral status as information (F-35); the escalation line reads a neutral status (not escalated) as info (F-39).
  *  Every other line is unchanged. */
 const bannerTone = (workspace: WorkspaceData, item: WorkItem): 'warning' | 'success' | 'problem' | 'info' =>
-  workspace.line_key === REPORT_LINE
+  workspace.line_key === SUBMISSION_LINE
+    ? workspace.status?.tone === 'verified'
+      ? 'success'
+      : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain'
+        ? 'problem'
+        : 'info'
+    : workspace.line_key === REPORT_LINE
     ? workspace.status?.tone === 'verified'
       ? 'success'
       : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain'
@@ -216,8 +230,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const assignButton = useRef<HTMLButtonElement>(null);
   const phone = useIsPhone();
   const stationsDrawn = STATION_LINES.has(workspace.line_key);
-  // F-30 (D-103, D-107), F-31, F-33, F-41, F-42: on a phone these lines' forms open in the full-height Drawer.
-  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE || workspace.line_key === RFP_LINE);
+  // F-30 (D-103, D-107), F-31, F-33, F-41, F-42, F-37, F-38: on a phone these lines' forms open in the full-height Drawer.
+  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE || workspace.line_key === RFP_LINE || workspace.line_key === SUBMISSION_LINE);
   // F-43: the cash forecast's record-what-happened panel sits above Next on desktop and after it on a phone, as its boards draw it
   const forecast = forecastLine(workspace.line_key);
   const beside = forecast && !phone;
@@ -235,7 +249,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const last = useRef<Attempt | null>(null);
   // F-37: the open form's own close, so the Drawer's close button asks the discard question too
   const formClose = useRef<(() => void) | null>(null);
-  const titled = workspace.title !== undefined && workspace.title !== item.title;
+  const titled = titleShown(item, workspace, phone);
   const decideId = useId();
   // an uncertain item with no reconcile: nothing to confirm here, the notice says it is being checked
   const noReconcile = item.state === 'effect_uncertain' && !item.reconcile;
@@ -849,14 +863,14 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   // the stations and the working agent are drawn here whichever branch draws the sections (WorkItemOverview draws no copy)
   const stationsDrawn = STATION_LINES.has(workspace.line_key);
   const agentSide = drawsAgentCard(workspace.line_key, item.agent.status);
-  const titled = workspace.title !== undefined && workspace.title !== item.title;
+  const titled = titleShown(item, workspace, phone);
   const forecast = forecastLine(workspace.line_key);
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';
   const rfpNote = workspace.line_key === RFP_LINE && !phone && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
   return (
     <div className="ws" data-line={workspace.line_key}>
-      <WorkspaceHeader workspace={workspace} itemTitle={item.title} beside={noteBeside(item) || issueLine(workspace) || (workspace.line_key === RFP_LINE && !phone)} />
+      <WorkspaceHeader workspace={workspace} showTitle={titled} beside={noteBeside(item) || issueLine(workspace) || (workspace.line_key === RFP_LINE && !phone)} status={framedSubmission(item, workspace, phone) ? workspace.status : undefined} />
       {writable ? (
         <WorkspaceSteps id={id} item={item} workspace={workspace} page={page} />
       ) : (

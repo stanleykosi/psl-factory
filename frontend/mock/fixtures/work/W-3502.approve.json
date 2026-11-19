@@ -1,0 +1,222 @@
+{
+  "id": "W-3502",
+  "title": "Submitted · delivery confirmed",
+  "line": "Pre-sale / RFP",
+  "reference": "TL-RFP-2026-014",
+  "state": "verified",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Tola assembles the pack",
+      "status": "done"
+    },
+    {
+      "name": "Document review",
+      "status": "done"
+    },
+    {
+      "name": "Submission",
+      "status": "done"
+    },
+    {
+      "name": "Outcome",
+      "status": "current_person"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-22T09:15:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-22T09:15:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-22T09:15:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-22T09:15:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-11-22T09:15:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-11-22T09:15:00Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3502",
+      "kind": "decide",
+      "title": "Review the submission pack",
+      "required_role": "document reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Submission pack v1",
+          "number": 1,
+          "document_id": "D-3501"
+        },
+        "recipient": "procurement@tamarindloans.example",
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "document reviewer",
+              "status": "current",
+              "is_you": false
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "none"
+  },
+  "next_step": "When the client announces the result, record it here: won, lost or still pending.",
+  "sample": true,
+  "case_id": "C-2102",
+  "case_revision": 3,
+  "rfp": {
+    "reference": "TL-RFP-2026-014",
+    "title": "loan origination RFP",
+    "client": "Tamarind Loans",
+    "status": {
+      "kind": "submitted",
+      "label": "SUBMITTED 26 NOV",
+      "at": "2026-11-26T14:42:00Z"
+    },
+    "pm": {
+      "name": "Tunde Bello",
+      "role": "PM",
+      "is_you": true
+    },
+    "tabs": [
+      {
+        "key": "requirements",
+        "label": "Requirements",
+        "count": 64
+      },
+      {
+        "key": "team_input",
+        "label": "Team input",
+        "count": 4,
+        "of": 4,
+        "work_id": "W-2101"
+      },
+      {
+        "key": "pricing",
+        "label": "Pricing"
+      },
+      {
+        "key": "submission",
+        "label": "Submission",
+        "work_id": "W-3502",
+        "current": true
+      },
+      {
+        "key": "outcome",
+        "label": "Outcome"
+      }
+    ]
+  },
+  "workspace": {
+    "line_key": "rfp_submission",
+    "screen": "SCR-40",
+    "view": "default",
+    "title": "Submitted · delivery confirmed",
+    "sections": [
+      {
+        "key": "banner",
+        "kind": "text",
+        "items": [
+          {
+            "id": "b1",
+            "text": "Emailed to procurement@tamarindloans.example, the address the RFP gives on p.2. Their mail server accepted it (ref TL-SUB-0091), so the response is verified as sent.",
+            "tag": {
+              "label": "Receipt confirmed",
+              "tone": "verified"
+            }
+          }
+        ]
+      },
+      {
+        "key": "happened",
+        "kind": "timeline",
+        "title": "What happened",
+        "items": [
+          {
+            "id": "t1",
+            "text": "Approved by document reviewer · Kemi Adebayo",
+            "at": "2026-11-26T13:58:00Z"
+          },
+          {
+            "id": "t2",
+            "text": "Emailed to procurement@tamarindloans.example",
+            "at": "2026-11-26T14:42:00Z"
+          },
+          {
+            "id": "t3",
+            "text": "Delivery confirmed by their mail server · ref TL-SUB-0091",
+            "at": "2026-11-26T14:43:00Z"
+          }
+        ]
+      },
+      {
+        "key": "sent_to",
+        "kind": "recipients",
+        "title": "Sent to",
+        "items": [
+          {
+            "id": "r1",
+            "text": "procurement@tamarindloans.example",
+            "channel": "Email",
+            "receipt": "received",
+            "at": "2026-11-26T14:43:00Z"
+          }
+        ]
+      }
+    ],
+    "next": [
+      "When the client announces the result, record it here: won, lost or still pending."
+    ],
+    "revision": 2
+  },
+  "rfp_outcome": {
+    "submission": {
+      "id": "TL-SUB-0091",
+      "label": "Submission pack v1",
+      "sent_at": "2026-11-26T14:42:00Z",
+      "delivery": "Delivery confirmed by their mail server"
+    },
+    "results": [
+      "won",
+      "lost",
+      "pending",
+      "unknown"
+    ],
+    "record_as": [
+      {
+        "value": "relationship_owner",
+        "label": "Relationship owner"
+      }
+    ],
+    "evidence_kind": "rfp_outcome_proof"
+  }
+}

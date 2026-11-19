@@ -350,6 +350,13 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                         <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>
                       </>
                     )}
+                    {/* F-38: the label the backend gives a check's source ("FROM THE RFP, P.2"); no earlier checklist carries one */}
+                    {item.cite_label && (
+                      <>
+                        {' '}
+                        <Cites item={{ ...item, cites: [] }} />
+                      </>
+                    )}
                   </span>
                   <Owner item={item} />
                 </span>
