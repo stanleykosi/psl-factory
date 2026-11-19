@@ -336,6 +336,8 @@ describe('Register the engagement (AC 4, 5)', () => {
     fireEvent.change(fileInput(), { target: { files: [file] } });
     await waitFor(() => expect(posts('/evidence')).toHaveLength(before + 1));
     await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
+    // the upload only counts once the form shows the file
+    await waitFor(() => expect(document.body.textContent).toContain(file.name));
   }
   async function fill(form: ReturnType<typeof within>) {
     await upload();
@@ -598,6 +600,8 @@ describe('Record department input, in the Drawer (AC 8, 9, 10)', () => {
     fireEvent.change(document.querySelector('[role="dialog"] input[type="file"]') as HTMLInputElement, { target: { files: [file] } });
     await waitFor(() => expect(posts('/evidence')).toHaveLength(before + 1));
     await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
+    // the upload only counts once the form shows the file
+    await waitFor(() => expect(document.body.textContent).toContain(file.name));
   }
   async function fillQa({ attest = true } = {}) {
     fireEvent.change(dialog().getByLabelText('Who gave it'), { target: { value: 'R-QA' } });

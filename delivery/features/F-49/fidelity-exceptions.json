@@ -1,0 +1,244 @@
+{
+ "exceptions": [
+  {
+   "role": "link",
+   "name": "Overview",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Setup",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "table",
+   "name": "(table)",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "columnheader",
+   "name": "WORK",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "columnheader",
+   "name": "STATE",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "columnheader",
+   "name": "AGE",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "2h",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "1d",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "×",
+   "category": "component",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the close control is a button named Close, not text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Logging an RFP opens a new pre-engagement workspace for it. The RFP reference can't be changed later.",
+   "category": "claim",
+   "conflicts": 2,
+   "reason": "Conflicts 2: not drawn; claims a workspace and an immutable reference that no source states (G-23-5).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "New client · they'll be added to the client register",
+   "category": "claim",
+   "conflicts": 1,
+   "reason": "Conflicts 1: not drawn; no operation creates a client (G-23-1).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "From the RFP. Shown on the submission pack and used to send it.",
+   "category": "claim",
+   "conflicts": 4,
+   "reason": "Conflicts 4: page draws the line's help 'Where the client wants it sent.' instead.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Taken from page 2 of the RFP (proof attached)",
+   "category": "claim",
+   "conflicts": 3,
+   "reason": "Conflicts 3: page draws the line's help 'Enter it as the RFP states it.'; no page number or proof is returned.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "12 Nov 2026, 09:40 WAT",
+   "category": "sample data",
+   "conflicts": 6,
+   "reason": "Conflicts 6 and 11: text inside a date-and-time control, matched by control; no WAT text is drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "28 Nov 2026, 17:00 WAT",
+   "category": "sample data",
+   "conflicts": 6,
+   "reason": "Conflicts 6 and 11: text inside a date-and-time control, matched by control.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tamarind Loans Ltd ▾",
+   "category": "sample data",
+   "conflicts": 11,
+   "reason": "Conflicts 11: text inside the client picker, matched by control; the page starts empty.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "TL-RFP-2026-014",
+   "category": "sample data",
+   "conflicts": 11,
+   "reason": "Conflicts 11: text typed into an input, matched by control.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "procurement@tamarindloans.example",
+   "category": "sample data",
+   "conflicts": 11,
+   "reason": "Conflicts 11: text typed into an input, matched by control.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Received from their procurement lead by email.",
+   "category": "sample data",
+   "conflicts": 11,
+   "reason": "Conflicts 11: text typed into the Note box, matched by control.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Client or prospect",
+   "category": "scroll-capture",
+   "conflicts": 9,
+   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "RFP reference",
+   "category": "scroll-capture",
+   "conflicts": 9,
+   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Received",
+   "category": "scroll-capture",
+   "conflicts": 9,
+   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Submit to",
+   "category": "scroll-capture",
+   "conflicts": 9,
+   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit. Page label reads 'Submit to (optional)'.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Deadline",
+   "category": "scroll-capture",
+   "conflicts": 9,
+   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit. Page label reads 'Deadline (optional)'.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Note",
+   "category": "scroll-capture",
+   "conflicts": 9,
+   "reason": "OPEN, for the design engineer: this label is drawn by the page (from the returned line) but the driver captured the drawer scrolled down to the last field, so it was off screen. The built drawer is taller than the board's at 1440 because help lines and '(optional)' sit under fields. Not a value-in-data exception; proposed as a driver capture limit. Page label reads 'Note (optional)'.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← My work",
+   "category": "frame",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the phone form is a bottom sheet; the page bar is not drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Opens a new pre-engagement workspace",
+   "category": "claim",
+   "conflicts": 2,
+   "reason": "Conflicts 2: not drawn; the sheet keeps 'Step 2 of 2 · change line'.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "12 Nov, 09:40",
+   "category": "sample data",
+   "conflicts": 6,
+   "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "28 Nov, 17:00",
+   "category": "sample data",
+   "conflicts": 6,
+   "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Submit by",
+   "category": "words",
+   "conflicts": 5,
+   "reason": "Conflicts 5: both widths use the desktop words ('How the client wants it submitted').",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ]
+}

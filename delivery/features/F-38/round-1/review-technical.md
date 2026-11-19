@@ -1,0 +1,33 @@
+VERDICT: CHANGES
+COMMIT: 32c97d3df9f2b6f5ae78bf523744c57ee74d83b4
+REVIEWER: reviewer-technical
+AUTHORITY: delivery technical review
+
+## Summary
+- The diff is small and stays inside the line. RfpFrame gets one additive `submission` branch and F-37's requirements, team_input and outcome branches are kept. The header, title, banner, Drawer, agent-card and task-card changes are each gated on `line_key === "rfp_submission"`.
+- Writes go through the existing hooks. Send for review uses `useWorkspaceStep` (CSRF, `expected_revision`, a UUID key reused on Try again). The reviewer path is claim then decide through `useDecision`. "Submitted", receipts and "Record the outcome" appear only from the re-read item. No resend control exists, and nothing reads `/me`.
+- One blocking gap. The reviewer's Decide panel never names the exact pack version (`decision.version.label`) that the spec and AC 8 require. The AC 8 test's title claims it checks this, but the test does not.
+- Two non-blocking items. A claim POST is still sent while a reconcile lock is up (AC 14e), though only on a hand-built case and not on any shipped fixture. The e2e run predates the merge commit.
+
+## Findings
+- TECH-1-1 | blocking | medium | frontend | AC 8 and Contract "What the panel shows: the version label (`decision.version.label`)", and Summary "The panel names `decision.version`": the reviewer's Decide panel does not show "Submission pack v1". I probed W-3502 in a scratch vitest using the suite's own harness. The panel text is "Decide · document reviewer / Goes to procurement@tamarindloans.example / Note (needed to return or reject) / Approve and submit / Return / Reject / Approving lets the factory submit this exact pack…", and `document.body` does not contain "Submission pack v1" at all. The can-act branch of `frontend/src/features/workspace/InlineDecide.tsx:331-391` draws `basis`, `recipient` and the consequences but never `task.decision.version.label`. The test `tests/rfp-submission.test.tsx:265` ("…the version, the consequence and where it goes") has no assertion for the version, so it passes without it. This is the "decide on that exact pack" guarantee (G-40-1, INV-RESEND). Expected: the panel names the returned version label. Gate it so that F-33's in-place panels and their fidelity do not change (for example, only when `decision.recipient` is returned, or only on this line, and say which in build.md). Add the assertion to the AC 8 test, and check that v2 is named after "Review the latest" on W-3506 (AC 13).
+- TECH-1-2 | non-blocking | low | frontend | AC 14(e) and Contract E-WORK-ACTION: "While `reconcile` is present … no POST to `/steps`, `/claim` or `/decision`." `InlineDecide` mounts `useDecision`, which claims any task with `you_can_act: true` even when the panel is `off` because of the reconcile lock. In a probe of the test's own `lockedReview` construction (tests/rfp-submission.test.tsx:697-702), the buttons were disabled but one POST went to `/api/v1/tasks/T-3505/claim`. That test block asserts `/decision` only, while the earlier block that asserts `/claim` has no decide panel, so that check proves nothing. No shipped fixture hits this: W-3505.approve's task is `already_decided`. A claim also records no decision, and the behaviour is F-33's (`useDecision` is read-only in this lane). Expected: either don't claim while `flow.allLocked` comes from reconcile, or record this as a shared bug for the backend and the F-33 owner. Then add `expect(posts('/claim')).toHaveLength(0)` to the last (e) block, or drop the claim to match.
+- TECH-1-3 | non-blocking | low | frontend | The e2e evidence predates the head commit. build.md says the four-spec e2e block ran before e8ec75b5, was not re-run as one block afterwards, and was not re-run after merge commit 32c97d3d. That merge resolved conflicts in `WorkItemView.tsx` (phone back order `deliveryId` then `rfpBack`), `Workspace.tsx` (`titleShown` with `screenHeading`) and `mock-contract.test.ts`. checks.sh covers the unit tests only. Expected: re-run `E2E_PORT=4951 MOCK_PORT=4952 npx playwright test e2e/rfp-submission.spec.ts e2e/rfp.spec.ts e2e/response.spec.ts e2e/workspace.spec.ts` on the head and paste the output in build.md (QA may do this instead).
+- TECH-1-4 | non-blocking | low | frontend | Reuse. `holds` (`InlineDecide.tsx:231-236`) adds its own `<p>` plus `aria-describedby` for a held step. `Button` already has a `reason` prop that writes the reason beside a disabled button and links it (`src/components/Button.tsx:24,83,111-118`). Separately, the new `bannerTone` branch for `SUBMISSION_LINE` (`Workspace.tsx:191-196`) is a copy of the `REPORT_LINE` branch below it, and the two conditions could be merged. Neither changes behaviour.
+- TECH-1-5 | non-blocking | low | pmo | The spec contradicts itself. AC 19 says "Loading any W-35xx page sends only GETs", but AC 11 and F-16 require one claim on load for a reviewer who can act. The builder disclosed this, and the tests and e2e exclude `/claim` from the load check. Expected: correct the spec wording in a later revision. No code change is needed.
+
+## Verified
+- Round 1: there are no earlier findings to retest.
+- Checked in the code and tests, with no defect found:
+  - RfpFrame: the `submission` link uses `tab.work_id` only, and the F-37 branches are unchanged (`RfpFrame.tsx:27-41`).
+  - With `current="submission"`, Team input links to `/work/W-2101` and Requirements stays plain.
+  - The frame and its status-without-fallback apply only to `rfp_submission`, and line items without `rfp` keep the old header (test at :223).
+  - Send for review: one POST, double press still one, UUID key reused on Try again, 409 shows the stale notice (tests :333-381).
+  - Approve: one claim, one decide `{verdict, expected_revision}` valid against the OpenAPI request schema; Submitted only from the re-read; a 200 with a stale re-read shows nothing (tests :431-460).
+  - The W-3506 409 shows v2 and sends no automatic second decide.
+  - Uncertain decide, 500 and network failures re-read first and send no second POST after 60 s.
+  - The W-3508 hold is a native `disabled` and a click sends nothing.
+  - The `decision.recipient` line appears on no other in-place decide fixture. Every existing fixture carrying a recipient is on an F-16 page or W-23xx, neither of which uses InlineDecide.
+  - The Sections `cite_label` change reaches only W-35xx checklists (I scanned all fixtures).
+  - The idempotency limit of E-TASK-DECIDE (PMO-3-1) is recorded in BACKEND-HANDOFF.
+  - The `mock/documents.mjs` change and the two `35` allowlist widenings are disclosed, and no assertion was removed.
