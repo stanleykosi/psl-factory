@@ -83,7 +83,7 @@ def detail(request,work,focus=None):
             elif a=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             messages.success(request,'Native schedule work updated');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work);panel=row['schedules'];s=panel['schedule'];reviews=[]
+    row=presentation(request.user,work,include_progress=not focus);panel=row['schedules'];s=panel['schedule'];reviews=[]
     latest = s.reviews.select_related('actor').order_by('-pk').first() if s else None
     if s and focus != 'recovery' and not work.cancel_requested and work.status not in ['cancelled','followup_needed']:
         try:schedules.authority(request.user,s)

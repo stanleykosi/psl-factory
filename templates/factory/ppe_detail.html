@@ -3,6 +3,7 @@
 <header class="page-heading"><div><p class="eyebrow">FINANCE SCHEDULES</p><h1>Asset schedule · {{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div></header>
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small><time datetime="{{ row.work.updated_at|date:'c' }}">{{ row.work.updated_at|date:'d M Y, H:i T' }}</time></div></div>
 {% include 'factory/work_focus.html' %}
+{% include 'factory/current_step.html' with progress=row.ppe.progress only %}
 <section class="card"><h2>Asset register</h2>{% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}
 <p>Exact register {{ row.ppe.register.pk }} · {{ row.ppe.register.reference }} · version {{ row.ppe.register.version }}</p>
 <p><a href="{% url 'ppe' case.pk %}">Inspect native asset evidence and configured rules</a></p>

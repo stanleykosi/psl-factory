@@ -3,9 +3,7 @@
 <div class="page-heading"><div><p class="eyebrow">ACCOUNTING PREPARATION AND REVIEWED REPORTS</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'finance_analysis' case.pk %}">Source and accounting records</a></div>
 <div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small>{{ row.work.updated_at|date:'d M Y, H:i:s T' }}</div></div>
 {% include 'factory/work_focus.html' %}
-{% if row.accounting.progress %}<section class="card"{% if row.accounting.progress.watching %} data-work-watch{% endif %}>
-<h2>Current step</h2><p role="status">{{ row.accounting.progress.label }}</p>
-</section>{% endif %}
+{% include 'factory/current_step.html' with progress=row.accounting.progress only %}
 <div class="factory-case-layout"><div><section class="card"><h2>Accounting work and output</h2>{% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}<p>Mapping, allocation and formulas are performed by the Finance service using the configured rules. Unknown values remain unconfirmed. This workflow posts no ledger transactions and records no customer payment.</p>
 {% if row.accounting.formula %}<table><thead><tr><th>Company figure</th><th>Value</th><th>Unit</th></tr></thead><tbody>{% for key,figure in row.accounting.formula.result.company.items %}<tr><th>{{ key|readable }}</th><td>{{ figure.value|default_if_none:'Not confirmed' }}</td><td>{{ figure.unit|readable }}</td></tr>{% endfor %}</tbody></table>{% else %}<p>A current formula output has not yet been prepared.</p>{% endif %}
 <details><summary>Native input, calculation and policy references</summary><pre>{{ row.accounting.state }}</pre></details></section>

@@ -13,7 +13,7 @@ from apps.policy.services import transition
 from apps.workflows import factory,factory_ppe as flow
 from apps.workflows.models import FactoryWork,FactoryAttempt
 from .ppe_helpers import fixture,capture,review,policy
-from .helpers import rev
+from .helpers import check_investigation_progress, rev
 
 class FactoryPPETests(TestCase):
     def setUp(self):
@@ -33,7 +33,9 @@ class FactoryPPETests(TestCase):
         f=self.f;self.work=flow.start(f['actor'],f['case'].pk,'PPE-1',f['register'].pk,None,f['parent'].pk,'factory-assets',rev(f['case']));return self.work
     def advance(self):factory.run_until_wait(self.work.pk);self.work.refresh_from_db();return self.work
     def test_native_chain_exact_reviews_note_and_read_only_console(self):
-        f=self.f;self.start();self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertEqual(s.result['status'],'ready');self.assertNotEqual(self.work.status,'verified')
+        f=self.f;self.start()
+        check_investigation_progress(self, f['actor'], self.work, 'Investigating the asset register and supporting records.')
+        self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertEqual(s.result['status'],'ready');self.assertNotEqual(self.work.status,'verified')
         review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         proof=flow.verify(self.work,f['actor']);self.assertEqual(proof['ledger'],f['parent'].pk);self.assertFalse(proof['ledger_posted']);self.assertEqual(proof['full_owner_oracle_acceptance'],'unresolved')
         self.client.force_login(f['actor']);before=self.rows()

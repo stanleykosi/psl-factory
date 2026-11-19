@@ -19,6 +19,26 @@ def setup_case(kind='project', synthetic=True, username='human',case_id=None):
     return actor,case
 
 
+def check_investigation_progress(test, actor, work, label):
+    from django.urls import reverse
+    from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+    from apps.workflows import factory
+
+    client = test.client
+    client.force_login(actor)
+    url = reverse('factory_detail', args=[work.pk])
+
+    class ObserveInvestigation(SyntheticFactoryCoordinator):
+        def choose(self, context):
+            test.assertEqual(context['eligible'], ['ACT04'])
+            test.assertContains(client.get(url), label)
+            return super().choose(context)
+
+    test.assertNotContains(client.get(url), label)
+    test.assertTrue(factory.run_once(work.pk, provider=ObserveInvestigation()))
+    test.assertNotContains(client.get(url), label)
+
+
 def envelope(case, component, value, evidence):
     return {'slot_id': components()[component]['parent_decision_id'], 'component_id':component,
         'component_schema_ref':components()[component]['schema_ref'], 'schema_version':'1',

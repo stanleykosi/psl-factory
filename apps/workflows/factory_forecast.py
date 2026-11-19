@@ -360,18 +360,22 @@ def human_action(actor, work_id, expected, case_expected, scenario_id, action, d
     return result
 
 
-def projection(actor, work):
+def projection(actor, work, *, include_progress=False):
     from .factory import access, profile
+    from .factory_progress import current_plan_step
     access(actor,work.case,'factory.read',DEFINITION)
     scenario,selected = source(work,actor,False)
     status={'stage':'source','finding':''};options=[];next_action='Review selected forecast sources';issue=''
     current=True
+    step = None
     try:
         source(work,actor)
         status=report(work,actor)
         _,value=profile(work)
         state,*args=snapshot(work,value,reader=actor)
         options,next_action=eligible(work,value,state,*args)
+        if include_progress:
+            step = current_plan_step(work, state['hash'], options)
     except (ValidationError,PermissionDenied) as exc:
         current=False;issue=finding(exc);next_action=issue
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'))
@@ -419,7 +423,8 @@ def projection(actor, work):
         group_disclosure={'configuration':group_binding.snapshot['projection_config'],
             'recipients':list(get_user_model().objects.filter(pk__in=group_binding.snapshot['projection']['recipient_ids']).order_by('pk').values('id','username')),
             'payload_sha256':group_binding.version.payload_sha256}
-    return {'group_disclosure':group_disclosure,'can_restart':can_restart,'restart_policy':restart_policy,'review_roles':review_roles,'scenario':scenario,'selection':selected,'run':r,'document':document(work),'jobs':jobs,'status':status,'finding':issue,'intake_current':current,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct}
+    progress = {'label': 'Investigating the selected cash forecast sources.', 'watching': True} if step == 'ACT04' else None
+    return {'group_disclosure':group_disclosure,'can_restart':can_restart,'restart_policy':restart_policy,'review_roles':review_roles,'scenario':scenario,'selection':selected,'run':r,'document':document(work),'jobs':jobs,'status':status,'finding':issue,'intake_current':current,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'progress':progress}
 
 
 def reconcile(actor,work_id,expected,adapter=None):

@@ -120,7 +120,7 @@ def detail(request,work,focus=None):
         except (ValidationError,ValueError) as exc:
             messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
             work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work)
+    row=presentation(request.user,work,include_progress=not focus)
     if focus:
         forms_list=[entry for entry in forms_list if entry['action'] in SCREENS[work.definition][focus]]
         if focus=='decision':

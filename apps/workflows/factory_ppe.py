@@ -178,12 +178,16 @@ def review(actor,work_id,expected,case_expected,target,purpose,verdict,evidence,
     if target!= (r.pk if purpose in ['register','basis'] else s.pk if s and purpose=='schedule' else None):raise ValidationError('Review exact selected native target')
     return ppe.review(actor,w.case_id,target,purpose,verdict,evidence,note,case_expected)
 
-def projection(actor,work):
+def projection(actor,work,*,include_progress=False):
     from .factory import profile
+    from .factory_progress import current_plan_step
     ppe.readable(actor,work.case);r,data=source(work,actor,False);s=schedule(work);options=[];changed=False;message='';n={}
+    step = None
     try:
         _,v=profile(work,recovery=True);state,latest,missing,stale,tasks,jobs=snapshot(work,v,reader=actor);n=state['native'];options,message=eligible(work,v,state,latest,missing,stale,tasks,jobs)
         if work.status=='verified':verify(work,actor)
+        if include_progress:
+            step = current_plan_step(work, state['hash'], options)
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified'
     pending_reviews=[];reviewer_names=[];can_review=False
     if not work.cancel_requested and work.status not in ['cancelled','followup_needed']:
@@ -203,7 +207,8 @@ def projection(actor,work):
                     except (ValidationError,PermissionDenied):continue
                     reviewer_names.append(user.get_full_name() or user.username)
                     if user.pk==actor.pk:can_review=True
-    return {'pending_reviews':pending_reviews,'reviewer_names':sorted(set(reviewer_names)),'can_review':can_review,'register':r,'schedule':s,'inputs':data,'next_options':options,'next_action':message,'readiness_changed':changed,'native':n,'finding':message if not options else ''}
+    progress = {'label': 'Investigating the asset register and supporting records.', 'watching': True} if step == 'ACT04' else None
+    return {'pending_reviews':pending_reviews,'reviewer_names':sorted(set(reviewer_names)),'can_review':can_review,'register':r,'schedule':s,'inputs':data,'next_options':options,'next_action':message,'readiness_changed':changed,'native':n,'finding':message if not options else '', 'progress':progress}
 
 @transaction.atomic
 def restart(actor,work_id,expected,case_expected,reason):

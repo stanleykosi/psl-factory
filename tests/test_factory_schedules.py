@@ -12,7 +12,7 @@ from apps.policy.services import transition
 from apps.workflows import factory,factory_schedules as flow
 from apps.workflows.models import FactoryWork
 from .schedule_helpers import fixture,policy,evidence,row,review,accepted_equity
-from .helpers import rev
+from .helpers import check_investigation_progress, rev
 
 class FactorySchedulesTests(TestCase):
     def setUp(self):
@@ -34,7 +34,9 @@ class FactorySchedulesTests(TestCase):
             for n in names:c.execute('SELECT to_jsonb(t)::text FROM '+connection.ops.quote_name(n)+' t ORDER BY to_jsonb(t)::text');result[n]=c.fetchall()
             return result
     def test_income_native_chain_and_read_only_metadata(self):
-        f=self.f;self.start();self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertEqual(s.result['adjusted_total'],'-1000');self.assertNotEqual(self.work.status,'verified')
+        f=self.f;self.start()
+        check_investigation_progress(self, f['actor'], self.work, 'Investigating the selected income and schedule evidence.')
+        self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertEqual(s.result['adjusted_total'],'-1000');self.assertNotEqual(self.work.status,'verified')
         review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding);self.assertFalse(flow.verify(self.work,f['actor'])['ledger_posted'])
         self.client.force_login(f['reviewer']);Grant.objects.filter(case=f['case'],user=f['reviewer'],action='schedules.report').update(active=False)
         before=self.rows();response=self.client.get('/work/'+str(self.work.pk)+'/');self.assertContains(response,'Private report values require separate report permission');self.assertEqual(before,self.rows());self.assertNotContains(response,'-600');self.assertNotContains(response,'-400');self.assertFalse(flow.projection(f['reviewer'],self.work)['readiness_changed'])

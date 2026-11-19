@@ -17,7 +17,7 @@ from apps.core.models import Evidence, Audit
 from . import factory_accounting_intake as intake
 from apps.documents.models import Template,PublicationReceipt
 from . import factory as runtime,factory_accounting as service
-from .models import FactoryActivity,FactoryAttempt,HumanTask
+from .models import FactoryActivity,HumanTask
 from .factory_views import ProfileForm, QUEUES
 from .factory_progress_views import StartWithBackground, start_work
 
@@ -248,6 +248,8 @@ def _presentation(actor,work,*,include_progress=False):
 
 
 def accounting_progress(work, observed, options, jobs):
+    from .factory_progress import current_plan_step
+
     if work.status == 'verified':
         return None
     now = timezone.now()
@@ -262,17 +264,10 @@ def accounting_progress(work, observed, options, jobs):
     if unresolved:
         return {'label': 'The report is queued for delivery.', 'watching': True}
 
-    labels = {('ACT04',): 'Investigating the accounting sources.',
-              ('ACT08',): 'Calculating the accounting figures.',
-              ('ACT09',): 'Drafting the accounting report.',
-              ('ACT13',): 'Verifying the report receipts.'}
-    label = labels.get(tuple(options))
-    if label and work.lease_until and work.lease_until > now:
-        claim = FactoryAttempt.objects.filter(activity__work=work, activity__kind='ACT03',
-            phase='started', fence=work.fence, observation__hash=observed['hash']).values('activity_id', 'number').first()
-        if claim and not FactoryAttempt.objects.filter(**claim, phase__in=('observed', 'failed')).exists():
-            return {'label': label, 'watching': True}
-    return None
+    labels = {'ACT04': 'Investigating the accounting sources.', 'ACT08': 'Calculating the accounting figures.',
+              'ACT09': 'Drafting the accounting report.', 'ACT13': 'Verifying the report receipts.'}
+    label = labels.get(current_plan_step(work, observed['hash'], options))
+    return {'label': label, 'watching': True} if label else None
 
 def detail(request,work,focus=None):
     from .screen_focus import require_action

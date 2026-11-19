@@ -128,11 +128,11 @@ def permitted(actor,work,action):
     except PermissionDenied:return False
 
 @read_observation
-def presentation(actor,work,*,focus=None):
+def presentation(actor,work,*,focus=None,include_progress=False):
     from apps.agents.factory_coordinator import decorate
-    return decorate(actor,work,_presentation(actor,work,focus=focus))
+    return decorate(actor,work,_presentation(actor,work,focus=focus,include_progress=include_progress))
 
-def _presentation(actor,work,*,focus=None):
+def _presentation(actor,work,*,focus=None,include_progress=False):
     if work.definition=='pmo-issues/v1':
         from .factory_issue_views import presentation as issue_presentation
         return issue_presentation(actor,work)
@@ -451,7 +451,7 @@ def _presentation(actor,work,*,focus=None):
         elif panel['native']['stage']=='observation':row.update(state='Awaiting current supplied incumbent observation',needs_me=permitted(actor,work,'ledger.verify'),department_wait=permitted(actor,work,'ledger.verify'))
     if work.definition=='finance-schedules/v1':
         from .factory_schedules import projection
-        row['schedules']=projection(actor,work);panel=row['schedules']
+        row['schedules']=projection(actor,work,include_progress=include_progress);panel=row['schedules']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if panel['pending_reviews']:
@@ -463,7 +463,7 @@ def _presentation(actor,work,*,focus=None):
         elif panel['readiness_changed']:row['state']='Reviewed income detail or schedule inventory needs revalidation'
     if work.definition=='finance-ppe/v1':
         from .factory_ppe import projection
-        row['ppe']=projection(actor,work);panel=row['ppe']
+        row['ppe']=projection(actor,work,include_progress=include_progress);panel=row['ppe']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'],can_reassess=False)
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         if panel['pending_reviews']:
@@ -477,7 +477,7 @@ def _presentation(actor,work,*,focus=None):
                           'output_review':'Awaiting asset schedule review'}.get(stage,row['state'])
     if work.definition=='finance-forecast/v1':
         from .factory_forecast import projection
-        row['forecast']=projection(actor,work);panel=row['forecast'];row['jobs']=panel['jobs']
+        row['forecast']=projection(actor,work,include_progress=include_progress);panel=row['forecast'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options']) and panel['intake_current']
         uncertain=any(d.uncertain_job(j) for j in panel['jobs'])

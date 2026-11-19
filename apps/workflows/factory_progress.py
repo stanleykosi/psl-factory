@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
-from django.db.models import Case, DateTimeField, F, Value, When
+from django.db.models import Case, DateTimeField, Exists, F, OuterRef, Value, When
 from django.utils import timezone
 
 from apps.agents import factory_coordinator
@@ -14,12 +14,24 @@ from apps.pmo.approval_models import ApprovalRouteJob
 
 from . import factory
 from .factory_execution import require_control
-from .models import FactoryProgress, FactoryWork
+from .models import FactoryAttempt, FactoryProgress, FactoryWork
 
 
 ACTIVE = ('queued', 'running', 'waiting')
 WAIT_INTERVAL = timedelta(seconds=45)
 LEASE = timedelta(minutes=6)
+
+
+def current_plan_step(work, observation_hash, options):
+    """Read the one permitted step of a matching unsettled planning claim."""
+    if (len(options) != 1 or work.cancel_requested or work.status in factory.TERMINAL or
+            not work.lease_until or work.lease_until <= timezone.now()):
+        return None
+    settled = FactoryAttempt.objects.filter(activity_id=OuterRef('activity_id'), number=OuterRef('number'),
+                                             phase__in=('observed', 'failed'))
+    active = FactoryAttempt.objects.filter(activity__work=work, activity__kind='ACT03', phase='started',
+                                            fence=work.fence, observation__hash=observation_hash).filter(~Exists(settled))
+    return options[0] if active.exists() else None
 
 
 def wake_waiting(work_id):

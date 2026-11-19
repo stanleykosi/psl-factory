@@ -190,12 +190,16 @@ def export(actor,work_id,expected,case_expected,target,kind,evidence):
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or not s or s.pk!=target:raise ValidationError('Export exact active reviewed target')
     settled(w);return native.export_adjustment(actor,w.case_id,target,kind,evidence,case_expected)
 
-def projection(actor,work):
+def projection(actor,work,*,include_progress=False):
     from .factory import profile
+    from .factory_progress import current_plan_step
     native.readable(actor,work.case);source(work,actor,False);s=schedule(work);options=[];changed=False;message='';n={}
+    step = None
     try:
         _,v=profile(work,recovery=True);state,latest,missing,stale,tasks,jobs=snapshot(work,v,reader=actor);n=state['native'];options,message=eligible(work,v,state,latest,missing,stale,tasks,jobs)
         if work.status=='verified':verify(work,actor)
+        if include_progress:
+            step = current_plan_step(work, state['hash'], options)
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified'
     pending_reviews=[];names=[];can_review=False
     if s and n.get('stage') in ('output_review', 'withdrawn') and s.result['status']=='ready' and not work.cancel_requested:
@@ -204,7 +208,8 @@ def projection(actor,work):
             try:native.authority(user,s)
             except (ValidationError,PermissionDenied):continue
             names.append(user.get_full_name() or user.username);can_review=can_review or user.pk==actor.pk
-    return {'schedule':s,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed,'pending_reviews':pending_reviews,'reviewer_names':names,'can_review':can_review,'native':n,'links':list(ScheduleAdjustment.objects.filter(work=s).select_related('adjustment')) if s else []}
+    progress = {'label': 'Investigating the selected income and schedule evidence.', 'watching': True} if step == 'ACT04' else None
+    return {'schedule':s,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed,'pending_reviews':pending_reviews,'reviewer_names':names,'can_review':can_review,'native':n,'links':list(ScheduleAdjustment.objects.filter(work=s).select_related('adjustment')) if s else [],'progress':progress}
 
 @transaction.atomic
 def restart(actor,work_id,expected,case_expected,reason):

@@ -76,7 +76,7 @@ def detail(request,work,focus=None):
             elif a=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             messages.success(request,'Native PPE work updated');return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work);s=row['ppe']['schedule'];reviews=[];decisions=[]
+    row=presentation(request.user,work,include_progress=not focus);s=row['ppe']['schedule'];reviews=[];decisions=[]
     candidates=[(r,['register','basis'] if r.result['date_basis_ambiguous'] else ['register']),(s,['schedule'])]
     for target,purposes in candidates:
         if not target:continue

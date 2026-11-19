@@ -17,7 +17,7 @@ from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition
 from tests.forecast_helpers import fixture,scenario,publication,review,actual
 from tests.billing_helpers import evidence
-from tests.helpers import rev
+from tests.helpers import check_investigation_progress, rev
 
 
 class PublicationTimeoutBeforeAcceptance(InternalPublicationAdapter):
@@ -45,7 +45,9 @@ class ForecastFactoryTests(TestCase):
         factory.run_until_wait(self.work.pk);self.work.refresh_from_db();return self.work
 
     def test_complete_native_review_and_aggregate_receipt_chain(self):
-        self.start();self.advance()
+        self.start()
+        check_investigation_progress(self, self.actor, self.work, 'Investigating the selected cash forecast sources.')
+        self.advance()
         r=service.calculation(self.work,self.actor)
         self.assertIsNotNone(r,self.work.finding)
         self.assertEqual(service.report(self.work,self.actor)['stage'],'review',self.work.finding)

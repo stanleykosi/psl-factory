@@ -64,8 +64,8 @@
         "escalation":["SCR-51-investigating","SCR-51-not-escalated"],
         "leadership":["SCR-52-drafting","SCR-52-setup","SCR-52-tuesday"],
         "finance_accounts":["SCR-53-drafting","SCR-53-investigating","SCR-53-owner-needed","SCR-53-publishing","SCR-53-quarantined","SCR-53-setup-needed","SCR-53-uncertain","SCR-53-units"],
-        "assets":["SCR-54-held","SCR-54-investigating"],
-        "schedules":["SCR-55-investigating"],
+        "assets":["SCR-55-investigating"],
+        "schedules":["SCR-54-held","SCR-54-investigating"],
         "forecasts":["SCR-56-investigating"]
       },
       "acceptance_rule":"Inspect each actual source state and existing backend, exercise native synthetic intake/decisions/recovery/output in the in-app browser, and record scoped evidence. Presence of a seeded record or a visit is not completion; reconcile optional old test examples separately."
