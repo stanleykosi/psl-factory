@@ -1,0 +1,13 @@
+Merge of origin/dlv-00-delivery-setup into fe-delivery-closure-handover
+Head: 60ff597c130fee6aa063eeafe8b11cb3bd6e900b
+
+Conflicts and resolutions
+- WorkItemView.tsx: took dlv-00's projectId (adds 'escalation', F-39) and kept F-40's deliveryId plus the "← Delivery" back target ahead of the Project fallback.
+- Workspace.tsx: took dlv-00's stationsDrawn/drawsAgentCard/forecastLine; kept F-40's screenHeading(workspace) === undefined in titled.
+- workspace.css: kept both blocks (F-40 handover rules, then F-45/F-43 rules).
+- mock-contract.test.ts: union of allow-lists (W-(23|25|26|31|36|37), W-2701, W-3201, W-3901, W-4001, W-4201, W-4211).
+
+Results
+- tsc --noEmit: clean. eslint src tests: clean.
+- delivery/checks.sh (under shared lock): django check, lint, typecheck, build OK. Vitest 2 failed / 3126 passed: ledger-source.test.tsx (401 sign-in link) and start-work.test.tsx (Esc focus return). Both pass when rerun alone (108/108); load flake, not merge-caused (neither file touched).
+- Playwright e2e support-handover, delivery-release, delivery-hypercare, escalation, leadership-report: 152 passed, 0 failed.

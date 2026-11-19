@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 1457df1c1d4ad44327640da4efcce7d5d85dc9cd
+COMMIT: 60ff597c130fee6aa063eeafe8b11cb3bd6e900b
 BUILDER: coordinator (records-only round, D-123)
 LANE: full
 
@@ -10,3 +10,4 @@ LANE: full
 ## Fixes
 - UI-2-1 | exception added for the separate date-time picker; record waivers corrected | 1457df1c1d4ad44327640da4efcce7d5d85dc9cd
 - UI-1-3 | the remaining part of UI-1-3 is the same picker, now covered by the UI-2-1 exception | 1457df1c1d4ad44327640da4efcce7d5d85dc9cd
+- Merged dlv-00 (F-35, F-39, F-43, F-45, #75) at 60ff597c130fee6aa063eeafe8b11cb3bd6e900b; see merge-checks.log.
