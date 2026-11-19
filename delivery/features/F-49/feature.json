@@ -71,7 +71,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "3bedb8756740b91d1771dbe8f62f63dd0a3e69d4",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T22:00:22Z",
+      "seconds": 539.0,
+      "evidence_ref": "delivery/features/F-49/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -142,7 +155,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "417fadb7ea0c946852f1c001feb941ba539e07d9",
     "task_branch": "fe-rfp-intake-log-received-rfp",
-    "head_sha": null,
+    "head_sha": "3bedb8756740b91d1771dbe8f62f63dd0a3e69d4",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-49",
     "pr_url": null,
     "pr_number": null,
@@ -153,7 +166,27 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/rfp-intake.spec.ts",
+      "frontend/mock/fixtures/me.pmo_lead.json",
+      "frontend/mock/fixtures/start-work/lines.pmo_lead.json",
+      "frontend/mock/fixtures/start-work/options/client.json",
+      "frontend/mock/fixtures/work/W-3351.json",
+      "frontend/mock/proposals/rfp-intake.json",
+      "frontend/mock/start-work.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/src/features/start-work/IntakeField.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/showWhen.ts",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/tests/rfp-intake-mock.test.ts",
+      "frontend/tests/rfp-intake.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -220,9 +253,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "3bedb8756740b91d1771dbe8f62f63dd0a3e69d4"
   },
   "blocked": null
 }

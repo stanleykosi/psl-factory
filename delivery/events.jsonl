@@ -3574,3 +3574,4 @@
 {"at":"2026-11-19T17:58:24Z","feature":"F-38","round":1,"kind":"finding","action":"add","finding":"UI-1-10","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
 {"at":"2026-11-19T17:58:24Z","feature":"F-38","round":1,"kind":"transition","head":"32c97d3df9f2","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-19T17:58:24Z","feature":"F-38","round":2,"kind":"transition","head":"32c97d3df9f2","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-19T22:00:22Z","feature":"F-49","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":539.0,"commit":"3bedb8756740"}
