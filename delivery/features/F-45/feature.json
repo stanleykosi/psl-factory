@@ -4,11 +4,17 @@
   "project_id": "psl-factory",
   "feature_id": "F-45",
   "outcome": "Ledger source LED-0052: a Finance person records what they found in QuickBooks with proof, and an independent reviewer approves or rejects it as a reference, in four states (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-FIN-LEDGER"
   ],
-  "operation_ids": [],
+  "operation_ids": [
+    "E-WORK-ITEM",
+    "E-WORK-STEP",
+    "E-EVIDENCE-UPLOAD",
+    "E-TASK-CLAIM",
+    "E-TASK-DECIDE"
+  ],
   "acceptance_criteria": [
     "**Four states from data.** `/work/W-4201`\u2026`W-4204` show their fixture's status label and tone, stations, sections, agent card, facts and text, and nothing else. No board string is in `src`: `grep -rn \"CHIDI INVESTIGATING\\|RECORD WHAT YOU FOUND\\|JE-7741\\|NO PREDECESSOR\\|Ledger reviewer\\|re-check reopens\" frontend/src` returns nothing. \u2014 verify: `cd frontend && npx vitest run tests/ledger-source.test.tsx`; the four pages at 1440 and 390.",
     "**No amount and no computing.** No page or sidecar of this feature shows a currency sign or an amount. Changing a fact value in a fixture copy changes only that text. The diff under `frontend/src` adds no `parseFloat`, `Number(`, `.reduce(` or `compactAmount`. \u2014 verify: component test over every fixture (`document.body.textContent` has no \"\u20a6\" and no digit-group amount); `git diff -U0 dlv-00-delivery-setup -- frontend/src | grep -nE \"parseFloat|Number\\(|\\.reduce\\(|compactAmount\"` returns nothing.",
@@ -112,11 +118,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -316,6 +324,121 @@
           "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
         }
       ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "feature.json `operation_ids` is empty. Set it to exactly: E-WORK-ITEM, E-WORK-STEP, E-EVIDENCE-UPLOAD, E-TASK-CLAIM, E-TASK-DECIDE.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "AC 22 (fidelity) is not fully met until the design engineer signs the 7 visual waivers (76.4 to 91), the 27 exceptions (all \"builder proposal, pending design engineer\") and the verified side-note choice (Conflicts 13, Option B). The UI review prefers Option B.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-3",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Ledger-only behaviour differs from F-33: after a decide 200 whose re-read still offers the task, the ledger page shows \"result not confirmed\", while the income line still says \"<label> is approved\". The design engineer should accept the difference or ask for F-33 to be aligned.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-4",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "AC 26 lists `mock/start-work.mjs` as unchanged. It changed by 2 lines, as the spec's own Conflicts line (spec.md:223) requires. Accepted.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-5",
+      "round": 1,
+      "snapshot_ref": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Product acceptance is required (readiness) and still pending. It covers the three NOT SET ledger policy values, the three-person separation, what Unknown or More than one does, and the verdict set.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-45/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:27:04Z",
+          "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
+        }
+      ]
     }
   ],
   "prior_review_records": [],
@@ -411,9 +534,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-45/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -455,6 +580,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-19T09:16:41Z",
+      "round": 1,
+      "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-19T09:27:05Z",
       "round": 1,
       "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
       "reason": null
