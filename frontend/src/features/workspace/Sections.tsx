@@ -351,7 +351,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {item.label && item.text && <span className="ws-sugg__ref">{item.label}</span>}
                 <span className={item.label && item.text ? 'ws-sugg__answer' : undefined}>{item.text ?? item.label}</span>
                 <Detail text={item.detail} />
-                {item.agent && !item.tag?.label.includes(agentName(item.agent)) && <span className="ws-detail">Suggested by {agentName(item.agent)}</span>}
+                {item.agent && !item.tag && <span className="ws-detail">Suggested by {agentName(item.agent)}</span>}
               </span>,
               <>
                 {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}

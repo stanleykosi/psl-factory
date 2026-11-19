@@ -28,7 +28,9 @@ function Tab({ id, tab, outcome, requirements, current, teamTask }: { id: string
     tab.key === 'team_input'
       ? teamTask
         ? `${work(id)}/respond?task=${encodeURIComponent(teamTask)}`
-        : work(target)
+        : current === 'requirements'
+          ? undefined
+          : work(target)
       : tab.key === 'requirements' && requirements
         ? work(target)
         : tab.key === 'outcome' && outcome

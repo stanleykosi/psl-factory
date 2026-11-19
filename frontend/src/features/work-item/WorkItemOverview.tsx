@@ -729,7 +729,7 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   const settled = (task: WorkItem['tasks'][number]) => scheduleLine(item.workspace?.line_key) && task.cannot_act_reason === 'already_decided';
   // F-37: on the RFP requirements page the team-input task is reached from the Team input tab and each team's Record; the board draws no second panel for it
   const rfpPage = !phone && item.workspace?.line_key === 'rfp_response' && item.rfp !== undefined;
-  const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task) && !rfpPage);
+  const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task) && !(rfpPage && (task.response as { variant?: string } | undefined)?.variant === 'team_input'));
 
   return (
     <div className={layout ? `work-overview work-board work-state--${item.state}${layout === LAYOUTS.issue ? ' work-board--issue' : ''} work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : `work-overview${item.workspace ? ' work-overview--line' : ''}`}>

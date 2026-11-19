@@ -167,18 +167,12 @@
     "line_key": "rfp_response",
     "screen": "SCR-26",
     "view": "review",
-    "agent_note": {
-      "agent": "tola",
-      "lines": [
-        "I matched 41 requirements to answers PSL gave in past bids. I’ve marked them “suggested”; check each one before it counts."
-      ]
-    },
     "revision": 8,
     "steps": [
       {
         "key": "accept_selected",
         "label": "Accept selected",
-        "emphasis": "primary",
+        "emphasis": "secondary",
         "applies_to": "items",
         "consequence": "Bulk accept still records each answer under your name."
       },
@@ -459,44 +453,6 @@
               "write_own"
             ],
             "detail": "From PSL’s past answer: Harmattan Bank RFP 2025 · R-12"
-          }
-        ]
-      },
-      {
-        "key": "before_review",
-        "kind": "checklist",
-        "title": "Before review",
-        "note": "Team input 2 OF 4",
-        "items": [
-          {
-            "id": "eng",
-            "label": "Engineering",
-            "detail": "10 Nov · estimate-eng.xlsx",
-            "status": "done"
-          },
-          {
-            "id": "qa",
-            "label": "QA",
-            "detail": "11 Nov · qa-plan.pdf",
-            "status": "done"
-          },
-          {
-            "id": "sec",
-            "label": "Security",
-            "status": "not_yet",
-            "team_key": "security",
-            "steps": [
-              "record_input"
-            ]
-          },
-          {
-            "id": "prod",
-            "label": "Product",
-            "status": "not_yet",
-            "team_key": "product",
-            "steps": [
-              "record_input"
-            ]
           }
         ]
       }

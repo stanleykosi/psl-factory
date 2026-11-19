@@ -166,7 +166,7 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-table--stack { min-width: 0; }
   .ws-table--stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .ws-table--stack:not(:has(.ws-table__steps)) tr { display: block; padding: var(--space-6px) 0; border-top: var(--rule-thin) solid var(--rule-soft); }
-  .ws-table--stack td[data-label] { display: grid; grid-template-columns: 5rem minmax(0, 1fr); column-gap: var(--space-10px); white-space: normal; border: none; align-items: center; }
+  .ws-table--stack td[data-label] { display: grid; grid-template-columns: 5rem minmax(0, 1fr); column-gap: var(--space-10px); white-space: normal; border: none; align-items: center; justify-items: start; }
   .ws-table--stack td[data-label]::before { content: attr(data-label); font-size: var(--text-small-size); color: var(--ink-muted); text-transform: uppercase; }
   /* F-37: a stacked table with a select-all box keeps that one header cell on screen, so the box can be pressed */
   .ws-table:has(thead th.ws-selectall) thead { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }

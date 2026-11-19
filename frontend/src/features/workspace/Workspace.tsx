@@ -5,7 +5,7 @@
 // Nothing here reads /me or decides who may act; the backend composes every section and step. Steps write through
 // E-WORK-STEP (useWorkspaceStep); a decision step links to the decision page; a reconcile goes to the existing
 // ReconcilePanel, which the page shows from the re-read item.
-import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 import Link from 'next/link';
 
@@ -113,6 +113,8 @@ const ISSUE_TEXT = { register: 'Open the issue register' } as const;
 const REMINDER_LINE = 'payment_reminder';
 /** F-37: the RFP requirements workspace's line key; read only for the phone Drawer, the discard question and where focus goes after a write. */
 const RFP_LINE = 'rfp_response';
+// F-37: on the RFP page Tola's note sits in the side column straight after the Progress figures
+const noteAfter = (workspace: NonNullable<WorkItem['workspace']>) => workspace.sections.find((section) => section.kind === 'figures')?.key;
 
 /** The stations as the schedule boards (income F-33, fixed assets F-42) draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
@@ -563,6 +565,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const strip = issueLine(workspace) ? workspace.sections.filter((section) => section.kind === 'facts') : [];
   const side = workspace.sections.filter(inSide(item));
   const main = workspace.sections.filter((section) => !inSide(item)(section) && !strip.includes(section));
+  const rfpSideNote = workspace.line_key === RFP_LINE && !phone && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
   const sideNote = (issueLine(workspace) || (workspace.line_key === RFP_LINE && !phone)) && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
   const agentSide = schedule && item.agent.status === 'working';
   const notice = flow.notice;
@@ -703,7 +706,10 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         {(side.length > 0 || showPanel || sideNote || decideTasks.size > 0 || agentSide) && (
           <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
             {side.map((section) => (
-              <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
+              <Fragment key={section.key}>
+                <SectionView section={section} level={titled ? 3 : 2} controls={sectionControls} />
+                {rfpSideNote && section.key === noteAfter(workspace) && <AgentNote note={workspace.agent_note!} />}
+              </Fragment>
             ))}
             {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} />}
             {[...decideTasks].map(([taskId, taskSteps]) => (
@@ -752,7 +758,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             )}
             {workspaceSteps.map((s) => form(`ws:${s.key}`))}
             {assignForm(false)}
-            {sideNote && <AgentNote note={workspace.agent_note!} />}
+            {sideNote && !(rfpSideNote && noteAfter(workspace) !== undefined) && <AgentNote note={workspace.agent_note!} />}
           </aside>
         )}
       </div>
@@ -794,6 +800,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';
+  const rfpNote = workspace.line_key === RFP_LINE && !phone && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
   return (
     <div className="ws" data-line={workspace.line_key}>
       <WorkspaceHeader workspace={workspace} itemTitle={item.title} beside={noteBeside(item) || issueLine(workspace) || (workspace.line_key === RFP_LINE && !phone)} />
@@ -817,9 +824,12 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
               {workspace.sections
                 .filter(inSide(item))
                 .map((section) => (
-                  <SectionView key={section.key} section={section} level={titled ? 3 : 2} />
+                  <Fragment key={section.key}>
+                    <SectionView section={section} level={titled ? 3 : 2} />
+                    {rfpNote && section.key === noteAfter(workspace) && <AgentNote note={workspace.agent_note!} />}
+                  </Fragment>
                 ))}
-              {workspace.line_key === RFP_LINE && !phone && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
+              {rfpNote && noteAfter(workspace) === undefined && <AgentNote note={workspace.agent_note!} />}
             </aside>
           )}
         </div>

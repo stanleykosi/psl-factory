@@ -167,6 +167,35 @@ describe('W-3401 from data (AC 2, 3, 4, 5)', () => {
     expect(checklist.getAllByRole('button', { name: 'Record' })).toHaveLength(2);
   });
 
+  it('puts Tola’s note in the side column straight after Progress, before the checklist', async () => {
+    await open(item('W-3401'));
+    const side = document.querySelector('.ws-side') as HTMLElement;
+    const order = ['Progress', 'I matched 41 requirements', 'Before review'].map((t) => (side.textContent ?? '').indexOf(t));
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+  });
+
+  it('hides only the team-input task panel on desktop; another task of the item still has its panel', async () => {
+    const w = clone('W-3401');
+    w.tasks = [...w.tasks!, { id: 'T-3499', kind: 'approve', title: 'Approve the bid', required_role: 'PM', you_can_act: true, revision: 1 } as never];
+    await open(w);
+    expect(screen.getAllByText('Approve the bid').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Record team input')).toBeNull();
+  });
+
+  it('draws the review, edit and reject fixtures as the boards do: one primary, no note, no checklist', () => {
+    for (const name of ['W-3402', 'W-3402.next.accept', 'W-3402.next.accept_selected', 'W-3402.next.edit_accept', 'W-3402.next.write_own', 'W-3403', 'W-3403.next']) {
+      const w = item(name).workspace!;
+      expect(w.steps!.find((s) => s.key === 'accept_selected')!.emphasis, name).not.toBe('primary');
+      expect(w.agent_note, name).toBeUndefined();
+      expect(w.sections!.map((x) => x.key), name).not.toContain('before_review');
+    }
+  });
+
+  it('tags in the stacked phone table keep their own width', () => {
+    expect(readFileSync(join(__dirname, '../src/features/workspace/workspace.css'), 'utf8')).toMatch(/\.ws-table--stack td\[data-label\] \{[^}]*justify-items: start/);
+  });
+
   it('no board string is in src or in the mock server code', () => {
     const hits: string[] = [];
     const walk = (dir: string) => {
@@ -258,7 +287,8 @@ describe('accept one (AC 7)', () => {
   it('shows the suggestion with its label, the past-answer line as returned, the consequence and three buttons', async () => {
     await open(item('W-3402'));
     expect(panel().getByText(/Approvals above a configurable threshold/)).toBeTruthy();
-    expect(panel().getByText('Suggested by Tola')).toBeTruthy();
+    expect(panel().getAllByText('Tola')).toHaveLength(1);
+    expect(panel().queryByText('Suggested by Tola')).toBeNull();
     expect(panel().getByText('From PSL’s past answer: Harmattan Bank RFP 2025 · R-12')).toBeTruthy();
     expect(body()).not.toContain('that bid was won');
     expect(panel().getByText('Addressed')).toBeTruthy();
