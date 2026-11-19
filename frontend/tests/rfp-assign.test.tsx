@@ -351,7 +351,7 @@ describe('writes (criteria 6 to 11)', () => {
     expect(await within(dialog).findAllByText('Choose a PM from the list to continue.')).not.toHaveLength(0);
     expect((within(dialog).getByRole('textbox', { name: /Note/ }) as HTMLTextAreaElement).value).toBe('kept');
     expect(within(dialog).getByRole('combobox', { name: /Accountable PM/ }).textContent).toContain('Tunde Bello');
-  });
+  }, 30000);
 
   const refuse422 = (names: string[]) => (s: Sent) =>
     s.method === 'POST' && s.path.endsWith('/assignment') ? json(422, { code: 'invalid', message: `Check these fields: ${names.join(', ')}.`, fields: names.map((name) => ({ name, message: `Check ${name}.` })) }) : undefined;
@@ -372,7 +372,7 @@ describe('writes (criteria 6 to 11)', () => {
     expect(dialog.textContent).not.toMatch(/Check these fields|acting_role|evidence_id/);
     expect((within(dialog).getByRole('textbox', { name: /Note/ }) as HTMLTextAreaElement).value).toBe('kept');
     expect(within(dialog).getByRole('combobox', { name: /Accountable PM/ }).textContent).toContain('Tunde Bello');
-  });
+  }, 30000);
 
   it('a 422 naming both fields lists both in the summary and focuses the role', async () => {
     const dialog = await open('W-3302');

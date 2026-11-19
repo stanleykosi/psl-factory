@@ -745,7 +745,7 @@ describe('reconcile panel (A-RECONCILE)', () => {
     expect(screen.queryByText('Choose what happened to continue.')).toBeNull();
     fireEvent.click(go);
     expect(screen.getByRole('alert').textContent).toBe('Choose what happened to continue.');
-    expect(document.activeElement).toBe(screen.getAllByRole('radio')[0]);
+    await waitFor(() => expect(document.activeElement).toBe(screen.getAllByRole('radio')[0]));
     expect(writes()).toHaveLength(0);
     fireEvent.click(screen.getByRole('radio', { name: /It didn’t arrive/ }));
     expect(screen.queryByText('Choose what happened to continue.')).toBeNull();

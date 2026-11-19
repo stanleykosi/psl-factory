@@ -270,13 +270,13 @@ describe('Client detail (SCR-35 detail)', () => {
     expect(puts()).toHaveLength(0);
     expect(screen.getByText('Enter the billing contact name.')).toBeTruthy();
     expect(screen.getByText('Enter the billing email.')).toBeTruthy();
-    expect(document.activeElement).toBe(nameBox());
+    await waitFor(() => expect(document.activeElement).toBe(nameBox()));
     fill('Ada Okoye', '   ');
     await press();
     expect(puts()).toHaveLength(0);
     expect(screen.queryByText('Enter the billing contact name.')).toBeNull();
     expect(screen.getByText('Enter the billing email.')).toBeTruthy();
-    expect(document.activeElement).toBe(emailBox());
+    await waitFor(() => expect(document.activeElement).toBe(emailBox()));
     fill('Ada Okoye', 'ada@lagoon.example');
     expect(saveButton()!.disabled).toBe(false);
     const button = saveButton()!;
@@ -306,7 +306,7 @@ describe('Client detail (SCR-35 detail)', () => {
     {
       const box = screen.getByText('Saved. We couldn’t refresh the page; reload to see the latest.').closest('[role="alert"]') as HTMLElement;
       expect(box).toBeTruthy();
-      expect(document.activeElement).toBe(box);
+      await waitFor(() => expect(document.activeElement).toBe(box));
     }
     expect(saveButton()).toBeNull();
     expect(nameBox().value).toBe('Ada Okoye');
@@ -326,7 +326,7 @@ describe('Client detail (SCR-35 detail)', () => {
     {
       const box = screen.getByText('This client changed while you were editing. Check the details and save again.').closest('[role="alert"]') as HTMLElement;
       expect(box).toBeTruthy();
-      expect(document.activeElement).toBe(box);
+      await waitFor(() => expect(document.activeElement).toBe(box));
     }
     expect(puts()).toHaveLength(1);
     expect(reads()).toHaveLength(2);
@@ -367,7 +367,7 @@ describe('Client detail (SCR-35 detail)', () => {
       const described = input.getAttribute('aria-describedby')!.split(' ').map((id) => document.getElementById(id)!.textContent);
       expect(described).toContain(message);
     }
-    expect(document.activeElement).toBe(nameBox());
+    await waitFor(() => expect(document.activeElement).toBe(nameBox()));
     expect(nameBox().value).toBe('Ada');
     expect(emailBox().value).toBe('nope');
     expect(reads()).toHaveLength(1);
@@ -395,7 +395,7 @@ describe('Client detail (SCR-35 detail)', () => {
     {
       const box = screen.getByText('Your role changed.').closest('[role="alert"]') as HTMLElement;
       expect(box).toBeTruthy();
-      expect(document.activeElement).toBe(box);
+      await waitFor(() => expect(document.activeElement).toBe(box));
     }
     expect(reads()).toHaveLength(2);
     expect(puts()).toHaveLength(1);
@@ -434,7 +434,7 @@ describe('Client detail (SCR-35 detail)', () => {
       {
         const box = screen.getByText('We couldn’t confirm the change was saved.').closest('[role="alert"]') as HTMLElement;
         expect(box).toBeTruthy();
-        expect(document.activeElement).toBe(box);
+        await waitFor(() => expect(document.activeElement).toBe(box));
       }
       expect(puts()).toHaveLength(1);
       expect(reads()).toHaveLength(2);

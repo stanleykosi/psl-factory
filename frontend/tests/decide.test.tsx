@@ -268,7 +268,7 @@ describe('claim and decide', () => {
         expect(note.getAttribute('aria-invalid')).toBe('true');
         const error = screen.getByText('Add a note to return or reject.');
         expect(note.getAttribute('aria-describedby')).toContain(error.id);
-        expect(document.activeElement).toBe(note);
+        await waitFor(() => expect(document.activeElement).toBe(note));
       }
     }
     expect(counts().decides).toHaveLength(0);

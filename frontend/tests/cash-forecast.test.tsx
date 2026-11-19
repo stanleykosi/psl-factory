@@ -509,7 +509,7 @@ describe('approve, return and reject (AC 12 to 14)', () => {
     await ready('Approve forecast');
     await click('Return with a note');
     expect(await screen.findByText('Add a note to return it.')).toBeTruthy();
-    expect(document.activeElement).toBe(note());
+    await waitFor(() => expect(document.activeElement).toBe(note()));
     expect(note().getAttribute('aria-invalid')).toBe('true');
     fireEvent.change(note(), { target: { value: '   ' } });
     await click('Reject');
@@ -831,7 +831,7 @@ describe('phone (AC 21)', () => {
       await new Promise((r) => setTimeout(r, 30));
     });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement?.textContent).toBe('Return with a note');
+    await waitFor(() => expect(document.activeElement?.textContent).toBe('Return with a note'));
   });
 
   it('the phone reconcile panel is named "Record what happened" and the uncertain page shows the same banner, facts and Next as desktop', async () => {

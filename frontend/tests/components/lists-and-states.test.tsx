@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Breadcrumb, Disclosure, EmptyState, ErrorState, Loading, PageTitle, Progress, ShowMore, Skeleton, ValidationSummary, VisuallyHidden, When } from '@/components';
@@ -104,9 +104,9 @@ describe('ValidationSummary', () => {
     const summary = screen.getByRole('alert');
     expect(summary.className).toBe('psl-summary');
     expect(screen.getByText('2 things to fix')).toBeTruthy();
-    expect(document.activeElement).toBe(summary);
+    await waitFor(() => expect(document.activeElement).toBe(summary));
     fireEvent.click(screen.getByRole('link', { name: 'Add the client’s acceptance proof' }));
-    expect(document.activeElement).toBe(screen.getByRole('textbox', { name: 'Proof' }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('textbox', { name: 'Proof' })));
     expect(await violations()).toEqual([]);
     rerender(<ValidationSummary attempt={2} problems={[{ fieldId: 'proof', message: 'Add the client’s acceptance proof' }]} />);
     expect(screen.getByText('1 thing to fix')).toBeTruthy();

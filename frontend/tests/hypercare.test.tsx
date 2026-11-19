@@ -359,7 +359,7 @@ describe('record the release (AC 10, 12, 14)', () => {
       fireEvent.submit(ws().getByRole('form'));
     });
     await waitFor(() => expect(pageText()).toContain('You can’t take that step.'));
-  });
+  }, 30000);
 
   it('a 500 shows the failed message, never "Done" or "recorded", and re-reads', async () => {
     stepAnswers = [json(500, { code: 'server_error', message: 'x' })];

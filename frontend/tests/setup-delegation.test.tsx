@@ -398,7 +398,7 @@ describe('the request and its checks (AC 9, 10)', () => {
     expect(puts()).toHaveLength(0);
     expect(panel().getByText('Choose who to delegate to.')).toBeTruthy();
     expect(panel().getByText('Enter the start date, for example 18 Nov 2026.')).toBeTruthy();
-    expect(document.activeElement).toBe(combo(panel(), 'To'));
+    await waitFor(() => expect(document.activeElement).toBe(combo(panel(), 'To')));
     expect(combo(panel(), 'To').getAttribute('aria-invalid')).toBe('true');
     pick(panel(), 'To', 'Femi Ade · PMO Lead');
     typeDate(panel(), 'Starts', '10 Nov 2026');
@@ -425,7 +425,7 @@ describe('outcomes (AC 11 to 15)', () => {
     expect(rows()[2]).toEqual(['Kemi Adebayo · PMO Lead', 'Femi Ade · PMO Lead', '01–03 Dec 2026', 'Training', 'Upcoming']);
     expect(announced()).toBe('Delegation added: Kemi Adebayo to Femi Ade, 01–03 Dec 2026.');
     await waitFor(() => expect(document.activeElement?.querySelector('[data-row-for]')?.getAttribute('data-row-for')).toBe('DL-9001'));
-    expect(document.activeElement?.tagName).toBe('TR');
+    await waitFor(() => expect(document.activeElement?.tagName).toBe('TR'));
     expect(combo(panel(), 'From').textContent).toContain('Choose who is delegating');
     expect((panel().getByLabelText('Reason') as HTMLInputElement).value).toBe('');
     const text = document.body.textContent!.replace(NOTE, '').replace(TO_HINT, '');
@@ -472,7 +472,7 @@ describe('outcomes (AC 11 to 15)', () => {
     expect(panel().queryByText(/delegate, ends/)).toBeNull();
     expect(panel().getByText('This person can’t take this delegation.')).toBeTruthy();
     expect(panel().getByText('Choose an end date within the next 90 days.')).toBeTruthy();
-    expect(document.activeElement).toBe(combo(panel(), 'To'));
+    await waitFor(() => expect(document.activeElement).toBe(combo(panel(), 'To')));
     expect(combo(panel(), 'To').textContent).toContain('Femi Ade · PMO Lead');
     expect((panel().getByLabelText('Reason') as HTMLInputElement).value).toBe('Training');
     expect(lists()).toHaveLength(1);

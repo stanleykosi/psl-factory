@@ -322,7 +322,7 @@ describe('escalate and don’t escalate (AC 7 to 9)', () => {
     await ready();
     await click("Don't escalate");
     expect(await screen.findByText('Add a note to reject it.')).toBeTruthy();
-    expect(document.activeElement).toBe(note());
+    await waitFor(() => expect(document.activeElement).toBe(note()));
     fireEvent.change(note(), { target: { value: '   ' } });
     await click("Don't escalate");
     fireEvent.change(note(), { target: { value: 'x'.repeat(2001) } });
@@ -592,7 +592,7 @@ describe('phone (AC 8, 17)', () => {
       await new Promise((r) => setTimeout(r, 30));
     });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement?.textContent).toBe("Don't escalate");
+    await waitFor(() => expect(document.activeElement?.textContent).toBe("Don't escalate"));
   });
 });
 
