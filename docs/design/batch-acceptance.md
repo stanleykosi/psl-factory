@@ -18,6 +18,12 @@ The runner `python scripts/design_acceptance_batch.py --audit` verifies that the
 
 The Railway runner can also use `--parallel-groups 2` in place of `--settings`. Each group gets a separate retained test database and a separate exit result. Start the parallel run after any current acceptance job exits. The original retained test database and the preview database stay separate from the group databases.
 
-After the grouped PostgreSQL result and deployment of the same application source, prepare the synthetic starting records from the guarded `tests/railway_batch_walkthrough_seed.py` script. It requires the design acceptance project and environment and the `PSL_COMPOSED_WALKTHROUGH=1` and `PSL_COMMERCIAL_CLIENT_FIXTURE=1` flags. Keep its `PSL_BATCH_FIXTURE` results as the sample map. Replay retains existing work. A failing fixture remains open and the other sample results stay available.
+After the grouped PostgreSQL result and deployment of the same application source, prepare the synthetic starting records in the Railway design acceptance project and environment:
+
+```sh
+PSL_COMPOSED_WALKTHROUGH=1 PSL_COMMERCIAL_CLIENT_FIXTURE=1 python manage.py shell --settings=config.acceptance_settings -c 'from tests.railway_batch_walkthrough_seed import run; run()'
+```
+
+Keep its `PSL_BATCH_FIXTURE` results as the sample map. Replay retains existing work. A failing fixture remains open and the other sample results stay available.
 
 Separate a passed test from a passed browser journey in the ledger. Provider activity, owner approvals and release claims require their own evidence.

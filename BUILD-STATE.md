@@ -26,7 +26,7 @@ Agents0012/0013, pmo0070–0072 and Finance0080/0081 are applied in testDB and p
 
 ## Remaining product work
 
-Of 262 states, 27 have a completed scoped journey, 189 have observations with checks still open, and 46 have no direct browser observation. Hosted 200 verified the original and corrected Finance company report and the recipient receipts on desktop and phone. The earlier invitation6 walkthrough establishes single-workspace account setup. Multiple workspace setup and verified alerts remain open. [Acceptance ledger](docs/design/screen-state-acceptance.md) and [backlog](BUILD-BACKLOG.json) retain the exact states and groups.
+Of 262 states, 29 have a completed scoped journey, 187 have observations with checks still open, and 46 have no direct browser observation. Hosted 200 verified management accounts, the escalation receipt and the monthly leadership receipt on desktop and phone. Earlier asset and cash forecast results now need revalidation. The earlier invitation6 walkthrough establishes single-workspace account setup. Multiple workspace setup and verified alerts remain open. [Acceptance ledger](docs/design/screen-state-acceptance.md) and [backlog](BUILD-BACKLOG.json) retain the exact states and groups.
 
 - Resolve the grouped201 result and run grouped browser journeys against a passing candidate.
 - Finish commercial client-requested rework/historical recovery and invitation onboarding variants. Existing native signature/adoption/Finance controls remain authoritative; design examples do not set billing rules.
