@@ -3,26 +3,59 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-51",
-  "outcome": null,
-  "state": "PLANNED",
+  "outcome": "Start work: open a fixed asset schedule with its proof file, and start a cash forecast from its scenario, as-of date, months and audience (contract mock only)",
+  "state": "READY",
   "task_ids": [
     "FE-M2A-PROOF"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "**Fixed-asset drawer from data.** As `finance_lead`, \"Fixed asset schedule\" shows Proof (the file box), \"Prior schedule (optional)\" and \"Accounting note (optional)\", in that order, with the button \"Start schedule\". Every word comes from the E-LINES fixture; no board string is in `src`. \u2014 verify: `cd frontend && npx vitest run tests/start-work-ppe-forecast.test.tsx`; `grep -rn \"ppe_register_oct\\|PPE-0005\\|Base case \u00b7 v4\\|All 3 accepted\" frontend/src` returns nothing; drawer at 1440 and 390.",
+    "**Forecast drawer from data, no file.** \"Cash forecast\" shows Scenario, As of, Months, Audience (Internal / Management / Group) and Sources \"All 3 accepted\", with the button \"Start forecast\". It has no Proof box, no file input and no \"Choose a file\". The Sources text is the fixture's `value`; changing the fixture changes the page. \u2014 verify: component test (`input[type=file]` count 0; Sources follows a changed fixture); drawer at 1440 and 390.",
+    "**Nothing computed or defaulted in the browser.** No audience is preselected; Months and As of are empty until typed; the page never counts sources, never reads \"accepted\" itself, never checks a month range or date, and renders no value the line did not send. Start stays off until the four required fields are filled. \u2014 verify: component test (initial values empty; Start disabled); `git diff -U0 frontend/src | grep -nE \"months *[<>]|new Date\\(|accepted\"` returns nothing.",
+    "**Only Finance gets the lines.** `finance_lead` is offered both lines; `pm`, `ceo` and `none` are offered neither, and `/me` `startable_lines` equals E-LINES keys for every persona. \u2014 verify: `cd frontend && npx vitest run tests/start-work-ppe-forecast-mock.test.ts tests/start-work-mock.test.ts`.",
+    "**Uploaded only when the backend says so.** Choosing `ppe_register_oct.xlsx` (98,304 bytes) sends one POST `/api/v1/cases/C-FIN-PPE/evidence` with CSRF and `{kind: \"ppe_register\", filename, content_base64, case_revision: 4}` (validates against the generated request schema, no extra keys). The card reads \"Uploading\u2026\" until the answer, then \"Uploaded \u00b7 96 KB\". An answer without `evidence_id` reads \"Not uploaded\" and the start sends no proof. \u2014 verify: component test with a recording `fetch`; e2e request log.",
+    "**Proof is required; revision chains.** With no file, Start is off and a start sent by other means answers 422 \"Proof is required.\" under the Proof box. Two uploads in a row send revisions 4 then 5; the start sends revision 6 and the second id. Removing the \"\u00d7\" card stops it being sent, sends no request, and the drawer never says \"deleted\". \u2014 verify: component test; `tests/start-work-ppe-forecast-mock.test.ts`; `grep -rn \"deleted\" frontend/src/features/start-work` returns nothing.",
+    "**Start is held while proof is unsure.** While an upload runs and while a card reads \"Not uploaded\", Start is disabled and sends nothing; removing the card or a successful Try again enables it (the file is required, so removing leaves it off). \u2014 verify: component test with a deferred upload.",
+    "**Wrong record.** A start carrying an evidence id from another case or persona, or one never issued, answers 422 \"That proof isn't on this record. Add it again.\" under Proof. As `finance_lead`, an upload to `C-0101` or `C-FIN-LEDGER` with kind `ppe_register` answers 404, shown as \"You can't add proof to this item.\". \u2014 verify: `tests/start-work-ppe-forecast-mock.test.ts`.",
+    "**Each start lands on its work item.** The fixed-asset drawer filled as in the Boards table sends exactly one E-WORK-START and lands on `/work/W-3901`; the forecast drawer sends exactly one and lands on `/work/W-4001`. A double press sends one (idempotency key from drawer open, uploads make none). \u2014 verify: component tests; e2e request log.",
+    "**Forecast sends the typed values only.** The forecast body has `scenario`, `as_of`, `months` (an integer), `audience`, no `sources`, no evidence and no field not filled. The 422 messages \"Months must be between 1 and 12.\", \"As of must be a date.\" and \"Choose one of the listed audiences.\" show word for word under their own field and keep every typed value. \u2014 verify: component test with a recording `fetch`; mock test.",
+    "**A held run does not hold the form.** With `psl_mock_start_work=start_hold`, a forecast start returns 201 and lands on `/work/W-4006`, whose page shows \"SETUP NEEDED\" and no preparer or reviewer name. The drawer shows no rule, no setup link, and never says the forecast was prepared. \u2014 verify: e2e (land on W-4006, text present, no Decide panel).",
+    "**Uncertain and stale.** With `start_uncertain` the drawer shows \"Check again\" and \"If it started, it will appear in My work.\", never \"started\"; Check again sends the identical body and key and the mock records one start (both lines). With `upload_uncertain` on the fixed-asset drawer the card says \"Not uploaded\", Try again re-reads, and the start sends only the second id and its revision. A stale 409 on the start or upload re-reads E-LINES, keeps typed values and cards, and sends the re-read revision with a new key. \u2014 verify: component and e2e tests; mock test.",
+    "**Access.** Without CSRF an upload or start answers 403 and shows the refusal; 401 shows the signed-out state with `next` set to the current page; 403 and 404 on the start read \"You can't start this here.\"; 403 and 404 on upload read alike. A fixed line without `case_revision` stays \"can't start here yet\" and sends nothing. \u2014 verify: component tests with a recording `fetch`; mock tests.",
+    "**Plain text, no limits, no authority from roles.** A file named `<img src=x onerror=alert(1)>.xlsx` and a 422 containing `<b>bold</b>` render as literal text; no `<a>` takes an `href` from an upload or E-LINES value; the file input has no `accept`; the diff adds no size or type check; the new code reads neither `/me` nor roles. Unknown is never 0: no card reads \"0 KB\", and an upload 200 without `case_revision` sends the last known revision, never 0 or blank. \u2014 verify: component test; `git diff -U0 frontend/src | grep -nE \"PROOF_TYPES|PROOF_MAX_BYTES|accept=|useMe|/api/v1/me|roles\"` returns nothing.",
+    "**Phone.** At 390 each drawer opens in F-05's bottom sheet with the same fields and order as desktop; nothing scrolls sideways; the \"\u00d7\", \"Choose a file\", Try again, Start and every segment and select are at least 44 by 44 px; Escape and Cancel close and return focus. \u2014 verify: e2e at 390 measuring bounding boxes.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over the 4 boards at 1440 and 390 on a production build. Coverage after approved exceptions is 100%; visual at least 90, or a board-level D-83 waiver with visual at least 70. Every exception has `role`, `name`, `category`, `reason`, `approved_by` and maps to a Conflicts number, and none covers a value the data can supply. \u2014 verify: the fidelity command; `round-<N>/fidelity/scores.txt`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on both drawers in: empty, uploading, uploaded, failed, a 422 under a field (Proof, Months), and \"Check again\". The Proof group is labelled; the file input is named; errors and uploading are announced as text, not colour. \u2014 verify: `e2e/start-work-ppe-forecast.spec.ts`.",
+    "**Tokens and components only.** The diff adds no `#hex`, `rgb(`, `hsl(` or raw px outside tokens, and no local copy of `ProofField`, `useEvidenceUpload` or any `@/components` export. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract, F-47 unchanged.** New lines and options validate against the generated E-LINES and E-LINE-OPTIONS schemas; every upload answer validates against the E-EVIDENCE-UPLOAD 200 schema; reset restores `C-FIN-PPE` 4 and `C-FIN-FORECAST` 2 and keeps `C-0101` 6, `C-FIN-SCHEDULES` 3, `C-FIN-LEDGER` 2; F-47's tests are green without a rewritten assertion; `git diff --stat` shows no change in `frontend/src/api/**`, `components/**`, `shell/**`, `features/response/**`, `mock/response.mjs`, `evidence.mjs`, `setup.mjs`, any existing fixture other than `lines.finance_lead.json` and `me.finance_lead.json`, `apps/**`, `architecture/**`, `design/**`, or the protected paths. \u2014 verify: `cd frontend && npx vitest run tests/start-work-ppe-forecast-mock.test.ts tests/start-work-proof-mock.test.ts tests/mock-contract.test.ts`; `git diff --stat`.",
+    "**Existing tests green; build.md evidence.** `delivery/checks.sh` passes and the Context tests pass. build.md lists commands and results, the 4 scores and waivers, every exception with its Conflicts number, every mock-only field and cookie (`start_hold` is new), the allowed edits outside the lane, the backend items and the held list. \u2014 verify: `delivery/checks.sh`; file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It reuses F-47's merged upload and start path, and F-47 already got the high-risk review of the proof upload and the revision chain. The new part is two fixed-case lines on that path: the fixed-asset upload is append-only on a shared Finance case, so a stale revision would still hit another logger, and the forecast only starts a run. No money field, payroll or client sending is in this slice. SURFACES: ui, api, contract-change (the two lines and their fields, as the consumer of the proposed D-START-INTAKE). PRODUCT-ACCEPTANCE is required, because both drawers are new to the client."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-51/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +92,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-51/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +185,28 @@
   "created_at": "2026-11-19T17:44:25Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-19T17:54:25Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-51/readiness.md",
+      "delivery/features/F-51/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

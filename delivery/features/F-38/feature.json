@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-38",
   "outcome": "RFP submission: the PM sends Tola's submission pack for review, the document reviewer decides on that exact pack, and the Submission tab shows \"Submitted\" and the receipt only as the backend returns them (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-RFP-SUBMIT"
   ],
@@ -77,7 +77,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T17:52:21Z",
+      "seconds": 493.2,
+      "evidence_ref": "delivery/features/F-38/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -155,7 +168,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "b11b48d8f15bad08f8aa8046c37e3646ba5a962c",
     "task_branch": "fe-rfp-submit-send-response",
-    "head_sha": null,
+    "head_sha": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-38",
     "pr_url": null,
     "pr_number": null,
@@ -166,7 +179,41 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/rfp-submission.spec.ts",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/D-3501.1.json",
+      "frontend/mock/fixtures/response/W-3505.delivered.json",
+      "frontend/mock/fixtures/response/W-3505.not_delivered.json",
+      "frontend/mock/fixtures/response/W-3505.unknown.json",
+      "frontend/mock/fixtures/work/W-3501.json",
+      "frontend/mock/fixtures/work/W-3501.next.json",
+      "frontend/mock/fixtures/work/W-3501.steps.json",
+      "frontend/mock/fixtures/work/W-3502.approve.json",
+      "frontend/mock/fixtures/work/W-3502.json",
+      "frontend/mock/fixtures/work/W-3502.reject.json",
+      "frontend/mock/fixtures/work/W-3502.return.json",
+      "frontend/mock/fixtures/work/W-3503.json",
+      "frontend/mock/fixtures/work/W-3504.json",
+      "frontend/mock/fixtures/work/W-3505.approve.json",
+      "frontend/mock/fixtures/work/W-3505.json",
+      "frontend/mock/fixtures/work/W-3506.json",
+      "frontend/mock/fixtures/work/W-3506.next.json",
+      "frontend/mock/fixtures/work/W-3507.json",
+      "frontend/mock/fixtures/work/W-3508.json",
+      "frontend/mock/fixtures/work/W-3509.json",
+      "frontend/src/features/rfp/RfpFrame.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/rfp-submission-mock.test.ts",
+      "frontend/tests/rfp-submission.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -217,6 +264,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T17:52:27Z",
+      "round": 1,
+      "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "reason": null
     }
   ],
   "routing": {
@@ -234,9 +289,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
   },
   "blocked": null
 }

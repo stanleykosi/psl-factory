@@ -3540,3 +3540,9 @@
 {"at":"2026-11-19T17:44:25Z","feature":"F-50","round":0,"kind":"created","tasks":["FE-MILESTONE-COMPLETE"]}
 {"at":"2026-11-19T17:44:25Z","feature":"F-51","round":0,"kind":"created","tasks":["FE-M2A-PROOF"]}
 {"at":"2026-11-19T17:46:16Z","feature":"F-50","round":0,"kind":"transition","reason":"NOT-READY: the completion write waits on a PSL decision (who may press 'Mark complete' and whether it auto-starts the invoice draft; PSL-DECISIONS pack) and the completion endpoint is missing from schema.d.ts (backend).","from":"PLANNED","to":"BLOCKED"}
+{"at":"2026-11-19T17:52:21Z","feature":"F-38","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":493.2,"commit":"32c97d3df9f2"}
+{"at":"2026-11-19T17:52:27Z","feature":"F-38","round":1,"kind":"transition","head":"32c97d3df9f2","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-19T17:54:22Z","feature":"F-49","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-19T17:54:25Z","feature":"F-49","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-19T17:54:25Z","feature":"F-51","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-19T17:54:25Z","feature":"F-51","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
