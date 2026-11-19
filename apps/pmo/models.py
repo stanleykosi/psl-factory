@@ -8,6 +8,7 @@ from .rfp_models import RFPCase,RFPIntake,RFPAssignment,RFPContribution,RFPRespo
 from .rfp_portal_models import RFPPortalReceipt
 from .rfp_message_models import RFPFollowupDispatch, RFPFollowupAttempt, RFPFollowupMailbox, RFPFollowupReceipt, RFPFollowupCursor
 from .delivery_models import DeliveryDossier,DeliverySource,DeliverySourceVerification,DeliveryRecord,DeliveryDocumentBinding,DeliverySignal,DeliveryScanCursor
+from .client_uat_models import ClientUATGateBinding
 from .recovery_models import AuthorityRecoveryRequest, AuthorityRecoveryDecision, AuthorityRecoveryRecord, EmergencyFollowup, EmergencyFollowupCompletion
 from .emergency_models import EmergencyProfile, EmergencyDecision, EmergencyAuthorization, EmergencyOutcome, EmergencyReview, EmergencyRetrospectiveDecision, EmergencyRetrospectiveRecord, EmergencyDocumentBinding, EmergencyDeadlineSignal, EmergencyScanCursor
 from .issue_models import Issue, IssueState, IssueClosureEntry

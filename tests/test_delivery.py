@@ -33,8 +33,8 @@ CRITERIA={'clock':'elapsed_hours_since_release','minimum_hours':0,'confirmation_
 
 
 class DeliveryFixture:
-    def setup_delivery(self):
-        self.actor,self.case=setup_case();self.e=signed(self.actor,self.case)
+    def setup_delivery(self,context=None):
+        self.actor,self.case=context or setup_case();self.e=signed(self.actor,self.case)
         self.candidate=register_candidate(self.actor,self.case.pk,'delivery-build',self.e['requirements'].pk,rev(self.case))
         self.d=open_dossier(self.actor,self.case.pk,self.candidate.pk,self.e['plan'].pk,'PM scope attestation for this requirements/plan',rev(self.case))
         self.t=register_template(self.actor,self.case.pk,'Delivery artifact',{'document_type':'project_artifact','required_fields':['executive_summary','status'],

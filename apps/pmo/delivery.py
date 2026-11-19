@@ -17,6 +17,7 @@ from apps.core.read_observation import observed_fact
 SOURCE_OWNERS={'registration':'PMO','scope_baseline':'PMO','ui_applicability':'Product/Design','ui_target':'Product/Design','ui_design':'Design Lead',
     'ui_client':'Client','technical_design':'Engineering Lead','test_strategy':'QA Lead','uat_approach':'Product Owner',
     'hypercare_engineering':'Engineering','hypercare_infrastructure':'Infrastructure','technical_finalization':'Engineering'}
+SOURCE_OWNERS.update(uat_client_target='PMO',uat_client_response='Client')
 PLANNING=['registration','scope_baseline','technical_design','test_strategy','uat_approach','ui_applicability']
 UPSTREAM_GATES=['qa_exit','uat_product_manager','uat_product_owner','uat_client','engineering_go']
 GLPI_GATES=['glpi_security','glpi_cto','glpi_ceo']
@@ -72,6 +73,9 @@ def open_dossier(actor,case_id,candidate_id,evidence_id,note,expected,*,declined
 
 
 def validate_source_payload(kind,payload):
+    from adapters.client_uat import KINDS as CLIENT_KINDS,validate_payload as validate_client
+    if kind in CLIENT_KINDS:
+        validate_client(kind,payload);return
     from .delivery_ui import KINDS,validate_payload
     if kind in KINDS:
         validate_payload(kind,payload);return
@@ -93,6 +97,8 @@ def validate_source_payload(kind,payload):
 
 @transaction.atomic
 def capture_source(actor,case_id,dossier_id,kind,external_ref,evidence_id,payload,expected):
+    from adapters.client_uat import KINDS as CLIENT_KINDS
+    if kind in CLIENT_KINDS:raise ValidationError('Use the human client-response workflow for these records')
     case=lock_case(actor,case_id,'delivery.source',expected);d=dossier_for(case,dossier_id);ensure_open(d)
     if kind not in SOURCE_OWNERS or not isinstance(external_ref,str) or not external_ref.strip() or len(external_ref)>240:
         raise ValidationError('Choose an owned source kind and bounded external reference')
@@ -130,6 +136,8 @@ def verify_source(actor,case_id,source_id,expected,adapter=None):
     case=Case.objects.get(pk=case_id);require(actor,case,'delivery.verify')
     s=DeliverySource.objects.select_related('dossier__candidate','evidence').filter(pk=source_id,dossier__case=case).first()
     if not s:raise ValidationError('Source is outside this case')
+    from adapters.client_uat import KINDS as CLIENT_KINDS
+    if s.kind in CLIENT_KINDS:raise ValidationError('Agent or synthetic source checks cannot confirm a human client response')
     if not case.synthetic:raise ValidationError('Operational source capture is available; authoritative verification needs an accepted remote adapter contract')
     adapter=adapter or SyntheticDeliverySourceAdapter();result=adapter.read(s)
     validate(source_result_schema(s),result)

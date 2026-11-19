@@ -16,6 +16,7 @@ from apps.pmo import costing_proposal_views
 from apps.finance import d03_views
 from apps.documents import migration_views
 from apps.pmo import approval_views
+from apps.pmo import client_uat_views
 from apps.baas import support_views
 from apps.finance import ledger_views,ledger_agent_views
 from apps.finance import ppe_views
@@ -132,7 +133,10 @@ from apps.workflows import factory_views
 from apps.workflows import factory_coordinator_views
 from apps.workflows import factory_execution_views
 from apps.pmo import closure_views
-urlpatterns += [path('cases/<uuid:case_id>/delivery/<int:dossier_id>/closure/',closure_views.preparation,name='closure_preparation')]
+urlpatterns += [path('cases/<uuid:case_id>/delivery/<int:dossier_id>/closure/',closure_views.preparation,name='closure_preparation'),
+    path('cases/<uuid:case_id>/delivery/<int:dossier_id>/client-response/',client_uat_views.desk,name='client_uat'),
+    path('cases/<uuid:case_id>/client-response/settings/',client_uat_views.configuration,name='client_uat_rules'),
+    path('cases/<uuid:case_id>/client-response/<int:response_id>/proof/<int:upload_id>/',client_uat_views.proof,name='client_uat_proof')]
 from apps.core import workbench_views
 urlpatterns += [path('workspaces/',workbench_views.home,name='workspace_overview'),
     path('factory/new/',factory_views.create,name='factory_create'),

@@ -8,7 +8,11 @@ GATE_ROLES={'qa_exit':['QA'],'uat_product_manager':['Product'],'uat_product_owne
 ROUTE=obj({'kind':KEY,'gate_kind':{'anyOf':[KEY,{'type':'null'}]},'source_owner':{'type':'string','minLength':1,'maxLength':100},'owner_id':ID,'owner_role':{'enum':ROLES},'source_actor_ref':KEY,'system':KEY,'route_mode':{'enum':['internal_inbox_v1','unsupported_remote']}})
 CONTRACT=obj({'kind':KEY,'contract_evidence_id':ID,'mode':{'enum':['owner_supplied_reference_v1','native_read_v1']},'signature_assurance':{'const':'reference_only'},'ordering':{'enum':['decided_at_monotonic_v1','unimplemented_native_order']},'max_age_seconds':{'type':'integer','minimum':1,'maximum':31536000},'required_subject_fields':{'type':'array','uniqueItems':True,'items':{'enum':['build_ref','release_ref']}},'reminders_enabled':{'type':'boolean'},'minimum_reminder_interval_seconds':{'type':'integer','minimum':1},'maximum_reminders':{'type':'integer','minimum':0,'maximum':20}})
 SCHEMAS={ROUTES:('schema:psl/approval-owner-routes/v1',obj({'lease_seconds':{'type':'integer','minimum':15,'maximum':300},'max_attempts':{'type':'integer','minimum':1,'maximum':10},'routes':{'type':'array','minItems':1,'maxItems':50,'items':ROUTE}})),CONTRACTS:('schema:psl/approval-evidence-contracts/v1',obj({'contracts':{'type':'array','minItems':1,'maxItems':50,'items':CONTRACT}}))}
+from . import client_uat_validators
+SCHEMAS[client_uat_validators.COMPONENT]=(client_uat_validators.SCHEMA_REF,client_uat_validators.SCHEMA)
 def validate_reference(component,target,case,runtime=False):
+ if component==client_uat_validators.COMPONENT:
+  return client_uat_validators.validate_reference(component,target,case,runtime)
  from apps.pmo.gates import GATE_OWNERS
  from apps.pmo.services import subject
  from apps.identity.models import Grant
