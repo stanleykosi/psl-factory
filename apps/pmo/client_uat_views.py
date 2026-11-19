@@ -5,7 +5,7 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied,ValidationError
+from django.core.exceptions import PermissionDenied,ValidationError,ObjectDoesNotExist
 from django.db import transaction
 from django.http import FileResponse
 from django.shortcuts import render,redirect,get_object_or_404
@@ -17,13 +17,15 @@ from apps.core.views import accessible_case
 from apps.core.models import ClientContactRevision,Evidence
 from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case
+from apps.core.read_budget import ReadBudget,ReadLimit
+from apps.documents.contracts import validate
 from apps.identity.services import require
 from apps.identity.models import Grant
 from apps.agents.models import CaseUpload
 from apps.agents.upload_views import upload_file
 from apps.policy.models import Configuration
 from apps.policy.approval_drafts import draft_approval_policy
-from apps.policy.client_uat_validators import COMPONENT
+from apps.policy.client_uat_validators import COMPONENT,SCHEMA
 from apps.policy.services import reference_values
 from . import client_uat as domain
 from .models import DeliveryDossier,ClientUATGateBinding
@@ -113,7 +115,8 @@ def desk(request,case_id,dossier_id):
     response_form.fields['proofs'].choices=[(row.pk,row.name) for row in CaseUpload.objects.filter(case=case,actor=request.user).order_by('-pk')[:50]]
     inspection=response.verifications.filter(adapter=contract.INSPECTION).order_by('-pk').first() if response else None
     review=response.verifications.filter(adapter=contract.REVIEW).order_by('-pk').first() if response else None
-    binding=ClientUATGateBinding.objects.filter(review__source=response).order_by('-pk').first() if response else None
+    binding=ClientUATGateBinding.objects.filter(review__source__dossier=dossier,
+        review__source__kind=contract.RESPONSE,review__source__payload__target_id=target.pk).order_by('-pk').first() if response else None
     decision_form=DecisionForm(request.POST if action=='review' else None,auto_id='proof_review_%s',initial={**initial,'response':response.pk if response else None,'inspection':inspection.pk if inspection else None})
     follow_form=FollowUpForm(request.POST if action in ['inspect','agent','export','retract'] else None,auto_id=False,initial={**initial,'response':response.pk if response else None,'review':review.pk if review else 0,'previous_binding':binding.pk if binding else 0})
     if action:
@@ -137,7 +140,8 @@ def desk(request,case_id,dossier_id):
                         locked=lock_case(request.user,case.pk,'client_uat.record',v['revision']);domain.queue_checks(request.user,domain.exact(locked,v['response'],contract.RESPONSE))
                 messages.success(request,'Client testing record updated. Review the next step below.')
                 return redirect(request.get_full_path())
-            except (ValidationError,PermissionDenied) as exc:form.add_error(None,str(exc));case.refresh_from_db()
+            except (ValidationError,PermissionDenied) as exc:
+                form.add_error(None,exc if isinstance(exc,ValidationError) else str(exc));case.refresh_from_db()
         elif form is None:messages.error(request,'Choose a displayed action.')
     status='No client testing request recorded';current=False;proofs=[];can_review=False;visible_response=response;agent_drafts=[]
     if response:
@@ -153,16 +157,22 @@ def desk(request,case_id,dossier_id):
         try:domain.current_response(request.user,response)
         except (PermissionDenied,ValidationError):
             visible_response=None;status='The recorded response needs a fresh source check';current=False;can_review=False
+    target_contact=None
+    if target:
+        try:target_contact=domain.current_target(request.user,target)[1].name
+        except (PermissionDenied,ValidationError):pass
     result=render(request,'pmo/client_uat.html',{'case':case,'dossier':dossier,'target':target,'response':visible_response,'return_work':return_work,
         'response_label':contract.OUTCOMES.get(visible_response.payload['outcome']) if visible_response else None,
         'status':status,'current':current,'proofs':proofs,'inspection':inspection,'review':review,'binding':binding,'agent_drafts':agent_drafts,
         'can_retract':bool(response and response.actor_id==request.user.pk and allowed(request.user,case,'client_uat.record')),
         'history':dossier.sources.filter(kind__in=contract.KINDS).defer('payload').select_related('actor').order_by('-pk')[:25],
+        'target_contact':target_contact,
         'target_form':target_form,'response_form':response_form,'decision_form':decision_form,'follow_form':follow_form,
         'can_record':allowed(request.user,case,'client_uat.record'),'can_upload':allowed(request.user,case,'evidence.add'),
         'can_rules':allowed(request.user,case,'policy.read') and allowed(request.user,case,'policy.configure'),
         'can_inspect':bool(proofs) and allowed(request.user,case,'client_uat.inspect'),
-        'can_export':current and allowed(request.user,case,'client_uat.export'),'can_review':can_review and bool(inspection)})
+        'can_export':current and response.payload['outcome'] in ['approved','approved_with_workaround'] and allowed(request.user,case,'client_uat.export'),
+        'can_review':can_review and bool(inspection)})
     result['Cache-Control']='no-store';return result
 
 
@@ -176,7 +186,8 @@ def _contact_visible(actor,case,pk):
 @require_safe
 @transaction.atomic
 def proof(request,case_id,response_id,upload_id):
-    case=lock_case(request.user,case_id,'case.read');response=domain.exact(case,response_id,contract.RESPONSE)
+    case=lock_case(request.user,case_id,'case.read');domain.readable(request.user,case)
+    response=domain.exact(case,response_id,contract.RESPONSE)
     uploads=domain.proof_rows(request.user,response)
     upload=next((row for row in uploads if row.pk==upload_id),None)
     if upload is None:raise PermissionDenied
@@ -208,8 +219,12 @@ def configuration(request,case_id):
     initial={'revision':case.revision,'operation_key':uuid4(),'head':latest.pk if latest else 0}
     if latest:
         from apps.policy.impact import configuration as checked
-        values=reference_values(checked(request.user,case.pk,latest.pk))[0]
-        initial.update({k:('yes' if v else 'no') if type(v) is bool else v or '' for k,v in values.items()})
+        try:
+            values=reference_values(checked(request.user,case.pk,latest.pk),budget=ReadBudget())[0]
+            validate(SCHEMA,values)
+        except (ValidationError,KeyError,IndexError,ObjectDoesNotExist,ReadLimit):
+            messages.warning(request,'The earlier draft needs repair. Review its source in business rule settings, or save a new draft here.')
+        else:initial.update({k:('yes' if v else 'no') if type(v) is bool else v or '' for k,v in values.items()})
     form=RulesForm(request.POST if request.method=='POST' else None,initial=initial)
     form.fields['reviewer_role'].choices=[('','Not decided'),*[(x,x) for x in ROLES]]
     candidates=Grant.objects.filter(case=case,action='client_uat.review',active=True,user__is_active=True).order_by('user_id').values('user_id')[:100]
@@ -230,5 +245,5 @@ def configuration(request,case_id):
                 draft_approval_policy(request.user,case.pk,COMPONENT,content,v['evidence'].pk,timezone.now())
             messages.success(request,'Client proof rule draft saved. Validation and activation are separate reviews.')
             return redirect(request.path)
-        except (ValidationError,PermissionDenied) as exc:form.add_error(None,str(exc))
+        except (ValidationError,PermissionDenied) as exc:form.add_error(None,exc if isinstance(exc,ValidationError) else str(exc))
     result=render(request,'pmo/client_uat_rules.html',{'case':case,'form':form,'latest':latest});result['Cache-Control']='no-store';return result

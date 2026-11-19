@@ -28,7 +28,7 @@ def validate_reference(component,target,case,runtime=False):
         people=list(get_user_model().objects.filter(pk__in=value['reviewer_ids'],is_active=True))
         if len(people)!=len(value['reviewer_ids']):raise ValidationError('Current actual human reviewers required')
         for person in people:
-            for action in ['case.read','delivery.read','engagement.read','client_uat.review']:
+            for action in ['case.read','delivery.read','engagement.read','client_uat.review','client_uat.proof.read']:
                 require(person,case,action)
             decision_authority(person,case,value['reviewer_role'])
     return value

@@ -11,10 +11,13 @@
       "remaining":"Optimise the high native current-report baseline when justified; retain exact provenance. Continue ordinary client acceptance/workaround, actual aggregate-only Assistant and other262-state functions."
     },
     "next_connected_delivery_acceptance_20261119":{
-      "status":"client_testing_native179_passed_pg180_factory_fixture_cohort_running_not_promoted",
+      "status":"hosted180_browser_handoff_verified_183_pg_passed_exact_deployment_submitted",
       "states":["SCR-16","SCR-16-sow-signed","SCR-16-success","SCR-16-validation","SCR-17-setup"],
       "scope_correction":"Actual SCR17-setup source is invitation account setup, not client testing. SCR16-sow-signed is a distinct commercial signature branch. Neither is closed by the ordinary testing-response implementation.",
-      "work_in_progress":"179 ca86bc40-4c8a-4951-b295-09c928221f66 passed16PG/111.294s/final0.180 b04f581a-b07b-451d-a3c0-1e644750f3d3 now runs added native factory/console checks and, only on success, preview migration/guarded new SAMPLE fixture. Root/frozen1748 paths match. Preserve applied pmo0070/0071 bytes. No promotion yet;175 remains hosted. Ordinary client request/response successors, bounded private A07 advice, Word/Excel/PDF checks, nullable proof rules/UI and exact current-authority gate binding implemented; browser pending.",
+      "work_in_progress":"18381352ddc-c3fc-46f7-af8a-90ccb5dde40d passed19PG/127.501s, checks/drift/preview migration/read-only probe/final0.0072 applied in bothDBs, immutable. Root1749/runtime stages1750 match; exact deployments submitted. Probe retained response225/job18/DeepSeek Flash/hash but correctly held oldv1 confirmation (2legacy/0current checks). Wait services, then actual freshv2 review/rebind and corrected-response browser path. No fixture/model reset.181/182 passed21each, not separately promoted.",
+      "accepted_180":{"deployment":"b04f581a-b07b-451d-a3c0-1e644750f3d3","tests":21,"seconds":199.795,"final_exit":0,"web":"e803a29d-7c26-4d30-a0da-a1244f70dc9f","worker":"ed187200-57c9-4a00-a113-601382e3d87b","runtime_paths":1749,"root_paths":1748,"mismatches":0,"source":"359fee83"},
+      "actual_browser_180":{"case":"eba4c353-2363-4b9e-a98f-a548472223a8","dossier":34,"work":119,"target":224,"response":225,"private_docx":7,"actual_agent_advice":true,"actual_human_review_and_delivery_binding":true,"next_station":"Independent GLPI request and approvals","future_time_and_stale_check_refused":true,"phone_body_client":[375,375],"viewport_reset":true,"browser_file_picker_upload":false,"actual_release_or_payment":false},
+      "next_verification":"Finish183 final result; promote matching source, then actual browser protocol upgrade/fresh review, corrected-response replacement and phone/desktop/settings checks. Signed-SOW/onboarding branches remain separate.",
       "source_backed_design":["A person records the external client response for an exact supplied build/version","Named client, response time, approval/change request/rejection, proof attachment and human genuineness attestation","Immutable correction records","Agent checks version/signatory mismatches but cannot vouch for the client"],
       "engineering_proposal":"Reuse delivery/approval/source services for an ordinary client-response/workaround path distinct from existing go-live attestations; connect current qualified response to release gates and rework, preserving signed-SOW invoicing independence.",
       "inspect":["apps/pmo/delivery.py","apps/workflows/factory_delivery.py","apps/pmo/approvals.py","apps/pmo/go_live_attestations.py","design/canvas/project/SCR-16-desktop.dc.html"],
@@ -22,10 +25,10 @@
     },
     "pending_direct_browser_groups_20261119":{
       "classification":"Engineering verification groups from inventory minus observed ledger; not a redefinition of the13 process families",
-      "unseen_count":51,
+      "unseen_count":48,
       "groups":{
         "shared_invoice_decisions":["SCR-02-issue","SCR-02-permission","SCR-02-waiting","SCR-03-ceo-costing","SCR-03-cto-emergency","SCR-03-not-yours","SCR-03-own","SCR-03-payment-exception","SCR-03-stale"],
-        "client_response_and_setup":["SCR-16","SCR-16-sow-signed","SCR-16-success","SCR-16-validation","SCR-17-setup"],
+        "commercial_signature_and_account_setup":["SCR-16-sow-signed","SCR-17-setup"],
         "commercial_costing":["SCR-27","SCR-27-adjust","SCR-27-approvals","SCR-27-ask"],
         "standard_change":["SCR-31-authorise","SCR-31-closed","SCR-31-decision","SCR-31-execution","SCR-31-go-live-note","SCR-31-impact","SCR-31-notice","SCR-31-rejected"],
         "hr_corrections":["SCR-37"],

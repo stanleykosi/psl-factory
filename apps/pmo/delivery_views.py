@@ -94,7 +94,8 @@ def workbench(request,case_id):
         for key,fn in [('Planning',planning_inputs),('Release evidence',readiness_inputs),('Hypercare',hypercare_inputs)]:
             try:dossier_for(case,d.pk);d.checks[key]={'state':'Source evidence available','details':fn(d)}
             except (ValidationError,PermissionDenied) as exc:d.checks[key]={'state':'Needs attention','details':str(exc)}
-    return render(request,'pmo/delivery.html',{'case':case,'dossiers':dossiers,'kinds':SOURCE_OWNERS,
+    from adapters.client_uat import KINDS as CLIENT_KINDS
+    return render(request,'pmo/delivery.html',{'case':case,'dossiers':dossiers,'kinds':{k:v for k,v in SOURCE_OWNERS.items() if k not in CLIENT_KINDS},
         'candidates':DeliveryCandidate.objects.filter(case=case),'evidence':case.evidence.all(),
         'meetings':MeetingVersion.objects.filter(meeting__case=case).order_by('-pk')[:100],
         'templates':Template.objects.filter(case=case,definition__document_type='project_artifact'),

@@ -93,6 +93,21 @@ class ClientUATTests(ClientUATFixture,TestCase):
         with self.assertRaises(ValidationError):domain.gate_current(self.candidate,binding.verification)
         self.assertEqual(DeliverySource.objects.filter(pk=response.pk).count(),1)
         with self.assertRaises(ValidationError):delivery.readiness_inputs(self.d)
+        correction_review=self.review(corrected)
+        with self.assertRaises(ValidationError):self.export(corrected,correction_review)
+        fresh=self.response(domain.exact(self.case,response.payload['target_id'],contract.TARGET),'approved',corrected)
+        fresh_review=self.review(fresh)
+        with self.assertRaises(ValidationError):self.export(fresh,fresh_review)
+        successor=domain.export_gate(self.actor,self.case.pk,fresh.pk,fresh_review.pk,rev(self.case),
+            previous_binding_id=binding.pk,correction_reason='SAMPLE reviewed corrected source replaces the earlier client gate')
+        domain.gate_current(self.candidate,successor.verification)
+        self.assertNotEqual(successor.verification.record_id,binding.verification.record_id)
+        with self.assertRaises(ValidationError):delivery.readiness_inputs(self.d)
+        delivery.record_release_request(self.actor,self.case.pk,self.d.pk,'SAMPLE-GLPI-corrected-client-proof',self.e['requirements'].pk,
+            'SAMPLE new request reviewed against corrected client source',rev(self.case))
+        self.gates(delivery.GLPI_GATES,'SAMPLE-GLPI-corrected-client-proof')
+        refreshed=delivery.prepare_readiness(self.actor,self.case.pk,self.d.pk,rev(self.case))
+        self.assertNotEqual(refreshed.pk,ready.pk)
 
     def test_existing_factory_wait_progresses_through_exact_client_proof_to_verified_readiness(self):
         import json
@@ -211,6 +226,12 @@ class ClientUATTests(ClientUATFixture,TestCase):
         response=DeliverySource.objects.get(dossier=self.d,kind=contract.RESPONSE)
         self.assertEqual(response.payload['outcome'],'approved')
         self.assertFalse(ClientUATGateBinding.objects.exists())
+        data.update(previous=response.pk,revision=rev(self.case),operation_key=str(uuid4()),day=(timezone.now()+timedelta(days=1)).date().isoformat())
+        refused=self.client.post(url,data)
+        self.assertContains(refused,'Response time must follow the actual test request')
+        self.assertNotContains(refused,"[&#x27;Response time")
+        self.assertContains(refused,'SAMPLE Client Witness')
+        self.assertContains(refused,'Correct the testing request')
 
     def test_wrong_contact_version_workaround_and_retraction_preserve_history(self):
         self.rule(workaround_mode=None)
@@ -226,12 +247,48 @@ class ClientUATTests(ClientUATFixture,TestCase):
         self.assertTrue(DeliverySource.objects.filter(pk=response.pk).exists())
         self.assertFalse(contract.mentions('Joanna approved build-1234','Ann'))
         self.assertFalse(contract.mentions('build-1234','build-123'))
+        self.assertFalse(contract.mentions('delivery/build','delivery-build',identifier=True))
+        self.assertFalse(contract.mentions('delivery-build-v2','delivery-build',identifier=True))
+        self.assertFalse(contract.mentions('DELIVERY-BUILD','delivery-build',identifier=True))
+        self.assertTrue(contract.mentions('Approved delivery-build.','delivery-build',identifier=True))
+
+    def test_nonmatching_build_slug_and_blank_workaround_cannot_qualify(self):
+        self.rule();target=self.target()
+        with self.assertRaises(ValidationError):self.response(target,outcome='approved_with_workaround',workaround='   ')
+        response=self.response(target,proof=self.proof('SAMPLE Client Witness approved delivery-build-v2.'))
+        inspection=self.check(response)
+        self.assertFalse(inspection.result['checks']['version_mentioned'])
+        with self.assertRaises(ValidationError):self.review(response,inspection)
+
+    def test_old_file_check_protocol_stays_history_until_fresh_exact_check_and_human_review(self):
+        self.rule();response=self.response()
+        # Execute the actual native check with its prior persisted protocol
+        # identity to model a retained v1 receipt; no internal service is mocked.
+        with patch.object(contract,'INSPECTION',contract.LEGACY_INSPECTION):legacy=self.check(response)
+        with self.assertRaises(ValidationError):self.review(response,legacy)
+        current=self.check(response);self.assertNotEqual(current.pk,legacy.pk)
+        self.assertEqual(current.adapter,'client-uat-evidence-check/v2')
+        review=self.review(response,current);self.export(response,review)
+        self.assertTrue(response.verifications.filter(pk=legacy.pk,adapter=contract.LEGACY_INSPECTION).exists())
+
+    def test_nomination_needs_actual_private_proof_access_and_revocation_holds_before_file_read(self):
+        grant=Grant.objects.get(case=self.case,user=self.actor,action='client_uat.proof.read');grant.active=False;grant.save()
+        with self.assertRaises((PermissionDenied,ValidationError)),transaction.atomic():self.rule()
+        response=self.response()
+        with patch('adapters.case_uploads.bucket') as storage:
+            with self.assertRaises(PermissionDenied):self.check(response)
+            storage.assert_not_called()
+        grant.active=True;grant.save();self.rule();review=self.review(response);binding=self.export(response,review)
+        grant.active=False;grant.save()
+        with self.assertRaises(PermissionDenied):domain.gate_current(self.candidate,binding.verification)
 
     def test_validation_private_downloads_ui_drafts_and_postgres_history_guards(self):
         self.rule();response=self.response();review=self.review(response);binding=self.export(response,review)
         self.client.force_login(self.actor)
         url=reverse('client_uat',args=[self.case.pk,self.d.pk])
         page=self.client.get(url);self.assertEqual(page.status_code,200);self.assertContains(page,'Client proof confirmed')
+        delivery_page=self.client.get(reverse('delivery',args=[self.case.pk]))
+        self.assertNotIn(contract.TARGET,delivery_page.context['kinds']);self.assertNotIn(contract.RESPONSE,delivery_page.context['kinds'])
         private=reverse('client_uat_proof',args=[self.case.pk,response.pk,response.payload['proofs'][0]['id']])
         download=self.client.get(private);self.assertEqual(download.status_code,200);self.assertEqual(download['Cache-Control'],'no-store')
         outsider=get_user_model().objects.create_user(username='ordinary-delivery-reader')
@@ -266,6 +323,16 @@ class ClientUATTests(ClientUATFixture,TestCase):
         response=self.response();self.assertEqual(response.kind,contract.RESPONSE)
         with self.assertRaises((ValidationError,PermissionDenied)):self.review(response)
         self.assertEqual(self.client.get(url).status_code,200)
+
+    def test_incomplete_owner_draft_keeps_configuration_repair_available(self):
+        from apps.policy.approval_drafts import draft_approval_policy
+        cfg=draft_approval_policy(self.actor,self.case.pk,COMPONENT,{},self.e['policy_decision'].pk,timezone.now())
+        self.client.force_login(self.actor)
+        response=self.client.get(reverse('client_uat_rules',args=[self.case.pk]))
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response,'The earlier draft needs repair')
+        self.assertContains(response,'Save proof rule draft')
+        with self.assertRaises(ValidationError):transition(self.actor,cfg.pk,'validated')
 
     def test_rebind_requires_reason_after_exporter_loses_access_and_new_review_stales_it(self):
         self.rule();response=self.response();review=self.review(response);old=self.export(response,review)

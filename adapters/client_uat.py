@@ -7,7 +7,8 @@ from apps.documents.contracts import validate
 TARGET='uat_client_target'
 RESPONSE='uat_client_response'
 KINDS={TARGET,RESPONSE}
-INSPECTION='client-uat-evidence-check/v1'
+LEGACY_INSPECTION='client-uat-evidence-check/v1'
+INSPECTION='client-uat-evidence-check/v2'
 REVIEW='human-client-uat-proof/v1'
 GATE='human-attested-client-uat/v1'
 WITHDRAWAL='client-uat-recording-withdrawal/v1'
@@ -54,12 +55,21 @@ def validate_payload(kind,payload):
         if (payload['outcome']=='approved_with_workaround')!=(payload['workaround'] is not None):
             from django.core.exceptions import ValidationError
             raise ValidationError('State a workaround only when the client explicitly approved it')
+        if payload['workaround'] is not None and not payload['workaround'].strip():
+            from django.core.exceptions import ValidationError
+            raise ValidationError('State the actual workaround the client approved')
 
 
-def normalized(value):
-    return ' '.join(re.findall(r'\w+',unicodedata.normalize('NFKC',value).casefold()))
+def normalized(value,*,fold=True):
+    text=unicodedata.normalize('NFKC',value)
+    return ' '.join((text.casefold() if fold else text).split())
 
 
-def mentions(text,value):
-    expected=normalized(value)
-    return bool(expected) and (' '+expected+' ') in (' '+normalized(text)+' ')
+def mentions(text,value,*,identifier=False):
+    expected=normalized(value,fold=not identifier)
+    if not expected:return False
+    # A build reference keeps its case and punctuation. A different slug or
+    # version suffix must not satisfy a literal match; sentence punctuation may.
+    boundary=r'(?<![\w/:@.\-])' if identifier else r'(?<!\w)'
+    ending=r'(?![\w/:@\-]|\.[\w])' if identifier else r'(?!\w)'
+    return re.search(boundary+re.escape(expected)+ending,normalized(text,fold=not identifier)) is not None

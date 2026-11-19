@@ -43,7 +43,9 @@ def rules(case):
 
 
 def reviewer(actor,case):
-    readable(actor,case);require(actor,case,'client_uat.review');cfg,value=rules(case)
+    readable(actor,case)
+    for action in ['client_uat.review','client_uat.proof.read']:require(actor,case,action)
+    cfg,value=rules(case)
     if actor.pk not in value['reviewer_ids'] or value['reviewer_role'] is None:
         raise PermissionDenied('A current nominated proof reviewer is required')
     return cfg,value,decision_authority(actor,case,value['reviewer_role'])
@@ -72,7 +74,7 @@ def contact(actor,case,pk):
     require(row.actor,case,'engagement.capture')
     if ClientContactRevision.objects.filter(case=case,purpose='project',customer='',number__gt=row.number).exists():
         raise ValidationError('The project contact changed; review the current contact')
-    if not public_evidence(case.evidence.filter(pk=row.evidence_id)).exists():raise PermissionDenied('Original contact evidence is unavailable')
+    if not public_evidence(case.evidence.filter(pk=row.evidence_id,kind__in=['engagement_source','policy_decision'])).exists():raise PermissionDenied('Original contact evidence is unavailable')
     return row
 
 
@@ -99,6 +101,7 @@ def current_target(actor,target):
 
 
 def current_response(actor,response):
+    readable(actor,response.dossier.case)
     contract.validate_payload(contract.RESPONSE,response.payload)
     target=exact(response.dossier.case,response.payload['target_id'],contract.TARGET)
     d,person=current_target(actor,target)
@@ -270,13 +273,14 @@ def agent_drafts(actor,response):
 @transaction.atomic
 def inspect_proof(actor,case_id,response_id,expected):
     case=lock_case(actor,case_id,'client_uat.inspect',expected)
+    readable(actor,case)
     response=exact(case,response_id,contract.RESPONSE);target,person=current_response(actor,response)
     uploads=proof_rows(actor,response)
     found_build=False;found_contact=False;codes=[]
     for upload in uploads:
         try:text=upload_text.extract(upload.name,case_uploads.read(upload))
         except (OSError,ValidationError,ValueError):codes.append('file_text_unavailable');continue
-        found_build|=contract.mentions(text,target.payload['candidate']['reference'])
+        found_build|=contract.mentions(text,target.payload['candidate']['reference'],identifier=True)
         found_contact|=contract.mentions(text,person.name)
     if not found_build:codes.append('version_not_found_in_text')
     if not found_contact:codes.append('contact_not_found_in_text')
@@ -326,6 +330,7 @@ def _qualifying_rules(value,response,uploads,checks):
 @transaction.atomic
 def review_proof(actor,case_id,response_id,inspection_id,verdict,proof_confirmed,note,operation_key,expected):
     case=lock_case(actor,case_id,'client_uat.review',expected)
+    readable(actor,case)
     response=exact(case,response_id,contract.RESPONSE);target,_=current_response(actor,response)
     cfg,value,authority=reviewer(actor,case)
     if verdict not in ['confirm','return','withdraw'] or not isinstance(note,str) or not 1<=len(note.strip())<=2000:
@@ -407,7 +412,8 @@ def export_gate(actor,case_id,response_id,review_id,expected,*,previous_binding_
     d=response.dossier
     if delivery.latest(d,'release_outcome',False):raise ValidationError('Use reviewed historical source recovery; this cannot authorise a release that already happened')
     for action in ['pmo.gate_record','pmo.gate_verify']:require(actor,case,action)
-    old=ClientUATGateBinding.objects.filter(review__source=response).order_by('-pk').first()
+    old=ClientUATGateBinding.objects.filter(review__source__dossier=d,review__source__kind=contract.RESPONSE,
+        review__source__payload__target_id=response.payload['target_id']).order_by('-pk').first()
     if old:
         try:
             from .approvals import gate_current as full_gate_current
