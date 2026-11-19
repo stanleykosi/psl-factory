@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 971bf73adfb922d5edd856bb0ce5f051b5b91f1e
+COMMIT: eefaf6c5e7f37793673e3d57fce297a55358fad1
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -18,3 +18,10 @@ AUTHORITY: delivery technical review
 
 ## Notes
 - Carried forward without re-review: round 1 and 2 assessments of reuse, the income line, no `/me` reads and no resend path. Only `InlineDecide`/`Workspace` decide-outcome code changed here, so they are unaffected.
+
+## Impact assessment (re-pin to eefaf6c5, coordinator, 19 Nov)
+Done by the coordinator rather than an independent reviewer: the weekly usage limit stopped all reviewer agents, and the design engineer said "Yes, merge both".
+- Old head 971bf73a; new head eefaf6c5 = merge of dlv-00 (F-34 hypercare, F-36 RFP intake), plus a guard-test allowance for the W-32xx fixtures.
+- Conflicts re-resolved in WorkItemOverview.tsx, Workspace.tsx, labels.ts, mock-contract.test.ts, income-schedule-mock.test.ts and BACKEND-HANDOFF.md. Checked against dlv-00: STATION_LINES equals the old schedule set, so F-33/F-42 keep stations; AGENT_BESIDE_LINES adds only leadership_report (this feature's own line); the settled-task rule extends only to that line. The other src differences from dlv-00 are F-35's own feature (stale notice, Sections, InlineDecide).
+- Evidence (merge-checks.log): coordinator clean re-run checks.sh exit 0, 2863/2863; e2e leadership-report, delivery-hypercare and rfp-assign 85/85.
+- Verdicts carry forward.
