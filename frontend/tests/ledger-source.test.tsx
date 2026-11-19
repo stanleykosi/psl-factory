@@ -147,6 +147,8 @@ async function upload(scope: HTMLElement = document.querySelector('.ws') as HTML
   });
   await waitFor(() => expect(posts('/evidence')).toHaveLength(count));
   await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
+  // the proof only counts once the form has taken the upload's answer and shows the file
+  await waitFor(() => expect(scope.textContent).toContain('qb-screenshot-je7741.png'));
 }
 const submit = async (scope = ws()) => {
   await act(async () => {
