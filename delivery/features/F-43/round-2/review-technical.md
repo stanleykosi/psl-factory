@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 5020a86be7320090efa1b2888295f52e205e761a
+COMMIT: ee8fe64afa47a84ad9599e9f70820ec5fdacaae6
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -20,3 +20,11 @@ AUTHORITY: delivery technical review
 - TECH-1-2: a nested `section` is used, with no `aside aside`. TECH-1-3: the line key is written once, as `INTERNAL_RECONCILE_LINE`. TECH-1-4: the phone count check is added.
 - Regression: with `src` reverted to 59ce7dc1, 6 of the 42 cash-forecast tests fail. At the head, cash-forecast plus response tests give 95 passed. The worktree was restored to the head with no changes left.
 - Gate PASS (checks 2882).
+
+## Impact assessment (re-pin to ee8fe64a, coordinator, 19 Nov)
+Done by the coordinator under D-123: the merge was checked against dlv-00 instead of starting a fresh reviewer.
+- The new head merges dlv-00 (F-34, F-35, F-36, F-39), including the shared stale-decision fix. 7 conflicted files were resolved, keeping both sides.
+- Checked against dlv-00: AGENT_BESIDE_LINES, STATION_LINES, drawsAgentCard and the leadership/escalation banner branches are unchanged. F-43 adds only its own cash_forecast line (it joins the schedule set, as in round 1) and the forecast strip and caption props.
+- A new two-reviewer 409 test passes. Its failure without the shared fix was reasoned, not run.
+- Evidence (merge-checks.log): tsc and eslint clean; checks.sh exit 0, 2962; e2e 138 passed.
+- Verdicts carry forward.

@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-ux
-COMMIT: 5020a86be7320090efa1b2888295f52e205e761a
+COMMIT: ee8fe64afa47a84ad9599e9f70820ec5fdacaae6
 AUTHORITY: delivery UX review
 
 ## Summary
