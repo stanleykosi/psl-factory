@@ -211,69 +211,61 @@
     },
     {
       "role": "complementary",
-      "name": "(side panel)",
+      "name": "",
       "category": "layout",
       "conflicts": 13,
-      "reason": "Conflicts 13 (sentence as data): the verified board draws the re-check sentence as an info note in a side column; the spec sends it as an untitled `text` section, which the shared workspace draws in the main column under the Recorded facts. The words are drawn as returned. Option B for the design engineer: the backend sends it as `workspace.next`, which the frame draws in the side column under a \"Next\" head.",
+      "reason": "Conflicts 13 (sentence as data): the verified board draws the re-check sentence as an info note in a side column; the spec sends it as an untitled `text` section, which the shared workspace draws in the main column under the Recorded facts. The words are drawn as returned. Option B for the design engineer: the backend sends it as `workspace.next`, which the frame draws in the side column under a \"Next\" head. The name is empty because the board's side column has no name; the report lists it as \"(side panel)\" (fidelity compare.mjs matches an unnamed area on role and the empty name).",
       "approved_by": "builder proposal, pending design engineer"
     }
   ],
   "visual_waivers": [
     {
-      "board": "SCR-58-desktop-investigating",
-      "width": 1440,
-      "visual": 80.1,
-      "reason": "D-83: measured 80.1 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with the alerts bell and the name's position, crumbs as a list, the History link, the page width; Conflicts 12); the shared StationTrack with a status line under each name and taller boxes; the AgentCard head with no title and the name and limits on their own lines, \"step 4 of 4\" from the steps sent (Conflicts 14); the shared facts list with bold labels and taller rows. None is a value the data could supply.",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
       "board": "SCR-58-desktop-review",
       "width": 1440,
-      "visual": 68.7,
-      "reason": "D-83: measured 68.7 in round 1 on a production build. Remaining gaps: the shared frame (top bar, crumbs as a list, the History link, the wider page; Conflicts 12); the shared StationTrack with a status line under each name, which makes the station row about twice as tall and moves everything below it down; the shared facts list with bold labels and taller rows; the note field 88px high (shared TextArea); the panel content as F-33's InlineDecide draws it. None is a value the data could supply. Below the D-83 floor of 70, so this needs its own one-board floor exception (as D-112 did for SCR-08-mobile and SCR-30-mobile-verified): board and page draw the same content in the same places (side-by-side.png); the shortfall is the taller shared station row and the wider page shifting every square below the header.",
-      "approved_by": "builder proposal, pending design engineer",
-      "floor_exception": true
+      "visual": 81.2,
+      "reason": "D-83: measured in round 1, second run, 81.2 on a production build. Remaining gaps: the shared frame (top bar, crumbs as a list, the History link, the wider page; Conflicts 12); the taller shared fact rows; the note field 88px high (shared TextArea); the panel content as F-33's InlineDecide draws it. None is a value the data could supply. Round 1 (second run) draws the stations as the boards do (number and name; status for screen readers) and fact labels in body weight, scoped to this line.",
+      "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-58-desktop-verified",
       "width": 1440,
-      "visual": 74.1,
-      "reason": "D-83: measured 74.1 in round 1 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the shared facts list with bold labels and taller rows; the re-check sentence drawn in the main column as an untitled text section, not as the board's side note (see the \"(side panel)\" exception). None is a value the data could supply.",
+      "visual": 80.5,
+      "reason": "D-83: measured in round 1, second run, 80.5 on a production build. Remaining gaps: the shared frame (Conflicts 12); the taller shared fact rows; the re-check sentence drawn in the main column as an untitled text section, not as the board's side note (see the \"(side panel)\" exception). None is a value the data could supply. Round 1 (second run) draws the stations as the boards do (number and name; status for screen readers) and fact labels in body weight, scoped to this line.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-58-mobile-investigating",
       "width": 390,
-      "visual": 83.2,
-      "reason": "D-83: measured 83.2 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with the alerts bell and the name's position, crumbs as a list, the History link, the page width; Conflicts 12); the shared StationTrack with a status line under each name and taller boxes; the AgentCard head with no title and the name and limits on their own lines, \"step 4 of 4\" from the steps sent (Conflicts 14); the shared facts list with bold labels and taller rows. On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
+      "visual": 83.0,
+      "reason": "D-83: measured in round 1, second run, 83.0 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar with the alerts bell and the name's position, crumbs as a list, the History link, the page width; Conflicts 12); the shared StationTrack with a status line under each name and taller boxes; the AgentCard head with no title and the name and limits on their own lines, \"step 4 of 4\" from the steps sent (Conflicts 14); the shared facts list with bold labels and taller rows. On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-58-mobile-review",
       "width": 390,
-      "visual": 82.9,
-      "reason": "D-83: measured 82.9 in round 1 on a production build. Remaining gaps: the shared frame (top bar, crumbs as a list, the History link, the wider page; Conflicts 12); the shared StationTrack with a status line under each name, which makes the station row about twice as tall and moves everything below it down; the shared facts list with bold labels and taller rows; the note field 88px high (shared TextArea); the panel content as F-33's InlineDecide draws it. On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
+      "visual": 83.4,
+      "reason": "D-83: measured in round 1, second run, 83.4 on a production build. Remaining gaps: the shared frame (top bar, crumbs as a list, the History link, the wider page; Conflicts 12); the shared StationTrack with a status line under each name, which makes the station row about twice as tall and moves everything below it down; the shared facts list with bold labels and taller rows; the note field 88px high (shared TextArea); the panel content as F-33's InlineDecide draws it. On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-58-mobile-verified",
       "width": 390,
-      "visual": 75.9,
-      "reason": "D-83: measured 75.9 in round 1 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the shared facts list with bold labels and taller rows; the re-check sentence drawn in the main column as an untitled text section, not as the board's side note (see the \"(side panel)\" exception). On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
+      "visual": 78.2,
+      "reason": "D-83: measured in round 1, second run, 78.2 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the shared facts list with bold labels and taller rows; the re-check sentence drawn in the main column as an untitled text section, not as the board's side note (see the \"(side panel)\" exception). On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-58-desktop-observe",
       "width": 1440,
-      "visual": 71.8,
-      "reason": "D-83: measured 71.8 in round 1 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the step form opened on press with its own heading \"Record observation\" (Conflicts 10); the shared Select instead of the radio segments (Conflicts 3); ProofField's chip instead of the card (Conflicts 11); the consequence drawn whole. None is a value the data could supply.",
+      "visual": 76.4,
+      "reason": "D-83: measured in round 1, second run, 76.4 on a production build. Remaining gaps: the shared frame (Conflicts 12); the step form opened on press with its own heading \"Record observation\" (Conflicts 10); the shared Select instead of the radio segments (Conflicts 3); ProofField's chip instead of the card (Conflicts 11); the consequence drawn whole. None is a value the data could supply. Round 1 (second run) draws the stations as the boards do, scoped to this line.",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
       "board": "SCR-58-mobile-observe",
       "width": 390,
       "visual": 77.8,
-      "reason": "D-83: measured 77.8 in round 1 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the step form opened on press with its own heading \"Record observation\" (Conflicts 10); the shared Select instead of the radio segments (Conflicts 3); ProofField's chip instead of the card (Conflicts 11); the consequence drawn whole. On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
+      "reason": "D-83: measured in round 1, second run, 77.8 on a production build. Remaining gaps: the shared frame (Conflicts 12) and StationTrack; the step form opened on press with its own heading \"Record observation\" (Conflicts 10); the shared Select instead of the radio segments (Conflicts 3); ProofField's chip instead of the card (Conflicts 11); the consequence drawn whole. On the phone: the frame bar and the one-column layout with the same sections and words as desktop (D-111, Conflicts 9). None is a value the data could supply.",
       "approved_by": "builder proposal, pending design engineer"
     }
   ]

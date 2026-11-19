@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: c3919ddbf1b37914456ffb2f2f42d96421b7d744
+COMMIT: 4dba97ab6ee7dd7c97f33f51a63d28750636cb58
 BUILDER: builder
 LANE: full
 
@@ -8,12 +8,15 @@ LANE: full
 - Recording what you found goes through F-17's step form. The choice is the shared Select with nothing pre-chosen, and Proof is required. The upload goes to C-LED-0052 with `kind: ledger_observation`, then one step is sent. Review is F-33's InlineDecide with approve and reject only, and "Verified" appears only after the re-read.
 - Change to shared code (scoped): a stale 409 on decide used to make the panel vanish and lose the typed note. Now, on the ledger line, the page keeps the stale sentence and "Your note wasn't sent: …" once the re-read closes the task.
 - F-47 merged first, so F-45 points the ledger start's landing at W-4201 (spec Lanes, AC 23).
-- Fidelity: 100% coverage after the proposed exceptions on all 8 boards. Visual is 68.7 to 83.2. Every waiver is a builder proposal, and desktop review needs a floor exception (under 70).
+- Fidelity: 100% coverage after the proposed exceptions on all 8 boards. After the coordinator's second run, visual is 76.4 to 91 (desktop review went from 68.7 to 81.2). No floor exception is needed now. 7 waivers are builder proposals.
+- Coordinator decisions (same round): (1) on the ledger line, the "approved" wording appears only when the re-read has moved on; otherwise the page says "LED-0052 v1: result not confirmed". The test failed first. (2) Ledger-scoped station and fact styling lifted desktop review above 70.
 
 ## Changes
 - `frontend/src/features/workspace/labels.ts`: adds `ledger_sources` to F-42's `SCHEDULE_LINES` (stations in the workspace, agent card beside, phone Drawer, stopped-station banner, no card for a decided task).
 - `frontend/src/features/work-item/WorkItemOverview.tsx`: no "See all exceptions" button on ledger holds (`setup_needed` is an exception state). Policy holds show no controls, as F-42 does for fixed assets.
 - `frontend/src/features/workspace/InlineDecide.tsx`: a required `onStale(note)` callback plus `DECIDE_TEXT.noteNotSent`. The hunk is byte-identical to F-39 45ae7b66 and F-35 971bf73a.
+- `frontend/src/features/workspace/Workspace.tsx` (coordinator decision 1): on the ledger line, `onDecided` records its `taskId`. If the re-read still offers that task's verdicts, a settled notice becomes `DECIDE_TEXT.notConfirmed(<version label>)`, never the VERDICT_WORDS heading. Other lines pass `onDecided` unchanged.
+- `frontend/src/features/workspace/workspace.css` (coordinator decision 2): on `.ws[data-line="ledger_sources"]` only, using tokens only. Stations are drawn as the boards draw them: number and name, 13px sans 600, no minimum height, with the status word visually hidden but still read by screen readers. Fact labels are in body weight.
 - `frontend/src/features/workspace/Workspace.tsx`: keeps `staleDecide` and shows the stale callout with the unsent note once the task's panel is gone. It is gated on `line_key === 'ledger_sources'` (new `LEDGER_LINE` constant). Otherwise it is the same as F-35/F-39's Workspace hunk.
 - `frontend/mock/fixtures/work/W-4201…W-4213` plus sidecars: `.next` (4202, 4208, 4213), `.steps` (4202, 4208, 4213), `.approve`/`.reject` (4203, 4212). There is no `.next` on any review fixture.
 - `frontend/mock/start-work.mjs`: `WORK_IDS.ledger_sources` changes from W-4402 to W-4201. W-4402 stays as a fixture because `start-work-proof-mock.test.ts` reads it.
@@ -31,7 +34,9 @@ LANE: full
 - No change to `mock/response.mjs`, `server.mjs` or `workspace.mjs`, any existing fixture, `src/api|decide|response|start-work|shell|components`, `StepForm`, `Steps` or `proposals.ts`.
 
 ## Fixes
-None (round 1).
+- COORD-1-1 | 65ddbf68 | Ledger line: "<label> is approved/rejected" only when the re-read no longer offers the task; otherwise "result not confirmed". The test `a 200 whose re-read still serves the review never says Verified or approved` failed before the change (1 failed) and passes after. The approve-to-verified test now also asserts "LED-0052 v1 is approved". F-33's income line is unchanged: `income-schedule.test.tsx` passes, including its "Schedule v1 is approved" assertion.
+- COORD-1-2 | 7a92f667 | Desktop review visual went from 68.7 to 81.2 through ledger-scoped station and fact styling, with one more fidelity run (`round-1/fidelity-2/`). The floor exception is dropped.
+- (test robustness) | 4dba97ab | The e2e and the fidelity driver wait for "Uploading…" to clear before recording. The W-4213 e2e had failed once in 2 of 9 runs because it submitted mid-upload.
 
 ## Spec against merged F-33 (and dlv-00 since d20fd9b2): differences
 1. **Line predicate.** The spec asks for a new `FINANCE_BOARD_LINES` set. F-42 had already merged that set as `SCHEDULE_LINES`/`scheduleLine`, used at every branch: `bannerTone`, `inDrawer`, `schedule`, `Workspace()`, and WorkItemOverview `:704`/`:729`. I added `ledger_sources` to it and did not create a second set. The spec's line references (`INCOME_LINE :105`, `:181`, `:643`) no longer exist.
@@ -40,7 +45,7 @@ None (round 1).
 4. **`steps[].verdict` overlay strip.** It is generic in `mock-contract.test.ts`. The regex allowlist in `income-schedule-mock.test.ts` named only W-27/W-39, so I extended it to W-42. The links allowlist in `mock-contract.test.ts` also needed W-4201 and W-4211.
 5. **Reviewer-not-set hold.** The W-2706 shape is unchanged and reused for W-4205. However, merged WorkItemOverview drew "See all exceptions" on `setup_needed` for every line except issue and fixed assets, so I excluded `ledger_sources`.
 6. **Upload seam.** F-31, not F-34 or F-45, already merged the step-evidence grant in `response.mjs`, so F-45 changes nothing there. That grant does not check the step's `disabled_reason`, which the spec asked for. On the mock, the W-4210 capturer could still upload to C-LED-0052. The page sends nothing (tested), and this is flagged for the backend in the handoff.
-7. **AC 9 wording conflict.** After a decide 200 and a successful re-read, merged InlineDecide says "LED-0052 v1 is approved" even when the re-read still serves the review. F-33's own test asserts this. The spec says the page must not say "approved" in that case. It never says "Verified", and the status stays as re-read. I did not change it, because InlineDecide's semantics are shared and out of scope. This is pending a coordinator or design engineer call.
+7. **AC 9 wording conflict.** After a decide 200 and a successful re-read, merged InlineDecide says "<label> is approved" even when the re-read still serves the review, and F-33's test asserts this. **Resolved for the ledger line (coordinator decision):** Workspace downgrades the notice to "result not confirmed" while the re-read still offers the task. InlineDecide is unchanged. The income line keeps F-33's behaviour, recorded as a coordinator follow-up.
 8. **Agent card.** It reads "step 4 of 4" from the steps sent (3 done), where the board says "step 3 of 4". It also has no title. This is exception Conflicts 14.
 9. **F-47** merged before F-45, so the repoint is F-45's (done). **Ports:** I used 4955 (app) and 4954 (mock) as instructed, not the spec's 4970/4971.
 
@@ -68,7 +73,7 @@ None (round 1).
    - finance_lead, ceo and pm see the same controls on all 13.
    - The `/me`/`is_you`/`prepared_by` diff grep returns nothing.
 8. [x] W-4201 agent card: WORKING, sources and "Started 15:12" in the side column; Ask Chidi links to /assistant. In the e2e, every request stays on the app origin, and the API calls go only to `/api/v1/`.
-9. [x] VERIFIED only from the re-read, and W-4204 has no control. One caveat: difference 7 (the "is approved" notice).
+9. [x] VERIFIED only from the re-read, and W-4204 has no control. A 200 whose re-read is still the review never says Verified or approved ("LED-0052 v1: result not confirmed").
 10. [x] Observation:
     - The form validates both fields, is announced, and puts focus on the Select.
     - The upload carries `kind`, `case_revision` 4 and CSRF, and it is schema-valid.
@@ -89,7 +94,7 @@ None (round 1).
 16. [x] W-4213: the re-read comes first, then `STEP_TEXT.failed`, never "Observation recorded.". The mock log shows one applied step, and a retry with the same key is a replay.
 17. [x] 401 on the read, the decide and the step all go to sign-in with `next`. 403 and 404 render identical text, with no title, fact or agent step. Persona none makes no further call.
 18. [x] Phone: the step form opens in the Drawer with the Select and the file input. Cancel and Escape return focus. The Decide bar is fixed. There is no sideways scroll. Every target is at least 44 px, including the chip "×" after an upload (e2e).
-19. [x] One fidelity run on a production build, with observe driven. Coverage after the proposed exceptions is 100% on all 8. Visual is under 90 everywhere, with waivers proposed and desktop review under 70 (see Fidelity).
+19. [x] Fidelity on a production build, with observe driven: the first run plus the one extra run the coordinator authorised. Coverage after the proposed exceptions is 100% on all 8. Visual is 76.4 to 91, with 7 D-83 waivers proposed and no board under 70.
 20. [x] Axe is clean at 1440 and 390 on W-4201 to W-4205 and W-4209, the open form with an upload, field errors, the note error, the Drawer, the uncertain notice and the not-open view. The agent tag does not animate under reduced motion.
 21. [x] No hex, rgb or hsl added, no CSS changed, and no local component copies.
 22. [x] `tests/ledger-source-mock.test.ts` covers schema, sample and line, upload then step for W-4202 and W-4208, claim then approve, reject 422, stale 409, W-4206 403, W-4212 uncertain, and reset.
@@ -98,24 +103,25 @@ None (round 1).
 25. [x] This file.
 
 ## Validation
-- `delivery/checks.sh`, run under the shared lock: Django check clean; lint, typecheck and build ok; vitest 120 files and 2882 tests passed; exit 0.
+- `delivery/checks.sh`, run under the shared lock at 4dba97ab: Django check clean; lint, typecheck and build ok; vitest 120 files and 2882 tests passed; exit 0.
 - `cd frontend && npx vitest run tests/ledger-source.test.tsx tests/ledger-source-mock.test.ts tests/mock-contract.test.ts tests/income-schedule-mock.test.ts tests/start-work-proof*.ts*`: all passed (47, 18, 343 and 144 tests).
-- `cd frontend && E2E_PORT=4955 MOCK_PORT=4954 npx playwright test e2e/ledger-source.spec.ts e2e/income-schedule.spec.ts e2e/workspace.spec.ts e2e/response.spec.ts e2e/start-work-proof.spec.ts e2e/asset-schedule.spec.ts`: 164 passed (8.3 m), exit 0.
+- `cd frontend && E2E_PORT=4955 MOCK_PORT=4954 npx playwright test e2e/ledger-source.spec.ts e2e/income-schedule.spec.ts e2e/workspace.spec.ts e2e/response.spec.ts e2e/start-work-proof.spec.ts e2e/asset-schedule.spec.ts`: 164 passed (7.9 m) at 4dba97ab, exit 0.
 - Fidelity: `round-1/fidelity/run.sh live`, then `node drive-states.mjs` (log: "no step sent"), then `run.sh frozen`. The app was the production build on 4955 with FRAME_FIXTURES=1, the mock on 4954 and the frozen pages on 4956. All servers are stopped and `test-results` is deleted.
 
-## Fidelity (round-1/fidelity/scores.txt)
-| board | coverage | after exceptions | visual |
-|---|---|---|---|
-| desktop-investigating 1440 | 86.7 | 100 | 80.1 |
-| desktop-review 1440 | 88.2 | 100 | **68.7** (floor exception proposed) |
-| desktop-verified 1440 | 89.3 | 96.4 in run → 100 | 74.1 |
-| desktop-observe 1440 (driven) | 81.8 | 100 | 71.8 |
-| mobile-investigating 390 | 77.8 | 100 | 83.2 |
-| mobile-review 390 | 85.7 | 100 | 82.9 |
-| mobile-verified 390 | 80 | 100 | 75.9 |
-| mobile-observe 390 (driven) | 83.3 | 100 | 77.8 |
+## Fidelity
+| board | coverage | after exceptions | visual, run 1 (`fidelity/`) | visual, run 2 (`fidelity-2/`) |
+|---|---|---|---|---|
+| desktop-investigating 1440 | 86.7 | 100 | 80.1 | **91** (passes, no waiver) |
+| desktop-review 1440 | 88.2 | 100 | 68.7 | **81.2** |
+| desktop-verified 1440 | 89.3 | 96.4 in run → 100 | 74.1 | 80.5 |
+| desktop-observe 1440 (driven) | 81.8 | 100 | 71.8 | 76.4 |
+| mobile-investigating 390 | 77.8 | 100 | 83.2 | 83.0 |
+| mobile-review 390 | 85.7 | 100 | 82.9 | 83.4 |
+| mobile-verified 390 | 80 | 100 | 75.9 | 78.2 |
+| mobile-observe 390 (driven) | 83.3 | 100 | 77.8 | 77.8 |
 
-- **Desktop verified:** one element was left after the run, the board's side note "(side panel)". The spec sends the re-check sentence as an untitled `text` section, which the shared workspace draws in the main column. I added a proposed `layout` exception (Conflicts 13), with Option B: send it as `workspace.next`. Coverage after exceptions, recomputed from `report.json` against the final file, is 100. I did not run fidelity a second time.
+- **Run 2** is the single extra run the coordinator authorised, with the same driver and boards (log: "no step sent").
+- **Desktop verified:** the only element left is the board's unnamed side column. The spec sends the re-check sentence as an untitled `text` section, which the shared workspace draws in the main column. The `layout` exception (Conflicts 13) proposes, as Option B, that the backend send it as `workspace.next`. That exception now has `name: ""`, because the tool matches an unnamed area by role and empty name; it showed as "(side panel)" and did not match, so it was still counted. Coverage after exceptions is recomputed from `report.json` against the final file: 100. I did not run fidelity again.
 - **Exceptions by Conflicts number:**
   - 3: the answers in the closed Select.
   - 7: the note label and "What happens next:".
@@ -124,10 +130,10 @@ None (round 1).
   - 10: "Look up JE-7741 in QuickBooks".
   - 11: "Uploaded · 310 KB".
   - 12: crumbs, ← My work, and the Bisi and Chuka names.
-  - 13: the side panel.
+  - 13: the side column.
   - 14: the agent card's title and role line.
   - SAMPLE DATA: design decision 14 Nov (c) and D-92.
-- **Desktop review at 68.7:** side-by-side shows the same content in the same places. The shortfall comes from the shared StationTrack (a status line under each name roughly doubles the row height) and the wider page shifting every square below the header. This is shared frame, not fixable in F-45.
+- **Remaining gaps:** the shared frame (top bar, crumbs as a list, History link, page width), taller shared fact rows, the shared TextArea height, and the components listed in each waiver.
 
 ## Contract proposals (mock only)
 - `line_key: "ledger_sources"`.
@@ -160,9 +166,10 @@ None (round 1).
 
 ## Pending
 - Design engineer:
-  - sign the 27 exceptions and 8 D-83 waivers, including the one-board floor exception for SCR-58-desktop-review (68.7);
-  - decide difference 7 (the "LED-0052 v1 is approved" notice when the re-read still shows the review);
-  - decide the verified side note: keep it in main, or have the backend send it as `next`.
+  - sign the 27 exceptions and 7 D-83 waivers (no floor exception now);
+  - decide the verified side note: keep it in main, or have the backend send it as `next`;
+  - review the ledger-scoped station style (status word kept for screen readers only, as the boards draw it).
+- Coordinator follow-up: the income line (F-33) still shows "<label> is approved" when a re-read has not moved on.
 - Coordinator: when F-35 or F-39 merges, reconcile the stale hunk (keep the general one and drop the `LEDGER_LINE` gate). F-42, F-43 and the line set are integration items. F-47's landing now points to W-4201.
 - Product acceptance (required).
 

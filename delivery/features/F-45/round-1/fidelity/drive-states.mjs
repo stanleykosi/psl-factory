@@ -58,6 +58,7 @@ async function observe(page, phone) {
   await page.getByRole('option', { name: 'Found', exact: true }).click();
   await scope.locator('input[type="file"]').setInputFiles(png);
   await scope.getByText('qb-screenshot-je7741.png · 310 KB').waitFor();
+  await page.waitForFunction(() => !document.body.textContent.includes('Uploading…'));
   await page.mouse.move(0, 0);
 }
 
