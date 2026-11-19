@@ -3,7 +3,7 @@
 // E-WORK-ASSIGN from the workspace (F-30, contract mock only): set the accountable person. One write at a time,
 // guarded synchronously so a double press sends once. The typed body has no idempotency key, so nothing here ever
 // resends: after a 5xx or a network failure the item is re-read first, and the form is offered again only if that
-// re-read still carries `assign` (no owner yet). Nothing says "Owner set" except a 200.
+// re-read still carries `assign` (no owner yet). Nothing says "Owner set" except a 200, and (F-36) not before the item has been re-read.
 import { useCallback, useRef, useState } from 'react';
 
 import { api } from '@/api/client';
@@ -16,7 +16,12 @@ import type { SubmitResult } from './useWorkspaceStep';
 export type AssignBody = paths['/api/v1/work/{work_id}/assignment']['post']['requestBody']['content']['application/json'];
 type FieldMessage = { name: string; message: string };
 
-export type AssignNotice = { kind: 'done'; text: string } | { kind: 'stale'; revision: number | undefined } | { kind: 'unconfirmed' };
+/** What a form sends: the person and note, and (F-36, PROPOSAL rfp-assign overlay) the proposed acting_role, evidence_id and case_revision. */
+export type AssignRequest = { person_id: string; note?: string; acting_role?: string; evidence_id?: string; case_revision?: number };
+/** F-36: `assignedTo` is who the 200 named and `reread` whether the item was read again after it. */
+export type AssignDone = { kind: 'done'; assignedTo: string; reread: boolean };
+
+export type AssignNotice = { kind: 'done'; text: string; assignedTo: string; reread: boolean } | { kind: 'stale'; revision: number | undefined } | { kind: 'unconfirmed' };
 
 export const ASSIGN_TEXT = {
   done: (owner: string) => `Owner set: ${owner}`,
@@ -60,15 +65,16 @@ export function useWorkspaceAssign({ id, revision, page, role }: { id: string; r
   const writing = useRef(false);
 
   const submit = useCallback(
-    async (request: { person_id: string; note?: string }): Promise<SubmitResult> => {
+    async (request: AssignRequest): Promise<SubmitResult | AssignDone> => {
       if (writing.current || page.refreshFailed || revision === undefined) return { kind: 'kept' };
       writing.current = true;
       setPending(true);
       try {
-        const result = await postAssign(id, { expected_revision: revision, ...request });
-        setNotice({ kind: 'done', text: role === 'PM' ? ASSIGN_TEXT.pmDone(result.assigned_to) : ASSIGN_TEXT.done(result.assigned_to) });
-        await page.reload();
-        return { kind: 'done' };
+        // the typed body is `AssignBody`; the proposed keys go only when a form sends them
+        const result = await postAssign(id, { expected_revision: revision, ...request } as AssignBody);
+        const item = await page.reload();
+        setNotice({ kind: 'done', text: role === 'PM' ? ASSIGN_TEXT.pmDone(result.assigned_to) : ASSIGN_TEXT.done(result.assigned_to), assignedTo: result.assigned_to, reread: item !== undefined });
+        return { kind: 'done', assignedTo: result.assigned_to, reread: item !== undefined };
       } catch (error) {
         const apiError = error instanceof ApiError ? error : networkError();
         switch (apiError.kind) {
@@ -79,7 +85,7 @@ export function useWorkspaceAssign({ id, revision, page, role }: { id: string; r
             return { kind: 'kept' };
           case 'stale': {
             const item = await page.reload();
-            setNotice({ kind: 'stale', revision: item?.workspace?.revision });
+            setNotice({ kind: 'stale', revision: item?.workspace?.revision ?? item?.revision });
             return { kind: 'kept' };
           }
           case 'invalid': {

@@ -4,10 +4,12 @@
 // beside the item: project (a case_id) and waiting (the waiting_on category). With the cookie
 // psl_mock_worklist=board it serves the SCR-01 boards' own sample rows (fixtures/E-WORK-LIST.board.json)
 // for the design-fidelity check; for pm that includes `suggestions` ("While you're free"), a field the v4
-// contract does not have yet (proposed in F-02 round 3). Sample data only; no business rules.
+// contract does not have yet (proposed in F-02 round 3). Persona pmo_lead (F-36) is a Lead with the W-33xx RFP rows. Sample data only; no business rules.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { assignedWorkIds } from './workspace.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const read = (name) => JSON.parse(readFileSync(join(here, 'fixtures', name), 'utf8'));
@@ -18,7 +20,7 @@ export const QUEUES = ['needs_me', 'waiting_on_others', 'done', 'unassigned'];
 const LIMITS = [10, 20, 50];
 const OPTIONAL = ['q', 'line', 'project', 'waiting_on', 'state', 'cursor'];
 const WAITING_ON = ['me', 'someone_else', 'agent', 'outside_party', 'no_owner'];
-const LEAD_PERSONAS = ['finance_lead'];
+const LEAD_PERSONAS = ['finance_lead', 'pmo_lead'];
 
 const INVALID_QUERY = { code: 'invalid_query', message: 'We could not read that list request.' };
 const QUEUE_NOT_OPEN = { code: 'queue_not_open', message: 'Only Leads can see unassigned work.' };
@@ -61,7 +63,11 @@ export function workList({ url, persona, dataset: name }) {
   // C8: persona none sees every queue empty; other non-leads are refused unassigned.
   if (queue === 'unassigned' && !lead && persona !== 'none') return { status: 403, body: QUEUE_NOT_OPEN };
 
-  const data = dataset(persona, lead, name);
+  const drawn = dataset(persona, lead, name);
+  // F-36: an Unassigned row whose assignment was written is gone, and the count goes down with it (the assignment log is workspace.mjs's).
+  const assigned = assignedWorkIds();
+  const gone = drawn.rows.filter((row) => row.queue === 'unassigned' && assigned.has(row.item.id)).length;
+  const data = gone === 0 ? drawn : { ...drawn, rows: drawn.rows.filter((row) => !(row.queue === 'unassigned' && assigned.has(row.item.id))), counts: { ...drawn.counts, unassigned: drawn.counts.unassigned - gone } };
 
   const state = params.get('state');
   const line = params.get('line');

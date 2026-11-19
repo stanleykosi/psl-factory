@@ -82,7 +82,8 @@ export const AGENT_AVATAR: Record<Agent, { src: string; alt: string }> = {
   zainab: { src: '/agents/zainab.png', alt: 'Zainab · HR agent' },
 };
 
-export type View = { queue: Queue; q?: string; line?: string; project?: string; state?: WorkState; waiting?: WaitingOn; limit: Limit };
+/** `assign` (F-36): the work item whose "Assign accountable PM" panel is open over the list; not part of the list's own request. */
+export type View = { queue: Queue; q?: string; line?: string; project?: string; state?: WorkState; waiting?: WaitingOn; limit: Limit; assign?: string };
 
 /** Reads the view from the URL; invalid values fall back to the defaults. */
 export function parseView(params: URLSearchParams): View {
@@ -95,7 +96,9 @@ export function parseView(params: URLSearchParams): View {
   const rawWaiting = params.get('waiting_on');
   const waiting = rawWaiting && Object.hasOwn(WAITING_ON, rawWaiting) ? (rawWaiting as WaitingOn) : undefined;
   const limit = LIMITS.find((n) => String(n) === params.get('limit')) ?? DEFAULT_LIMIT;
-  return { queue, q, line, project, state, waiting, limit };
+  const rawAssign = params.get('assign');
+  const assign = queue === 'unassigned' && rawAssign && /^W-\d+$/.test(rawAssign) ? rawAssign : undefined;
+  return { queue, q, line, project, state, waiting, limit, assign };
 }
 
 /** The URL search for a view; defaults are left out. Cursors are never written. */
@@ -108,6 +111,7 @@ export function viewSearch(view: View): string {
   if (view.state) params.set('state', view.state);
   if (view.waiting) params.set('waiting_on', view.waiting);
   if (view.limit !== DEFAULT_LIMIT) params.set('limit', String(view.limit));
+  if (view.assign) params.set('assign', view.assign);
   const search = params.toString();
   return search ? `?${search}` : '';
 }
