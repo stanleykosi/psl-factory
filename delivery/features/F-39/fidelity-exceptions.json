@@ -247,7 +247,7 @@
    "category": "position",
    "conflicts": null,
    "reason": "PROPOSED, UI-1-5: the board draws Back to the issue as a full-width button inside the Next panel; the page draws the backend link in the main column under the quote (the shared workspace links row). Conflicts 10 does not cover the position.",
-   "approved_by": "builder proposal, pending design engineer signature (not signed)"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -255,7 +255,7 @@
    "category": "component",
    "conflicts": null,
    "reason": "PROPOSED, UI-1-5: the decide board draws this fact value as a person-tone tag; the shared facts list has no per-value tag, so it is plain text (backend/component list item).",
-   "approved_by": "builder proposal, pending design engineer signature (not signed)"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -263,7 +263,7 @@
    "category": "copy",
    "conflicts": null,
    "reason": "PROPOSED, UX-1-4: shared uncertain notice (useWorkspaceStep, all lines) uses the word sent; not changed here to keep other lines' behaviour. Not on a board.",
-   "approved_by": "builder proposal, pending design engineer signature (not signed)"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -271,7 +271,7 @@
    "category": "tool artefact",
    "conflicts": null,
    "reason": "PROPOSED, UI-1-2: the message is drawn (as the section item text, in the shared list row) but the fidelity tool skips text inside a list item, so it reports it missing. The words are on the page; changing the shared row markup for every line was not done.",
-   "approved_by": "builder proposal, pending design engineer signature (not signed)"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -279,7 +279,7 @@
    "category": "component styling",
    "conflicts": null,
    "reason": "PROPOSED, UI-2-2: the draft board draws the message in a blue outlined, tinted box; the page draws it as a plain shared list row with a divider because the shared SectionView has no message-box style. Design-system gap to raise for the design engineer.",
-   "approved_by": "builder proposal, pending design engineer signature (not signed)"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   }
  ],
  "visual_waivers": [
