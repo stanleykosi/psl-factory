@@ -93,7 +93,7 @@ function WorkspaceHeader({ workspace, showTitle, beside, status }: { workspace: 
     <header className="ws-header">
       {showTitle && (
         <div className="ws-titleline">
-          <h2 className="ws-title">{title}</h2>
+          <h2 className={workspace.line_key === SUBMISSION_LINE ? 'ws-title ws-title--submission' : 'ws-title'}>{title}</h2>
           {/* F-38: the frame draws the RFP's own status; the workspace's status (in review, effect uncertain) ends the title line */}
           {status && status.tone !== 'verified' && <Tag tone={tagTone(status.tone)}>{status.label}</Tag>}
         </div>
@@ -830,7 +830,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           {replySteps.map((s) => (
             <ResponsePanel key={s.key} workId={id} taskId={s.task_id!} title={s.label} onRecorded={afterReplyRecorded} onReplyMoved={afterReplyMoved} onAccessLost={page.onAccessLost} />
           ))}
-          <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} page={page} />
+          <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} page={page} plain={workspace.line_key === SUBMISSION_LINE} />
         </div>
         {(side.length > 0 || showPanel || sideNote || decideTasks.size > 0 || agentSide || beside) && (
           <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
@@ -955,7 +955,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
               .map((section) => (
                 <SectionView key={section.key} section={section} level={titled ? 3 : 2} strip={forecast && section.kind === 'figures' && !section.title} caption={forecast} />
               ))}
-            <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} />
+            <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} plain={workspace.line_key === SUBMISSION_LINE} />
           </div>
           {(workspace.sections.some(inSide(item)) || agentSide || (forecast && !phone) || (workspace.line_key === RFP_LINE && !phone && (workspace.agent_note?.lines.length ?? 0) > 0)) && (
             <aside className="ws-side" aria-label="Review and decide">

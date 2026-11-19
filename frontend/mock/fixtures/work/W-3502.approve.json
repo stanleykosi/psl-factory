@@ -98,7 +98,7 @@
     "title": "loan origination RFP",
     "client": "Tamarind Loans",
     "status": {
-      "kind": "submitted",
+      "kind": "pending",
       "label": "SUBMITTED 26 NOV",
       "at": "2026-11-26T14:42:00Z"
     },

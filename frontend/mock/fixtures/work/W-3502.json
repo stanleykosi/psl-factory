@@ -214,7 +214,7 @@
       {
         "key": "reject_submission",
         "label": "Reject",
-        "emphasis": "danger",
+        "emphasis": "secondary",
         "applies_to": "workspace",
         "task_id": "T-3502",
         "verdict": "reject"
