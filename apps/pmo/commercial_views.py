@@ -69,6 +69,23 @@ def workbench(request,case_id):
         except (ValidationError,ValueError,KeyError) as exc:
             messages.error(request,str(exc));case.refresh_from_db()
     dossier=CommercialCase.objects.filter(case=case).select_related('current').first()
+    from .commercial_client_response import source_note_visible
+    from .commercial_models import ClientResponse
+    from apps.core.models import Evidence
+    client_responses = []
+    if dossier and dossier.current_id:
+        rows = ClientResponse.objects.filter(revision_id=dossier.current_id).select_related('evidence').defer('note', 'evidence__body').order_by('-pk')[:50]
+        for row in rows:
+            visible = source_note_visible(request.user, case, row.evidence.source)
+            client_responses.append({'record': row, 'note': row.note if visible else None})
+    packets = list(CommercialSignaturePacket.objects.filter(case=case).defer('note').order_by('-pk')[:50])
+    signature_ids = [packet.signatures.get('sow', {}).get('evidence_id') for packet in packets]
+    signature_sources = dict(Evidence.objects.filter(case=case, pk__in=signature_ids).values_list('pk', 'source'))
+    signature_packets = []
+    for packet in packets:
+        source = signature_sources.get(packet.signatures.get('sow', {}).get('evidence_id'), '')
+        visible = source_note_visible(request.user, case, source)
+        signature_packets.append((packet, packet_status(packet), packet.note if visible else None))
     from .models import RFPCase,RFPDisposition,RFPResponse
     rfp_workspace=RFPCase.objects.filter(case=case).first()
     converted=bool(rfp_workspace and RFPDisposition.objects.filter(rfp=rfp_workspace,kind='route_a').exists())
@@ -77,7 +94,7 @@ def workbench(request,case_id):
         'revisions':CommercialRevision.objects.filter(dossier__case=case).order_by('-number'),
         'signature_form': signature_form, 'signature_contract_form': contract_form,
         'exemption_form': exemption_form, 'signature_exemptions': BaselineSignatureExemption.objects.filter(case=case).order_by('-pk'),
-        'signature_packets': [(packet, packet_status(packet)) for packet in CommercialSignaturePacket.objects.filter(case=case).order_by('-pk')],
+        'signature_packets': signature_packets, 'client_responses': client_responses,
         'decision_form':CommercialDecisionForm(auto_id='decision_%s'),
         'templates':Template.objects.filter(case=case,definition__document_type='sow'),
         'template_scopes':TemplateScope.objects.filter(case=case,document_type='sow',audience='client') if request.user.grant_set.filter(case=case,action='document.read',active=True).exists() else TemplateScope.objects.none(),

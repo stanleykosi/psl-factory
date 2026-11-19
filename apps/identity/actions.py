@@ -34,3 +34,4 @@ ACTIONS += ['delivery.archive_files']
 ACTIONS += ['delivery.record_support_reply']
 ACTIONS += ['issue.message.read','issue.message.prepare','issue.message.review','issue.message.release','issue.message.recover']
 ACTIONS += CLIENT_UAT_ACTIONS
+ACTIONS += ['commercial.proof.read']

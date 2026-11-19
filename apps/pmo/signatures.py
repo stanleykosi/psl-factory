@@ -53,7 +53,7 @@ def sources(case, prd_id, revision=None):
 
 
 def latest(case):
-    return CommercialSignaturePacket.objects.filter(case=case).order_by('-pk').first()
+    return CommercialSignaturePacket.objects.filter(case=case).defer('note').order_by('-pk').first()
 
 
 def validate_signature_sources(case, signatures):
@@ -123,6 +123,9 @@ def validate_packet_policy(packet):
     if role_policy(packet.actor, case, 'PM').pk != packet.authority_id:
         raise ValidationError('Signature recorder authority changed; a current human attestation is required')
     validate_signature_sources(case, packet.signatures)
+    if 'sow' in packet.signatures:
+        from .commercial_client_response import current_for_signature
+        current_for_signature(packet.actor, case, subject(case, packet.signatures['sow']['evidence_id'], 'signature'), packet.revision_id)
     if set(packet.signatures) != {'sow', 'prd'} or not all(x['human_verified'] for x in packet.signatures.values()):
         raise ValidationError('Separately human-verified current SOW and PRD signatures are both required')
     policy = active_component(COMPONENT, case)
@@ -141,6 +144,8 @@ def validate_packet_policy(packet):
         if value['method'] not in rules['methods'] or not any(
                 p['party_ref'] == value['party_ref'] and kind in p['documents'] for p in rules['parties']):
             raise ValidationError('Signature party/method is not authorized by the current owner-supplied contract: ' + kind)
+    from .commercial_client_response import qualify_signature_packet
+    qualify_signature_packet(packet, rules)
     return rules
 
 

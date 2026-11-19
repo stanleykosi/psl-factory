@@ -235,6 +235,8 @@ def adopt_signed(actor, case_id, revision_id, response_id, expected):
     response = ClientResponse.objects.filter(pk=response_id, revision=revision, kind='signed').first()
     if not response or revision.responses.order_by('-pk').first().pk != response.pk:
         raise ValidationError('Current response must attest the exact delivered signed version')
+    from .commercial_client_response import current_for_signature
+    current_for_signature(actor, case, response.evidence, revision.pk)
     binding = CommercialDocumentBinding.objects.get(version=response.receipt.publication.version)
     if binding_findings(binding):
         raise ValidationError(binding_findings(binding))

@@ -4,7 +4,13 @@ Current release108 PMO/Finance IDs; preserve122 IDs/13 families and existing14 B
 
 ## Current implementation and verification
 
-192 is hosted on Railway: web07fe8a4c-390f-49c7-94c6-72d5e4da9570 / worker5b409bb7-6bac-4036-8878-a4da992efdf7 SUCCESS,1,753 paths exactly match passing stages/root1,752. Latest pushed checkpoint19f0614a is190 shared recovery;192 source/records checkpoint follows.192 passed8PG/13.873s/checks/drift/probe/final0 and actual parallel-form browser handoffs; earlier191/pending192 notes are superseded.
+The current Railway checkpoint is 200. It passed 30 PostgreSQL tests, confirmed native adoption and Finance intake, and closed the legacy-page private-note read before access was checked. Both services are healthy. The in-app browser confirmed the plain source choices and current signature status.
+
+Implementation and acceptance now run in [workflow batches](docs/design/batch-acceptance.md). Candidate201 connects client change requests to reviewed planning-agent advice, an editable retained draft and a new native proposal for fresh approvals. It is in one grouped PostgreSQL run with commercial, project delivery, Finance and shared workflow test modules. It awaits acceptance and browser walkthrough.
+
+In the signed-agreement browser journey, sample case11f14978 retained the exact receipt and private Word proof. It refused future response time and adoption before both signatures were checked. The model cited the original sample file, a human reviewed the draft, and separate human signature checks preceded adoption and the Finance intake receipt. Desktop and phone checks passed. The revised-agreement branch, historical recovery and browser correction cases stay open.
+
+The previously pushed recovery and agent handoffs are recorded in checkpoint 02bee295. See BUILD-TESTS.md for the PostgreSQL and browser results.
 
 All eight file agents have explicit original-uploader recovery with current account/source checks, exact stopped-attempt pin, reason and acknowledgement of an unknown earlier provider result. Fresh claims/matching settlement fence stale workers; late replies stay interrupted, old workers cannot reserve new work, reviewed evidence cannot reset. Bounded readable history and automatic progress preserve unsaved edits. Native human-reviewed output still needs its separate downstream business controls.
 
@@ -18,10 +24,10 @@ Agents0012/0013, pmo0070–0072 and Finance0080/0081 are applied in testDB and p
 
 ## Remaining product work
 
-262 states/59 screen IDs: **214 observed /188 with open acceptance checks /48 unseen /26 completed scoped journeys**. Shared recovery is not an extra state closure. Some old open notes are wider role/device/recovery examples; reconcile actual source criteria/evidence. [Acceptance ledger](docs/design/screen-state-acceptance.md) and [backlog](BUILD-BACKLOG.json) retain exact states/groups.
+262 states/59 screen IDs: **215 observed /189 with open acceptance checks /47 unseen /26 completed scoped journeys**. The signed-commercial state is now observed but not closed. Some old open notes are wider role/device/recovery examples; reconcile actual source criteria/evidence. [Acceptance ledger](docs/design/screen-state-acceptance.md) and [backlog](BUILD-BACKLOG.json) retain exact states/groups.
 
-- Save/push192 checkpoint and continue the remaining source-specific states; generic file-agent recovery is now verified.
-- Build the plain exact-version commercial signature branch and finish invitation onboarding variants. Existing native signature/adoption/Finance controls remain authoritative; design examples do not set billing rules.
+- Resolve the grouped201 result and run grouped browser journeys against a passing candidate.
+- Finish commercial client-requested rework/historical recovery and invitation onboarding variants. Existing native signature/adoption/Finance controls remain authoritative; design examples do not set billing rules.
 - Connect aggregate-only report recipients to actual Zainab/Assistant through reviewed model-egress interfaces; closed human HR questions are implemented.
 - Add explicitly authorised optional HR name/employment inputs; membership dates do not establish employment departure.
 - Finish started-work/recording handover, multi/all-project profiles/invites and reviewed past-winning RFP answer reuse.
