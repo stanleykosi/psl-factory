@@ -1,93 +1,93 @@
-GATE: FAIL
+GATE: PASS
 COMMIT: bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11
-ATTEMPT: 1
+ATTEMPT: 2
 
 ## Summary
-- checks.sh failed with exit 1
+- checks.sh passed
 - Protected paths: none changed
-- Commit bad2bb2dd6f6, round 2, attempt 1
+- Commit bad2bb2dd6f6, round 2, attempt 2
 
 ## checks.sh (last 80 lines of checks.log)
 
 ```
-+                 Delivery
-+               </a>
-+             </span>
-+           </li>
-+           <li
-+             class="setup-card"
-+           >
-+             <strong>
-+               Invoice payment terms default
-+             </strong>
-+             <span
-+               class="setup-card__line"
-+             >
-+               From each signed SOW
-+                · 
-+               <a
-+                 class="psl-link"
-+                 href="/setup/rules/finance"
-+               >
-+                 Finance
-+               </a>
-+             </span>
-+           </li>
-+           <li
-+             class="setup-card"
-+           >
-+             <strong>
-+               Who may record an RFP outcome
-+             </strong>
-+             <span
-+               class="setup-card__line"
-+             >
-+               Not set
-+                · 
-+               Pre-sale
-+             </span>
-+           </li>
-+           <li
-+             class="setup-card"
-+           >
-+             <strong>
-+               Who may adjust a project's costing
-+             </strong>
-+             <span
-+               class="setup-card__line"
-+             >
-+               Not set
-+                · 
-+               Pre-sale
-+             </span>
-+           </li>
-+           <li
-+             class="setup-card"
-+           >
-+             <strong>
-+               Costing adjustment limit (per role)
-+             </strong>
-+             <span
-+               class="setup-card__line"
-+             >
-+               Not set
-+                · 
-+               Pre-sale
-+             </span>
-+           </li>
-+         </ul>
-+       </div>
-+     </main>
-+   </div>
-+ </body>
+✓ Generating static pages using 7 workers (23/23) in 647ms
+  Finalizing page optimization ...
 
- ❯ tests/setup-rules.test.tsx:429:36
-    427|     await waitFor(() => expect(desktop().getByRole('alert').textConten…
-    428|     expect(screen.queryByRole('region', { name: 'Set a rule' })).toBeN…
-    429|     expect(document.activeElement).toBe(desktop().getByRole('alert'));
-       |                                    ^
-    430|     expect(saves()).toHaveLength(1);
-    431|     expect(reads()).toHaveLength(2);
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /assistant
+├ ƒ /assistant/[conversationId]
+├ ○ /clients
+├ ƒ /clients/[clientId]
+├ ○ /exceptions
+├ ƒ /finance/month-end
+├ ○ /finance/payments
+├ ƒ /frame-fixtures/phone-back
+├ ○ /my-work
+├ ○ /notifications
+├ ○ /overview
+├ ○ /projects
+├ ƒ /projects/[caseId]
+├ ƒ /projects/[caseId]/[tab]
+├ ƒ /projects/[caseId]/documents/[documentId]
+├ ○ /settings/alerts
+├ ○ /setup
+├ ○ /setup/costing-rule
+├ ○ /setup/delegation
+├ ○ /setup/payroll-visibility
+├ ○ /setup/roles
+├ ○ /setup/rules
+├ ○ /setup/rules/delivery
+├ ○ /setup/rules/finance
+├ ○ /setup/staff
+├ ○ /setup/templates
+├ ƒ /work/[id]
+├ ƒ /work/[id]/decide
+├ ƒ /work/[id]/history
+├ ƒ /work/[id]/outcome
+└ ƒ /work/[id]/respond
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'jsdom@31.0.1',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'w3c-xmlserializer@6.0.0',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
 ```

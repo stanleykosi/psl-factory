@@ -162,22 +162,6 @@
   },
   {
    "role": "text",
-   "name": "From PSL's past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
-   "category": "missing",
-   "conflicts": 2,
-   "reason": "Conflicts 2: no field returns a past bid's result or its link (G-26-5); the past-answer line is fixture text without them.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "link",
-   "name": "Harmattan Bank RFP 2025 · R-12",
-   "category": "missing",
-   "conflicts": 2,
-   "reason": "Conflicts 2: no field returns a past bid's result or its link (G-26-5); the past-answer line is fixture text without them.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
    "name": "Status",
    "category": "component",
    "conflicts": 12,
@@ -358,14 +342,6 @@
    "category": "component",
    "conflicts": 12,
    "reason": "Conflicts 12: the consequence line is the returned step consequence, shown in the shared form or panel in the returned words.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
-   "name": "From Harmattan Bank RFP 2025 · R-12",
-   "category": "missing",
-   "conflicts": 2,
-   "reason": "Conflicts 2: no field returns a past bid's result or its link (G-26-5); the past-answer line is fixture text without them.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {

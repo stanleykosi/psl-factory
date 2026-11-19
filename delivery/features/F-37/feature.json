@@ -94,6 +94,18 @@
       "at": "2026-11-19T10:00:39Z",
       "seconds": 629.3,
       "evidence_ref": "delivery/features/F-37/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:30:41Z",
+      "seconds": 357.3,
+      "evidence_ref": "delivery/features/F-37/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -156,7 +168,7 @@
         "delivery/features/F-37/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -173,11 +185,25 @@
           ],
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "`WorkItemOverview.tsx` now hides only tasks with `response.variant === 'team_input'` on the desktop RFP page. The new test adds an approve task and still finds its panel."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "desktop RFP page hides only the team-input task panel"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`WorkItemOverview.tsx` now hides only tasks with `response.variant === 'team_input'` on the desktop RFP page. The new test adds an approve task and still finds its panel."
       ]
     },
     {
@@ -193,7 +219,7 @@
         "delivery/features/F-37/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -210,11 +236,25 @@
           ],
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "`Sections.tsx` is back to `item.agent && !item.tag`, so no other line changes. The test for one Tola is consistent with it."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "\"Suggested by\" rule restored to the original, no longer widened for all lines"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`Sections.tsx` is back to `item.agent && !item.tag`, so no other line changes. The test for one Tola is consistent with it."
       ]
     },
     {
@@ -253,7 +293,7 @@
         "delivery/features/F-37/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -270,11 +310,25 @@
           ],
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "`RfpFrame.tsx`: Team input is plain text only when `current === 'requirements'` and no task exists. Other pages keep the old link."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "Team input is plain text when no actionable task exists on the requirements page"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`RfpFrame.tsx`: Team input is plain text only when `current === 'requirements'` and no task exists. Other pages keep the old link."
       ]
     },
     {
@@ -428,7 +482,7 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -445,11 +499,25 @@
           ],
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "live W-3402 at 1440 and 390: \"Accept selected\" is grey secondary (rgb 201,205,199); \"Accept answer\" is the only blue primary in the review panel."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "Accept selected is secondary in the review, edit and reject fixtures"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "live W-3402 at 1440 and 390: \"Accept selected\" is grey secondary (rgb 201,205,199); \"Accept answer\" is the only blue primary in the review panel."
       ]
     },
     {
@@ -465,7 +533,7 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -482,11 +550,25 @@
           ],
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "W-3401 at 1440: Tola's note sits directly after Progress, before Before review and Decide."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "Tola's note moved to directly after Progress in the side column"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-3401 at 1440: Tola's note sits directly after Progress, before Before review and Decide."
       ]
     },
     {
@@ -502,7 +584,7 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -519,11 +601,25 @@
           ],
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "W-3402 shows only the table and \"Review Tola's suggestion\"; no note or Before review checklist at either width."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "review, edit and reject fixtures no longer return the note or Before review checklist"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-3402 shows only the table and \"Review Tola's suggestion\"; no note or Before review checklist at either width."
       ]
     },
     {
@@ -539,7 +635,7 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -556,11 +652,25 @@
           ],
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "refs": [
+            "panel names Tola once (name line; the tag no longer repeats it). The Status exception now separates the review boards (missing control, Conflicts 4) from edit/reject (shared form label, Conflicts 12). Honest."
+          ],
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "one Tola in the review panel; Status exception relabelled honestly (missing control on review boards)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "panel names Tola once (name line; the tag no longer repeats it). The Status exception now separates the review boards (missing control, Conflicts 4) from edit/reject (shared form label, Conflicts 12). Honest."
       ]
     },
     {
@@ -598,6 +708,98 @@
       "fix_by": "builder",
       "fix_refs": [
         "phone stacked-table tags at natural width (justify-items: start)"
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`workspace.css` `justify-items: start` on `.ws-table--stack td[data-label]` is not scoped to the RFP line. It applies to every stacked phone table (F-30, F-31, income, fixed assets). Cells hold only text and tags (Sections.tsx:262), so no control is shrunk. A right-aligned `num` cell may now sit at the left of its column on a phone. Scope it with `[data-line=\"rfp_response\"]`, or have the F-30 and F-31 owners look at it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`Workspace.tsx`: `rfpSideNote`, `sideNote`, `rfpNote` and `noteAfter` repeat one condition (TECH-1-5 still open). Behaviour is correct.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T10:32:05Z",
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "UI-1-5 is only half fixed. At 390 the stacked table still draws a short loose rule under each select-box cell and under the header box (screenshot scratchpad/ui/r2-W-3402-390.png). Tags are now natural width, but the checkbox cell border remains. Expected: no stray rule; fix in `workspace.css` for `.ws-table--stack` and re-check the F-30/F-31 stacked tables, which the builder did not look at.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "owner": "fixtures",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Exceptions \"From PSL's past answer: Harmattan Bank RFP 2025 \u00b7 R-12 \u00b7 that bid was won\" and the \"Harmattan Bank RFP 2025 \u00b7 R-12\" link are filed as `missing` because \"no field returns the bid result or link\". The board draws both, and the contract says a missing field is built with mock data, not omitted. Expected: add the result text and link to the W-3402/W-3403 fixtures and remove those two exceptions (and the phone \"From Harmattan\u2026\" one), or have the design engineer approve them as a drawable-element waiver.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-37/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:32:05Z",
+          "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        }
       ]
     }
   ],
@@ -653,6 +855,61 @@
           "snapshot_ref": "089037b2cde16d3877db4e4aed27068017c50a35",
           "evidence_refs": [
             "delivery/features/F-37/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "evidence_refs": [
+            "delivery/features/F-37/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-37/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "evidence_refs": [
+            "delivery/features/F-37/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+          "evidence_refs": [
+            "delivery/features/F-37/round-2/review-ui.md"
           ]
         }
       }
@@ -749,7 +1006,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -791,6 +1048,30 @@
       "round": 2,
       "head": "089037b2cde16d3877db4e4aed27068017c50a35",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T10:30:43Z",
+      "round": 2,
+      "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T10:32:06Z",
+      "round": 2,
+      "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T10:32:06Z",
+      "round": 3,
+      "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
+      "reason": null
     }
   ],
   "routing": {
@@ -806,10 +1087,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "FAIL",
-    "commit": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

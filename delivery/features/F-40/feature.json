@@ -99,15 +99,29 @@
       "at": "2026-11-19T10:24:15Z",
       "seconds": 487.6,
       "evidence_ref": "delivery/features/F-40/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:36:35Z",
+      "seconds": 347.9,
+      "evidence_ref": "delivery/features/F-40/round-3/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -133,11 +147,13 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/review-ux.md"
+      ]
     },
     "ui": {
       "status": "pending",
@@ -147,11 +163,13 @@
       "evidence_refs": []
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "evidence_refs": [
+        "delivery/features/F-40/round-3/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -640,14 +658,28 @@
         "delivery/features/F-40/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T10:27:27Z",
           "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
+        },
+        {
+          "action": "fix",
+          "by": "coordinator (records-only round, D-123)",
+          "at": "2026-11-19T10:36:36Z",
+          "refs": [
+            "exception added for the separate date-time picker; record waivers corrected"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
         }
+      ],
+      "fix_by": "coordinator (records-only round, D-123)",
+      "fix_refs": [
+        "exception added for the separate date-time picker; record waivers corrected"
       ]
     },
     {
@@ -1007,9 +1039,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
   },
   "blocked": null
 }
