@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-43",
   "outcome": "Cash forecast \u00b7 base case, Nov\u2013Apr: Finance reviews the six-month forecast, approves, returns or rejects it in place, and records what happened to an uncertain delivery, in four states (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-FIN-FORECAST"
   ],
@@ -77,7 +77,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T02:22:43Z",
+      "seconds": 479.1,
+      "evidence_ref": "delivery/features/F-43/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -155,7 +168,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "006599ef8c8f55c13ad73a5c23a16ce774106e83",
     "task_branch": "fe-fin-forecast-cash-forecast-review",
-    "head_sha": null,
+    "head_sha": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-43",
     "pr_url": null,
     "pr_number": null,
@@ -166,7 +179,42 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/cash-forecast.spec.ts",
+      "frontend/mock/fixtures/response/W-4003.delivered.json",
+      "frontend/mock/fixtures/response/W-4003.not_delivered.json",
+      "frontend/mock/fixtures/response/W-4003.unknown.json",
+      "frontend/mock/fixtures/work/W-4001.json",
+      "frontend/mock/fixtures/work/W-4002.approve.json",
+      "frontend/mock/fixtures/work/W-4002.json",
+      "frontend/mock/fixtures/work/W-4002.reject.json",
+      "frontend/mock/fixtures/work/W-4002.return.json",
+      "frontend/mock/fixtures/work/W-4003.json",
+      "frontend/mock/fixtures/work/W-4004.json",
+      "frontend/mock/fixtures/work/W-4005.json",
+      "frontend/mock/fixtures/work/W-4006.json",
+      "frontend/mock/fixtures/work/W-4007.json",
+      "frontend/mock/fixtures/work/W-4008.json",
+      "frontend/mock/fixtures/work/W-4009.json",
+      "frontend/mock/fixtures/work/W-4010.json",
+      "frontend/mock/fixtures/work/W-4011.json",
+      "frontend/mock/fixtures/work/W-4012.json",
+      "frontend/mock/fixtures/work/W-4013.approve.json",
+      "frontend/mock/fixtures/work/W-4013.json",
+      "frontend/mock/fixtures/work/W-4013.reject.json",
+      "frontend/mock/fixtures/work/W-4013.return.json",
+      "frontend/src/features/response/ReconcilePanel.tsx",
+      "frontend/src/features/response/labels.ts",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/cash-forecast-mock.test.ts",
+      "frontend/tests/cash-forecast.test.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -217,6 +265,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T02:22:44Z",
+      "round": 1,
+      "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "reason": null
     }
   ],
   "routing": {
@@ -234,9 +290,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
   },
   "blocked": null
 }
