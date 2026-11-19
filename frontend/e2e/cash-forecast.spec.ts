@@ -74,6 +74,23 @@ for (const [label, viewport] of [
       });
     }
 
+    test('W-4004: the verified figures are a dark strip (six across on desktop, three on a phone) with the limit as a caption under it', async ({ page }) => {
+      await page.goto('/work/W-4004');
+      await loaded(page);
+      const cells = page.locator('.ws-figstrip__cell');
+      await expect(cells.locator('dt')).toHaveText(['CALCULATED', 'REVIEWED', 'DRAFTED', 'PUBLISHED', 'RECEIPTS', 'VERIFIED']);
+      await expect(cells.locator('dd')).toHaveText(['12 Nov', '13 Nov', '13 Nov', '14 Nov', '2 of 2', '14 Nov']);
+      const tops = await cells.evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+      expect(new Set(tops).size).toBe(phone ? 2 : 1);
+      const backgrounds = await cells.evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor));
+      expect(new Set(backgrounds.slice(0, 5)).size).toBe(1);
+      expect(backgrounds[5]).not.toBe(backgrounds[0]);
+      const caption = page.locator('p.ws-caption');
+      await expect(caption).toHaveText('The forecast never moves cash or authorises a payment.');
+      expect((await caption.boundingBox())!.y).toBeGreaterThan((await cells.last().boundingBox())!.y);
+      expect(await noHorizontalScroll(page)).toBe(true);
+    });
+
     test('W-4002: the amounts as returned at this width, never shortened; Unknown in text; the table scrolls only in its named region', async ({ page }) => {
       await page.goto('/work/W-4002');
       await loaded(page);
@@ -180,21 +197,25 @@ for (const [label, viewport] of [
       const writes = recordWrites(page);
       await page.goto('/work/W-4003');
       await loaded(page);
-      const reconcile = page.getByRole('complementary', { name: 'Record what happened' });
+      // a named section inside the desktop side column (TECH-1-2); its own aside on a phone
+      const reconcile = page.getByRole(phone ? 'complementary' : 'region', { name: 'Record what happened' });
       await expect(reconcile).toBeVisible();
+      if (phone) {
+        // UI-1-3: the board's order: the station line and banner under the title, then Delivery and Next, then the choices
+        const top = async (locator: ReturnType<typeof page.locator>) => (await locator.boundingBox())!.y;
+        const ys = [await top(page.locator('.ws-ministations')), await top(page.locator('.ws-note').first()), await top(page.getByRole('heading', { name: 'Delivery' })), await top(page.getByRole('heading', { name: 'Next' })), await top(reconcile.getByRole('radiogroup'))];
+        expect([...ys].sort((a, b) => a - b)).toEqual(ys);
+      }
       await expect(reconcile).not.toContainText(/client|invoiced/i);
       await expect(page.getByRole('button', { name: /Cancel delivery|Send again|Resend|Retry/ })).toHaveCount(0);
       const go = page.getByRole('button', { name: 'Record and continue' });
-      if (phone) {
-        await go.click();
-        await expect(page.getByRole('alert').filter({ hasText: 'Choose what happened to continue.' })).toBeVisible();
-        await expectNoAxeViolations(page);
-      } else {
-        await expect(go).toBeDisabled();
-        await expectNoAxeViolations(page);
-      }
+      // UX-1-1: pressable before a choice at both widths; the press says what is missing
+      await go.click();
+      await expect(page.getByRole('alert').filter({ hasText: 'Choose what happened to continue.' })).toBeVisible();
+      await expectNoAxeViolations(page);
       await page.getByRole('radio', { name: /^It arrived\./ }).check();
       await expect(go).toBeDisabled();
+      await expect(go).toHaveAccessibleDescription('Upload the proof to continue.');
       await page.locator('input[type="file"]').setInputFiles(pdf('ceo-receipt.pdf', 4096));
       await expect(go).toBeEnabled();
       await go.dblclick();

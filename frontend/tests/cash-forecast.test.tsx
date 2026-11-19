@@ -132,7 +132,13 @@ const said = () =>
 const factValue = (label: string) => [...document.querySelectorAll('.ws-fact')].find((f) => f.querySelector('dt')?.textContent === label)?.querySelector('dd')?.textContent;
 const column = (label: string) => [...document.querySelectorAll(`.ws-table td[data-label="${label}"]`)].map((td) => td.textContent);
 const settle = () => new Promise((r) => setTimeout(r, 50));
-const panel = () => screen.queryByRole('complementary', { name: 'Record what happened' });
+/** The record panel: a named section inside the desktop side column (no second complementary landmark), its own aside on a phone. */
+const panel = () => screen.queryByRole('region', { name: 'Record what happened' }) ?? screen.queryByRole('complementary', { name: 'Record what happened' });
+/** A fact's tag as drawn: its words and its design-system tone class. */
+const factTag = (label: string) => {
+  const tag = [...document.querySelectorAll('.ws-fact')].find((f) => f.querySelector('dt')?.textContent === label)?.querySelector('dd .psl-tag');
+  return tag ? { text: tag.textContent, done: tag.classList.contains('psl-tag--done'), waiting: tag.classList.contains('psl-tag--waiting') } : null;
+};
 const record = () => screen.getByRole('button', { name: /Record and continue|Recording…/ }) as HTMLButtonElement;
 const choose = (name: RegExp) => fireEvent.click(screen.getByRole('radio', { name }));
 type Money = { amount?: string; currency: string; unknown: boolean };
@@ -147,6 +153,8 @@ describe('four states from data (AC 1, 9, 10, 12)', () => {
     expect(factValue('Opening balances')).toBe('ACCEPTED');
     expect(factValue('Assumptions workbook')).toBe('ACCEPTED');
     expect(factValue('Payroll estimate')).toBe('ACCEPTED');
+    // UI-1-2: the tag the backend sends is drawn in its tone, once
+    for (const label of ['Opening balances', 'Assumptions workbook', 'Payroll estimate']) expect(factTag(label), label).toEqual({ text: 'ACCEPTED', done: true, waiting: false });
     const card = document.querySelector('.ws-lineagent')!;
     for (const text of ['WORKING', 'Read opening balances', '3 BANK ACCOUNTS · 31 OCT', 'Aged open invoices', '9 INVOICES · ₦31.4M', 'FC-0013', 'Hand to calculation']) expect(card.textContent, text).toContain(text);
     expect(card.querySelector('.psl-agent__foot')!.textContent).toBe('Started 08:40Ask Chidi');
@@ -192,8 +200,13 @@ describe('four states from data (AC 1, 9, 10, 12)', () => {
     expect(ws().getByText("We don't know if the CEO received the forecast. The delivery is held; it can't be sent again until someone checks.")).toBeTruthy();
     expect(factValue('Sent')).toBe('14 NOV 09:00');
     expect(factValue('Confirmation')).toBe('UNKNOWN');
+    expect(factTag('Confirmation')).toEqual({ text: 'UNKNOWN', done: false, waiting: true });
+    expect(factTag('Sent')).toBeNull();
     expect(screen.getAllByText("Check with the CEO's office, then record it.").length).toBeGreaterThan(0);
     const reconcile = panel()!;
+    // TECH-1-2: inside the side column it is a named section, not a complementary landmark nested in another
+    expect(reconcile.tagName).toBe('SECTION');
+    expect(document.querySelectorAll('aside aside')).toHaveLength(0);
     expect(within(reconcile).getByRole('heading', { level: 2 }).textContent).toBe('Record what happened');
     // the board draws it in the side column above Next, not above the workspace (desktop)
     expect(document.querySelector('.ws-side')!.contains(reconcile)).toBe(true);
@@ -211,9 +224,24 @@ describe('four states from data (AC 1, 9, 10, 12)', () => {
   it('W-4004 verified: VERIFIED, the six figures, the limit sentence and Next as returned, with no Record actuals and no control', async () => {
     await open(item('W-4004'));
     expect(status().textContent).toBe('VERIFIED');
-    const figures = [...document.querySelectorAll('.ws-rows--figures > li')].map((f) => f.textContent);
-    expect(figures).toEqual(['CALCULATED12 Nov', 'REVIEWED13 Nov', 'DRAFTED13 Nov', 'PUBLISHED14 Nov', 'RECEIPTS2 of 2', 'VERIFIED14 Nov']);
-    expect(ws().getByText('The forecast never moves cash or authorises a payment.')).toBeTruthy();
+    // UI-1-1: the board's strip of six cells, each label over its value as returned; the VERIFIED cell in the tone its tag sends
+    expect(document.querySelector('.ws-rows--figures')).toBeNull();
+    const cells = [...document.querySelectorAll('.ws-section--strip .ws-figstrip__cell')];
+    expect(cells.map((c) => [c.querySelector('dt')?.textContent, c.querySelector('dd')?.textContent])).toEqual([
+      ['CALCULATED', '12 Nov'],
+      ['REVIEWED', '13 Nov'],
+      ['DRAFTED', '13 Nov'],
+      ['PUBLISHED', '14 Nov'],
+      ['RECEIPTS', '2 of 2'],
+      ['VERIFIED', '14 Nov'],
+    ]);
+    expect(cells.map((c) => c.getAttribute('data-tone'))).toEqual([null, null, null, null, null, 'done']);
+    // the limit sentence is a caption under the strip, with no panel of its own
+    const caption = ws().getByText('The forecast never moves cash or authorises a payment.');
+    expect(caption.tagName).toBe('P');
+    expect(caption.className).toBe('ws-caption');
+    expect(caption.closest('.psl-panel')).toBeNull();
+    expect(document.querySelector('.ws-section--strip')!.compareDocumentPosition(caption) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getAllByText('As months close, record actual cash against the forecast.').length).toBeGreaterThan(0);
     expect(screen.queryByRole('button', { name: /Record actuals/ })).toBeNull();
     expect(buttons()).toEqual([]);
@@ -639,26 +667,35 @@ describe('refusals and uncertain decides (AC 16, 17, 20)', () => {
 });
 
 describe('record what happened (AC 12, 18, 19)', () => {
-  it('a press with no choice sends nothing and asks for one (the phone pins a pressable button; desktop keeps it off)', async () => {
-    phone();
-    await open(item('W-4003'));
-    expect(record().disabled).toBe(false);
-    fireEvent.click(record());
-    expect(screen.getByRole('alert').textContent).toBe('Choose what happened to continue.');
-    await settle();
-    expect(writes()).toHaveLength(0);
-  });
+  for (const width of ['phone', 'desktop'] as const) {
+    it(`${width}: a press with no choice sends nothing and asks for one (UX-1-1: the button is pressable at both widths)`, async () => {
+      if (width === 'phone') phone();
+      await open(item('W-4003'));
+      expect(record().disabled).toBe(false);
+      fireEvent.click(record());
+      expect(screen.getByRole('alert').textContent).toBe('Choose what happened to continue.');
+      await settle();
+      expect(writes()).toHaveLength(0);
+      // a choice clears the ask
+      choose(/^It didn’t arrive\./);
+      expect(screen.queryByText('Choose what happened to continue.')).toBeNull();
+    });
+  }
 
   it('"It arrived": button off until the proof is uploaded, one POST with evidence_id and case_revision, Verified only after the re-read', async () => {
     await open(item('W-4003'));
-    expect(record().disabled).toBe(true);
     choose(/^It arrived\./);
     expect(record().disabled).toBe(true);
+    // UX-1-1: the off button says why, beside it
+    const why = screen.getByText('Upload the proof to continue.');
+    expect(record().getAttribute('aria-describedby')).toBe(why.id);
     const before = posts('/evidence').length;
     fireEvent.change(document.querySelector('input[type="file"]') as HTMLInputElement, { target: { files: [new File([new Uint8Array(2048).fill(37)], 'ceo-receipt.pdf', { type: 'application/pdf' })] } });
     await waitFor(() => expect(posts('/evidence')).toHaveLength(before + 1));
     expect(posts('/evidence')[0]).toMatchObject({ path: '/api/v1/cases/C-4003/evidence', body: { kind: 'delivery_receipt', case_revision: 2 }, csrf: 'mock-csrf-finance_lead' });
     await waitFor(() => expect(record().disabled).toBe(false));
+    expect(screen.queryByText('Upload the proof to continue.')).toBeNull();
+    expect(record().hasAttribute('aria-describedby')).toBe(false);
     fireEvent.click(record());
     fireEvent.click(record());
     await screen.findByText('Recorded. Reloading the work item…');
@@ -785,6 +822,14 @@ describe('phone (AC 21)', () => {
     phone();
     await open(item('W-4003'));
     expect(panel()).not.toBeNull();
+    // TECH-1-4: exactly one panel on a phone too
+    expect(document.querySelectorAll('.resp-reconcile')).toHaveLength(1);
+    // UI-1-3: the board's order: stations, banner, Delivery, Next, then the choices above the pinned button
+    const banner = ws().getByText("We don't know if the CEO received the forecast. The delivery is held; it can't be sent again until someone checks.");
+    const order = [document.querySelector('.ws-ministations')!, banner, ws().getByRole('heading', { name: 'Delivery' }), ws().getByRole('heading', { name: 'Next' }), panel()!];
+    for (let i = 1; i < order.length; i++) expect(order[i - 1].compareDocumentPosition(order[i]) & Node.DOCUMENT_POSITION_FOLLOWING, `${i}`).toBeTruthy();
+    // nothing of the panel is drawn ahead of the workspace
+    expect(document.querySelector('.ws')!.contains(panel()!)).toBe(true);
     expect(ws().getByText("We don't know if the CEO received the forecast. The delivery is held; it can't be sent again until someone checks.")).toBeTruthy();
     expect(factValue('Sent')).toBe('14 NOV 09:00');
     expect(screen.getAllByText("Check with the CEO's office, then record it.").length).toBeGreaterThan(0);
