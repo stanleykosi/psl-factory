@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-19T21:48:00.931Z",
+  "generatedAt": "2026-11-19T22:56:47.233Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-49/design/canvas/project/SCR-23-desktop.dc.html",
   "boardName": "SCR-23-desktop.dc.html",
   "pageUrl": "http://localhost:4965/my-work",
@@ -15,16 +15,16 @@
     "threshold": 0.8,
     "strictPosition": false
   },
-  "exceptionsPath": "/private/tmp/claude-501/-Users-Hunchoo-psl-factory/deb68768-c424-41cc-9491-f6358e1fee2d/scratchpad/empty.json",
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-49/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "25 board item(s) are missing from the page and are not approved exceptions (coverage 51.9% with exceptions, needs 100%).",
+    "7 board item(s) are missing from the page and are not approved exceptions (coverage 86.5% with exceptions, needs 100%).",
     "Visual match 74.2 is below 90.",
     "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 51.9,
-    "coverageWithExceptions": 51.9,
+    "coverageWithExceptions": 86.5,
     "visual": 74.2
   },
   "visual": {
@@ -637,7 +637,10 @@
           "w": 86,
           "h": 55
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Link",
@@ -651,7 +654,10 @@
           "w": 65,
           "h": 55
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Table",
@@ -679,7 +685,10 @@
           "w": 652,
           "h": 35
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Table column",
@@ -693,7 +702,10 @@
           "w": 496,
           "h": 35
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Table column",
@@ -707,7 +719,10 @@
           "w": 112,
           "h": 35
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -721,7 +736,10 @@
           "w": 112,
           "h": 58
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -735,7 +753,10 @@
           "w": 112,
           "h": 57
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: frame item; the board's My work page under the scrim is the board's own list, not My work as built (the page shows its empty state for this persona).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -749,7 +770,10 @@
           "w": 13,
           "h": 40
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: the close control is a button named Close, not text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -763,7 +787,10 @@
           "w": 408,
           "h": 42
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 2: not drawn; claims a workspace and an immutable reference that no source states (G-23-5).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -791,7 +818,10 @@
           "w": 460,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 11: text inside the client picker, matched by control; the page starts empty.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -805,7 +835,10 @@
           "w": 460,
           "h": 17
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 1: not drawn; no operation creates a client (G-23-1).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -833,7 +866,10 @@
           "w": 460,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 11: text typed into an input, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -861,7 +897,10 @@
           "w": 460,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 6 and 11: text inside a date-and-time control, matched by control; no WAT text is drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -889,7 +928,10 @@
           "w": 460,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 11: text typed into an input, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -903,7 +945,10 @@
           "w": 460,
           "h": 17
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 4: page draws the line's help 'Where the client wants it sent.' instead.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -931,7 +976,10 @@
           "w": 460,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 6 and 11: text inside a date-and-time control, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Pagination",
@@ -945,7 +993,10 @@
           "w": 460,
           "h": 17
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 3: page draws the line's help 'Enter it as the RFP states it.'; no page number or proof is returned.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -973,7 +1024,10 @@
           "w": 460,
           "h": 112
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 11: text typed into the Note box, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
     "misplaced": [
@@ -1288,7 +1342,7 @@
         }
       }
     ],
-    "unexcepted": 25
+    "unexcepted": 7
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-49/design/mascots/canvas-assets.json (19 mapped)."

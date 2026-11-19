@@ -1,0 +1,2 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-40-mobile-draft-390	390	85.7	100	78.4	False
