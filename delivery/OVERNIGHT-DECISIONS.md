@@ -240,3 +240,6 @@ F-37 RFP response, requirements and answers, part 1. Signed as presented once re
 - product acceptance on the contract mock.
 
 QA-3-1 (Record team input can't complete on the mock; the shared response mock has no T-3401 handler) is in scope as accepted, because AC5 needs only the link and drawer. It's recorded as a follow-up. Merge into dlv-00 approved once merge prep passes.
+
+## D-127 · F-40 allowed one extra gate attempt (19 Nov 2026, design engineer: "Yes, one more try")
+F-40 used its 3 gate attempts in round 3. Attempts 1–2 failed on load-flaky tests; attempt 3 passed every test but flagged delivery/config.json because of a stale base_sha (a coordinator error, now corrected). max_gate_attempts is raised to 4 for this one attempt, then set back to 3.

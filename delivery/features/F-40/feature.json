@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-40",
   "outcome": "Handover to Support: Tola's draft is published, the PM records Support's reply with proof, gaps go back for v2, and \"acknowledged\" shows only when the backend verifies it (contract mock only)",
-  "state": "BLOCKED",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -1056,6 +1056,14 @@
       "round": 3,
       "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
       "reason": "gate failed 3 times in round 3: attempts 1-2 were load-flaky tests (since fixed by PR #75); attempt 3 passed all tests (exit 0) but flagged delivery/config.json, because base_sha predated the dlv-00 merge (now corrected to a9bfa180bbb86754f4d9739419127e596b94b8b2). Needs a person to allow one more gate attempt."
+    },
+    {
+      "from": "BLOCKED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T14:30:19Z",
+      "round": 3,
+      "head": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b",
+      "reason": "D-127: one extra gate attempt allowed by the design engineer"
     }
   ],
   "routing": {
@@ -1077,9 +1085,5 @@
     "verdict": "FAIL",
     "commit": "60ff597c130fee6aa063eeafe8b11cb3bd6e900b"
   },
-  "blocked": {
-    "from": "IMPLEMENTING",
-    "reason": "gate failed 3 times in round 3: attempts 1-2 were load-flaky tests (since fixed by PR #75); attempt 3 passed all tests (exit 0) but flagged delivery/config.json, because base_sha predated the dlv-00 merge (now corrected to a9bfa180bbb86754f4d9739419127e596b94b8b2). Needs a person to allow one more gate attempt.",
-    "at": "2026-11-19T14:28:03Z"
-  }
+  "blocked": null
 }
