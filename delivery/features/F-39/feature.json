@@ -96,6 +96,18 @@
       "at": "2026-11-18T20:37:08Z",
       "seconds": 219.6,
       "evidence_ref": "delivery/features/F-39/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-18T21:01:49Z",
+      "seconds": 317.9,
+      "evidence_ref": "delivery/features/F-39/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -158,7 +170,7 @@
         "delivery/features/F-39/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -175,11 +187,25 @@
           ],
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "d-W-3603 and d-after screenshots at 1440: quote left, NEXT right, no decide panel, no blank hole; the success notice now has a gap above."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "desktop NOT ESCALATED layout now board-like (consequence of UI-1-1 and UI-1-3)"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "d-W-3603 and d-after screenshots at 1440: quote left, NEXT right, no decide panel, no blank hole; the success notice now has a gap above."
       ]
     },
     {
@@ -195,7 +221,7 @@
         "delivery/features/F-39/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -212,11 +238,25 @@
           ],
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "W-3604 and W-3608 show Message V1 with the message text and no \"Nothing here yet.\" (1440 and 390)."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "same change as UI-1-2 (W-3604, W-3608)"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-3604 and W-3608 show Message V1 with the message text and no \"Nothing here yet.\" (1440 and 390)."
       ]
     },
     {
@@ -324,7 +364,7 @@
         "delivery/features/F-39/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -341,11 +381,25 @@
           ],
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "W-3601 and W-3603 show no \"Decide whether to escalate\" card at 1440 or 390 (no matching heading in the DOM; screenshots). On investigating, the facts and Tola's card sit side by side at the board's height. On not-escalated, the callout is at the top of the main column with Next beside it. WorkItemOverview.tsx:727-730 adds the `escalation` rule. W-3602 still decides in place with InlineDecide, and no second card appears."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "extra decide TaskPanels card removed on W-3601/W-3603"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-3601 and W-3603 show no \"Decide whether to escalate\" card at 1440 or 390 (no matching heading in the DOM; screenshots). On investigating, the facts and Tola's card sit side by side at the board's height. On not-escalated, the callout is at the top of the main column with Next beside it. WorkItemOverview.tsx:727-730 adds the `escalation` rule. W-3602 still decides in place with InlineDecide, and no second card appears."
       ]
     },
     {
@@ -361,7 +415,7 @@
         "delivery/features/F-39/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -378,11 +432,25 @@
           ],
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "W-3604 shows no \"Nothing here yet.\" and no amber callout at either width. The message is the section's item text (fixtures W-3604, W-3604.next, W-3602.approve, W-3608). The missing box styling is raised as UI-2-2."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "message sent as item text, no \"Nothing here yet.\" or warning"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "W-3604 shows no \"Nothing here yet.\" and no amber callout at either width. The message is the section's item text (fixtures W-3604, W-3604.next, W-3602.approve, W-3608). The missing box styling is raised as UI-2-2."
       ]
     },
     {
@@ -398,7 +466,7 @@
         "delivery/features/F-39/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -415,11 +483,25 @@
           ],
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "The W-3603 banner is `psl-callout--info` with the info icon at 1440 and 390, and matches the board's blue callout. bannerTone, Workspace.tsx:166-173, keys it to the escalation line's status tone (neutral gives info)."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "not-escalated banner uses the info tone"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The W-3603 banner is `psl-callout--info` with the info icon at 1440 and 390, and matches the board's blue callout. bannerTone, Workspace.tsx:166-173, keys it to the escalation line's status tone (neutral gives info)."
       ]
     },
     {
@@ -435,7 +517,7 @@
         "delivery/features/F-39/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -452,11 +534,25 @@
           ],
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "MESSAGE DRAFTED is `psl-tag--agent` (blue, as on the board). NOT ESCALATED is `psl-tag--neutral` (grey, as on the board). Live DOM and side-by-sides at both widths."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "MESSAGE DRAFTED agent, NOT ESCALATED neutral"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "MESSAGE DRAFTED is `psl-tag--agent` (blue, as on the board). NOT ESCALATED is `psl-tag--neutral` (grey, as on the board). Live DOM and side-by-sides at both widths."
       ]
     },
     {
@@ -472,7 +568,7 @@
         "delivery/features/F-39/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -489,11 +585,122 @@
           ],
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "refs": [
+            "The \"Back to the issue\" position and the \"15 DAYS LATE\" tag now each have their own proposed exception, both marked \"not signed\". The desktop not-escalated side-by-side confirms that the link-position exception describes what the page actually draws."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "proposed exceptions added (see below)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The \"Back to the issue\" position and the \"15 DAYS LATE\" tag now each have their own proposed exception, both marked \"not signed\". The desktop not-escalated side-by-side confirms that the link-position exception describes what the page actually draws."
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop NOT ESCALATED \"Back to the issue\" sits as a loose button under the quote, not inside the NEXT panel as on the board (builder lists it as a proposed exception, unsigned). Layout is otherwise clean.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-18T20:39:59Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Desktop investigating is below 90 and has no waiver. round-2/fidelity/scores.txt gives SCR-51-desktop-investigating-1440 a visual score of 87.1, pass False. It was 90.1 in round 1 and dropped once the extra decide card was removed. fidelity-exceptions.json `visual_waivers` lists the other seven boards but not this one. Expected: a D-83 waiver for this board, with its own reason and \"pending design engineer\". The reason should cite the shared frame (D-99, D-110), the AgentCard head and footer (Conflicts 7), and the untitled facts section, which the board draws with \"RAISED BY YOU\" as its heading row (Conflicts 9).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T21:01:49Z",
+          "refs": [
+            "waiver added for desktop investigating"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "waiver added for desktop investigating"
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The draft board's message box is a difference with no exception. SCR-51-desktop-draft draws Message v1 inside a blue outlined, tinted box. The page draws the text as a plain shared list row with a divider (W-3604 at 1440 and at 390). The only related exception covers the message text as a tool artefact, not the box styling, and the draft waiver reason does not mention it. The round-1 instruction was to draw the box or list its styling as an exception. Expected: either draw the box, or add its own proposed exception (category component or styling) and name it in the desktop-draft waiver.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-18T20:39:59Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-18T21:01:49Z",
+          "refs": [
+            "waiver added for draft message box"
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "waiver added for draft message box"
       ]
     }
   ],
@@ -549,6 +756,61 @@
           "snapshot_ref": "356656654596e6bc7295f4cdca4f80a88d4ce2e5",
           "evidence_refs": [
             "delivery/features/F-39/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-39/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-2/review-ui.md"
           ]
         }
       }
@@ -646,7 +908,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -696,6 +958,30 @@
       "round": 2,
       "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-18T20:39:59Z",
+      "round": 2,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-18T20:40:00Z",
+      "round": 3,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-18T21:01:50Z",
+      "round": 3,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
     }
   ],
   "routing": {
@@ -711,7 +997,7 @@
     ]
   },
   "gate": {
-    "round": 2,
+    "round": 3,
     "attempts": 1,
     "verdict": "PASS",
     "commit": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"

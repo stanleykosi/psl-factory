@@ -272,9 +272,24 @@
    "conflicts": null,
    "reason": "PROPOSED, UI-1-2: the message is drawn (as the section item text, in the shared list row) but the fidelity tool skips text inside a list item, so it reports it missing. The words are on the page; changing the shared row markup for every line was not done.",
    "approved_by": "builder proposal, pending design engineer signature (not signed)"
+  },
+  {
+   "role": "text",
+   "name": "Message v1 box",
+   "category": "component styling",
+   "conflicts": null,
+   "reason": "PROPOSED, UI-2-2: the draft board draws the message in a blue outlined, tinted box; the page draws it as a plain shared list row with a divider because the shared SectionView has no message-box style. Design-system gap to raise for the design engineer.",
+   "approved_by": "builder proposal, pending design engineer signature (not signed)"
   }
  ],
  "visual_waivers": [
+  {
+   "board": "SCR-51-desktop-investigating",
+   "width": 1440,
+   "visual": 87.1,
+   "reason": "D-83: measured 87.1 in round 2 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the AgentCard head and footer (Conflicts 7); the untitled facts section, which the board heads with \"RAISED BY YOU\" (Conflicts 9).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
   {
    "board": "SCR-51-desktop-decide",
    "width": 1440,
@@ -293,7 +308,7 @@
    "board": "SCR-51-desktop-draft",
    "width": 1440,
    "visual": 80.1,
-   "reason": "D-83: measured 80.1 in round 2 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the AgentCard head and footer (Conflicts 7); the Next panel and Send for review placed by the shared workspace layout (Conflicts 10).",
+   "reason": "D-83: measured 80.1 in round 2 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the AgentCard head and footer (Conflicts 7); the Next panel and Send for review placed by the shared workspace layout (Conflicts 10). Also the message box styling (blue outlined, tinted box drawn as a plain list row; proposed exception UI-2-2).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -321,7 +336,7 @@
    "board": "SCR-51-mobile-draft",
    "width": 390,
    "visual": 85.3,
-   "reason": "D-83: measured 85.3 in round 2 on a production build. Remaining gaps: the frame's phone bar (Conflicts 9); the item title instead of \"Message drafted\" (Conflicts 6); the AgentCard head and footer (Conflicts 7); Send for review placed in the page rather than pinned.",
+   "reason": "D-83: measured 85.3 in round 2 on a production build. Remaining gaps: the frame's phone bar (Conflicts 9); the item title instead of \"Message drafted\" (Conflicts 6); the AgentCard head and footer (Conflicts 7); Send for review placed in the page rather than pinned. Also the message box styling (blue outlined, tinted box drawn as a plain list row; proposed exception UI-2-2).",
    "approved_by": "builder proposal, pending design engineer"
   }
  ]
