@@ -246,3 +246,6 @@ F-40 used its 3 gate attempts in round 3. Attempts 1–2 failed on load-flaky te
 
 ## D-128 · F-40 waivers, exceptions and product acceptance signed (19 Nov 2026, design engineer: "Sign F-40")
 F-40 delivery closure and handover, part 1 (Sign-off list 3): the 8 visual waivers (73.8–88.2) and 26 exceptions, including the separate "Support replied" date-time picker and the Proof card's remove control. Product acceptance is given on the contract mock. Merge into dlv-00 approved after the backend-handoff section is added.
+
+## D-129 · F-48 waiver and exceptions signed (19 Nov 2026, design engineer: "Sign F-48")
+F-48 assistant "can't" state (Sign-off list 3): the phone visual waiver (88.2) and the exceptions. Product acceptance is not required (readiness). The restricted-reference stopgap is noted; the backend fix is handoff gap G-SCR05-9. Merge into dlv-00 approved.
