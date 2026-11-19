@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-45",
   "outcome": "Ledger source LED-0052: a Finance person records what they found in QuickBooks with proof, and an independent reviewer approves or rejects it as a reference, in four states (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-FIN-LEDGER"
   ],
@@ -78,7 +78,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T03:55:35Z",
+      "seconds": 352.7,
+      "evidence_ref": "delivery/features/F-45/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -156,7 +169,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "ca3d889696f6d84bcfe4c0b54eeb685e9d429ebe",
     "task_branch": "fe-fin-ledger-source-recorded-reference",
-    "head_sha": null,
+    "head_sha": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-45",
     "pr_url": null,
     "pr_number": null,
@@ -167,7 +180,46 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/ledger-source.spec.ts",
+      "frontend/e2e/start-work-proof.spec.ts",
+      "frontend/mock/fixtures/work/W-4201.json",
+      "frontend/mock/fixtures/work/W-4202.json",
+      "frontend/mock/fixtures/work/W-4202.next.json",
+      "frontend/mock/fixtures/work/W-4202.steps.json",
+      "frontend/mock/fixtures/work/W-4203.approve.json",
+      "frontend/mock/fixtures/work/W-4203.json",
+      "frontend/mock/fixtures/work/W-4203.reject.json",
+      "frontend/mock/fixtures/work/W-4204.json",
+      "frontend/mock/fixtures/work/W-4205.json",
+      "frontend/mock/fixtures/work/W-4206.json",
+      "frontend/mock/fixtures/work/W-4207.json",
+      "frontend/mock/fixtures/work/W-4208.json",
+      "frontend/mock/fixtures/work/W-4208.next.json",
+      "frontend/mock/fixtures/work/W-4208.steps.json",
+      "frontend/mock/fixtures/work/W-4209.json",
+      "frontend/mock/fixtures/work/W-4210.json",
+      "frontend/mock/fixtures/work/W-4211.json",
+      "frontend/mock/fixtures/work/W-4212.approve.json",
+      "frontend/mock/fixtures/work/W-4212.json",
+      "frontend/mock/fixtures/work/W-4212.reject.json",
+      "frontend/mock/fixtures/work/W-4213.json",
+      "frontend/mock/fixtures/work/W-4213.next.json",
+      "frontend/mock/fixtures/work/W-4213.steps.json",
+      "frontend/mock/start-work.mjs",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/labels.ts",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/ledger-source-mock.test.ts",
+      "frontend/tests/ledger-source.test.tsx",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/start-work-proof-mock.test.ts",
+      "frontend/tests/start-work-proof.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -218,6 +270,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T03:55:36Z",
+      "round": 1,
+      "head": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58",
+      "reason": null
     }
   ],
   "routing": {
@@ -235,9 +295,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "4dba97ab6ee7dd7c97f33f51a63d28750636cb58"
   },
   "blocked": null
 }
