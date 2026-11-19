@@ -28,4 +28,6 @@ PSL_COMPOSED_WALKTHROUGH=1 PSL_COMMERCIAL_CLIENT_FIXTURE=1 python manage.py shel
 
 Keep its `PSL_BATCH_FIXTURE` results as the sample map. Replay retains existing work. A failing fixture remains open and the other sample results stay available.
 
+The synthetic web stage may use `scripts/railway-preview-samples.sh` as a pre-deploy command to migrate and prepare this pack while the broader regression runs on the checks service. Keep this command restricted to the exact design acceptance project and environment. It uses the preview database and private object storage. The worker and normal application startup use their existing commands. [Railway pre-deploy command](https://docs.railway.com/deployments/pre-deploy-command).
+
 Separate a passed test from a passed browser journey in the ledger. Provider activity, owner approvals and release claims require their own evidence.
