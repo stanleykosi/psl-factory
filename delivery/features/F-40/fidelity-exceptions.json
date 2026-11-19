@@ -21,7 +21,7 @@
    "name": "← Delivery",
    "category": "frame item",
    "conflicts": 7,
-   "reason": "Conflicts 7: The phone bar is the built F-22 bar, not the board's '← Delivery' (D-113).",
+   "reason": "Conflicts 7: the visible text and the target now match the board (Delivery tab); the shared phone bar names the link 'Back to Delivery' (F-22 PhoneBar aria-label), so the tool reads a different accessible name.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -183,63 +183,71 @@
    "conflicts": 12,
    "reason": "Conflicts 12: The signed-in name and role are the frame's top bar, as built (F-22), not the board's wording.",
    "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "checkbox",
+   "name": "I confirm this response is genuine.",
+   "category": "added control",
+   "conflicts": 5,
+   "reason": "Conflicts 5: the record boards draw no confirmation, but the contract needs an attestation (the response body's attested flag) before Record reply is allowed; the tick is the F-18 control, kept (acceptance 10).",
+   "approved_by": "builder proposal, pending design engineer"
   }
  ],
  "visual_waivers": [
   {
    "board": "SCR-48-desktop",
    "width": 1440,
-   "visual": 78.1,
-   "reason": "D-83 proposal (Conflicts 14): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. The reply form's position differs from the record board (form in place, intro as footnote). Counts only after the design engineer signs it.",
+   "visual": 79.4,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-48-desktop-gaps",
    "width": 1440,
-   "visual": 83.0,
-   "reason": "D-83 proposal (Conflicts 14): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. The reply form's position differs from the record board (form in place, intro as footnote). Counts only after the design engineer signs it.",
+   "visual": 83.4,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-48-desktop-received",
    "width": 1440,
    "visual": 77.8,
-   "reason": "D-83 proposal (Conflicts 14): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. The reply form's position differs from the record board (form in place, intro as footnote). Counts only after the design engineer signs it.",
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-48-mobile",
    "width": 390,
-   "visual": 82.4,
-   "reason": "D-83 proposal (Conflicts 14): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. The reply form's position differs from the record board (form in place, intro as footnote). Counts only after the design engineer signs it.",
+   "visual": 86.8,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-48-mobile-gaps",
    "width": 390,
-   "visual": 87.7,
-   "reason": "D-83 proposal (Conflicts 14): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. The reply form's position differs from the record board (form in place, intro as footnote). Counts only after the design engineer signs it.",
+   "visual": 88.2,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-48-mobile-received",
    "width": 390,
-   "visual": 74.8,
-   "reason": "D-83 proposal (Conflicts 14): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. The reply form's position differs from the record board (form in place, intro as footnote). Counts only after the design engineer signs it.",
+   "visual": 75.3,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-48-desktop-record",
    "width": 1440,
-   "visual": 74.2,
-   "reason": "D-83 proposal (Conflicts 14): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. The reply form's position differs from the record board (form in place, intro as footnote). Counts only after the design engineer signs it.",
+   "visual": 73.8,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-48-mobile-record",
    "width": 390,
-   "visual": 82.2,
-   "reason": "D-83 proposal (Conflicts 14): the remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. The reply form's position differs from the record board (form in place, intro as footnote). Counts only after the design engineer signs it.",
+   "visual": 82.5,
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   }
  ]
