@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: d28b8b98fe3f84c959c01d24d5f7aff07497916c
+COMMIT: ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7
 BUILDER: builder
 LANE: full
 
@@ -42,3 +42,4 @@ Others unchanged from round 1.
 - One fidelity run, production build with API_ORIGIN=127.0.0.1:4772; servers stopped after.
 - Not done: I did not run the new tests against the old code to show they fail.
 - Demo rebuilt and running: app 4925, mock 4924. Pushed to origin/fe-assistant-cant-state; worktree clean except the untracked root node_modules.
+- Coordinator: merged dlv-00 (ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7), bringing the test-reliability fixes #75/#78; base_sha moved to b11b48d8f15bad08f8aa8046c37e3646ba5a962c.
