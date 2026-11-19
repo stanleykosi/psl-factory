@@ -31,6 +31,9 @@ class AgentJob(models.Model):
     status = models.CharField(max_length=12, default='queued', db_index=True)
     result = models.JSONField(default=dict)
     started_at = models.DateTimeField(null=True)
+    attempt = models.PositiveIntegerField(default=0)
+    claim_token = models.UUIDField(null=True, unique=True)
+    settled_token = models.UUIDField(null=True)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['upload', 'actor', 'role'], name='unique_upload_agent_job')]

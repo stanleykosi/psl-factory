@@ -26,15 +26,28 @@
 {% for job in jobs %}
 <article class="card" id="agent-job-{{ job.pk }}">
   <h3>{{ job.role_label }} · {{ job.upload.name }}</h3>
-  <p>{{ job.status }}</p>
+  <p role="status">{{ job.progress.label }}</p>
+  {% if job.attempt %}<p>File review attempt {{ job.attempt }}{% if job.started_at %} · Started {{ job.started_at|date:"j M Y, H:i:s T" }}{% endif %}</p>{% endif %}
+  {% if job.recovery_form %}
+  <p>The earlier model request may have been processed, even though no usable draft was saved. Another review does not approve or repeat a business action.</p>
+  <form method="post">
+    {% csrf_token %}<input type="hidden" name="action" value="retry"><input type="hidden" name="job" value="{{ job.pk }}">
+    {{ job.recovery_form.as_p }}<button>Try this file review again</button>
+  </form>
+  {% endif %}
+  {% if job.history %}<details><summary>File review history</summary>
+  <p>Recent activity across the latest 50 file reviews; at most 200 entries. Drafts still need human review.</p>
+  <ol>{% for item in job.history %}<li>{{ item.label }}{% if item.attempt %} · Attempt {{ item.attempt }}{% endif %}
+    <time>{{ item.at|date:"j M Y, H:i:s T" }}</time>{% if item.reason %}<p>{{ item.reason }}</p>{% endif %}</li>{% endfor %}</ol>
+  </details>{% endif %}
   {% if job.file_review %}<h4>Reviewed summary</h4><p>{{ job.file_review.summary|linebreaksbr }}</p>
   <ul>{% for gap in job.file_review.gaps %}<li>{{ gap }}</li>{% endfor %}</ul>
   <details><summary>Original draft</summary><p>{{ job.result.summary|linebreaksbr }}</p>
   <ul>{% for gap in job.result.gaps %}<li>{{ gap }}</li>{% endfor %}</ul></details>
-  {% elif job.result %}<p>{{ job.result.summary }}</p>
+  {% elif job.status == 'draft' and job.result %}<p>{{ job.result.summary }}</p>
   <ul>{% for gap in job.result.gaps %}<li>{{ gap }}</li>{% endfor %}</ul>{% endif %}
-  {% if job.result.quotes %}<h4>Source excerpts</h4>
-  <ul>{% for quote in job.result.quotes %}<li>{{ quote }}</li>{% endfor %}</ul>{% endif %}
+  {% if job.status == 'draft' or job.status == 'reviewed' %}{% if job.result.quotes %}<h4>Source excerpts</h4>
+  <ul>{% for quote in job.result.quotes %}<li>{{ quote }}</li>{% endfor %}</ul>{% endif %}{% endif %}
   {% if job.needs_fresh_draft %}<p>Queue a fresh draft with source excerpts before reviewing this file.</p>{% endif %}
   {% if job.review_form %}
   <form method="post">

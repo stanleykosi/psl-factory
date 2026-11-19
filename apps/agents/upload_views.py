@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db import transaction
 from django.views.decorators.http import require_http_methods, require_safe
 
 from adapters import case_uploads
@@ -13,6 +14,7 @@ from apps.identity.services import active_case_grants, require
 from .models import AgentJob, CaseUpload
 from .upload_jobs import FOLLOW_UP, ROLES, authorize
 from . import file_draft_reviews, workflow_handoffs
+from . import upload_recovery
 
 
 def upload_file(actor, case, file):
@@ -30,14 +32,20 @@ def upload_file(actor, case, file):
     return upload
 
 
+@transaction.atomic
 def queue_draft(actor, upload, role):
+    from apps.core.services import lock_case
+    lock_case(actor, upload.case_id, 'agent.extract')
     authorize(actor, upload)
     if role not in ROLES or not os.getenv('OPENROUTER_MODEL'):
         raise ValidationError('Choose an available agent. A model must be configured to start a draft.')
-    job, _ = AgentJob.objects.get_or_create(upload=upload, actor=actor, role=role)
-    AgentJob.objects.filter(pk=job.pk, status='held').update(status='queued')
+    job, created = AgentJob.objects.get_or_create(upload=upload, actor=actor, role=role)
+    if created:
+        upload_recovery.audit(job, 'queued')
+    if job.status in {'held', 'interrupted'}:
+        raise ValidationError('Open the stopped file review below and record why another review is needed.')
     if job.status == 'draft' and not file_draft_reviews.reviewable(job):
-        AgentJob.objects.filter(pk=job.pk, status='draft', result=job.result).update(status='queued')
+        raise ValidationError('The earlier draft needs a new review. Record the reason in its recovery form below.')
     return job
 
 
@@ -48,6 +56,7 @@ def workbench(request, case_id):
     uploads = CaseUpload.objects.filter(case=case, actor=request.user)
     error = None
     attempted_review = None
+    attempted_recovery = None
     if request.method == 'POST':
         try:
             if request.POST.get('action') == 'upload':
@@ -58,6 +67,9 @@ def workbench(request, case_id):
             elif request.POST.get('action') == 'review':
                 attempted_review = request.POST.get('job')
                 file_draft_reviews.retain(request.user, case, request.POST.get('job'), request.POST)
+            elif request.POST.get('action') == 'retry':
+                attempted_recovery = request.POST.get('job')
+                upload_recovery.retry(request.user, case, request.POST.get('job'), request.POST)
             elif request.POST.get('action') == 'handoff':
                 workflow_handoffs.consume(request.user, case, request.POST.get('job'), request.POST)
             else:
@@ -72,8 +84,16 @@ def workbench(request, case_id):
     can_review = all((case.pk, permission) in permissions for permission in ('document.review', 'evidence.add'))
     jobs = list(AgentJob.objects.filter(upload__in=uploads, actor=request.user)
                 .select_related('upload', 'file_review').order_by('-pk')[:50]) if can_use_agent else []
+    histories = upload_recovery.histories(request.user, case, jobs)
     for job in jobs:
         job.role_label = ROLES[job.role][0]
+        job.progress = upload_recovery.describe(job)
+        if job.progress['can_request_recovery']:
+            initial = {'attempt_pin': upload_recovery.pin(job)}
+            if str(job.pk) == attempted_recovery:
+                initial.update(reason=request.POST.get('reason', ''), confirm=bool(request.POST.get('confirm')))
+            job.recovery_form = upload_recovery.RecoveryForm(initial=initial)
+        job.history = histories.get(job.pk, [])
         job.follow_up = FOLLOW_UP.get(job.role)
         if job.status == 'draft' and can_review:
             if file_draft_reviews.reviewable(job):
