@@ -433,3 +433,17 @@ Screen: SCR-58 part 1 (investigating, observe, review, verified; `/work/W-4201..
 - **Ask Chidi (G-C-4)**: the `workspace.links[]` `assistant` link to `/assistant`, with no work-item context. Chidi reads the file and its provenance only; please confirm the factory reads nothing from QuickBooks.
 - **State and view names used** (please confirm): investigating `processing`/`investigating`; observe `action_needed`/`observe`; review `action_needed`/`review`; verified `verified`/`verified`; rejected `cancelled`/`rejected`; held after Unknown `waiting`/`check_held`; reviewer not set `setup_needed`/`setup_needed`; decide not confirmed `effect_uncertain`/`effect_uncertain`.
 - **Held to part 2**: the duplicate refusal and its compare table (G-58-1; two amounts only the backend may supply and flag), "Correct" with `continues` (G-58-2, G-C-6), "Open LED-0049" (G-C-3), the rejected board, and the F-47 landing repoint (`WORK_IDS.ledger_sources` to W-4201, whichever of F-45 and F-47 merges second; F-47 merged first, so this is the coordinator's follow-up).
+
+## Added during F-37: RFP response requirements and answers (19 Nov)
+
+Screen: SCR-26 (`/work/W-3401..W-3404`), the RFP response workspace on the line workspace, contract mock only (D-LINE-WORKSPACE proposed). Gap ids G-26-* are in [gaps-b-rfp-planning.md](backend-handoff/gaps-b-rfp-planning.md); the overlay is `frontend/mock/proposals/rfp-response.json`.
+
+- **Step names** (the keys are the backend's to confirm): `accept`, `accept_selected`, `edit_accept`, `write_own`, `add_requirement`.
+- **Mock overlay, not in the generated types**: `steps[].submit_label` (the words on the form's submit button) and `steps[].fields[].value` (the start value of a text, long text or choice field; G-26-3 asks the backend to define it for any field kind). Start values sit on the step, not the item.
+- **`items[].team_key`** (reused from F-31) ties a row to a team.
+- **The mock's 422 on `item_ids`**: for the RFP lines the mock refuses an item id that is not in the served item or does not list the step, with `fields: [{name: "item_ids"}]`. The backend must refuse the same way.
+- **Open questions**:
+  - G-26-1: which tabs are separate work items (`rfp.tabs[].work_id`) and which are views (`?view=<tab key>`).
+  - G-26-2: the section read (filter, search, cursor) and a scope for "all matching".
+  - G-26-5: the past-answer source, its grants, and where "that bid was won" comes from (an earlier E-RFP-OUTCOME). Not built on the page.
+  - QA-3-1: the T-3401 record-input response (E-RESPONSE `team_input`) is not mocked.

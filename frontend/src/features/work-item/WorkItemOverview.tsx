@@ -727,12 +727,14 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
 
   // A task the workspace's own steps already link to is decided from that link: no second card for it (F-23).
   const linked = new Set((item.workspace?.steps ?? []).map((step) => step.task_id).filter(Boolean));
-  // F-33, F-35: on the lines that decide in place a decided task has nothing left to open; the workspace shows what it became.
+  // F-33, F-35, F-42: on the lines that decide in place a decided task has nothing left to open; the workspace shows what it became.
   // F-39: the escalation boards draw no task card for a decision that is decided or has no step on the page.
   const settled = (task: WorkItem['tasks'][number]) =>
     (AGENT_BESIDE_LINES.has(item.workspace?.line_key ?? '') && task.cannot_act_reason === 'already_decided') ||
     (item.workspace?.line_key === 'escalation' && (task.cannot_act_reason === 'already_decided' || !linked.has(task.id)));
-  const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task));
+  // F-37: on the RFP requirements page the team-input task is reached from the Team input tab and each team's Record; the board draws no second panel for it
+  const rfpPage = !phone && item.workspace?.line_key === 'rfp_response' && item.rfp !== undefined;
+  const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task) && !(rfpPage && (task.response as { variant?: string } | undefined)?.variant === 'team_input'));
 
   return (
     <div className={layout ? `work-overview work-board work-state--${item.state}${layout === LAYOUTS.issue ? ' work-board--issue' : ''} work-board--${phone ? 'phone' : `desktop work-board--${layout.track}`}` : `work-overview${item.workspace ? ' work-overview--line' : ''}`}>

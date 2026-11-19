@@ -1,0 +1,30 @@
+{
+  "accept": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "R-07 accepted under your name."
+    }
+  },
+  "accept_selected": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "2 answers accepted under your name."
+    }
+  },
+  "edit_accept": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "R-07 saved with your edit and accepted."
+    }
+  },
+  "write_own": {
+    "status": 200,
+    "body": {
+      "outcome": "done",
+      "message": "Your answer to R-07 is saved. Tola’s suggestion is marked not used."
+    }
+  }
+}
