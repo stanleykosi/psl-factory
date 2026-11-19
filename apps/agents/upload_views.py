@@ -92,7 +92,7 @@ def workbench(request, case_id):
             initial = {'attempt_pin': upload_recovery.pin(job)}
             if str(job.pk) == attempted_recovery:
                 initial.update(reason=request.POST.get('reason', ''), confirm=bool(request.POST.get('confirm')))
-            job.recovery_form = upload_recovery.RecoveryForm(initial=initial)
+            job.recovery_form = upload_recovery.RecoveryForm(initial=initial, auto_id=f'file-recovery-{job.pk}-%s')
         job.history = histories.get(job.pk, [])
         job.follow_up = FOLLOW_UP.get(job.role)
         if job.status == 'draft' and can_review:
@@ -106,6 +106,7 @@ def workbench(request, case_id):
     response = render(request, 'agents/uploads.html', {
         'case': case, 'uploads': uploads.order_by('-pk')[:50], 'roles': ROLES,
         'jobs': jobs,
+        'watch_jobs': any(job.status in {'queued', 'running'} for job in jobs),
         'can_queue': can_use_agent and bool(os.getenv('OPENROUTER_MODEL')),
         'error': error,
     })

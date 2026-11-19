@@ -45,7 +45,7 @@ def reviewable(job):
 def review_form(job, data=None):
     # Always refresh the server pin when rendering a form after an error.
     values = data or {}
-    return ReviewForm(initial={'draft': draft_digest(job), 'summary': values.get('summary', job.result['summary']),
+    return ReviewForm(auto_id=f'file-review-{job.pk}-%s', initial={'draft': draft_digest(job), 'summary': values.get('summary', job.result['summary']),
                                'gaps': values.get('gaps', '\n'.join(job.result['gaps'])), 'note': values.get('note', '')})
 
 

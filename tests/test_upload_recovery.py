@@ -2,6 +2,7 @@ import hashlib
 import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
+from html.parser import HTMLParser
 from threading import Event
 from unittest.mock import patch
 
@@ -240,6 +241,70 @@ class UploadRecoveryTests(UploadRecoveryFixture, TestCase):
         job.refresh_from_db()
         self.assertEqual(job.status, 'queued')
         self.assertEqual(job.attempt, 0)
+
+    def test_visible_pending_work_uses_shared_edit_preserving_progress_and_truthful_prior_attempt_copy(self):
+        job = queue_draft(self.actor, self.upload, 'A07')
+        pending = self.client.get(self.url)
+        self.assertContains(pending, 'data-work-watch')
+        self.assertContains(pending, 'work-progress.js')
+        self.assertContains(pending, 'data-preserve-form="false"')
+        invalid = self.client.post(self.url, {'action': 'queue', 'upload': self.upload.pk, 'role': 'BAD'})
+        self.assertContains(invalid, 'data-preserve-form="true"')
+        claim = upload_jobs.claim_next()
+        upload_jobs.finish(claim, failure='provider_unavailable')
+        job.refresh_from_db()
+        self.assertNotContains(self.client.get(self.url), 'data-work-watch')
+        upload_recovery.retry(self.actor, self.case, job.pk, self.values(job))
+        queued = self.client.get(self.url)
+        self.assertContains(queued, 'Previous file review attempt 1')
+        self.assertContains(queued, 'data-work-watch')
+        new = upload_jobs.claim_next()
+        upload_jobs.finish(new, self.draft_result())
+        finished = self.client.get(self.url)
+        self.assertNotContains(finished, 'data-work-watch')
+        self.assertContains(finished, 'Draft ready for human review')
+
+    def test_parallel_review_handoff_and_recovery_labels_target_only_their_own_agent_form(self):
+        reviewed = {'A01', 'A04'}
+        stopped = {'A03', 'A05'}
+        for role in upload_jobs.ROLES:
+            if role == 'A06':
+                continue
+            job = queue_draft(self.actor, self.upload, role)
+            with patch('adapters.case_uploads.read', return_value=self.source), \
+                 patch('adapters.openrouter.review', side_effect=TimeoutError if role in stopped else lambda *_: self.output()):
+                upload_jobs.run_once()
+            if role in reviewed:
+                file_draft_reviews.retain(self.actor, self.case, job.pk, {'note': 'SAMPLE multiple agents awaiting separate handoffs.'})
+        queue_draft(self.actor, self.upload, 'A06')
+        response = self.client.get(self.url)
+        class Labels(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.ids, self.targets, self.stack, self.inputs = [], [], [], {}
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if 'id' in attrs:
+                    self.ids.append(attrs['id'])
+                if tag == 'article':
+                    self.stack.append(attrs.get('id'))
+                if tag == 'label' and 'for' in attrs:
+                    self.targets.append((attrs['for'], self.stack[-1] if self.stack else None))
+                if tag in {'input', 'textarea', 'select'} and 'id' in attrs:
+                    self.inputs[attrs['id']] = self.stack[-1] if self.stack else None
+            def handle_endtag(self, tag):
+                if tag == 'article':
+                    self.stack.pop()
+        parser = Labels()
+        parser.feed(response.content.decode())
+        self.assertEqual(len(parser.ids), len(set(parser.ids)), 'Agent forms must never share element identifiers')
+        relevant = [(target, card) for target, card in parser.targets if card]
+        self.assertGreater(len(relevant), 10)
+        for target, card in relevant:
+            self.assertEqual(parser.inputs.get(target), card, 'Every form label must target a control in its own agent card')
+        self.assertContains(response, 'file-handoff-')
+        self.assertContains(response, 'file-recovery-')
+        self.assertContains(response, 'file-review-')
 
 
 class UploadRecoveryConcurrencyTests(UploadRecoveryFixture, TransactionTestCase):

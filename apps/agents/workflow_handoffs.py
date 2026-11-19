@@ -47,7 +47,7 @@ def form_for(job, data=None):
         fields['gate'] = forms.ChoiceField(choices=[(key, f'{key.replace("_", " ")} · {owner}')
                                                    for key, owner in gates.GATE_OWNERS.items()])
         fields['external_ref'] = forms.CharField(max_length=240, label='Source reference')
-    return type('ReviewedDraftForm', (forms.Form,), fields)(data)
+    return type('ReviewedDraftForm', (forms.Form,), fields)(data, auto_id=f'file-handoff-{job.pk}-%s')
 
 
 def discovery(actor, case, evidence, key, result):

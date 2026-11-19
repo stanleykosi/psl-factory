@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <h1>Files and agent work</h1>
 <p><a href="{% url 'case' case.pk %}">{{ case.title }}</a></p>
@@ -23,11 +24,14 @@
   {% endif %}
 {% endfor %}
 <h2>Agent drafts</h2>
+{% if watch_jobs %}<div data-work-watch data-preserve-form="{% if error %}true{% else %}false{% endif %}">
+  <p>Agents are reviewing your files. This page updates while you wait.</p>
+</div><script defer src="{% static 'work-progress.js' %}?v=1"></script>{% endif %}
 {% for job in jobs %}
 <article class="card" id="agent-job-{{ job.pk }}">
   <h3>{{ job.role_label }} · {{ job.upload.name }}</h3>
   <p role="status">{{ job.progress.label }}</p>
-  {% if job.attempt %}<p>File review attempt {{ job.attempt }}{% if job.started_at %} · Started {{ job.started_at|date:"j M Y, H:i:s T" }}{% endif %}</p>{% endif %}
+  {% if job.attempt %}<p>{% if job.status == 'queued' %}Previous file review attempt{% else %}File review attempt{% endif %} {{ job.attempt }}{% if job.started_at %} · Started {{ job.started_at|date:"j M Y, H:i:s T" }}{% endif %}</p>{% endif %}
   {% if job.recovery_form %}
   <p>The earlier model request may have been processed, even though no usable draft was saved. Another review does not approve or repeat a business action.</p>
   <form method="post">
