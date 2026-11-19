@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-security
-COMMIT: 60ff597c130fee6aa063eeafe8b11cb3bd6e900b
+COMMIT: bb47233b740f50132102bbe88167479f9645553f
 AUTHORITY: delivery security review
 
 ## Summary
