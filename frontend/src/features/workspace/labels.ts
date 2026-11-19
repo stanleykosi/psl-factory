@@ -3,6 +3,7 @@
 // backend's. A value outside these lists is shown as it came, never hidden.
 import { formatDate, formatDayTime, type TagTone } from '@/components';
 import { formatAmount } from '@/features/decide/format';
+import { INTERNAL_RECONCILE_LINE } from '@/features/response/labels';
 import type { WorkItem } from '@/features/work-item/labels';
 
 export type Workspace = NonNullable<WorkItem['workspace']>;
@@ -66,10 +67,14 @@ export function word<K extends string>(words: Record<K, string>, value: string):
 
 export const agentName = (agent: string) => word(AGENT_NAMES, agent);
 
-/** F-33, F-42: the Finance schedule lines whose boards draw the stations in the workspace, the working agent's card beside
+/** F-33, F-42, F-43: the Finance board lines whose boards draw the stations in the workspace, the working agent's card beside
  *  the sections, the phone Drawer, the stopped-station banner and no card for a decided task. Other lines are unchanged. */
-const SCHEDULE_LINES: ReadonlySet<string> = new Set(['income_schedules', 'fixed_assets']);
+const SCHEDULE_LINES: ReadonlySet<string> = new Set(['income_schedules', 'fixed_assets', INTERNAL_RECONCILE_LINE]);
 export const scheduleLine = (lineKey: string | undefined) => lineKey !== undefined && SCHEDULE_LINES.has(lineKey);
+/** F-43: the cash forecast line. Its workspace draws the record-what-happened control (in the side column above Next on desktop,
+ *  after Next on a phone), so the work item page draws none of its own; its untitled figures are the board's strip and a one-sentence note a caption
+ *  (W-2004's titled figures, the D-62 example, stay rows). */
+export const forecastLine = (lineKey: string | undefined) => lineKey === INTERNAL_RECONCILE_LINE;
 /** F-33, F-35, F-42: the lines whose boards draw the working agent's card beside the sections, with the assistant link in the card;
  *  a task decided there has nothing left to open. The leadership report (F-35) draws it too, with no stations. */
 export const AGENT_BESIDE_LINES: ReadonlySet<string> = new Set([...SCHEDULE_LINES, 'leadership_report']);

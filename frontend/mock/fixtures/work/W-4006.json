@@ -1,0 +1,144 @@
+{
+  "id": "W-4006",
+  "title": "Cash forecast · base case, Nov–Apr",
+  "line": "Cash forecast",
+  "reference": "FC-0014",
+  "state": "setup_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Calculate",
+      "status": "stopped"
+    },
+    {
+      "name": "Review",
+      "status": "not_started"
+    },
+    {
+      "name": "Group rows",
+      "status": "not_started"
+    },
+    {
+      "name": "Group review",
+      "status": "not_started"
+    },
+    {
+      "name": "Chidi drafts",
+      "status": "not_started"
+    },
+    {
+      "name": "Publish",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read opening balances",
+        "status": "done",
+        "source": "3 BANK ACCOUNTS · 31 OCT"
+      },
+      {
+        "text": "Aged open invoices",
+        "status": "done",
+        "source": "9 INVOICES · ₦31.4M"
+      },
+      {
+        "text": "Carried over last forecast's assumptions",
+        "status": "done",
+        "source": "FC-0013"
+      },
+      {
+        "text": "Hand to calculation",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-12T07:40:00Z"
+  },
+  "next_step": "An admin sets Forecast preparer in Setup · Finance rules. The forecast is prepared then.",
+  "sample": true,
+  "workspace": {
+    "line_key": "cash_forecast",
+    "screen": "SCR-56",
+    "view": "held",
+    "status": {
+      "label": "SETUP NEEDED",
+      "tone": "stopped"
+    },
+    "sections": [
+      {
+        "key": "held",
+        "kind": "facts",
+        "title": "Why it's held",
+        "items": [
+          {
+            "id": "H-1",
+            "label": "Forecast preparer",
+            "value": "NOT SET",
+            "tag": {
+              "label": "NOT SET",
+              "tone": "stopped"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "An admin sets Forecast preparer in Setup · Finance rules. The forecast is prepared then."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "forecasts",
+          "label": "FORECASTS"
+        },
+        {
+          "value": "FC-0014",
+          "label": "FC-0014"
+        }
+      ]
+    },
+    "revision": 1
+  }
+}
