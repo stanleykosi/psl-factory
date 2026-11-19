@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 36db1217cc448105529fc82e2e2ec5087be13606
+COMMIT: 435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f
 AUTHORITY: delivery technical review
 
 ## Findings
@@ -19,3 +19,9 @@ AUTHORITY: delivery technical review
 
 ## Carried forward to round 3 (coordinator, D-123)
 Round 3 changed the stacked-table CSS at 390, added the past-answer result and link to the W-3402/W-3403 fixtures (drawn from data), and made a 44px link fix. No write, authority or journey path changed. Carried forward; the UI re-review covers the changes.
+
+## Impact assessment (re-pin to 435ef7d9, coordinator, 19 Nov, D-123)
+- 36db1217 → 435ef7d9: the F-37 backend-handoff section, plus a dlv-00 merge (F-34..F-36, F-39, F-43, F-45, #75); 4 conflicts, both sides kept.
+- Checked against dlv-00: every shared Workspace/WorkItemOverview change is gated on RFP_LINE (the drawer, the side note, the side column); the dlv-00 line rules are untouched.
+- Evidence (merge-checks.log): tsc and eslint clean; e2e 152/152; coordinator re-run at load 5: checks.sh exit 0, 3071/3071.
+- Verdicts carry forward.
