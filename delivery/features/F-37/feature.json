@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-37",
   "outcome": "RFP response, part 1: the PM works through the RFP's requirements inside the RFP frame, and accepts, edits or replaces each of Tola's suggested answers (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-RFP-RESPONSE"
   ],
@@ -118,15 +118,29 @@
       "at": "2026-11-19T10:42:37Z",
       "seconds": 340.1,
       "evidence_ref": "delivery/features/F-37/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 2,
+      "commit": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T11:35:19Z",
+      "seconds": 417.1,
+      "evidence_ref": "delivery/features/F-37/round-3/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -152,18 +166,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "evidence_refs": [
+        "delivery/features/F-37/round-3/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -698,7 +716,7 @@
         "delivery/features/F-37/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -715,11 +733,25 @@
           ],
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T13:13:38Z",
+          "refs": [
+            "same evidence as UI-2-1; tags natural width, no loose rule."
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "phone stacked-table tags at natural width (justify-items: start)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "same evidence as UI-2-1; tags natural width, no loose rule."
       ]
     },
     {
@@ -735,14 +767,28 @@
         "delivery/features/F-37/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T10:32:05Z",
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T11:35:19Z",
+          "refs": [
+            "justify-items scoped to the RFP line"
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "justify-items scoped to the RFP line"
       ]
     },
     {
@@ -781,14 +827,42 @@
         "delivery/features/F-37/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T10:32:05Z",
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T11:35:19Z",
+          "refs": [
+            "border removed on the select-box cell and header box in `.ws-table--stack`"
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T13:13:38Z",
+          "refs": [
+            "live W-3402 at 390: select-box cells and header box have 0px borders, screenshot shows no stray rule; no horizontal overflow at 390 or 1440. At 1440 the borders are unchanged (rule is phone-only)."
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "border removed on the select-box cell and header box in `.ws-table--stack`"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "live W-3402 at 390: select-box cells and header box have 0px borders, screenshot shows no stray rule; no horizontal overflow at 390 or 1440. At 1440 the borders are unchanged (rule is phone-only)."
       ]
     },
     {
@@ -804,14 +878,42 @@
         "delivery/features/F-37/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T10:32:05Z",
           "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T11:35:19Z",
+          "refs": [
+            "past-answer result and link added to the W-3402/W-3403 fixtures; exceptions removed"
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T13:17:23Z",
+          "refs": [
+            "36db1217"
+          ],
+          "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+          "reason": "round-3/review-ui.md verified from source; the coordinator restarted the demo and the mock now serves 'that bid was won' on W-3402"
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "past-answer result and link added to the W-3402/W-3403 fixtures; exceptions removed"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "36db1217"
       ]
     }
   ],
@@ -949,7 +1051,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "006599ef8c8f55c13ad73a5c23a16ce774106e83",
     "task_branch": "fe-rfp-response-requirements-answers",
-    "head_sha": "befd93dcf5415e1791379530158a4fd4dd64c81a",
+    "head_sha": "36db1217cc448105529fc82e2e2ec5087be13606",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-37",
     "pr_url": null,
     "pr_number": null,
@@ -1084,6 +1186,22 @@
       "round": 3,
       "head": "bad2bb2dd6f6d198aa7c72719cec51a8c1db6c11",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T11:35:20Z",
+      "round": 3,
+      "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T13:17:26Z",
+      "round": 3,
+      "head": "36db1217cc448105529fc82e2e2ec5087be13606",
+      "reason": null
     }
   ],
   "routing": {
@@ -1100,9 +1218,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 1,
+    "attempts": 2,
     "verdict": "PASS",
-    "commit": "befd93dcf5415e1791379530158a4fd4dd64c81a"
+    "commit": "36db1217cc448105529fc82e2e2ec5087be13606"
   },
   "blocked": null
 }
