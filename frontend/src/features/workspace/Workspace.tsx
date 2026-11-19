@@ -110,6 +110,12 @@ const ISSUE_TEXT = { register: 'Open the issue register' } as const;
 const REMINDER_LINE = 'payment_reminder';
 /** F-35: the leadership report boards draw the working agent's card beside the sections too, with no stations. */
 const REPORT_LINE = 'leadership_report';
+/** F-39: the escalation boards draw Tola's card beside the sections while she works and once she has drafted. */
+const ESCALATION_LINE = 'escalation';
+
+/** Whether the workspace draws the agent's card itself (WorkItemOverview then keeps its copy for screen readers only). */
+export const drawsAgentCard = (lineKey: string, status: string) =>
+  (AGENT_BESIDE_LINES.has(lineKey) && status === 'working') || (lineKey === ESCALATION_LINE && (status === 'working' || status === 'done'));
 
 /** The stations as the schedule boards (income F-33, fixed assets F-42) draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
@@ -158,7 +164,8 @@ const splitAsk = (links: WorkspaceLink[], inCard: boolean) => {
 
 /** The lead banner's tone follows the data (never the words): the issue follow-up reads the status tone (F-30); the income
  *  schedule line reads a stopped station too, as a returned or rejected schedule has (F-33); the leadership report draws an
- *  agent or neutral status as information (F-35). Every other line is unchanged. */
+ *  agent or neutral status as information (F-35); the escalation line reads a neutral status (not escalated) as info (F-39).
+ *  Every other line is unchanged. */
 const bannerTone = (workspace: WorkspaceData, item: WorkItem): 'warning' | 'success' | 'problem' | 'info' =>
   workspace.line_key === REPORT_LINE
     ? workspace.status?.tone === 'verified'
@@ -166,6 +173,12 @@ const bannerTone = (workspace: WorkspaceData, item: WorkItem): 'warning' | 'succ
       : workspace.status?.tone === 'stopped' || workspace.status?.tone === 'uncertain'
         ? 'problem'
         : workspace.status?.tone === 'agent' || workspace.status?.tone === 'neutral'
+          ? 'info'
+          : 'warning'
+    : workspace.line_key === ESCALATION_LINE
+      ? workspace.status?.tone === 'verified'
+        ? 'success'
+        : workspace.status?.tone === 'neutral'
           ? 'info'
           : 'warning'
     : scheduleLine(workspace.line_key)
@@ -537,7 +550,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const side = workspace.sections.filter(inSide(item));
   const main = workspace.sections.filter((section) => !inSide(item)(section) && !strip.includes(section));
   const sideNote = issueLine(workspace) && workspace.agent_note !== undefined && workspace.agent_note.lines.length > 0;
-  const agentSide = AGENT_BESIDE_LINES.has(workspace.line_key) && item.agent.status === 'working';
+  const agentSide = drawsAgentCard(workspace.line_key, item.agent.status);
   const notice = flow.notice;
   return (
     <>
@@ -773,7 +786,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   if (!workspace) return null;
   // the stations and the working agent are drawn here whichever branch draws the sections (WorkItemOverview draws no copy)
   const stationsDrawn = STATION_LINES.has(workspace.line_key);
-  const agentSide = AGENT_BESIDE_LINES.has(workspace.line_key) && item.agent.status === 'working';
+  const agentSide = drawsAgentCard(workspace.line_key, item.agent.status);
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';

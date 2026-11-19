@@ -14,7 +14,7 @@ import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 import { AGENT_BESIDE_LINES, STATION_LINES } from '@/features/workspace/labels';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
-import { Workspace } from '@/features/workspace/Workspace';
+import { drawsAgentCard, Workspace } from '@/features/workspace/Workspace';
 import { RfpOutcomeLink } from '@/features/rfp';
 
 import {
@@ -711,7 +711,7 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
     );
     main = (
       <div className="cmp-sr">
-        {!(AGENT_BESIDE_LINES.has(lineKey) && agent.status === 'working') && <AgentCard agent={item.agent} />}
+        {!drawsAgentCard(lineKey, agent.status) && <AgentCard agent={item.agent} />}
         <NextStep item={item} quiet />
       </div>
     );
@@ -727,7 +727,10 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   // A task the workspace's own steps already link to is decided from that link: no second card for it (F-23).
   const linked = new Set((item.workspace?.steps ?? []).map((step) => step.task_id).filter(Boolean));
   // F-33, F-35: on the lines that decide in place a decided task has nothing left to open; the workspace shows what it became.
-  const settled = (task: WorkItem['tasks'][number]) => AGENT_BESIDE_LINES.has(item.workspace?.line_key ?? '') && task.cannot_act_reason === 'already_decided';
+  // F-39: the escalation boards draw no task card for a decision that is decided or has no step on the page.
+  const settled = (task: WorkItem['tasks'][number]) =>
+    (AGENT_BESIDE_LINES.has(item.workspace?.line_key ?? '') && task.cannot_act_reason === 'already_decided') ||
+    (item.workspace?.line_key === 'escalation' && (task.cannot_act_reason === 'already_decided' || !linked.has(task.id)));
   const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task));
 
   return (

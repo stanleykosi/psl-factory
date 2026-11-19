@@ -304,11 +304,20 @@ export function InlineDecide({ id, taskId, steps, page, off, onDecided, onDecidi
   if (!task) return <p className="ws-consequence">{DECIDE_TEXT.notOpen}</p>;
   if (!canAct) {
     const copy = cannotActCopy(task.cannot_act_reason, task);
+    // F-39: who was asked, only when the response sends it (nothing is drawn without `asked`)
+    const asked = task.asked ?? [];
     return panel(
-      <p className="ws-consequence">
-        <strong>{copy.heading}</strong>
-        {copy.text && <> {copy.text}</>}
-      </p>,
+      <>
+        <p className="ws-consequence">
+          <strong>{copy.heading}</strong>
+          {copy.text && <> {copy.text}</>}
+        </p>
+        {asked.length > 0 && (
+          <p className="ws-consequence">
+            {asked.map((person) => `${person.name} · ${person.role}`).join(', ')}
+          </p>
+        )}
+      </>,
     );
   }
 
