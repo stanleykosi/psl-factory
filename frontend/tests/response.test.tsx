@@ -123,6 +123,8 @@ async function addFile(file = pdf()) {
   fireEvent.change(fileInput(), { target: { files: [file] } });
   await waitFor(() => expect(posts('/evidence')).toHaveLength(before + 1));
   await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
+  // the upload only counts once the form shows the file
+  await waitFor(() => expect(document.body.textContent).toContain(file.name));
 }
 function choose(label: string) {
   fireEvent.click(screen.getByRole('radio', { name: label }));

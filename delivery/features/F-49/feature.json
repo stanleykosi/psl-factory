@@ -1,0 +1,261 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-49",
+  "outcome": "Log a received RFP: a person fills in the client, reference, RFP document, received time, submission method and deadline in the Start work drawer and lands on the new RFP (contract mock only)",
+  "state": "IMPLEMENTING",
+  "task_ids": [
+    "FE-RFP-INTAKE"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "**The line is drawn from data.** As `pmo_lead`, Start work lists \"Log a received RFP\" under \"Pre-sale\". Its drawer shows, in this order, Client or prospect, RFP reference (help \"As written on their document\"), The RFP document, Received, \"How the client wants it submitted\" (4 choices), \"Submission deadline\" (3 choices) and Note \"(optional)\"; the button reads \"Log RFP\"; the eyebrow reads \"START WORK \u00b7 PRE-SALE\". `grep -rn \"Tamarind\\|TL-RFP\\|procurement@\" frontend/src` returns nothing. \u2014 verify: `cd frontend && npx vitest run tests/rfp-intake.test.tsx`; drawer at 1440 and 390.",
+    "**Nobody but the grant sees it.** As `pm`, `ceo`, `finance_lead` and `none` the line is absent from the chooser; `/me` `startable_lines` equals the E-LINES keys for every persona; the new code reads no `useMe`, `/api/v1/me` or `roles` (`grep -rn \"useMe\\|/api/v1/me\\|roles\" frontend/src/features/start-work` returns nothing). A `none` request for the client options and an upload from a persona without the line answer 404 and look the same as a 403. \u2014 verify: `tests/rfp-intake-mock.test.ts`; grep.",
+    "**Clients only from the backend.** The Client picker lists exactly CL-3506 \"Tamarind Loans Ltd\", CL-3507 and CL-3508, with no typed-in option and no \"New client\" row. \u2014 verify: component test with a recording `fetch`.",
+    "**New client only under the overlay.** With the cookie `psl_mock_rfp=new_client` the picker ends with \"New client\" and a required name box; choosing it and typing \"Acme Foods\" sends `intake.client = {new: {name: \"Acme Foods\"}}`; an empty name shows F-05's required message and sends nothing. Without the cookie no such row exists and no `{new: \u2026}` is ever sent. The sentence \"added to the client register\" is not in the page. \u2014 verify: component test; `grep -rn \"client register\" frontend/src` returns nothing.",
+    "**Deadline has three separate values.** Choosing Unknown or Not stated sends `deadline_status` with that value and no `deadline_at`, even after a date was typed under Stated and then the choice was changed (the typed date is dropped and not sent). Choosing Stated draws the Deadline control and sends `deadline_at` as an ISO instant. No request ever carries a date for Unknown or Not stated, and nothing fills a default date. \u2014 verify: component tests with a recording `fetch`; `rfp-intake-mock.test.ts`.",
+    "**Conditional fields follow the line's `show_when`.** With the overlay, \"Submit to\" is drawn only for Email and Client portal; By hand and Not stated hide it and its value is not sent. Without the overlay (a copy of the line with `show_when` removed) every field is drawn, optional ones stay optional, and a stated deadline with no date is refused only by the backend's 422 \"Enter the deadline the RFP states.\" shown under Deadline. \u2014 verify: component tests on both line copies.",
+    "**Phone fields match desktop.** At 390 the sheet shows the same fields, words and order as desktop in one column, including Note, with \"Log RFP\" pinned and no sideways scroll. Cancel is desktop-only. \u2014 verify: e2e at 390 and 1440.",
+    "**The document uploads when chosen.** Choosing the file (2.4 MB, the board's name) sends one POST `/api/v1/cases/C-RFP-INTAKE/evidence` with `X-CSRFToken` and `{kind: \"rfp_document\", filename, content_base64, case_revision: 5}`; the card reads \"Uploading\u2026\", then \"Uploaded \u00b7 2.4 MB\" only after an `evidence_id` is returned; the start sends that id and `case_revision: 6`. With the upload made to fail (`psl_mock_scenario=500`) the card reads \"Not uploaded\" and \"Log RFP\" sends nothing until Try again succeeds or the file is removed. There is no `accept` attribute and no size or type check in the diff. \u2014 verify: `tests/rfp-intake.test.tsx`; `git diff -U0 frontend/src | grep -nE \"PROOF_TYPES|PROOF_MAX_BYTES|accept=|\\.size *[<>]\"` returns nothing.",
+    "**One start, from the board's values.** With the board's values the page sends exactly one POST `/api/v1/work` with `X-CSRFToken` and the body in the example (validated against the generated E-WORK-START request schema; no extra key), using the key made when the drawer opened, and lands on `/work/W-3351`, where the RFP shows as Unassigned. A double press sends one. Opening the drawer again gives a new key. Uploading made no new key. \u2014 verify: component test; `GET /__mock/...` start log in `rfp-intake-mock.test.ts`; e2e request log.",
+    "**The logged RFP shows in Unassigned.** After the start, `pmo_lead`'s `/my-work?queue=unassigned` has one more row for the new RFP (its reference as typed) and the Unassigned count is one higher; pressing it opens F-36's assign panel (`?queue=unassigned&assign=W-3351`). `/__mock/reset` restores the list. \u2014 verify: e2e; `rfp-intake-mock.test.ts`.",
+    "**No browser rules on what the backend decides.** A \"Received\" time in the future, a repeated reference and a repeated file are all sent; the page shows nothing about them before the answer. The mock's 422s \"Received can't be in the future.\" (under Received) and \"This RFP is already logged for that client.\" (under RFP reference) appear as returned, with the entries kept and a top summary. The diff contains no date comparison on `received_at` and no duplicate check. \u2014 verify: component tests; grep on the diff.",
+    "**Stale.** With `psl_mock_scenario=stale` the 409 re-reads the revision, keeps every typed value and the uploaded card, and the next press sends the re-read revision with a new key and succeeds. After 60 seconds of fake time there is still one POST. \u2014 verify: component test with fake timers.",
+    "**Uncertain never says logged.** With `psl_mock_start_work=start_uncertain` the drawer shows \"Check again\" and \"If it started, it will appear in My work.\" and never \"logged\" or \"started\". Check again sends the identical body and key and lands on `/work/W-3351`; the mock records one start. A network failure behaves the same. With `upload_uncertain` the card reads \"Not uploaded\", Try again re-reads the revision first, and the start sends only the second id. \u2014 verify: component tests; e2e request log.",
+    "**Access.** A 401 on E-LINES, the upload or the start shows the signed-out state with `next` set to the current page. A 403 and a 404 on the start show \"You can't start this here.\" with no client, reference or file name, and nothing differs between them. A start without the CSRF header answers 403 and shows the same refusal. \u2014 verify: component tests with a recording `fetch`; mock tests.",
+    "**Plain text, no claims.** A reference or note of `<img src=x onerror=alert(1)>` and a 422 message containing `<b>bold</b>` render as literal text. The drawer has no `<a>` whose `href` comes from a returned value. The page text never contains \"Tola\", \"has read\", \"its own case\" or \"workspace\" (`textContent` check on every state). \u2014 verify: component test; grep.",
+    "**Unknown, never 0.** A line copy with `case_revision` removed stays \"can't start here yet\" (F-05) and sends nothing. An upload 200 without `case_revision` never makes the start send 0 or blank. No card reads \"0 KB\". \u2014 verify: component tests.",
+    "**Phone targets (D-92c).** At 390 every button, input, segment, the Select and the document card's \"Choose a file\", \"\u00d7\" and Try again are at least 44 by 44 px. \u2014 verify: e2e measures `getBoundingClientRect` for each control before and after an upload.",
+    "**Fidelity (D-64, D-83).** One design-fidelity run per round over both boards on a production build, with the cookies in the Boards table. Element coverage after approved exceptions is 100% on each board, and visual is at least 90 or carries a board-level waiver citing D-83, never under 70. Every exception has `role`, `name`, `category`, `reason` and `approved_by` and maps to a Conflicts number. None covers a value the data can supply (a label, a help line, an option or a count). \u2014 verify: the fidelity command per board (`--width 1440`, `--width 390`); `round-<N>/fidelity/`.",
+    "**Accessibility.** No axe violations (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) at 1440 and 390 on the empty drawer, the Stated state, uploading, uploaded, failed, the 422 state, \"Check again\" and the not-open state. Every field has a label; the segmented groups are labelled by their field label; errors and notices are announced (`role=\"status\"` or `alert`); focus moves to the first field with an error. Nothing animates under `reducedMotion: 'reduce'`. \u2014 verify: `e2e/rfp-intake.spec.ts`.",
+    "**Tokens and components only.** `git diff` adds no `#hex`, `rgb(` or `hsl(` in any `.css`, no raw px outside tokens, and no local copy of `ProofField`, `useEvidenceUpload` or any `@/components` export. \u2014 verify: grep on the diff.",
+    "**Mock matches the contract.** `rfp-intake-mock.test.ts` checks: the new line validates against the generated E-LINES schema, `options/client.json` against E-LINE-OPTIONS, `W-3351` against E-WORK-ITEM (with overlay keys removed; the overlay keys validate against `proposals/rfp-intake.json`); every upload answer validates against the E-EVIDENCE-UPLOAD 200 schema; an extra key is a 422; `{new: \u2026}` is accepted only with `allow_new`; `deadline_at` is refused unless the state is stated; reset restores revision 5 on `C-RFP-INTAKE` and the Unassigned list. \u2014 verify: `cd frontend && npx vitest run tests/rfp-intake.test.tsx tests/rfp-intake-mock.test.ts tests/mock-contract.test.ts`.",
+    "**Contract not extended.** `git diff --stat` shows no change in `frontend/src/api/**`, `frontend/src/components/**`, `frontend/src/shell/**`, `frontend/src/features/response/**`, `frontend/src/features/rfp/**`, `apps/**`, `architecture/**`, `design/**`, the protected paths, or existing fixtures other than the two named under Lanes. Every overlay (`show_when`, `allow_new`, `deadline_status`, `{new: {name}}`) and cookie is listed in build.md as a contract proposal with its gap number. \u2014 verify: `git diff --stat`; build.md.",
+    "**Existing behaviour green.** `delivery/checks.sh` passes. F-05, F-47 and F-36 still pass: `cd frontend && npx vitest run tests/start-work.test.tsx tests/start-work-intake.test.ts tests/start-work-mock.test.ts tests/start-work-prefill.test.tsx tests/start-work-proof.test.tsx tests/start-work-proof-mock.test.ts tests/rfp-assign.test.tsx tests/rfp-assign-mock.test.ts tests/my-work.test.tsx tests/mock-work-list.test.ts tests/response.test.tsx`, plus the e2e command under Lanes. `pm`, `ceo` and `finance_lead` still show their F-05 and F-47 lines (8, 8 and 3). \u2014 verify: the commands; build.md output."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It creates a client-bid work item and uploads append-only evidence to a shared fixed intake case, so a wrong revision hits other loggers (G-23-5). But it is a single drawer on F-47's merged upload path, with no money, migration, client sending or release. SURFACES: ui (2 boards), api (E-LINES, E-WORK-START, E-EVIDENCE-UPLOAD), contract-change (the `rfp_intake` line, `show_when`, deadline state and `allow_new` as mock overlays). `security` is not ticked, because F-47's case-scoped upload grant is reused unchanged. PRODUCT-ACCEPTANCE is required, because logging an RFP is a new client flow with new wording."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-49/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "2859ab217d8c17a7262c7580640458c2c48fec8b1e56f5675d35851ded333d82",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "3bedb8756740b91d1771dbe8f62f63dd0a3e69d4",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T22:00:22Z",
+      "seconds": 539.0,
+      "evidence_ref": "delivery/features/F-49/round-1/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-49/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-RFP-INTAKE",
+    "base_branch": "dlv-00-delivery-setup",
+    "base_sha": "417fadb7ea0c946852f1c001feb941ba539e07d9",
+    "task_branch": "fe-rfp-intake-log-received-rfp",
+    "head_sha": "3bedb8756740b91d1771dbe8f62f63dd0a3e69d4",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-49",
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/rfp-intake.spec.ts",
+      "frontend/mock/fixtures/me.pmo_lead.json",
+      "frontend/mock/fixtures/start-work/lines.pmo_lead.json",
+      "frontend/mock/fixtures/start-work/options/client.json",
+      "frontend/mock/fixtures/work/W-3351.json",
+      "frontend/mock/proposals/rfp-intake.json",
+      "frontend/mock/start-work.mjs",
+      "frontend/mock/work-list.mjs",
+      "frontend/src/features/start-work/IntakeField.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/showWhen.ts",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/tests/rfp-intake-mock.test.ts",
+      "frontend/tests/rfp-intake.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-19T17:44:25Z",
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-19T17:54:25Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T17:55:28Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-49/readiness.md",
+      "delivery/features/F-49/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 1,
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "3bedb8756740b91d1771dbe8f62f63dd0a3e69d4"
+  },
+  "blocked": null
+}

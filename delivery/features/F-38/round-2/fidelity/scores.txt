@@ -1,0 +1,9 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-40-desktop-draft-1440	1440	81.3	100	89	False
+SCR-40-desktop-review-1440	1440	80	100	76.7	False
+SCR-40-desktop-submitted-1440	1440	85.2	100	84.7	False
+SCR-40-desktop-submitted-portal-1440	1440	85.2	100	79.5	False
+SCR-40-mobile-draft-390	390	85.7	100	78.4	False
+SCR-40-mobile-review-390	390	77.8	100	79.3	False
+SCR-40-mobile-submitted-390	390	66.7	100	83.6	False
+SCR-40-mobile-submitted-portal-390	390	66.7	100	81.3	False

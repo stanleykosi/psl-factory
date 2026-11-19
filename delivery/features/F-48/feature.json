@@ -4,11 +4,14 @@
   "project_id": "psl-factory",
   "feature_id": "F-48",
   "outcome": "The Assistant \"can't\" state: a person asks for something their access does not allow and sees that the agent cannot do it, why, and what it checked (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "DONE",
   "task_ids": [
     "FE-ASSISTANT"
   ],
-  "operation_ids": [],
+  "operation_ids": [
+    "E-CONVERSATION",
+    "E-CONVERSATIONS"
+  ],
   "acceptance_criteria": [
     "**Desktop board at 1440.** `SCR-05-desktop-cant` reports `pass: true`, `scores.coverageWithExceptions` = 100 and `scores.visual` >= 70 (the D-64/D-83 floor), or a D-83 waiver signed per board by the design engineer where the gap is a field the API lacks. \u2014 verify: the command exits 0; `round-<N>/fidelity/scores.txt` lists board, width, coverage, visual, pass.",
     "**Phone board at 390.** `SCR-05-mobile-cant` passes at `--width 390` with the same thresholds. \u2014 verify: same, a row in `scores.txt`.",
@@ -128,52 +131,76 @@
       "at": "2026-11-19T16:05:19Z",
       "seconds": 350.7,
       "evidence_ref": "delivery/features/F-48/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 3,
+      "commit": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T17:29:18Z",
+      "seconds": 1265.8,
+      "evidence_ref": "delivery/features/F-48/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "evidence_refs": [
+        "delivery/features/F-48/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "delivery integrated QA",
+      "snapshot_ref": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "evidence_refs": [
+        "delivery/features/F-48/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "evidence_refs": [
+        "delivery/features/F-48/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
       "assessment_reason": "delivery/features/F-48/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (recorded by the coordinator)",
+      "authority": "product acceptance, design engineer, 19 Nov 2026 \u2014 D-129",
+      "snapshot_ref": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "evidence_refs": [
+        "delivery/features/F-48/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "evidence_refs": [
+        "delivery/features/F-48/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "evidence_refs": [
+        "delivery/features/F-48/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -190,7 +217,7 @@
         "delivery/features/F-48/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -207,11 +234,25 @@
           ],
           "head": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:34:50Z",
+          "refs": [
+            "Read model.ts:17-25, Thread.tsx stepRecord, sourcesOf (restricted keeps nothing), SourceTag. Paths that could draw the label: steps (now dropped), sources (lock only), chips (none), reason text (fixture is plain text), phone/desktop share Thread. Mutation run (`!hidden.has(words)` replaced by `true`) fails the CV-2404 body-text test at 1440/390."
+          ],
+          "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "restricted label no longer drawn in the CV-2404 step"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Read model.ts:17-25, Thread.tsx stepRecord, sourcesOf (restricted keeps nothing), SourceTag. Paths that could draw the label: steps (now dropped), sources (lock only), chips (none), reason text (fixture is plain text), phone/desktop share Thread. Mutation run (`!hidden.has(words)` replaced by `true`) fails the CV-2404 body-text test at 1440/390."
       ]
     },
     {
@@ -227,7 +268,7 @@
         "delivery/features/F-48/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -244,11 +285,25 @@
           ],
           "head": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:34:50Z",
+          "refs": [
+            "Added tests: CV-2404 label absent at 1440 and 390, cannot_reason markup literal with no img/b element, finance_lead and unknown id see not-found with nothing of the refusal. 59 passed on head. Only the label test fails without the fix; the others are regression guards."
+          ],
+          "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "CV-2404 wrong-user, unknown-id and cannot_reason markup tests"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Added tests: CV-2404 label absent at 1440 and 390, cannot_reason markup literal with no img/b element, finance_lead and unknown id see not-found with nothing of the refusal. 59 passed on head. Only the label test fails without the fix; the others are regression guards."
       ]
     },
     {
@@ -264,7 +319,7 @@
         "delivery/features/F-48/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -281,11 +336,25 @@
           ],
           "head": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:34:50Z",
+          "refs": [
+            "Scripted check of fidelity-exceptions.json: 41 entries, every reason contains \"Conflicts\"; restricted-label entry now says it is hidden in the step (an uncommitted edit in the main repo, coordinator to commit)."
+          ],
+          "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "Conflicts numbers on every exception; restricted-label wording corrected"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Scripted check of fidelity-exceptions.json: 41 entries, every reason contains \"Conflicts\"; restricted-label entry now says it is hidden in the step (an uncommitted edit in the main repo, coordinator to commit)."
       ]
     },
     {
@@ -301,7 +370,7 @@
         "delivery/features/F-48/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -318,11 +387,48 @@
           ],
           "head": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:34:50Z",
+          "refs": [
+            "Test asserts the reason's `.closest('.cmp-chat__cannot')` is itself and the text line is not inside one."
+          ],
+          "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "reason asserted in its own .cmp-chat__cannot element"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Test asserts the reason's `.closest('.cmp-chat__cannot')` is itself and the text line is not inside one."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`hidden` in model.ts:19 compares only `refWords` (label, else reference). A step with a different label but a restricted `reference` string would still draw its label; harmless today (label only, fixture has none). Better fix is the contract marking step references `restricted`; raise with integration later.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-48/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:34:50Z",
+          "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7"
+        }
       ]
     }
   ],
@@ -391,9 +497,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -403,18 +509,18 @@
     "repository": null,
     "task_id": "FE-ASSISTANT",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "a9bfa180bbb86754f4d9739419127e596b94b8b2",
+    "base_sha": "b11b48d8f15bad08f8aa8046c37e3646ba5a962c",
     "task_branch": "fe-assistant-cant-state",
-    "head_sha": "d28b8b98fe3f84c959c01d24d5f7aff07497916c",
+    "head_sha": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-48",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/79",
+    "pr_number": 79,
     "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "designated_approver": "design engineer (hunchoweb), D-129",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "33e4d934c4cb2461a0cee9f3d624fb9bb8bb40b3",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/assistant.spec.ts",
@@ -446,12 +552,16 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-48/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -501,6 +611,70 @@
       "round": 2,
       "head": "8a9755d4f598464231786ff2100fd420a93b31a4",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T17:30:03Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T17:34:51Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-19T17:38:31Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-19T17:40:17Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-19T17:40:24Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-19T17:40:25Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-19T17:40:26Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-19T17:40:27Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
     }
   ],
   "routing": {
@@ -517,9 +691,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 2,
-    "verdict": "FAIL",
-    "commit": "d28b8b98fe3f84c959c01d24d5f7aff07497916c"
+    "attempts": 3,
+    "verdict": "PASS",
+    "commit": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7"
   },
   "blocked": null
 }

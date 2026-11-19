@@ -77,7 +77,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T17:52:21Z",
+      "seconds": 493.2,
+      "evidence_ref": "delivery/features/F-38/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -131,8 +144,557 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "AC 8 and Contract \"What the panel shows: the version label (`decision.version.label`)\", and Summary \"The panel names `decision.version`\": the reviewer's Decide panel does not show \"Submission pack v1\". I probed W-3502 in a scratch vitest using the suite's own harness. The panel text is \"Decide \u00b7 document reviewer / Goes to procurement@tamarindloans.example / Note (needed to return or reject) / Approve and submit / Return / Reject / Approving lets the factory submit this exact pack\u2026\", and `document.body` does not contain \"Submission pack v1\" at all. The can-act branch of `frontend/src/features/workspace/InlineDecide.tsx:331-391` draws `basis`, `recipient` and the consequences but never `task.decision.version.label`. The test `tests/rfp-submission.test.tsx:265` (\"\u2026the version, the consequence and where it goes\") has no assertion for the version, so it passes without it. This is the \"decide on that exact pack\" guarantee (G-40-1, INV-RESEND). Expected: the panel names the returned version label. Gate it so that F-33's in-place panels and their fidelity do not change (for example, only when `decision.recipient` is returned, or only on this line, and say which in build.md). Add the assertion to the AC 8 test, and check that v2 is named after \"Review the latest\" on W-3506 (AC 13).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "AC 14(e) and Contract E-WORK-ACTION: \"While `reconcile` is present \u2026 no POST to `/steps`, `/claim` or `/decision`.\" `InlineDecide` mounts `useDecision`, which claims any task with `you_can_act: true` even when the panel is `off` because of the reconcile lock. In a probe of the test's own `lockedReview` construction (tests/rfp-submission.test.tsx:697-702), the buttons were disabled but one POST went to `/api/v1/tasks/T-3505/claim`. That test block asserts `/decision` only, while the earlier block that asserts `/claim` has no decide panel, so that check proves nothing. No shipped fixture hits this: W-3505.approve's task is `already_decided`. A claim also records no decision, and the behaviour is F-33's (`useDecision` is read-only in this lane). Expected: either don't claim while `flow.allLocked` comes from reconcile, or record this as a shared bug for the backend and the F-33 owner. Then add `expect(posts('/claim')).toHaveLength(0)` to the last (e) block, or drop the claim to match.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The e2e evidence predates the head commit. build.md says the four-spec e2e block ran before e8ec75b5, was not re-run as one block afterwards, and was not re-run after merge commit 32c97d3d. That merge resolved conflicts in `WorkItemView.tsx` (phone back order `deliveryId` then `rfpBack`), `Workspace.tsx` (`titleShown` with `screenHeading`) and `mock-contract.test.ts`. checks.sh covers the unit tests only. Expected: re-run `E2E_PORT=4951 MOCK_PORT=4952 npx playwright test e2e/rfp-submission.spec.ts e2e/rfp.spec.ts e2e/response.spec.ts e2e/workspace.spec.ts` on the head and paste the output in build.md (QA may do this instead).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Reuse. `holds` (`InlineDecide.tsx:231-236`) adds its own `<p>` plus `aria-describedby` for a held step. `Button` already has a `reason` prop that writes the reason beside a disabled button and links it (`src/components/Button.tsx:24,83,111-118`). Separately, the new `bannerTone` branch for `SUBMISSION_LINE` (`Workspace.tsx:191-196`) is a copy of the `REPORT_LINE` branch below it, and the two conditions could be merged. Neither changes behaviour.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec contradicts itself. AC 19 says \"Loading any W-35xx page sends only GETs\", but AC 11 and F-16 require one claim on load for a reviewer who can act. The builder disclosed this, and the tests and e2e exclude `/claim` from the load check. Expected: correct the spec wording in a later revision. No code change is needed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "After an approve answers uncertain (W-3505.approve) and after Not delivered, the page still says \"Next step. A document reviewer approves, returns or rejects this exact pack.\", and the station track shows \"Document review: Needs a person\" and \"REVIEWED In progress\", while the timeline shows \"Approved by document reviewer 26 Nov 14:58\". The approval is already recorded, so the page tells a person a decision is pending and invites a second one. Expected: the fixture's `next_step`, stations and facts match the uncertain and not-delivered states. Actual: copied from the review fixture. Fix in `frontend/mock/fixtures/work/W-3505.approve.json`, `response/W-3505.not_delivered.json` and `.unknown.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The submitted fixtures (W-3502.approve, W-3503, W-3504, W-3505.delivered) carry all six facts as \"Earned 22 Nov 10:15\", so \"APPROVED\", \"SENT\", \"RECEIPT RECORDED\" and \"VERIFIED\" read as earned four days before the timeline's 26 Nov 14:58 to 15:43. A fact claiming a send time earlier than the send is a false trust signal. Fix the `facts[].at` in those fixtures to the timeline times, or return no time (shows \"Unknown\").",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The shared reconcile panel on the uncertain page says \"so the client is never invoiced twice\" and \"before anything is resent\", invoice wording on an RFP submission. Expected: wording for a submission pack. Actual: shared copy, outside this feature's lane; raise it with the shared owner or pass it through the fixture if the panel allows.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The facts strip (DRAFTED, REVIEWED, APPROVED, SENT, RECEIPT RECORDED, VERIFIED) and the station stepper appear on every board state but are not on the SCR-40 boards, and no exception covers them. Check with the design engineer whether they are signed as shared frame.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Small targets: at 390 \"History\" is 42x24 and the shell back link 41x44. At 1440 \"Ask Tola\" is 51x20 and \"History\" 50x15. The builder already listed the phone ones as shared items.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The demo app on 4985 proxies to 4010, so the demo cannot show F-38 states in a browser as handed over. Rebuild with `API_ORIGIN=http://127.0.0.1:4984` before the design engineer looks.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "\"Record the outcome\" is drawn as a white outlined link above Next (page y~270) on desktop-submitted, -portal, and phone; the board has a blue (#2459D6, white text) primary button inside the Next card (desktop) / a sticky bottom bar (phone). Exception-free restyle and move. Build it as the board does.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Success banner is a bordered panel row with a \"RECEIPT CONFIRMED\" tag, not the board's green band with check icon (desktop and phone). The sentence's missing-element exceptions (Conflicts 23) hide a restyle of a drawable element. Draw the green band with the icon; the tag may stay secondary.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone submitted/portal: board one-line \"Email delivered \u00b7 ref TL-SUB-0091.\" / \"Portal receipt TL-SUB-0091 confirmed.\" and top-bar \"DONE\" tag are excepted as \"no field\". The ref and status are returned data already shown in the page (banner, timeline). Draw them in the green band and the bar. Same for the phone draft \"v1\" tag and \"DEADLINE 28 NOV \u00b7 6 DAYS\" (returned rfp.status/title data), and the draft/review headings.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Desktop-draft: the tab nav is excepted as \"not a tablist\", yet the board shows it as plain links; the page renders extra text copies (Requirements, 64, Pricing, Outcome) and a nav named \"RFP\". The exception covers the role mismatch only; accept via approval or align the roles so the extra-element list is empty. Also \"Submission pack v1\" is drawn as a dark filled chip (#1F2427 bg, white text) vs board plain bold text.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Headings: title is h2 at 22px where the board has h1 at 24px with wider letter spacing (draft/submitted desktop, phone 20 vs 22); review 35px vs 32px. Use the board's heading level and size via existing type tokens.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "\"Submitted\" status tag text colour #3F474B vs board amber #6E4700 on the amber chip; draft \"DONE\" #16502F vs #16388F; nav active-state: \"Projects\"/\"My work\" colour #C8CDD0 with no orange underline vs board white with #C8401C bar; \"More ways to start\" 600 and no underline vs 400 and underline.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Review: \"Open the full pack\" is drawn as an outlined button (600, black) vs the board's plain blue underlined link (#2459D6); \"Reject\" is red (#9A2F10) vs board neutral #1F2427; the decide caption is #4A5357 vs #1F2427; the section header has an orange bar the board lacks; \"Note (needed to return or reject)\" is excepted but flagged extra textbox (rename rather than waive, or get the board changed). Phone review: the REVIEW tag is a red-filled chip vs mono plain text; the ref TL-RFP-2026-014 is white vs #4A5357.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone draft/submitted: the 390 layout adds the \"History\" link (42x24, below the 44px target; shared) and a big gap and misordered stack; the board has a sticky bottom action bar for Send for review/Record the outcome. Send for review is \"misplaced\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-9",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The \"Tola \u00b7 PMO agent \u00b7 done\" and \"Drafted 22 Nov 10:15 Ask Tola\" exceptions hide a drawable card: the board shows the role line and Drafted time. The time is in agent.started_at (page shows \"Started 10:15\"); drawing \"Drafted <time>\" from the same field is possible with mock data. The CEO rule is that a missing API field is not grounds for omission, so build it with mock data. Likewise \"Kemi Adebayo \u00b7 PMO Lead\" (person name in the top bar) and the PMO Lead Overview/Setup nav links are drawable with mock data and are not valid exceptions.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-10",
+      "round": 1,
+      "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The \"If delivery hadn't been confirmed...\" info note (blue band, board draws it on both submitted desktops) is excepted as \"a state the page isn't in\". It is drawn on the board, so it is a missing element; draw it with mock data (fixed text).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T17:58:24Z",
+          "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+          "evidence_refs": [
+            "delivery/features/F-38/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-38/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+          "evidence_refs": [
+            "delivery/features/F-38/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+          "evidence_refs": [
+            "delivery/features/F-38/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+          "evidence_refs": [
+            "delivery/features/F-38/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -153,9 +715,9 @@
     "repository": null,
     "task_id": "FE-RFP-SUBMIT",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "adcb61fa5781b4f3929dcb0298328bc6c6b52a48",
+    "base_sha": "b11b48d8f15bad08f8aa8046c37e3646ba5a962c",
     "task_branch": "fe-rfp-submit-send-response",
-    "head_sha": null,
+    "head_sha": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-38",
     "pr_url": null,
     "pr_number": null,
@@ -166,7 +728,41 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "delivery/BACKEND-HANDOFF.md",
+      "frontend/e2e/rfp-submission.spec.ts",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/D-3501.1.json",
+      "frontend/mock/fixtures/response/W-3505.delivered.json",
+      "frontend/mock/fixtures/response/W-3505.not_delivered.json",
+      "frontend/mock/fixtures/response/W-3505.unknown.json",
+      "frontend/mock/fixtures/work/W-3501.json",
+      "frontend/mock/fixtures/work/W-3501.next.json",
+      "frontend/mock/fixtures/work/W-3501.steps.json",
+      "frontend/mock/fixtures/work/W-3502.approve.json",
+      "frontend/mock/fixtures/work/W-3502.json",
+      "frontend/mock/fixtures/work/W-3502.reject.json",
+      "frontend/mock/fixtures/work/W-3502.return.json",
+      "frontend/mock/fixtures/work/W-3503.json",
+      "frontend/mock/fixtures/work/W-3504.json",
+      "frontend/mock/fixtures/work/W-3505.approve.json",
+      "frontend/mock/fixtures/work/W-3505.json",
+      "frontend/mock/fixtures/work/W-3506.json",
+      "frontend/mock/fixtures/work/W-3506.next.json",
+      "frontend/mock/fixtures/work/W-3507.json",
+      "frontend/mock/fixtures/work/W-3508.json",
+      "frontend/mock/fixtures/work/W-3509.json",
+      "frontend/src/features/rfp/RfpFrame.tsx",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/tests/income-schedule-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/rfp-submission-mock.test.ts",
+      "frontend/tests/rfp-submission.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -199,7 +795,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -217,6 +813,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T17:52:27Z",
+      "round": 1,
+      "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T17:58:24Z",
+      "round": 1,
+      "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T17:58:24Z",
+      "round": 2,
+      "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+      "reason": null
     }
   ],
   "routing": {
@@ -233,7 +853,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null
