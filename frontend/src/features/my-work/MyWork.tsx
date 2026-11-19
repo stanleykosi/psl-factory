@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 import { Button, Callout, EmptyState, ListToolbar, Loading, Segmented, Skeleton, Tabs, useIsPhone, type FilterChip } from '@/components';
+import { AssignPmDrawer, type Assigned } from '@/features/rfp/AssignPmDrawer';
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { CaughtUp } from './CaughtUp';
@@ -51,7 +52,11 @@ const asApiError = (error: unknown) => (error instanceof ApiError ? error : netw
 export function MyWork() {
   const params = useSearchParams();
   const router = useRouter();
-  const view = useMemo(() => parseView(new URLSearchParams(params?.toString() ?? '')), [params]);
+  const urlView = useMemo(() => parseView(new URLSearchParams(params?.toString() ?? '')), [params]);
+  // F-36: opening or closing the assign panel changes the URL but not the list, which stays drawn behind it
+  const listSearch = viewSearch({ ...urlView, assign: undefined });
+  const view = useMemo(() => parseView(new URLSearchParams(listSearch)), [listSearch]);
+  const assignId = urlView.assign;
   const phone = useIsPhone();
 
   const [list, setList] = useState<ListState>({ status: 'loading' });
@@ -63,6 +68,8 @@ export function MyWork() {
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const [signedOut, setSignedOut] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+  // F-36: the polite notice after the assign panel's write has been read back
+  const [notice, setNotice] = useState<{ kind: 'done' | 'sent'; text: string }>();
 
   const seq = useRef(0);
   const inFlight = useRef(0);
@@ -72,8 +79,12 @@ export function MyWork() {
   const viewRef = useRef(view);
   const panel = useRef<HTMLDivElement>(null);
 
+  const tabs = useRef<HTMLDivElement>(null);
   const navigate = useCallback(
-    (next: Partial<View>) => router.replace(`/my-work${viewSearch({ ...viewRef.current, ...next })}`, { scroll: false }),
+    (next: Partial<View>) => {
+      setNotice(undefined);
+      router.replace(`/my-work${viewSearch({ ...viewRef.current, ...next })}`, { scroll: false });
+    },
     [router],
   );
 
@@ -116,13 +127,13 @@ export function MyWork() {
     [fetchPage, took],
   );
 
-  /** Re-reads page 1 in place: rows loaded with Show more stay, nothing else on screen moves. */
-  const refresh = useCallback(async () => {
-    if (inFlight.current > 0) return;
+  /** Re-reads page 1 in place: rows loaded with Show more stay, nothing else on screen moves. `force` (after a write) does not skip a read already running; the answer is whether the list was read. */
+  const refresh = useCallback(async (force = false) => {
+    if (inFlight.current > 0 && !force) return true;
     const mine = seq.current;
     try {
       const data = await fetchPage(viewRef.current);
-      if (mine !== seq.current) return;
+      if (mine !== seq.current) return true;
       took(data);
       setList((prev) =>
         prev.status !== 'ready'
@@ -134,10 +145,12 @@ export function MyWork() {
               nextCursor: prev.pages === 1 ? data.next_cursor : prev.nextCursor,
             },
       );
+      return true;
     } catch (error) {
-      if (mine !== seq.current) return;
+      if (mine !== seq.current) return true;
       if (asApiError(error).kind === 'unauthenticated') setSignedOut(true);
       else setRefreshFailed(true);
+      return false;
     }
   }, [fetchPage, took]);
 
@@ -243,12 +256,24 @@ export function MyWork() {
   }, []);
   const removeFilter = (filters: Filters) => navigate(filters);
 
+  // F-36: closing the panel keeps the list's own view; after a write the list is read again, the panel closes and the person is told
+  const closeAssign = (wrote = false) => {
+    router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
+    if (wrote) void refresh(true);
+  };
+  const assigned = async ({ reference, assignedTo, reread }: Assigned) => {
+    const listed = await refresh(true);
+    setNotice(reread && listed ? { kind: 'done', text: `${reference} is now with ${assignedTo}.` } : { kind: 'sent', text: 'The assignment was sent, but we couldn’t refresh to confirm it. Reload My work to check.' });
+    router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
+    requestAnimationFrame(() => tabs.current?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')?.focus());
+  };
+
   if (signedOut) return <SignedOutState pathname="/my-work" />;
 
   const ready = list.status === 'ready' ? list : null;
-  const tabs = QUEUES.filter((x) => x.key !== 'unassigned' || counts?.unassigned !== undefined);
+  const shownTabs = QUEUES.filter((x) => x.key !== 'unassigned' || counts?.unassigned !== undefined);
   const current = QUEUES.find((x) => x.key === view.queue)!;
-  const selectedShown = tabs.some((x) => x.key === view.queue);
+  const selectedShown = shownTabs.some((x) => x.key === view.queue);
   const filterCount = countFilters(view);
   const narrowed = isNarrowed(view);
   const lines = lineOptions(lineFilters, ready?.items ?? [], view.line);
@@ -275,6 +300,9 @@ export function MyWork() {
       onClose={closeFilter}
     />
   );
+
+  // F-36: an Unassigned row opens the assign panel over the list; an item that carries no `assign` goes on to its own page from there
+  const rowHref = (item: WorkItem) => (view.queue === 'unassigned' ? `/my-work${viewSearch({ ...view, assign: item.id })}` : `/work/${item.id}`);
 
   let body;
   if (list.status === 'loading') {
@@ -332,11 +360,11 @@ export function MyWork() {
     body = (
       <>
         {!phone ? (
-          <WorkTable items={list.items} />
+          <WorkTable items={list.items} hrefFor={rowHref} />
         ) : view.queue === 'waiting_on_others' ? (
           <StartedCards items={list.items} />
         ) : (
-          <WorkCards items={list.items} />
+          <WorkCards items={list.items} hrefFor={rowHref} />
         )}
         <div className="my-work__foot">
           <div className="psl-showmore my-work__showmore">
@@ -380,14 +408,20 @@ export function MyWork() {
           ))}
       </div>
 
-      <div className="my-work__tabs">
+      {notice && (
+        <Callout kind={notice.kind === 'done' ? 'success' : 'warning'} className="my-work__notice">
+          {notice.text}
+        </Callout>
+      )}
+
+      <div className="my-work__tabs" ref={tabs}>
         <Tabs
           label="My work"
           panelId={PANEL_ID}
           strip={phone}
-          selected={selectedShown ? view.queue : tabs[0].key}
+          selected={selectedShown ? view.queue : shownTabs[0].key}
           onSelect={(queue) => navigate({ queue })}
-          tabs={tabs.map((tab) => ({ key: tab.key, label: tab.label, count: counts?.[tab.key] }))}
+          tabs={shownTabs.map((tab) => ({ key: tab.key, label: tab.label, count: counts?.[tab.key] }))}
         />
         {counts === null && <span className="my-work__nocount">Count unavailable</span>}
       </div>
@@ -425,6 +459,8 @@ export function MyWork() {
       >
         {body}
       </div>
+
+      {assignId && <AssignPmDrawer key={assignId} workId={assignId} onClose={closeAssign} onAssigned={assigned} />}
     </>
   );
 }

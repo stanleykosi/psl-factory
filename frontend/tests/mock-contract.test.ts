@@ -41,7 +41,7 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'milestones', document_id: 'D-2304', version: '1' };
-const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201' };
+const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201', pmo_lead: 'N-0201' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
   'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
@@ -147,6 +147,9 @@ function minutesProposalsStripped(body: unknown): unknown {
     expect(typeof offered.default_hint === 'string' && offered.default_hint !== '').toBe(true);
     delete offered.default_hint;
   }
+  // PROPOSAL (F-36, mock/proposals/rfp-assign.json): `assign.roles`, `evidence_kind` and `next`; tests/rfp-assign-mock.test.ts checks each against the overlay.
+  const rfpAssign = (copy as { assign?: Record<string, unknown> }).assign;
+  if (rfpAssign) for (const key of ['roles', 'evidence_kind', 'next']) delete rfpAssign[key];
   for (const section of w?.sections ?? []) {
     for (const row of section.items as { team_key?: unknown }[]) {
       if (row.team_key === undefined) continue;
@@ -281,6 +284,7 @@ describe('mock server matches openapi.json', () => {
       ['Folake Bello', ['my_work', 'projects', 'overview', 'assistant'], 'mock-csrf-ceo'],
       ['Sample Person', [], 'mock-csrf-none'],
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-admin'],
+      ['Kemi Adebayo', ['my_work', 'projects', 'assistant'], 'mock-csrf-pmo_lead'],
     ]);
   });
 

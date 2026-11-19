@@ -45,6 +45,13 @@
         {"queue": "waiting_on_others", "project": "C-KORA-LOGISTICS", "waiting": "someone_else", "item": {"id":"W-1414","title":"Kora Logistics · costing","line":"Commercial submission","line_key":"commercial","reference":"COM-0240","kind":"started","state":"waiting","station":{"index":5,"count":6,"name":"CEO approval"},"waiting_on":"CEO · step 3 of 3","age_seconds":86400,"sample":true}},
         {"queue": "waiting_on_others", "project": "C-OJO-FOODS", "waiting": "someone_else", "item": {"id":"W-1415","title":"Ojo Foods · plan","line":"Plan a project","line_key":"planning","reference":"PLN-0151","kind":"started","state":"owner_needed","station":{"index":3,"count":6,"name":"Design sign-off"},"waiting_on":"Held · Design Lead role missing","age_seconds":259200,"sample":true}}
       ]
+    },
+    "pmo_lead": {
+      "counts": {"needs_me": 3, "waiting_on_others": 2, "done": 28, "unassigned": 1},
+      "lines": [{"key": "rfp_intake", "title": "RFP received"}],
+      "rows": [
+        {"queue": "unassigned", "waiting": "no_owner", "item": {"id":"W-3302","title":"Tamarind Loans · loan origination RFP","line":"RFP received","line_key":"rfp_intake","reference":"TL-RFP-2026-014","kind":"do","state":"owner_needed","station":{"index":2,"count":5,"name":"Assign PM"},"waiting_on":"PMO Lead","age_seconds":600,"sample":true}}
+      ]
     }
   }
 }

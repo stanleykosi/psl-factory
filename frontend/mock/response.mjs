@@ -102,6 +102,8 @@ function decodeSegment(value) {
 }
 
 const issued = (caseId, id) => typeof id === 'string' && (evidence.get(caseId)?.has(id) ?? false);
+/** F-36: whether this evidence id was uploaded on that case (the assignment's proof). */
+export const evidenceIssued = issued;
 const responseTasks = (item) => item.tasks.filter((t) => t.response);
 
 /** A case can hold several work items; its revision is theirs, and an upload moves all of them on. */
@@ -113,7 +115,7 @@ function upload(body, ctx) {
   // F-31: a workspace step's evidence field (plan evidence on the engagement) takes uploads of its kind on the item's case
   const stepEvidence = (item) => (item.workspace?.steps ?? []).flatMap((s) => (s.fields ?? []).filter((f) => f.type === 'evidence' && f.evidence_kind));
   const kinds = all
-    .flatMap((item) => [...responseTasks(item).map((t) => t.response.evidence_kind), item.reconcile?.evidence_kind, item.rfp_outcome?.evidence_kind, ...stepEvidence(item).map((f) => f.evidence_kind)])
+    .flatMap((item) => [...responseTasks(item).map((t) => t.response.evidence_kind), item.reconcile?.evidence_kind, item.rfp_outcome?.evidence_kind, ...stepEvidence(item).map((f) => f.evidence_kind), item.assign?.evidence_kind])
     .filter(Boolean);
   const fields = [];
   if (!kinds.includes(body.kind)) fields.push('kind');
@@ -127,7 +129,8 @@ function upload(body, ctx) {
       responseTasks(item).some((t) => t.you_can_act) ||
       (Boolean(item.reconcile) && (item.allowed_actions ?? []).includes('reconcile')) ||
       Boolean(item.rfp_outcome) ||
-      stepEvidence(item).length > 0,
+      stepEvidence(item).length > 0 ||
+      Boolean(item.assign?.evidence_kind),
   );
   if (!granted) return [403, SCENARIO_BODIES[403]];
 
