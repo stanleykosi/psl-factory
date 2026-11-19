@@ -18,6 +18,7 @@ import {
   buildIntake,
   dependentsOf,
   fillable,
+  isNew,
   newIdempotencyKey,
   parentValue,
   resolveCase,
@@ -26,6 +27,7 @@ import {
   type Values,
 } from './intake';
 import { CANT_ADD } from './labels';
+import { isShown, shownNow } from './showWhen';
 import type { Field, FieldProblem, Line, LineOption, Lines, StartBody } from './types';
 
 /** What one evidence field's uploader reports: the confirmed ids, its files, and the revision it now holds. */
@@ -138,6 +140,8 @@ async function findOptions(lineKey: string, field: string, parent: string | unde
 export function useStartForm(line: Line, onStarted: (workId: string) => void, initialIntake?: Record<string, unknown>, onConflict?: () => void) {
   const fields = useMemo(() => shownFields(line), [line]);
   const [values, setValues] = useState<Values>({});
+  // F-49: a field whose `show_when` is not met is not drawn and never sent.
+  const drawn = useMemo(() => shownNow(fields, values), [fields, values]);
   // A fixed case's revision as last read from E-LINES (it changes only after a 409 re-read).
   const [fixedRevision, setFixedRevision] = useState(line.case_revision);
   const [key, setKey] = useState(newIdempotencyKey);
@@ -233,9 +237,21 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
           if (Object.values(proof).some((p) => p.count > 0)) setProofMoved(true);
         }
       }
+      // a typed-in new client's name is checked by this drawer, so its message goes when the name is edited
+      if (isNew(values[name]) || isNew(value)) setFieldErrors((current) => Object.fromEntries(Object.entries(current).filter(([key]) => key !== name)));
       setValues((current) => {
         const next = { ...current, [name]: value };
         for (const dependent of cleared) delete next[dependent];
+        // a field the change hides loses its value, so it is never sent
+        for (let changed = true; changed; ) {
+          changed = false;
+          for (const field of fields) {
+            if (next[field.name] !== undefined && !isShown(field, next)) {
+              delete next[field.name];
+              changed = true;
+            }
+          }
+        }
         return next;
       });
       setFieldNotes((current) => {
@@ -321,11 +337,22 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
   const submit = useCallback(async () => {
     if (writing.current || prefilling) return;
     if (!(uncertain && sent.current) && proofHeld) return;
+    if (!(uncertain && sent.current)) {
+      // F-49: a "New client" with no name is not sent; the field says so, as a required field does.
+      const nameless = drawn.find((f) => {
+        const value = values[f.name];
+        return isNew(value) && value.new.name.trim() === '';
+      });
+      if (nameless) {
+        setFieldErrors({ [nameless.name]: `${nameless.label} is required.` });
+        return;
+      }
+    }
     const ids = Object.fromEntries(Object.entries(proof).map(([name, p]) => [name, p.ids]));
     const body: StartBody | null =
       uncertain && sent.current
         ? sent.current
-        : sendCase && { line: line.key, ...sendCase, intake: buildIntake(fields, values, ids), idempotency_key: key };
+        : sendCase && { line: line.key, ...sendCase, intake: buildIntake(drawn, values, ids), idempotency_key: key };
     if (!body) return;
     writing.current = true;
     sent.current = body;
@@ -359,7 +386,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
           (p) => typeof p?.name === 'string' && typeof p?.message === 'string',
         );
         // A problem for a field this drawer does not render is drawn as its own box; one for Proof sits under it.
-        const names = new Set(fields.filter(fillable).map((f) => f.name));
+        const names = new Set(drawn.filter(fillable).map((f) => f.name));
         const inline = Object.fromEntries(problems.filter((p) => names.has(p.name)).map((p) => [p.name, p.message]));
         const unmatched = problems.filter((p) => !names.has(p.name));
         setFieldErrors(inline);
@@ -378,10 +405,10 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
       writing.current = false;
       setBusy(false);
     }
-  }, [fields, key, line.key, onConflict, onStarted, prefilling, proof, proofHeld, reloadRevision, sendCase, show, uncertain, values]);
+  }, [drawn, key, line.key, onConflict, onStarted, prefilling, proof, proofHeld, reloadRevision, sendCase, show, uncertain, values]);
 
   return {
-    fields,
+    fields: drawn,
     values,
     setValue,
     caseRef,
