@@ -1,0 +1,3 @@
+board                 width  coverage(with exceptions)  visual  pass(tool, floor 90)
+SCR-05-desktop-cant   1440   100                        91.8    PASS
+SCR-05-mobile-cant    390    100                        88.2    FAIL on the tool default 90 only; above spec floor 70
