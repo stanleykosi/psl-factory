@@ -1124,7 +1124,7 @@
     "repository": null,
     "task_id": "FE-RFP-SUBMIT",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "26d06343cbf753403427f76b492a592f01ea9fb2",
+    "base_sha": "4fc80166d2df5ba46d5b305a63af05b471211959",
     "task_branch": "fe-rfp-submit-send-response",
     "head_sha": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-38",
