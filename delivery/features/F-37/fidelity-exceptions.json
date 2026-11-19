@@ -413,57 +413,57 @@
   {
    "board": "SCR-26-desktop",
    "width": 1440,
-   "visual": 76.8,
-   "reason": "D-83: measured 76.8 in round 1 (after layout fixes) on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "visual": 74.7,
+   "reason": "D-83: measured 74.7 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-mobile",
    "width": 390,
-   "visual": 70.5,
-   "reason": "D-83: measured 70.5 in round 1 (after layout fixes) on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "visual": 70.7,
+   "reason": "D-83: measured 70.7 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-desktop-review",
    "width": 1440,
-   "visual": 71.0,
-   "reason": "D-83: measured 71 in round 1 (after layout fixes) on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "visual": 70.5,
+   "reason": "D-83: measured 70.5 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-desktop-edit",
    "width": 1440,
-   "visual": 71.0,
-   "reason": "D-83: measured 71 in round 1 (after layout fixes) on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "visual": 70.7,
+   "reason": "D-83: measured 70.7 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-desktop-reject",
    "width": 1440,
-   "visual": 70.5,
-   "reason": "D-83: measured 70.5 in round 1 (after layout fixes) on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "visual": 71.2,
+   "reason": "D-83: measured 71.2 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-mobile-review",
    "width": 390,
-   "visual": 71.9,
-   "reason": "D-83: measured 71.9 in round 1 (after layout fixes) on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "visual": 73.4,
+   "reason": "D-83: measured 73.4 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-mobile-edit",
    "width": 390,
    "visual": 73.4,
-   "reason": "D-83: measured 73.4 in round 1 (after layout fixes) on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "reason": "D-83: measured 73.4 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-mobile-reject",
    "width": 390,
    "visual": 72.0,
-   "reason": "D-83: measured 72 in round 1 (after layout fixes) on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "reason": "D-83: measured 72 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   }
  ]

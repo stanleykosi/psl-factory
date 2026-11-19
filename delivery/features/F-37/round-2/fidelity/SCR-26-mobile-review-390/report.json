@@ -1,0 +1,478 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T09:40:32.657Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-26-mobile-review.dc.html",
+  "boardName": "SCR-26-mobile-review.dc.html",
+  "pageUrl": "http://localhost:4994/frozen/SCR-26-mobile-review-390.html",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-37/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 73.4 is below 90.",
+    "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 46.2,
+    "coverageWithExceptions": 100,
+    "visual": 73.4
+  },
+  "visual": {
+    "score": 73.4,
+    "allCellsScore": 73.6,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 2578,
+    "cell": 12,
+    "contentCells": 2321,
+    "mismatchedCells": 617
+  },
+  "coverage": {
+    "total": 13,
+    "found": 6,
+    "coverage": 46.2,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "R-07",
+        "pageName": "R-07",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text size 12px on the board, 14px on the page",
+          "text colour #FFFFFF on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 253,
+          "y": 21,
+          "w": 29,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 34,
+          "y": 596,
+          "w": 322,
+          "h": 41
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Suggested by Tola41",
+        "pageName": "Tamarind Loans · loan origination RFP",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Suggested by Tola41\" on the board, \"Tamarind Loans · loan origination RFP\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Loan officers approve applications above a set amount",
+        "pageName": "Loan officers approve applications above a set amount RFP p.6",
+        "pageRole": "text",
+        "similarity": 95,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 131,
+          "w": 358,
+          "h": 38
+        },
+        "pageBox": {
+          "x": 34,
+          "y": 637,
+          "w": 322,
+          "h": 101
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+        "pageName": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "background #F3F6FD on the board, none on the page",
+          "coloured bar under it on the board (#2459D6), none on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 181,
+          "w": 358,
+          "h": 66
+        },
+        "pageBox": {
+          "x": 34,
+          "y": 738,
+          "w": 322,
+          "h": 104
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Accept answer",
+        "pageName": "Accept answer",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 2376,
+          "w": 326,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← RFP",
+        "key": "link: ← RFP",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 14: the phone top bar is the frame's \"← Queue\" with the item reference.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "R-07 · RFP p.6",
+        "key": "text: R-07 · RFP p.6",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 358,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 12: the suggestion's reference line is returned item text in the panel and the row; the board's separate eyebrow is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "From Harmattan Bank RFP 2025 · R-12",
+        "key": "text: From Harmattan Bank RFP 2025 · R-12",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 259,
+          "w": 358,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 2: no field returns a past bid's result or its link (G-26-5); the past-answer line is fixture text without them.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Status",
+        "key": "text: Status",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 286,
+          "w": 358,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Edit",
+        "key": "link: Edit",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 373,
+          "w": 175,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Conflicts 13/15: the phone shows the desktop's sections with the returned labels (Edit answer, Write my own); no swipe and no \"1 of 41\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Reject",
+        "key": "link: Reject",
+        "container": "page",
+        "boardBox": {
+          "x": 199,
+          "y": 373,
+          "w": 175,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Conflicts 13/15: the phone shows the desktop's sections with the returned labels (Edit answer, Write my own); no swipe and no \"1 of 41\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "1 of 41 · swipe for the next",
+        "key": "text: 1 of 41 · swipe for the next",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 435,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 13/15: the phone shows the desktop's sections with the returned labels (Edit answer, Write my own); no swipe and no \"1 of 41\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"R-07\"",
+        "kind": "Text",
+        "name": "R-07",
+        "boardBox": {
+          "x": 253,
+          "y": 21,
+          "w": 29,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 34,
+          "y": 596,
+          "w": 322,
+          "h": 41
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Heading \"Suggested by Tola41\"",
+          "across the page: right on the board (69% across), middle on the page (50% across)",
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Text \"Loan officers approve applications above a set amount\"",
+        "kind": "Text",
+        "name": "Loan officers approve applications above a set amount",
+        "boardBox": {
+          "x": 16,
+          "y": 131,
+          "w": 358,
+          "h": 38
+        },
+        "pageBox": {
+          "x": 34,
+          "y": 637,
+          "w": 322,
+          "h": 101
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Text \"Approvals above a configurable threshold go to a named loan officer; every decision is recorded.\"",
+        "kind": "Text",
+        "name": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+        "boardBox": {
+          "x": 16,
+          "y": 181,
+          "w": 358,
+          "h": 66
+        },
+        "pageBox": {
+          "x": 34,
+          "y": 738,
+          "w": 322,
+          "h": 104
+        },
+        "reasons": [
+          "inside the main area on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Link \"Accept answer\"",
+        "kind": "Link",
+        "name": "Accept answer",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 2376,
+          "w": 326,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "TL-RFP-2026-014",
+        "container": "main",
+        "pageBox": {
+          "x": 124,
+          "y": 0,
+          "w": 108,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DEADLINE 28 NOV · 16 DAYS",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 182,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 127,
+          "w": 42,
+          "h": 24
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
