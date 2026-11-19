@@ -12,7 +12,8 @@ import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, DisclosureLink
 import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
-import { AGENT_BESIDE_LINES, STATION_LINES } from '@/features/workspace/labels';
+import { INTERNAL_RECONCILE_LINE } from '@/features/response/labels';
+import { AGENT_BESIDE_LINES, forecastLine, STATION_LINES } from '@/features/workspace/labels';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
 import { drawsAgentCard, Workspace } from '@/features/workspace/Workspace';
 import { RfpOutcomeLink } from '@/features/rfp';
@@ -715,9 +716,9 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
         <NextStep item={item} quiet />
       </div>
     );
-    // F-30: the issue follow-up boards draw no exceptions button above the workspace; F-42: nor do the fixed asset boards,
-    // whose holds are a status, a reason and a Next sentence with no button (the button also sat on the phone station bar)
-    after = hasExceptionsLink(item) && item.workspace.line_key !== 'issue_followup' && item.workspace.line_key !== 'fixed_assets' ? (
+    // F-30: the issue follow-up boards draw no exceptions button above the workspace; F-42, F-43: nor do the fixed asset and
+    // cash forecast boards, whose holds are a status, a reason and a Next sentence with no button (the button also sat on the phone station bar)
+    after = hasExceptionsLink(item) && !['issue_followup', 'fixed_assets', INTERNAL_RECONCILE_LINE].includes(item.workspace.line_key) ? (
       <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
         See all exceptions
       </Link>
@@ -740,7 +741,8 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
       <div className={item.workspace?.line_key === 'delivery_release' && shownTasks.length > 0 ? 'work-columns work-columns--lone' : 'work-columns'}>
         <div className="work-column">{main}</div>
         <div className="work-column work-aside">
-          <ReconcilePanel id={id} item={asResponseItem(item)} />
+          {/* F-43: the cash forecast's workspace draws it, in the board's place at each width */}
+          {!(item.workspace && forecastLine(item.workspace.line_key)) && <ReconcilePanel id={id} item={asResponseItem(item)} />}
           {aside}
           {shownTasks.length > 0 && <TaskPanels id={id} tasks={shownTasks} />}
           <RfpOutcomeLink id={id} item={item} />

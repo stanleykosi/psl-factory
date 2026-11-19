@@ -287,3 +287,21 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws[data-line="fixed_assets"] .ws-rows--text .ws-row { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0; }
 .ws[data-line="fixed_assets"] .ws-rows--text .ws-row__end { order: -1; }
 .ws[data-line="fixed_assets"] .ws-rows--text .ws-cite, .ws[data-line="fixed_assets"] .ws-rows--text .ws-ref { font-family: var(--font-sans); font-size: var(--text-body-size); color: var(--ink); text-transform: none; font-weight: 600; overflow-wrap: anywhere; }
+/* F-43: the cash forecast board draws its eight stations as equal columns that shrink to fit the main column (no sideways scroll) */
+.ws[data-line="cash_forecast"] .ws-stations .psl-track { grid-auto-columns: minmax(0, 1fr); }
+.ws[data-line="cash_forecast"] .ws-stations .psl-station { min-width: 0; }
+/* F-43 (UI-1-1): the verified figures are the board's dark strip, each label over its value; a cell's tag tone colours it (six columns
+   on desktop, three on a phone). The one-sentence limit under it is a muted caption with no panel. */
+.ws-section--figures.ws-section--strip { border: var(--rule-strong) solid var(--ink); background: var(--ink); }
+.ws-section--figures.ws-section--strip .ws-section__body { padding: 0; }
+.ws-figstrip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--rule-strong); margin: 0; }
+.ws-figstrip__cell { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; padding: var(--space-2); background: var(--ink); color: var(--on-strong); }
+.ws-figstrip__cell[data-tone="done"] { background: var(--verified); }
+.ws-figstrip dt { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: .06em; }
+.ws-figstrip dd { margin: 0; font-family: var(--font-display); font-weight: 700; overflow-wrap: anywhere; }
+@media (min-width: 720px) {
+  .ws-figstrip { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-columns: none; }
+  .ws-figstrip__cell { padding: var(--space-3) var(--space-14px); }
+  .ws-figstrip dd { font-size: var(--text-fact-size); }
+}
+.ws-caption { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }

@@ -10,12 +10,13 @@ import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 
 import Link from 'next/link';
 
 import { Button, buttonClass, Callout, Drawer, formatClock, formatDayTime, MiniStationBar, useIsPhone, type StationStatus } from '@/components';
+import { asResponseItem, ReconcilePanel } from '@/features/response';
 import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
 import { currentStationIndex, STATIONS, type WorkItem } from '@/features/work-item/labels';
 import { AgentCard, StationTrack } from '@/features/work-item/WorkItemOverview';
 
 import { AssignForm } from './AssignForm';
-import { AGENT_BESIDE_LINES, agentName, scheduleLine, STATION_LINES, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
+import { AGENT_BESIDE_LINES, agentName, forecastLine, scheduleLine, STATION_LINES, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { DECIDE_TEXT, InlineDecide, type DecidedNotice } from './InlineDecide';
 import { WorkspaceLinks } from './Links';
 import { assignDefault, itemsDefaultChecked, itemTeamKey, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks, type WorkspaceLink } from './proposals';
@@ -208,6 +209,9 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const stationsDrawn = STATION_LINES.has(workspace.line_key);
   // F-30 (D-103, D-107), F-31, F-33, F-41, F-42: on a phone these lines' forms open in the full-height Drawer.
   const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE);
+  // F-43: the cash forecast's record-what-happened panel sits above Next on desktop and after it on a phone, as its boards draw it
+  const forecast = forecastLine(workspace.line_key);
+  const beside = forecast && !phone;
   // F-31: a department's "Record input" opens F-18's team-input form in the Drawer; `recording` names the pressed row's button.
   const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);
   const [recorded, setRecorded] = useState<string | null>(null);
@@ -692,12 +696,13 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           {noteBeside(item) && workspace.agent_note && workspace.agent_note.lines.length > 0 && <AgentNote note={workspace.agent_note} />}
           {workspace.sections.length === 0 && workspaceSteps.length === 0 && assign === undefined && <p className="ws-empty">{WS_TEXT.empty}</p>}
           {main.map((section) => (
-            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} banner={bannerTone(workspace, item)} />
+            <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} banner={bannerTone(workspace, item)} strip={forecast && section.kind === 'figures' && !section.title} caption={forecast} />
           ))}
           <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} page={page} />
         </div>
-        {(side.length > 0 || showPanel || sideNote || decideTasks.size > 0 || agentSide) && (
+        {(side.length > 0 || showPanel || sideNote || decideTasks.size > 0 || agentSide || beside) && (
           <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
+            {beside && <ReconcilePanel id={id} item={asResponseItem(item)} nested />}
             {side.map((section) => (
               <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
             ))}
@@ -751,6 +756,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             {sideNote && <AgentNote note={workspace.agent_note!} />}
           </aside>
         )}
+        {forecast && phone && <ReconcilePanel id={id} item={asResponseItem(item)} />}
       </div>
       {recording && (
         <ResponseDrawer
@@ -788,6 +794,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   const stationsDrawn = STATION_LINES.has(workspace.line_key);
   const agentSide = drawsAgentCard(workspace.line_key, item.agent.status);
   const titled = workspace.title !== undefined && workspace.title !== item.title;
+  const forecast = forecastLine(workspace.line_key);
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';
   return (
@@ -803,12 +810,13 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
             {workspace.sections
               .filter((section) => !inSide(item)(section))
               .map((section) => (
-                <SectionView key={section.key} section={section} level={titled ? 3 : 2} />
+                <SectionView key={section.key} section={section} level={titled ? 3 : 2} strip={forecast && section.kind === 'figures' && !section.title} caption={forecast} />
               ))}
             <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} />
           </div>
-          {(workspace.sections.some(inSide(item)) || agentSide) && (
+          {(workspace.sections.some(inSide(item)) || agentSide || (forecast && !phone)) && (
             <aside className="ws-side" aria-label="Review and decide">
+              {forecast && !phone && <ReconcilePanel id={id} item={asResponseItem(item)} nested />}
               {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} day={workspace.line_key === REPORT_LINE} />}
               {workspace.sections
                 .filter(inSide(item))
@@ -817,6 +825,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
                 ))}
             </aside>
           )}
+          {forecast && phone && <ReconcilePanel id={id} item={asResponseItem(item)} />}
         </div>
       )}
     </div>
