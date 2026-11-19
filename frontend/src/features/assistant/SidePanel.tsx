@@ -8,10 +8,11 @@ import { AGENTS } from '@/components';
 import { CANNOT_NOTE } from './labels';
 import type { AgentName, Conversation } from './types';
 
-export type Pose = 'idle' | 'working' | 'done';
+export type Pose = 'idle' | 'working' | 'done' | 'cant';
 
 export function poseFor(conversation: Pick<Conversation, 'status'>): Pose {
   if (conversation.status === 'working') return 'working';
+  if (conversation.status === 'cannot_answer') return 'cant';
   return conversation.status === 'drafted' ? 'done' : 'idle';
 }
 
