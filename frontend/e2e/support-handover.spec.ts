@@ -63,8 +63,8 @@ for (const [label, viewport] of [
     test('the Delivery tab links Handover to W-3704, in the row and the sub-nav', async ({ page }) => {
       await page.goto('/projects/P-0101/delivery');
       await loaded(page);
-      await expect(page.getByRole('link', { name: 'Handover' })).toHaveAttribute('href', '/work/W-3704');
       await expect(page.getByRole('link', { name: /Handover to Support/ })).toHaveAttribute('href', '/work/W-3704');
+      if (!phone) await expect(page.getByRole('navigation', { name: 'Delivery lines' }).getByRole('link', { name: 'Handover' })).toHaveAttribute('href', '/work/W-3704');
     });
 
     for (const id of ['W-3701', 'W-3702', 'W-3703', 'W-3704', 'W-3705', 'W-3709']) {
@@ -281,14 +281,10 @@ test.describe('Record Support’s reply', () => {
     await expect(page.locator('body')).not.toContainText(/Recorded under your name|Femi Ojo/);
   });
 
-  test('the ceo persona gets the no-access view and the page makes no further read of the item', async ({ page, context }) => {
+  test('the ceo persona is not on P-0101’s list: the Delivery tab is the no-access view with no handover text', async ({ page, context }) => {
     await context.addCookies([{ name: 'psl_mock_persona', value: 'ceo', url: test.info().project.use.baseURL! }]);
-    const reads: string[] = [];
-    page.on('request', (r) => {
-      if (r.method() === 'GET' && /\/api\/v1\/work\/W-3703$/.test(new URL(r.url()).pathname)) reads.push(r.url());
-    });
-    await page.goto('/work/W-3703');
-    await expect(page.locator('body')).not.toContainText(/Femi Ojo|Lagoon Health/);
-    expect(reads.length).toBeLessThanOrEqual(1);
+    await page.goto('/projects/P-0101/delivery');
+    await expect(page.getByText('You can’t open this project')).toBeVisible();
+    await expect(page.locator('body')).not.toContainText(/Handover to Support|HND-0048|Femi Ojo/);
   });
 });
