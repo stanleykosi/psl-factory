@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-technical
-COMMIT: 4dba97ab6ee7dd7c97f33f51a63d28750636cb58
+COMMIT: af1d1c8d3629b577c4baeebb4eae025c6a511397
 AUTHORITY: delivery technical review
 
 ## Summary
@@ -28,3 +28,9 @@ AUTHORITY: delivery technical review
 
 ## Notes
 - The ledger `onDecided` and the `onStale` callback are inline lambdas, so InlineDecide's effect re-runs on every render. The `handled` ref guards it, which makes this harmless, and it is the same pattern as F-35.
+
+## Impact assessment (re-pin to af1d1c8d, coordinator, 19 Nov, D-123)
+- 4dba97ab → 777f2668: Option B (D-125). The re-check sentence is sent as workspace.next. Fixture, test and handoff changes only; verified boards 87 / 84.4.
+- 777f2668 → af1d1c8d: merges dlv-00 (F-34, F-35, F-36, F-39, F-43), including the shared stale fix. Following TECH-1-1, only the ledger `staleShown` gate was dropped; `notMovedOn` (AC 9) and the ledger `onDecided` wrapper were kept. Checked against dlv-00: every Workspace/labels change is scoped to `ledger_sources`. The line joins the schedule set, as in round 1.
+- Evidence (round-2/merge-checks.log): tsc and eslint clean; coordinator re-run checks.sh exit 0, 3028/3028; e2e 175/175, including the ledger two-reviewer stale test.
+- Verdicts carry forward.
