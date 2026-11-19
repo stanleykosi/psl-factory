@@ -1,0 +1,9 @@
+{
+  "$comment": "F-37 contract overlay (mock only). The RFP requirements fixtures (W-3401 to W-3404) carry no field of their own that the generated types lack. They reuse steps[].submit_label (F-41: the words on a form's submit button, 'Save and accept'), steps[].fields[].value (the start value of a text, long text or choice field, which the form already reads) and items[].team_key (F-31). The start values sit on the step descriptor, not on the item, because the review panel holds one suggestion and Write my own must open with an empty answer while Edit answer opens on Tola's text. For the backend developer, not read by the page: rfp.tabs[].work_id or a view parameter saying which tab is which item or view (G-26-1); a section read and a scope for 'all matching' (G-26-2); item-level start values for any field kind (G-26-3); the past-answer source, its grants and the bid result (G-26-5); the requirement extraction job (G-24-4); next_item_id and undo (G-26-4). Not built: 'that bid was won' and 'Your reason helps Tola suggest better next time' (product questions, spec Conflicts 2 and 3).",
+  "step": {
+    "type": "object",
+    "properties": {
+      "submit_label": { "type": "string", "minLength": 1 }
+    }
+  }
+}
