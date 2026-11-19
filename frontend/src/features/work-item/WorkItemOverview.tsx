@@ -12,7 +12,8 @@ import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, DisclosureLink
 import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
-import { reconcileBeside, scheduleLine } from '@/features/workspace/labels';
+import { INTERNAL_RECONCILE_LINE } from '@/features/response/labels';
+import { forecastLine, scheduleLine } from '@/features/workspace/labels';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
 import { Workspace } from '@/features/workspace/Workspace';
 import { RfpOutcomeLink } from '@/features/rfp';
@@ -716,7 +717,7 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
     );
     // F-30: the issue follow-up boards draw no exceptions button above the workspace; F-42, F-43: nor do the fixed asset and
     // cash forecast boards, whose holds are a status, a reason and a Next sentence with no button (the button also sat on the phone station bar)
-    after = hasExceptionsLink(item) && !['issue_followup', 'fixed_assets', 'cash_forecast'].includes(item.workspace.line_key) ? (
+    after = hasExceptionsLink(item) && !['issue_followup', 'fixed_assets', INTERNAL_RECONCILE_LINE].includes(item.workspace.line_key) ? (
       <Link className={`${buttonClass("secondary", "lg")} work-exceptions`} href="/exceptions">
         See all exceptions
       </Link>
@@ -736,8 +737,8 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
       <div className={item.workspace?.line_key === 'delivery_release' && shownTasks.length > 0 ? 'work-columns work-columns--lone' : 'work-columns'}>
         <div className="work-column">{main}</div>
         <div className="work-column work-aside">
-          {/* F-43: the cash forecast draws it in the workspace's side column on desktop */}
-          {!reconcileBeside(item.workspace?.line_key, phone) && <ReconcilePanel id={id} item={asResponseItem(item)} />}
+          {/* F-43: the cash forecast's workspace draws it, in the board's place at each width */}
+          {!(item.workspace && forecastLine(item.workspace.line_key)) && <ReconcilePanel id={id} item={asResponseItem(item)} />}
           {aside}
           {shownTasks.length > 0 && <TaskPanels id={id} tasks={shownTasks} />}
           <RfpOutcomeLink id={id} item={item} />

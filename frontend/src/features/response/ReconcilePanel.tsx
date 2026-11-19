@@ -31,15 +31,17 @@ type Status =
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 
-export function ReconcilePanel({ id, item }: { id: string; item: ResponseWorkItem }) {
+/** `nested`: drawn inside another side column (F-43), so the panel is a named section, not a second complementary landmark. */
+export function ReconcilePanel({ id, item, nested = false }: { id: string; item: ResponseWorkItem; nested?: boolean }) {
   const reconcile = item.reconcile;
   if (!reconcile || !item.allowed_actions?.includes('reconcile')) return null;
-  return <ReconcileForm id={id} item={item} reconcile={reconcile} />;
+  return <ReconcileForm id={id} item={item} reconcile={reconcile} nested={nested} />;
 }
 
-function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWorkItem; reconcile: Reconcile }) {
+function ReconcileForm({ id, item, reconcile, nested }: { id: string; item: ResponseWorkItem; reconcile: Reconcile; nested: boolean }) {
   const phone = useIsPhone();
   const headId = useId();
+  const whyId = useId();
   const [outcome, setOutcome] = useState<ReconcileOutcome | null>(null);
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [accessError, setAccessError] = useState<ApiError | null>(null);
@@ -76,8 +78,13 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
   const locked = status.kind === 'busy' || status.kind === 'done' || status.kind === 'stale' || status.kind === 'uncertain';
   const needsProof = outcome === 'delivered';
   const ready = outcome !== null && !locked && !proof.uploading && (!needsProof || proof.evidenceIds.length > 0);
+  // F-43: an internal delivery (the cash forecast to the CEO) is recorded in its board's words, with no client in them
+  const internal = item.workspace?.line_key === INTERNAL_RECONCILE_LINE;
   // The phone bar is pinned while the options may still be below the fold, so it does not look disabled there.
-  const askFirst = phone && outcome === null && !locked;
+  // F-43 (UX-1-1): the cash forecast's desktop button is pressable before a choice too, so the press says what is missing.
+  const askFirst = (phone || internal) && outcome === null && !locked;
+  // F-43 (UX-1-1): "It arrived" keeps the button off until the proof is uploaded, and the panel says so beside it.
+  const proofFirst = internal && needsProof && !locked && !proof.uploading && proof.evidenceIds.length === 0;
 
   const ask = () => {
     setAsked(true);
@@ -112,14 +119,13 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
   };
 
   const checks = checksSentence(reconcile.checks);
-  // F-43: an internal delivery (the cash forecast to the CEO) is recorded in its board's words, with no client in them
-  const internal = item.workspace?.line_key === INTERNAL_RECONCILE_LINE;
   const title = internal ? 'Record what happened' : 'Confirm what happened';
+  const Landmark = nested ? 'section' : 'aside';
   const resendNote = reconcile.resend_note ? ` ${sentence(reconcile.resend_note)}` : '';
 
   return (
     <div className="work-column">
-      <aside className="resp-reconcile" aria-labelledby={phone ? undefined : headId} aria-label={phone ? title : undefined}>
+      <Landmark className="resp-reconcile" aria-labelledby={phone ? undefined : headId} aria-label={phone ? title : undefined}>
         {!phone && (
           <h2 id={headId} className="resp-reconcile__head">
             {title}
@@ -166,6 +172,11 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
             })}
           </div>
           {needsProof && <ProofField proof={proof} />}
+          {proofFirst && (
+            <p id={whyId} className="resp-plain">
+              Upload the proof to continue.
+            </p>
+          )}
           {askFirst && asked && (
             <div role="alert" className="resp-alert">
               Choose what happened to continue.
@@ -200,6 +211,7 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
               type="button"
               className="psl-btn psl-btn--lg psl-btn--block"
               disabled={!ready && !askFirst}
+              aria-describedby={proofFirst ? whyId : undefined}
               onClick={askFirst ? ask : () => void submit()}
             >
               {status.kind === 'busy' ? RESPONSE_LABELS.busy : 'Record and continue'}
@@ -207,7 +219,7 @@ function ReconcileForm({ id, item, reconcile }: { id: string; item: ResponseWork
           </div>
           <p className="resp-footnote">Your choice is recorded with your name.{resendNote}</p>
         </div>
-      </aside>
+      </Landmark>
     </div>
   );
 }
