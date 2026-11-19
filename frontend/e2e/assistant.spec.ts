@@ -35,6 +35,7 @@ async function startInvoice(page: Page) {
 
 const PAGES = [
   { name: '/assistant', path: '/assistant' },
+  { name: 'CV-2404', path: '/assistant/CV-2404' },
   { name: 'CV-2401', path: '/assistant/CV-2401' },
   { name: 'CV-2403', path: '/assistant/CV-2403' },
   { name: 'CV-2405', path: '/assistant/CV-2405' },
@@ -237,4 +238,21 @@ test('phone: the draft button is never hidden under the docked composer when it 
   const dock = (await page.locator('.as__open').boundingBox())!;
   expect(dock.y + dock.height).toBeGreaterThan(844 - 4);
   await expect(page.getByRole('textbox')).toHaveCount(0);
+});
+
+// F-48: the "can't" state.
+test('CV-2404: the cant pose at 1440 (side panel) and 390 (inline card, 44px controls), still, with no write', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await ready(page, '/assistant/CV-2404');
+  await expect(page.getByRole('complementary', { name: 'Agent and context' }).getByAltText('Zainab pose')).toHaveAttribute('src', '/agents/zainab-cant.png');
+  await expect(page.getByAltText('Zainab, can’t do this')).toHaveCount(0);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await ready(page, '/assistant/CV-2404');
+  const card = page.getByAltText('Zainab, can’t do this');
+  await expect(card).toHaveAttribute('src', '/agents/zainab-cant.png');
+  expect(await card.evaluate((el) => getComputedStyle(el).animationName + getComputedStyle(el).transitionDuration)).toMatch(/^none0s$/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  expect((await log(page)).filter((e) => /post|send|start/i.test(e.operation))).toEqual([]);
+  const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+  expect(results.violations).toEqual([]);
 });
