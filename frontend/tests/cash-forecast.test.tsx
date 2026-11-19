@@ -572,6 +572,22 @@ describe('refusals and uncertain decides (AC 16, 17, 20)', () => {
     expect(posts('/decision')[1].body!.expected_revision).toBe(2);
   });
 
+  it('409 after another reviewer decided first: the closed task keeps the lasting stale notice and the unsent note, with no decide buttons', async () => {
+    onDecide = () => {
+      served = item('W-4002.approve');
+      return json(409, { code: 'stale_revision', message: 'Someone changed this since you opened it.' });
+    };
+    await open(item('W-4002'));
+    await ready('Approve forecast');
+    fireEvent.change(note(), { target: { value: '  Check January first.  ' } });
+    await click('Return with a note');
+    expect(await ws().findByText('This review changed while you were reading it, so nothing was recorded.')).toBeTruthy();
+    expect(ws().getByText('Your note wasn’t sent: “Check January first.”')).toBeTruthy();
+    expect(document.querySelector('.ws-idecide')).toBeNull();
+    expect(buttons().filter((b) => /Approve forecast|Return with a note|Reject/.test(b))).toEqual([]);
+    expect(posts('/decision')).toHaveLength(1);
+  });
+
   it('422: the backend message under the note', async () => {
     onDecide = () => json(422, { code: 'invalid', message: 'Say which month.', fields: [{ name: 'note', message: 'Say which month.' }] });
     await open(item('W-4002'));
