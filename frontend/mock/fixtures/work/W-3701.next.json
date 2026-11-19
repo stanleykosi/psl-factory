@@ -142,7 +142,7 @@
     "revision": 2,
     "status": {
       "label": "Handover · published 08 Apr",
-      "tone": "person"
+      "tone": "uncertain"
     },
     "sections": [],
     "steps": [
@@ -157,6 +157,7 @@
     "version": {
       "label": "Support handover v1",
       "document_id": "D-3701"
-    }
+    },
+    "title": "Support's reply"
   }
 }

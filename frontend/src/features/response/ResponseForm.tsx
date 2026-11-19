@@ -32,10 +32,10 @@ export type FormProps = {
 
 const CHOOSE = 'Choose…';
 
-export function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; text: string }[] }) {
+export function Select({ label, value, onChange, options, hideLabel }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; text: string }[]; hideLabel?: boolean }) {
   return (
     <label className="resp-field">
-      <span className="resp-label">{label}</span>
+      <span className={hideLabel ? 'resp-label cmp-sr' : 'resp-label'}>{label}</span>
       <select className="psl-input resp-select" value={value} onChange={(e) => onChange(e.target.value)}>
         {options.length !== 1 && <option value="">{CHOOSE}</option>}
         {options.map((o) => (
@@ -48,10 +48,10 @@ export function Select({ label, value, onChange, options }: { label: string; val
   );
 }
 
-export function WhenField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+export function WhenField({ label, value, onChange, hideLabel }: { label: string; value: string; onChange: (v: string) => void; hideLabel?: boolean }) {
   return (
     <label className="resp-field">
-      <span className="resp-label">{label}</span>
+      <span className={hideLabel ? 'resp-label cmp-sr' : 'resp-label'}>{label}</span>
       <input type="datetime-local" className="psl-input" value={value} onChange={(e) => onChange(e.target.value)} />
     </label>
   );

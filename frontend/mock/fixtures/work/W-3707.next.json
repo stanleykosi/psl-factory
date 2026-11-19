@@ -114,7 +114,7 @@
             "text": "Support handover v1",
             "tag": {
               "label": "DRAFT",
-              "tone": "neutral"
+              "tone": "agent"
             },
             "cites": [
               {
@@ -214,7 +214,8 @@
     "version": {
       "label": "Support handover v1",
       "document_id": "D-3701"
-    }
+    },
+    "title": "Support handover"
   },
   "allowed_actions": [
     "reconcile"

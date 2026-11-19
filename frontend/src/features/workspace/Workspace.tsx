@@ -71,10 +71,13 @@ const noteBeside = (item: WorkItem) => item.agent.status === 'working' && (item.
 /** F-30: the issue follow-up's board draws the agent note in the side column, under the panel; its facts as a strip under the title. */
 const issueLine = (workspace: WorkspaceData) => workspace.line_key === 'issue_followup';
 
+/** F-40: the handover boards title the phone screen with the workspace title ("Support's reply"); the page frame draws it as the h1 there and nowhere else. */
+export const screenHeading = (workspace: WorkspaceData) => (workspace.line_key === 'delivery_handover' ? workspace.title : undefined);
+
 function WorkspaceHeader({ workspace, itemTitle, beside }: { workspace: WorkspaceData; itemTitle: string; beside: boolean }) {
   const { title, byline, version } = workspace;
   const note = beside ? undefined : workspace.agent_note;
-  const showTitle = title !== undefined && title !== itemTitle;
+  const showTitle = title !== undefined && title !== itemTitle && screenHeading(workspace) === undefined;
   if (!showTitle && !byline && !version && !note) return null;
   return (
     <header className="ws-header">
@@ -202,7 +205,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const controls = useRef(new Map<string, HTMLButtonElement | null>());
   // The attempt a manual Try again repeats (same key), after a network or server failure on a step that doesn't send.
   const last = useRef<Attempt | null>(null);
-  const titled = workspace.title !== undefined && workspace.title !== item.title;
+  const titled = workspace.title !== undefined && workspace.title !== item.title && screenHeading(workspace) === undefined;
   const decideId = useId();
   // an uncertain item with no reconcile: nothing to confirm here, the notice says it is being checked
   const noReconcile = item.state === 'effect_uncertain' && !item.reconcile;
@@ -800,7 +803,7 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
   // a schedule line's stations and working agent are drawn here whichever branch draws the sections (WorkItemOverview draws no copy)
   const schedule = scheduleLine(workspace.line_key);
   const agentSide = schedule && item.agent.status === 'working';
-  const titled = workspace.title !== undefined && workspace.title !== item.title;
+  const titled = workspace.title !== undefined && workspace.title !== item.title && screenHeading(workspace) === undefined;
   // Without a revision no write control is drawn: the revision is never guessed.
   const writable = page !== undefined && typeof workspace.revision === 'number';
   return (

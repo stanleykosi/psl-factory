@@ -100,7 +100,7 @@ async function open(first: WorkItem, ...later: (WorkItem | (() => Response | Pro
       <WorkItemView id={first.id} tab="overview" />
     </AppShell>,
   );
-  await screen.findByRole('heading', { level: 1, name: first.title });
+  await screen.findByRole('heading', { level: 1 });
   return view;
 }
 
@@ -182,6 +182,63 @@ describe('four states from the fixture (AC 4)', () => {
     await open(item('W-3704'));
     expect(ws().getAllByText('OPEN')).toHaveLength(2);
     expect(ws().getByRole('button', { name: 'Ask Tola to draft v2' })).toBeTruthy();
+  });
+});
+
+describe('round 2: the boards’ tones, rows, form fields, phone headings and Back', () => {
+  const stateTag = () => document.querySelector('.work-state') as HTMLElement;
+  it('the state chip takes its tone from the data: amber for ready and published, red for gaps, green for acknowledged', async () => {
+    for (const [id, cls] of [['W-3701', 'psl-tag--waiting'], ['W-3703', 'psl-tag--waiting'], ['W-3704', 'psl-tag--person'], ['W-3705', 'psl-tag--done']] as const) {
+      await open(item(id));
+      expect(stateTag().className).toContain(cls);
+      cleanup();
+    }
+  });
+
+  it('the DRAFT row tag is the agent tone and the review row tag stays neutral (rows are laid out by CSS on data-line)', async () => {
+    await open(item('W-3701'));
+    expect(document.querySelector('.ws')!.getAttribute('data-line')).toBe('delivery_handover');
+    expect(ws().getByText('DRAFT').className).toContain('psl-tag--agent');
+    expect(ws().getByText('No · below the rule’s threshold').className).toContain('psl-tag--neutral');
+  });
+
+  it('Support replied is one field holding who replied and when; the Proof label and the gaps hint are screen-reader only; the tick stays', async () => {
+    await open(item('W-3703'));
+    await ready();
+    const p = panel();
+    const group = p.getByRole('group', { name: 'Support replied' });
+    expect(within(group).getByText('Femi Ojo · Support lead')).toBeTruthy();
+    expect(within(group).getByLabelText('When they replied')).toBeTruthy();
+    expect(p.getByText('When they replied').className).toContain('cmp-sr');
+    expect(p.getByText('Proof of the reply').className).toContain('cmp-sr');
+    fireEvent.click(p.getByRole('radio', { name: 'Gaps found' }));
+    expect(p.getByText('One gap per line.').className).toContain('cmp-sr');
+    expect(p.getByRole('checkbox', { name: /I confirm this response is genuine/ })).toBeTruthy();
+  });
+
+  it('at 390 the heading is the board’s screen heading, from the data, and the project title is not the h1', async () => {
+    phone();
+    for (const [id, heading] of [['W-3701', 'Support handover'], ['W-3703', 'Support\'s reply'], ['W-3704', 'Support found gaps'], ['W-3705', 'Handover acknowledged']] as const) {
+      await open(item(id));
+      expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(heading);
+      expect(document.querySelectorAll('.ws-title')).toHaveLength(0);
+      cleanup();
+    }
+  });
+
+  it('at 1440 the h1 stays the project title and the screen heading is not drawn', async () => {
+    await open(item('W-3703'));
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
+    expect(screen.queryByRole('heading', { name: 'Support\'s reply' })).toBeNull();
+  });
+
+  it('at 390 Back from the handover says Delivery and goes to the project’s Delivery tab, not the Queue', async () => {
+    phone();
+    await open(item('W-3704'));
+    const back = screen.getByRole('link', { name: /Delivery/, hidden: false });
+    expect(back.textContent).toContain('Delivery');
+    expect(back.getAttribute('href')).toBe('/projects/P-0101/delivery');
+    expect(screen.queryByRole('link', { name: /Queue/ })).toBeNull();
   });
 });
 

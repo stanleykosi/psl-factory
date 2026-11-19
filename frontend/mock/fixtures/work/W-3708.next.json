@@ -101,7 +101,7 @@
     "revision": 2,
     "status": {
       "label": "Handover · published 08 Apr",
-      "tone": "person"
+      "tone": "uncertain"
     },
     "sections": [
       {
@@ -114,7 +114,7 @@
             "text": "Support handover v1",
             "tag": {
               "label": "DRAFT",
-              "tone": "neutral"
+              "tone": "agent"
             },
             "cites": [
               {
@@ -203,6 +203,7 @@
     "version": {
       "label": "Support handover v1",
       "document_id": "D-3701"
-    }
+    },
+    "title": "Support's reply"
   }
 }

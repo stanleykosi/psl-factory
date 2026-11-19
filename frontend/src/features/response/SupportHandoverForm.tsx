@@ -7,7 +7,7 @@ import { useId } from 'react';
 
 import { responderText } from './labels';
 import { ProofField } from './ProofField';
-import { Actions, Attest, Fixed, RecordRow, Select, WhenField, type FormProps } from './ResponseForm';
+import { Actions, Attest, RecordRow, Select, WhenField, type FormProps } from './ResponseForm';
 import { gapLines, missingLine } from './useResponse';
 
 export const GAPS_PROBLEM = 'Add at least one gap.';
@@ -27,13 +27,19 @@ export function SupportHandoverForm(props: FormProps & { gapsProblem?: boolean }
 
   return (
     <form className={props.phone ? 'resp-form resp-form--phone resp-form--handover' : 'resp-form resp-form--handover'} aria-busy={busy} onSubmit={(e) => e.preventDefault()}>
-      <div className="resp-row">
-        {responders.length === 1 ? (
-          <Fixed label="Support replied" text={responderText(responders[0], response.variant)} />
-        ) : (
-          <Select label="Support replied" value={entries.who} onChange={(v) => setEntry('who', v)} options={responders.map((r) => ({ value: r.id, text: responderText(r, response.variant) }))} />
-        )}
-        <WhenField label="When they replied" value={entries.when} onChange={(v) => setEntry('when', v)} />
+      {/* SCR-48 record: one field, who replied and when (UI-1-3); the date-time keeps its own accessible name */}
+      <div className="resp-field" role="group" aria-labelledby={`${gapsId}-replied`}>
+        <span id={`${gapsId}-replied`} className="resp-label resp-label--strong">
+          Support replied
+        </span>
+        <div className="resp-replied">
+          {responders.length === 1 ? (
+            <span className="resp-static">{responderText(responders[0], response.variant)}</span>
+          ) : (
+            <Select label="Who replied" hideLabel value={entries.who} onChange={(v) => setEntry('who', v)} options={responders.map((r) => ({ value: r.id, text: responderText(r, response.variant) }))} />
+          )}
+          <WhenField label="When they replied" hideLabel value={entries.when} onChange={(v) => setEntry('when', v)} />
+        </div>
       </div>
       <Actions response={response} entries={entries} setEntry={setEntry} segmented label="What Support said" />
       {gaps && (
@@ -50,7 +56,7 @@ export function SupportHandoverForm(props: FormProps & { gapsProblem?: boolean }
             aria-describedby={`${gapsId}-hint${gapsProblem ? ` ${gapsId}-err` : ''}`}
             onChange={(e) => setEntry('gaps', e.target.value)}
           />
-          <span id={`${gapsId}-hint`} className="psl-hint">
+          <span id={`${gapsId}-hint`} className="psl-hint cmp-sr">
             One gap per line.{gapLines(entries.gaps).length > 0 && ` ${gapLines(entries.gaps).length} so far.`}
           </span>
           {gapsProblem && (
@@ -60,7 +66,7 @@ export function SupportHandoverForm(props: FormProps & { gapsProblem?: boolean }
           )}
         </div>
       )}
-      <ProofField proof={proof} layout="card" choose="Choose a file" />
+      <ProofField proof={proof} layout="card" choose="Choose a file" label="Proof of the reply" hideLabel />
       <Attest entries={entries} setEntry={setEntry} short />
       {next}
       <RecordRow props={props} ready={ready} line={line} />

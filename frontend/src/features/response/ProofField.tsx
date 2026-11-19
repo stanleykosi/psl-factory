@@ -77,7 +77,7 @@ function Card({ file, proof }: { file: ProofFile; proof: EvidenceUpload }) {
 }
 
 /** `choose`: the picker's words where the layout's default does not fit (team input: "Choose a file"). */
-export function ProofField({ proof, hint, layout = 'drop', label = 'Proof', choose }: { proof: EvidenceUpload; hint?: string; layout?: Layout; label?: string; choose?: string }) {
+export function ProofField({ proof, hint, layout = 'drop', label = 'Proof', choose, hideLabel }: { proof: EvidenceUpload; hint?: string; layout?: Layout; label?: string; choose?: string; hideLabel?: boolean }) {
   const input = useRef<HTMLInputElement>(null);
   const labelId = useId();
   const hintId = useId();
@@ -115,7 +115,7 @@ export function ProofField({ proof, hint, layout = 'drop', label = 'Proof', choo
 
   return (
     <div className="resp-field" role="group" aria-labelledby={labelId}>
-      <span id={labelId} className="resp-label">
+      <span id={labelId} className={hideLabel ? 'resp-label cmp-sr' : 'resp-label'}>
         {label}
       </span>
       {layout === 'drop' && (

@@ -13,6 +13,7 @@ import { SampleLabel } from '@/shell/SampleLabel';
 import { useWorkspacePage } from '@/features/workspace/usePageReload';
 
 import { SEVERITY_WORDS, tagTone } from '@/features/workspace/labels';
+import { screenHeading } from '@/features/workspace/Workspace';
 
 import { startedLine, STATE_TAGS, type WorkItem } from './labels';
 import { presentationOf, viewFor } from './presentation';
@@ -185,7 +186,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
         </div>
       )}
       <div className="work-titleline">
-        <h1 className="shell-title">{item.title}</h1>
+        <h1 className="shell-title">{phone && ws ? screenHeading(ws) ?? item.title : item.title}</h1>
         {!phone && (
           <span className="work-lineend">
             {/* INV-SAMPLE: the record says it is sample data, whatever the build's API mode */}
@@ -241,7 +242,9 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   // F-30: an issue's work item goes back to its project (D-111 item 9); every other work item keeps the queue.
   // F-31: the planning item does the same (D-113 item 9).
   const projectId = item?.workspace?.line_key === 'issue_followup' || item?.workspace?.line_key === 'planning' ? item.workspace.context?.project?.case_id : undefined;
-  usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : projectId ? { label: 'Project', href: `/projects/${encodeURIComponent(projectId)}` } : { label: 'Queue', href: '/my-work' });
+  // F-40: the handover goes back to the Delivery tab it was opened from (UX-1-1)
+  const deliveryId = item?.workspace?.line_key === 'delivery_handover' ? item.workspace.context?.project?.case_id : undefined;
+  usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : deliveryId ? { label: 'Delivery', href: `/projects/${encodeURIComponent(deliveryId)}/delivery` } : projectId ? { label: 'Project', href: `/projects/${encodeURIComponent(projectId)}` } : { label: 'Queue', href: '/my-work' });
 
   if (state.status === 'loading') return <LoadingState />;
   if (state.status === 'error') {

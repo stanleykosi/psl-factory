@@ -93,7 +93,7 @@ for (const [label, viewport] of [
       const panel = replyPanel(page);
       await expect(panel.getByRole('button', { name: 'Remove support-reply-10apr.pdf' })).toBeVisible();
       if (phone) {
-        await expectTouchTargets(await panel.locator('button, input[type="datetime-local"], .psl-seg__opt').all());
+        await expectTouchTargets(await panel.locator('button, input[type="datetime-local"], .psl-seg__opt, .resp-attest').all());
         const box = (await panel.locator('.resp-chip__remove').boundingBox())!;
         expect([box.width >= 44, box.height >= 44]).toEqual([true, true]);
         const bar = (await panel.locator('.psl-actionbar').boundingBox())!;
@@ -286,5 +286,31 @@ test.describe('Record Support’s reply', () => {
     await page.goto('/projects/P-0101/delivery');
     await expect(page.getByText('You can’t open this project')).toBeVisible();
     await expect(page.locator('body')).not.toContainText(/Handover to Support|HND-0048|Femi Ojo/);
+  });
+});
+
+test.describe('round 2: rows, headings and Back', () => {
+  test('1440: neutral row values are plain mono text at the row end, a DRAFT tag is a chip, and the state chip is amber', async ({ page }) => {
+    await page.setViewportSize(DESKTOP);
+    await page.goto('/work/W-3701');
+    await loaded(page);
+    const bg = (text: string) => page.locator('.ws .psl-tag', { hasText: text }).first().evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(await bg('NO · BELOW')).toBe('rgba(0, 0, 0, 0)');
+    expect(await bg('ATTACHED')).toBe('rgba(0, 0, 0, 0)');
+    expect(await bg('DRAFT')).not.toBe('rgba(0, 0, 0, 0)');
+    const row = page.locator('.ws-row', { hasText: 'Review needed?' });
+    const [rowBox, tagBox] = [(await row.boundingBox())!, (await row.locator('.psl-tag').boundingBox())!];
+    expect(tagBox.x + tagBox.width).toBeGreaterThan(rowBox.x + rowBox.width - 4);
+    expect(await page.locator('.work-state').evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(await page.locator('.psl-tag--waiting').first().evaluate((el) => getComputedStyle(el).backgroundColor));
+  });
+
+  test('390: the board’s screen heading, and Back from the Delivery tab returns to the Delivery tab', async ({ page }) => {
+    await page.setViewportSize(PHONE);
+    await page.goto('/projects/P-0101/delivery');
+    await page.getByRole('link', { name: /HND-0048|Handover to Support/ }).first().click();
+    await expect(page).toHaveURL(/\/work\/W-3704$/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Support found gaps');
+    await page.getByRole('link', { name: 'Back to Delivery' }).click();
+    await expect(page).toHaveURL(/\/projects\/P-0101\/delivery$/);
   });
 });
