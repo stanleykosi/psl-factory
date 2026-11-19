@@ -1,5 +1,7 @@
 # Build decisions
 
+19 November 2026. Concurrent acceptance groups use separate fixed-name Railway test databases. The original retained test database remains reserved for the baseline. The synthetic walkthrough pack supplies starting records and leaves human decisions and receipts for real browser actions. Bid-costing amounts require the current selected plan and estimates, current source authority and an exact native calculation binding. A supplied costing reference without a calculation remains visible as a reference. Live receipt lookup and live copying are distinct worker operations.
+
 19 November 2026. Group implementation and acceptance by shared workflow rather than by individual design state. The inventory and evidence ledger retain each design state. A combined PostgreSQL test command checks backend behavior across related groups. Browser journeys and provider evidence remain separately recorded. Commercial change requests use reviewed file advice and human-edited scope. The new proposal requires fresh native decisions, and missing inputs remain explicitly unknown in the retained draft.
 
 19 November 2026. Derive live status from the current background request and the file worker's actual copy lease. A queued file has not started copying. An expired lease needs the original copy checked. Only matching store receipts close the file-copy view.

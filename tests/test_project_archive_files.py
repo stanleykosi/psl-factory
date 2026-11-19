@@ -121,9 +121,21 @@ class ArchiveFileTests(TestCase):
         self.assertEqual(job.status, 'unknown')
         with self.assertRaises(ValidationError):
             archive_transfer.retry_missing(f.actor, job.pk, job.revision)
-        self.assertTrue(archive_transfer.run_once(job.pk))
+        self.client.force_login(f.actor)
+        url = reverse('factory_detail', args=[f.work.pk])
+        lookup_in_store = SyntheticObjectArchive.lookup
+
+        def check_lookup_progress(adapter, file):
+            page = self.client.get(url)
+            self.assertContains(page, 'Checking 1 original file copy.')
+            self.assertNotContains(page, 'Copying 1 file')
+            return lookup_in_store(adapter, file)
+
+        with patch.object(SyntheticObjectArchive, 'lookup', new=check_lookup_progress):
+            self.assertTrue(archive_transfer.run_once(job.pk))
         job.refresh_from_db()
         self.assertEqual(job.status, 'confirmed')
+        self.assertIsNone(job.lease_operation)
         self.assertEqual(job.attempts.filter(operation='copy').count(), 1)
         self.assertEqual(job.attempts.filter(operation='lookup').count(), 1)
         self.assertEqual(SyntheticArchiveObject.objects.filter(file=job.file).count(), 1)

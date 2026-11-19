@@ -163,8 +163,10 @@ urlpatterns += [path('cases/<uuid:case_id>/factory/change-intake/',factory_chang
 from apps.workflows import factory_intake_views
 urlpatterns += [path('work/<int:work_id>/project-instruction/',factory_intake_views.review,name='factory_intake_reaffirm')]
 from apps.workflows import factory_rfp_views
+from apps.workflows import factory_rfp_pricing
 from apps.pmo import rfp_answer_views
 urlpatterns += [path('work/<int:work_id>/requirements/', rfp_answer_views.workbench, name='factory_rfp_answers')]
+urlpatterns += [path('work/<int:work_id>/pricing/', factory_rfp_pricing.detail, name='factory_rfp_pricing')]
 urlpatterns += [path('cases/<uuid:case_id>/factory/rfp-outcome-settings/',factory_rfp_views.outcome_configuration,name='factory_rfp_outcome_configuration')]
 
 from apps.finance import coverage_views

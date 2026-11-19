@@ -16,4 +16,6 @@ Use the [screen inventory](screen-state-inventory.csv) as the design checklist a
 
 The runner `python scripts/design_acceptance_batch.py --audit` verifies that the inventory, boards, acceptance ledger and backlog agree. Its output lists open and unseen states. `--list` shows the PostgreSQL test modules. Run all four groups together with `python scripts/design_acceptance_batch.py --settings config.acceptance_settings` in the configured Railway checks container. Add `--suite` to select groups for focused development. The composed run continues through test failures and returns the Django test process result.
 
+The Railway runner can also use `--parallel-groups 2` in place of `--settings`. Each group gets a separate retained test database and a separate exit result. Start the parallel run after any current acceptance job exits. The original retained test database and the preview database stay separate from the group databases.
+
 Separate a passed test from a passed browser journey in the ledger. Provider activity, owner approvals and release claims require their own evidence.

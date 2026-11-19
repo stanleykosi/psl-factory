@@ -6,7 +6,9 @@ Current release108 PMO/Finance IDs; preserve122 IDs/13 families and existing14 B
 
 The current Railway checkpoint is 200. It passed 30 PostgreSQL tests, confirmed native adoption and Finance intake, and closed the legacy-page private-note read before access was checked. Both services are healthy. The in-app browser confirmed the plain source choices and current signature status.
 
-Implementation and acceptance now run in [workflow batches](docs/design/batch-acceptance.md). Candidate201 connects client change requests to reviewed planning-agent advice, an editable retained draft and a new native proposal for fresh approvals. One grouped PostgreSQL run discovered 487 tests in 36 modules spanning commercial, project delivery, Finance and shared workflows. Final result pending. Release stability and archive copying progress changes were made after the candidate froze and await the next grouped check.
+Implementation and acceptance now run in [workflow batches](docs/design/batch-acceptance.md). Candidate 201 connects client change requests to reviewed planning-agent advice, an editable retained draft and a new native proposal for fresh approvals. The frozen Railway job discovered 487 PostgreSQL tests across 36 modules. At the 231-start checkpoint it had reported one bid form failure and two Standard Change failures. The final summary and complete failure traces are pending.
+
+Candidate 202 stages the bid form and Standard Change fixture corrections, live release stability, separate file-copy and receipt-check progress, and in-page handling of unsaved edits. It adds a bid-costing view with exact input and approval provenance, a guarded parallel Railway runner, and 12 additive synthetic walkthrough starting scenarios. The hosted application is still checkpoint 200. Bid costing adjustments and dispatch to a configured Security estimate contact remain open. These are engineering gaps alongside the actual owner choices for adjustment limits and estimate routes.
 
 In the signed-agreement browser journey, sample case11f14978 retained the exact receipt and private Word proof. It refused future response time and adoption before both signatures were checked. The model cited the original sample file, a human reviewed the draft, and separate human signature checks preceded adoption and the Finance intake receipt. Desktop and phone checks passed. The revised-agreement branch, historical recovery and browser correction cases stay open.
 
@@ -24,7 +26,7 @@ Agents0012/0013, pmo0070–0072 and Finance0080/0081 are applied in testDB and p
 
 ## Remaining product work
 
-262 states/59 screen IDs: **215 observed /189 with open acceptance checks /47 unseen /26 completed scoped journeys**. The signed-commercial state is now observed but not closed. Some old open notes are wider role/device/recovery examples; reconcile actual source criteria/evidence. [Acceptance ledger](docs/design/screen-state-acceptance.md) and [backlog](BUILD-BACKLOG.json) retain exact states/groups.
+Of 262 states, 26 have a completed scoped journey, 190 have observations with checks still open, and 46 have no direct browser observation. The prior invitation6 walkthrough establishes the single-workspace account setup state. Multiple workspace setup and verified alerts remain open. [Acceptance ledger](docs/design/screen-state-acceptance.md) and [backlog](BUILD-BACKLOG.json) retain the exact states and groups.
 
 - Resolve the grouped201 result and run grouped browser journeys against a passing candidate.
 - Finish commercial client-requested rework/historical recovery and invitation onboarding variants. Existing native signature/adoption/Finance controls remain authoritative; design examples do not set billing rules.

@@ -1,8 +1,10 @@
 """Audit the design ledger and run selected workflow suites against one test database."""
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import csv
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -15,7 +17,7 @@ SUITES = {
     'commercial': (
         'commercial_client_response', 'commercial_rework', 'commercial_changes',
         'commercial_signatures', 'factory_commercial', 'costing_design',
-        'factory_rfp_console_flow', 'factory_rfp_outcome_console',
+        'factory_rfp_console_flow', 'factory_rfp_outcome_console', 'factory_rfp_pricing',
     ),
     'project_delivery': (
         'factory_change', 'factory_change_branches', 'standard_changes', 'factory_emergency',
@@ -30,7 +32,7 @@ SUITES = {
     'shared': (
         'factory_console', 'factory_human_independence', 'factory_review_authority',
         'factory_progress', 'design_delegation', 'staff_accounts', 'staff_profiles',
-        'staff_reactivation', 'ui_layout',
+        'staff_reactivation', 'ui_layout', 'design_batch_walkthrough',
     ),
 }
 LEDGER_ROW = re.compile(r'^\| `(SCR-[^\x60]+)` \| [^\n]+ \| (.+) \|$', re.MULTILINE)
@@ -72,21 +74,46 @@ def main():
     parser.add_argument('--suite', action='append', choices=SUITES, help='Include a workflow suite. Defaults to all.')
     parser.add_argument('--settings', help='Django settings module for the isolated test database.')
     parser.add_argument('--list', action='store_true', help='Print the selected test labels without running them.')
+    parser.add_argument('--parallel-groups', type=int, choices=(2, 3, 4),
+                        help='Run acceptance groups on separate PostgreSQL test databases on Railway.')
     args = parser.parse_args()
     if args.audit:
         audit()
         return 0
-    labels = list(dict.fromkeys(f'tests.test_{name}' for suite in args.suite or SUITES for name in SUITES[suite]))
+    suites = list(dict.fromkeys(args.suite or SUITES))
+    labels = list(dict.fromkeys(f'tests.test_{name}' for suite in suites for name in SUITES[suite]))
     missing = [label for label in labels if not (ROOT / (label.replace('.', '/') + '.py')).is_file()]
     if missing:
         parser.error(f'Missing suites: {", ".join(missing)}')
     if args.list:
         print('\n'.join(labels))
         return 0
+    if args.parallel_groups:
+        if args.settings:
+            parser.error('Parallel groups use their own guarded Railway test settings.')
+        if os.environ.get('RAILWAY_ENVIRONMENT_NAME') != 'design-acceptance':
+            parser.error('Parallel groups require the Railway design-acceptance environment.')
+        with ThreadPoolExecutor(max_workers=args.parallel_groups) as pool:
+            results = list(pool.map(run_group, suites))
+        print('PSL_GROUPED_TEST_RESULTS=' + json.dumps(dict(zip(suites, results))), flush=True)
+        return int(any(results))
+    return run_tests(labels, settings=args.settings)
+
+
+def run_tests(labels, *, settings=None, env=None):
     command = [sys.executable, 'manage.py', 'test', *labels, '--keepdb', '--noinput', '--verbosity', '2']
-    if args.settings:
-        command.extend(['--settings', args.settings])
-    return subprocess.run(command, cwd=ROOT, check=False).returncode
+    if settings:
+        command.extend(['--settings', settings])
+    return subprocess.run(command, cwd=ROOT, env=env, check=False).returncode
+
+
+def run_group(name):
+    env = {**os.environ, 'PSL_DESIGN_TEST_GROUP': name}
+    print(f'PSL_GROUP_STARTED={name}', flush=True)
+    status = run_tests([f'tests.test_{module}' for module in SUITES[name]],
+                       settings='config.design_batch_settings', env=env)
+    print(f'PSL_GROUP_EXIT={name}:{status}', flush=True)
+    return status
 
 
 if __name__ == '__main__':

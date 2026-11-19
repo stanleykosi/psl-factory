@@ -37,6 +37,7 @@ class ArchiveCopyJob(models.Model):
     revision = models.PositiveIntegerField(default=1)
     lease_token = models.UUIDField(null=True)
     lease_until = models.DateTimeField(null=True)
+    lease_operation = models.CharField(max_length=6, choices=[('copy', 'Copy'), ('lookup', 'Lookup')], null=True)
     finding = models.CharField(max_length=240, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 

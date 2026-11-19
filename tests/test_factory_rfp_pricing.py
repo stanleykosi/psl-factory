@@ -1,0 +1,42 @@
+from django.test import TestCase
+from django.urls import reverse
+
+from apps.identity.models import Grant
+from apps.pmo.models import CommercialDecision
+from tests import factory_rfp_helpers, test_rfp
+from tests.helpers import rev
+
+
+class FactoryRFPPricingTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.data = factory_rfp_helpers.configured()
+        cls.work = factory_rfp_helpers.start(cls.data)
+
+    def test_pricing_keeps_supplied_legacy_reference_separate_from_calculated_amounts(self):
+        actor, case = self.data['actor'], self.data['case']
+        self.client.force_login(actor)
+        url = reverse('factory_rfp_pricing', args=[self.work.pk])
+        initial_revision = rev(case)
+        page = self.client.get(url)
+        self.assertContains(page, 'A costing reference was supplied. Its calculated amounts are unavailable here.')
+        self.assertContains(page, 'Not yet recorded')
+        self.assertContains(self.client.get(reverse('factory_detail', args=[self.work.pk])),
+                            f'href="{url}"')
+        self.assertEqual(rev(case), initial_revision)
+        self.assertEqual(self.client.post(url, {}).status_code, 405)
+        Grant.objects.filter(case=case, user=actor, action='costing.source.read').update(active=False)
+        self.assertContains(self.client.get(url), 'Your access does not include the calculation amounts.')
+
+    def test_exact_recorded_proposal_decisions_and_current_access(self):
+        actor, case, evidence = self.data['actor'], self.data['case'], self.data['evidence']
+        response = test_rfp.response(actor, case, evidence)
+        test_rfp.approve(actor, case, evidence, response)
+        self.client.force_login(actor)
+        url = reverse('factory_rfp_pricing', args=[self.work.pk])
+        page = self.client.get(url)
+        self.assertContains(page, 'Proposal version')
+        self.assertContains(page, 'Approved', count=3)
+        self.assertEqual(CommercialDecision.objects.filter(revision=response.commercial).count(), 3)
+        Grant.objects.filter(case=case, user=actor, action='rfp.read').update(active=False)
+        self.assertIn(self.client.get(url).status_code, (403, 404))

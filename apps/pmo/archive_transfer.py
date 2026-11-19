@@ -210,6 +210,7 @@ def run_once(job_id=None, *, actor=None, adapter=None, lookup_only=False, expect
         lookup = lookup_only or job.status in ['unknown', 'leased']
         if not lookup and job.status != 'pending':
             raise ValidationError('Check the original store receipt before authorising a missing-file retry.')
+        operation = 'lookup' if lookup else 'copy'
         operator = actor or get_user_model().objects.filter(pk=job.file.plan.manifest['operator_id']).first()
         token = uuid4()
         try:
@@ -219,8 +220,11 @@ def run_once(job_id=None, *, actor=None, adapter=None, lookup_only=False, expect
             value = authorize_file(job.file, operator, lookup=lookup)
         except (ValidationError, PermissionDenied):
             ArchiveCopyAttempt.objects.create(job=job, token=token,
-                operation='lookup' if lookup else 'copy', outcome='held')
+                operation=operation, outcome='held')
             job.status = 'held'
+            job.lease_operation = None
+            job.lease_token = None
+            job.lease_until = None
             job.finding = 'Review the current archive source, store rule and operator permission.'
             job.revision += 1
             job.save()
@@ -228,12 +232,12 @@ def run_once(job_id=None, *, actor=None, adapter=None, lookup_only=False, expect
                   job_id=job.pk, provider_contacted=False)
             return True
         job.status = 'leased'
+        job.lease_operation = operation
         job.lease_token = token
         job.lease_until = now + timedelta(seconds=value['lease_seconds'])
         job.revision += 1
         job.save()
         file = job.file
-    operation = 'lookup' if lookup else 'copy'
     outcome, receipt = 'uncertain', None
     try:
         transport = adapter or project_archive.configured_adapter(value)
@@ -264,6 +268,7 @@ def run_once(job_id=None, *, actor=None, adapter=None, lookup_only=False, expect
             'uncertain': 'Check the original archive store receipt before copying this file again.'}[outcome]
         current.lease_token = None
         current.lease_until = None
+        current.lease_operation = None
         current.revision += 1
         current.save()
         event(operator, file.plan.work.case, 'delivery.archive_file_observed', file_id=file.pk,
@@ -309,14 +314,18 @@ def projection(actor, work):
     groups = {}
     now = timezone.now()
     copying = 0
+    checking = 0
     queued = 0
     for file in files:
         file.plan = plan
         file.display_name = file.name if can_operate and file.evidence_id in visible else 'Project source file'
         lease_current = file.job.status == 'leased' and file.job.lease_until and file.job.lease_until > now
-        copying += bool(lease_current)
+        is_copying = lease_current and file.job.lease_operation == 'copy'
+        copying += bool(is_copying)
+        checking += bool(lease_current and not is_copying)
         queued += file.job.status == 'pending'
-        file.display_status = {'pending':'Queued','leased':'Copying' if lease_current else 'Original copy needs checking',
+        file.display_status = {'pending':'Queued','leased':(
+            'Copying' if is_copying else 'Checking original copy' if lease_current else 'Original copy needs checking'),
             'unknown':'Confirmation missing',
             'missing':'File not found','confirmed':'Archived','held':'Needs review'}[file.job.status]
         file.can_lookup = can_operate and file.evidence_id in visible and file.job.status in ['unknown', 'missing', 'held']
@@ -366,5 +375,5 @@ def projection(actor, work):
                           not work.cancel_requested and file.job.status == 'missing')
     return {'plan': plan, 'files': files, 'confirmed': confirmed, 'total': len(files),
             'can_operate': can_operate, 'verified': verified, 'finding': finding, 'store_label': store_label,
-            'groups': list(groups.values()), 'copying': copying, 'queued': queued,
-            'watching': bool(copying or (queued and current_scope and not work.cancel_requested))}
+            'groups': list(groups.values()), 'copying': copying, 'checking': checking, 'queued': queued,
+            'watching': bool(copying or checking or (queued and current_scope and not work.cancel_requested))}

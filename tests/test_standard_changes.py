@@ -20,6 +20,7 @@ from apps.documents.models import PublicationReceipt, PublicationJob
 from adapters.pmo_reporting import LocalPMOReportingAdapter
 from .helpers import rev, activate, setup_case
 from .document_helpers import artifact
+from .signature_helpers import reaffirm_for
 from .test_commercial_changes import fixture, change_roles
 from . import test_commercial_changes as commercial_tests
 
@@ -66,7 +67,6 @@ class StandardChangeTests(TestCase):
 
     def test_connected_preapproval_execution_review_publication_and_signed_closure(self):
         from apps.pmo.signatures import assert_current_signed_baseline
-        from .signature_helpers import reaffirm_for
         with self.assertRaises(ValidationError):assert_current_signed_baseline(self.case)
         reaffirm_for(self.actor,self.case)
         auth=self.authorized();a,c=self.actor,self.case
@@ -126,17 +126,20 @@ class StandardChangeTests(TestCase):
         self.assertEqual(ChangeAuthorization.objects.count(),1)
 
     def test_new_preapproval_or_pm_match_invalidates_authorization_snapshot(self):
+        reaffirm_for(self.actor,self.case)
         auth=self.authorized();a,c=self.actor,self.case
+        validate_authorization(c,auth)
         preapprove(a,c.pk,'api-maintenance','Product','approve',self.approval.pk,'Renewed explicit decision',rev(c))
         with self.assertRaisesMessage(ValidationError,'snapshot changed'):validate_authorization(c,auth)
 
     def test_revoked_preapprover_grant_holds_queued_publication(self):
+        reaffirm_for(self.actor,self.case)
         auth=self.authorized();a,c=self.actor,self.case;t=self.change_template()
         v=draft_change_document(a,c.pk,auth.pk,t.pk,'notice',rev(c))
         request_review(a,c.pk,v.pk,rev(c));review_version(a,c.pk,v.pk,'approve','Exact review',rev(c))
-        reserve_publication(a,c.pk,v.pk,rev(c))
+        publication=reserve_publication(a,c.pk,v.pk,rev(c))
         Grant.objects.filter(case=c,user=a,action='change.preapprove').update(active=False)
-        self.assertTrue(run_publication_once())
+        self.assertTrue(run_publication_once(job_id=publication.job.pk))
         self.assertEqual(PublicationJob.objects.get(publication__version=v).status,'held')
         self.assertFalse(PublicationReceipt.objects.filter(publication__version=v).exists())
 

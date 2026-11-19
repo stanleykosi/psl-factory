@@ -1,0 +1,25 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Bid costing · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'factory_detail' work.pk %}">← Bid response</a>
+<header class="page-heading"><div><h1>Bid costing</h1><p class="lede">{{ work.request.reference }} · {{ case|workspace_name }}</p></div></header>
+<div class="factory-case-layout"><div>
+  <section class="card"><h2>Inputs</h2>
+    <dl>{% for label, version in pricing.inputs %}<dt>{{ label }}</dt><dd>{% if version %}Recorded · version {{ version }}{% else %}Not provided yet{% endif %}</dd>{% endfor %}</dl>
+    <p><a href="{% url 'rfp' case.pk %}">Review team inputs</a></p>
+  </section>
+  <section class="card"><h2>Calculation</h2>
+    {% if pricing.amounts %}<div class="table-scroll"><table><thead><tr><th>Item</th><th>Amount or value</th><th>Unit</th></tr></thead>
+      <tbody>{% for item in pricing.amounts %}<tr><th scope="row">{{ item.key|readable }}</th><td>{{ item.value|default_if_none:"Unknown" }}</td><td>{{ item.unit }}</td></tr>{% endfor %}</tbody>
+    </table></div>{% elif pricing.estimate_missing %}<p role="status">Total unknown until the Engineering and Security inputs are recorded.</p>{% endif %}
+    <p>{{ pricing.costing_note }}</p>
+    {% if pricing.can_open_calculator %}<p><a href="{% url 'costing' case.pk %}">Open the costing calculator</a></p>{% endif %}
+  </section>
+</div><aside class="factory-action-panel">
+  <section class="card"><h2>Approval order</h2>
+    {% if pricing.revision %}<p>Proposal version {{ pricing.revision }}{% if not pricing.current %} · recorded history{% endif %}</p>{% endif %}
+    <ol>{% for label, status, date in pricing.approvals %}<li><strong>{{ label }}</strong><p>{{ status }}{% if date %} · <time>{{ date|date:"j M Y H:i T" }}</time>{% endif %}</p></li>{% endfor %}</ol>
+    <p><a href="{% url 'factory_invoice_decision' work.pk %}">Open the bid decisions</a></p>
+  </section>
+</aside></div>
+{% endblock %}
