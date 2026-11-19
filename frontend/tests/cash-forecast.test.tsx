@@ -542,6 +542,7 @@ describe('refusals and uncertain decides (AC 16, 17, 20)', () => {
   for (const [name, reply] of [
     ['a 500', () => json(500, { code: 'server_error', message: 'Down.' })],
     ['a network failure', () => Promise.reject(new TypeError('Failed to fetch'))],
+    ['a timeout', () => Promise.reject(new DOMException('Timed out', 'TimeoutError'))],
   ] as const) {
     it(`${name} re-reads first, shows the uncertain notice, says nothing was decided and never sends again by itself`, async () => {
       vi.useFakeTimers({ toFake: ['setTimeout', 'setInterval'], shouldAdvanceTime: true });
