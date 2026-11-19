@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-48",
   "outcome": "The Assistant \"can't\" state: a person asks for something their access does not allow and sees that the agent cannot do it, why, and what it checked (contract mock only)",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "DONE",
   "task_ids": [
     "FE-ASSISTANT"
   ],
@@ -497,9 +497,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -513,14 +513,14 @@
     "task_branch": "fe-assistant-cant-state",
     "head_sha": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-48",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/79",
+    "pr_number": 79,
     "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "designated_approver": "design engineer (hunchoweb), D-129",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "33e4d934c4cb2461a0cee9f3d624fb9bb8bb40b3",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/assistant.spec.ts",
@@ -557,9 +557,11 @@
     "approver_reasons": [
       "delivery/features/F-48/decision.md"
     ],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -630,6 +632,46 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-19T17:38:31Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-19T17:40:17Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-19T17:40:24Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-19T17:40:25Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-19T17:40:26Z",
+      "round": 2,
+      "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-19T17:40:27Z",
       "round": 2,
       "head": "ee9dc46dca9ff40d39148cc4ba1f76572bb35aa7",
       "reason": null
