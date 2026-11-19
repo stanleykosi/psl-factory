@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-19T21:48:09.905Z",
+  "generatedAt": "2026-11-19T22:56:57.815Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/f-49/design/canvas/project/SCR-23-mobile.dc.html",
   "boardName": "SCR-23-mobile.dc.html",
   "pageUrl": "http://localhost:4965/my-work",
@@ -15,33 +15,32 @@
     "threshold": 0.8,
     "strictPosition": false
   },
-  "exceptionsPath": "/private/tmp/claude-501/-Users-Hunchoo-psl-factory/deb68768-c424-41cc-9491-f6358e1fee2d/scratchpad/empty.json",
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-49/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "15 board item(s) are missing from the page and are not approved exceptions (coverage 34.8% with exceptions, needs 100%).",
-    "Visual match 67.9 is below 90.",
-    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+    "5 board item(s) are missing from the page and are not approved exceptions (coverage 78.3% with exceptions, needs 100%).",
+    "Visual match 59 is below 90."
   ],
   "scores": {
-    "coverage": 34.8,
-    "coverageWithExceptions": 34.8,
-    "visual": 67.9
+    "coverage": 39.1,
+    "coverageWithExceptions": 78.3,
+    "visual": 59
   },
   "visual": {
-    "score": 67.9,
-    "allCellsScore": 73.2,
+    "score": 59,
+    "allCellsScore": 69.5,
     "width": 390,
-    "height": 844,
+    "height": 1202,
     "boardHeight": 844,
-    "pageHeight": 844,
+    "pageHeight": 1202,
     "cell": 12,
-    "contentCells": 1956,
-    "mismatchedCells": 627
+    "contentCells": 2481,
+    "mismatchedCells": 1018
   },
   "coverage": {
     "total": 23,
-    "found": 8,
-    "coverage": 34.8,
+    "found": 9,
+    "coverage": 39.1,
     "matched": [
       {
         "kind": "Link",
@@ -104,7 +103,7 @@
           "x": 0,
           "y": 126,
           "w": 390,
-          "h": 718
+          "h": 1076
         }
       },
       {
@@ -125,9 +124,30 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 147,
+          "y": 149,
           "w": 192,
           "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client or prospect",
+        "pageName": "Client or prospect",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 184,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 220,
+          "w": 358,
+          "h": 21
         }
       },
       {
@@ -146,7 +166,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 42,
+          "y": 406,
           "w": 358,
           "h": 21
         }
@@ -167,7 +187,7 @@
         },
         "pageBox": {
           "x": 58,
-          "y": 86,
+          "y": 450,
           "w": 244,
           "h": 21
         }
@@ -188,7 +208,7 @@
         },
         "pageBox": {
           "x": 58,
-          "y": 107,
+          "y": 471,
           "w": 244,
           "h": 18
         }
@@ -210,7 +230,7 @@
         },
         "pageBox": {
           "x": 16,
-          "y": 776,
+          "y": 1134,
           "w": 358,
           "h": 50
         }
@@ -230,7 +250,10 @@
           "w": 73,
           "h": 44
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: the phone form is a bottom sheet; the page bar is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -244,7 +267,10 @@
           "w": 242,
           "h": 17
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 2: not drawn; the sheet keeps 'Step 2 of 2 · change line'.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -258,21 +284,10 @@
           "w": 13,
           "h": 39
         },
-        "exception": null
-      },
-      {
-        "kind": "Text",
-        "role": "text",
-        "name": "Client or prospect",
-        "key": "text: Client or prospect",
-        "container": "dialog",
-        "boardBox": {
-          "x": 16,
-          "y": 184,
-          "w": 358,
-          "h": 18
-        },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 8: the close control is a button named Close, not text.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -286,7 +301,10 @@
           "w": 358,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 11: text inside the client picker, matched by control; the page starts empty.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -314,7 +332,10 @@
           "w": 358,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 11: text typed into an input, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -342,7 +363,10 @@
           "w": 358,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -384,7 +408,10 @@
           "w": 358,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 6 and 11: date-and-time control, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -398,7 +425,10 @@
           "w": 358,
           "h": 18
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 5: both widths use the desktop words ('How the client wants it submitted').",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -426,51 +456,13 @@
           "w": 358,
           "h": 48
         },
-        "exception": null
+        "exception": {
+          "reason": "Conflicts 11: text typed into an input, matched by control.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       }
     ],
-    "misplaced": [
-      {
-        "label": "Heading \"My work\"",
-        "kind": "Heading",
-        "name": "My work",
-        "boardBox": {
-          "x": 16,
-          "y": 70,
-          "w": 358,
-          "h": 28
-        },
-        "pageBox": {
-          "x": 16,
-          "y": 72,
-          "w": 122,
-          "h": 28
-        },
-        "reasons": [
-          "order: on the board it comes after Link \"Start\"; on the page it comes after Text \"The RFP document\""
-        ]
-      },
-      {
-        "label": "Text \"Log a received RFP\"",
-        "kind": "Text",
-        "name": "Log a received RFP",
-        "boardBox": {
-          "x": 16,
-          "y": 119,
-          "w": 164,
-          "h": 20
-        },
-        "pageBox": {
-          "x": 16,
-          "y": 147,
-          "w": 192,
-          "h": 24
-        },
-        "reasons": [
-          "order: on the board it comes after Heading \"My work\"; on the page it comes after Text \"Uploaded · 2.4 MB\""
-        ]
-      }
-    ],
+    "misplaced": [],
     "extra": [
       {
         "kind": "Button",
@@ -515,7 +507,7 @@
         "container": "dialog",
         "pageBox": {
           "x": 16,
-          "y": 171,
+          "y": 173,
           "w": 192,
           "h": 18
         }
@@ -527,7 +519,7 @@
         "container": "dialog",
         "pageBox": {
           "x": 89,
-          "y": 158,
+          "y": 160,
           "w": 67,
           "h": 44
         }
@@ -539,8 +531,20 @@
         "container": "dialog",
         "pageBox": {
           "x": 330,
-          "y": 146,
+          "y": 148,
           "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Client or prospect",
+        "container": "dialog",
+        "pageBox": {
+          "x": 16,
+          "y": 247,
+          "w": 358,
           "h": 44
         }
       },
@@ -551,7 +555,7 @@
         "container": "dialog",
         "pageBox": {
           "x": 312,
-          "y": 81,
+          "y": 445,
           "w": 48,
           "h": 48
         }
@@ -563,7 +567,7 @@
         "container": "dialog",
         "pageBox": {
           "x": 16,
-          "y": 256,
+          "y": 620,
           "w": 358,
           "h": 21
         }
@@ -575,8 +579,8 @@
         "container": "dialog",
         "pageBox": {
           "x": 18,
-          "y": 285,
-          "w": 178,
+          "y": 649,
+          "w": 67,
           "h": 44
         }
       },
@@ -586,9 +590,9 @@
         "name": "Client portal",
         "container": "dialog",
         "pageBox": {
-          "x": 196,
-          "y": 285,
-          "w": 178,
+          "x": 85,
+          "y": 649,
+          "w": 109,
           "h": 44
         }
       },
@@ -598,9 +602,9 @@
         "name": "By hand",
         "container": "dialog",
         "pageBox": {
-          "x": 18,
-          "y": 329,
-          "w": 178,
+          "x": 194,
+          "y": 649,
+          "w": 83,
           "h": 44
         }
       },
@@ -610,9 +614,9 @@
         "name": "Not stated",
         "container": "dialog",
         "pageBox": {
-          "x": 196,
-          "y": 329,
-          "w": 178,
+          "x": 277,
+          "y": 649,
+          "w": 98,
           "h": 44
         }
       },
@@ -623,7 +627,7 @@
         "container": "dialog",
         "pageBox": {
           "x": 16,
-          "y": 488,
+          "y": 808,
           "w": 358,
           "h": 21
         }
@@ -635,7 +639,7 @@
         "container": "dialog",
         "pageBox": {
           "x": 18,
-          "y": 517,
+          "y": 837,
           "w": 123,
           "h": 44
         }
@@ -647,7 +651,7 @@
         "container": "dialog",
         "pageBox": {
           "x": 141,
-          "y": 517,
+          "y": 837,
           "w": 104,
           "h": 44
         }
@@ -659,13 +663,13 @@
         "container": "dialog",
         "pageBox": {
           "x": 245,
-          "y": 517,
+          "y": 837,
           "w": 129,
           "h": 44
         }
       }
     ],
-    "unexcepted": 15
+    "unexcepted": 5
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/f-49/design/mascots/canvas-assets.json (19 mapped)."

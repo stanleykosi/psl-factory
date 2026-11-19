@@ -89,6 +89,30 @@
       "at": "2026-11-19T17:52:21Z",
       "seconds": 493.2,
       "evidence_ref": "delivery/features/F-38/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T22:21:48Z",
+      "seconds": 407.0,
+      "evidence_ref": "delivery/features/F-38/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T22:35:15Z",
+      "seconds": 413.1,
+      "evidence_ref": "delivery/features/F-38/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -158,14 +182,42 @@
         "delivery/features/F-38/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "Decide panel names the returned version label; AC 8 test asserts \"Submission pack v1\""
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T22:39:00Z",
+          "refs": [
+            "`InlineDecide.tsx:333-339` draws `task.decision.version.label` beside \"Goes to \u2026\", only when `decision.recipient` is non-empty, so other in-place panels are unchanged (round 1 established that no InlineDecide fixture outside W-35xx returns a recipient). Assertions: `tests/rfp-submission.test.tsx:272` (`.ws-idecide` contains \"Submission pack v1\" on W-3502) and `:536` (\"Submission pack v2\" after \"Review the latest\" on W-3506). They fail without the fix: my round-1 probe of this exact panel found the label nowhere in `document.body`, and the assertions are scoped to `.ws-idecide` (322f0d91), so the version text elsewhere on the page cannot satisfy them."
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Decide panel names the returned version label; AC 8 test asserts \"Submission pack v1\""
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`InlineDecide.tsx:333-339` draws `task.decision.version.label` beside \"Goes to \u2026\", only when `decision.recipient` is non-empty, so other in-place panels are unchanged (round 1 established that no InlineDecide fixture outside W-35xx returns a recipient). Assertions: `tests/rfp-submission.test.tsx:272` (`.ws-idecide` contains \"Submission pack v1\" on W-3502) and `:536` (\"Submission pack v2\" after \"Review the latest\" on W-3506). They fail without the fix: my round-1 probe of this exact panel found the label nowhere in `document.body`, and the assertions are scoped to `.ws-idecide` (322f0d91), so the version text elsewhere on the page cannot satisfy them."
       ]
     },
     {
@@ -273,14 +325,42 @@
         "delivery/features/F-38/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "uncertain and not-delivered fixtures no longer say a decision is pending"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T22:39:00Z",
+          "refs": [
+            "After Approve, W-3505 shows \"Next step. Delivery isn't confirmed yet. Someone checks it before anything is sent again.\", \"Document review: Done\", \"Submission: Needs a person\", REVIEWED and APPROVED earned 26 Nov 14:58, SENT \"In progress\", and the timeline \"Approved by document reviewer\". After \"It didn't arrive\": \"NOT DELIVERED\", FAILED, \"Someone checks with Tamarind Loans before anything is sent again\", no Approve buttons and no resend. Same at 390. No \"A document reviewer approves...\" text remains."
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "uncertain and not-delivered fixtures no longer say a decision is pending"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "After Approve, W-3505 shows \"Next step. Delivery isn't confirmed yet. Someone checks it before anything is sent again.\", \"Document review: Done\", \"Submission: Needs a person\", REVIEWED and APPROVED earned 26 Nov 14:58, SENT \"In progress\", and the timeline \"Approved by document reviewer\". After \"It didn't arrive\": \"NOT DELIVERED\", FAILED, \"Someone checks with Tamarind Loans before anything is sent again\", no Approve buttons and no resend. Same at 390. No \"A document reviewer approves...\" text remains."
       ]
     },
     {
@@ -296,14 +376,42 @@
         "delivery/features/F-38/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "submitted fixture facts carry the true timeline times"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T22:39:00Z",
+          "refs": [
+            "W-3503 and W-3504 facts: Drafted 22 Nov 10:15, Reviewed and Approved 26 Nov 14:58, Sent 26 Nov 15:42, Receipt recorded and Verified 26 Nov 15:43, matching the timeline. Uncertain pages show no Receipt or Verified time."
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "submitted fixture facts carry the true timeline times"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "W-3503 and W-3504 facts: Drafted 22 Nov 10:15, Reviewed and Approved 26 Nov 14:58, Sent 26 Nov 15:42, Receipt recorded and Verified 26 Nov 15:43, matching the timeline. Uncertain pages show no Receipt or Verified time."
       ]
     },
     {
@@ -411,14 +519,42 @@
         "delivery/features/F-38/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "Record the outcome is the primary button in the Next card (phone: own bottom section)"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:39:00Z",
+          "refs": [
+            "\"Record the outcome\" is a blue primary button inside the NEXT card at 1440 (W-3503, W-3504) and a pinned bottom bar at 390."
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Record the outcome is the primary button in the Next card (phone: own bottom section)"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"Record the outcome\" is a blue primary button inside the NEXT card at 1440 (W-3503, W-3504) and a pinned bottom bar at 390."
       ]
     },
     {
@@ -434,14 +570,42 @@
         "delivery/features/F-38/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "success banner is the green band with icon"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:39:00Z",
+          "refs": [
+            "Success banner is a green band with a check icon at 1440 and 390; \"RECEIPT CONFIRMED\" is a small secondary tag."
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "success banner is the green band with icon"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Success banner is a green band with a check icon at 1440 and 390; \"RECEIPT CONFIRMED\" is a small secondary tag."
       ]
     },
     {
@@ -457,14 +621,42 @@
         "delivery/features/F-38/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "receipt ref sentences and phone bar tags/status drawn from returned data"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:39:00Z",
+          "refs": [
+            "Receipt ref TL-SUB-0091 is drawn from returned data in the band and timeline; phone top bar shows \"Done\"; draft shows \"v1\" and \"DEADLINE 28 NOV \u00b7 6 DAYS\". The one-line phone sentence exceptions (Conflicts 20) stay as the contract returns one sentence; honest."
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "receipt ref sentences and phone bar tags/status drawn from returned data"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Receipt ref TL-SUB-0091 is drawn from returned data in the band and timeline; phone top bar shows \"Done\"; draft shows \"v1\" and \"DEADLINE 28 NOV \u00b7 6 DAYS\". The one-line phone sentence exceptions (Conflicts 20) stay as the contract returns one sentence; honest."
       ]
     },
     {
@@ -503,14 +695,28 @@
         "delivery/features/F-38/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "submission title 24px wide-set (20px phone); still h2 under the frame's h1"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "submission title 24px wide-set (20px phone); still h2 under the frame's h1"
       ]
     },
     {
@@ -526,14 +732,28 @@
         "delivery/features/F-38/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "Submitted tag amber via status kind in fixtures"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Submitted tag amber via status kind in fixtures"
       ]
     },
     {
@@ -549,14 +769,28 @@
         "delivery/features/F-38/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "Open the full pack is a plain link; Reject neutral"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Open the full pack is a plain link; Reject neutral"
       ]
     },
     {
@@ -595,14 +829,28 @@
         "delivery/features/F-38/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "Tola \"Drafted <time>\" drawn from agent.started_at"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Tola \"Drafted <time>\" drawn from agent.started_at"
       ]
     },
     {
@@ -618,13 +866,110 @@
         "delivery/features/F-38/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T17:58:24Z",
           "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T22:21:48Z",
+          "refs": [
+            "info note drawn from fixture text"
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:39:00Z",
+          "refs": [
+            "The blue info note (\"If delivery hadn't been confirmed...\", portal variant too) is drawn on both submitted pages at both widths."
+          ],
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "info note drawn from fixture text"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The blue info note (\"If delivery hadn't been confirmed...\", portal variant too) is drawn on both submitted pages at both widths."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Spec fixture table (`spec.md:196-197`: W-3503/W-3504 RFP status \"`submitted` 'SUBMITTED 26 NOV'\") and F-18 spec `:40` (\"tone chosen by `rfp.status.kind` (deadline, pending: amber; submitted: neutral \u2026)\"). To close UI-1-6, commit a1f2c7c1 changed `rfp.status.kind` from `submitted` to `pending` in `mock/fixtures/work/W-3502.approve.json:101`, `W-3503.json:72`, `W-3504.json` and `response/W-3505.delivered.json`, and kept the label \"SUBMITTED 26 NOV\". The fixtures now say something the backend will not send. `pending` is one of the outcome results (won, lost, pending, unknown), so the RFP reads as if an outcome of \"still pending\" was already recorded before anyone pressed Record the outcome. The F-18 W-21xx fixtures for the same RFP still say `submitted`. A real `submitted` response still draws neutral through `statusTone` (`src/features/rfp/labels.ts:25-29`), so the fidelity gain exists only on the mock. Expected: put `kind: \"submitted\"` back on all four fixtures. Then either get amber with a tone override scoped to this line that keys on `submitted` (and record the F-18 conflict in build.md), or keep UI-1-6's tag colour as a pending exception for the design engineer to decide.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T22:39:00Z",
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`WorkItemOverview.tsx:750` now suppresses `RfpOutcomeLink` on every `rfp_submission` item. The replacement in `Workspace.tsx:859` is drawn only inside the Next/Decide panel (`showPanel`: steps, next lines, assign) on desktop, and only in the writable `WorkspaceSteps` path (`typeof workspace.revision === 'number'`). If the backend returns `rfp_outcome` without `next` lines, or without a revision, the item loses its only way into the outcome. No shipped fixture does this. Expected: draw `outcomeButton` whenever `outcomeLink` is set, outside the `showPanel` condition (and in the read-only branch), or keep `RfpOutcomeLink` as the fallback when the workspace draws no button.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T22:39:00Z",
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+      "owner": "process",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Visual is under 90 on all 8 boards (desktop 89 / 76.7 / 84.7 / 79.5; phone 78.4 / 79.3 / 83.6 / 81.3) and every visual_waiver and all 26 exceptions say \"pending design engineer (not signed)\". Coverage 100 holds only after approval. Needs the design engineer to sign or reject the waivers; nothing here can be self-approved.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-38/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T22:39:00Z",
+          "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96"
         }
       ]
     }
@@ -693,6 +1038,70 @@
           ]
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "evidence_refs": [
+            "delivery/features/F-38/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-38/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "evidence_refs": [
+            "delivery/features/F-38/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "evidence_refs": [
+            "delivery/features/F-38/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+          "evidence_refs": [
+            "delivery/features/F-38/round-2/review-security.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -715,9 +1124,9 @@
     "repository": null,
     "task_id": "FE-RFP-SUBMIT",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "b11b48d8f15bad08f8aa8046c37e3646ba5a962c",
+    "base_sha": "26d06343cbf753403427f76b492a592f01ea9fb2",
     "task_branch": "fe-rfp-submit-send-response",
-    "head_sha": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
+    "head_sha": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-38",
     "pr_url": null,
     "pr_number": null,
@@ -756,8 +1165,10 @@
       "frontend/src/features/work-item/WorkItemOverview.tsx",
       "frontend/src/features/work-item/WorkItemView.tsx",
       "frontend/src/features/workspace/InlineDecide.tsx",
+      "frontend/src/features/workspace/Links.tsx",
       "frontend/src/features/workspace/Sections.tsx",
       "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/workspace.css",
       "frontend/tests/income-schedule-mock.test.ts",
       "frontend/tests/mock-contract.test.ts",
       "frontend/tests/rfp-submission-mock.test.ts",
@@ -795,7 +1206,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -837,6 +1248,30 @@
       "round": 2,
       "head": "32c97d3df9f2b6f5ae78bf523744c57ee74d83b4",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T22:35:16Z",
+      "round": 2,
+      "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T22:39:01Z",
+      "round": 2,
+      "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T22:39:01Z",
+      "round": 3,
+      "head": "273d81b5b7cb2d146cd010383cb6f5a40e9e6b96",
+      "reason": null
     }
   ],
   "routing": {
@@ -853,7 +1288,7 @@
     ]
   },
   "gate": {
-    "round": 2,
+    "round": 3,
     "attempts": 0,
     "verdict": null,
     "commit": null

@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 3bedb8756740b91d1771dbe8f62f63dd0a3e69d4
+COMMIT: 9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c
 BUILDER: builder
 LANE: full
 
@@ -29,3 +29,4 @@ One run, production build, app 4965 / mock 4964, still running. With NO exceptio
 - Design engineer: sign conflicts 1-7 and the exceptions; decide the six scroll-capture label exceptions (a driver limit, not data) and the phone waiver.
 - Backend questions (non-blocking): G-23-1, G-23-5, duplicate reference status, G-23-2, G-23-3, time zone for Received, G-23-4, G-23-6.
 - No shared bug found. Possible flake: rfp-intake-mock ECONNRESET under load.
+- Coordinator: merged dlv-00 (9b8df3bbb9a306ec4b5f1050a5f0bbf2436ee83c) to take test-reliability fix #80; base_sha 26d06343cbf753403427f76b492a592f01ea9fb2.
