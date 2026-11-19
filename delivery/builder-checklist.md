@@ -14,3 +14,4 @@ Check each item before writing build.md. Each one has cost a review round before
 10. **Fidelity.** ONE run. At 70 or above, write a waiver; don't iterate.
 11. **Fixes lines** use the format `- ID | what | sha`, with plain IDs.
 12. **Before handing in, the worktree is clean and pushed, and your servers are stopped.** Wait for the shared lock with a blocking background wait, not repeated polling.
+- **Never remove the shared lock by hand.** Another run may hold it. Wait for it to be released (one blocking background wait).
