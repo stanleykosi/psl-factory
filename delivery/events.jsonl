@@ -3536,3 +3536,6 @@
 {"at":"2026-11-19T17:40:26Z","feature":"F-48","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"33e4d934c4cb2461a0cee9f3d624fb9bb8bb40b3"}}
 {"at":"2026-11-19T17:40:26Z","feature":"F-48","round":2,"kind":"transition","head":"ee9dc46dca9f","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-19T17:40:27Z","feature":"F-48","round":2,"kind":"transition","head":"ee9dc46dca9f","from":"MERGED","to":"DONE"}
+{"at":"2026-11-19T17:44:25Z","feature":"F-49","round":0,"kind":"created","tasks":["FE-RFP-INTAKE"]}
+{"at":"2026-11-19T17:44:25Z","feature":"F-50","round":0,"kind":"created","tasks":["FE-MILESTONE-COMPLETE"]}
+{"at":"2026-11-19T17:44:25Z","feature":"F-51","round":0,"kind":"created","tasks":["FE-M2A-PROOF"]}
