@@ -67,7 +67,8 @@ export function documentRead({ url, persona, cookies = {}, work, overrides }) {
   } catch {
     // keep the raw segment
   }
-  if (id === 'D-3501') return rawVersion === '1' ? { status: 200, body: pack } : { status: 404, body: NOT_FOUND };
+  // the pack is served to the people who can open its work item (W-3502); the persona with no sections open gets the same 404 as a missing one
+  if (id === 'D-3501') return rawVersion === '1' && persona !== 'none' ? { status: 200, body: pack } : { status: 404, body: NOT_FOUND };
   if (id !== 'D-2901') return undefined;
   const base = versions[rawVersion];
   if (!base) return { status: 404, body: NOT_FOUND };

@@ -246,4 +246,9 @@ describe('the document (AC 17)', () => {
     expect((await fetch(`${base}/api/v1/documents/D-3501/versions/2`, { headers: HEADERS })).status).toBe(404);
     expect((await fetch(`${base}/api/v1/documents/D-2901/versions/1`, { headers: HEADERS })).status).toBe(200);
   });
+
+  it('the persona with no sections open gets the same 404 as a missing version (not served to every persona)', async () => {
+    const none = { ...HEADERS, Cookie: 'psl_mock_persona=none' };
+    expect((await fetch(`${base}/api/v1/documents/D-3501/versions/1`, { headers: none })).status).toBe(404);
+  });
 });
