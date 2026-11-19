@@ -1,0 +1,7 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-48-desktop-1440	1440	59.5	100	79.4	False
+SCR-48-desktop-gaps-1440	1440	64.9	100	83.4	False
+SCR-48-desktop-received-1440	1440	63.9	100	77.8	False
+SCR-48-mobile-390	390	55.6	88.9	86.8	False
+SCR-48-mobile-gaps-390	390	80	80	88.2	False
+SCR-48-mobile-received-390	390	40	80	75.3	False

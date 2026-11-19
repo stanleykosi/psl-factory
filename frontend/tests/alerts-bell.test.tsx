@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setImmediate as realImmediate } from 'node:timers';
 
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AppShell } from '@/shell/AppShell';
@@ -236,7 +236,7 @@ describe('the drawer', () => {
       ['Alert settings', '/settings/alerts'],
     ]);
     // The shared Drawer takes focus on the panel itself when it holds no field (the trap starts there).
-    expect(document.activeElement).toBe(d);
+    await waitFor(() => expect(document.activeElement).toBe(d));
     expect(document.querySelector('main')!.hasAttribute('inert')).toBe(true);
   });
 
@@ -251,7 +251,7 @@ describe('the drawer', () => {
       await openDrawer();
       close();
       await until(() => expect(dialog()).toBeNull());
-      expect(document.activeElement).toBe(bell());
+      await waitFor(() => expect(document.activeElement).toBe(bell()));
       expect(bell().getAttribute('aria-expanded')).toBe('false');
       expect(document.querySelector('main')!.hasAttribute('inert')).toBe(false);
     }
@@ -265,9 +265,9 @@ describe('the drawer', () => {
     const settings = within(d).getByRole('link', { name: 'Alert settings' });
     settings.focus();
     fireEvent.keyDown(settings, { key: 'Tab' });
-    expect(document.activeElement).toBe(close);
+    await waitFor(() => expect(document.activeElement).toBe(close));
     fireEvent.keyDown(close, { key: 'Tab', shiftKey: true });
-    expect(document.activeElement).toBe(settings);
+    await waitFor(() => expect(document.activeElement).toBe(settings));
     expect([...d.querySelectorAll('a[href], button')].map((el) => el.getAttribute('aria-label') ?? el.textContent)).toHaveLength(9);
   });
 
@@ -504,14 +504,14 @@ describe('phone (below 720px)', () => {
     expect(groupHeads()).toEqual([]);
     fireEvent.keyDown(tabs[0], { key: 'ArrowRight' });
     // The shared Tabs move focus with the arrows; choosing is a click or Enter.
-    expect(document.activeElement).toBe(within(d).getByRole('tab', { name: 'For your information' }));
+    await waitFor(() => expect(document.activeElement).toBe(within(d).getByRole('tab', { name: 'For your information' })));
     fireEvent.click(document.activeElement!);
     expect(openLinks().map((a) => a.getAttribute('href'))).toEqual(['/work/w-uat-lh', '/work/w-inv-lh-001', '/work/w-ms-kl-02']);
     fireEvent.click(within(d).getByRole('tab', { name: /^Needs you/ }));
     expect(openLinks()).toHaveLength(3);
     fireEvent.keyDown(dialog()!, { key: 'Escape' });
     await until(() => expect(dialog()).toBeNull());
-    expect(document.activeElement).toBe(phoneBell());
+    await waitFor(() => expect(document.activeElement).toBe(phoneBell()));
   });
 
   /** The phone bar remounts on a route change (key={pathname}): the page changes and the bell there takes focus. */
@@ -533,7 +533,7 @@ describe('phone (below 720px)', () => {
     await until(() => expect(nav.push).toHaveBeenCalledWith('/work/w-inv-lh-002'));
     await goTo(view, '/work/w-inv-lh-002');
     expect(before.isConnected).toBe(false);
-    expect(document.activeElement).toBe(phoneBell());
+    await waitFor(() => expect(document.activeElement).toBe(phoneBell()));
   });
 
   it('Alert settings and See all alerts: focus lands on the new phone bell', async () => {
@@ -546,7 +546,7 @@ describe('phone (below 720px)', () => {
       await openDrawer(phoneBell());
       fireEvent.click(within(dialog()!).getByRole('link', { name }), { button: 0 });
       await goTo(view, path);
-      expect(document.activeElement).toBe(phoneBell());
+      await waitFor(() => expect(document.activeElement).toBe(phoneBell()));
       view.unmount();
     }
   });
@@ -557,10 +557,10 @@ describe('phone (below 720px)', () => {
     await openDrawer(phoneBell());
     fireEvent.click(within(dialog()!).getByRole('link', { name: 'See all alerts' }), { button: 0 });
     await until(() => expect(dialog()).toBeNull());
-    expect(document.activeElement).toBe(phoneBell());
+    await waitFor(() => expect(document.activeElement).toBe(phoneBell()));
     (document.activeElement as HTMLElement).blur();
     await goTo(view, '/my-work');
-    expect(document.activeElement).not.toBe(phoneBell());
+    await waitFor(() => expect(document.activeElement).not.toBe(phoneBell()));
   });
 
   it('without needs_you there are no tabs, only For your information', async () => {

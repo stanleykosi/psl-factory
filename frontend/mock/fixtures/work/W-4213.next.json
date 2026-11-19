@@ -1,0 +1,192 @@
+{
+  "id": "W-4213",
+  "title": "QuickBooks journal JE-7741 · October",
+  "line": "Ledger sources",
+  "reference": "LED-0052",
+  "state": "action_needed",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Capture lineage",
+      "status": "done"
+    },
+    {
+      "name": "Record what was found",
+      "status": "done"
+    },
+    {
+      "name": "Independent review",
+      "status": "current_person"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-14T15:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-4213",
+      "kind": "decide",
+      "title": "Review the ledger source",
+      "required_role": "Ledger reviewer",
+      "you_can_act": false,
+      "revision": 1,
+      "decision": {
+        "version": {
+          "label": "LED-0052 v1",
+          "number": 1,
+          "drafted_at": "2026-11-14T14:40:00Z"
+        },
+        "basis": "Approve JE-7741 as a supplied reference. You captured nothing and observed nothing here, so you can review.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": false,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Ledger reviewer",
+              "status": "current",
+              "is_you": false
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "prepared_by_you"
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the ledger source file",
+        "status": "done",
+        "source": "QB_EXPORT_JE7741.PDF"
+      },
+      {
+        "text": "Checked date and period",
+        "status": "done",
+        "source": "28 OCT · 2026-10"
+      },
+      {
+        "text": "Checked where it came from",
+        "status": "done",
+        "source": "QUICKBOOKS · REALM PSL-NG"
+      },
+      {
+        "text": "Capture the lineage",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-14T14:12:00Z"
+  },
+  "next_step": "An independent reviewer approves or rejects JE-7741 as a reference on this page.",
+  "sample": true,
+  "case_id": "C-LED-0052",
+  "case_revision": 4,
+  "workspace": {
+    "line_key": "ledger_sources",
+    "screen": "SCR-58",
+    "view": "review",
+    "status": {
+      "label": "AWAITING FINANCE DECISION",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "evidence",
+        "kind": "facts",
+        "title": "Evidence",
+        "items": [
+          {
+            "id": "E-1",
+            "label": "Captured by",
+            "value": "BISI ADE"
+          },
+          {
+            "id": "E-2",
+            "label": "Observed by",
+            "value": "CHUKA EZE · FOUND"
+          },
+          {
+            "id": "E-3",
+            "label": "Lineage",
+            "value": "NEW · NO PREDECESSOR"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_reference",
+        "label": "Approve reference",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "task_id": "T-4213",
+        "verdict": "approve",
+        "consequence": "Ledger review is approve or reject only. Approving records a reference; nothing is posted and authenticity isn’t certified."
+      },
+      {
+        "key": "reject_reference",
+        "label": "Reject",
+        "emphasis": "danger",
+        "applies_to": "workspace",
+        "task_id": "T-4213",
+        "verdict": "reject"
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "ledger_sources",
+          "label": "LEDGER SOURCES"
+        },
+        {
+          "value": "LED-0052",
+          "label": "LED-0052"
+        }
+      ]
+    },
+    "revision": 3
+  }
+}

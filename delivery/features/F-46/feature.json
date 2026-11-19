@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-46",
   "outcome": null,
-  "state": "BLOCKED",
+  "state": "CLOSED",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -78,9 +78,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "closed",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": "Duplicate of F-12 (FE-ALERTS delivered in PR #18, merge 537607ea); the other SCR-15 boards belong to FE-ALERTS-MENU part 2 (D-SIGNIN) and T-ALERTS (D-ALERT-PROVIDERS). Closed on the design engineer's instruction, 19 Nov."
   },
   "release": {
     "status": "not_authorized",
@@ -146,6 +146,14 @@
       "round": 0,
       "head": null,
       "reason": "Duplicate: FE-ALERTS was delivered by F-12 (PR #18, merge 537607ea); see F-46/readiness.md"
+    },
+    {
+      "from": "BLOCKED",
+      "to": "CLOSED",
+      "at": "2026-11-19T11:11:14Z",
+      "round": 0,
+      "head": null,
+      "reason": "Duplicate of F-12 (FE-ALERTS delivered in PR #18, merge 537607ea); the other SCR-15 boards belong to FE-ALERTS-MENU part 2 (D-SIGNIN) and T-ALERTS (D-ALERT-PROVIDERS). Closed on the design engineer's instruction, 19 Nov."
     }
   ],
   "routing": null,
@@ -155,9 +163,5 @@
     "verdict": null,
     "commit": null
   },
-  "blocked": {
-    "from": "PLANNED",
-    "reason": "Duplicate: FE-ALERTS was delivered by F-12 (PR #18, merge 537607ea); see F-46/readiness.md",
-    "at": "2026-11-18T05:30:14Z"
-  }
+  "blocked": null
 }

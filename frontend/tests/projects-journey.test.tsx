@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setImmediate as realImmediate } from 'node:timers';
 
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ProjectJourneyPage } from '@/features/projects/ProjectJourney';
@@ -230,11 +230,11 @@ describe('journey reads E-PROJECT and keeps order (JR-08), drawn as SCR-07', () 
     await open();
     projectTabs()[0].focus();
     fireEvent.keyDown(projectTabs()[0], { key: 'ArrowRight' });
-    expect(document.activeElement).toBe(projectTabs()[1]);
+    await waitFor(() => expect(document.activeElement).toBe(projectTabs()[1]));
     fireEvent.keyDown(projectTabs()[1], { key: 'End' });
-    expect(document.activeElement).toBe(projectTabs()[6]);
+    await waitFor(() => expect(document.activeElement).toBe(projectTabs()[6]));
     fireEvent.keyDown(projectTabs()[6], { key: 'ArrowRight' });
-    expect(document.activeElement).toBe(projectTabs()[0]);
+    await waitFor(() => expect(document.activeElement).toBe(projectTabs()[0]));
   });
 });
 

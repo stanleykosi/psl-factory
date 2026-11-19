@@ -185,7 +185,7 @@ describe('the step form (AC 14, 15)', () => {
 
   it('W-2006: every field kind is drawn, focus moves to the form heading, display is shown, restricted draws no value', async () => {
     const form = await openForm();
-    expect(document.activeElement).toBe(within(form).getByRole('heading', { name: 'Save and accept' }));
+    await waitFor(() => expect(document.activeElement).toBe(within(form).getByRole('heading', { name: 'Save and accept' })));
     const f = within(form);
     expect(f.getByLabelText('Your answer').tagName).toBe('TEXTAREA');
     expect(f.getByLabelText('Short title (optional)').getAttribute('placeholder')).toBe('e.g. Approval threshold');

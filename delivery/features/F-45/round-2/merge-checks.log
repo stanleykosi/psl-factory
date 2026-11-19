@@ -1,0 +1,20 @@
+F-45 merge of origin/dlv-00-delivery-setup
+Head: af1d1c8d (branch fe-fin-ledger-source-recorded-reference)
+
+Conflicts and resolutions
+- BACKEND-HANDOFF.md: kept every section (F-39, F-43 from dlv-00, then F-45).
+- WorkItemOverview.tsx: dlv-00 exceptions-button rule, with 'ledger_sources' added to the no-button lines.
+- Workspace.tsx: dlv-00 imports (AGENT_BESIDE_LINES, forecastLine, STATION_LINES), REPORT_LINE/ESCALATION_LINE/drawsAgentCard kept plus F-45 LEDGER_LINE; shared stale comment; F-45 ledger-scoped staleShown gate dropped for the shared one (TECH-1-1); AC 9 notMovedOn/decidedShown and ledger onDecided wrapper kept.
+- labels.ts: SCHEDULE_LINES = income_schedules, fixed_assets, ledger_sources, INTERNAL_RECONCILE_LINE (cash_forecast).
+- workspace.css: both F-43 and F-45 blocks kept.
+- income-schedule-mock.test.ts: verdict allow-list union (27|32|36|39|40|42).
+- mock-contract.test.ts: links allow-list union (adds W-4201, W-4211); F-43 and F-45 fixture describes both kept.
+
+tsc --noEmit: exit 0. eslint src tests: exit 0.
+checks.sh (under shared lock): exit 1, 125/126 files, 3027/3028 tests passed. Sole failure: tests/rfp-assign.test.tsx focus waitFor (unrelated file, not touched); re-run alone passes 35/35, so load flake.
+e2e (ledger-source, cash-forecast, escalation, leadership-report, income-schedule): 175 passed, exit 0; ledger two-reviewer stale test passes at desktop and phone 390.
+Pushed.
+coordinator re-run on af1d1c8d3629b577c4baeebb4eae025c6a511397, load { 10.48 13.17 16.44 }
+checks exit 0
+ Test Files  126 passed (126)
+      Tests  3028 passed (3028)

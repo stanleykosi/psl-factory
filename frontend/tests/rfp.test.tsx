@@ -913,7 +913,7 @@ describe('the follow-up is a person’s action (INV-AGENT, INV-RESEND)', () => {
     fireEvent.click(button('Send follow-up'));
     const status = await screen.findByText(/^Sent /);
     expect(text()).not.toContain('It goes only if you send it');
-    expect(document.activeElement).toBe(status);
+    await waitFor(() => expect(document.activeElement).toBe(status));
   });
 
   it('W-2111: effect_uncertain shows the callout and no Send, after one reload and no second POST', async () => {

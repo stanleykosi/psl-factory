@@ -1,0 +1,199 @@
+{
+  "id": "W-3209",
+  "title": "Monthly leadership report · October",
+  "line": "Leadership report",
+  "reference": "RPT-M-2026-10",
+  "state": "effect_uncertain",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Gather",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Leadership review",
+      "status": "done"
+    },
+    {
+      "name": "Send",
+      "status": "waiting"
+    },
+    {
+      "name": "Received",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-02T08:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-03T08:10:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-03T08:10:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-03T08:12:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3209",
+      "kind": "decide",
+      "title": "Review the monthly leadership report",
+      "required_role": "Leadership reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Monthly report v1",
+          "number": 1,
+          "drafted_at": "2026-11-02T08:30:00Z"
+        },
+        "basis": "Approving sends this exact version to the audience. Who reviews is set in Setup › Rules.",
+        "prepared_by": {
+          "name": "Kemi Adebayo",
+          "role": "PMO Lead",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Leadership reviewer",
+              "status": "approved",
+              "is_you": false,
+              "person": "Ifeoma Nwosu",
+              "decided_at": "2026-11-03T08:10:00Z"
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Gathered October's records",
+        "status": "done",
+        "source": "5 PROJECTS · 41 MEETINGS · 12 ISSUES"
+      },
+      {
+        "text": "Summarised milestones and money",
+        "status": "done",
+        "source": "3 MILESTONES COMPLETE · 2 INVOICES VERIFIED"
+      },
+      {
+        "text": "Drafted the escalations section",
+        "status": "done",
+        "source": "ESC-0011 · ESC-0012"
+      }
+    ],
+    "started_at": "2026-11-01T07:00:00Z"
+  },
+  "next_step": "The factory is checking the last delivery of monthly report v1.",
+  "sample": true,
+  "workspace": {
+    "line_key": "leadership_report",
+    "screen": "SCR-52",
+    "view": "sent",
+    "status": {
+      "label": "SENT · DELIVERY NOT CONFIRMED",
+      "tone": "uncertain"
+    },
+    "sections": [
+      {
+        "key": "recipients",
+        "kind": "recipients",
+        "title": "Recipients",
+        "items": [
+          {
+            "id": "R-1",
+            "text": "CEO",
+            "receipt": "received",
+            "tag": {
+              "label": "DELIVERED",
+              "tone": "verified"
+            },
+            "at": "2026-11-03T08:12:00Z"
+          },
+          {
+            "id": "R-2",
+            "text": "CTO",
+            "receipt": "received",
+            "tag": {
+              "label": "DELIVERED",
+              "tone": "verified"
+            },
+            "at": "2026-11-03T08:12:00Z"
+          },
+          {
+            "id": "R-3",
+            "text": "PMO Lead",
+            "receipt": "received",
+            "tag": {
+              "label": "DELIVERED",
+              "tone": "verified"
+            },
+            "at": "2026-11-03T08:12:00Z"
+          },
+          {
+            "id": "R-4",
+            "text": "Finance Lead",
+            "receipt": "uncertain",
+            "tag": {
+              "label": "CHECKING",
+              "tone": "uncertain"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "The factory checks the last delivery before marking it received. It won't resend until it knows."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "overview",
+          "label": "OVERVIEW"
+        },
+        {
+          "value": "leadership_reports",
+          "label": "LEADERSHIP REPORTS"
+        },
+        {
+          "value": "RPT-M-2026-10",
+          "label": "RPT-M-2026-10"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

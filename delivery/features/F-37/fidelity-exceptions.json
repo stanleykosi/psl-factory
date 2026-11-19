@@ -1,14 +1,6 @@
 {
  "exceptions": [
   {
-   "role": "text",
-   "name": "Tunde Bello · PMO",
-   "category": "sample data",
-   "conflicts": 18,
-   "reason": "Conflicts 18: the shell draws the signed-in name from /me (persona pm is Tunde Bello · PM); the board text is a different sample.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
    "role": "tablist",
    "name": "RFP",
    "category": "component",
@@ -157,7 +149,7 @@
    "name": "Your answer",
    "category": "component",
    "conflicts": 12,
-   "reason": "Conflicts 12: field labels are drawn by the shared step form and the panel (returned labels), not as separate text blocks.",
+   "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -170,26 +162,10 @@
   },
   {
    "role": "text",
-   "name": "From PSL's past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
-   "category": "missing",
-   "conflicts": 2,
-   "reason": "Conflicts 2: no field returns a past bid's result or its link (G-26-5); the past-answer line is fixture text without them.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "link",
-   "name": "Harmattan Bank RFP 2025 · R-12",
-   "category": "missing",
-   "conflicts": 2,
-   "reason": "Conflicts 2: no field returns a past bid's result or its link (G-26-5); the past-answer line is fixture text without them.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
    "name": "Status",
    "category": "component",
    "conflicts": 12,
-   "reason": "Conflicts 12: field labels are drawn by the shared step form and the panel (returned labels), not as separate text blocks.",
+   "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -253,7 +229,7 @@
    "name": "Tola's suggested answer",
    "category": "component",
    "conflicts": 12,
-   "reason": "Conflicts 12: field labels are drawn by the shared step form and the panel (returned labels), not as separate text blocks.",
+   "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -370,14 +346,6 @@
   },
   {
    "role": "text",
-   "name": "From Harmattan Bank RFP 2025 · R-12",
-   "category": "missing",
-   "conflicts": 2,
-   "reason": "Conflicts 2: no field returns a past bid's result or its link (G-26-5); the past-answer line is fixture text without them.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "role": "text",
    "name": "Cancel keeps Tola's suggestion. If you've typed changes, we ask first.",
    "category": "component",
    "conflicts": 17,
@@ -421,57 +389,57 @@
   {
    "board": "SCR-26-desktop",
    "width": 1440,
-   "visual": 75.7,
-   "reason": "D-83: measured 75.7 in round 1 on a production build. Remaining gaps: the shared frame (top bar, name position, page width; D-99, D-107, D-112); the Decide panel at the side and Progress and Before review under the table (Conflicts 8); the table, toolbar and form drawn by the shared workspace and step form (Conflicts 10, 12); on phones the stacked table in place of the card list (Conflicts 13).",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "board": "SCR-26-desktop-review",
-   "width": 1440,
-   "visual": 67.9,
-   "reason": "D-83: measured 67.9 in round 1 on a production build. Remaining gaps: the shared frame (top bar, name position, page width; D-99, D-107, D-112); the Decide panel at the side and Progress and Before review under the table (Conflicts 8); the table, toolbar and form drawn by the shared workspace and step form (Conflicts 10, 12); on phones the stacked table in place of the card list (Conflicts 13). BELOW THE D-83 FLOOR OF 70: needs a signed one-board exception (as D-112) or a design decision; not signed.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "board": "SCR-26-desktop-edit",
-   "width": 1440,
-   "visual": 68.0,
-   "reason": "D-83: measured 68.0 in round 1 on a production build. Remaining gaps: the shared frame (top bar, name position, page width; D-99, D-107, D-112); the Decide panel at the side and Progress and Before review under the table (Conflicts 8); the table, toolbar and form drawn by the shared workspace and step form (Conflicts 10, 12); on phones the stacked table in place of the card list (Conflicts 13). BELOW THE D-83 FLOOR OF 70: needs a signed one-board exception (as D-112) or a design decision; not signed.",
-   "approved_by": "builder proposal, pending design engineer"
-  },
-  {
-   "board": "SCR-26-desktop-reject",
-   "width": 1440,
-   "visual": 69.4,
-   "reason": "D-83: measured 69.4 in round 1 on a production build. Remaining gaps: the shared frame (top bar, name position, page width; D-99, D-107, D-112); the Decide panel at the side and Progress and Before review under the table (Conflicts 8); the table, toolbar and form drawn by the shared workspace and step form (Conflicts 10, 12); on phones the stacked table in place of the card list (Conflicts 13). BELOW THE D-83 FLOOR OF 70: needs a signed one-board exception (as D-112) or a design decision; not signed.",
+   "visual": 74.7,
+   "reason": "D-83: measured 74.7 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-mobile",
    "width": 390,
+   "visual": 70.7,
+   "reason": "D-83: measured 70.7 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in this state (Conflicts 8); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-26-desktop-review",
+   "width": 1440,
    "visual": 70.5,
-   "reason": "D-83: measured 70.5 in round 1 on a production build. Remaining gaps: the shared frame (top bar, name position, page width; D-99, D-107, D-112); the Decide panel at the side and Progress and Before review under the table (Conflicts 8); the table, toolbar and form drawn by the shared workspace and step form (Conflicts 10, 12); on phones the stacked table in place of the card list (Conflicts 13).",
+   "reason": "D-83: measured 70.5 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-26-desktop-edit",
+   "width": 1440,
+   "visual": 70.7,
+   "reason": "D-83: measured 70.7 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "board": "SCR-26-desktop-reject",
+   "width": 1440,
+   "visual": 71.2,
+   "reason": "D-83: measured 71.2 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-mobile-review",
    "width": 390,
-   "visual": 71.9,
-   "reason": "D-83: measured 71.9 in round 1 on a production build. Remaining gaps: the shared frame (top bar, name position, page width; D-99, D-107, D-112); the Decide panel at the side and Progress and Before review under the table (Conflicts 8); the table, toolbar and form drawn by the shared workspace and step form (Conflicts 10, 12); on phones the stacked table in place of the card list (Conflicts 13).",
+   "visual": 73.4,
+   "reason": "D-83: measured 73.4 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-mobile-edit",
    "width": 390,
    "visual": 73.4,
-   "reason": "D-83: measured 73.4 in round 1 on a production build. Remaining gaps: the shared frame (top bar, name position, page width; D-99, D-107, D-112); the Decide panel at the side and Progress and Before review under the table (Conflicts 8); the table, toolbar and form drawn by the shared workspace and step form (Conflicts 10, 12); on phones the stacked table in place of the card list (Conflicts 13).",
+   "reason": "D-83: measured 73.4 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-26-mobile-reject",
    "width": 390,
    "visual": 72.0,
-   "reason": "D-83: measured 72.0 in round 1 on a production build. Remaining gaps: the shared frame (top bar, name position, page width; D-99, D-107, D-112); the Decide panel at the side and Progress and Before review under the table (Conflicts 8); the table, toolbar and form drawn by the shared workspace and step form (Conflicts 10, 12); on phones the stacked table in place of the card list (Conflicts 13).",
+   "reason": "D-83: measured 72 in round 2 on a production build. Remaining gaps: the shared frame (top bar, name position; D-99, D-107, D-112); the board's search box, Filter button and chips, drawn inert by the shared toolbar (Conflicts 10); the table inside the shared section panel with taller rows; the Progress, Before review and Tola's note panels the board does not draw in the default state (Conflicts 8; the review, edit and reject pages no longer draw the note or checklist); on phones the stacked table in place of the card list (Conflicts 13).",
    "approved_by": "builder proposal, pending design engineer"
   }
  ]

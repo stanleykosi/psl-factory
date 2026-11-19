@@ -205,9 +205,9 @@ describe('the main button and the chooser', () => {
     back.focus();
     // Next is disabled, so Back is the last focusable: Tab wraps to Close.
     fireEvent.keyDown(back, { key: 'Tab' });
-    expect(document.activeElement).toBe(close);
+    await waitFor(() => expect(document.activeElement).toBe(close));
     fireEvent.keyDown(close, { key: 'Tab', shiftKey: true });
-    expect(document.activeElement).toBe(back);
+    await waitFor(() => expect(document.activeElement).toBe(back));
     fireEvent.keyDown(dialog(), { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
     await waitFor(() => expect(document.activeElement).toBe(chevron));
@@ -488,7 +488,7 @@ describe('server answers', () => {
     expect(milestone.getAttribute('aria-describedby')!.split(' ')).toContain(message.closest('.psl-error')!.id);
     const callout = within(dialog()).getByRole('alert');
     expect(callout.textContent).toBe('1 thing to fix before Chidi can start.');
-    expect(document.activeElement).toBe(callout);
+    await waitFor(() => expect(document.activeElement).toBe(callout));
     // The count replaces the head's subline; the eyebrow stays (SCR-04-desktop-validation).
     expect(within(dialog()).getByText('1 thing to fix')).toBeTruthy();
     expect(within(dialog()).getByText('START WORK')).toBeTruthy();

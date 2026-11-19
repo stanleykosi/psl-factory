@@ -347,7 +347,7 @@ describe('edit, remove, add (AC 10)', () => {
       return el;
     });
     expect(screen.getByText('Write the action in words.')).toBeTruthy();
-    expect(document.activeElement).toBe(input);
+    await waitFor(() => expect(document.activeElement).toBe(input));
     expect((input as HTMLInputElement).value).toBe('x');
     await act(async () => {
       fireEvent.click(f.getByRole('button', { name: '+ Add an action' }));

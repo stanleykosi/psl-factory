@@ -425,7 +425,7 @@ describe('approve, return and reject (AC 9 to 11)', () => {
     await ready('Approve register');
     await click('Return with a note');
     expect(await screen.findByText('Add a note to return it.')).toBeTruthy();
-    expect(document.activeElement).toBe(note());
+    await waitFor(() => expect(document.activeElement).toBe(note()));
     fireEvent.change(note(), { target: { value: '   ' } });
     await click('Reject');
     expect(await screen.findByText('Add a note to reject it.')).toBeTruthy();
@@ -644,7 +644,7 @@ describe('phone (AC 16)', () => {
       await new Promise((r) => setTimeout(r, 30));
     });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement?.textContent).toBe('Return with a note');
+    await waitFor(() => expect(document.activeElement?.textContent).toBe('Return with a note'));
   });
 });
 

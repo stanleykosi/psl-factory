@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 0a7196f6eaf9b82b7193ea7139b2e0b72cb9aeb9
+COMMIT: 2900167babb52fd0ae639672099c398e287ad1a5
 BUILDER: builder
 LANE: full
 
@@ -36,3 +36,6 @@ LANE: full
 - `E2E_PORT=4774 MOCK_PORT=4775 playwright test e2e/assistant.spec.ts`: 27 passed. test-results deleted.
 - Fidelity: production build with API_ORIGIN=127.0.0.1:4772, app on 4773, shared tool unmodified, output in round-1/fidelity/ (scores.txt). Desktop 1440: coverage 78.1 (100 with exceptions), visual 90.8, PASS. Phone 390: coverage 28.6 (100 with exceptions), visual 87.8, tool FAIL on its default 90 only.
 - My servers on 4772/4773 stopped by PID.
+
+## Coordinator note (19 Nov)
+Merged dlv-00 into the branch (2900167babb52fd0ae639672099c398e287ad1a5) to pick up the flaky-test fix (PR #65) and the merged features; there were no conflicts. The first gate failed on a 10 s hook timeout from the old base.

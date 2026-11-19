@@ -1,0 +1,152 @@
+{
+  "id": "W-3202",
+  "title": "Monthly leadership report · October",
+  "line": "Leadership report",
+  "reference": "RPT-M-2026-10",
+  "state": "processing",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Gather",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "current_agent"
+    },
+    {
+      "name": "Leadership review",
+      "status": "not_started"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Received",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-02T10:00:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3202",
+      "kind": "decide",
+      "title": "Review the monthly leadership report",
+      "required_role": "Leadership reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Monthly report v1",
+          "number": 1,
+          "drafted_at": "2026-11-02T08:30:00Z"
+        },
+        "basis": "Approving sends this exact version to the audience. Who reviews is set in Setup › Rules.",
+        "prepared_by": {
+          "name": "Kemi Adebayo",
+          "role": "PMO Lead",
+          "is_you": false,
+          "with_agent": "tola"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Leadership reviewer",
+              "status": "returned",
+              "is_you": false,
+              "person": "Ifeoma Nwosu",
+              "decided_at": "2026-11-02T10:00:00Z"
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Read the reviewer’s note",
+        "status": "done",
+        "source": "MONTHLY REPORT V1"
+      },
+      {
+        "text": "Adding the Lagoon Health escalation to the summary",
+        "status": "working",
+        "source": "ESC-0012"
+      },
+      {
+        "text": "Send for leadership review",
+        "status": "not_started"
+      }
+    ],
+    "started_at": "2026-11-02T10:05:00Z"
+  },
+  "next_step": "Tola is drafting monthly report v2 from the reviewer’s note.",
+  "sample": true,
+  "workspace": {
+    "line_key": "leadership_report",
+    "screen": "SCR-52",
+    "view": "returned",
+    "status": {
+      "label": "DRAFTING · RETURNED",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "returned",
+        "kind": "text",
+        "items": [],
+        "note": "Returned on 02 Nov: “Add the Lagoon Health escalation to the summary.”"
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "overview",
+          "label": "OVERVIEW"
+        },
+        {
+          "value": "leadership_reports",
+          "label": "LEADERSHIP REPORTS"
+        },
+        {
+          "value": "RPT-M-2026-10",
+          "label": "RPT-M-2026-10"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}
