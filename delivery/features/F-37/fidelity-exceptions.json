@@ -149,7 +149,7 @@
    "name": "Your answer",
    "category": "component",
    "conflicts": 12,
-   "reason": "Conflicts 12: field labels are drawn by the shared step form and the panel (returned labels), not as separate text blocks.",
+   "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -181,7 +181,7 @@
    "name": "Status",
    "category": "component",
    "conflicts": 12,
-   "reason": "Conflicts 12: field labels are drawn by the shared step form and the panel (returned labels), not as separate text blocks.",
+   "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
@@ -245,7 +245,7 @@
    "name": "Tola's suggested answer",
    "category": "component",
    "conflicts": 12,
-   "reason": "Conflicts 12: field labels are drawn by the shared step form and the panel (returned labels), not as separate text blocks.",
+   "reason": "Two cases. Review boards (Conflicts 4): the review panel does not draw the Status control (Addressed / Clarify / Out of scope); the status shows as the returned tag, and to change it the PM opens Edit answer. Edit and reject boards (Conflicts 12): the Status label is drawn by the shared step form, not as a separate text block.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {

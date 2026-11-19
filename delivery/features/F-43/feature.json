@@ -4,11 +4,17 @@
   "project_id": "psl-factory",
   "feature_id": "F-43",
   "outcome": "Cash forecast \u00b7 base case, Nov\u2013Apr: Finance reviews the six-month forecast, approves, returns or rejects it in place, and records what happened to an uncertain delivery, in four states (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-FIN-FORECAST"
   ],
-  "operation_ids": [],
+  "operation_ids": [
+    "E-WORK-ITEM",
+    "E-TASK-CLAIM",
+    "E-TASK-DECIDE",
+    "E-WORK-ACTION",
+    "E-EVIDENCE-UPLOAD"
+  ],
   "acceptance_criteria": [
     "**Four states from data.** `/work/W-4001`\u2026`W-4004` show the status label and tone, stations, sections, agent card, banner, facts, figures, table, note and \"Next\" of their fixture and nothing else; no board string is in `src` (`grep -rn \"CHIDI INVESTIGATING\\|AWAITING FINANCE DECISION\\|EFFECT UNCERTAIN\\|Forecast reviewer\\|CEO's office\\|Kola Foods\\|never moves cash\\|base case\" frontend/src --exclude=schema.d.ts` returns nothing). \u2014 verify: `cd frontend && npx vitest run tests/cash-forecast.test.tsx`; pages at 1440 and 390.",
     "**Amounts as returned.** On W-4002 the Nov OPENING cell reads \"\u20a622,600,000.00\" at 1440 and at 390 and no cell reads \"\u20a622.6M\" or any \"M\" form; changing the fixture's amount to `\"22600000.10\"` shows \"\u20a622,600,000.10\" exactly, and a 17-digit amount is shown digit for digit. \u2014 verify: component test at both widths.",
@@ -123,11 +129,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "delivery PMO acceptance",
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -831,6 +839,98 @@
           "head": "5020a86be7320090efa1b2888295f52e205e761a"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "coordinator",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "feature.json `operation_ids` is empty. Set to E-WORK-ITEM, E-TASK-CLAIM, E-TASK-DECIDE, E-WORK-ACTION (spec lines 5, 103), plus E-EVIDENCE-UPLOAD (proof for \"It arrived\"). E-WORKSPACE and E-WORKSPACE-FRAME are consumed unchanged and need not be listed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:20:43Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "product",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "AC 12 (no \"received\" before the re-read) collides with the Conflicts 4 option \"I have proof it was received\" (TECH-1-5). Tests strip `.resp-options` to pass. Needs the design engineer's call.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:20:43Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "AC 26 (contract not extended) and AC 27 deviate in one place: shared `Sections.tsx` changed (strip, caption, fact tags) because UI-1-1/UI-1-2 cannot be met otherwise. Opt-in except the tag change (TECH-2-1). Builder listed it; accept or reject at sign-off.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:20:43Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "builder",
+      "severity": "low",
+      "blocking": false,
+      "summary": "AC 22 is not fully met until the waivers and the two floor exceptions are signed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-19T09:20:43Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -988,9 +1088,11 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-43/decision.md"
+    ],
     "script_decision": null,
     "script_reasons": [],
     "decided_for_head_sha": null,
@@ -1056,6 +1158,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-19T03:29:21Z",
+      "round": 2,
+      "head": "5020a86be7320090efa1b2888295f52e205e761a",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-19T09:20:43Z",
       "round": 2,
       "head": "5020a86be7320090efa1b2888295f52e205e761a",
       "reason": null
