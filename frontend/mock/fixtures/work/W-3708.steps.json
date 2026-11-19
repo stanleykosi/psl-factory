@@ -1,0 +1,10 @@
+{
+  "publish": {
+    "status": 409,
+    "body": {
+      "code": "stale",
+      "message": "Changed."
+    },
+    "next": true
+  }
+}

@@ -95,7 +95,7 @@ describe('rows', () => {
       '05Handover to SupportHND-0048Support listed 2 gaps · 10 Apr',
       '06Closure—Not yet · Needs hypercare, handover, retrospective',
     ]);
-    expect(rows().map((r) => r.querySelector('a')?.getAttribute('href') ?? null)).toEqual(['/work/W-2503', '/work/W-2510', '/work/W-3101', null, null, null]);
+    expect(rows().map((r) => r.querySelector('a')?.getAttribute('href') ?? null)).toEqual(['/work/W-2503', '/work/W-2510', '/work/W-3101', null, '/work/W-3704', null]);
     expect(main()).toContain('The delivery lines, in order');
   });
 
@@ -214,6 +214,7 @@ describe('sub-nav (Conflicts 5)', () => {
       ['Release', '/work/W-2503'],
       ['Go-live', '/work/W-2510'],
       ['Hypercare', '/work/W-3101'],
+      ['Handover', '/work/W-3704'],
     ]);
   });
 

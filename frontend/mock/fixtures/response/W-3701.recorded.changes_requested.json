@@ -1,0 +1,149 @@
+{
+  "id": "W-3701",
+  "title": "Lagoon Health · patient app",
+  "line": "Handover to Support",
+  "reference": "HND-0048",
+  "state": "waiting",
+  "revision": 3,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Go-live",
+      "status": "done"
+    },
+    {
+      "name": "Handover",
+      "status": "current_person"
+    },
+    {
+      "name": "Closure",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-04-08T13:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted the support handover",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "delivery_handover",
+    "screen": "SCR-48",
+    "view": "handover",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "HND-0048",
+          "label": "HND-0048"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 3,
+    "status": {
+      "label": "Gaps · 2",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "banner",
+        "kind": "text",
+        "items": [],
+        "note": "Support listed 2 gaps on 10 Apr. The handover isn’t acknowledged until they’re closed."
+      },
+      {
+        "key": "gaps",
+        "kind": "checklist",
+        "title": "Gaps",
+        "items": [
+          {
+            "id": "G-1",
+            "text": "No contact for the credit bureau outage",
+            "tag": {
+              "label": "OPEN",
+              "tone": "uncertain"
+            }
+          },
+          {
+            "id": "G-2",
+            "text": "Runbook misses the nightly export restart",
+            "tag": {
+              "label": "OPEN",
+              "tone": "uncertain"
+            }
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "draft_v2",
+        "label": "Ask Tola to draft v2",
+        "emphasis": "primary",
+        "applies_to": "workspace"
+      }
+    ],
+    "next": [
+      "Tola drafts v2 covering both gaps; it’s published to Support again."
+    ]
+  }
+}

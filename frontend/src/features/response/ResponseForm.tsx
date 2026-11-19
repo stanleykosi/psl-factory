@@ -71,12 +71,12 @@ function ChannelSelect({ response, entries, setEntry }: Pick<FormProps, 'respons
   );
 }
 
-function Actions({ response, entries, setEntry, segmented }: Pick<FormProps, 'response' | 'entries' | 'setEntry'> & { segmented: boolean }) {
+export function Actions({ response, entries, setEntry, segmented, label = 'What they did' }: Pick<FormProps, 'response' | 'entries' | 'setEntry'> & { segmented: boolean; label?: string }) {
   const labelId = useId();
   return (
     <div className="resp-field">
       <span id={labelId} className="resp-label">
-        What they did
+        {label}
       </span>
       <div role="radiogroup" aria-labelledby={labelId} className={segmented ? 'psl-seg resp-seg' : 'resp-pills'}>
         {offeredActions(response).map((a) => (
@@ -117,7 +117,7 @@ export function Note({ entries, setEntry }: Pick<FormProps, 'entries' | 'setEntr
   );
 }
 
-function Attest({ entries, setEntry, short }: Pick<FormProps, 'entries' | 'setEntry'> & { short: boolean }) {
+export function Attest({ entries, setEntry, short }: Pick<FormProps, 'entries' | 'setEntry'> & { short: boolean }) {
   return (
     <label className="psl-check resp-attest">
       <input type="checkbox" checked={entries.attested} onChange={(e) => setEntry('attested', e.target.checked)} />
@@ -263,7 +263,7 @@ export function ClientResponseForm(props: FormProps) {
   );
 }
 
-function Fixed({ label, text, note }: { label: string; text: string; note?: string }) {
+export function Fixed({ label, text, note }: { label: string; text: string; note?: string }) {
   return (
     <div className="resp-field">
       <span className="resp-label resp-label--strong">{label}</span>

@@ -287,3 +287,12 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 .ws[data-line="fixed_assets"] .ws-rows--text .ws-row { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 0; }
 .ws[data-line="fixed_assets"] .ws-rows--text .ws-row__end { order: -1; }
 .ws[data-line="fixed_assets"] .ws-rows--text .ws-cite, .ws[data-line="fixed_assets"] .ws-rows--text .ws-ref { font-family: var(--font-sans); font-size: var(--text-body-size); color: var(--ink); text-transform: none; font-weight: 600; overflow-wrap: anywhere; }
+
+/* F-40: the support-handover reply is drawn in place in the main column (SCR-48 record), on F-18's flow */
+.ws-respinline .resp-form--handover .resp-gaps { min-height: calc(var(--control-md) * 2); }
+.ws-respinline .resp-form--handover { gap: var(--space-18px); }
+@media (max-width: 719.98px) {
+  .ws-respinline .resp-form--handover .resp-row { grid-template-columns: minmax(0, 1fr); }
+  .ws-respinline .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }
+  .ws-respinline .resp-form--handover .psl-input:not(textarea) { min-height: var(--control-phone); }
+}

@@ -93,6 +93,8 @@ export type ResponseBody = {
   team?: string;
   estimate_person_days?: number;
   what?: string;
+  /** PROPOSAL G-48-1 (contract mock only): the gaps Support listed, one string each; with `changes_requested` on `support_handover` only. */
+  gaps?: string[];
 };
 export type ResponseResult = { task_id: string; work_state: WorkState; revision?: number; recorded?: Recorded; next?: string[] };
 

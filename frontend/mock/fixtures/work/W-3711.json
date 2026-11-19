@@ -1,0 +1,123 @@
+{
+  "id": "W-3711",
+  "title": "Lagoon Health · patient app",
+  "line": "Handover to Support",
+  "reference": "HND-0048",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Go-live",
+      "status": "done"
+    },
+    {
+      "name": "Handover",
+      "status": "current_agent"
+    },
+    {
+      "name": "Closure",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-04-08T13:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Support acknowledged the handover",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "delivery_handover",
+    "screen": "SCR-48",
+    "view": "handover",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "HND-0048",
+          "label": "HND-0048"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 1,
+    "status": {
+      "label": "Drafting v2",
+      "tone": "agent"
+    },
+    "sections": [
+      {
+        "key": "tola",
+        "kind": "checklist",
+        "title": "Support handover v1",
+        "agent": "tola",
+        "items": [
+          {
+            "id": "T-1",
+            "text": "Support acknowledged the handover",
+            "status": "done"
+          }
+        ],
+        "as_of": "2026-04-08T13:30:00Z"
+      }
+    ]
+  }
+}

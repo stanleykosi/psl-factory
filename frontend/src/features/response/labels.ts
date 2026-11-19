@@ -8,7 +8,7 @@ export const RECORDABLE: ReadonlySet<ResponseVariant> = new Set(['client_respons
 export const RESPONSE_LABELS = {
   /** The SCR-02 waiting panel's link, in place of "Open the decision". */
   entry: { client_response: 'Record the client’s response', sow_signature: 'Record the client’s signature', team_input: 'Record team input' } as Partial<Record<ResponseVariant, string>>,
-  record: { client_response: 'Record response', sow_signature: 'Record signature', team_input: 'Record input' } as Partial<Record<ResponseVariant, string>>,
+  record: { client_response: 'Record response', sow_signature: 'Record signature', team_input: 'Record input', support_handover: 'Record reply' } as Partial<Record<ResponseVariant, string>>,
   busy: 'Recording…',
 };
 
@@ -27,7 +27,7 @@ export const AGENT_LABELS: Record<AgentKey, { name: string; role: string }> = {
 
 /** "Client contact · Dr Amaka Obi, Lagoon Health" (client_response) or "Ngozi Bello · Head of …, Tamarind Loans". */
 export function responderText(r: Responder, variant: ResponseVariant): string {
-  if (variant === 'sow_signature') {
+  if (variant === 'sow_signature' || variant === 'support_handover') {
     const after = [r.role, r.organisation].filter(Boolean).join(', ');
     return after ? `${r.name} · ${after}` : r.name;
   }
