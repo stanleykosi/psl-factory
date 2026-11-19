@@ -18,7 +18,7 @@ from apps.workflows import factory,factory_escalation as domain
 from apps.workflows.models import FactoryWork,FactoryAttempt
 from adapters.publications import InternalPublicationAdapter,PublicationTimeoutAfterAccept
 from tests.test_escalations import fixture,profile
-from tests.helpers import rev,activate
+from tests.helpers import check_investigation_progress, rev,activate
 from tests.document_helpers import artifact
 
 class FactoryEscalationTests(TestCase):
@@ -72,6 +72,32 @@ class FactoryEscalationTests(TestCase):
         self.r=native.request_escalation(self.a,self.c.pk,self.p.pk,'escalate','Client',self.e.pk,'Corrected source and human request',rev(self.c))
         domain.correct(self.a,self.w.pk,self.w.revision,rev(self.c),self.r.pk,self.t.pk,'Explicit source successor');self.w.refresh_from_db()
         self.assertEqual(self.w.budget_used,spent);self.assertEqual(old.decisions.get().verdict,'return');self.decision();self.advance();self.review();self.finish()
+
+    def test_decline_requires_its_own_role_and_records_no_communication(self):
+        self.start()
+        check_investigation_progress(self, self.a, self.w, 'Investigating the blocker and who needs to decide.')
+        self.advance()
+        self.client.force_login(self.a)
+        url = reverse('factory_detail', args=[self.w.pk])
+        self.assertNotContains(self.client.get(url), 'Decline client communication')
+        values = {'action': 'decision', 'revision': self.w.revision, 'case_revision': rev(self.c),
+                  'request': self.r.pk, 'role': 'Head of PMO', 'verdict': 'reject',
+                  'note': 'The synthetic dependency can be handled internally.'}
+        page = self.client.post(url, values)
+        self.assertContains(page, values['note'])
+        self.assertFalse(self.r.decisions.exists())
+        artifact(self.a,self.c,'D05.decision_action_matrix','schema:psl/decision-actions/v1',
+                 {'rules':[{'role':'Head of PMO','actions':['reject']}]},self.owner)
+        self.assertContains(self.client.get(url), 'Decline client communication', count=1)
+        self.assertEqual(self.client.post(url, {**values, 'case_revision': rev(self.c)}).status_code, 302)
+        page = self.client.get(url)
+        self.assertContains(page, 'Not escalated')
+        self.assertContains(page, 'No recorded communication receipt.')
+        self.assertNotContains(page, 'Approve client communication')
+        self.assertEqual(self.r.decisions.get().verdict, 'reject')
+        self.advance()
+        self.assertIsNone(domain.document(self.w))
+        self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
     def test_returned_document_requires_deliberate_successor_without_resetting_history(self):
         artifact(self.a,self.c,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':['return']}]},self.owner)
         self.start();self.decision();self.advance();old=domain.document(self.w);self.review('return');self.advance();spent=self.w.budget_used

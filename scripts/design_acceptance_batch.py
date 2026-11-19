@@ -47,9 +47,11 @@ CANDIDATE_GATE = (
     'factory_review_authority.FactoryReviewAuthorityTests.test_restored_approval_does_not_override_current_original_pending_job',
     'project_archive_files.ArchiveFileTests.test_interrupted_copy_recovers_original_receipt_without_another_copy',
     'factory_hypercare.FactoryHypercareTests.test_release_stability_progress_follows_an_actual_claim_and_stops_at_observed_result',
+    'factory_escalation.FactoryEscalationTests.test_decline_requires_its_own_role_and_records_no_communication',
     'commercial_rework.CommercialReworkTests.test_rework_browser_fixture_is_additive_and_does_not_create_responses_or_model_jobs',
     'design_batch_walkthrough',
     'factory_accounting.FactoryAccountingTests.test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt',
+    'factory_accounting.AccountingOperatorTests.test_continue_queues_accounting_on_the_worker_and_preserves_native_review',
     'factory_accounting.AccountingRecoveryTests.test_missing_receipt_remains_uncertain_without_a_second_delivery',
     'factory_accounting_intake.AccountingSuppliedIntakeTests.test_http_confirm_units_starts_successor_from_the_same_unchanged_file',
     'factory_accounting_intake.AccountingSuppliedIntakeTests.test_confirming_thousands_records_evidence_but_keeps_calculation_on_hold',
@@ -57,6 +59,7 @@ CANDIDATE_GATE = (
     'factory_ppe.FactoryPPETests.test_native_chain_exact_reviews_note_and_read_only_console',
     'factory_ppe.FactoryPPETests.test_unused_linked_note_role_assignee_inactivity_invalidates_policy_gate',
     'factory_forecast.ForecastFactoryTests.test_complete_native_review_and_aggregate_receipt_chain',
+    'factory_group_forecast.GroupForecastFactoryTests.test_returned_group_disclosure_requires_source_owned_rework_and_fresh_review',
 )
 
 

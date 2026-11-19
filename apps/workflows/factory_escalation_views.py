@@ -75,6 +75,11 @@ def detail(request,work,focus=None):
             elif action=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             else:raise ValidationError('Choose an explicit current action')
             messages.success(request,'Communication action recorded. Issue resolution remains separate.');return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
-    row=presentation(request.user,work)
-    return render(request,'factory/escalation_detail.html',{'row':row,'case':work.case,'focus':focus,'inputs_form':form,'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})
+        except (ValidationError,ValueError) as exc:
+            messages.error(request, domain.finding(exc));work.refresh_from_db();work.case.refresh_from_db()
+    row=presentation(request.user,work,include_progress=not focus)
+    controls = domain.decision_controls(request.user, work.case, row['escalation']['decision_roles']) if focus != 'recovery' else []
+    posted_decision = request.POST if request.method == 'POST' and request.POST.get('action') == 'decision' else {}
+    return render(request,'factory/escalation_detail.html',{'row':row,'case':work.case,'focus':focus,'inputs_form':form,
+        'decision_controls':controls,'decision_role':posted_decision.get('role'),'decision_note':posted_decision.get('note','')[:4000],
+        'can_configure':permitted(request.user,work,'policy.configure'),'activities':work.activities.order_by('pk')})

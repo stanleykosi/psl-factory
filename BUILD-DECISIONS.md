@@ -1,5 +1,9 @@
 # Build decisions
 
+20 November 2026. Accounting's existing Continue action uses the background request and wakes an existing wait. The worker retains its permission checks, leases, budgets and human wait points. The unit test stops the forecast fixture's local business date from shifting during the same return-and-rework journey. Production date validation remains active.
+
+20 November 2026. Show each escalation reviewer only the native actions that their current role and action rules allow. Retain the reason when a server recheck holds submission. After a native return or refusal, preserve its decision and show its exact disposition. Original unsettled effects retain recovery priority. Expose live investigation on the detail view only for the matching active claim.
+
 19 November 2026. The fixed-asset verification read uses the same linked Finance mapping check as the terminal PostgreSQL guard. It holds verification for the affected note and preserves unrelated role-controlled workflows. The synthetic deployment gate runs the discovered failures and new workflow checks first, with the full regression result recorded separately.
 
 19 November 2026. Finance close shows live activity only for a matching, unsettled claim on the current accounting observation or an actual native publication job. An expired delivery claim or unknown response points to the original delivery receipt lookup. The work queue keeps its existing status and query path. A submitter with current Finance intake rights can record the stated units on the exact held file and create a linked successor. This uses the existing evidence and import guards. Unsupported scales remain held for a reviewed conversion.

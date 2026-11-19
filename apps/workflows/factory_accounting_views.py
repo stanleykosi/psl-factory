@@ -284,11 +284,11 @@ def detail(request,work,focus=None):
             if action in ['claim','decide']:
                 target=get_object_or_404(HumanTask,pk=int(request.POST.get('task','0')),case=work.case,kind='factory_accounting_review',context__work=work.pk)
             if action=='advance':
-                runtime.access(request.user,work.case,'factory.execute',service.DEFINITION)
-                from .factory_execution import require_control
-                require_control(request.user,work)
-                if work.revision!=revision:raise ValidationError('STALE_VERSION: accounting work changed')
-                runtime.run_until_wait(work.pk)
+                from .factory_progress import set_progress, wake_waiting
+                set_progress(request.user, work.pk, revision, True)
+                wake_waiting(work.pk)
+                messages.success(request, 'Accounting work can continue in the background. Check this work item for decisions and receipts.')
+                return redirect(url)
             elif action=='claim':service.claim(request.user,target.pk,int(request.POST['task_revision']))
             elif action=='decide':service.decide(request.user,target.pk,int(request.POST['task_revision']),request.POST.get('verdict'),int(request.POST['evidence']),request.POST.get('reason',''))
             elif action=='cancel':runtime.manage(request.user,work.pk,revision,'cancel')

@@ -488,12 +488,16 @@ def _presentation(actor,work,*,focus=None,include_progress=False):
             row.update(state='Delivery uncertain',next_action='Look up the original forecast delivery',can_advance=False)
     if work.definition=='pmo-escalation/v1':
         from .factory_escalation import projection
-        row['escalation']=projection(actor,work);panel=row['escalation'];row['jobs']=panel['jobs']
+        row['escalation']=projection(actor,work,include_progress=include_progress);panel=row['escalation'];row['jobs']=panel['jobs']
         row.update(next_action=panel['next_action'],blocker=panel['finding'],readiness_changed=panel['readiness_changed'])
         row['can_advance']=row['can_advance'] and bool(panel['next_options'])
         row['can_reconcile']=recovery_available and controlled and not (work.lease_until and work.lease_until>timezone.now()) and any(d.uncertain_job(j) for j in panel['jobs'])
         if panel['review_verdicts']:row.update(needs_me=True,department_wait=True,owner=actor.get_full_name() or actor.username,state='Awaiting exact document review')
         if panel['native'].get('stage')=='decision':row.update(owner=', '.join(panel['owner_names']) or 'Unassigned PMO Lead / Head of PMO',needs_me=bool(panel['decision_roles']),department_wait=bool(panel['decision_roles']),state='Awaiting native client decision')
+        if panel['native'].get('stage') == 'not_escalated':
+            row.update(state='Not escalated', owner='No action required', needs_me=False, department_wait=False, can_advance=False)
+        elif panel['native'].get('stage') == 'returned':
+            row.update(state='Returned for correction', needs_me=permitted(actor,work,'factory.manage'), department_wait=False, can_advance=False)
         if panel['readiness_changed']:row['state']='Communication evidence needs revalidation'
     if work.definition=='pmo-leadership-report/v1':
         from .factory_leadership import projection

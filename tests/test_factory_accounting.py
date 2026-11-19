@@ -192,6 +192,35 @@ class AccountingOperatorTests(TestCase):
         self.assertEqual(client.get(reverse('factory_detail',args=[work.pk])).status_code,200)
         self.assertEqual(client.get(reverse('factory_create')+'?definition=finance-accounts/v1&case=not-a-workspace').status_code,404)
 
+    def test_continue_queues_accounting_on_the_worker_and_preserves_native_review(self):
+        from apps.workflows import factory_progress
+        from apps.workflows.models import FactoryProgress
+        from tests.factory_accounting_helpers import configured
+
+        actor, case, evidence, _, _, source, template, _ = self.data
+        work = configured(actor, case, evidence, source, template, METRICS)['work']
+        self.client.force_login(actor)
+        url = reverse('factory_detail', args=[work.pk])
+        fields = {'action': 'advance', 'revision': work.revision}
+        self.assertEqual(self.client.post(url, {**fields, 'revision': 0}).status_code, 302)
+        self.assertFalse(FactoryProgress.objects.filter(work=work).exists())
+        self.assertEqual(self.client.post(url, fields).status_code, 302)
+        self.assertEqual(self.client.post(url, fields).status_code, 302)
+        request = FactoryProgress.objects.get(work=work)
+        self.assertEqual(request.status, 'queued')
+        work.refresh_from_db()
+        self.assertEqual(work.budget_used, 0)
+        self.assertFalse(work.activities.exists())
+
+        for _ in range(12):
+            factory_progress.run_once()
+            request.refresh_from_db()
+            if request.status == 'waiting':
+                break
+        self.assertEqual(request.status, 'waiting')
+        self.assertTrue(HumanTask.objects.filter(case=case, kind='factory_accounting_review',
+            context__work=work.pk, context__purpose='source', status='open').exists())
+
     def test_accounting_configuration_uses_typed_native_lifecycle_and_can_leave_output_slots_unknown(self):
         import json
         from pathlib import Path

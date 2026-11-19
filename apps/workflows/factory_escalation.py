@@ -105,6 +105,11 @@ def report(work,actor=None):
     # Observation equality includes threshold changes, not the passage of microseconds.
     for key in ['as_of','elapsed_hours']:clock.pop(key,None)
     n={'request':r.pk,'profile':r.profile_id,'issue_state':r.profile.state_id,'timing':clock,'stage':'decision','finding':'','issue_resolution_verified':False}
+    decision = r.decisions.order_by('-pk').values('pk', 'verdict').first()
+    if decision and decision['verdict'] in ('return', 'reject'):
+        returned = decision['verdict'] == 'return'
+        return dict(n, decision=decision['pk'], stage='returned' if returned else 'not_escalated',
+                    finding='Correct the source and record a fresh request.' if returned else 'The decision to stop this client escalation was recorded.')
     try:
         d=native.approved_request(work.case,r);n.update(decision=d.pk if d else None,stage='communication')
         published(work,actor);n['stage']='complete'
@@ -133,7 +138,7 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if any(j.status in ['held','leased'] for j in jobs):return [],'Resolve the original communication delivery before continuing'
     if not Activity.objects.filter(work=work,key=investigation_key(work,state),status='succeeded').exists():return ['ACT04'],'Investigate the exact blocker, immediate impact and native approval needs'
     if missing or stale:return [],'Current configured intake evidence required: '+', '.join(missing+stale)
-    if state['native']['stage']=='decision':return [],state['native']['finding']
+    if state['native']['stage'] in ('decision', 'returned', 'not_escalated'):return [],state['native']['finding']
     if state['native']['stage']=='complete':return ['ACT13'],'Verify the reviewed communication and every recipient receipt, not issue resolution'
     if not state['document']:return ['ACT09'],'Prepare the controlled native communication'
     if state['review']['status']!='ready' and not HumanTask.objects.filter(version_id=state['document']).exists():return ['ACT09'],'Request native review of the retained exact communication'
@@ -225,6 +230,23 @@ def decide(actor,work_id,expected,case_expected,request_id,role,verdict,note,del
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or r.pk!=request_id or w.status=='verified':raise ValidationError('Choose exact current native client decision wait')
     return native.decide_escalation(actor,w.case_id,r.pk,role,verdict,note,case_expected,delegated)
 
+
+def decision_controls(actor, case, roles):
+    from apps.policy.services import decision_authority
+
+    controls = []
+    for role in roles:
+        verdicts = []
+        for verdict in ('approve', 'return', 'reject'):
+            try:
+                decision_authority(actor, case, role, verdict)
+            except (ValidationError, PermissionDenied):
+                continue
+            verdicts.append(verdict)
+        if verdicts:
+            controls.append({'role': role, 'verdicts': verdicts})
+    return controls
+
 @transaction.atomic
 def review(actor,work_id,expected,case_expected,version_id,verdict,note):
     from .factory import access
@@ -234,12 +256,16 @@ def review(actor,work_id,expected,case_expected,version_id,verdict,note):
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or not v or v.pk!=version_id:raise ValidationError('Review exact current native communication')
     return review_version(actor,w.case_id,v.pk,verdict,note,case_expected)
 
-def projection(actor,work):
+def projection(actor,work,*,include_progress=False):
     from .factory import profile
+    from .factory_progress import current_plan_step
     from apps.policy.services import decision_authority
     r,data=source(work,actor,False);v=document(work);issue='';options=[];next_action='Review current escalation source';n={};changed=False
+    progress = None
     try:
         _,value=profile(work,recovery=True);state,*args=snapshot(work,value,reader=actor);n=state['native'];options,next_action=eligible(work,value,state,*args)
+        if include_progress and current_plan_step(work, state['hash'], options) == 'ACT04':
+            progress = {'label': 'Investigating the blocker and who needs to decide.', 'watching': True}
         if work.status=='verified':verify(work,actor);next_action='Inspect the communication receipts. Issue resolution is tracked separately.'
     except (ValidationError,PermissionDenied) as exc:issue=finding(exc);next_action=issue;changed=work.status=='verified'
     owners=[];roles=[];verdicts=[]
@@ -273,7 +299,7 @@ def projection(actor,work):
     for head in Evidence.objects.filter(case=work.case,kind=KIND,pk__in=heads).order_by('pk'):
         requests.append(json.loads(head.body)['request_id'])
     from apps.pmo.models import EscalationDecision
-    return {'request':r,'data':data,'native':n,'document':v,'jobs':jobs,'receipts':list(PublicationReceipt.objects.filter(publication__factory_work=work).order_by('pk')),'decision_history':list(EscalationDecision.objects.filter(request_id__in=requests).order_by('pk')),'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'owner_names':sorted(set(owners)),'decision_roles':roles,'review_verdicts':verdicts}
+    return {'request':r,'data':data,'native':n,'document':v,'jobs':jobs,'receipts':list(PublicationReceipt.objects.filter(publication__factory_work=work).order_by('pk')),'decision_history':list(EscalationDecision.objects.filter(request_id__in=requests).order_by('pk')),'finding':issue,'readiness_changed':changed,'next_options':options,'next_action':next_action,'owner_names':sorted(set(owners)),'decision_roles':roles,'review_verdicts':verdicts,'progress':progress}
 
 def reconcile(actor,work_id,expected,adapter=None):
     from .factory import access,cancellation_status

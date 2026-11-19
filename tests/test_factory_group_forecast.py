@@ -1,6 +1,7 @@
 """Explicit group intent through existing forecast factory; synthetic sources only."""
 import json
 from pathlib import Path
+from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.urls import reverse
@@ -64,6 +65,10 @@ class GroupForecastFactoryTests(TestCase):
         self.assertEqual(self.client.post(url,values).status_code,403)
 
     def setUp(self):
+        # A long acceptance run can cross midnight during one review journey.
+        # Keep the test on its starting business date while worker leases use real time.
+        business_date = timezone.localdate()
+        self.enterContext(patch.object(timezone, 'localdate', return_value=business_date))
         self.a,self.c,self.run,self.reader,self.t,self.g,self.expected=configured()
         s=self.run.scenario;p=s.payload
         self.selected={'protocol':PROTOCOL,'scenario_id':s.pk,'as_of':p['as_of'],'months':p['months'],

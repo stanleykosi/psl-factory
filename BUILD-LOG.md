@@ -1,5 +1,13 @@
 # Build progress log
 
+20 November 2026. Verified the exact accounting receipt through the existing background request. The synthetic commercial rework reached delivery 75 after a stopped and recovered planning draft, human edits, four new commercial decisions and separate controlled document review. Shared regression passed 108 tests. Project delivery remained active.
+
+20 November 2026. Confirmed monthly report receipt and Standard Change impact, authorization, review and notice delivery. Found the accounting continuation timeout after exact output approval. Added durable continuation and its native-review test. Finance regression had one date-sensitive forecast error and Commercial passed 106 tests. Project and shared groups continue.
+
+20 November 2026. Hosted the 203 application and worker, applied the archive lease migration and prepared 14 guarded sample cases. Verified Tuesday delivery and fresh stability and archive receipts in the in-app browser. Recorded the Finance units successor and quarantine recheck. Verified independent Emergency sources and retained the recorded outcome with its missing authorization. Grouped regression stayed active and logged a Standard Change publication error. Added locally checked action visibility and live progress for escalation.
+
+19 November 2026. The corrected Finance drafting test passed on Railway, with both retained receipt probes and combined preview gate exit 0. Started the full parallel regression and submitted the matching synthetic web candidate. Browser sample preparation and deployment health are pending.
+
 19 November 2026. The 202 candidate gate passed all seven baseline corrections and most new checks. Moved the Finance drafting assertion after its required approval and submitted the focused 203 rerun on identical application source. The 202 test failure and pending probes remain in the evidence ledger.
 
 19 November 2026. Frozen Railway 201 completed 487 PostgreSQL tests with seven failing cases. Grouped all seven fixes in 202, including the fixed-asset linked-note verification mismatch. Prepared the 22-test preview gate and parallel regression. The existing application stays hosted until the gate passes.
