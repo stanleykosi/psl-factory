@@ -1,5 +1,7 @@
 # Build progress log
 
+19 November 2026. The 202 candidate gate passed all seven baseline corrections and most new checks. Moved the Finance drafting assertion after its required approval and submitted the focused 203 rerun on identical application source. The 202 test failure and pending probes remain in the evidence ledger.
+
 19 November 2026. Frozen Railway 201 completed 487 PostgreSQL tests with seven failing cases. Grouped all seven fixes in 202, including the fixed-asset linked-note verification mismatch. Prepared the 22-test preview gate and parallel regression. The existing application stays hosted until the gate passes.
 
 19 November 2026. Grouped the late invoice test failures with the earlier corrections. Matched the test database to the invoice crash guard and kept every child test process on its parent's isolated database. Added the current synthetic identity prerequisite to the two pending-reservation fixtures. The five guard checks passed without a database; the final Railway traces and grouped rerun are pending.

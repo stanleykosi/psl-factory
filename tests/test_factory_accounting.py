@@ -136,7 +136,7 @@ class FactoryAccountingTests(TestCase):
         factory.run_until_wait(work.pk, provider=InspectNativeClaim())
         self.assertContains(observed_phases['ACT04'], 'Investigating the accounting sources.')
         self.assertContains(observed_phases['ACT08'], 'Calculating the accounting figures.')
-        self.assertContains(observed_phases['ACT09'], 'Drafting the accounting report.')
+        self.assertNotIn('ACT09', observed_phases)
         task=HumanTask.objects.get(case=c,kind='factory_accounting_review',status='open')
         self.assertEqual(task.context['purpose'],'output')
         response=client.get(url);self.assertEqual(response.status_code,200);self.assertContains(response,'Review the prepared accounting report')
@@ -145,7 +145,8 @@ class FactoryAccountingTests(TestCase):
         response=client.post(url,{'action':'decide','task':task.pk,'task_revision':task.revision,'verdict':'approve',
             'evidence':e['finance_review'].pk,'reason':'Synthetic exact accounting output and lineage reviewed'})
         self.assertEqual(response.status_code,302)
-        factory.run_until_wait(work.pk);work.refresh_from_db()
+        factory.run_until_wait(work.pk, provider=InspectNativeClaim());work.refresh_from_db()
+        self.assertContains(observed_phases['ACT09'], 'Drafting the accounting report.')
         self.assertEqual(work.status,'verified',work.finding)
         output=FinanceRun.objects.filter(case=c,kind='formula').latest('pk')
         self.assertEqual(output.result['company']['pbt']['value'],'609.99')
