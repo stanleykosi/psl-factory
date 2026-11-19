@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-37",
   "outcome": "RFP response, part 1: the PM works through the RFP's requirements inside the RFP frame, and accepts, edits or replaces each of Tola's suggested answers (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-RFP-RESPONSE"
   ],
@@ -70,7 +70,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T03:39:11Z",
+      "seconds": 461.8,
+      "evidence_ref": "delivery/features/F-37/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -141,7 +154,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "006599ef8c8f55c13ad73a5c23a16ce774106e83",
     "task_branch": "fe-rfp-response-requirements-answers",
-    "head_sha": null,
+    "head_sha": "089037b2cde16d3877db4e4aed27068017c50a35",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-37",
     "pr_url": null,
     "pr_number": null,
@@ -152,7 +165,32 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/rfp-requirements.spec.ts",
+      "frontend/mock/fixtures/work/W-3401.json",
+      "frontend/mock/fixtures/work/W-3402.json",
+      "frontend/mock/fixtures/work/W-3402.next.accept.json",
+      "frontend/mock/fixtures/work/W-3402.next.accept_selected.json",
+      "frontend/mock/fixtures/work/W-3402.next.edit_accept.json",
+      "frontend/mock/fixtures/work/W-3402.next.write_own.json",
+      "frontend/mock/fixtures/work/W-3402.steps.json",
+      "frontend/mock/fixtures/work/W-3403.json",
+      "frontend/mock/fixtures/work/W-3403.next.json",
+      "frontend/mock/fixtures/work/W-3403.steps.json",
+      "frontend/mock/fixtures/work/W-3404.json",
+      "frontend/mock/proposals/rfp-response.json",
+      "frontend/mock/workspace.mjs",
+      "frontend/src/features/rfp/RfpFrame.tsx",
+      "frontend/src/features/rfp/rfp.css",
+      "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/work-item/WorkItemView.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
+      "frontend/src/features/workspace/StepForm.tsx",
+      "frontend/src/features/workspace/Workspace.tsx",
+      "frontend/src/features/workspace/workspace.css",
+      "frontend/tests/rfp-requirements-mock.test.ts",
+      "frontend/tests/rfp-requirements.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -203,6 +241,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T03:39:14Z",
+      "round": 1,
+      "head": "089037b2cde16d3877db4e4aed27068017c50a35",
+      "reason": null
     }
   ],
   "routing": {
@@ -219,9 +265,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "089037b2cde16d3877db4e4aed27068017c50a35"
   },
   "blocked": null
 }
