@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-43",
   "outcome": "Cash forecast \u00b7 base case, Nov\u2013Apr: Finance reviews the six-month forecast, approves, returns or rejects it in place, and records what happened to an uncertain delivery, in four states (contract mock only)",
-  "state": "IMPLEMENTING",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-FIN-FORECAST"
   ],
@@ -89,15 +89,29 @@
       "at": "2026-11-19T02:22:43Z",
       "seconds": 479.1,
       "evidence_ref": "delivery/features/F-43/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "5020a86be7320090efa1b2888295f52e205e761a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T03:25:15Z",
+      "seconds": 283.2,
+      "evidence_ref": "delivery/features/F-43/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -123,25 +137,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "delivery security review",
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -181,14 +201,28 @@
         "delivery/features/F-43/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T02:29:28Z",
           "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T03:25:15Z",
+          "refs": [
+            "89a5caf4"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "89a5caf4"
       ]
     },
     {
@@ -204,14 +238,28 @@
         "delivery/features/F-43/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T02:29:28Z",
           "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T03:25:15Z",
+          "refs": [
+            "89a5caf4"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "89a5caf4"
       ]
     },
     {
@@ -227,14 +275,28 @@
         "delivery/features/F-43/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-19T02:29:28Z",
           "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T03:25:15Z",
+          "refs": [
+            "5020a86b"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5020a86b"
       ]
     },
     {
@@ -273,14 +335,42 @@
         "delivery/features/F-43/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-19T02:29:28Z",
           "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T03:25:15Z",
+          "refs": [
+            "89a5caf4"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T03:29:19Z",
+          "refs": [
+            "5020a86b"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": "round-2/review-ux.md: fixed at 1440 and 390"
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "89a5caf4"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "5020a86b"
       ]
     },
     {
@@ -388,14 +478,42 @@
         "delivery/features/F-43/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T02:29:28Z",
           "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T03:25:15Z",
+          "refs": [
+            "29a7f94c"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:29:18Z",
+          "refs": [
+            "5020a86b"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": "round-2/review-ui.md: fixed at 1440 and 390"
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "29a7f94c"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "5020a86b"
       ]
     },
     {
@@ -411,14 +529,42 @@
         "delivery/features/F-43/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T02:29:28Z",
           "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T03:25:15Z",
+          "refs": [
+            "29a7f94c"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:29:19Z",
+          "refs": [
+            "5020a86b"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": "round-2/review-ui.md: fixed at 1440 and 390"
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "29a7f94c"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "5020a86b"
       ]
     },
     {
@@ -434,14 +580,42 @@
         "delivery/features/F-43/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T02:29:28Z",
           "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T03:25:15Z",
+          "refs": [
+            "89a5caf4"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:29:19Z",
+          "refs": [
+            "5020a86b"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": "round-2/review-ui.md: fixed at 1440 and 390"
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "89a5caf4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "5020a86b"
       ]
     },
     {
@@ -457,14 +631,28 @@
         "delivery/features/F-43/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T02:29:28Z",
           "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T03:25:15Z",
+          "refs": [
+            "(factory file)"
+          ],
+          "head": "5020a86be7320090efa1b2888295f52e205e761a",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "(factory file)"
       ]
     },
     {
@@ -487,6 +675,75 @@
           "by": "reviewer-ui",
           "at": "2026-11-19T02:29:28Z",
           "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The shared `FactsList` tag change also reaches F-33 W-2706 and F-42 W-3907..3909 (\"NOT SET\"). Those facts now draw a tag in place of plain words. The builder listed this, and their tests pass unchanged. For design engineer awareness only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:28:56Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`caption={forecast}` applies to every section of the `cash_forecast` line, including the older W-2004 D-62 example. This is harmless today, because `captionText` only matches a one-item, untitled, plain text section. Be aware of it if more forecast fixtures are added.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T03:28:56Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "5020a86be7320090efa1b2888295f52e205e761a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Phone strip cells use the desktop type, not the board's.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T03:28:56Z",
+          "head": "5020a86be7320090efa1b2888295f52e205e761a"
         }
       ]
     }
@@ -579,7 +836,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "006599ef8c8f55c13ad73a5c23a16ce774106e83",
     "task_branch": "fe-fin-forecast-cash-forecast-review",
-    "head_sha": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+    "head_sha": "5020a86be7320090efa1b2888295f52e205e761a",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-43",
     "pr_url": null,
     "pr_number": null,
@@ -618,6 +875,7 @@
       "frontend/src/features/response/ReconcilePanel.tsx",
       "frontend/src/features/response/labels.ts",
       "frontend/src/features/work-item/WorkItemOverview.tsx",
+      "frontend/src/features/workspace/Sections.tsx",
       "frontend/src/features/workspace/Workspace.tsx",
       "frontend/src/features/workspace/labels.ts",
       "frontend/src/features/workspace/workspace.css",
@@ -700,6 +958,22 @@
       "round": 2,
       "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T03:25:16Z",
+      "round": 2,
+      "head": "5020a86be7320090efa1b2888295f52e205e761a",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T03:29:21Z",
+      "round": 2,
+      "head": "5020a86be7320090efa1b2888295f52e205e761a",
+      "reason": null
     }
   ],
   "routing": {
@@ -717,9 +991,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "5020a86be7320090efa1b2888295f52e205e761a"
   },
   "blocked": null
 }
