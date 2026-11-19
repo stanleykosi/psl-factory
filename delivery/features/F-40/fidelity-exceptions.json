@@ -191,6 +191,22 @@
    "conflicts": 5,
    "reason": "Conflicts 5: the record boards draw no confirmation, but the contract needs an attestation (the response body's attested flag) before Record reply is allowed; the tick is the F-18 control, kept (acceptance 10).",
    "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "textbox",
+   "name": "Support replied",
+   "category": "component",
+   "conflicts": null,
+   "reason": "UI-2-1 (coordinator, round 3): the record boards draw 'Support replied' as one text line (name · role · date and time). The page draws a name-and-role input plus a separate native date-time picker, because the step's contract takes the reply time as a structured date-time, not free text. The values drawn are the ones entered; nothing is computed.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "button",
+   "name": "Remove",
+   "category": "component",
+   "conflicts": null,
+   "reason": "UI-2-2 (coordinator, round 3): the shared F-18 Proof card draws a remove (×) control for an uploaded file, which the record boards do not draw. It belongs to the shared proof component.",
+   "approved_by": "builder proposal, pending design engineer"
   }
  ],
  "visual_waivers": [
@@ -240,14 +256,14 @@
    "board": "SCR-48-desktop-record",
    "width": 1440,
    "visual": 73.8,
-   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, and the phone screen headings now follow the boards; the Support replied field is one name-and-role box plus a separate date-time picker (exception below, UI-2-1), and the Proof card shows a remove control (UI-2-2). The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   },
   {
    "board": "SCR-48-mobile-record",
    "width": 390,
    "visual": 82.5,
-   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, the single Support replied field and the phone screen headings now follow the boards. The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
+   "reason": "D-83 proposal (Conflicts 14), round 2: the state chip tone, the row layout, and the phone screen headings now follow the boards; the Support replied field is one name-and-role box plus a separate date-time picker (exception below, UI-2-1), and the Proof card shows a remove control (UI-2-2). The remaining gap is the shared F-17/F-22 frame (top bar, crumbs as a list, History link, page width, project tab bar as links, no delivery sub-nav) and the frame's Next panel; the board's data is drawn as returned. On the record boards the form sits in place with the intro as its footnote, and the confirm tick, Proof file card and gaps lines are the F-18 parts. Counts only after the design engineer signs it.",
    "approved_by": "builder proposal, pending design engineer"
   }
  ]

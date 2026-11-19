@@ -87,6 +87,18 @@
       "at": "2026-11-19T04:01:47Z",
       "seconds": 369.5,
       "evidence_ref": "delivery/features/F-40/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-19T10:24:15Z",
+      "seconds": 487.6,
+      "evidence_ref": "delivery/features/F-40/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -225,14 +237,42 @@
         "delivery/features/F-40/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-19T09:22:41Z",
           "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "phone Back reads \"\u2190 Delivery\" and returns to the project's Delivery tab (component and e2e tests)"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "At 390, PM opens W-3704 from the Delivery tab: bar reads \"\u2190 Delivery\"; clicking it returns to /projects/P-0101/delivery. At 1440 the crumb \"\u2190 Delivery\" also returns there."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "phone Back reads \"\u2190 Delivery\" and returns to the project's Delivery tab (component and e2e tests)"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "At 390, PM opens W-3704 from the Delivery tab: bar reads \"\u2190 Delivery\"; clicking it returns to /projects/P-0101/delivery. At 1440 the crumb \"\u2190 Delivery\" also returns there."
       ]
     },
     {
@@ -248,14 +288,42 @@
         "delivery/features/F-40/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-19T09:22:41Z",
           "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "attestation row is 48px at 390 (e2e measures it)"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "At 390 on W-3703 the attestation row measures 48px."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "attestation row is 48px at 390 (e2e measures it)"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "At 390 on W-3703 the attestation row measures 48px."
       ]
     },
     {
@@ -271,14 +339,42 @@
         "delivery/features/F-40/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-19T09:22:41Z",
           "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "mock returns 404 for the handover items to ceo and none; the backend must do the same"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "ceo gets \"NO ACCESS - You can't open this work item\" on W-3704 at both widths; a persona with no roles gets \"No sections are open to your role yet\"."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "mock returns 404 for the handover items to ceo and none; the backend must do the same"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "ceo gets \"NO ACCESS - You can't open this work item\" on W-3704 at both widths; a persona with no roles gets \"No sections are open to your role yet\"."
       ]
     },
     {
@@ -294,14 +390,42 @@
         "delivery/features/F-40/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T09:22:41Z",
           "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "state chips take their tone from the fixture status (`uncertain` = amber), checked per state in a component test and an e2e colour check"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "Ready and Published chips are amber at 1440 (desktop and record side-by-sides) and at 390 (mobile-record), matching the boards."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "state chips take their tone from the fixture status (`uncertain` = amber), checked per state in a component test and an e2e colour check"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Ready and Published chips are amber at 1440 (desktop and record side-by-sides) and at 390 (mobile-record), matching the boards."
       ]
     },
     {
@@ -317,14 +441,42 @@
         "delivery/features/F-40/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T09:22:41Z",
           "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "Handover rows laid out like the board by CSS on the line key; DRAFT is the agent chip, other values plain mono caps at the row end"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "Handover rows at 1440: label left, mono caps value right (NO \u00b7 BELOW THE RULE'S THRESHOLD, ATTACHED), row rules; DRAFT is a chip as on the board."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Handover rows laid out like the board by CSS on the line key; DRAFT is the agent chip, other values plain mono caps at the row end"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Handover rows at 1440: label left, mono caps value right (NO \u00b7 BELOW THE RULE'S THRESHOLD, ATTACHED), row rules; DRAFT is a chip as on the board."
       ]
     },
     {
@@ -340,14 +492,28 @@
         "delivery/features/F-40/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T09:22:41Z",
           "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "one \"Support replied\" field with name, role and date-time; Proof label and gaps hint visually hidden but still labelled; the confirm tick stays as an exception (Conflicts 5)"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "one \"Support replied\" field with name, role and date-time; Proof label and gaps hint visually hidden but still labelled; the confirm tick stays as an exception (Conflicts 5)"
       ]
     },
     {
@@ -363,14 +529,42 @@
         "delivery/features/F-40/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T09:22:41Z",
           "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "390 headings come from `workspace.title`; the card and caption are gone on the phone record screen"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "refs": [
+            "At 390 the headings read \"Support's reply\" and the card is gone on the record screen."
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "390 headings come from `workspace.title`; the card and caption are gone on the phone record screen"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "At 390 the headings read \"Support's reply\" and the card is gone on the record screen."
       ]
     },
     {
@@ -386,13 +580,96 @@
         "delivery/features/F-40/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-19T09:22:41Z",
           "head": "b051cfa790dc4984060e6e236649aefb5c83e764"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-19T10:24:16Z",
+          "refs": [
+            "waivers rewritten to name what remains"
+          ],
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "waivers rewritten to name what remains"
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "owner": "coordinator",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The History link in the shared line header is 24px tall at 390 (17px at 1440). It belongs to the shared F-22 header and the build records it. Not a blocker for F-40.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T10:27:27Z",
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The \"Support replied\" field is still not the board's single box. Desktop and 390 record boards draw one text line (\"Femi Ojo \u00b7 Support lead \u00b7 10 Apr 2027, 11:00\"); the page draws a name/role input plus a separate native date-time picker (beside it at 1440, on its own row at 390). No exception covers the picker, and the round-2 waivers say the field \"now follows the boards\". Add an honest exception (a structured date-time is needed by the contract) and correct the waiver text, or merge into one field.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Proof card shows a remove \"\u00d7\" the board does not draw. Mention it under the F-18 Proof exception wording.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-40/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T10:27:27Z",
+          "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd"
         }
       ]
     }
@@ -461,6 +738,70 @@
           ]
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "evidence_refs": [
+            "delivery/features/F-40/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-40/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "evidence_refs": [
+            "delivery/features/F-40/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "evidence_refs": [
+            "delivery/features/F-40/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+          "evidence_refs": [
+            "delivery/features/F-40/round-2/review-security.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -485,7 +826,7 @@
     "base_branch": "dlv-00-delivery-setup",
     "base_sha": "cc43884ecce27110928a512664a2fc32c79119f5",
     "task_branch": "fe-delivery-closure-handover",
-    "head_sha": "b051cfa790dc4984060e6e236649aefb5c83e764",
+    "head_sha": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-40",
     "pr_url": null,
     "pr_number": null,
@@ -532,11 +873,14 @@
       "frontend/mock/fixtures/work/W-3711.json",
       "frontend/mock/fixtures/work/W-3720.json",
       "frontend/mock/response.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/src/features/response/ProofField.tsx",
       "frontend/src/features/response/ResponseForm.tsx",
       "frontend/src/features/response/SupportHandoverForm.tsx",
       "frontend/src/features/response/contract.ts",
       "frontend/src/features/response/labels.ts",
       "frontend/src/features/response/useResponse.ts",
+      "frontend/src/features/work-item/WorkItemView.tsx",
       "frontend/src/features/workspace/ResponseDrawer.tsx",
       "frontend/src/features/workspace/Steps.tsx",
       "frontend/src/features/workspace/Workspace.tsx",
@@ -580,7 +924,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -622,6 +966,30 @@
       "round": 2,
       "head": "b051cfa790dc4984060e6e236649aefb5c83e764",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-19T10:24:17Z",
+      "round": 2,
+      "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T10:27:28Z",
+      "round": 2,
+      "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T10:27:29Z",
+      "round": 3,
+      "head": "1457df1c1d4ad44327640da4efcce7d5d85dc9cd",
+      "reason": null
     }
   ],
   "routing": {
@@ -638,7 +1006,7 @@
     ]
   },
   "gate": {
-    "round": 2,
+    "round": 3,
     "attempts": 0,
     "verdict": null,
     "commit": null
