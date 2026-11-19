@@ -74,6 +74,21 @@ for (const [label, viewport] of [
       await expect(page.getByRole('navigation', { name: 'RFP' }).getByRole('link', { name: /Team input/ })).toHaveAttribute('href', '/work/W-2101');
     });
 
+    if (phone) {
+      test('the draft keeps Send for review and Edit cover letter in a bar pinned to the bottom, whatever the scroll (UI-1-8)', async ({ page }) => {
+        await page.goto('/work/W-3501');
+        await loaded(page);
+        const bar = page.locator('.ws-decide').filter({ has: page.getByRole('button', { name: 'Send for review' }) });
+        await expect(bar.getByRole('button', { name: 'Edit cover letter' })).toBeVisible();
+        expect(await bar.evaluate((el) => getComputedStyle(el).position)).toBe('fixed');
+        for (const y of [0, 100000]) {
+          await page.evaluate((top) => window.scrollTo(0, top), y);
+          const box = await bar.boundingBox();
+          expect(Math.round(box!.y + box!.height)).toBe(viewport.height);
+        }
+      });
+    }
+
     test('Send for review sends one step and the re-read shows the in-review state; nothing says it was sent first', async ({ page }) => {
       const seen = recorder(page);
       await page.goto('/work/W-3501');

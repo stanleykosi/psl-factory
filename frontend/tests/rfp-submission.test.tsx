@@ -578,6 +578,15 @@ describe('the facts and next step match the state (UX-1-1, UX-1-2)', () => {
   });
 });
 
+describe('submitted status kind (TECH-2-1, spec fixture table, F-18 tone rule)', () => {
+  it('every submitted fixture keeps rfp.status.kind "submitted" with the SUBMITTED label', () => {
+    for (const w of [item('W-3502.approve'), item('W-3503'), item('W-3504'), sidecar('W-3505.delivered')]) {
+      expect(w.rfp?.status.kind).toBe('submitted');
+      expect(w.rfp?.status.label).toMatch(/^SUBMITTED /);
+    }
+  });
+});
+
 describe('uncertain paths (AC 14)', () => {
   const uncertain = (): WorkItem => item('W-3505.approve');
 
