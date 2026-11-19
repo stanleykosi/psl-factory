@@ -1,5 +1,43 @@
 {
   "design_consolidation_20261116": {
+    "payroll_question_reads_20261119":{
+      "status":"postgresql175_hosted_exact_focus_browser_verified",
+      "process_ids":["F18","F35"],
+      "passed_175":{"deployment":"b8a3c75b-828a-4be3-96e6-2887a4abe226","passed":10,"seconds":176.172,"final_exit":0,"tight_charged_query_budget":1100,"total_queries_with_fixed_metadata_and_cleanup":1117},
+      "runtime_175":{"web":"5fe76db5-3736-411e-a17c-c86ef50bcad8","worker":"198cde06-fd16-41f1-86c5-35fe50e70648","status":"SUCCESS","paths_per_service":1740,"root_paths":1739,"mismatches":0},
+      "browser":{"retained_question":2,"exact_focus_and_all_questions_navigation":true,"hr_question":1,"author_waits_for_original_recipient":true,"desktop_body_client":[1265,1265],"screenshot":".runtime/design-acceptance-payroll175-exact-hr-question-desktop.jpg","viewport_reset":true,"records_changed":false,"multi_report_deferral_observed_in_browser":false},
+      "implemented":["Total2400-query/5-second distinct-report desk bound","Exact-question focus and participant-scoped links","Safe per-item deferral without prior replies or inferred authority","Native prepared report check reuse within a locked request","Savepoint rollback/release after read-limit exhaustion","HR author versus report-recipient acknowledgement copy"],
+      "fixture_or_migration":false,
+      "remaining":"Optimise the high native current-report baseline when justified; retain exact provenance. Continue ordinary client acceptance/workaround, actual aggregate-only Assistant and other262-state functions."
+    },
+    "next_connected_delivery_acceptance_20261119":{
+      "status":"source_and_existing_service_inspection_in_progress",
+      "states":["SCR-16","SCR-16-sow-signed","SCR-16-success","SCR-16-validation","SCR-17-setup"],
+      "source_backed_design":["A person records the external client response for an exact supplied build/version","Named client, response time, approval/change request/rejection, proof attachment and human genuineness attestation","Immutable correction records","Agent checks version/signatory mismatches but cannot vouch for the client"],
+      "engineering_proposal":"Reuse delivery/approval/source services for an ordinary client-response/workaround path distinct from existing go-live attestations; connect current qualified response to release gates and rework, preserving signed-SOW invoicing independence.",
+      "inspect":["apps/pmo/delivery.py","apps/workflows/factory_delivery.py","apps/pmo/approvals.py","apps/pmo/go_live_attestations.py","design/canvas/project/SCR-16-desktop.dc.html"],
+      "hod_deferred":"Actual contacts/owners, proof acceptance and financial/stage policy values; build typed interfaces and use explicitly SAMPLE fixtures."
+    },
+    "pending_direct_browser_groups_20261119":{
+      "classification":"Engineering verification groups from inventory minus observed ledger; not a redefinition of the13 process families",
+      "unseen_count":51,
+      "groups":{
+        "shared_invoice_decisions":["SCR-02-issue","SCR-02-permission","SCR-02-waiting","SCR-03-ceo-costing","SCR-03-cto-emergency","SCR-03-not-yours","SCR-03-own","SCR-03-payment-exception","SCR-03-stale"],
+        "client_response_and_setup":["SCR-16","SCR-16-sow-signed","SCR-16-success","SCR-16-validation","SCR-17-setup"],
+        "commercial_costing":["SCR-27","SCR-27-adjust","SCR-27-approvals","SCR-27-ask"],
+        "standard_change":["SCR-31-authorise","SCR-31-closed","SCR-31-decision","SCR-31-execution","SCR-31-go-live-note","SCR-31-impact","SCR-31-notice","SCR-31-rejected"],
+        "hr_corrections":["SCR-37"],
+        "agent_progress":["SCR-46-evaluating","SCR-47-working"],
+        "emergency":["SCR-50-record","SCR-50-refused","SCR-50-report","SCR-50-retro","SCR-50-review"],
+        "escalation":["SCR-51-investigating","SCR-51-not-escalated"],
+        "leadership":["SCR-52-drafting","SCR-52-setup","SCR-52-tuesday"],
+        "finance_accounts":["SCR-53-drafting","SCR-53-investigating","SCR-53-owner-needed","SCR-53-publishing","SCR-53-quarantined","SCR-53-setup-needed","SCR-53-uncertain","SCR-53-units"],
+        "assets":["SCR-54-held","SCR-54-investigating"],
+        "schedules":["SCR-55-investigating"],
+        "forecasts":["SCR-56-investigating"]
+      },
+      "acceptance_rule":"Inspect each actual source state and existing backend, exercise native synthetic intake/decisions/recovery/output in the in-app browser, and record scoped evidence. Presence of a seeded record or a visit is not completion; reconcile optional old test examples separately."
+    },
     "payroll_hr_questions_20261119":{
       "status":"postgresql171_172_173_174_hosted_browser_closed_question_flow_verified",
       "states":["SCR-18-permission"],

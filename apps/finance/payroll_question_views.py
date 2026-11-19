@@ -1,10 +1,12 @@
 from uuid import uuid4
+from time import monotonic
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied,ValidationError
 from django.db.models import Q
+from django.http import HttpResponseBadRequest
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views.decorators.http import require_http_methods
 
@@ -17,11 +19,22 @@ from apps.policy.payroll_validators import QUESTION_ROUTE
 from apps.policy.payroll_drafts import draft_payroll_policy
 from apps.policy.services import reference_values
 from apps.core.services import lock_case
+from apps.core.read_budget import limit_queries,ReadLimit
 from django.db import transaction
 from django.utils import timezone
 from . import payroll_questions as domain,payroll as native
 from .payroll_models import PayrollPublication
 from .payroll_question_models import PayrollReportQuestion
+
+QUERY_LIMIT=2400
+READ_SECONDS=5
+
+
+def record_id(value):
+    if value is None:return None
+    if not value.isascii() or not value.isdigit() or not 1<=len(value)<=19 or not 0<int(value)<2**63:
+        raise ValidationError('Choose a valid report or question')
+    return int(value)
 
 
 class QuestionForm(forms.Form):
@@ -58,26 +71,35 @@ def desk(request,case_id):
                 return redirect('payroll_questions',case_id=case.pk)
             except (PermissionDenied,ValidationError):held='The report, question or authority changed. Review the current information.'
         else:held='Choose a displayed question and action.'
-    publication_id=request.GET.get('report')
-    if publication_id and publication_id.isascii() and publication_id.isdigit():
-        publication=get_object_or_404(PayrollPublication.objects.defer('payload').select_related('request'),
-                                      request__case=case,pk=publication_id)
-        try:
-            native.read_publication(request.user,publication.pk)
-            create_form=QuestionForm(initial={'revision':case.revision,'publication':publication.pk,'operation_key':uuid4()})
-        except (PermissionDenied,ValidationError):held='This report needs current recipient and source checks before a question can be recorded.'
+    try:publication_id=record_id(request.GET.get('report'));question_id=record_id(request.GET.get('question'))
+    except ValidationError:return HttpResponseBadRequest('Choose a valid report or question.')
     selected=PayrollReportQuestion.objects.select_related('case','actor').filter(case=case).filter(
         Q(actor=request.user)|Q(events__kind='dispatched',events__data__owner_id=request.user.pk)).distinct().order_by('-pk')
+    if question_id:selected=selected.filter(pk=question_id)
     page=request.GET.get('page','1')
-    number=min(int(page),10000) if page.isascii() and page.isdigit() else 1
+    number=max(1,min(int(page),10000)) if page.isascii() and page.isdigit() and len(page)<=5 else 1
     offset=max(number-1,0)*25;items=list(selected[offset:offset+26]);has_next=len(items)>25;cards=[]
     reader=domain.Reader(request.user,case)
-    for item in items[:25]:
-        try:cards.append(domain.projection(request.user,item,reader))
-        except (PermissionDenied,ValidationError):continue
+    deferred=[]
+    with limit_queries(QUERY_LIMIT,deadline=monotonic()+READ_SECONDS):
+        if publication_id:
+            try:
+                publication=get_object_or_404(PayrollPublication.objects.defer('payload').select_related('request'),
+                                              request__case=case,pk=publication_id)
+                reader.admit_publication(request.user,publication)
+                create_form=QuestionForm(initial={'revision':case.revision,'publication':publication.pk,'operation_key':uuid4()})
+            except (PermissionDenied,ValidationError,ReadLimit):
+                held='This report needs a fresh recipient and source check before a question can be recorded.'
+        for item in items[:25]:
+            try:cards.append(domain.projection(request.user,item,reader))
+            except (PermissionDenied,ValidationError):continue
+            except ReadLimit:deferred.append(item)
+    # No reply, source values, owner name or usable action is projected for a
+    # deferred record. Its exact link starts a fresh, separately bounded read.
+    cards.extend(domain.deferred_projection(request.user,item) for item in deferred)
     response=render(request,'finance/payroll_questions.html',{'case':case,'create_form':create_form,
         'cards':cards,'held':held,'reply_choices':REPLIES.items(),'has_next':has_next,'page':number,
-        'next_page':number+1,'previous_page':number-1})
+        'next_page':number+1,'previous_page':number-1,'focused':bool(question_id)})
     response['Cache-Control']='no-store';return response
 
 

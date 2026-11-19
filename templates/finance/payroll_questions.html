@@ -1,17 +1,20 @@
 {% extends 'base.html' %}{% load studio_ui %}{% block content %}
 <a href="{% url 'case' case.pk %}">Back to workspace</a>
 <h1>Questions for HR</h1><p>{{ case|workspace_name }}</p>
+{% if focused %}<p><a href="{% url 'payroll_questions' case.pk %}">All your questions in this workspace</a></p>{% endif %}
 <p>Ask about the staff information behind a reviewed report. Individual names and pay stay in the restricted HR view.</p>
 {% if held %}<p role="alert">{{ held }}</p>{% endif %}
 {% if create_form %}<section class="card"><h2>Ask HR a question</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="record">{{ create_form.as_p }}<button>Record question for review</button></form></section>{% endif %}
-{% for card in cards %}<section class="card"><h2>{{ card.question }}</h2><p>Period {{ card.period }} · Report {{ card.publication }}</p>
+{% for card in cards %}<section class="card"><h2>{{ card.question }}</h2>{% if card.publication %}<p>Period {{ card.period }} · Report {{ card.publication }}</p>{% endif %}
 {% if card.state == 'recorded' %}<p>Ready for your review. Sending creates an internal wait for the configured HR owner.</p>
 {% elif card.state == 'owner_needed' %}<p>Question recorded. Select and activate an HR response owner before sending.</p>
 {% elif card.state == 'dispatched' %}<p>Waiting for the assigned HR owner.</p>
-{% elif card.state == 'answered' %}<p>HR has responded. Read the reply and acknowledge it.</p>
+{% elif card.state == 'answered' %}<p>{% if card.can_receive %}HR has responded. Read the reply and acknowledge it.{% else %}HR response recorded. Waiting for the original report recipient to acknowledge it.{% endif %}</p>
 {% elif card.state == 'received' %}<p>Reply acknowledged. This question is complete.</p>
 {% elif card.state == 'cancelled' %}<p>Question cancelled. Its history is retained.</p>
+{% elif card.state == 'read_limited' %}<p>This question needs a fresh check. Its source, owner and reply have not been confirmed on this page.</p>
 {% else %}<p>The source report or authority changed. Its previous reply is unavailable. Record a fresh question against a current report.</p>{% endif %}
+{% if not focused %}<p><a href="{% url 'payroll_questions' case.pk %}?question={{ card.id }}">Open this question</a></p>{% endif %}
 {% if card.reply %}<p>{{ card.reply }}</p>{% endif %}
 {% if card.owner_name %}<p>HR response owner: {{ card.owner_name }}</p>{% endif %}
 {% if card.can_send or card.can_answer or card.can_receive or card.can_cancel %}

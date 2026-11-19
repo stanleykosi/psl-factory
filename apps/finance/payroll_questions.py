@@ -61,6 +61,11 @@ class Reader:
     def __init__(self,actor,case):
         self.case=lock_case(actor,case.pk,'case.read');self.sources={};self.routing=None;self.route_checked=False
 
+    def admit_publication(self,actor,publication):
+        if publication.request.case_id!=self.case.pk:raise PermissionDenied('Report belongs to another workspace')
+        packet=prepare_report_question(actor,publication,'report_coverage')
+        self.sources[(actor.pk,publication.pk)]=packet
+
     def source(self,question):
         if question.case_id!=self.case.pk:raise PermissionDenied('Question belongs to another workspace')
         validate(PACKET,question.packet);key=(question.actor_id,question.publication_id)
@@ -178,6 +183,16 @@ def _projection(actor,question,reader):
         person=get_user_model().objects.only('first_name','last_name','username').get(pk=current_route['owner_id'])
         result['owner_name']=person.get_full_name() or person.username
     return result
+
+
+def deferred_projection(actor,question):
+    """No source or ownership assertion when the engineering read limit fires."""
+    active_actor(actor,question.case,'case.read')
+    own=actor.pk==question.actor_id
+    if own:validate(PACKET,question.packet)
+    return {'id':question.pk,'question':TOPICS[question.packet['topic']] if own else 'A question needs current access checks',
+            'period':question.packet['period'] if own else None,'publication':None,'state':'read_limited',
+            'can_cancel':False,'can_send':False,'can_answer':False,'can_receive':False,'reply':None,'owner_name':None}
 
 
 @transaction.atomic

@@ -158,6 +158,6 @@ def work(actor,limit=25):
             'reference':question['question'],'status':question['state'],'display_status':{
                 'owner_needed':'HR owner needed','dispatched':'Waiting for HR','answered':'HR reply ready',
                 'recorded':'Ready for your review','held':'Needs current source or authority checks'}.get(question['state'],question['state']),
-            'url':f'/cases/{case.pk}/finance/payroll/questions/'})
+            'url':f'/cases/{case.pk}/finance/payroll/questions/?question={question["id"]}'})
     return {'rows':rows,'coverage':'Bounded current accessible recorded assignments, delivered department requests, role-eligible reviews, HR report questions and initiated operational work; not an exhaustive task or approval claim',
         'authority_from_discovery':False,'effect_tools':[]}
