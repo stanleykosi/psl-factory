@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-43",
   "outcome": "Cash forecast \u00b7 base case, Nov\u2013Apr: Finance reviews the six-month forecast, approves, returns or rejects it in place, and records what happened to an uncertain delivery, in four states (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-FIN-FORECAST"
   ],
@@ -144,8 +144,419 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The shared InlineDecide stale-409 gap (F-35 QA-2-1, fixed only on the unmerged F-35 and F-39 branches) affects F-43's review step. Example: a second reviewer decides W-4002 first, so this reviewer's decide gets a 409 and the re-read closes T-4002. The panel then disappears with no stale sentence, and the return or reject note is dropped without a word. Expected: the stale sentence and the unsent note (spec E-TASK-DECIDE 409, \"entries kept\"). Actual: `tests/cash-forecast.test.tsx:526` covers only a 409 where the task stays open (revision 2, still actionable). This is not blocking, by instruction. When F-35/F-39 merge into the base, rerun the cash-forecast tests and add a W-4002 case where the re-read closes the task.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On desktop, `ReconcilePanel` renders its own `<aside class=\"resp-reconcile\">` (inside a `div.work-column`) within the workspace's `<aside class=\"ws-side\">` (`frontend/src/features/workspace/Workspace.tsx:663-664`, `:775-776`). In `WorkspaceSteps` the outer aside is then named by the \"Next\" heading (`aria-labelledby={decideId}-head` when `hasNext && side.length === 0`). Nested complementary landmarks are an axe best-practice rule, not one of the WCAG tags AC 23 runs, so this does not fail. A later tidy-up could drop the inner landmark when the panel is drawn beside.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The line key `cash_forecast` is written out in three places: `INTERNAL_RECONCILE_LINE` in `frontend/src/features/response/labels.ts:77`, `reconcileBeside` in `frontend/src/features/workspace/labels.ts`, and the exceptions list in `frontend/src/features/work-item/WorkItemOverview.tsx:719`. All three are correct today, but they could drift when F-44 or F-45 add internal-delivery lines. Consider one shared set.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The desktop test checks that exactly one `.resp-reconcile` is drawn, inside `.ws-side` (`tests/cash-forecast.test.tsx:199-200`). The phone test (`:784`) checks only that the panel is present, not that there is one. Both components use `useIsPhone`, so a double render is not possible today, but a count check on the phone would catch a placement regression.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec contradicts itself. The Conflicts 4 option wording \"I have proof it was received (upload it next).\" uses the word AC 12 bans (\"received\" must not appear before the re-read). The tests strip `.resp-options` before checking AC 12. Product acceptance needs to confirm the wording (build.md note 1).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "AC 18 says pressing \"Record and continue\" with no choice sends nothing and shows \"Choose what happened to continue.\" On desktop (1440) W-4003 the button is disabled from the start and no message or hint says why; on 390 the button is enabled and the message path applies. A disabled button with no explanation leaves a keyboard or screen-reader user with a dead control. Expected: the same behaviour at both widths, enabled and explaining, or a visible hint beside the disabled button. Actual: desktop silent. `frontend/src/features/response/ReconcilePanel.tsx`; the \"It arrived\" case (disabled until proof) has the same silence.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone W-4003 panel heading reads \"Confirm what happened before anything is resent.\" (the client-line phone wording), not the board's \"Record what happened\" used on desktop. Conflicts 4 scopes the heading to the line, so phone should match. `ReconcilePanel.tsx`/`labels.ts` phone branch.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "W-4004 shows the same \"Next\" sentence twice, in the header (\"Next step. As months close, a person records actual cash...\") and in the NEXT section (\"...record actual cash against the forecast.\"), and says a person records actuals while no control exists (Record actuals is held to part 3). Wording is the fixture's; consider one sentence only. Same duplication on every state.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Agent card on W-4002..W-4007 reads \"DONE\" with \"Hand to calculation\" ticked, while on the hold pages (W-4006/7) station 02 says \"Stopped\". Reads as a contradiction beside \"SETUP NEEDED\". Data/fixture wording; no code change needed if the backend sends a stopped agent step.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Phone: \"Skip to main content\" (129x21) and \"History\" (42x24) are under the 44x44 target. Both are shared frame elements, not new in F-43; noted only. Not changed by this feature.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**Verified figures: the tool-limit exceptions hide a restyle and a move.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**Tags sent in `facts` items are not drawn.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "**Phone uncertain page is in the wrong order and has a gap.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**The \"Unknown\" exception should not be listed as a tool limit only.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "**Side column named \"Review and decide\" with nothing to decide.**",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-43/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T02:29:28Z",
+          "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+          "evidence_refs": [
+            "delivery/features/F-43/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-43/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+          "evidence_refs": [
+            "delivery/features/F-43/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+          "evidence_refs": [
+            "delivery/features/F-43/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "delivery security review",
+          "snapshot_ref": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+          "evidence_refs": [
+            "delivery/features/F-43/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -247,7 +658,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:06Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -273,6 +684,22 @@
       "round": 1,
       "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T02:29:29Z",
+      "round": 1,
+      "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T02:29:30Z",
+      "round": 2,
+      "head": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937",
+      "reason": null
     }
   ],
   "routing": {
@@ -289,10 +716,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "59ce7dc1e6896a89a54ccd7e83cf2addf5b51937"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
