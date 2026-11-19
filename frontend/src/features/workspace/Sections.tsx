@@ -39,6 +39,8 @@ export type ItemControls = {
   item?: (section: Section, item: Item) => ReactNode;
   /** The checkbox for an `items` step. */
   select?: (section: Section, item: Item) => ReactNode;
+  /** F-37: the header box that ticks or unticks the rows on screen (never rows that are not drawn). */
+  selectAll?: (section: Section) => ReactNode;
   /** The open form for one of the item's steps, drawn under its row. */
   after?: (section: Section, item: Item) => ReactNode;
   /** The `items` step button under the section. */
@@ -225,8 +227,9 @@ function Table({ section, controls }: { section: Section; controls?: ItemControl
         <thead>
           <tr>
             {selectable && (
-              <th className="psl-check-cell">
+              <th className={controls?.selectAll?.(section) ? 'psl-check-cell ws-selectall' : 'psl-check-cell'}>
                 <span className="cmp-sr">Select</span>
+                {controls?.selectAll?.(section)}
               </th>
             )}
             {columns.map((c) => (
@@ -348,7 +351,7 @@ function Items({ section, controls }: { section: Section; controls?: ItemControl
                 {item.label && item.text && <span className="ws-sugg__ref">{item.label}</span>}
                 <span className={item.label && item.text ? 'ws-sugg__answer' : undefined}>{item.text ?? item.label}</span>
                 <Detail text={item.detail} />
-                {item.agent && !item.tag && <span className="ws-detail">Suggested by {agentName(item.agent)}</span>}
+                {item.agent && !item.tag?.label.includes(agentName(item.agent)) && <span className="ws-detail">Suggested by {agentName(item.agent)}</span>}
               </span>,
               <>
                 {item.tag && <Tag tone={tagTone(item.tag.tone)}>{item.tag.label}</Tag>}

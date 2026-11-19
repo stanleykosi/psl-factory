@@ -108,6 +108,8 @@ const ENGAGEMENT_LINE = 'engagement';
 const ISSUE_TEXT = { register: 'Open the issue register' } as const;
 /** F-41: the payment reminder's line key (SCR-32); read only to open its Edit form in the phone Drawer. */
 const REMINDER_LINE = 'payment_reminder';
+/** F-37: the RFP requirements workspace's line key; read only for the phone Drawer, the discard question and where focus goes after a write. */
+const RFP_LINE = 'rfp_response';
 
 /** The stations as the schedule boards (income F-33, fixed assets F-42) draw them: a row of boxes on desktop, the small bar and its words on a phone
  *  (where the page keeps the full track for screen readers, WorkItemOverview). */
@@ -182,7 +184,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const assignButton = useRef<HTMLButtonElement>(null);
   const phone = useIsPhone();
   // F-30 (D-103, D-107), F-31, F-33, F-41, F-42: on a phone these lines' forms open in the full-height Drawer.
-  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE);
+  const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE || workspace.line_key === RFP_LINE);
   const schedule = scheduleLine(workspace.line_key);
   // F-31: a department's "Record input" opens F-18's team-input form in the Drawer; `recording` names the pressed row's button.
   const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);
@@ -196,6 +198,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const controls = useRef(new Map<string, HTMLButtonElement | null>());
   // The attempt a manual Try again repeats (same key), after a network or server failure on a step that doesn't send.
   const last = useRef<Attempt | null>(null);
+  // F-37: the open form's own close, so the Drawer's close button asks the discard question too
+  const formClose = useRef<(() => void) | null>(null);
   const titled = workspace.title !== undefined && workspace.title !== item.title;
   const decideId = useId();
   // an uncertain item with no reconcile: nothing to confirm here, the notice says it is being checked
@@ -259,9 +263,22 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   const run = async (attempt: Attempt, request?: Pick<StepBody, 'inputs' | 'evidence_ids' | 'note' | 'case_revision'>): Promise<SubmitResult> => {
     last.current = attempt;
     const result = await flow.submit(attempt, request);
-    if (result.kind === 'done') setOpen(null);
+    if (result.kind === 'done') {
+      setOpen(null);
+      if (workspace.line_key === RFP_LINE) focusAfterWrite(attempt.step);
+    }
     if (result.kind === 'invalid' && !open) flow.setNotice({ kind: 'problem', text: result.message ?? STEP_TEXT.failed });
     return result;
+  };
+
+  // F-37: the pressed button goes with the re-read, so focus goes to the suggestion panel's heading, or to the table's toolbar after a bulk accept
+  const focusAfterWrite = (step: Step) => {
+    requestAnimationFrame(() => {
+      const target = scope(step) === 'items' ? document.querySelector<HTMLElement>('.ws-section--table .ws-filters, .ws-section--table .ws-tablewrap') : document.querySelector<HTMLElement>('.ws-section--suggestions .psl-panel__head');
+      if (!target) return;
+      target.tabIndex = -1;
+      target.focus();
+    });
   };
 
   const press = (step: Step, token: string, itemIds?: string[], items?: Open['items']) => {
@@ -354,6 +371,8 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
         initial={row ? itemValues(row) : undefined}
         consequence={<Consequence step={open.step} />}
         summary={issueLine(workspace)}
+        askBeforeDiscard={workspace.line_key === RFP_LINE}
+        closeRef={formClose}
         onSubmit={(request) => {
           const itemIds = open.items ? liveIds(open.step, open.items.section) : open.itemIds;
           // everything was unticked while the form was open: nothing to send
@@ -365,7 +384,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
       />
     );
     return inDrawer ? (
-      <Drawer title={open.step.label} onClose={() => close(token)}>
+      <Drawer title={open.step.label} onClose={() => (formClose.current ? formClose.current() : close(token))}>
         {shown}
       </Drawer>
     ) : (
@@ -484,6 +503,27 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
             aria-label={`Select ${itemName(section, it)}`}
             checked={checked}
             onChange={(event) => setChoices((current) => ({ ...current, [choiceKey(section, it)]: event.target.checked }))}
+          />
+        </label>
+      );
+    };
+    // F-37: the requirements table has the header box; other lines' item lists keep their own boxes only
+    sectionControls.selectAll = (section) => {
+      if (workspace.line_key !== RFP_LINE) return undefined;
+      const rows = section.items.filter((it) => isItemsTarget(it) && !it.restricted);
+      if (section.restricted || rows.length === 0) return undefined;
+      const on = rows.filter((it) => ticked(section, it)).length;
+      return (
+        <label className="ws-checkwrap">
+          <input
+            type="checkbox"
+            className="ws-check"
+            aria-label="Select all shown rows"
+            checked={on === rows.length}
+            ref={(el) => {
+              if (el) el.indeterminate = on > 0 && on < rows.length;
+            }}
+            onChange={(event) => setChoices((current) => ({ ...current, ...Object.fromEntries(rows.map((it) => [choiceKey(section, it), event.target.checked])) }))}
           />
         </label>
       );

@@ -3,6 +3,7 @@
 // bar's "← RFP" instead). Tabs are links in a nav, not a tablist: the screens behind Requirements, Pricing and
 // Submission are not built, so those are plain text, never a dead link or a disabled button.
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 import type { WorkItem } from '@/api/types';
 
@@ -16,10 +17,23 @@ function Count({ tab }: { tab: RfpTab }) {
   return <span className="psl-badge">{tab.of === undefined ? tab.count : `${tab.count}/${tab.of}`}</span>;
 }
 
-function Tab({ id, tab, outcome }: { id: string; tab: RfpTab; outcome: boolean }) {
+/** F-37: the page that is the Requirements workspace says so; a team-input task this person can act on is the page's own Team input. */
+const REQUIREMENTS_LINE = 'rfp_response';
+
+function Tab({ id, tab, outcome, requirements, current, teamTask }: { id: string; tab: RfpTab; outcome: boolean; requirements: boolean; current?: RfpTab['key']; teamTask?: string }) {
   const target = tab.work_id ?? id;
-  const href = tab.key === 'team_input' ? work(target) : tab.key === 'outcome' && outcome ? `${work(target)}/outcome` : undefined;
-  if (tab.current) {
+  const isCurrent = current ? tab.key === current : tab.current;
+  const href =
+    tab.key === 'team_input'
+      ? teamTask
+        ? `${work(id)}/respond?task=${encodeURIComponent(teamTask)}`
+        : work(target)
+      : tab.key === 'requirements' && requirements
+        ? work(target)
+        : tab.key === 'outcome' && outcome
+          ? `${work(target)}/outcome`
+          : undefined;
+  if (isCurrent) {
     return (
       <span className="psl-tab rfp-tab is-current" aria-current="page">
         {tab.label}
@@ -47,11 +61,17 @@ function Tab({ id, tab, outcome }: { id: string; tab: RfpTab; outcome: boolean }
  * `item.line` leads the eyebrow as the boards draw it ("PRE-SALE / RFP · TL-RFP-2026-014"). `fallback` is the
  * page's own title, the h1 when `rfp` has neither client nor title.
  */
-export function RfpFrame({ id, item, rfp, fallback }: { id: string; item: Pick<WorkItem, 'line' | 'rfp_outcome'>; rfp: Rfp; fallback: string }) {
+export function RfpFrame({ id, item, rfp, fallback, current, end }: { id: string; item: Pick<WorkItem, 'line' | 'rfp_outcome'> & Partial<Pick<WorkItem, 'workspace' | 'tasks'>>; rfp: Rfp; fallback: string; current?: RfpTab['key']; end?: ReactNode }) {
+  const requirements = item.workspace?.line_key === REQUIREMENTS_LINE;
+  // the Requirements page links its Team input tab to the form of a team-input task the response says this person can act on
+  const teamTask = current === 'requirements' ? item.tasks?.find((t) => t.you_can_act && (t.response as { variant?: string } | undefined)?.variant === 'team_input')?.id : undefined;
   const heading = frameHeading(rfp) ?? fallback;
   return (
     <header className="rfp-frame">
-      <p className="rfp-eyebrow">{[item.line, rfp.reference].filter(Boolean).join(' · ')}</p>
+      <p className="rfp-eyebrow">
+        {[item.line, rfp.reference].filter(Boolean).join(' · ')}
+        {end}
+      </p>
       <div className="rfp-titlerow">
         <h1 className="shell-title rfp-title">{heading}</h1>
         <span className="rfp-tags">
@@ -62,7 +82,7 @@ export function RfpFrame({ id, item, rfp, fallback }: { id: string; item: Pick<W
       {rfp.tabs && rfp.tabs.length > 0 && (
         <nav aria-label="RFP" className="psl-tabs rfp-tabs">
           {rfp.tabs.map((tab) => (
-            <Tab key={tab.key} id={id} tab={tab} outcome={Boolean(item.rfp_outcome)} />
+            <Tab key={tab.key} id={id} tab={tab} outcome={Boolean(item.rfp_outcome)} requirements={requirements} current={current} teamTask={teamTask} />
           ))}
         </nav>
       )}
