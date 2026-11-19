@@ -147,3 +147,40 @@ State when the agents stopped. Their saved work can be resumed with SendMessage 
 | F-44, F-46 | BLOCKED (PSL/backend) | — |
 Then the dlv-00 → main sync PR. Ask the user before merging into main.
 Follow-ups: F-33 income line needs its own two-reviewer stale test, and still says "approved" before the re-read; TECH-2-1 (F-43 tags on F-33/F-42 NOT SET facts); QA-4-1 (W-3602 send-for-review fixture); F-35 stale-notice polish (UX-3-1..3, TECH-3-1).
+
+## Remaining work after this wave: what is blocked, and what unblocks it (19 Nov 2026)
+Buildable now: F-38 (RFP submit, round 2), F-49 (log a received RFP, building), F-51 (fixed-asset proof field, after F-49). Then the dlv-00 → main sync PR (needs the user).
+
+**Whole tasks not started.** Source: architecture/packages/v7/model.json tasks and readiness files. PSL decisions are explained in delivery/psl-decisions/PSL-DECISIONS.pdf.
+| Task | What it is | Blocked by |
+|---|---|---|
+| FE-FIN-BU (F-44) | Business-unit totals (SCR-57) | PSL: D-PAYROLL-VISIBILITY (may Finance see staff count and cost per BU); backend G-SCR59-9, G-57-1 |
+| FE-MILESTONE-COMPLETE (F-50) | Mark a milestone complete (SCR-19) | PSL: who may press "Mark complete", and whether it starts the invoice draft; backend: the completion endpoint is missing |
+| FE-DECIDE-VARIANTS | Payment-exception, CEO final costing and CTO emergency decision screens | PSL: D-DECISION-VARIANTS |
+| FE-COSTING | Costing sheet (SCR-27) | PSL: D-COSTING-RULE (the costing formula, rates, margin) |
+| FE-SETUP-COSTING | Costing rule setup (SCR-39) | PSL: D-COSTING-RULE |
+| FE-CHANGE | Change request detail (SCR-31) | PSL: D-CHANGE-DECIDERS (who decides a change) |
+| FE-PAYMENTS-RECEIPT | Record a payment (SCR-20 record) | PSL: D-RECEIPT-ALLOCATION (how a payment is allocated) |
+| FE-SIGNIN | Sign-in, reset, account set-up (SCR-17), plus the account menu's sign-out | PSL/engineering: D-SIGNIN |
+| FE-SETUP-ROLES | Roles and staff accounts (SCR-13) | PSL: D-ADMIN-AUTHORITY (who administers roles) |
+| FE-SETUP-PAYROLL-FIELDS | Payroll field visibility (SCR-13 fields) | PSL: D-PAYROLL-VISIBILITY |
+| FE-FIN-PAYROLL-IMPORT, -CORRECTIONS, -RUN | Payroll inputs, corrections, run (SCR-09/18/37/59) | Readiness not yet run. Expected to wait on D-PAYROLL-VISIBILITY and the payroll rules (unset Setup) |
+| FE-FIN-ACCOUNTS-INTAKE, -PUBLISH | Management accounts (SCR-53) | Readiness not yet run. Backend answers G-SCR04P-1/3 (the money field); publication recipients (D11) |
+| FE-ASSISTANT-SPEECH | "Speak your request" in the assistant | PSL: D-SPEECH-INPUT |
+| FE-CONNECT-1 | Connect the app to the real backend API | Backend: the real API for My work, work item and decide (T-* tasks) |
+Not work: FE-M2, FE-M3 and FE-M4 are retired umbrella tasks (split into the features already built).
+
+**Later parts of shipped features.** These are from readiness notes, not exhaustive; each needs its own readiness check when unblocked.
+| Part | From | Blocked by |
+|---|---|---|
+| Planning readiness, held/ready (SCR-42, 6 boards) | F-31 | PSL rule G-42-6 (who accepts readiness; what makes planning verified) |
+| RFP response part 2 | F-37 | PSL: Engineering Lead review rule G-26-9; D-RETURN |
+| Income detail part 2 (SCR-54 held, export) | F-33 | Backend/PSL: G-54-1, G-54-2 (Income detail rules NOT SET) |
+| Delivery part 2 (SCR-33 retrospective, SCR-49 blocked, 4 boards) | F-40 | Readiness to run (no gate named yet) |
+| Delivery closure part 3 (SCR-49, 8 boards) | F-40 | PMO Lead decision screens; expect NEEDS-INFO, high risk |
+| Hypercare and release part 3 (reconcile, response) | F-32, F-34 | Readiness to run |
+| Cash forecast part 3, actuals (SCR-56) | F-43 | PSL: D-RECEIPT-ALLOCATION, D-DECISION-VARIANTS, D-PAYROLL-VISIBILITY; backend G-56-5..8 |
+| Escalation part 2 (review, received, client send; CTO pre-authorisation) | F-39 | PSL decisions on escalation and the alert provider |
+| Leadership report setup (part 2) and a reports page | F-35 | Setup rules (reviewer, audience, skip-review); backend G-SCR52-5b |
+| Start work management-accounts fields (F-47C) | F-47 | Backend G-SCR04P-1/3 |
+| Alert WhatsApp/email templates | F-12 | PSL/engineering: D-ALERT-PROVIDERS |
