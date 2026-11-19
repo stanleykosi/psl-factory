@@ -1,93 +1,93 @@
 GATE: FAIL
-COMMIT: 1457df1c1d4ad44327640da4efcce7d5d85dc9cd
-ATTEMPT: 2
+COMMIT: 60ff597c130fee6aa063eeafe8b11cb3bd6e900b
+ATTEMPT: 3
 
 ## Summary
-- checks.sh failed with exit 1
-- Protected paths: none changed
-- Commit 1457df1c1d4a, round 3, attempt 2
+- checks.sh passed
+- Protected paths: M delivery/config.json
+- Commit 60ff597c130f, round 3, attempt 3
 
 ## checks.sh (last 80 lines of checks.log)
 
 ```
-                [36m/>[39m
-              [36m</svg>[39m
-              [36m<input[39m
-                [33maria-label[39m=[32m"Search"[39m
-                [33mclass[39m=[32m"psl-input cmp-search"[39m
-                [33mplaceholder[39m=[32m"Search work, client or reference"[39m
-                [33mtype[39m=[32m"search"[39m
-                [33mvalue[39m=[32m""[39m
-              [36m/>[39m
-            [36m</div>[39m
-            [36m<span[39m
-              [33mclass[39m=[32m"cmp-anchor cmp-anchor--inline"[39m
-            [36m>[39m
-              [36m<button[39m
-                [33maria-expanded[39m=[32m"false"[39m
-                [33mclass[39m=[32m"psl-btn psl-btn--secondary"[39m
-                [33mtype[39m=[32m"button"[39m
-              [36m>[39m
-                [36m<svg[39m
-                  [33maria-hidden[39m=[32m"true"[39m
-                  [33mclass[39m=[32m"psl-icon"[39m
-                  [33mfill[39m=[32m"none"[39m
-                  [33mfocusable[39m=[32m"false"[39m
-                  [33mheight[39m=[32m"18"[39m
-                  [33mstroke[39m=[32m"currentColor"[39m
-                  [33mstroke-linecap[39m=[32m"square"[39m
-                  [33mstroke-width[39m=[32m"2"[39m
-                  [33mviewBox[39m=[32m"0 0 18 18"[39m
-                  [33mwidth[39m=[32m"18"[39m
-                [36m>[39m
-                  [36m<path[39m
-                    [33md[39m=[32m"M2 3h14l-5.5 6.5V15l-3 1.5V9.5z"[39m
-                    [33mstroke-linejoin[39m=[32m"round"[39m
-                  [36m/>[39m
-                [36m</svg>[39m
-                [0mFilter[0m
-              [36m</button>[39m
-            [36m</span>[39m
-            [36m<span[39m
-              [33maria-live[39m=[32m"polite"[39m
-              [33mclass[39m=[32m"psl-resultcount"[39m
-            [36m>[39m
-              [0m6 ITEMS[0m
-            [36m</span>[39m
-          [36m</div>[39m
-        [36m</div>[39m
-      [36m</form>[39m
-      [36m<div[39m
-        [33maria-label[39m=[32m"Unassigned"[39m
-        [33mclass[39m=[32m"my-work__panel"[39m
-        [33mid[39m=[32m"my-work-panel"[39m
-        [33mrole[39m=[32m"tabpanel"[39m
-      [36m>[39m
-        [36m<div[39m
-          [33mclass[39m=[32m"my-work__tablewrap"[39m
-        [36m>[39m
-          [36m<div[39m
-            [33maria-label[39m=[32m"Your work"[39m
-            [33mclass[39m=[32m"psl-tablewrap"[39m
-            [33mrole[39m=[32m"region"[39m
-            [33mtabindex[39m=[32m"0"[39m
-       ...
+✓ Generating static pages using 7 workers (23/23) in 1338ms
+  Finalizing page optimization ...
 
-- Expected
-+ Received
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /assistant
+├ ƒ /assistant/[conversationId]
+├ ○ /clients
+├ ƒ /clients/[clientId]
+├ ○ /exceptions
+├ ƒ /finance/month-end
+├ ○ /finance/payments
+├ ƒ /frame-fixtures/phone-back
+├ ○ /my-work
+├ ○ /notifications
+├ ○ /overview
+├ ○ /projects
+├ ƒ /projects/[caseId]
+├ ƒ /projects/[caseId]/[tab]
+├ ƒ /projects/[caseId]/documents/[documentId]
+├ ○ /settings/alerts
+├ ○ /setup
+├ ○ /setup/costing-rule
+├ ○ /setup/delegation
+├ ○ /setup/payroll-visibility
+├ ○ /setup/roles
+├ ○ /setup/rules
+├ ○ /setup/rules/delivery
+├ ○ /setup/rules/finance
+├ ○ /setup/staff
+├ ○ /setup/templates
+├ ƒ /work/[id]
+├ ƒ /work/[id]/decide
+├ ƒ /work/[id]/history
+├ ƒ /work/[id]/outcome
+└ ƒ /work/[id]/respond
 
-- assign-pm-proof
 
- ❯ tests/rfp-assign.test.tsx:371:60
-    369|     expect(within(dialog).getByText('1 thing to fix')).toBeTruthy();
-    370|     expect(within(dialog).getByRole('link', { name: message }).getAttr…
-    371|     await waitFor(() => expect(document.activeElement?.id).toBe(focusI…
-       |                                                            ^
-    372|     expect(dialog.textContent).not.toMatch(/Check these fields|acting_…
-    373|     expect((within(dialog).getByRole('textbox', { name: /Note/ }) as H…
- ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
- ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
- ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'jsdom@31.0.1',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'w3c-xmlserializer@6.0.0',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
 ```
