@@ -336,7 +336,7 @@
    "board": "SCR-51-mobile-draft",
    "width": 390,
    "visual": 85.3,
-   "reason": "D-83: measured 85.3 in round 2 on a production build. Remaining gaps: the frame's phone bar (Conflicts 9); the item title instead of \"Message drafted\" (Conflicts 6); the AgentCard head and footer (Conflicts 7); Send for review placed in the page rather than pinned. Also the message box styling (blue outlined, tinted box drawn as a plain list row; proposed exception UI-2-2).",
+   "reason": "D-83: measured 85.3 in round 2 on a production build. Remaining gaps: the frame's phone bar (Conflicts 9); the item title instead of \"Message drafted\" (Conflicts 6); the AgentCard head and footer (Conflicts 7); the page shows the message v1 text, which the phone board does not draw. Send for review is pinned as on the board. (Corrected by the coordinator after UI-3-1: the earlier text wrongly cited the message box and an unpinned Send for review.)",
    "approved_by": "builder proposal, pending design engineer"
   }
  ]

@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-39",
   "outcome": "Escalation: Tola checks a raised escalation, the PMO Lead decides \"Escalate to the client\" or \"Don't escalate\", and Tola drafts Message v1 for internal review, in four states (contract mock only)",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-EMERGENCY-ESCALATION"
   ],
@@ -112,11 +112,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "delivery technical review",
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -142,18 +144,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "delivery UX review",
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "delivery UI review",
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -642,7 +648,7 @@
         "delivery/features/F-39/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -659,11 +665,25 @@
           ],
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T01:05:58Z",
+          "refs": [
+            "fidelity-exceptions.json `visual_waivers` now has SCR-51-desktop-investigating at 1440, visual 87.1. This matches round-2/fidelity/scores.txt (87.1, False). The reason is its own and cites D-83, the shared frame (D-99, D-110), the AgentCard head and footer (Conflicts 7) and the untitled facts section headed \"RAISED BY YOU\" (Conflicts 9). It is marked \"builder proposal, pending design engineer\"."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "waiver added for desktop investigating"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "fidelity-exceptions.json `visual_waivers` now has SCR-51-desktop-investigating at 1440, visual 87.1. This matches round-2/fidelity/scores.txt (87.1, False). The reason is its own and cites D-83, the shared frame (D-99, D-110), the AgentCard head and footer (Conflicts 7) and the untitled facts section headed \"RAISED BY YOU\" (Conflicts 9). It is marked \"builder proposal, pending design engineer\"."
       ]
     },
     {
@@ -679,7 +699,7 @@
         "delivery/features/F-39/round-2/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -696,11 +716,48 @@
           ],
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T01:05:58Z",
+          "refs": [
+            "A new exception \"Message v1 box\" (category \"component styling\", PROPOSED, UI-2-2) describes the blue outlined, tinted box drawn as a plain shared list row. The SCR-51-desktop-draft 1440 waiver names it, and the desktop draft board does draw the box (board.rendered.html contains Message v1). It is marked \"pending design engineer signature (not signed)\"."
+          ],
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "waiver added for draft message box"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "A new exception \"Message v1 box\" (category \"component styling\", PROPOSED, UI-2-2) describes the blue outlined, tinted box drawn as a plain shared list row. The SCR-51-desktop-draft 1440 waiver names it, and the desktop draft board does draw the box (board.rendered.html contains Message v1). It is marked \"pending design engineer signature (not signed)\"."
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "record",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mobile-draft waiver mentions a box the phone board does not draw. The SCR-51-mobile-draft-390 waiver ends with \"Also the message box styling (blue outlined, tinted box ... proposed exception UI-2-2)\". The phone board does not draw the message at all. round-2/fidelity/SCR-51-mobile-draft-390/board.png shows only the heading, Tola's card and the pinned Send for review button. board.rendered.html has no \"Message v1\" and no message text (0 matches; the desktop-draft board has 1). Expected: remove that sentence from the mobile-draft waiver. The page's extra Message v1 on the phone is already covered by Conflicts 6 (phone extras). Also still open from the round-2 notes: the same waiver says \"Send for review placed in the page rather than pinned\", but the page pins it at the bottom.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-19T01:05:58Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
       ]
     }
   ],
@@ -979,6 +1036,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-18T21:01:50Z",
+      "round": 3,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-19T01:06:10Z",
       "round": 3,
       "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
       "reason": null
