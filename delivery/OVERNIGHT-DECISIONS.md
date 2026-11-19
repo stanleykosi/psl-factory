@@ -232,3 +232,11 @@ F-43 Finance cash forecast review, part 1 (Sign-off list 3): the 8 visual waiver
 
 ## D-125 · F-45 signed; Option B chosen for the re-check sentence (19 Nov 2026, design engineer: "Sign, choose Option B")
 F-45 ledger source, part 1 (Sign-off list 3): the 7 visual waivers and the exceptions, except the Conflicts 13 side-note exception. For that one the design engineer chose Option B: the backend sends the re-check sentence as `workspace.next`, and the frame draws it in the side column as the board does. That changes the mock fixture plus the backend handoff, and the exception is removed once the builder makes the change. The ledger-only "approved only after the re-read confirms it" behaviour is accepted (F-33's income line stays a follow-up). Product acceptance is given on the contract mock. Merge into dlv-00 approved after the Option B change and the dlv-00 merge.
+
+## D-126 · F-37 waivers, exceptions, rework decision and product acceptance signed (19 Nov 2026, design engineer: "once f37 is ready, i have signed off")
+F-37 RFP response, requirements and answers, part 1. Signed as presented once ready:
+- the 8 visual waivers (70.5–74.7) and 48 exceptions;
+- the coordinator's call to rework the layout before review;
+- product acceptance on the contract mock.
+
+QA-3-1 (Record team input can't complete on the mock; the shared response mock has no T-3401 handler) is in scope as accepted, because AC5 needs only the link and drawer. It's recorded as a follow-up. Merge into dlv-00 approved once merge prep passes.
