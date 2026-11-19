@@ -95,3 +95,16 @@ High. Approving this pack is the step that releases a priced commercial proposal
 
 ## Questions
 None block the build. PSL's answers to the questions listed under Scope hold the real send only.
+
+## Re-check 19 Nov
+**Verdict unchanged: READY.** Risk (high) and surfaces unchanged.
+
+What was re-checked:
+- F-17 and F-18 are merged in dlv-00. `frontend/src/features/rfp/RfpFrame.tsx` still links only `team_input` and `outcome` tabs (lines 20-21) and draws Submission as plain text, so the work is still not done elsewhere.
+- F-37 is still building and edits the same `Tab` function in `RfpFrame.tsx` (the `href` line 21 is the shared hunk).
+
+What the builder must know:
+- Expect a merge conflict on the `href` expression in `RfpFrame.tsx`. Whichever merges second rebases and keeps both tab links; add a Submission case driven by `tab.work_id`, and do not replace F-37's. Do not restructure `Tab`.
+- Rebase on dlv-00 before building and re-read `RfpFrame.tsx` and `RfpFrame` tests. If F-37 has merged by then, use its tab-routing result for G-26-1; otherwise keep the `tab.work_id` link only.
+- F-33 (InlineDecide, PR #64) is now merged. The spec uses F-16 `DecidePanel`/`useDecision` in place (D-113), which still holds. Do not switch to InlineDecide without a spec change. Its stale-409 gap (fix in F-39 round 4) does not touch this build, because F-38 already requires reload and no resubmit on 409; the tests must cover that path.
+- Rerun `design.py check` before the spec is relied on.

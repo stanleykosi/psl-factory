@@ -1,0 +1,397 @@
+{
+  "id": "W-2603",
+  "title": "Ojo Foods · ordering app",
+  "line": "Plan a project",
+  "reference": "PLN-0031",
+  "state": "waiting",
+  "revision": 7,
+  "stations": [
+    {
+      "name": "Asked",
+      "status": "done"
+    },
+    {
+      "name": "Inputs",
+      "status": "current_person"
+    },
+    {
+      "name": "Readiness",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-12-04T14:09:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-2603",
+      "kind": "record_response",
+      "title": "Record department input",
+      "required_role": "PM",
+      "you_can_act": true,
+      "revision": 4,
+      "response": {
+        "variant": "team_input",
+        "responders": [
+          {
+            "id": "R-QA",
+            "name": "QA lead",
+            "role": "QA",
+            "organisation": "PSL"
+          },
+          {
+            "id": "R-INF",
+            "name": "Infrastructure lead",
+            "role": "Infrastructure",
+            "organisation": "PSL"
+          }
+        ],
+        "actions": [
+          {
+            "value": "input",
+            "label": "Input"
+          },
+          {
+            "value": "estimate",
+            "label": "Estimate"
+          }
+        ],
+        "teams": [
+          {
+            "key": "infrastructure",
+            "name": "Infrastructure",
+            "given": false,
+            "estimate_needed": true
+          }
+        ],
+        "evidence_kind": "proof",
+        "intro": "QA doesn't log in. This records their input under your name, with the proof attached."
+      }
+    }
+  ],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the packet and asked the departments",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "C-2603",
+  "case_revision": 3,
+  "workspace": {
+    "line_key": "planning",
+    "screen": "SCR-42",
+    "view": "default",
+    "title": "Ojo Foods · ordering app",
+    "subtitle": "Engagement EN-0042 · route A from OF-RFP-2026-006 · start date 15 Jan 2027",
+    "byline": "PM Sola Martins",
+    "status": {
+      "label": "PLANNING · 3 OF 5 IN",
+      "tone": "agent"
+    },
+    "context": {
+      "project": {
+        "case_id": "P-0106",
+        "title": "Ojo Foods · ordering app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0106",
+          "label": "Ojo Foods"
+        },
+        {
+          "value": "PLN-0031",
+          "label": "Planning · PLN-0031"
+        }
+      ]
+    },
+    "revision": 7,
+    "sections": [
+      {
+        "key": "departments",
+        "kind": "table",
+        "title": "What each department must give",
+        "columns": [
+          {
+            "key": "department",
+            "label": "Department",
+            "kind": "text"
+          },
+          {
+            "key": "asked",
+            "label": "What we asked for",
+            "kind": "text"
+          },
+          {
+            "key": "status",
+            "label": "Status",
+            "kind": "tag"
+          },
+          {
+            "key": "estimate",
+            "label": "Estimate",
+            "kind": "text"
+          },
+          {
+            "key": "proof",
+            "label": "Proof",
+            "kind": "reference"
+          }
+        ],
+        "items": [
+          {
+            "id": "D-ENG",
+            "cells": [
+              {
+                "column": "department",
+                "text": "Engineering"
+              },
+              {
+                "column": "asked",
+                "text": "Scope breakdown and effort"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "IN · 09 DEC",
+                  "tone": "verified"
+                }
+              },
+              {
+                "column": "estimate",
+                "text": "230 person-days"
+              },
+              {
+                "column": "proof",
+                "link": {
+                  "label": "Proof",
+                  "evidence_id": "EV-C-2603-1"
+                }
+              }
+            ]
+          },
+          {
+            "id": "D-QA",
+            "cells": [
+              {
+                "column": "department",
+                "text": "QA"
+              },
+              {
+                "column": "asked",
+                "text": "Test plan and effort"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "IN · 11 DEC",
+                  "tone": "verified"
+                }
+              },
+              {
+                "column": "estimate",
+                "text": "45 person-days"
+              },
+              {
+                "column": "proof",
+                "link": {
+                  "label": "Proof",
+                  "evidence_id": "EV-C-2603-QA"
+                }
+              }
+            ]
+          },
+          {
+            "id": "D-SEC",
+            "cells": [
+              {
+                "column": "department",
+                "text": "Security"
+              },
+              {
+                "column": "asked",
+                "text": "Security review plan and effort"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "IN · 09 DEC",
+                  "tone": "verified"
+                }
+              },
+              {
+                "column": "estimate",
+                "text": "20 person-days"
+              },
+              {
+                "column": "proof",
+                "link": {
+                  "label": "Proof",
+                  "evidence_id": "EV-C-2603-2"
+                }
+              }
+            ]
+          },
+          {
+            "id": "D-PRO",
+            "cells": [
+              {
+                "column": "department",
+                "text": "Product"
+              },
+              {
+                "column": "asked",
+                "text": "Confirm scope against the RFP"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "OWNER NEEDED",
+                  "tone": "stopped"
+                }
+              },
+              {
+                "column": "estimate"
+              }
+            ],
+            "steps": [
+              "who_receives"
+            ]
+          },
+          {
+            "id": "D-INF",
+            "cells": [
+              {
+                "column": "department",
+                "text": "Infrastructure"
+              },
+              {
+                "column": "asked",
+                "text": "Hosting and environments"
+              },
+              {
+                "column": "status",
+                "tag": {
+                  "label": "WAITING · ASKED 08 DEC",
+                  "tone": "uncertain"
+                }
+              },
+              {
+                "column": "estimate"
+              }
+            ],
+            "steps": [
+              "record_input"
+            ]
+          }
+        ],
+        "note": "Departments don't log in. You record what they send, with proof; the record keeps your name."
+      },
+      {
+        "key": "estimate_changed",
+        "kind": "findings",
+        "items": [
+          {
+            "id": "F-1",
+            "text": "Engineering now says 230 person-days; the RFP costing used 210. The SOW price can't come from costing v2 as it stands: a new costing version (v3) will be needed and its approvals start again.",
+            "cites": [
+              {
+                "label": "Costing v2",
+                "reference": "COSTING-V2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "tola_work",
+        "kind": "checklist",
+        "title": "Read the packet and asked departments",
+        "agent": "tola",
+        "items": [
+          {
+            "id": "T-1",
+            "label": "Read the planning packet",
+            "detail": "PACKET · EN-0042",
+            "status": "done"
+          },
+          {
+            "id": "T-2",
+            "label": "Listed what each department must supply",
+            "detail": "5 DEPARTMENTS",
+            "status": "done"
+          },
+          {
+            "id": "T-3",
+            "label": "Sent requests to Engineering, QA, Security and Infrastructure",
+            "detail": "EMAIL · 08 DEC",
+            "status": "done"
+          },
+          {
+            "id": "T-4",
+            "label": "Couldn't route the Product request",
+            "detail": "OWNER NEEDED · NO ONE SET UP",
+            "status": "blocked"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "record_input",
+        "label": "Record input",
+        "emphasis": "secondary",
+        "applies_to": "item",
+        "task_id": "T-2603"
+      },
+      {
+        "key": "who_receives",
+        "label": "Who receives this?",
+        "emphasis": "secondary",
+        "applies_to": "item",
+        "disabled_reason": "Not available yet"
+      },
+      {
+        "key": "prepare_readiness",
+        "label": "Prepare readiness",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "consequence": "Tola prepares the readiness summary once every department has answered.",
+        "disabled_reason": "Waiting on Infrastructure. Product has no owner yet."
+      }
+    ]
+  }
+}

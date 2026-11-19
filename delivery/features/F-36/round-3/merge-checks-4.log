@@ -1,0 +1,10 @@
+head ba1ee621c715fa9ca4cfdbd22cf22f2620028305
+checks exit 0
+ Test Files  118 passed (118)
+      Tests  2816 passed (2816)
+e2e exit 1
+e2e (rerun, rfp-assign + rfp + delivery-hypercare) exit 0
+  ✓  74 e2e/rfp.spec.ts:188:1 › the outcome records through the mock and shows the recorded state; the work item links into it (772ms)
+  ✓  75 e2e/rfp.spec.ts:202:1 › the follow-up Edit and Send are reached by keyboard, and Send goes through the mock once (660ms)
+
+  75 passed (1.7m)

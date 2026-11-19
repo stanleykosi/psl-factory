@@ -1,0 +1,255 @@
+{
+ "exceptions": [
+  {
+   "role": "text",
+   "name": "FINANCE / SCHEDULES / ASSETS · PPE-0006",
+   "category": "frame",
+   "conflicts": 11,
+   "reason": "Conflicts 11: the frame draws workspace.context.crumbs as a list of plain items (F-17/F-22/F-33 frame as built), not one text line; the words come from the crumbs.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "link",
+   "name": "← My work",
+   "category": "frame",
+   "conflicts": 11,
+   "reason": "Conflicts 11: the phone bar's way back is the frame's (\"← Queue\" to My work, F-17/F-22/F-33 as built); the board's wording is not drawn.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "SAMPLE DATA",
+   "category": "frame",
+   "conflicts": null,
+   "reason": "Design decision 14 Nov 2026 (c), restated in D-92: the visible SAMPLE DATA tag is off in team builds. Every fixture is sample: true, and the shared tag shows when the build sets NEXT_PUBLIC_SHOW_SAMPLE_LABEL=1 (component test on all 12 fixtures). Not a spec Conflicts item.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119",
+   "authority": "design decision 14 Nov 2026 (c), restated in D-92"
+  },
+  {
+   "role": "text",
+   "name": "Bisi Ade · Finance",
+   "category": "sample data",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the signed-in name comes from /me; the mock's Finance persona is Ada Okafor · Finance Lead on all four boards and no new persona is added.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Investigating the asset register",
+   "category": "component",
+   "conflicts": 15,
+   "reason": "Conflicts 15: the agent card is the existing AgentCard drawn from item.agent, which has no title field; the agent's name, steps, sources, WORKING and the footer are drawn.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Investigating",
+   "category": "component",
+   "conflicts": 15,
+   "reason": "Conflicts 15: the phone agent card's title; AgentCard has no title field (item.agent carries none).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Chidi · Finance agent · step 3 of 4",
+   "category": "component",
+   "conflicts": 15,
+   "reason": "Conflicts 15: the existing AgentCard draws the name, \"Cannot approve, send or pay.\" and \"step n of m\" (from the steps sent) on separate lines; item.agent carries no agent role.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "October register",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: the basis sentence is tasks[].decision.basis as returned, drawn whole with no bold; the page composes none of it, so the bold piece is not a separate element.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Note (needed to return, reject or withdraw)",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: the note label lists only the verdicts offered that need a note, \"Note (needed to return or reject)\"; withdraw is part 2.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "(needed to return, reject or withdraw)",
+   "category": "component",
+   "conflicts": 7,
+   "reason": "Conflicts 7: the label's muted part reads \"(needed to return or reject)\"; withdraw is part 2.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "link",
+   "name": "Return",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the phone Decide bar uses the step labels, the same as desktop (\"Return with a note\"), as F-33 built it.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Chidi investigating",
+   "category": "frame",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone title is the work item's title at both widths (D-111); the status tag carries the state.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Register review",
+   "category": "frame",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone title is the work item's title at both widths (D-111); the station line \"STATION 2 OF 6 · REGISTER REVIEW\" and the status tag carry the state.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Date review",
+   "category": "frame",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone title is the work item's title at both widths (D-111); the station line \"STATION 3 OF 6 · DATE REVIEW (IF UNCLEAR)\" and the status tag carry the state.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Calculating",
+   "category": "frame",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the phone title (and the phone card's title) is the work item's title at both widths (D-111); the station line and the PROCESSING tag carry the state.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "4",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the phone register board's \"Added 4 / Disposed 1\" summary is replaced by the same Register changes table as desktop, with the full costs. The review state sends no summary count and the page counts no rows.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "1",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: as \"4\": the phone summary count is replaced by the desktop table; the page counts no rows.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Disposed",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the phone summary label; the table's CHANGE cell \"Disposed 20 Oct\" is drawn instead.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "EXPLAINED",
+   "category": "component",
+   "conflicts": 10,
+   "reason": "Conflicts 10: the phone date board's \"3 unclear dates EXPLAINED\" summary is replaced by the same Unclear dates table and proof as desktop; the review state sends no such tag.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "₦8,400,000.00",
+   "category": "component",
+   "conflicts": null,
+   "reason": "Tool false-miss, added after the round-1 run (not counted in its scores): the cost is drawn by the shared Sections MoneyValue as a span inside the table cell, and the check does not read text nested in a td (the F-16 precedent for a dd, D-55). The value is on screen in the drawn place at 1440 and 390 (e2e and component tests). Not a spec Conflicts item.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "₦14,000,000.00",
+   "category": "component",
+   "conflicts": null,
+   "reason": "Tool false-miss, added after the round-1 run (not counted in its scores): the cost is drawn by the shared Sections MoneyValue as a span inside the table cell, and the check does not read text nested in a td (the F-16 precedent for a dd, D-55). The value is on screen in the drawn place at 1440 and 390 (e2e and component tests). Not a spec Conflicts item.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "₦3,150,000.00",
+   "category": "component",
+   "conflicts": null,
+   "reason": "Tool false-miss, added after the round-1 run (not counted in its scores): the cost is drawn by the shared Sections MoneyValue as a span inside the table cell, and the check does not read text nested in a td (the F-16 precedent for a dd, D-55). The value is on screen in the drawn place at 1440 and 390 (e2e and component tests). Not a spec Conflicts item.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "asset-dates-explanation.pdf",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Tool limitation (round 2, re-checked): after UI-1-1 the row draws the file name in its returned case in body text, with \"Uploaded · 64 KB\" under it, as the board does. The check still does not read text nested inside the shared Sections list row (li), as with the table-cell costs. The words are on screen in the Proof section (component test, round-2 screenshots). Conflicts 12 covers only the missing paperclip.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Uploaded · 64 KB",
+   "category": "component",
+   "conflicts": 12,
+   "reason": "Tool limitation (round 2, re-checked): after UI-1-1 the row draws the file name in its returned case in body text, with \"Uploaded · 64 KB\" under it, as the board does. The check still does not read text nested inside the shared Sections list row (li), as with the table-cell costs. The words are on screen in the Proof section (component test, round-2 screenshots). Conflicts 12 covers only the missing paperclip.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-55-desktop-investigating",
+   "width": 1440,
+   "visual": 84.1,
+   "reason": "D-83: measured 84.1 in rounds 1 and 2 (unchanged) on a production build. Remaining gaps: the shared F-17/F-22/F-33 frame (top bar with the alerts bell and the name's position, crumbs as a list, the History link, the wider page; spec item 11); the joined station strip with a status line under each name and larger names (shared StationTrack; spec item 11); the AgentCard head with no title and the name and limits on their own lines (Conflicts 15); the Register note drawn as the shared warning callout (Sections facts note).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-55-desktop-register-review",
+   "width": 1440,
+   "visual": 75.0,
+   "reason": "D-83: measured 75.0 in rounds 1 and 2 (unchanged) on a production build. Remaining gaps: the shared F-17/F-22/F-33 frame (top bar with the alerts bell and the name's position, crumbs as a list, the History link, the wider page; spec item 11); the joined station strip with a status line under each name and larger names (shared StationTrack; spec item 11); the shared table with taller rows; the basis drawn whole without bold (Conflicts 7); the note field taller (shared TextArea). With-exceptions coverage is 100 in round 2: the three costs are a tool limitation (the check does not read a span inside a td).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-55-desktop-date-review",
+   "width": 1440,
+   "visual": 74.9,
+   "reason": "D-83: measured 74.9 in round 2 on a production build. Remaining gaps: the shared F-17/F-22/F-33 frame (top bar with the alerts bell and the name's position, crumbs as a list, the History link, the wider page; spec item 11); the joined station strip with a status line under each name (shared StationTrack; spec item 11); the shared table with taller rows; the Proof as its own titled section with no paperclip (Conflicts 12); the basis drawn whole. The proof row now draws the file name as returned with its detail under it (UI-1-1).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-55-desktop-calculating",
+   "width": 1440,
+   "visual": 74.6,
+   "reason": "D-83: measured 74.6 in rounds 1 and 2 (unchanged) on a production build. Remaining gaps: the shared F-17/F-22/F-33 frame (top bar with the alerts bell and the name's position, crumbs as a list, the History link, the wider page; spec item 11); the joined station strip with a status line under each name and larger names (shared StationTrack; spec item 11); the Calculate station drawn as the shared amber 'Waiting' box, not the board's blue agent box: builder proposal, because current_agent would draw 'Agent working' on a factory step (backend handoff item); the Next panel in the side column.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-55-mobile-investigating",
+   "width": 390,
+   "visual": 82.4,
+   "reason": "D-83: measured 82.4 in rounds 1 and 2 (unchanged) on a production build. Remaining gaps: the shared phone frame (\"← Queue\" bar, the item title at both widths; Conflicts 9, 11); the phone shows the same Register facts and note as desktop (Conflicts 10); the AgentCard head (Conflicts 15).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-55-mobile-register-review",
+   "width": 390,
+   "visual": 84.4,
+   "reason": "D-83: measured 84.4 in rounds 1 and 2 (unchanged) on a production build. Remaining gaps: the shared phone frame (Conflicts 9, 11); the full Register changes table stacked one cell per line with full costs in place of the board's Added/Disposed summary, plus the basis and consequence (Conflicts 10); the step labels in the pinned bar (Conflicts 10).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-55-mobile-date-review",
+   "width": 390,
+   "visual": 87.1,
+   "reason": "D-83: measured 87.1 in rounds 1 and 2 (unchanged) on a production build. Remaining gaps: the shared phone frame (Conflicts 9, 11); the full Unclear dates table stacked and the proof in place of the board's '3 unclear dates EXPLAINED' summary, plus the basis (Conflicts 10); the step labels in the pinned bar.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-55-mobile-calculating",
+   "width": 390,
+   "visual": 89.1,
+   "reason": "D-83: measured 89.1 in rounds 1 and 2 (unchanged) on a production build. Remaining gaps: the shared phone frame (Conflicts 9, 11); the Calculation facts and Next shown as on desktop (Conflicts 10); the Calculate station amber, as on desktop.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  }
+ ]
+}

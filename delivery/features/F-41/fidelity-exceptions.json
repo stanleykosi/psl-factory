@@ -1,0 +1,318 @@
+{
+ "exceptions": [
+  {
+   "role": "text",
+   "name": "Bisi Adeyemi · Finance",
+   "category": "sample data",
+   "conflicts": 14,
+   "reason": "Conflicts 14: the signed-in name is the mock's Finance persona (Ada Okafor · Finance Lead), drawn by the shell; the board's sample name is not built.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "link",
+   "name": "Record a payment received",
+   "category": "held decision",
+   "conflicts": 1,
+   "reason": "Conflicts 1: recording a payment is held (D-RECEIPT-ALLOCATION open, D14 UNCONFIGURED, FE-PAYMENTS-RECEIPT); the button is not drawn at either width.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "link",
+   "name": "INV-0398",
+   "category": "component",
+   "conflicts": 16,
+   "reason": "Conflicts 16: the reference is a link only when the backend sends the row's work_id; the fixtures send none (no invoice work item exists in the mock), so INV-0398 is drawn as plain mono text.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "link",
+   "name": "INV-0391",
+   "category": "component",
+   "conflicts": 16,
+   "reason": "Conflicts 16: the reference is a link only when the backend sends the row's work_id; the fixtures send none (no invoice work item exists in the mock), so INV-0391 is drawn as plain mono text.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "link",
+   "name": "INV-0402",
+   "category": "component",
+   "conflicts": 16,
+   "reason": "Conflicts 16: the reference is a link only when the backend sends the row's work_id; the fixtures send none (no invoice work item exists in the mock), so INV-0402 is drawn as plain mono text.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "link",
+   "name": "INV-0388",
+   "category": "component",
+   "conflicts": 16,
+   "reason": "Conflicts 16: the reference is a link only when the backend sends the row's work_id; the fixtures send none (no invoice work item exists in the mock), so INV-0388 is drawn as plain mono text.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "₦0.00",
+   "category": "tool limit",
+   "conflicts": 16,
+   "reason": "Conflicts 16: both known zeros are on the page as sent (INV-0391 RECEIVED, INV-0388 STILL OWED, bold like every STILL OWED cell, since the page does not style a cell by its amount); the tool pairs only one of the two equal strings.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "link",
+   "name": "← Home",
+   "category": "frame",
+   "conflicts": 14,
+   "reason": "Conflicts 14: the shell's phone back link reads \"← Home\" and is named \"Back to Home\" for screen readers; the words match, the accessible name does not.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Lagoon Health · M1",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "PART PAID",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Still owed ₦500,000.00",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "₦500,000.00",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "INV-0398 · overdue 9 days",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Harmattan Bank · M1",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Still owed ₦6,800,000.00",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "INV-0391 · overdue 21 days",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Kora Logistics · M1",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "BANK DATA MISSING",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Still owed Unknown",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Unknown",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "INV-0402 · overdue 6 days",
+   "category": "tool limit",
+   "conflicts": 12,
+   "reason": "Conflicts 12: drawn on the page in the phone invoice card from the row's data; the tool reads the page's repeated cards as one data pattern and does not compare their words, while the board's cards are static. Not a missing value.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Chidi · Finance agent Reminder for Harmattan Bank drafted. You send it.",
+   "category": "layout",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the phone draws the note's own returned lines (the same three as desktop) under \"Chidi · Finance agent\"; the board's shortened phone sentence has no source.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Chidi",
+   "category": "layout",
+   "conflicts": 12,
+   "reason": "Conflicts 12: the phone note head reads \"Chidi · Finance agent\" as one line, as on desktop.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "FINANCE / PAYMENTS / INV-0391 · REMINDER",
+   "category": "frame",
+   "conflicts": 14,
+   "reason": "Conflicts 14: the crumbs come from workspace.context.crumbs and the work-item frame draws them as a list (FINANCE, PAYMENTS, INV-0391 · REMINDER), each item matched by words but not as one string.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "To: finance@harmattanbank.example · Copy: Kunle Ade (PM) Subject: Reminder: invoice INV-0391 is 21 days overdue",
+   "category": "frame",
+   "conflicts": 14,
+   "reason": "Conflicts 14: the shared line workspace draws an untitled facts section as label/value rows (To, Copy, Subject) with the same values; the frame is F-17's and is not changed here.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Dear Harmattan Bank Finance team, Our records show invoice INV-0391 for ₦6,800,000.00 (Milestone 1, mobile onboarding) was due on 22 Oct and hasn't been paid yet. The invoice is attached again for con",
+   "category": "frame",
+   "conflicts": 14,
+   "reason": "Conflicts 14: the shared workspace text section draws the four message paragraphs as rows, word for word; the board draws one block.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "INV-0391.pdf",
+   "category": "tool limit",
+   "conflicts": 8,
+   "reason": "Conflicts 8: drawn from the attachment proposal under the message in the board's dashed box with the paperclip (bold name, then \"Uploaded · 84 KB\"), inside the workspace row the tool reads as a data pattern.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Uploaded · 84 KB",
+   "category": "tool limit",
+   "conflicts": 8,
+   "reason": "Conflicts 8: drawn under the file name from size_bytes (formatSize), inside the workspace row the tool reads as a data pattern.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "₦6,800,000.00",
+   "category": "tool limit",
+   "conflicts": 16,
+   "reason": "Conflicts 16: the This invoice Amount is on the page as sent (₦6,800,000.00) in the frame's facts list; the tool pairs it with the message's figure.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Chidi · Finance agent After you send it, I'll check it was delivered. If there's no reply in 7 days I'll draft a second reminder for you.",
+   "category": "held decision",
+   "conflicts": 6,
+   "reason": "Conflicts 6: no second-reminder interval is configured, so the \"7 days\" sentence is not shown; the frame's agent note carries the returned line \"After you send it, I'll check it was delivered.\" at the top of the workspace.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "link",
+   "name": "← Payments",
+   "category": "frame",
+   "conflicts": 14,
+   "reason": "Conflicts 14: the work-item frame's phone back reads \"← Queue\"; changing it to \"← Payments\" is a shell change, out of scope.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Chidi drafted this. Nothing is sent until you press Send.",
+   "category": "layout",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the same full subtitle as desktop (from workspace.subtitle).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "INV-0391 · ₦6,800,000.00",
+   "category": "layout",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the same sections as desktop; the reference is in the phone bar and the amount in This invoice.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "21 days overdue · no reminders yet",
+   "category": "layout",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the backend's facts (Overdue by 21 days, Reminders sent None yet) in This invoice, not a composed summary line.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "role": "text",
+   "name": "Our records show invoice INV-0391 for ₦6,800,000.00 was due on 22 Oct and hasn't been paid yet…",
+   "category": "layout",
+   "conflicts": 13,
+   "reason": "Conflicts 13: the phone shows the full message, not a cut-off one.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-20-desktop",
+   "width": 1440,
+   "visual": 84.5,
+   "conflicts": 17,
+   "reason": "D-83, Conflicts 17: measured 84.5 in round 1 on a production build. SCR-20 is a list, so this needs the design engineer's board-level waiver. Coverage is 100% after exceptions. What remains: the held \"Record a payment received\" button (Conflicts 1); references drawn as plain mono text because no row work_id is sent (Conflicts 16); \"Unknown\" drawn as the library's amber Unknown tag, not the board's bold amber words (Conflicts 16, component); the extra \"Updated 12 Nov 10:00\" line (Conflicts 15); the shell's bell, Overview/Setup links and persona name (Conflicts 14); and Chidi's avatar, which the tool cannot draw on the board (unmapped /_blob image).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-20-mobile",
+   "width": 390,
+   "visual": 71.1,
+   "conflicts": 17,
+   "reason": "D-83, Conflicts 17: measured 71.1 in round 1 and again in round 2 on a production build. SCR-20 is a list, so this needs the design engineer's board-level waiver; it is above the 70 floor. The phone draws every strip cell, the coverage sentence, all four cards (PAID included) and the note's full lines in one column (Conflicts 12). The board draws only \"Owed to PSL\" and three cards. The count line, the filter icon on its own row and the missing pinned \"Record a payment received\" bar (Conflicts 1) move everything below the toolbar.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-32-desktop",
+   "width": 1440,
+   "visual": 76.7,
+   "conflicts": 17,
+   "reason": "D-83, Conflicts 17: measured 76.7 in round 2 on a production build (76.9 in round 1; the attachment is now the board's dashed box with the paperclip, UI-2-2). Line workspace (D-83). The F-17 frame lays it out: the agent note and \"Draft v1\" sit at the top, To/Copy/Subject and the paragraphs are drawn as rows, This invoice is in the main column, and Send, Edit and Not now are in the Decide panel on the right with \"This sends to the client.\" The board puts This invoice and the note in the aside and the buttons under the message (Conflicts 14, 15). The 7-day sentence is held (Conflicts 6).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  },
+  {
+   "board": "SCR-32-mobile",
+   "width": 390,
+   "visual": 79.2,
+   "conflicts": 17,
+   "reason": "D-83, Conflicts 17: measured 79.2 in round 1 and again in round 2 on a production build. Line workspace (D-83). The phone shows the same sections and the full message as desktop in one column, with the frame's pinned bar carrying Send reminder, Edit and Not now (Conflicts 13). The phone back reads \"← Queue\" (Conflicts 14).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-119"
+  }
+ ]
+}

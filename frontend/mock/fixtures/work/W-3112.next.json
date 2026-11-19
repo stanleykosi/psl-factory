@@ -1,0 +1,278 @@
+{
+  "id": "W-3112",
+  "title": "Lagoon Health · patient app",
+  "line": "Hypercare",
+  "reference": "HYP-0062",
+  "state": "processing",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Go-live",
+      "status": "done"
+    },
+    {
+      "name": "Hypercare",
+      "status": "current_agent"
+    },
+    {
+      "name": "Archive",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-04-01T22:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Checked the observations so far",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "delivery_hypercare",
+    "screen": "SCR-46",
+    "view": "hypercare",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "HYP-0062",
+          "label": "HYP-0062"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 2,
+    "status": {
+      "label": "Hypercare · day 10 of 30",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "observations",
+        "kind": "table",
+        "title": "Observations so far",
+        "columns": [
+          {
+            "key": "ref",
+            "label": "Reference",
+            "kind": "reference"
+          },
+          {
+            "key": "what",
+            "label": "What",
+            "kind": "text"
+          },
+          {
+            "key": "state",
+            "label": "State",
+            "kind": "tag"
+          }
+        ],
+        "items": [
+          {
+            "id": "ISS-0301",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "ISS-0301"
+              },
+              {
+                "column": "what",
+                "text": "Login slow on older phones · medium"
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "Open · owner set",
+                  "tone": "person"
+                }
+              }
+            ]
+          },
+          {
+            "id": "OBS-0012",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "OBS-0012"
+              },
+              {
+                "column": "what",
+                "text": "Peak load on day 3 handled"
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "Noted",
+                  "tone": "neutral"
+                }
+              }
+            ]
+          },
+          {
+            "id": "OBS-0013",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "OBS-0013"
+              },
+              {
+                "column": "what",
+                "text": "Checkout page slow once on day 10"
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "Noted",
+                  "tone": "neutral"
+                }
+              }
+            ]
+          },
+          {
+            "id": "INC",
+            "cells": [
+              {
+                "column": "ref",
+                "text": "—"
+              },
+              {
+                "column": "what",
+                "text": "Incidents"
+              },
+              {
+                "column": "state",
+                "tag": {
+                  "label": "None",
+                  "tone": "verified"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "criteria",
+        "kind": "checklist",
+        "title": "Criteria · from Setup › Rules (PSL to confirm)",
+        "items": [
+          {
+            "id": "C-1",
+            "text": "Window",
+            "tag": {
+              "label": "30 days · from Setup",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "C-2",
+            "text": "No open high-severity issues",
+            "tag": {
+              "label": "Met",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "C-3",
+            "text": "No unresolved incidents",
+            "tag": {
+              "label": "Met",
+              "tone": "verified"
+            }
+          },
+          {
+            "id": "C-4",
+            "text": "Medium issues have an owner",
+            "tag": {
+              "label": "Met",
+              "tone": "verified"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "Tola evaluates hypercare when the window ends on 01 May. You can log an issue or observation any time."
+    ],
+    "steps": [
+      {
+        "key": "log_observation",
+        "label": "Log an observation",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "fields": [
+          {
+            "name": "what",
+            "label": "What did you notice?",
+            "type": "long_text",
+            "required": true
+          },
+          {
+            "name": "proof",
+            "label": "Proof",
+            "type": "evidence",
+            "required": false,
+            "evidence_kind": "hypercare_observation"
+          }
+        ]
+      }
+    ]
+  }
+}

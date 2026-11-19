@@ -562,6 +562,7 @@ describe('frame (AC 16, 17)', () => {
     const bar = screen.getByRole('navigation', { name: 'Project' });
     expect(within(bar).getAllByRole('link').map((l) => l.getAttribute('href'))).toEqual([
       '/projects/P-0101',
+      '/projects/P-0101/delivery',
       '/projects/P-0101/milestones',
       '/projects/P-0101/documents',
       '/projects/P-0101/money',

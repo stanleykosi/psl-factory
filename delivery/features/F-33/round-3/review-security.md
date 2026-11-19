@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-security
-COMMIT: d20fd9b2ccee7be267936cc2758358989ecdedbb
+COMMIT: 306728777fda087120513e0a18e5bcc8d2344389
 AUTHORITY: delivery security review
 
 ## Summary
@@ -28,3 +28,8 @@ None.
 
 ## Notes
 - Carried forward and not blocking: E-TASK-DECIDE has no idempotency key. This is a backend item and is not changed here.
+
+## Update for head 30672877 (diff b8265cdb..30672877)
+- Merge head 30672877 only adds F-31 (response drawer, engagement/planning) and F-32 (orphan-step rule, work links) code around F-33; F-33's inline decide, uncertain handling, income banner and agent card are untouched in the Workspace/proposals/workspace.css diff.
+- No arithmetic added; Unknown is never shown as 0; F-32 orphan-step rule (decision is a link only with a task and you_can_act) is intact and F-31's drawer is gated on an open task.
+- Verdict unchanged.

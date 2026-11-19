@@ -1,7 +1,7 @@
 // Local contract mock for /api/v1. Routes come from the v7 openapi.json; M-1
 // operations answer with sample fixtures, everything else answers 501. Local use only.
 //
-// Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none; default finance_lead).
+// Persona: cookie psl_mock_persona (finance_lead | pm | ceo | none | admin | pmo_lead; default finance_lead).
 // Start work: E-LINES, E-LINE-OPTIONS and E-WORK-START are answered by start-work.mjs.
 // Scenario: cookie psl_mock_scenario or header X-Mock-Scenario (401 | 403 | 404 | 409 | 422),
 // applied only when the operation declares that status.
@@ -16,6 +16,7 @@
 // Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 // Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
+// Invoices (F-41): E-INVOICES answers from invoices.mjs (variant cookie psl_mock_invoices, q, status, paging, overlay proposals).
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
 import { dirname, join } from 'node:path';
@@ -30,6 +31,7 @@ import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
+import { invoices } from './invoices.mjs';
 import { overview } from './overview.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
@@ -45,8 +47,8 @@ import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog,
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
-export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', 'E-INVOICES', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
+export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin', 'pmo_lead'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
 
@@ -222,7 +224,7 @@ function send(res, status, body) {
 export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'))) {
   const routes = loadRoutes(openapi);
   const me = Object.fromEntries(PERSONAS.map((p) => [p, readFixture(`me.${p}`)]));
-  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME' && id !== 'E-PROJECT-TAB' && !START_OPERATIONS.includes(id) && !ASSISTANT_OPERATIONS.includes(id)).map((id) => [id, readFixture(id)]));
+  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME' && id !== 'E-PROJECT-TAB' && id !== 'E-INVOICES' && !START_OPERATIONS.includes(id) && !ASSISTANT_OPERATIONS.includes(id)).map((id) => [id, readFixture(id)]));
   const work = readWorkFixtures();
   const validators = bodyValidators(openapi);
   const startWork = createStartWorkMock(openapi);
@@ -260,6 +262,17 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (WORKSPACE_OPERATIONS.includes(route.operationId)) return send(res, ...workspaceRoute({ req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides, operationId: route.operationId }));
       // E-EVIDENCE-UPLOAD has two mock owners: Setup proof cases (C-SETUP-*, F-11, evidence.mjs) and work-item cases (F-09, response.mjs).
       const setupProof = route.operationId === 'E-EVIDENCE-UPLOAD' && decodeURIComponent(url.pathname.split('/')[4] ?? '').startsWith('C-SETUP-');
+      // F-47: a third owner, start work (start-work.mjs), for an upload whose kind is a Start work line's evidence_kind for this persona, on a case that line starts on.
+      if (route.operationId === 'E-EVIDENCE-UPLOAD' && !setupProof) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        if (startWork.ownsUpload(url, raw, persona)) {
+          const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+          if (scenario && SCENARIO_BODIES[scenario] && route.statuses.includes(String(scenario))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+          if (req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+          return send(res, ...startWork.handle(route.operationId, { url, raw, persona, cookies }));
+        }
+      }
       if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {
         return send(res, ...responseRoute(route.operationId, { req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
       }
@@ -285,6 +298,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-PROJECT-TAB') { const r = projectTab({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EXCEPTIONS') { const r = exceptionsList({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-MONTH-END') { const r = monthEnd({ url, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-INVOICES') { const r = invoices({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-SETUP-RULES' || route.operationId === 'E-SETUP-RULE-SAVE') { const r = (route.operationId === 'E-SETUP-RULES' ? setupRules : saveSetupRule)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-TEMPLATES' || route.operationId === 'E-TEMPLATE-VERSION') { const r = (route.operationId === 'E-TEMPLATES' ? templatesList : templateVersion)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-DELEGATIONS' || route.operationId === 'E-DELEGATION') { const r = (route.operationId === 'E-DELEGATIONS' ? delegationsList : saveDelegation)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
@@ -299,7 +313,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const fromDraft = assistant.draftStart(raw, persona);
         if (fromDraft) return send(res, ...fromDraft);
       }
-      if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona }));
+      if (START_OPERATIONS.includes(route.operationId)) return send(res, ...startWork.handle(route.operationId, { url, raw, persona, cookies }));
       if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, r.body); }
       // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.
       if (route.operationId === 'E-DOCUMENT') { const r = documentRead({ url, persona, cookies, work, overrides }); if (r) return send(res, r.status, r.body); }

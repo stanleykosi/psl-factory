@@ -21,6 +21,8 @@ import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractBody as monthEndBody } from '../mock/finance.mjs';
 // @ts-expect-error plain ESM module without type declarations
+import { contractBody as invoicesBody } from '../mock/invoices.mjs';
+// @ts-expect-error plain ESM module without type declarations
 import { contractRules } from '../mock/setup.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractDelegation, contractDelegations } from '../mock/delegations.mjs';
@@ -39,7 +41,7 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'milestones', document_id: 'D-2304', version: '1' };
-const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201' };
+const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201', pmo_lead: 'N-0201' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
   'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
@@ -58,6 +60,7 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-CLIENT-CONTACT': { none: 403 },
   'E-EXCEPTIONS': { pm: 403 },
   'E-MONTH-END': { pm: 403, none: 403 },
+  'E-INVOICES': { pm: 403, none: 403 },
   'E-SETUP-RULES': { pm: 403, none: 403 },
   'E-SETUP-RULE-SAVE': { pm: 403, none: 403 },
   'E-EVIDENCE-UPLOAD': { pm: 403, none: 403 },
@@ -82,7 +85,7 @@ function savedRecordsStripped(body: unknown): unknown {
   return copy;
 }
 // PROPOSAL (D-LINE-WORKSPACE, F-23): `steps[].items_default` ("checked" or absent) and `workspace.links[]`
-// ({key, label, target: {kind: assistant | document | project_tab (F-28), document_id?, version?, tab?, case_id?}}). Each is checked on its own, then removed
+// ({key, label, target: {kind: assistant | document | project_tab (F-28) | work (F-32) | setup_rules (F-34), document_id?, version?, tab?, case_id?}}). Each is checked on its own, then removed
 // before the schema check; the generated types and openapi.json do not carry them.
 const linkSchema = {
   type: 'array',
@@ -90,14 +93,16 @@ const linkSchema = {
   items: {
     oneOf: [
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind'], properties: { kind: { const: 'assistant' } } } } },
-      { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'tab', 'case_id'], properties: { kind: { const: 'project_tab' }, tab: { enum: ['journey', 'milestones', 'documents', 'money', 'registers', 'actions'] }, case_id: { type: 'string', pattern: '^[A-Za-z0-9][A-Za-z0-9._-]*$' } } } } },
+      { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'tab', 'case_id'], properties: { kind: { const: 'project_tab' }, tab: { enum: ['journey', 'delivery', 'milestones', 'documents', 'money', 'registers', 'actions'] }, case_id: { type: 'string', pattern: '^[A-Za-z0-9][A-Za-z0-9._-]*$' } } } } },
+      { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'work_id'], properties: { kind: { const: 'work' }, work_id: { type: 'string', pattern: '^[A-Za-z0-9][A-Za-z0-9._-]*$' } } } } },
+      { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'area'], properties: { kind: { const: 'setup_rules' }, area: { enum: ['finance', 'delivery'] } } } } },
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'document_id', 'version'], properties: { kind: { const: 'document' }, document_id: { type: 'string', minLength: 1 }, version: { anyOf: [{ type: 'string' }, { type: 'integer' }] } } } } },
     ],
   },
 };
 const validLinks = ajv.compile(linkSchema);
 function minutesProposalsStripped(body: unknown): unknown {
-  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { columns?: { date_format?: unknown }[]; items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; items_default?: unknown; starts_line?: unknown }[] } };
+  const copy = structuredClone(savedRecordsStripped(body)) as { workspace?: { links?: unknown; sections?: { columns?: { date_format?: unknown }[]; items: { id: string; values?: Record<string, unknown> }[] }[]; steps?: { key?: string; task_id?: string; items_default?: unknown; starts_line?: unknown; verdict?: unknown }[] } };
   const w = copy.workspace;
   if (w?.links !== undefined) {
     expect(validLinks(w.links), ajv.errorsText(validLinks.errors)).toBe(true);
@@ -123,6 +128,40 @@ function minutesProposalsStripped(body: unknown): unknown {
       }
       delete row.values;
     }
+    // PROPOSAL (F-41 G-SCR32-3): an item's `attachment` {label, size_bytes, document_id?}
+    for (const row of section.items as { id: string; attachment?: { label?: unknown; size_bytes?: unknown; document_id?: unknown } }[]) {
+      if (row.attachment === undefined) continue;
+      const { label, size_bytes: size, document_id: documentId, ...rest } = row.attachment;
+      expect(typeof label === 'string' && label !== '' && Number.isInteger(size) && (documentId === undefined || typeof documentId === 'string') && Object.keys(rest).length === 0, row.id).toBe(true);
+      delete row.attachment;
+    }
+  }
+  // PROPOSAL (F-31, mock/proposals/engagement-planning.json): `assign.default_person_id` (one of the candidates) and `default_hint`,
+  // `items[].team_key` and `tasks[].response.teams[].disabled_reason` / `asked_at`; each is checked on its own, then removed.
+  const offered = (copy as { assign?: { candidates: { person_id: string }[]; default_person_id?: unknown; default_hint?: unknown } }).assign;
+  if (offered?.default_person_id !== undefined) {
+    expect(offered.candidates.some((c) => c.person_id === offered.default_person_id)).toBe(true);
+    delete offered.default_person_id;
+  }
+  if (offered?.default_hint !== undefined) {
+    expect(typeof offered.default_hint === 'string' && offered.default_hint !== '').toBe(true);
+    delete offered.default_hint;
+  }
+  // PROPOSAL (F-36, mock/proposals/rfp-assign.json): `assign.roles`, `evidence_kind` and `next`; tests/rfp-assign-mock.test.ts checks each against the overlay.
+  const rfpAssign = (copy as { assign?: Record<string, unknown> }).assign;
+  if (rfpAssign) for (const key of ['roles', 'evidence_kind', 'next']) delete rfpAssign[key];
+  for (const section of w?.sections ?? []) {
+    for (const row of section.items as { team_key?: unknown }[]) {
+      if (row.team_key === undefined) continue;
+      expect(typeof row.team_key === 'string' && row.team_key !== '').toBe(true);
+      delete row.team_key;
+    }
+  }
+  for (const task of (copy as { tasks?: { response?: { teams?: { disabled_reason?: unknown; asked_at?: unknown }[] } }[] }).tasks ?? []) {
+    for (const team of task.response?.teams ?? []) {
+      delete team.disabled_reason;
+      delete team.asked_at;
+    }
   }
   // PROPOSAL (F-30): `steps[].starts_line` {line_key, prefill} and `assign.candidates[].kind`
   const candidates = (copy as { assign?: { candidates: { kind?: unknown }[] } }).assign?.candidates ?? [];
@@ -132,10 +171,21 @@ function minutesProposalsStripped(body: unknown): unknown {
     delete candidate.kind;
   }
   for (const step of w?.steps ?? []) {
+    // PROPOSAL (F-41 UX-2-3): `steps[].submit_label`, the words on a step form's submit button
+    const submit = (step as { submit_label?: unknown }).submit_label;
+    if (submit !== undefined) {
+      expect(typeof submit === 'string' && submit.trim() !== '', step.key).toBe(true);
+      delete (step as { submit_label?: unknown }).submit_label;
+    }
     if (step.starts_line !== undefined) {
       const { line_key: line, prefill } = step.starts_line as { line_key?: unknown; prefill?: unknown };
       expect(typeof line === 'string' && line !== '' && typeof prefill === 'object' && prefill !== null, step.key).toBe(true);
       delete step.starts_line;
+    }
+    // PROPOSAL (F-33 G-C-1): `steps[].verdict`, a decision step decided in place; only on a step that carries a task id
+    if (step.verdict !== undefined) {
+      expect(typeof step.task_id === 'string' && typeof step.verdict === 'string', step.key).toBe(true);
+      delete step.verdict;
     }
     if (step.items_default === undefined) continue;
     expect(step.items_default, step.key).toBe('checked');
@@ -147,6 +197,7 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
   'E-WORK-ITEM': minutesProposalsStripped,
   'E-EXCEPTIONS': exceptionsBody,
   'E-MONTH-END': monthEndBody,
+  'E-INVOICES': invoicesBody,
   'E-SETUP-RULES': contractRules,
   'E-EVIDENCE-UPLOAD': contractEvidence,
   'E-DELEGATIONS': contractDelegations,
@@ -233,6 +284,7 @@ describe('mock server matches openapi.json', () => {
       ['Folake Bello', ['my_work', 'projects', 'overview', 'assistant'], 'mock-csrf-ceo'],
       ['Sample Person', [], 'mock-csrf-none'],
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-admin'],
+      ['Kemi Adebayo', ['my_work', 'projects', 'assistant'], 'mock-csrf-pmo_lead'],
     ]);
   });
 
@@ -473,7 +525,8 @@ describe('mock work items: per-id fixtures, fallback and history parameters', ()
           expect(decidePresentation, name).toBeUndefined();
         }
         expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(item));
-        expect(body.sample, name).toBe(true);
+        // F-41: W-3813 is the one item served with sample: false, to prove the label follows the record
+        expect(body.sample, name).toBe(name !== 'W-3813.json');
       }
     }
     expect(files.filter(boardFixture)).toHaveLength(12);
@@ -643,7 +696,9 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
         .filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name))
         .filter((name) => (key === 'links' ? 'links' in (JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}) : JSON.stringify(JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}).includes('"items_default"')));
     expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
-    expect(withKey('links').every((name) => /^W-23/.test(name))).toBe(true);
+    // F-31 (W-26xx), F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) and F-34 hypercare (W-31xx) carry links too; F-33's investigating board (W-2701) and F-42's (W-3901) F-43's (W-4001) and F-45's (W-4201, W-4211) draw Ask Chidi;
+    // F-35's drafting board (W-3201) draws Ask Tola; F-39's escalation boards (W-36xx) draw their links too
+    expect(withKey('links').every((name) => /^W-(23|25|26|31|36)/.test(name) || name === 'W-2701.json' || name === 'W-3201.json' || name === 'W-3901.json' || name === 'W-4001.json' || name === 'W-4201.json' || name === 'W-4211.json')).toBe(true);
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
   });
 
@@ -688,5 +743,53 @@ describe('F-28 minutes end-state fixtures (W-2309 to W-2314)', () => {
     expect(carrying.sort()).toEqual(['W-2309.approve.json', 'W-2310.json', 'W-2311.json', 'W-2312.json', 'W-2313.json', 'W-2301.next.internal.json'].sort());
     expect(validLinks([{ key: 'k', label: 'Open', target: { kind: 'project_tab', tab: 'nowhere', case_id: 'C-0211' } }])).toBe(false);
     expect(validLinks([{ key: 'k', label: 'Open', target: { kind: 'project_tab', tab: 'actions', case_id: '../x' } }])).toBe(false);
+  });
+});
+
+describe('F-42 fixed asset schedule fixtures (W-3901 to W-3912)', () => {
+  const dir = join(__dirname, '../mock/fixtures/work');
+  const names = readdirSync(dir).filter((name) => /^W-39\d\d(\.[a-z]+)?\.json$/.test(name));
+
+  it('every item and decide sidecar is schema-valid and marked sample once steps[].verdict is removed', () => {
+    expect(names.filter((name) => /^W-\d+\.json$/.test(name))).toHaveLength(12);
+    expect(names).toHaveLength(21);
+    for (const name of names) {
+      const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
+      expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(body));
+      expect(body.sample, name).toBe(true);
+      expect(body.workspace.line_key, name).toBe('fixed_assets');
+    }
+  });
+});
+
+describe('F-45 ledger source fixtures (W-4201 to W-4213)', () => {
+  const dir = join(__dirname, '../mock/fixtures/work');
+  const names = readdirSync(dir).filter((name) => /^W-42\d\d(\.[a-z]+)?\.json$/.test(name) && !name.includes('.steps'));
+
+  it('every item and sidecar is schema-valid and marked sample once steps[].verdict and the links are removed', () => {
+    expect(names.filter((name) => /^W-\d+\.json$/.test(name))).toHaveLength(13);
+    expect(names).toHaveLength(20);
+    for (const name of names) {
+      const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
+      expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(body));
+      expect(body.sample, name).toBe(true);
+      expect(body.workspace.line_key, name).toBe('ledger_sources');
+    }
+  });
+});
+
+describe('F-43 cash forecast fixtures (W-4001 to W-4013)', () => {
+  const dir = join(__dirname, '../mock/fixtures/work');
+  const names = readdirSync(dir).filter((name) => /^W-40\d\d(\.[a-z]+)?\.json$/.test(name));
+
+  it('every item and decide sidecar is schema-valid and marked sample once steps[].verdict is removed', () => {
+    expect(names.filter((name) => /^W-\d+\.json$/.test(name))).toHaveLength(13);
+    expect(names).toHaveLength(19);
+    for (const name of names) {
+      const body = JSON.parse(readFileSync(join(dir, name), 'utf8'));
+      expectValid('E-WORK-ITEM', 200, minutesProposalsStripped(body));
+      expect(body.sample, name).toBe(true);
+      expect(body.workspace.line_key, name).toBe('cash_forecast');
+    }
   });
 });

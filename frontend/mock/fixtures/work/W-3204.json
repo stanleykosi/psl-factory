@@ -1,0 +1,128 @@
+{
+  "id": "W-3204",
+  "title": "Monthly leadership report · October",
+  "line": "Leadership report",
+  "reference": "RPT-M-2026-10",
+  "state": "verified",
+  "revision": 4,
+  "stations": [
+    {
+      "name": "Gather",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Leadership review",
+      "status": "done"
+    },
+    {
+      "name": "Send",
+      "status": "done"
+    },
+    {
+      "name": "Received",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-02T08:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-03T08:10:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-03T08:10:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-03T08:12:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-11-03T09:40:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-11-03T09:40:00Z"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Gathered October's records",
+        "status": "done",
+        "source": "5 PROJECTS · 41 MEETINGS · 12 ISSUES"
+      },
+      {
+        "text": "Summarised milestones and money",
+        "status": "done",
+        "source": "3 MILESTONES COMPLETE · 2 INVOICES VERIFIED"
+      },
+      {
+        "text": "Drafted the escalations section",
+        "status": "done",
+        "source": "ESC-0011 · ESC-0012"
+      },
+      {
+        "text": "Handed the draft for leadership review",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-01T07:00:00Z"
+  },
+  "next_step": "Nothing more is needed.",
+  "sample": true,
+  "workspace": {
+    "line_key": "leadership_report",
+    "screen": "SCR-52",
+    "view": "received",
+    "status": {
+      "label": "RECEIVED BY EVERY RECIPIENT",
+      "tone": "verified"
+    },
+    "sections": [
+      {
+        "key": "received",
+        "kind": "text",
+        "items": [],
+        "note": "October's report was approved by Ifeoma Nwosu and delivered to all 4 recipients on 03 Nov, verified."
+      }
+    ],
+    "next": [
+      "Read it any time on Overview."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "overview",
+          "label": "OVERVIEW"
+        },
+        {
+          "value": "leadership_reports",
+          "label": "LEADERSHIP REPORTS"
+        },
+        {
+          "value": "RPT-M-2026-10",
+          "label": "RPT-M-2026-10"
+        }
+      ]
+    },
+    "revision": 4
+  }
+}

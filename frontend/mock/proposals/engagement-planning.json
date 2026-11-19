@@ -1,0 +1,23 @@
+{
+  "$comment": "F-31 contract overlay (mock only). Fields the engagement and planning fixtures (W-2601 to W-2604) carry ahead of the generated types, for the backend developer to adopt, change or refuse. Every one is optional and absent reads as 'not supplied'. assign.default_person_id and assign.default_hint (G-41-1): the person the form opens with, which must be one of assign.candidates, and the line under the field. items[].team_key (G-42-2): the team a row's record step is for. teams[].disabled_reason and asked_at (G-42-2): a team that is not offered in the form, and when it was asked (not read by the page). Cell text with money in a text column (G-41-3) uses typed fields only. Not read by the page and not in the fixtures: quantity cells {value?, unit, unknown} (G-42-1); E-WORK-STEP 200 created[] {kind, case_id?, work_id?, reference, line?} and a reconcile path for a half-done registration (G-41-5); where plan evidence lives before the project exists (G-41-4); the client project contact record (G-41-6); a panel title for the side panel; a link target for 'Who receives this?' (G-42-4). Mock scripts may carry serve: the name of another fixture to serve under the item's id.",
+  "assign": {
+    "type": "object",
+    "properties": {
+      "default_person_id": { "type": "string", "minLength": 1 },
+      "default_hint": { "type": "string", "minLength": 1 }
+    }
+  },
+  "item": {
+    "type": "object",
+    "properties": {
+      "team_key": { "type": "string", "minLength": 1 }
+    }
+  },
+  "team": {
+    "type": "object",
+    "properties": {
+      "disabled_reason": { "type": "string", "minLength": 1 },
+      "asked_at": { "type": "string", "format": "date-time" }
+    }
+  }
+}

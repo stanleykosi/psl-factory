@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-ui
-COMMIT: d20fd9b2ccee7be267936cc2758358989ecdedbb
+COMMIT: 306728777fda087120513e0a18e5bcc8d2344389
 AUTHORITY: delivery UI review
 
 ## Summary
@@ -38,3 +38,8 @@ None.
 
 ## Notes
 - The AgentCard's "step 4 of 4" against the board's "step 3 of 4" (Conflicts 15) is still worth the design engineer's eye when signing.
+
+## Update for head 30672877 (diff b8265cdb..30672877)
+- Merge head 30672877 only adds F-31 (response drawer, engagement/planning) and F-32 (orphan-step rule, work links) code around F-33; F-33's inline decide, uncertain handling, income banner and agent card are untouched in the Workspace/proposals/workspace.css diff.
+- The phone Drawer now covers issue, engagement and income lines only; other lines are unchanged. New CSS is scoped to engagement/planning/Drawer selectors and the disabled-button tweak does not touch income.
+- Verdict unchanged.

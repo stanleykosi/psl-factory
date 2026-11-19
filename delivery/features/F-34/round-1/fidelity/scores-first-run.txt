@@ -1,0 +1,9 @@
+board	width	coverage	with-exceptions	visual	pass
+SCR-46-desktop-1440	1440	71.7	71.7	92.3	False
+SCR-46-desktop-setup-needed-1440	1440	71.7	71.7	77.1	False
+SCR-46-desktop-qualified-1440	1440	64.9	64.9	80.4	False
+SCR-46-mobile-390	390	75	75	84.5	False
+SCR-46-mobile-setup-needed-390	390	40	40	80	False
+SCR-46-mobile-qualified-390	390	40	40	81.5	False
+SCR-46-desktop-record-1440	1440	56.5	60.9	82.7	False
+SCR-46-mobile-record-390	390	42.9	50	77.5	False

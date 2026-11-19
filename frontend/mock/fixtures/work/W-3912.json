@@ -1,0 +1,307 @@
+{
+  "id": "W-3912",
+  "title": "Fixed asset schedule · October",
+  "line": "Fixed asset schedule",
+  "reference": "PPE-0006",
+  "state": "action_needed",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Register review",
+      "status": "done"
+    },
+    {
+      "name": "Date review (if unclear)",
+      "status": "current_person"
+    },
+    {
+      "name": "Calculate",
+      "status": "not_started"
+    },
+    {
+      "name": "Schedule review",
+      "status": "not_started"
+    },
+    {
+      "name": "Verified",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-3932",
+      "kind": "decide",
+      "title": "Review the asset register",
+      "required_role": "PPE reviewer",
+      "you_can_act": false,
+      "revision": 1,
+      "decision": {
+        "version": {
+          "label": "October register",
+          "number": 1,
+          "drafted_at": "2026-11-13T11:40:00Z"
+        },
+        "basis": "Approve the October register as the source for the schedule.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": false,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PPE reviewer",
+              "status": "approved",
+              "is_you": false,
+              "person": "Ada Okafor",
+              "decided_at": "2026-11-13T14:05:00Z"
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    },
+    {
+      "id": "T-3912",
+      "kind": "decide",
+      "title": "Review the in-service dates",
+      "required_role": "PPE reviewer",
+      "you_can_act": false,
+      "revision": 1,
+      "decision": {
+        "version": {
+          "label": "October in-service dates",
+          "number": 1,
+          "drafted_at": "2026-11-13T11:40:00Z"
+        },
+        "basis": "Approve the explained dates. Depreciation starts from these dates.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": true,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "PPE reviewer",
+              "status": "current",
+              "is_you": false
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "prepared_by_you"
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read the asset register",
+        "status": "done",
+        "source": "PPE_REGISTER_OCT.XLSX · 64 ASSETS"
+      },
+      {
+        "text": "Compared with September's schedule",
+        "status": "done",
+        "source": "PPE-0005"
+      },
+      {
+        "text": "Found 3 assets with unclear in-service dates",
+        "status": "done",
+        "source": "VALUES NOT READ"
+      },
+      {
+        "text": "Hand to register review",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-13T09:05:00Z"
+  },
+  "next_step": "A PPE reviewer approves, returns or rejects the explained in-service dates on this page.",
+  "sample": true,
+  "workspace": {
+    "line_key": "fixed_assets",
+    "screen": "SCR-55",
+    "view": "date_review",
+    "status": {
+      "label": "AWAITING FINANCE DECISION",
+      "tone": "person"
+    },
+    "sections": [
+      {
+        "key": "unclear_dates",
+        "kind": "table",
+        "title": "Unclear dates",
+        "columns": [
+          {
+            "key": "asset",
+            "label": "ASSET",
+            "kind": "text"
+          },
+          {
+            "key": "register_says",
+            "label": "REGISTER SAYS",
+            "kind": "text"
+          },
+          {
+            "key": "explanation",
+            "label": "EXPLANATION",
+            "kind": "text"
+          }
+        ],
+        "items": [
+          {
+            "id": "A-0412",
+            "cells": [
+              {
+                "column": "asset",
+                "text": "A-0412 server rack"
+              },
+              {
+                "column": "register_says",
+                "text": "\"Oct 2026\""
+              },
+              {
+                "column": "explanation",
+                "text": "Delivered 02 Oct, live 15 Oct"
+              }
+            ]
+          },
+          {
+            "id": "A-0415",
+            "cells": [
+              {
+                "column": "asset",
+                "text": "A-0415 laptop"
+              },
+              {
+                "column": "register_says",
+                "text": "Blank"
+              },
+              {
+                "column": "explanation",
+                "text": "Issued 07 Oct"
+              }
+            ]
+          },
+          {
+            "id": "A-0416",
+            "cells": [
+              {
+                "column": "asset",
+                "text": "A-0416 laptop"
+              },
+              {
+                "column": "register_says",
+                "text": "\"Q4\""
+              },
+              {
+                "column": "explanation",
+                "text": "Issued 09 Oct"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "proof",
+        "kind": "text",
+        "title": "Proof",
+        "items": [
+          {
+            "id": "P-1",
+            "cites": [
+              {
+                "label": "asset-dates-explanation.pdf",
+                "evidence_id": "EV-3903"
+              }
+            ],
+            "detail": "Uploaded · 64 KB"
+          }
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "key": "approve_dates",
+        "label": "Approve dates",
+        "emphasis": "primary",
+        "applies_to": "workspace",
+        "task_id": "T-3912",
+        "verdict": "approve"
+      },
+      {
+        "key": "return_dates",
+        "label": "Return with a note",
+        "emphasis": "secondary",
+        "applies_to": "workspace",
+        "task_id": "T-3912",
+        "verdict": "return"
+      },
+      {
+        "key": "reject_dates",
+        "label": "Reject",
+        "emphasis": "danger",
+        "applies_to": "workspace",
+        "task_id": "T-3912",
+        "verdict": "reject"
+      }
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "schedules",
+          "label": "SCHEDULES"
+        },
+        {
+          "value": "PPE-0006",
+          "label": "ASSETS · PPE-0006"
+        }
+      ]
+    },
+    "revision": 1
+  }
+}

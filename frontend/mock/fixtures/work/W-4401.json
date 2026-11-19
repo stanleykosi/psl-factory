@@ -1,0 +1,62 @@
+{
+  "id": "W-4401",
+  "title": "Income detail · October",
+  "line": "Income detail or schedule inventory",
+  "reference": "SCH-0022",
+  "state": "processing",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Read the file",
+      "status": "current_agent"
+    },
+    {
+      "name": "Finance review",
+      "status": "not_started"
+    },
+    {
+      "name": "Record",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "current"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Chidi",
+    "status": "working",
+    "steps": [
+      {
+        "text": "Reading income_detail_oct.xlsx",
+        "status": "working"
+      }
+    ]
+  },
+  "next_step": "Chidi is reading the file. A Finance Lead reviews it next.",
+  "sample": true,
+  "case_id": "C-FIN-SCHEDULES"
+}

@@ -1,0 +1,9 @@
+{
+  "record_release": {
+    "status": 200,
+    "body": {
+      "outcome": "effect_uncertain",
+      "message": "The release may not have been recorded."
+    }
+  }
+}

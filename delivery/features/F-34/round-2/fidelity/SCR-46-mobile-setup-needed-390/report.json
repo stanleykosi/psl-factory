@@ -1,0 +1,354 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-18T12:48:04.775Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-46-mobile-setup-needed.dc.html",
+  "boardName": "SCR-46-mobile-setup-needed.dc.html",
+  "pageUrl": "http://localhost:4961/work/W-3103",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-34/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 80 is below 90."
+  ],
+  "scores": {
+    "coverage": 40,
+    "coverageWithExceptions": 100,
+    "visual": 80
+  },
+  "visual": {
+    "score": 80,
+    "allCellsScore": 85.3,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1057,
+    "cell": 12,
+    "contentCells": 1721,
+    "mismatchedCells": 344
+  },
+  "coverage": {
+    "total": 5,
+    "found": 2,
+    "coverage": 40,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Setup needed",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Setup needed\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 336,
+          "h": 24
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Delivery",
+        "key": "link: ← Delivery",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 72,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: the phone bar keeps the built F-22 frame (Back to Queue).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SETUP",
+        "key": "text: SETUP",
+        "container": "page",
+        "boardBox": {
+          "x": 245,
+          "y": 21,
+          "w": 36,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 7: the phone bar word is a frame item; the status is drawn by the returned label and tone.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Hypercare criteria aren't set yet. An admin sets them in Setup › Rules.",
+        "key": "text: Hypercare criteria aren't set yet. An admin sets them in Setup › Rules.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 114,
+          "w": 306,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Conflicts 7: the page shows the desktop wording (the returned hold sentence) stacked in one column.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "HYP-0062",
+        "container": "main",
+        "pageBox": {
+          "x": 174,
+          "y": 0,
+          "w": 58,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 106,
+          "w": 84,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SETUP NEEDED",
+        "container": "main",
+        "pageBox": {
+          "x": 163,
+          "y": 103,
+          "w": 106,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "navigation",
+        "pageBox": {
+          "x": 332,
+          "y": 103,
+          "w": 42,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See all exceptions",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 139,
+          "w": 358,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Hypercare can't be evaluated: PSL hasn't set the hypercare criteria yet (how long the window is and what must be true at the end).",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 199,
+          "w": 306,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "OBSERVATIONS SO FAR",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 288,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Section",
+        "role": "region",
+        "name": "Table: Observations so far",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 325,
+          "w": 326,
+          "h": 438
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "container": "region",
+        "pageBox": {
+          "x": 34,
+          "y": 327,
+          "w": 322,
+          "h": 434
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open Setup › Rules",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 785,
+          "w": 159,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "Next",
+        "container": "main",
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "heading",
+        "name": "NEXT",
+        "container": "complementary",
+        "pageBox": {
+          "x": 18,
+          "y": 857,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "An admin sets the criteria in Setup › Rules. Observations keep being collected meanwhile.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 32,
+          "y": 894,
+          "w": 326,
+          "h": 42
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

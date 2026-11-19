@@ -1,0 +1,31 @@
+VERDICT: CHANGES
+REVIEWER: reviewer-ui
+COMMIT: 512e5bc3ca426ddf049cb23ec6272cd4cd2848e4
+AUTHORITY: delivery UI review
+
+## Summary
+- I read the coordinator's scored run (round-1/fidelity/scores.txt, 8 reports and side-by-sides) and did not re-run it. After exceptions, coverage is 100 on all 8 boards. Visual scores: desktop 92.3 / 77.1 / 80.4 / 82.7, phone 84.5 / 80.0 / 81.5 / 77.5. Every board is at 70 or above.
+- Most of the gap on the 7 boards under 90 is the approved shared frame and the D-118 layout calls. That part can be waived under D-83. Two differences are not frame and are not listed. On the criteria rows, a "DONE" tag appears next to "MET" (desktop and phone, default and qualified). Three tags draw orange where the board draws amber: the running status, the record status and "Open · owner set".
+- The 26 exceptions each map to a spec Conflicts item (6, 7, 8, 13, 14, 15). None hides a value the data supplies: "Build 1.0.0" and "Production · Lagoon Health" are on the page, as pre-filled input values.
+- Tokens and components: the src diff is 4 small files (link kind, an exported route map, notice timing). There is no CSS, no colour literal and no new component. Phone width does not overflow on any of the 4 states (scrollWidth 390). Every control the feature adds is 44px or more at 390.
+- W-2502 (F-32 release) and W-2901 render as before at 1440 and 390. No fixture or drawing code they use was changed. The only shared change is the notice timing in useWorkspaceStep.ts, which is not visual.
+
+## Findings
+1. UI-1-1 | blocking | medium | frontend | **An extra "DONE" tag on each criterion.** Boards SCR-46-desktop, SCR-46-mobile, SCR-46-desktop-qualified and SCR-46-mobile-qualified draw each criterion with one green "MET" at the end of the row. The page draws "MET" after the text and a second green "DONE" at the end (side-by-side.png for desktop-1440, desktop-qualified-1440 and mobile-qualified-390). The cause is in the fixtures: the criteria items C-2..C-4 carry both `tag: Met` and `status: "done"` (frontend/mock/fixtures/work/W-3101.json and W-3104.json, criteria checklist). The tool does not report this, but the boards have no such element and no exception covers it. Expected fix: drop `status` from those items so the returned "Met" tag is the only result shown. Then add one `frame layout` exception (Conflicts 10/12) for "MET" sitting after the text rather than at the row end, which is where the shared checklist puts a tag.
+2. UI-1-2 | blocking | low | frontend | **Three tags are orange where the board draws amber, and no exception lists them.** The tags are "HYPERCARE · DAY 10 OF 30" (W-3101), "HYPERCARE · RELEASE NOT RECORDED" (W-3102) and the "Open · owner set" row tag (W-3101/W-3103), at both widths. The fixtures return tone `person`, which draws the orange "a person must act" family (Tag.tsx STATE_TAGS; workspace/labels.ts TONE). The boards draw amber, which means waiting on someone. A running window is waiting, not a person's action, and the workspace tone list has no plain "waiting" value. `uncertain` is the only tone that draws amber, and it is reserved for effect uncertain, so the fixture must not use it. Spec Conflicts 16 says such a colour difference is listed as an exception and never hard-coded. Also, spec Conflicts 4 assumed `person` draws an amber tag. In fact the setup-needed tag draws orange-red, close to the board's red, and only the banner is amber. Expected fix: add `tone` exceptions for the three tags, stating the real colours and this setup-needed result, so the design engineer can sign them. Add a `waiting` workspace tone to the backend gap list (delivery/BACKEND-HANDOFF.md, "Added during F-34").
+
+## Per-board decision (D-83)
+- SCR-46-desktop 1440, 92.3: passes. UI-1-1 and UI-1-2 still apply.
+- SCR-46-desktop-setup-needed 1440, 77.1: can be waived. The gap is frame: the top bar, crumbs as a list, History, the project bar with no tab current and no counts, no delivery sub-nav (D-113), the "PM Tunde Bello" meta line, and the full-width "See all exceptions" above the banner (Conflicts 11). "Open Setup › Rules" sits in the links row (Conflicts 9), the "Reference" header is added (Conflicts 10) and the banner is amber (Conflicts 4). Nothing here is fixable in this feature except UI-1-2's row tag.
+- SCR-46-desktop-qualified 1440, 80.4: can be waived once UI-1-1 is fixed. The rest is the same frame, plus "See what closure needs" in the links row (Conflicts 2, 9).
+- SCR-46-desktop-record 1440, 82.7: can be waived. The form opens on press in the side panel and the main column is empty (Conflicts 6, D-69). The date input is native and shows 2026 (Conflicts 15). The proof chip comes from ProofField (Conflicts 13).
+- SCR-46-mobile 390, 84.5: can be waived once UI-1-2 is listed. The desktop sections are stacked in one column (Conflicts 7), and the shared phone bar shows "← Queue" and the sticky step bar.
+- SCR-46-mobile-setup-needed 390, 80.0: can be waived (Conflicts 4, 7, 11).
+- SCR-46-mobile-qualified 390, 81.5: can be waived once UI-1-1 is fixed (Conflicts 7).
+- SCR-46-mobile-record 390, 77.5: can be waived (Conflicts 6, 7). The board's sticky "Record release" bar is drawn as the frame's in-form buttons.
+
+## Notes
+- fidelity-exceptions.json still says `approved_by: "builder proposal, pending design engineer"` on all 26 entries. D-118 has approved Conflicts 1-16 as recommended, so these can now cite D-118. The 7 visual waivers stay pending until the design engineer signs them after this round.
+- Record state, shared frame: with the form open, the Next panel keeps its "Record release" button and the consequence sentence, and the form repeats both. As a result the sentence and the button label each appear twice (desktop-record side-by-side). This comes from the F-17/F-23 frame (Steps.tsx consequence plus StepForm), not from this feature. It is worth a frame pass later.
+- At 390, the shared "History" link is 24px tall on every line item, W-2502 and W-2901 included. The shared proof chip's remove button is also 24px. Both were there before this feature and are frame items.
+- Screens checked read-only on 4961 (persona pm, GET only, no mock writes): /private/tmp/claude-501/-Users-Hunchoo--claude-spares-spare-2d2Z3S/0986a60c-391e-48d6-b2da-79de8713a755/scratchpad/ui/

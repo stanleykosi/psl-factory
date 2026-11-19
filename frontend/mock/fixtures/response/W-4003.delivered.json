@@ -1,0 +1,221 @@
+{
+  "id": "W-4003",
+  "title": "Cash forecast · base case, Nov–Apr",
+  "line": "Cash forecast",
+  "reference": "FC-0014",
+  "state": "verified",
+  "revision": 6,
+  "stations": [
+    {
+      "name": "Chidi investigates",
+      "status": "done"
+    },
+    {
+      "name": "Calculate",
+      "status": "done"
+    },
+    {
+      "name": "Review",
+      "status": "done"
+    },
+    {
+      "name": "Group rows",
+      "status": "done"
+    },
+    {
+      "name": "Group review",
+      "status": "done"
+    },
+    {
+      "name": "Chidi drafts",
+      "status": "done"
+    },
+    {
+      "name": "Publish",
+      "status": "done"
+    },
+    {
+      "name": "Verified",
+      "status": "verified"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-13T15:00:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "earned",
+      "at": "2026-11-13T10:00:00Z"
+    },
+    {
+      "name": "approved",
+      "status": "earned",
+      "at": "2026-11-13T10:00:00Z"
+    },
+    {
+      "name": "sent",
+      "status": "earned",
+      "at": "2026-11-14T08:00:00Z"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "earned",
+      "at": "2026-11-14T12:00:00Z"
+    },
+    {
+      "name": "verified",
+      "status": "earned",
+      "at": "2026-11-14T12:00:00Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T-4003",
+      "kind": "decide",
+      "title": "Review the cash forecast",
+      "required_role": "Forecast reviewer",
+      "you_can_act": false,
+      "revision": 2,
+      "decision": {
+        "version": {
+          "label": "Forecast v1",
+          "number": 1,
+          "drafted_at": "2026-11-12T11:00:00Z"
+        },
+        "basis": "Approve the base-case forecast for management. It doesn't move any cash.",
+        "prepared_by": {
+          "name": "Bisi Ade",
+          "role": "Finance",
+          "is_you": false,
+          "with_agent": "chidi"
+        },
+        "chain": {
+          "steps": [
+            {
+              "position": 1,
+              "role": "Forecast reviewer",
+              "status": "approved",
+              "is_you": false
+            }
+          ],
+          "step_count": 1
+        }
+      },
+      "cannot_act_reason": "already_decided"
+    }
+  ],
+  "agent": {
+    "name": "Chidi",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Read opening balances",
+        "status": "done",
+        "source": "3 BANK ACCOUNTS · 31 OCT"
+      },
+      {
+        "text": "Aged open invoices",
+        "status": "done",
+        "source": "9 INVOICES · ₦31.4M"
+      },
+      {
+        "text": "Carried over last forecast's assumptions",
+        "status": "done",
+        "source": "FC-0013"
+      },
+      {
+        "text": "Hand to calculation",
+        "status": "done"
+      }
+    ],
+    "started_at": "2026-11-12T07:40:00Z"
+  },
+  "next_step": "As months close, a person records actual cash against the forecast.",
+  "sample": true,
+  "case_id": "C-4003",
+  "case_revision": 3,
+  "workspace": {
+    "line_key": "cash_forecast",
+    "screen": "SCR-56",
+    "view": "verified",
+    "status": {
+      "label": "VERIFIED",
+      "tone": "verified"
+    },
+    "sections": [
+      {
+        "key": "milestones",
+        "kind": "figures",
+        "items": [
+          {
+            "id": "V-1",
+            "label": "CALCULATED",
+            "value": "12 Nov"
+          },
+          {
+            "id": "V-2",
+            "label": "REVIEWED",
+            "value": "13 Nov"
+          },
+          {
+            "id": "V-3",
+            "label": "DRAFTED",
+            "value": "13 Nov"
+          },
+          {
+            "id": "V-4",
+            "label": "PUBLISHED",
+            "value": "14 Nov"
+          },
+          {
+            "id": "V-5",
+            "label": "RECEIPTS",
+            "value": "2 of 2"
+          },
+          {
+            "id": "V-6",
+            "label": "VERIFIED",
+            "value": "14 Nov",
+            "tag": {
+              "label": "VERIFIED",
+              "tone": "verified"
+            }
+          }
+        ]
+      },
+      {
+        "key": "limits",
+        "kind": "text",
+        "items": [
+          {
+            "id": "L-1",
+            "text": "The forecast never moves cash or authorises a payment."
+          }
+        ]
+      }
+    ],
+    "next": [
+      "As months close, record actual cash against the forecast."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "finance",
+          "label": "FINANCE"
+        },
+        {
+          "value": "forecasts",
+          "label": "FORECASTS"
+        },
+        {
+          "value": "FC-0014",
+          "label": "FC-0014"
+        }
+      ]
+    },
+    "revision": 6
+  }
+}

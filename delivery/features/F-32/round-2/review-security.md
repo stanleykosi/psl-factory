@@ -1,6 +1,6 @@
 VERDICT: PASS
 REVIEWER: reviewer-security
-COMMIT: 5bab76ae6a1d3a5bd8a26c0504b7a7ad72d51b9b
+COMMIT: 62ed73aa419d1e6a2bc990125bfd517422a778d3
 AUTHORITY: delivery security review
 
 ## Summary
@@ -14,3 +14,9 @@ No blocking findings.
 - Layout changes add no control or write. The only new interactive element in `DeliveryTab.tsx` is a `Link` to `/work/<encoded id>` (navigation, encoded). `work-columns--lone` is a class only. The fixture, CSS and e2e edits (link count 6 to 7) add no capability.
 - Checks: `release-gates` and `decide` vitest files pass (61 tests).
 - Notes (non-blocking): the hint "Claim it first" is no longer shown on release steps. That is cosmetic and matches the page, which claims on open.
+
+## Update for head 62ed73aa (diff 5bab76ae..62ed73aa)
+- Read the diff 5bab76ae..62ed73aa on the shared files (Steps, Workspace, Sections, WorkItemView, AssignForm, workspace.mjs, mock-contract test): F-31 additions sit beside the F-32 release-gate paths without changing them.
+- Orphan-step rule checked: a step whose task is in tasks[] with you_can_act true still links to the decision page; only a missing task or you_can_act false is unavailable.
+- Ran engagement-planning, release-gates, delivery-*, workspace* and issue-detail tests in the worktree: 8 files, 230 tests passed.
+- Verdict unchanged.

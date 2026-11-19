@@ -1,0 +1,139 @@
+{
+ "exceptions": [
+  {
+   "role": "link",
+   "name": "Overview",
+   "category": "frame item",
+   "reason": "Conflicts 6: the shared frame shows the destinations the signed-in persona (pmo_lead, mock only, destinations as pm) has; the board shows a PMO Lead with Overview.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "link",
+   "name": "Setup",
+   "category": "frame item",
+   "reason": "Conflicts 6: the shared frame shows the destinations the signed-in persona (pmo_lead, mock only, destinations as pm) has; the board shows a PMO Lead with Setup.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "Tunde Bello · PMO ▾",
+   "category": "sample data",
+   "reason": "Conflicts 2 and 10: nobody is chosen for the person; the list starts at \"Choose a PM\" and the PM is picked from assign.candidates only.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "NEEDS A PM",
+   "category": "page behind",
+   "reason": "Conflicts 8: the list behind the panel is My work as built (F-02): the state word comes from the contract (\"Owner needed\").",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "RFP received · TL-RFP-2026-014 · deadline 28 Nov",
+   "category": "page behind",
+   "reason": "Conflicts 8: My work as built draws the meta from line · reference; a list row has no deadline.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "pattern",
+   "name": "Table rows with columns WORK / STATE / AGE",
+   "category": "page behind",
+   "reason": "Conflicts 8: My work as built has the kind tag and four columns (WORK, WHERE ON ITS LINE, STATE, AGE); the board draws three.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "assignment-email.eml",
+   "category": "sample data",
+   "reason": "Conflicts 10: the file name is drawn filled in on the board; the page starts with no file and shows the person's own after choosing one.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "Uploaded · 18 KB",
+   "category": "sample data",
+   "reason": "Conflicts 10: the file size is drawn filled in on the board; the page shows the chosen file's own size (\"Size unknown\" when not known).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "Tunde led the Lagoon Health bid; similar loan-origination scope.",
+   "category": "sample data",
+   "reason": "Conflicts 10: the note is drawn filled in on the board; the page starts with an empty note.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "What happens next: Tunde is alerted by WhatsApp and email and sees it in Needs me. They start the RFP response, and Tola investigates it straight away.",
+   "category": "sample data",
+   "reason": "Conflicts 5: the sentences are the backend's (assign.next, mock overlay G-24-3), shown as returned; the backend cannot know the chosen name before the choice, and no analysis job exists (G-24-4).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "link",
+   "name": "← My work",
+   "category": "frame item",
+   "reason": "Conflicts 9: My work is a top-level page and has no back link; the sheet covers the bar and its × returns to the list.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "Led a similar bid",
+   "category": "sample data",
+   "reason": "Conflicts 10: the phone note is drawn filled in on the board; the page starts with an empty note.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "Next: Tunde is alerted and starts the RFP response.",
+   "category": "sample data",
+   "reason": "Conflicts 5 and 7: the phone sheet shows the same \"What happens next\" lines as desktop, from the backend's assign.next when it sends one; the name is sample data.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "×",
+   "category": "component",
+   "reason": "Conflicts 7 and 11: the shared Drawer's close is an icon button named Close, not a text ×.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "PMO Lead ▾",
+   "category": "component",
+   "reason": "Conflicts 3: the shared Select draws its own chevron; the role words come from the response (assign.roles).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "Note",
+   "category": "component",
+   "reason": "Conflicts 10: the shared TextArea writes \"(optional)\" after the label and shows a character count.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "What happens next:",
+   "category": "sample data",
+   "reason": "Conflicts 5: the sentence after the label is the backend's own (assign.next), so the label and sentence are one block.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  },
+  {
+   "role": "text",
+   "name": "Next:",
+   "category": "sample data",
+   "reason": "Conflicts 5 and 7: the phone sheet shows the same \"What happens next:\" block as desktop.",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-24-mobile",
+   "width": 390,
+   "visual": 75.6,
+   "reason": "Measured 75.6 in round 1 (floor 70, D-83). Gaps: the sheet shows the desktop's content in one column (Conflicts 7: intro callout, count, role help, proof field, fuller next sentence) where the phone board draws only PM, role, note and a short next line; the page shows nothing chosen and an empty note (Conflicts 2, 10); shared frame and the list behind the sheet are My work as built (Conflicts 8, 9).",
+   "approved_by": "design engineer, 18 Nov 2026 — D-120"
+  }
+ ]
+}

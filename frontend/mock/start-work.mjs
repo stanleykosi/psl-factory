@@ -1,10 +1,22 @@
-// Start work in the contract mock: E-LINES, E-LINE-OPTIONS and E-WORK-START. Local use only.
+// Start work in the contract mock: E-LINES, E-LINE-OPTIONS, E-WORK-START and the start-work proof uploads
+// (E-EVIDENCE-UPLOAD, FE-M2A-PROOF). Local use only.
 //
 // Lines: fixtures/start-work/lines.<persona>.json. Options: fixtures/start-work/options/<field>.json, filtered by
 // the mock-only `_personas` and `_parent` (both stripped before serving), then `q`, paged by an "o:<offset>" cursor.
 // A start is checked in order: request schema (422), line granted (403), idempotency replay (same key and body:
 // the stored 201; different body: 409), case served to the persona (404), case revision (409), intake (422). Started
 // work is kept in memory by idempotency key; reset() clears it.
+//
+// Proof: an upload whose `kind` is the evidence_kind of a line served to the persona, on a case that line starts on,
+// comes here (server.mjs routes it; any other upload keeps its F-09 or F-11 owner). Checked in order: request
+// schema (422), a case that line starts on (its fixed case, or a project option served to the persona; else 404),
+// case revision (409), content (422: empty, or the backend-stated sample "EXE files can't be used as proof."). Success moves the case revision on by one and returns EV-SW-<case_id>-<n>. Case
+// revisions live in one map ("<persona>:<case_id>", from the fixtures) that E-LINES, E-LINE-OPTIONS and E-WORK-START
+// read, so a re-read after a 409 sees the current one. A start's evidence value must be an id issued here on the
+// same case for the same persona. The mock-only cookie psl_mock_start_work picks an uncertain fixture, used once
+// per reset: `upload_uncertain` applies the next upload and answers 500; `start_uncertain` applies the next start
+// (stored under its key, so a replay answers its 201) and answers 500.
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -33,6 +45,9 @@ const WORK_IDS = {
   emergency_change: 'W-1406',
   escalation: 'W-1407',
   leadership_report: 'W-1408',
+  income_schedules: 'W-4401',
+  // F-45: the ledger start lands on the ledger source's investigating page (W-4201, spec Lanes); W-4402 stays as a fixture
+  ledger_sources: 'W-4201',
 };
 const KIND_WORDS = { date: 'date', date_range: 'date range', period: 'period', datetime: 'date and time', integer: 'whole number' };
 
@@ -44,6 +59,9 @@ const REUSED = {
   message: 'This start was already sent with different details. Close the form and start again.',
 };
 const INVALID = 'Check the highlighted fields and try again.';
+const LOST = { code: 'mock_lost', message: 'The mock applied this and dropped the reply.' };
+const NOT_ON_RECORD = "That proof isn't on this record. Add it again.";
+const UNCERTAIN = ['upload_uncertain', 'start_uncertain'];
 
 // A malformed segment such as `%` keeps its raw text instead of crashing the mock.
 function decodePart(value) {
@@ -88,10 +106,26 @@ export function createStartWorkMock(openapi) {
   addFormats(ajv);
   const startOp = Object.values(openapi.paths['/api/v1/work']).find((op) => op?.operationId === 'E-WORK-START');
   const validateStart = ajv.compile(startOp.requestBody.content['application/json'].schema);
+  const uploadOp = Object.values(openapi.paths['/api/v1/cases/{case_id}/evidence']).find((op) => op?.operationId === 'E-EVIDENCE-UPLOAD');
+  const validateUpload = ajv.compile(uploadOp.requestBody.content['application/json'].schema);
   const lines = Object.fromEntries(PERSONAS.map((p) => [p, readJson(`lines.${p}.json`)]));
   const optionCache = new Map();
   // idempotency_key -> {body, response}; in memory only.
   const started = new Map();
+  // "<persona>:<case_id>" -> the case revision once an upload moved it on; the fixture value until then.
+  const revisions = new Map();
+  // "<persona>:<case_id>" -> the evidence ids issued on that case.
+  const issued = new Map();
+  // "<persona> <fixture>": the uncertain fixtures already used since the last reset.
+  const used = new Set();
+
+  const revisionOf = (persona, caseId, base) => revisions.get(`${persona}:${caseId}`) ?? base;
+  /** One uncertain fixture, once per reset: true the first time the cookie names it for this persona. */
+  function uncertainOnce(persona, cookies, name) {
+    if (cookies?.psl_mock_start_work !== name || !UNCERTAIN.includes(name) || used.has(`${persona} ${name}`)) return false;
+    used.add(`${persona} ${name}`);
+    return true;
+  }
 
   function optionRows(field) {
     const file = OPTION_FILES[field] ?? field;
@@ -106,7 +140,18 @@ export function createStartWorkMock(openapi) {
     );
   }
 
-  const lineFor = (persona, key) => lines[persona].items.find((line) => line.key === key);
+  const lineFor = (persona, key) => lines[persona]?.items.find((line) => line.key === key);
+  /** E-LINES as served now: a fixed case carries its current revision. */
+  const servedLines = (persona) => ({
+    ...lines[persona],
+    items: lines[persona].items.map((line) =>
+      line.case_scope === 'fixed' && line.case_id !== undefined && line.case_revision !== undefined
+        ? { ...line, case_revision: revisionOf(persona, line.case_id, line.case_revision) }
+        : line,
+    ),
+  });
+  const withRevision = (persona, row) =>
+    row.case_id !== undefined && row.case_revision !== undefined ? { ...row, case_revision: revisionOf(persona, row.case_id, row.case_revision) } : row;
   const optionsField = (line, name) =>
     line.intake.find((f) => f.name === name && f.options_source === 'line_options') ??
     (STEP_RECORD_FIELDS[line.key]?.includes(name) ? { name, type: 'records', options_source: 'line_options' } : undefined);
@@ -126,13 +171,13 @@ export function createStartWorkMock(openapi) {
     const limit = LIMITS.includes(Number(query.get('limit'))) ? Number(query.get('limit')) : 20;
     const match = /^o:(\d+)$/.exec(query.get('cursor') ?? '');
     const offset = match && Number(match[1]) < rows.length ? Number(match[1]) : 0;
-    const page = { items: rows.slice(offset, offset + limit).map(strip), as_of: asOf };
+    const page = { items: rows.slice(offset, offset + limit).map((row) => strip(withRevision(persona, row))), as_of: asOf };
     if (offset + limit < rows.length) page.next_cursor = `o:${offset + limit}`;
     return [200, page];
   }
 
   /** Per-field problems with the intake, as {name, message}. */
-  function intakeProblems(line, intake, persona) {
+  function intakeProblems(line, intake, persona, caseId) {
     const fields = [];
     const known = new Map(line.intake.map((f) => [f.name, f]));
     for (const name of Object.keys(intake)) {
@@ -150,6 +195,12 @@ export function createStartWorkMock(openapi) {
         if (typeof value !== 'string') fields.push({ name: field.name, message: `Enter ${field.label.toLowerCase()} as text.` });
       } else if (field.type === 'choice') {
         if (!field.options.some((o) => o.value === value)) fields.push({ name: field.name, message: 'Choose one from the list.' });
+      } else if (field.type === 'evidence') {
+        const ids = field.multiple && Array.isArray(value) ? value : [value];
+        const mine = issued.get(`${persona}:${caseId}`);
+        if ((!field.multiple && Array.isArray(value)) || !field.evidence_kind || !ids.every((id) => typeof id === 'string' && mine?.get(id) === field.evidence_kind)) {
+          fields.push({ name: field.name, message: NOT_ON_RECORD });
+        }
       } else if (field.type === 'record' || field.type === 'records') {
         const values = field.type === 'records' && Array.isArray(value) ? value : [value];
         const rows = served(persona, field, intake[field.depends_on]);
@@ -172,7 +223,64 @@ export function createStartWorkMock(openapi) {
     return fields;
   }
 
-  function start(raw, persona) {
+  /** The fixture revision of a case this line starts on for this persona, or undefined when it doesn't start there. */
+  function caseBase(line, persona, caseId, intake) {
+    if (line.case_scope === 'fixed') return line.case_id === caseId ? line.case_revision : undefined;
+    if (line.case_scope !== 'project') return undefined;
+    const field = optionsField(line, line.case_field);
+    const rows = field ? served(persona, field) : [];
+    const option = intake ? rows.find((row) => row.value === intake[line.case_field]) : rows.find((row) => row.case_id === caseId);
+    return option?.case_id === caseId ? option.case_revision : undefined;
+  }
+
+  /** The evidence kinds of the lines served to this persona. */
+  const kindsFor = (persona) => (lines[persona]?.items ?? []).flatMap((line) => line.intake.filter((f) => f.type === 'evidence' && f.evidence_kind).map((f) => f.evidence_kind));
+
+  /** True when an upload belongs to start work: its kind is the evidence_kind of a line served to the persona, and
+   *  its case is one that line starts on (the line's fixed case, or a project option served to the persona). */
+  function ownsUpload(url, raw, persona) {
+    let body;
+    try {
+      body = JSON.parse(raw);
+    } catch {
+      return false;
+    }
+    if (typeof body?.kind !== 'string' || !kindsFor(persona).includes(body.kind)) return false;
+    const caseId = decodePart(url.pathname.split('/')[4] ?? '');
+    return lines[persona].items.some(
+      (l) => l.intake.some((f) => f.type === 'evidence' && f.evidence_kind === body.kind) && caseBase(l, persona, caseId) !== undefined,
+    );
+  }
+
+  function upload(url, raw, persona, cookies) {
+    const caseId = decodePart(url.pathname.split('/')[4] ?? '');
+    let body;
+    try {
+      body = JSON.parse(raw);
+    } catch {
+      return [422, { code: 'invalid', message: INVALID }];
+    }
+    if (!validateUpload(body)) return [422, { code: 'invalid', message: INVALID }];
+    const line = lines[persona].items.find(
+      (l) => l.intake.some((f) => f.type === 'evidence' && f.evidence_kind === body.kind) && caseBase(l, persona, caseId) !== undefined,
+    );
+    if (!line) return [404, NOT_FOUND];
+    const current = revisionOf(persona, caseId, caseBase(line, persona, caseId));
+    if (body.case_revision !== current) return [409, STALE];
+    const bytes = /^[A-Za-z0-9+/]+={0,2}$/.test(body.content_base64) ? Buffer.from(body.content_base64, 'base64') : Buffer.alloc(0);
+    if (bytes.length === 0) return [422, { code: 'invalid', message: 'This file is empty. Choose another file.' }];
+    if (/\.exe$/i.test(body.filename.trim())) return [422, { code: 'invalid', message: "EXE files can't be used as proof." }];
+    const key = `${persona}:${caseId}`;
+    const ids = issued.get(key) ?? new Map();
+    const evidenceId = `EV-SW-${caseId}-${ids.size + 1}`;
+    ids.set(evidenceId, body.kind);
+    issued.set(key, ids);
+    revisions.set(key, current + 1);
+    if (uncertainOnce(persona, cookies, 'upload_uncertain')) return [500, LOST];
+    return [200, { evidence_id: evidenceId, sha256: createHash('sha256').update(bytes).digest('hex'), case_revision: current + 1 }];
+  }
+
+  function start(raw, persona, cookies) {
     let body;
     try {
       body = JSON.parse(raw);
@@ -190,32 +298,33 @@ export function createStartWorkMock(openapi) {
     const previous = started.get(body.idempotency_key);
     if (previous) return canonical(previous.body) === canonical(body) ? previous.response : [409, REUSED];
 
-    let caseRevision;
-    if (line.case_scope === 'project') {
-      const field = optionsField(line, line.case_field);
-      const option = field && served(persona, field).find((row) => row.value === body.intake[line.case_field]);
-      if (!option?.case_id || option.case_id !== body.case_id) return [404, NOT_FOUND];
-      caseRevision = option.case_revision;
-    } else if (line.case_scope === 'fixed') {
-      if (line.case_id !== body.case_id) return [404, NOT_FOUND];
-      caseRevision = line.case_revision;
-    } else return [404, NOT_FOUND];
-    if (body.case_revision !== caseRevision) return [409, STALE];
+    const base = caseBase(line, persona, body.case_id, line.case_scope === 'project' ? body.intake : undefined);
+    if (base === undefined) return [404, NOT_FOUND];
+    if (body.case_revision !== revisionOf(persona, body.case_id, base)) return [409, STALE];
 
-    const fields = intakeProblems(line, body.intake, persona);
+    const fields = intakeProblems(line, body.intake, persona, body.case_id);
     if (fields.length > 0) return [422, { code: 'invalid', message: INVALID, fields }];
     const response = [201, { work_id: WORK_IDS[line.key], state: 'processing' }];
     started.set(body.idempotency_key, { body, response });
+    if (uncertainOnce(persona, cookies, 'start_uncertain')) return [500, LOST];
     return response;
   }
 
   return {
     started,
-    reset: () => started.clear(),
-    handle(operationId, { url, raw, persona }) {
-      if (operationId === 'E-LINES') return [200, lines[persona]];
+    issued,
+    ownsUpload,
+    reset: () => {
+      started.clear();
+      revisions.clear();
+      issued.clear();
+      used.clear();
+    },
+    handle(operationId, { url, raw, persona, cookies }) {
+      if (operationId === 'E-LINES') return [200, servedLines(persona)];
       if (operationId === 'E-LINE-OPTIONS') return options(url, persona);
-      return start(raw, persona);
+      if (operationId === 'E-EVIDENCE-UPLOAD') return upload(url, raw, persona, cookies);
+      return start(raw, persona, cookies);
     },
   };
 }

@@ -59,6 +59,12 @@
 .sw-range .psl-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .sw-display { overflow-wrap: anywhere; }
 .sw-seg { display: flex; width: 100%; }
+/* Proof (FE-M2A-PROOF): F-09's ProofField in the drawer; its label in the drawer's label weight, as the boards draw "Proof" */
+.sw-prooffield { min-width: 0; }
+.sw-prooffield .resp-label { font-weight: 600; }
+.sw-prooffield .resp-card__text strong { font-weight: 600; }
+/* a failed upload's words for screen readers only (the card shows them) */
+.sw-announce { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .sw-proof { display: flex; align-items: center; gap: var(--space-10px); padding: var(--space-10px) var(--space-3); border: var(--rule-strong) dashed var(--ink); background: var(--steel); color: var(--ink-muted); cursor: not-allowed; }
 .sw-picker { position: relative; }
 .sw-picker > .psl-select { width: 100%; display: flex; align-items: center; gap: var(--space-2); font: inherit; color: inherit; }
@@ -78,6 +84,8 @@ div.sw-next { display: flex; flex-direction: column; gap: var(--space-6px); bord
 @media (max-width: 719.98px) {
   .sw-body .psl-option, .sw-body .psl-seg__opt { min-height: var(--control-md); }
   .sw-primary { min-height: var(--control-lg); }
+  /* the file card's "×", "Choose a file" and Try again: 44px targets in the sheet only (D-92c); F-09's pages keep theirs */
+  .sw-prooffield .resp-chip__remove, .sw-prooffield .resp-filebtn, .sw-prooffield .resp-chip__problem .psl-btn { min-width: var(--control-md); min-height: var(--control-md); }
   .sw-body { gap: var(--space-10px); }
   .sw-lines, .sw-lines .sw-group, .sw-lines .cmp-choices--cards { gap: var(--space-10px); }
   .sw-lines .psl-choice { padding: var(--space-10px) var(--space-3); min-height: var(--control-md); }
