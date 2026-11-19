@@ -208,14 +208,6 @@
    "conflicts": 9,
    "reason": "Conflicts 9: the phone shows the desktop fact label \"Posting performed\" as returned, not the board's short \"Posted\".",
    "approved_by": "design engineer, 19 Nov 2026 — D-125"
-  },
-  {
-   "role": "complementary",
-   "name": "",
-   "category": "layout",
-   "conflicts": 13,
-   "reason": "Conflicts 13 (sentence as data): the verified board draws the re-check sentence as an info note in a side column; the spec sends it as an untitled `text` section, which the shared workspace draws in the main column under the Recorded facts. The words are drawn as returned. Option B for the design engineer: the backend sends it as `workspace.next`, which the frame draws in the side column under a \"Next\" head. The name is empty because the board's side column has no name; the report lists it as \"(side panel)\" (fidelity compare.mjs matches an unnamed area on role and the empty name).",
-   "approved_by": "NOT approved: replaced by Option B (D-125), to be removed when the builder sends the sentence as workspace.next"
   }
  ],
  "visual_waivers": [
