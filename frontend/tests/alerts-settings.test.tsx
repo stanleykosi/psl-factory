@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setImmediate as realImmediate } from 'node:timers';
 
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AlertSettingsPage } from '@/features/alerts/AlertSettingsPage';
@@ -196,7 +196,7 @@ describe('settings (SCR-15-desktop-settings)', () => {
     save();
     const text = 'Someone changed these settings since you opened them. This is the latest version; make your changes again.';
     await until(() => expect(screen.getByText(text)).toBeTruthy());
-    expect(document.activeElement).toBe(screen.getByText(text).closest('.psl-callout'));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByText(text).closest('.psl-callout')));
     expect(checked('WhatsApp, A decision is waiting for me')).toBe('true');
     expect(checked('Email, Work I started is stuck')).toBe('false');
     expect(calls.map((c) => c.method)).toEqual(['GET', 'PUT', 'GET']);
@@ -211,7 +211,7 @@ describe('settings (SCR-15-desktop-settings)', () => {
     fireEvent.click(sw('Email, Everything else'));
     save();
     await until(() => expect(screen.getByRole('alert').textContent).toBe('We couldn’t save your settings. Check these fields: channel.'));
-    expect(document.activeElement).toBe(screen.getByRole('alert'));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('alert')));
     expect(sent()[0].channel).toBe('sms');
     expect(checked('Email, Everything else')).toBe('false');
   });

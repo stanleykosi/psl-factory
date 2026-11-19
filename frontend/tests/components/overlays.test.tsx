@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -46,15 +46,15 @@ describe('Drawer', () => {
     expect(dialog.className).toBe('psl-drawer cmp-panel');
     expect(dialog.getAttribute('aria-modal')).toBe('true');
     expect(screen.getByText('START WORK').className).toBe('psl-drawer__eyebrow');
-    expect(document.activeElement).toBe(screen.getByRole('textbox', { name: 'What changes' }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('textbox', { name: 'What changes' })));
     expect(await violations()).toEqual([]);
     const buttons = [...dialog.querySelectorAll('button')];
     buttons[buttons.length - 1].focus();
     fireEvent.keyDown(buttons[buttons.length - 1], { key: 'Tab' });
-    expect(document.activeElement).toBe(buttons[0]);
+    await waitFor(() => expect(document.activeElement).toBe(buttons[0]));
     fireEvent.keyDown(dialog, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(document.activeElement).toBe(opener);
+    await waitFor(() => expect(document.activeElement).toBe(opener));
   });
 
   it('the close button and the scrim close it', () => {
@@ -113,7 +113,7 @@ describe('Dialog', () => {
     );
     const dialog = screen.getByRole('alertdialog', { name: 'Deactivate Kunle Ade?' });
     expect(dialog.getAttribute('aria-describedby')).toBeTruthy();
-    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Cancel' })));
     expect(screen.getByRole('button', { name: 'Deactivate account' }).className).toBe('psl-btn psl-btn--reject');
     expect(await violations()).toEqual([]);
     fireEvent.keyDown(dialog, { key: 'Escape' });

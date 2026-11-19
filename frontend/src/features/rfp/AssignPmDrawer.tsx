@@ -86,6 +86,12 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
   const [fieldError, setFieldError] = useState<{ evidence?: string }>({});
   // bumps when this panel's own fields (role, proof) are refused, so the summary is announced and focus goes to the first of them
   const [attempt, setAttempt] = useState(0);
+  const [focusField, setFocusField] = useState<{ id: string }>();
+
+  // Runs after the summary's own focus effect in the same commit, so the field wins however late the render comes.
+  useEffect(() => {
+    if (focusField) document.getElementById(focusField.id)?.focus();
+  }, [focusField]);
 
   useEffect(() => {
     void reload();
@@ -116,8 +122,7 @@ export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
 
   const refused = (fieldId: string) => {
     setAttempt((n) => n + 1);
-    // after the summary has taken focus for the new attempt
-    requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById(fieldId)?.focus()));
+    setFocusField({ id: fieldId });
   };
   const roleFieldId = roles && roles.length > 1 ? ROLE_ID : ROLE_STATIC_ID;
 

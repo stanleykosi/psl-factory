@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setImmediate as realImmediate } from 'node:timers';
 
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { OverviewPage } from '@/features/overview/OverviewPage';
@@ -108,11 +108,11 @@ describe('the 3D floor loads only when chosen', () => {
     radio('Flat').focus();
     fireEvent.keyDown(radio('Flat'), { key: 'ArrowRight' });
     expect(radio('3D floor').getAttribute('aria-checked')).toBe('true');
-    expect(document.activeElement).toBe(radio('3D floor'));
+    await waitFor(() => expect(document.activeElement).toBe(radio('3D floor')));
     expect(radio('Flat').tabIndex).toBe(-1);
     fireEvent.keyDown(radio('3D floor'), { key: 'ArrowLeft' });
     expect(radio('Flat').getAttribute('aria-checked')).toBe('true');
-    expect(document.activeElement).toBe(radio('Flat'));
+    await waitFor(() => expect(document.activeElement).toBe(radio('Flat')));
   });
 
   it('reduced motion turning on while 3D is shown switches to Flat; the switch returns when it turns off', async () => {

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
 
@@ -39,7 +39,7 @@ describe('Segmented', () => {
     expect(month.getAttribute('aria-checked')).toBe('true');
     fireEvent.keyDown(month, { key: 'ArrowRight' });
     expect(year.getAttribute('aria-checked')).toBe('true');
-    expect(document.activeElement).toBe(year);
+    await waitFor(() => expect(document.activeElement).toBe(year));
     fireEvent.keyDown(year, { key: 'Home' });
     expect(week.getAttribute('aria-checked')).toBe('true');
     fireEvent.keyDown(week, { key: 'End' });
@@ -82,11 +82,11 @@ describe('Tabs', () => {
     expect(await violations()).toEqual([]);
     tabs[0].focus();
     fireEvent.keyDown(tabs[0], { key: 'ArrowRight' });
-    expect(document.activeElement).toBe(tabs[1]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs[1]));
     fireEvent.keyDown(tabs[1], { key: 'End' });
-    expect(document.activeElement).toBe(tabs[2]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs[2]));
     fireEvent.keyDown(tabs[2], { key: 'ArrowRight' });
-    expect(document.activeElement).toBe(tabs[0]);
+    await waitFor(() => expect(document.activeElement).toBe(tabs[0]));
     fireEvent.keyDown(tabs[0], { key: 'ArrowLeft' });
     fireEvent.click(document.activeElement as Element);
     expect(screen.getAllByRole('tab')[2].getAttribute('aria-selected')).toBe('true');

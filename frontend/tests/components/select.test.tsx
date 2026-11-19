@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
 
@@ -62,7 +62,7 @@ describe('Select', () => {
     expect(screen.getByRole('option', { name: /Chuka Eze/ }).getAttribute('aria-selected')).toBe('true');
     fireEvent.keyDown(box(), { key: 'Escape' });
     expect(screen.queryByRole('listbox')).toBeNull();
-    expect(document.activeElement).toBe(box());
+    await waitFor(() => expect(document.activeElement).toBe(box()));
   });
 
   it('the pointer chooses an option; a disabled one stays unchosen', () => {
