@@ -1,0 +1,18 @@
+{
+  "$comment": "F-34 contract overlay (mock only). setup_rules_link is the PROPOSED workspace.links[] target kind 'setup_rules' (G-F34-1): it names a Setup rules area and the page links to that area's rules screen. Also proposed and expressible in v7 (checked by the fixtures): step log_observation and OBS- table rows (G-46-1), environment as a text field, evidence_kind deployment_log and hypercare_observation. Not built, recorded only: G-46-2 evaluation trigger, G-46-3 drop 'Record go-live acceptance' from this line. The backend developer may change or refuse any of them.",
+  "setup_rules_link": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["key", "label", "target"],
+    "properties": {
+      "key": { "type": "string", "minLength": 1 },
+      "label": { "type": "string", "minLength": 1 },
+      "target": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "area"],
+        "properties": { "kind": { "const": "setup_rules" }, "area": { "enum": ["finance", "delivery"] } }
+      }
+    }
+  }
+}

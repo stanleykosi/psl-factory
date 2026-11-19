@@ -1,0 +1,129 @@
+{
+  "id": "W-3207",
+  "title": "Monthly leadership report · October",
+  "line": "Leadership report",
+  "reference": "RPT-M-2026-10",
+  "state": "setup_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Gather",
+      "status": "done"
+    },
+    {
+      "name": "Draft",
+      "status": "done"
+    },
+    {
+      "name": "Leadership review",
+      "status": "stopped"
+    },
+    {
+      "name": "Send",
+      "status": "not_started"
+    },
+    {
+      "name": "Received",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-11-02T08:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "unknown"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Gathered October's records",
+        "status": "done",
+        "source": "5 PROJECTS · 41 MEETINGS · 12 ISSUES"
+      },
+      {
+        "text": "Summarised milestones and money",
+        "status": "done",
+        "source": "3 MILESTONES COMPLETE · 2 INVOICES VERIFIED"
+      },
+      {
+        "text": "Drafted the escalations section",
+        "status": "done",
+        "source": "ESC-0011 · ESC-0012"
+      }
+    ],
+    "started_at": "2026-11-01T07:00:00Z"
+  },
+  "next_step": "An admin sets who reviews leadership reports.",
+  "sample": true,
+  "workspace": {
+    "line_key": "leadership_report",
+    "screen": "SCR-52",
+    "view": "setup_needed",
+    "status": {
+      "label": "SETUP NEEDED",
+      "tone": "stopped"
+    },
+    "sections": [
+      {
+        "key": "held",
+        "kind": "facts",
+        "title": "Why it's held",
+        "items": [
+          {
+            "id": "H-1",
+            "label": "Leadership reviewer",
+            "value": "NOT SET",
+            "tag": {
+              "label": "NOT SET",
+              "tone": "stopped"
+            }
+          }
+        ]
+      }
+    ],
+    "next": [
+      "An admin sets who reviews leadership reports in Setup › Rules. The review starts then."
+    ],
+    "context": {
+      "crumbs": [
+        {
+          "value": "overview",
+          "label": "OVERVIEW"
+        },
+        {
+          "value": "leadership_reports",
+          "label": "LEADERSHIP REPORTS"
+        },
+        {
+          "value": "RPT-M-2026-10",
+          "label": "RPT-M-2026-10"
+        }
+      ]
+    },
+    "revision": 2
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "W-3120",
+  "title": "Lagoon Health · patient app",
+  "line": "Closure",
+  "reference": "CLS-0140",
+  "state": "waiting",
+  "revision": 1,
+  "stations": [
+    {
+      "name": "Hypercare",
+      "status": "done"
+    },
+    {
+      "name": "Handover",
+      "status": "current_person"
+    },
+    {
+      "name": "Retrospective",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "not_yet"
+    },
+    {
+      "name": "reviewed",
+      "status": "not_yet"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "status": "none"
+  },
+  "next_step": "A person records the handover and the retrospective.",
+  "sample": true
+}

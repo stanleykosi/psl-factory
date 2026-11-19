@@ -1,0 +1,1677 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T01:55:27.383Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-26-desktop-reject.dc.html",
+  "boardName": "SCR-26-desktop-reject.dc.html",
+  "pageUrl": "http://localhost:4994/frozen/SCR-26-desktop-reject-1440.html",
+  "viewport": {
+    "width": 1440,
+    "height": 1060
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-37/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 70.5 is below 90.",
+    "15 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 61.8,
+    "coverageWithExceptions": 100,
+    "visual": 70.5
+  },
+  "visual": {
+    "score": 70.5,
+    "allCellsScore": 81.5,
+    "width": 1440,
+    "height": 1070,
+    "boardHeight": 1070,
+    "pageHeight": 2067,
+    "cell": 12,
+    "contentCells": 6778,
+    "mismatchedCells": 2001
+  },
+  "coverage": {
+    "total": 55,
+    "found": 34,
+    "coverage": 61.8,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello · PM",
+        "pageRole": "text",
+        "similarity": 98,
+        "looks": [],
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 1014
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 2010
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PRE-SALE / RFP · TL-RFP-2026-014",
+        "pageName": "PRE-SALE / RFP · TL-RFP-2026-014History",
+        "pageRole": "text",
+        "similarity": 93,
+        "looks": [
+          "capitals on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Tamarind Loans · loan origination RFP",
+        "pageName": "Tamarind Loans · loan origination RFP",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 744,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 123,
+          "w": 670,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DEADLINE 28 NOV · 16 DAYS",
+        "pageName": "DEADLINE 28 NOV · 16 DAYS",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1053,
+          "y": 133,
+          "w": 176,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1053,
+          "y": 137,
+          "w": 176,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM TUNDE BELLO",
+        "pageName": "PM TUNDE BELLO",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1238,
+          "y": 133,
+          "w": 114,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 1238,
+          "y": 137,
+          "w": 114,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Team input 2/4",
+        "pageName": "Team input 2/4",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 245,
+          "y": 176,
+          "w": 143,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 245,
+          "y": 172,
+          "w": 143,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter 1",
+        "pageName": "Filter",
+        "pageRole": "button",
+        "similarity": 90,
+        "looks": [
+          "text colour #FFFFFF on the board, #4A5357 on the page",
+          "background #1F2427 on the board, #C9CDC7 on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 558,
+          "y": 242,
+          "w": 116,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 258,
+          "w": 70,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Status: Suggested by Tola",
+        "pageName": "Status: Suggested by Tola",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "font IBM Plex Sans on the board, Arial on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 298,
+          "w": 206,
+          "h": 32
+        },
+        "pageBox": {
+          "x": 182,
+          "y": 258,
+          "w": 173,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 352,
+          "w": 898,
+          "h": 322
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 316,
+          "w": 866,
+          "h": 411
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "#",
+        "pageName": "#",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 136,
+          "y": 352,
+          "w": 57,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 164,
+          "y": 316,
+          "w": 62,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "REQUIREMENT",
+        "pageName": "REQUIREMENT",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 193,
+          "y": 352,
+          "w": 261,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 226,
+          "y": 316,
+          "w": 228,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "SUGGESTED ANSWER",
+        "pageName": "SUGGESTED ANSWER",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 453,
+          "y": 352,
+          "w": 370,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 453,
+          "y": 316,
+          "w": 355,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATUS",
+        "pageName": "STATUS",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 824,
+          "y": 352,
+          "w": 164,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 808,
+          "y": 316,
+          "w": 164,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Select",
+        "pageName": "Select R-10",
+        "pageRole": "checkbox",
+        "similarity": 82,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 418,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 132,
+          "y": 668,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Select",
+        "pageName": "Select R-09",
+        "pageRole": "checkbox",
+        "similarity": 82,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 493,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 132,
+          "y": 587,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Select",
+        "pageName": "Select R-08",
+        "pageRole": "checkbox",
+        "similarity": 82,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 568,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 132,
+          "y": 506,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Select",
+        "pageName": "Select R-07",
+        "pageRole": "checkbox",
+        "similarity": 82,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 634,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 132,
+          "y": 404,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 selected",
+        "pageName": "1 SELECTED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "text size 14px on the board, 12px on the page",
+          "weight 700 on the board, 400 on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page",
+          "capitals on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 706,
+          "w": 67,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 810,
+          "w": 72,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Accept selected",
+        "pageName": "Accept selected",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "text colour #1F2427 on the board, #FFFFFF on the page",
+          "background #FFFFFF on the board, #2459D6 on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 165,
+          "y": 690,
+          "w": 220,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 546,
+          "y": 797,
+          "w": 140,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Bulk accept still records each answer under your name.",
+        "pageName": "Bulk accept still records each answer under your name.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text size 12px on the board, 14px on the page",
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 395,
+          "y": 707,
+          "w": 297,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 190,
+          "y": 809,
+          "w": 346,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Review and decide",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1012,
+          "y": 350,
+          "w": 340,
+          "h": 665
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 242,
+          "w": 340,
+          "h": 1769
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEW TOLA'S SUGGESTION",
+        "pageName": "REVIEW TOLA’S SUGGESTION",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "bar under it on the page (#2459D6), none on the board"
+        ],
+        "boardBox": {
+          "x": 1014,
+          "y": 352,
+          "w": 336,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1014,
+          "y": 244,
+          "w": 336,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Loan officers approve applications above a set amount",
+        "pageName": "Loan officers approve applications above a set amount RFP p.6",
+        "pageRole": "text",
+        "similarity": 95,
+        "looks": [],
+        "boardBox": {
+          "x": 1028,
+          "y": 428,
+          "w": 308,
+          "h": 38
+        },
+        "pageBox": {
+          "x": 226,
+          "y": 381,
+          "w": 228,
+          "h": 103
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+        "pageName": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1039,
+          "y": 534,
+          "w": 286,
+          "h": 38
+        },
+        "pageBox": {
+          "x": 453,
+          "y": 381,
+          "w": 355,
+          "h": 103
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Save my answer",
+        "pageName": "Save my answer",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, plain text on the board",
+        "looks": [
+          "background #B9C8EC on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 1028,
+          "y": 906,
+          "w": 200,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1044,
+          "y": 1325,
+          "w": 166,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Cancel",
+        "pageName": "Cancel",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1236,
+          "y": 906,
+          "w": 100,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1219,
+          "y": 1325,
+          "w": 101,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "RFP",
+        "key": "tablist: RFP",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 579,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Requirements 64",
+        "key": "tab: Requirements 64",
+        "container": "tablist",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 155,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Pricing",
+        "key": "tab: Pricing",
+        "container": "tablist",
+        "boardBox": {
+          "x": 389,
+          "y": 176,
+          "w": 78,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Submission",
+        "key": "tab: Submission",
+        "container": "tablist",
+        "boardBox": {
+          "x": 467,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Outcome",
+        "key": "tab: Outcome",
+        "container": "tablist",
+        "boardBox": {
+          "x": 575,
+          "y": 176,
+          "w": 92,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 7: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "(search area)",
+        "key": "search:",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 242,
+          "w": 1264,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 10: no read can search (G-26-2); the toolbar is drawn inert as F-17 draws it, with no search box.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "key": "searchbox: Search",
+        "container": "search",
+        "boardBox": {
+          "x": 88,
+          "y": 242,
+          "w": 460,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 10: no read can search (G-26-2); the toolbar is drawn inert as F-17 draws it, with no search box.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "41 OF 64 ROWS",
+        "key": "text: 41 OF 64 ROWS",
+        "container": "search",
+        "boardBox": {
+          "x": 1258,
+          "y": 256,
+          "w": 94,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 10: the toolbar shows the returned chip and \"<shown> of <total>\"; \"Clear filters\", the chip's remove and the board's row-count wording are not drawn (G-26-2).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Suggested by Tola",
+        "key": "text: Suggested by Tola",
+        "container": "main",
+        "boardBox": {
+          "x": 147,
+          "y": 305,
+          "w": 109,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 10: the toolbar shows the returned chip and \"<shown> of <total>\"; \"Clear filters\", the chip's remove and the board's row-count wording are not drawn (G-26-2).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "link",
+        "name": "Remove filter",
+        "key": "link: Remove filter",
+        "container": "main",
+        "boardBox": {
+          "x": 264,
+          "y": 302,
+          "w": 24,
+          "h": 24
+        },
+        "exception": {
+          "reason": "Conflicts 10: the toolbar shows the returned chip and \"<shown> of <total>\"; \"Clear filters\", the chip's remove and the board's row-count wording are not drawn (G-26-2).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "link",
+        "name": "Clear filters",
+        "key": "link: Clear filters",
+        "container": "main",
+        "boardBox": {
+          "x": 302,
+          "y": 305,
+          "w": 67,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 10: the toolbar shows the returned chip and \"<shown> of <total>\"; \"Clear filters\", the chip's remove and the board's row-count wording are not drawn (G-26-2).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Select all 41 suggestions",
+        "key": "checkbox: Select all 41 suggestions",
+        "container": "table",
+        "boardBox": {
+          "x": 104,
+          "y": 362,
+          "w": 18,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 11: the header box is labelled \"Select all shown rows\" and ticks only the rows on screen; \"Select all 41 suggestions\" needs the all-matching scope (G-26-2).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "R-07 · RFP p.6",
+        "key": "text: R-07 · RFP p.6",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 401,
+          "w": 308,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 12: the suggestion's reference line is returned item text in the panel and the row; the board's separate eyebrow is not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Your answer",
+        "key": "text: Your answer",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 478,
+          "w": 308,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12: field labels are drawn by the shared step form and the panel (returned labels), not as separate text blocks.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Tola's suggestion (not used)",
+        "key": "button: Tola's suggestion (not used)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1039,
+          "y": 511,
+          "w": 286,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Conflicts 12: the display field, the reason label, its optional marker and placeholder are drawn by the shared step form (labels and the \"(optional)\" marker as returned).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Why not Tola's answer? (optional)",
+        "key": "text: Why not Tola's answer? (optional)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 696,
+          "w": 308,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12: the display field, the reason label, its optional marker and placeholder are drawn by the shared step form (labels and the \"(optional)\" marker as returned).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "(optional)",
+        "key": "text: (optional)",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1183,
+          "y": 696,
+          "w": 61,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 17: optional fields carry the shared \"(optional)\" marker.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "e.g. the client asked for two approvers",
+        "key": "text: e.g. the client asked for two approvers",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 722,
+          "w": 308,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Conflicts 12: the display field, the reason label, its optional marker and placeholder are drawn by the shared step form (labels and the \"(optional)\" marker as returned).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Your reason helps Tola suggest better next time. It is not shown to the client.",
+        "key": "text: Your reason helps Tola suggest better next time. It is not shown to the client.",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 778,
+          "w": 308,
+          "h": 30
+        },
+        "exception": {
+          "reason": "Conflicts 3: the reason help is returned as \"Kept internal. It is not shown to the client.\"; the learning sentence is held for PSL (gaps line 77).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Status",
+        "key": "text: Status",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 820,
+          "w": 308,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Conflicts 12: field labels are drawn by the shared step form and the panel (returned labels), not as separate text blocks.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Save stays off until you write an answer. Tola's suggestion is kept in the history, marked \"not used\".",
+        "key": "text: Save stays off until you write an answer. Tola's suggestion is kept in the history, marked \"not used\".",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 968,
+          "w": 308,
+          "h": 30
+        },
+        "exception": {
+          "reason": "Conflicts 17: the shared form never greys Save out; an empty answer names the field instead.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Tunde Bello · PMO\"",
+        "kind": "Text",
+        "name": "Tunde Bello · PMO",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 1082,
+          "y": 19,
+          "w": 98,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Link \"Assistant\""
+        ]
+      },
+      {
+        "label": "Tab \"Team input 2/4\"",
+        "kind": "Tab",
+        "name": "Team input 2/4",
+        "boardBox": {
+          "x": 245,
+          "y": 176,
+          "w": 143,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 245,
+          "y": 172,
+          "w": 143,
+          "h": 44
+        },
+        "reasons": [
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Filter \"Filter 1\"",
+        "kind": "Filter",
+        "name": "Filter 1",
+        "boardBox": {
+          "x": 558,
+          "y": 242,
+          "w": 116,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 258,
+          "w": 70,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: middle on the board (43% across), left on the page (10% across)",
+          "inside the search bar on the board, inside the main area on the page"
+        ]
+      },
+      {
+        "label": "Text \"REVIEW TOLA'S SUGGESTION\"",
+        "kind": "Text",
+        "name": "REVIEW TOLA'S SUGGESTION",
+        "boardBox": {
+          "x": 1014,
+          "y": 352,
+          "w": 336,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1014,
+          "y": 244,
+          "w": 336,
+          "h": 43
+        },
+        "reasons": [
+          "order: on the board it comes after Table column \"STATUS\"; on the page it comes after Tab \"Team input 2/4\""
+        ]
+      },
+      {
+        "label": "Checkbox \"Select\"",
+        "kind": "Checkbox",
+        "name": "Select",
+        "boardBox": {
+          "x": 104,
+          "y": 418,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 132,
+          "y": 668,
+          "w": 20,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"REVIEW TOLA'S SUGGESTION\"; on the page it comes after Checkbox \"Select\""
+        ]
+      },
+      {
+        "label": "Text \"Loan officers approve applications above a set amount\"",
+        "kind": "Text",
+        "name": "Loan officers approve applications above a set amount",
+        "boardBox": {
+          "x": 1028,
+          "y": 428,
+          "w": 308,
+          "h": 38
+        },
+        "pageBox": {
+          "x": 226,
+          "y": 381,
+          "w": 228,
+          "h": 103
+        },
+        "reasons": [
+          "across the page: right on the board (82% across), left on the page (24% across)",
+          "inside a side panel on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Checkbox \"Select\"",
+        "kind": "Checkbox",
+        "name": "Select",
+        "boardBox": {
+          "x": 104,
+          "y": 493,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 132,
+          "y": 587,
+          "w": 20,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Loan officers approve applications above a set amount\"; on the page it comes after Table \"\""
+        ]
+      },
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 90,
+          "y": 352,
+          "w": 898,
+          "h": 322
+        },
+        "pageBox": {
+          "x": 106,
+          "y": 316,
+          "w": 866,
+          "h": 411
+        },
+        "reasons": [
+          "order: on the board it comes after Checkbox \"Select\"; on the page it comes after Checkbox \"Select\"",
+          "inside the table frame on the board, inside a section on the page"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 1014
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 2010
+        },
+        "reasons": [
+          "order: on the board it comes after Table \"\"; on the page it comes after Link \"Accept selected\""
+        ]
+      },
+      {
+        "label": "Text \"Approvals above a configurable threshold go to a named loan officer; every decision is recorded.\"",
+        "kind": "Text",
+        "name": "Approvals above a configurable threshold go to a named loan officer; every decision is recorded.",
+        "boardBox": {
+          "x": 1039,
+          "y": 534,
+          "w": 286,
+          "h": 38
+        },
+        "pageBox": {
+          "x": 453,
+          "y": 381,
+          "w": 355,
+          "h": 103
+        },
+        "reasons": [
+          "across the page: right on the board (82% across), middle on the page (44% across)",
+          "inside a side panel on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Checkbox \"Select\"",
+        "kind": "Checkbox",
+        "name": "Select",
+        "boardBox": {
+          "x": 104,
+          "y": 634,
+          "w": 18,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 132,
+          "y": 404,
+          "w": 20,
+          "h": 20
+        },
+        "reasons": [
+          "order: on the board it comes after Checkbox \"Select\"; on the page it comes after Table column \"STATUS\""
+        ]
+      },
+      {
+        "label": "Side panel \"\"",
+        "kind": "Side panel",
+        "name": "",
+        "boardBox": {
+          "x": 1012,
+          "y": 350,
+          "w": 340,
+          "h": 665
+        },
+        "pageBox": {
+          "x": 1012,
+          "y": 242,
+          "w": 340,
+          "h": 1769
+        },
+        "reasons": [
+          "order: on the board it comes after Checkbox \"Select\"; on the page it comes after Main area \"\""
+        ]
+      },
+      {
+        "label": "Link \"Accept selected\"",
+        "kind": "Link",
+        "name": "Accept selected",
+        "boardBox": {
+          "x": 165,
+          "y": 690,
+          "w": 220,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 546,
+          "y": 797,
+          "w": 140,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"1 selected\"; on the page it comes after Text \"Bulk accept still records each answer under your name.\"",
+          "across the page: left on the board (19% across), middle on the page (43% across)"
+        ]
+      },
+      {
+        "label": "Text \"Save my answer\"",
+        "kind": "Text",
+        "name": "Save my answer",
+        "boardBox": {
+          "x": 1028,
+          "y": 906,
+          "w": 200,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1044,
+          "y": 1325,
+          "w": 166,
+          "h": 50
+        },
+        "reasons": [
+          "inside a side panel on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Cancel\"",
+        "kind": "Link",
+        "name": "Cancel",
+        "boardBox": {
+          "x": 1236,
+          "y": 906,
+          "w": 100,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 1219,
+          "y": 1325,
+          "w": 101,
+          "h": 50
+        },
+        "reasons": [
+          "inside a side panel on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1034,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "History",
+        "container": "main",
+        "pageBox": {
+          "x": 334,
+          "y": 86,
+          "w": 50,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "RFP",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 170,
+          "w": 580,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Requirements 64",
+        "container": "navigation",
+        "pageBox": {
+          "x": 90,
+          "y": 172,
+          "w": 155,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "64",
+        "container": "navigation",
+        "pageBox": {
+          "x": 202,
+          "y": 185,
+          "w": 25,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pricing",
+        "container": "navigation",
+        "pageBox": {
+          "x": 389,
+          "y": 172,
+          "w": 78,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Submission",
+        "container": "navigation",
+        "pageBox": {
+          "x": 467,
+          "y": 172,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Outcome",
+        "container": "navigation",
+        "pageBox": {
+          "x": 575,
+          "y": 172,
+          "w": 92,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "4 OF 41",
+        "container": "main",
+        "pageBox": {
+          "x": 363,
+          "y": 271,
+          "w": 50,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "More rows aren’t available yet.",
+        "container": "main",
+        "pageBox": {
+          "x": 422,
+          "y": 270,
+          "w": 178,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Section",
+        "role": "region",
+        "name": "Table",
+        "container": "main",
+        "pageBox": {
+          "x": 104,
+          "y": 314,
+          "w": 870,
+          "h": 415
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "SELECT",
+        "container": "table",
+        "pageBox": {
+          "x": 106,
+          "y": 316,
+          "w": 58,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "Select all shown rows",
+        "container": "table",
+        "pageBox": {
+          "x": 132,
+          "y": 338,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "button",
+        "name": "Show more",
+        "container": "main",
+        "pageBox": {
+          "x": 104,
+          "y": 741,
+          "w": 109,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1024,
+          "y": 1915,
+          "w": 316,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I matched 41 requirements to answers PSL gave in past bids. I’ve marked them “suggested”; check each one before it counts.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1024,
+          "y": 1938,
+          "w": 316,
+          "h": 63
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

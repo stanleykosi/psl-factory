@@ -6,7 +6,7 @@
    "category": "frame",
    "conflicts": null,
    "reason": "Design decision 14 Nov 2026 (c), restated in D-92: the visible SAMPLE DATA tag is off in team builds; every fixture is sample: true. Not a spec Conflicts item.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -14,7 +14,7 @@
    "category": "frame",
    "conflicts": 9,
    "reason": "Conflicts 9: the frame draws workspace.context.crumbs as a list of plain items as returned, not one text line.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "link",
@@ -22,7 +22,7 @@
    "category": "frame item",
    "conflicts": 12,
    "reason": "Conflicts 12: the decide board is served to the pm persona; Overview and Setup belong to the PMO Lead nav the mock has no persona for (F-32 precedent).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "link",
@@ -30,7 +30,7 @@
    "category": "frame item",
    "conflicts": 12,
    "reason": "Conflicts 12: as Overview.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -38,7 +38,7 @@
    "category": "frame item",
    "conflicts": 12,
    "reason": "Conflicts 12: the signed-in name comes from /me; the mock has no PMO Lead persona.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -46,7 +46,7 @@
    "category": "frame item",
    "conflicts": 12,
    "reason": "Conflicts 12: the signed-in name and role come from /me.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -54,7 +54,7 @@
    "category": "no field",
    "conflicts": 7,
    "reason": "Conflicts 7: the agent card title has no field.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -62,7 +62,7 @@
    "category": "no field",
    "conflicts": 7,
    "reason": "Conflicts 7: the agent card title has no field.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -70,7 +70,7 @@
    "category": "component",
    "conflicts": 7,
    "reason": "Conflicts 7: the shared AgentCard head draws the name and limits on their own lines; \"step 3 of 4\" is the card's own.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -78,7 +78,7 @@
    "category": "component",
    "conflicts": 7,
    "reason": "Conflicts 7: as above.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -86,7 +86,7 @@
    "category": "wording",
    "conflicts": 7,
    "reason": "Conflicts 7: the card footer reads \"Started <agent.started_at>\" in both states; there is no finished_at.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -94,7 +94,7 @@
    "category": "wording",
    "conflicts": 2,
    "reason": "Conflicts 2: the shared rule names only the offered verdicts that need a note: \"Note (needed to reject)\".",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -102,7 +102,7 @@
    "category": "wording",
    "conflicts": 2,
    "reason": "Conflicts 2: as above.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "link",
@@ -110,7 +110,7 @@
    "category": "frame item",
    "conflicts": 9,
    "reason": "Conflicts 9: the phone bar goes back to the project (\"← Project\") on all four states.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -118,7 +118,7 @@
    "category": "frame item",
    "conflicts": 9,
    "reason": "Conflicts 9: bar words DECIDE and CLOSED are not drawn.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -126,7 +126,7 @@
    "category": "frame item",
    "conflicts": 9,
    "reason": "Conflicts 9: as DECIDE.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -134,7 +134,7 @@
    "category": "phone wording",
    "conflicts": 6,
    "reason": "Conflicts 6: the phone shows the item title at both widths.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -142,7 +142,7 @@
    "category": "phone wording",
    "conflicts": 6,
    "reason": "Conflicts 6: as above.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -150,7 +150,7 @@
    "category": "phone wording",
    "conflicts": 6,
    "reason": "Conflicts 6: as above.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "text",
@@ -158,7 +158,7 @@
    "category": "phone wording",
    "conflicts": 6,
    "reason": "Conflicts 6: as above.",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "role": "link",
@@ -166,7 +166,7 @@
    "category": "frame",
    "conflicts": 9,
    "reason": "Conflicts 9: the crumbs are workspace.context.crumbs as returned, drawn by the frame as plain items (not links).",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122",
    "added_after_run": true
   },
   {
@@ -175,7 +175,7 @@
    "category": "frame",
    "conflicts": 9,
    "reason": "Conflicts 9: as PROJECTS.",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122",
    "added_after_run": true
   },
   {
@@ -184,7 +184,7 @@
    "category": "frame",
    "conflicts": 9,
    "reason": "Conflicts 9: the project tab bar links every tab and marks none current (F-30); it is drawn by the frame as a nav, not a tablist.",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122",
    "added_after_run": true
   },
   {
@@ -193,7 +193,7 @@
    "category": "component",
    "conflicts": 7,
    "reason": "Conflicts 7: shared agent card shows time only (\"Started 11:00\"), not the date; \"Ask Tola\" is the assistant link in the same footer. Pending the design engineer.",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122",
    "added_after_run": true
   },
   {
@@ -202,7 +202,7 @@
    "category": "wording",
    "conflicts": 7,
    "reason": "Conflicts 7: the footer reads \"Started <agent.started_at>\" in both states; there is no finished_at.",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122",
    "added_after_run": true
   },
   {
@@ -211,7 +211,7 @@
    "category": "component",
    "conflicts": 7,
    "reason": "Conflicts 7: shared agent card shows time only (\"Started 11:00\"), not the date; \"Ask Tola\" is the assistant link in the same footer. Pending the design engineer.",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122",
    "added_after_run": true
   },
   {
@@ -220,7 +220,7 @@
    "category": "wording",
    "conflicts": 7,
    "reason": "Conflicts 7: as above; no finished_at.",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122",
    "added_after_run": true
   },
   {
@@ -229,7 +229,7 @@
    "category": "frame item",
    "conflicts": 9,
    "reason": "Conflicts 9: the frame's phone bar draws the back link (\"← Project\", to /projects/P-0101) with the accessible name \"Back to Project\".",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122",
    "added_after_run": true
   },
   {
@@ -238,59 +238,106 @@
    "category": "phone wording",
    "conflicts": 6,
    "reason": "Conflicts 6: the phone shows the desktop sentence as returned, not the shorter quote.",
-   "approved_by": "builder proposal, pending design engineer",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122",
    "added_after_run": true
+  },
+  {
+   "role": "link",
+   "name": "Back to the issue",
+   "category": "position",
+   "conflicts": null,
+   "reason": "PROPOSED, UI-1-5: the board draws Back to the issue as a full-width button inside the Next panel; the page draws the backend link in the main column under the quote (the shared workspace links row). Conflicts 10 does not cover the position.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
+  },
+  {
+   "role": "text",
+   "name": "15 DAYS LATE",
+   "category": "component",
+   "conflicts": null,
+   "reason": "PROPOSED, UI-1-5: the decide board draws this fact value as a person-tone tag; the shared facts list has no per-value tag, so it is plain text (backend/component list item).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
+  },
+  {
+   "role": "text",
+   "name": "Nothing was sent again.",
+   "category": "copy",
+   "conflicts": null,
+   "reason": "PROPOSED, UX-1-4: shared uncertain notice (useWorkspaceStep, all lines) uses the word sent; not changed here to keep other lines' behaviour. Not on a board.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
+  },
+  {
+   "role": "text",
+   "name": "Your team's test data is now 15 days late (asked 22 Oct, 29 Oct, 5 Nov). Go-live on 4 Dec depends on it. Could you confirm a date this week?",
+   "category": "tool artefact",
+   "conflicts": null,
+   "reason": "PROPOSED, UI-1-2: the message is drawn (as the section item text, in the shared list row) but the fidelity tool skips text inside a list item, so it reports it missing. The words are on the page; changing the shared row markup for every line was not done.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
+  },
+  {
+   "role": "text",
+   "name": "Message v1 box",
+   "category": "component styling",
+   "conflicts": null,
+   "reason": "PROPOSED, UI-2-2: the draft board draws the message in a blue outlined, tinted box; the page draws it as a plain shared list row with a divider because the shared SectionView has no message-box style. Design-system gap to raise for the design engineer.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   }
  ],
  "visual_waivers": [
+  {
+   "board": "SCR-51-desktop-investigating",
+   "width": 1440,
+   "visual": 87.1,
+   "reason": "D-83: measured 87.1 in round 2 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the AgentCard head and footer (Conflicts 7); the untitled facts section, which the board heads with \"RAISED BY YOU\" (Conflicts 9).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
+  },
   {
    "board": "SCR-51-desktop-decide",
    "width": 1440,
    "visual": 77.3,
    "reason": "D-83: measured 77.3 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the shared facts list (bold labels, taller rows); the note field height (shared TextArea); the Decide panel's consequence under the buttons as F-33 draws it (Conflicts 1).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "board": "SCR-51-desktop-not-escalated",
    "width": 1440,
-   "visual": 78.6,
-   "reason": "D-83: measured 78.6 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the Next panel and \"Back to the issue\" placed by the shared workspace layout (Conflicts 10).",
-   "approved_by": "builder proposal, pending design engineer"
+   "visual": 84.4,
+   "reason": "D-83: measured 84.4 in round 2 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the Next panel and \"Back to the issue\" placed by the shared workspace layout (Conflicts 10).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "board": "SCR-51-desktop-draft",
    "width": 1440,
-   "visual": 76.8,
-   "reason": "D-83: measured 76.8 in round 1 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the AgentCard head and footer (Conflicts 7); the Next panel and Send for review placed by the shared workspace layout (Conflicts 10).",
-   "approved_by": "builder proposal, pending design engineer"
+   "visual": 80.1,
+   "reason": "D-83: measured 80.1 in round 2 on a production build. Remaining gaps: the shared F-17/F-22 frame (top bar, the name's position, crumbs as a list, the History link, the page width; D-99, D-110); the AgentCard head and footer (Conflicts 7); the Next panel and Send for review placed by the shared workspace layout (Conflicts 10). Also the message box styling (blue outlined, tinted box drawn as a plain list row; proposed exception UI-2-2).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "board": "SCR-51-mobile-investigating",
    "width": 390,
-   "visual": 86.1,
-   "reason": "D-83: measured 86.1 in round 1 on a production build. Remaining gaps: the frame's phone bar and \"← Project\" (Conflicts 9); the item title instead of \"Escalation\" and the extra facts the phone board omits (Conflicts 6); the AgentCard head and footer (Conflicts 7).",
-   "approved_by": "builder proposal, pending design engineer"
+   "visual": 85.0,
+   "reason": "D-83: measured 85.0 in round 2 on a production build. Remaining gaps: the frame's phone bar and \"← Project\" (Conflicts 9); the item title instead of \"Escalation\" and the extra facts the phone board omits (Conflicts 6); the AgentCard head and footer (Conflicts 7).",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "board": "SCR-51-mobile-decide",
    "width": 390,
    "visual": 82.3,
    "reason": "D-83: measured 82.3 in round 1 on a production build. Remaining gaps: the frame's phone bar and its words (Conflicts 9, 12); the item title instead of \"Escalate?\"; the extra \"What Tola found\" rows; the pinned bar and the note in the Drawer that the phone board does not draw (Conflicts 4, 6).",
-   "approved_by": "builder proposal, pending design engineer"
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "board": "SCR-51-mobile-not-escalated",
    "width": 390,
-   "visual": 79.2,
-   "reason": "D-83: measured 79.2 in round 1 on a production build. Remaining gaps: the frame's phone bar and bar words (Conflicts 9); the item title instead of \"Not escalated\" and the full sentence instead of the shorter quote (Conflicts 6); the Next panel the phone board omits.",
-   "approved_by": "builder proposal, pending design engineer"
+   "visual": 75.5,
+   "reason": "D-83: measured 75.5 in round 2 on a production build. Remaining gaps: the frame's phone bar and bar words (Conflicts 9); the item title instead of \"Not escalated\" and the full sentence instead of the shorter quote (Conflicts 6); the Next panel the phone board omits.",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   },
   {
    "board": "SCR-51-mobile-draft",
    "width": 390,
-   "visual": 81.2,
-   "reason": "D-83: measured 81.2 in round 1 on a production build. Remaining gaps: the frame's phone bar (Conflicts 9); the item title instead of \"Message drafted\" (Conflicts 6); the AgentCard head and footer (Conflicts 7); Send for review placed in the page rather than pinned.",
-   "approved_by": "builder proposal, pending design engineer"
+   "visual": 85.3,
+   "reason": "D-83: measured 85.3 in round 2 on a production build. Remaining gaps: the frame's phone bar (Conflicts 9); the item title instead of \"Message drafted\" (Conflicts 6); the AgentCard head and footer (Conflicts 7); the page shows the message v1 text, which the phone board does not draw. Send for review is pinned as on the board. (Corrected by the coordinator after UI-3-1: the earlier text wrongly cited the message box and an unpinned Send for review.)",
+   "approved_by": "design engineer, 19 Nov 2026 — D-122"
   }
  ]
 }

@@ -75,6 +75,11 @@ export const scheduleLine = (lineKey: string | undefined) => lineKey !== undefin
  *  after Next on a phone), so the work item page draws none of its own; its untitled figures are the board's strip and a one-sentence note a caption
  *  (W-2004's titled figures, the D-62 example, stay rows). */
 export const forecastLine = (lineKey: string | undefined) => lineKey === INTERNAL_RECONCILE_LINE;
+/** F-33, F-35, F-42: the lines whose boards draw the working agent's card beside the sections, with the assistant link in the card;
+ *  a task decided there has nothing left to open. The leadership report (F-35) draws it too, with no stations. */
+export const AGENT_BESIDE_LINES: ReadonlySet<string> = new Set([...SCHEDULE_LINES, 'leadership_report']);
+/** F-33, F-42: the lines whose boards draw the stations in the workspace itself. */
+export const STATION_LINES: ReadonlySet<string> = SCHEDULE_LINES;
 
 // Frontend-owned neutral sentences (spec Assumptions); none of them is a business rule.
 export const WS_TEXT = {

@@ -13,9 +13,9 @@ import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 import { INTERNAL_RECONCILE_LINE } from '@/features/response/labels';
-import { forecastLine, scheduleLine } from '@/features/workspace/labels';
+import { AGENT_BESIDE_LINES, forecastLine, STATION_LINES } from '@/features/workspace/labels';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
-import { Workspace } from '@/features/workspace/Workspace';
+import { drawsAgentCard, Workspace } from '@/features/workspace/Workspace';
 import { RfpOutcomeLink } from '@/features/rfp';
 
 import {
@@ -701,17 +701,18 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
   // D-73: the line boards draw the workspace straight under the title. The facts, stations, agent card and next step
   // stay in the page for screen readers only (the contract data is never dropped), the way the state boards do.
   if (item.workspace) {
-    // F-33, F-42: the schedule boards draw the station row (desktop) and the working agent's card in the workspace itself
-    const schedule = scheduleLine(item.workspace.line_key);
+    // F-33, F-35: the income schedule boards draw the station row (desktop), and they and the leadership report boards draw the
+    // working agent's card, in the workspace itself
+    const lineKey = item.workspace.line_key;
     before = (
       <div className="cmp-sr">
         <FactsStrip facts={item.facts} paidNote={false} />
-        {!(schedule && !phone) && <StationTrack stations={item.stations} state={item.state} />}
+        {!(STATION_LINES.has(lineKey) && !phone) && <StationTrack stations={item.stations} state={item.state} />}
       </div>
     );
     main = (
       <div className="cmp-sr">
-        {!(schedule && agent.status === 'working') && <AgentCard agent={item.agent} />}
+        {!drawsAgentCard(lineKey, agent.status) && <AgentCard agent={item.agent} />}
         <NextStep item={item} quiet />
       </div>
     );
@@ -726,8 +727,11 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
 
   // A task the workspace's own steps already link to is decided from that link: no second card for it (F-23).
   const linked = new Set((item.workspace?.steps ?? []).map((step) => step.task_id).filter(Boolean));
-  // F-33, F-42: on a schedule line a decided task has nothing left to open; the workspace shows what it became.
-  const settled = (task: WorkItem['tasks'][number]) => scheduleLine(item.workspace?.line_key) && task.cannot_act_reason === 'already_decided';
+  // F-33, F-35: on the lines that decide in place a decided task has nothing left to open; the workspace shows what it became.
+  // F-39: the escalation boards draw no task card for a decision that is decided or has no step on the page.
+  const settled = (task: WorkItem['tasks'][number]) =>
+    (AGENT_BESIDE_LINES.has(item.workspace?.line_key ?? '') && task.cannot_act_reason === 'already_decided') ||
+    (item.workspace?.line_key === 'escalation' && (task.cannot_act_reason === 'already_decided' || !linked.has(task.id)));
   const shownTasks = asResponseItem(item).tasks.filter((task) => !linked.has(task.id) && !settled(task));
 
   return (

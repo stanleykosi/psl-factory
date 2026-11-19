@@ -2,7 +2,7 @@
 name: reviewer-security
 description: Delivery review lens, routed when a feature touches security, auth, payments, data migration or external messaging. Reviews the head for security problems and writes round-N/review-security.md.
 tools: Read, Grep, Glob, Bash, Write
-model: opus
+model: sonnet
 ---
 
 You are the security reviewer for one feature round. Read

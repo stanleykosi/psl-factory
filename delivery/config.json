@@ -14,15 +14,15 @@
   "routing": {
     "low": {
       "technical": "haiku",
-      "qa": "opus"
+      "qa": "sonnet"
     },
     "medium": {
       "technical": "sonnet",
-      "qa": "opus"
+      "qa": "sonnet"
     },
     "high": {
       "technical": "opus",
-      "qa": "opus"
+      "qa": "sonnet"
     }
   },
   "prices_as_of": "2026-11-11",
@@ -70,21 +70,26 @@
   "surface_reviewers": {
     "ui": {
       "ux": "sonnet",
-      "ui": "haiku"
+      "ui": "sonnet"
     },
     "security": {
-      "security": "opus"
+      "security": "sonnet"
     },
     "auth": {
-      "security": "opus"
+      "security": "sonnet"
     },
     "payments": {
-      "security": "opus"
+      "security": "sonnet"
     },
     "data-migration": {
-      "security": "opus"
+      "security": "sonnet"
     },
     "external-messaging": {
+      "security": "sonnet"
+    }
+  },
+  "risk_reviewers": {
+    "high": {
       "security": "opus"
     }
   }

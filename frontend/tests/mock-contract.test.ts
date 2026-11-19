@@ -41,7 +41,7 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'milestones', document_id: 'D-2304', version: '1' };
-const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201' };
+const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0201', none: 'N-0201', admin: 'N-0201', pmo_lead: 'N-0201' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
   'E-ALERT-PREFS': { channel: 'both', frequency: 'immediate' },
@@ -85,7 +85,7 @@ function savedRecordsStripped(body: unknown): unknown {
   return copy;
 }
 // PROPOSAL (D-LINE-WORKSPACE, F-23): `steps[].items_default` ("checked" or absent) and `workspace.links[]`
-// ({key, label, target: {kind: assistant | document | project_tab (F-28) | work (F-32), document_id?, version?, tab?, case_id?}}). Each is checked on its own, then removed
+// ({key, label, target: {kind: assistant | document | project_tab (F-28) | work (F-32) | setup_rules (F-34), document_id?, version?, tab?, case_id?}}). Each is checked on its own, then removed
 // before the schema check; the generated types and openapi.json do not carry them.
 const linkSchema = {
   type: 'array',
@@ -95,6 +95,7 @@ const linkSchema = {
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind'], properties: { kind: { const: 'assistant' } } } } },
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'tab', 'case_id'], properties: { kind: { const: 'project_tab' }, tab: { enum: ['journey', 'delivery', 'milestones', 'documents', 'money', 'registers', 'actions'] }, case_id: { type: 'string', pattern: '^[A-Za-z0-9][A-Za-z0-9._-]*$' } } } } },
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'work_id'], properties: { kind: { const: 'work' }, work_id: { type: 'string', pattern: '^[A-Za-z0-9][A-Za-z0-9._-]*$' } } } } },
+      { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'area'], properties: { kind: { const: 'setup_rules' }, area: { enum: ['finance', 'delivery'] } } } } },
       { type: 'object', additionalProperties: false, required: ['key', 'label', 'target'], properties: { key: { type: 'string', minLength: 1 }, label: { type: 'string', minLength: 1 }, target: { type: 'object', additionalProperties: false, required: ['kind', 'document_id', 'version'], properties: { kind: { const: 'document' }, document_id: { type: 'string', minLength: 1 }, version: { anyOf: [{ type: 'string' }, { type: 'integer' }] } } } } },
     ],
   },
@@ -146,6 +147,9 @@ function minutesProposalsStripped(body: unknown): unknown {
     expect(typeof offered.default_hint === 'string' && offered.default_hint !== '').toBe(true);
     delete offered.default_hint;
   }
+  // PROPOSAL (F-36, mock/proposals/rfp-assign.json): `assign.roles`, `evidence_kind` and `next`; tests/rfp-assign-mock.test.ts checks each against the overlay.
+  const rfpAssign = (copy as { assign?: Record<string, unknown> }).assign;
+  if (rfpAssign) for (const key of ['roles', 'evidence_kind', 'next']) delete rfpAssign[key];
   for (const section of w?.sections ?? []) {
     for (const row of section.items as { team_key?: unknown }[]) {
       if (row.team_key === undefined) continue;
@@ -280,6 +284,7 @@ describe('mock server matches openapi.json', () => {
       ['Folake Bello', ['my_work', 'projects', 'overview', 'assistant'], 'mock-csrf-ceo'],
       ['Sample Person', [], 'mock-csrf-none'],
       ['Ada Okafor', ['my_work', 'projects', 'overview', 'assistant', 'setup'], 'mock-csrf-admin'],
+      ['Kemi Adebayo', ['my_work', 'projects', 'assistant'], 'mock-csrf-pmo_lead'],
     ]);
   });
 
@@ -691,8 +696,9 @@ describe('F-23 minutes fixtures (W-2301 to W-2308)', () => {
         .filter((name) => /^W-\d+(\.[a-z]+)?\.json$/.test(name))
         .filter((name) => (key === 'links' ? 'links' in (JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}) : JSON.stringify(JSON.parse(readFileSync(join(dir, name), 'utf8')).workspace ?? {}).includes('"items_default"')));
     expect(withKey('items_default').every((name) => /^W-23/.test(name))).toBe(true);
-    // F-31 (W-26xx) and F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) carry links too; F-33's investigating board (W-2701), F-42's (W-3901) and F-43's (W-4001) draw Ask Chidi
-    expect(withKey('links').every((name) => /^W-(23|25|26)/.test(name) || ['W-2701.json', 'W-3901.json', 'W-4001.json'].includes(name))).toBe(true);
+    // F-31 (W-26xx), F-32 release boards (W-2501, W-2503: Ask Tola, Open go-live) and F-34 hypercare (W-31xx) carry links too; F-33's investigating board (W-2701) and F-42's (W-3901) and F-43's (W-4001) draw Ask Chidi;
+    // F-35's drafting board (W-3201) draws Ask Tola; F-39's escalation boards (W-36xx) draw their links too
+    expect(withKey('links').every((name) => /^W-(23|25|26|31|36)/.test(name) || name === 'W-2701.json' || name === 'W-3201.json' || name === 'W-3901.json' || name === 'W-4001.json')).toBe(true);
     expect(withKey('links')).toEqual(expect.arrayContaining(['W-2302.json', 'W-2303.json', 'W-2304.json', 'W-2305.json']));
   });
 

@@ -254,6 +254,8 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
 }
 /* QA-2-1: the uploaded file chip's remove button is a 44px target inside a Drawer (F-18's own page is unchanged) */
 .cmp-panel .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); }
+/* QA-2-1 (F-34): and in the step form on a phone (F-18's own page is unchanged) */
+@media (max-width: 719.98px) { .ws-form .resp-chip__remove { min-width: var(--control-phone); min-height: var(--control-phone); } }
 
 /* F-33: the income schedule boards: the stations in the main column, the working agent's card beside the sections,
    and the decision steps decided in place (InlineDecide) in the side column */

@@ -503,9 +503,10 @@ function Paging({ section, position, noteId }: { section: Section; position: 'to
   );
 }
 
-/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default.
+/** `banner` is the tone of a note-only section's banner; a verified status draws it green (F-30), else the warning default
+ *  (information on the leadership report while the agent drafts, F-35).
  *  `strip` draws facts (F-30) or figures (F-43) as a strip of cells; `caption` draws a one-sentence untitled text section as a caption (F-43). */
-export function SectionView({ section, level, controls, banner = 'warning', strip = false, caption = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; caption?: boolean; banner?: 'warning' | 'success' | 'problem' }) {
+export function SectionView({ section, level, controls, banner = 'warning', strip = false, caption = false }: { section: Section; level: 2 | 3; controls?: ItemControls; strip?: boolean; caption?: boolean; banner?: 'warning' | 'success' | 'problem' | 'info' }) {
   const headId = useId();
   const noteId = useId();
   const Heading = level === 2 ? 'h2' : 'h3';

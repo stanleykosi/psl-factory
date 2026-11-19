@@ -1,0 +1,9 @@
+coordinator merge checks on 644c8aafaff61edb86748e73808886fdcaf014dd, load { 12.10 36.39 46.83 }
+checks exit 0
+ Test Files  122 passed (122)
+      Tests  2903 passed (2903)
+e2e exit 0
+  ✓   99 e2e/leadership-report.spec.ts:273:7 › phone 390 › the phone Decide bar is pinned with both steps; every control is at least 44 by 44 (3.4s)
+  ✓  100 e2e/leadership-report.spec.ts:300:3 › reduced motion › the working agent does not animate (1.2s)
+
+  100 passed (3.1m)
