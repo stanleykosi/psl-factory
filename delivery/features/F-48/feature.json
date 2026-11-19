@@ -162,7 +162,7 @@
     "repository": null,
     "task_id": "FE-ASSISTANT",
     "base_branch": "dlv-00-delivery-setup",
-    "base_sha": "7fe412d9048280a85a4e37f74cfb0519975400cf",
+    "base_sha": "a9bfa180bbb86754f4d9739419127e596b94b8b2",
     "task_branch": "fe-assistant-cant-state",
     "head_sha": "2900167babb52fd0ae639672099c398e287ad1a5",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/f-48",
