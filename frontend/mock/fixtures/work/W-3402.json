@@ -452,7 +452,13 @@
               "edit_accept",
               "write_own"
             ],
-            "detail": "From PSL’s past answer: Harmattan Bank RFP 2025 · R-12"
+            "detail": "From PSL’s past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won",
+            "cites": [
+              {
+                "label": "Harmattan Bank RFP 2025 · R-12",
+                "work_id": "W-1999"
+              }
+            ]
           }
         ]
       }

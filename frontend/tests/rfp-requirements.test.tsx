@@ -193,7 +193,9 @@ describe('W-3401 from data (AC 2, 3, 4, 5)', () => {
   });
 
   it('tags in the stacked phone table keep their own width', () => {
-    expect(readFileSync(join(__dirname, '../src/features/workspace/workspace.css'), 'utf8')).toMatch(/\.ws-table--stack td\[data-label\] \{[^}]*justify-items: start/);
+    const css = readFileSync(join(__dirname, '../src/features/workspace/workspace.css'), 'utf8');
+    expect(css).toMatch(/\.ws-table--stack td\.psl-check-cell, \.ws-table--stack th\.psl-check-cell \{ border: none/);
+    expect(css).toMatch(/\.ws\[data-line=\"rfp_response\"\] \.ws-table--stack td\[data-label\] \{[^}]*justify-items: start/);
   });
 
   it('no board string is in src or in the mock server code', () => {
@@ -289,8 +291,8 @@ describe('accept one (AC 7)', () => {
     expect(panel().getByText(/Approvals above a configurable threshold/)).toBeTruthy();
     expect(panel().getAllByText('Tola')).toHaveLength(1);
     expect(panel().queryByText('Suggested by Tola')).toBeNull();
-    expect(panel().getByText('From PSL’s past answer: Harmattan Bank RFP 2025 · R-12')).toBeTruthy();
-    expect(body()).not.toContain('that bid was won');
+    expect(panel().getByText('From PSL’s past answer: Harmattan Bank RFP 2025 · R-12 · that bid was won')).toBeTruthy();
+    expect(panel().getByText('Harmattan Bank RFP 2025 · R-12').closest('a')).toBeTruthy();
     expect(panel().getByText('Addressed')).toBeTruthy();
     for (const name of ['Accept answer', 'Edit answer', 'Write my own']) expect(panel().getByRole('button', { name })).toBeTruthy();
   });
