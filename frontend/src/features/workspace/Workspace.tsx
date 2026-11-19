@@ -10,12 +10,13 @@ import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 
 import Link from 'next/link';
 
 import { Button, buttonClass, Callout, Drawer, formatClock, MiniStationBar, useIsPhone, type StationStatus } from '@/components';
+import { asResponseItem, ReconcilePanel } from '@/features/response';
 import { StartWorkDrawer } from '@/features/start-work/StartWorkDrawer';
 import { currentStationIndex, STATIONS, type WorkItem } from '@/features/work-item/labels';
 import { AgentCard, StationTrack } from '@/features/work-item/WorkItemOverview';
 
 import { AssignForm } from './AssignForm';
-import { agentName, scheduleLine, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
+import { agentName, reconcileBeside, scheduleLine, WS_TEXT, type Item, type Section, type Step, type Workspace as WorkspaceData } from './labels';
 import { InlineDecide, type DecidedNotice } from './InlineDecide';
 import { WorkspaceLinks } from './Links';
 import { assignDefault, itemsDefaultChecked, itemTeamKey, itemValues, startsLine, stepVerdict, warnLines, workspaceLinks, type WorkspaceLink } from './proposals';
@@ -184,6 +185,7 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
   // F-30 (D-103, D-107), F-31, F-33, F-41, F-42: on a phone these lines' forms open in the full-height Drawer.
   const inDrawer = phone && (workspace.line_key === ISSUE_LINE || workspace.line_key === ENGAGEMENT_LINE || scheduleLine(workspace.line_key) || workspace.line_key === REMINDER_LINE);
   const schedule = scheduleLine(workspace.line_key);
+  const beside = reconcileBeside(workspace.line_key, phone);
   // F-31: a department's "Record input" opens F-18's team-input form in the Drawer; `recording` names the pressed row's button.
   const [recording, setRecording] = useState<{ token: string; taskId: string; teamKey?: string; heading: HTMLElement | null } | null>(null);
   const [recorded, setRecorded] = useState<string | null>(null);
@@ -657,8 +659,9 @@ function WorkspaceSteps({ id, item, workspace, page }: { id: string; item: WorkI
           ))}
           <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} page={page} />
         </div>
-        {(side.length > 0 || showPanel || sideNote || decideTasks.size > 0 || agentSide) && (
+        {(side.length > 0 || showPanel || sideNote || decideTasks.size > 0 || agentSide || beside) && (
           <aside className="ws-side" aria-label={hasNext && side.length === 0 ? undefined : 'Review and decide'} aria-labelledby={hasNext && side.length === 0 ? `${decideId}-head` : undefined}>
+            {beside && <ReconcilePanel id={id} item={asResponseItem(item)} />}
             {side.map((section) => (
               <SectionView key={section.key} section={section} level={titled ? 3 : 2} controls={sectionControls} />
             ))}
@@ -768,8 +771,9 @@ export function Workspace({ id, item, page }: { id: string; item: WorkItem; page
               ))}
             <WorkspaceLinks links={splitAsk(workspaceLinks(workspace), agentSide).rest} />
           </div>
-          {(workspace.sections.some(inSide(item)) || agentSide) && (
+          {(workspace.sections.some(inSide(item)) || agentSide || reconcileBeside(workspace.line_key, phone)) && (
             <aside className="ws-side" aria-label="Review and decide">
+              {reconcileBeside(workspace.line_key, phone) && <ReconcilePanel id={id} item={asResponseItem(item)} />}
               {agentSide && <LineAgent agent={item.agent} ask={splitAsk(workspaceLinks(workspace), true).ask} />}
               {workspace.sections
                 .filter(inSide(item))

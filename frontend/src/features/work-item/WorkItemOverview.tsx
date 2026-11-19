@@ -12,7 +12,7 @@ import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, DisclosureLink
 import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
-import { scheduleLine } from '@/features/workspace/labels';
+import { reconcileBeside, scheduleLine } from '@/features/workspace/labels';
 import type { WorkspacePage } from '@/features/workspace/usePageReload';
 import { Workspace } from '@/features/workspace/Workspace';
 import { RfpOutcomeLink } from '@/features/rfp';
@@ -736,7 +736,8 @@ export function WorkItemOverview({ id, item, workspace }: { id: string; item: Wo
       <div className={item.workspace?.line_key === 'delivery_release' && shownTasks.length > 0 ? 'work-columns work-columns--lone' : 'work-columns'}>
         <div className="work-column">{main}</div>
         <div className="work-column work-aside">
-          <ReconcilePanel id={id} item={asResponseItem(item)} />
+          {/* F-43: the cash forecast draws it in the workspace's side column on desktop */}
+          {!reconcileBeside(item.workspace?.line_key, phone) && <ReconcilePanel id={id} item={asResponseItem(item)} />}
           {aside}
           {shownTasks.length > 0 && <TaskPanels id={id} tasks={shownTasks} />}
           <RfpOutcomeLink id={id} item={item} />

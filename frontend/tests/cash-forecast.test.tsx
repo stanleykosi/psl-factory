@@ -118,8 +118,17 @@ const click = async (name: string) => {
   });
 };
 const note = () => ws().getByLabelText(/^Note \(needed to/) as HTMLTextAreaElement;
-/** What the page says about the write: its notices, the status tag and the side column (not the station names). */
-const said = () => [document.querySelector('.ws-notices'), status(), document.querySelector('.ws-side')].map((el) => el?.textContent ?? '').join(' ');
+/** What the page says about the write: its notices, the status tag and the side column (not the station names). The
+ *  reconcile choices' own labels ("It arrived. I have proof it was received…", the approved wording) are not a claim. */
+const said = () =>
+  [document.querySelector('.ws-notices'), status(), document.querySelector('.ws-side')]
+    .map((el) => {
+      if (!el) return '';
+      const copy = el.cloneNode(true) as HTMLElement;
+      copy.querySelectorAll('.resp-options').forEach((options) => options.remove());
+      return copy.textContent ?? '';
+    })
+    .join(' ');
 const factValue = (label: string) => [...document.querySelectorAll('.ws-fact')].find((f) => f.querySelector('dt')?.textContent === label)?.querySelector('dd')?.textContent;
 const column = (label: string) => [...document.querySelectorAll(`.ws-table td[data-label="${label}"]`)].map((td) => td.textContent);
 const settle = () => new Promise((r) => setTimeout(r, 50));
@@ -186,6 +195,9 @@ describe('four states from data (AC 1, 9, 10, 12)', () => {
     expect(screen.getAllByText("Check with the CEO's office, then record it.").length).toBeGreaterThan(0);
     const reconcile = panel()!;
     expect(within(reconcile).getByRole('heading', { level: 2 }).textContent).toBe('Record what happened');
+    // the board draws it in the side column above Next, not above the workspace (desktop)
+    expect(document.querySelector('.ws-side')!.contains(reconcile)).toBe(true);
+    expect(document.querySelectorAll('.resp-reconcile')).toHaveLength(1);
     expect(reconcile.textContent).toContain('Nothing is sent again until a person records what happened.');
     expect(reconcile.textContent).not.toMatch(/client|invoiced/i);
     const options = within(within(reconcile).getByRole('radiogroup', { name: 'Record what happened' })).getAllByRole('radio') as HTMLInputElement[];
@@ -287,13 +299,15 @@ describe('amounts as returned (AC 2 to 4)', () => {
     const root = join(__dirname, '../..');
     let diff = '';
     try {
-      diff = execFileSync('git', ['diff', '-U0', 'origin/dlv-00-delivery-setup', '--', 'frontend/src'], { cwd: root, encoding: 'utf8' });
+      // against the branch point, so later dlv-00 commits are not read as this branch's lines
+      const base = execFileSync('git', ['merge-base', 'HEAD', 'origin/dlv-00-delivery-setup'], { cwd: root, encoding: 'utf8' }).trim();
+      diff = execFileSync('git', ['diff', '-U0', base, '--', 'frontend/src'], { cwd: root, encoding: 'utf8' });
     } catch {
       diff = execFileSync('git', ['diff', '-U0', 'HEAD', '--', 'frontend/src'], { cwd: root, encoding: 'utf8' });
     }
     const added = diff.split('\n').filter((l) => l.startsWith('+') && !l.startsWith('+++'));
     expect(added.filter((l) => /parseFloat|Number\(|\.reduce\(|compactAmount|toFixed/.test(l))).toEqual([]);
-    expect(added.filter((l) => /useMe|\/api\/v1\/me/.test(l))).toEqual([]);
+    expect(added.filter((l) => /\buseMe\b|\/api\/v1\/me/.test(l))).toEqual([]);
   });
 
   it('Unknown is never 0 at desktop and phone; a real "0.00" reads ₦0.00', async () => {

@@ -70,6 +70,8 @@ export const agentName = (agent: string) => word(AGENT_NAMES, agent);
  *  the sections, the phone Drawer, the stopped-station banner and no card for a decided task. Other lines are unchanged. */
 const SCHEDULE_LINES: ReadonlySet<string> = new Set(['income_schedules', 'fixed_assets', 'cash_forecast']);
 export const scheduleLine = (lineKey: string | undefined) => lineKey !== undefined && SCHEDULE_LINES.has(lineKey);
+/** F-43: the cash forecast board draws its record-what-happened control in the side column, above Next (desktop only). */
+export const reconcileBeside = (lineKey: string | undefined, phone: boolean) => !phone && lineKey === 'cash_forecast';
 
 // Frontend-owned neutral sentences (spec Assumptions); none of them is a business rule.
 export const WS_TEXT = {
