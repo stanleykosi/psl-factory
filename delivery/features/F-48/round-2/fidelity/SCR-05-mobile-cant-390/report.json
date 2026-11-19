@@ -1,0 +1,327 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-19T15:23:48.668Z",
+  "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-05-mobile-cant.dc.html",
+  "boardName": "SCR-05-mobile-cant.dc.html",
+  "pageUrl": "http://localhost:4773/assistant/CV-2404",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory/delivery/features/F-48/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 88.2 is below 90."
+  ],
+  "scores": {
+    "coverage": 28.6,
+    "coverageWithExceptions": 100,
+    "visual": 88.2
+  },
+  "visual": {
+    "score": 88.2,
+    "allCellsScore": 89.2,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2066,
+    "mismatchedCells": 244
+  },
+  "coverage": {
+    "total": 7,
+    "found": 2,
+    "coverage": 28.6,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What is Musa Ibrahim’s monthly salary?",
+        "pageName": "What is Musa Ibrahim’s monthly salary?",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "background #1F2427 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 101,
+          "y": 70,
+          "w": 273,
+          "h": 38
+        },
+        "pageBox": {
+          "x": 113,
+          "y": 80,
+          "w": 249,
+          "h": 21
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Assistant",
+        "key": "link: ← Assistant",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 79,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Conflicts 9: the back link is the app frame's phone bar (usePhoneBack \"← Assistant\" with the conversation title, one line with an ellipsis); the frame names the link for screen readers, so the tool cannot match the board text. The page draws the link.",
+          "approved_by": "design engineer, 16 Nov 2026 — D-100"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Payroll",
+        "key": "text: Payroll",
+        "container": "page",
+        "boardBox": {
+          "x": 231,
+          "y": 21,
+          "w": 50,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Conflicts 5: the phone header shows the conversation title (E-CONVERSATION title), not the board's 'Payroll'.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Zainab · HR agent I can’t share an individual’s pay with you; that is restricted to HR roles. I can show staff-cost totals for your business unit instead.",
+        "key": "text: Zainab · HR agent I can’t share an individual’s pay with you; that is restricted to HR roles. I can show staff-cost totals for your business unit instead.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 310,
+          "w": 358,
+          "h": 90
+        },
+        "exception": {
+          "reason": "Conflicts 3: the contract carries text and cannot_reason as separate plain lines, never joined or rewritten; the board's one paragraph differs from the mock's two lines.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Show staff-cost totals",
+        "key": "link: Show staff-cost totals",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 412,
+          "w": 161,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Conflicts 6 (D-116): no field carries suggestion buttons (G-SCR05-5); not drawn. Proposal: typed suggestions[] on the message.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask HR Lead for access",
+        "key": "link: Ask HR Lead for access",
+        "container": "page",
+        "boardBox": {
+          "x": 183,
+          "y": 412,
+          "w": 170,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Conflicts 6 (D-116): no field carries it (G-SCR05-5); who receives an access request is an unproposed business decision; not drawn.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Assistant",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 74,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "A staff member’s salary",
+        "container": "banner",
+        "pageBox": {
+          "x": 90,
+          "y": 19,
+          "w": 136,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Zainab · HR agent",
+        "container": "main",
+        "pageBox": {
+          "x": 60,
+          "y": 317,
+          "w": 314,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 STEP · DONE",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 363,
+          "w": 92,
+          "h": 14
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I can’t share an individual’s pay with you; that is restricted to HR roles. I can show you staff-cost totals for your business unit, or you can ask the HR Lead for access if your work needs it.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 432,
+          "w": 358,
+          "h": 90
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Individual pay is restricted to HR roles.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 532,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Restricted",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 563,
+          "w": 110,
+          "h": 27
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Message Zainab",
+        "container": "form",
+        "pageBox": {
+          "x": 18,
+          "y": 698,
+          "w": 354,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "@ Mention",
+        "container": "form",
+        "pageBox": {
+          "x": 28,
+          "y": 772,
+          "w": 89,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Send",
+        "container": "form",
+        "pageBox": {
+          "x": 318,
+          "y": 772,
+          "w": 44,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

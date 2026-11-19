@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 2900167babb52fd0ae639672099c398e287ad1a5
+COMMIT: 8a9755d4f598464231786ff2100fd420a93b31a4
 BUILDER: builder
 LANE: full
 
@@ -39,3 +39,4 @@ LANE: full
 
 ## Coordinator note (19 Nov)
 Merged dlv-00 into the branch (2900167babb52fd0ae639672099c398e287ad1a5) to pick up the flaky-test fix (PR #65) and the merged features; there were no conflicts. The first gate failed on a 10 s hook timeout from the old base.
+- Merged dlv-00 again (8a9755d4f598464231786ff2100fd420a93b31a4) to pick up the flaky-test fix (#75); base_sha moved to a9bfa180bbb86754f4d9739419127e596b94b8b2.

@@ -1,0 +1,9 @@
+{
+  "draft_v2": {
+    "status": 200,
+    "body": {
+      "outcome": "queued",
+      "message": "Tola is drafting v2."
+    }
+  }
+}

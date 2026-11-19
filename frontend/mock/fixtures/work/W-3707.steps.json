@@ -1,0 +1,10 @@
+{
+  "publish": {
+    "status": 502,
+    "body": {
+      "code": "mock_lost",
+      "message": "The mock dropped this reply."
+    },
+    "next": true
+  }
+}

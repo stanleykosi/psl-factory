@@ -12,7 +12,10 @@ import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { SampleLabel } from '@/shell/SampleLabel';
 import { useWorkspacePage } from '@/features/workspace/usePageReload';
 
+import { RfpFrame } from '@/features/rfp/RfpFrame';
+import { statusTone } from '@/features/rfp/labels';
 import { SEVERITY_WORDS, tagTone } from '@/features/workspace/labels';
+import { screenHeading } from '@/features/workspace/Workspace';
 
 import { startedLine, STATE_TAGS, type WorkItem } from './labels';
 import { presentationOf, viewFor } from './presentation';
@@ -142,6 +145,9 @@ function ProjectBar({ caseId }: { caseId: string }) {
   );
 }
 
+/** F-37: the line key of the RFP requirements workspace; read only to draw the RFP frame and its status tag. */
+const RFP_RESPONSE_LINE = 'rfp_response';
+
 function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boolean; historyHref: string }) {
   const ws = item.workspace;
   const state = STATE_TAGS[item.state];
@@ -154,7 +160,10 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
   );
   // F-30: a severity the workspace's facts carry is drawn beside the status, as the issue boards do
   const severity = ws?.sections.flatMap((section) => (section.kind === 'facts' && !section.restricted ? section.items : [])).find((i) => i.severity !== undefined)?.severity;
-  const tag = status ? (
+  // F-37: an RFP's requirements page reads the RFP's own status (the frame's tag), as the RFP pages do
+  const tag = item.rfp && ws?.line_key === RFP_RESPONSE_LINE ? (
+    <span className={`psl-tag ${statusTone(item.rfp.status.kind)} work-state`}>{item.rfp.status.label}</span>
+  ) : status ? (
     <Tag tone={tagTone(status.tone)} className="work-state">
       {status.label}
     </Tag>
@@ -185,7 +194,7 @@ function LineHeader({ item, phone, historyHref }: { item: WorkItem; phone: boole
         </div>
       )}
       <div className="work-titleline">
-        <h1 className="shell-title">{item.title}</h1>
+        <h1 className="shell-title">{phone && ws ? screenHeading(ws) ?? item.title : item.title}</h1>
         {!phone && (
           <span className="work-lineend">
             {/* INV-SAMPLE: the record says it is sample data, whatever the build's API mode */}
@@ -241,7 +250,9 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   // F-30: an issue's work item goes back to its project (D-111 item 9); every other work item keeps the queue.
   // F-31: the planning item does the same (D-113 item 9). F-39: so does the escalation.
   const projectId = item?.workspace?.line_key === 'issue_followup' || item?.workspace?.line_key === 'planning' || item?.workspace?.line_key === 'escalation' ? item.workspace.context?.project?.case_id : undefined;
-  usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : projectId ? { label: 'Project', href: `/projects/${encodeURIComponent(projectId)}` } : { label: 'Queue', href: '/my-work' });
+  // F-40: the handover goes back to the Delivery tab it was opened from (UX-1-1)
+  const deliveryId = item?.workspace?.line_key === 'delivery_handover' ? item.workspace.context?.project?.case_id : undefined;
+  usePhoneBack(tab === 'history' ? { label: view?.back_label ?? 'Work item', href: base } : deliveryId ? { label: 'Delivery', href: `/projects/${encodeURIComponent(deliveryId)}/delivery` } : projectId ? { label: 'Project', href: `/projects/${encodeURIComponent(projectId)}` } : { label: 'Queue', href: '/my-work' });
 
   if (state.status === 'loading') return <LoadingState />;
   if (state.status === 'error') {
@@ -268,7 +279,20 @@ export function WorkItemView({ id, tab }: { id: string; tab: WorkItemTab }) {
   const tabs = <WorkItemTabs base={base} tab={tab} count={view?.history_counts?.all} />;
   return (
     <>
-      {line ? (
+      {line && !phone && shown.rfp && shown.workspace?.line_key === RFP_RESPONSE_LINE ? (
+        <RfpFrame
+          id={id}
+          item={shown}
+          rfp={shown.rfp}
+          fallback={shown.title}
+          current="requirements"
+          end={
+            <Link className="psl-link rfp-history" href={`${base}/history`}>
+              History
+            </Link>
+          }
+        />
+      ) : line ? (
         <LineHeader item={shown} phone={phone} historyHref={`${base}/history`} />
       ) : (
         <WorkItemHeader item={shown} tab={tab} phone={phone} tabs={tabs} />

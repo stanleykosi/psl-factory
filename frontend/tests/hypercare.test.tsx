@@ -277,6 +277,8 @@ describe('record the release (AC 10, 12, 14)', () => {
     });
     await waitFor(() => expect(posts('/evidence')).toHaveLength(1));
     await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
+    // the proof only counts once the page has taken the upload's answer: wait until it stops asking for proof
+    await waitFor(() => expect(screen.queryByText('Add proof to continue.')).toBeNull());
   };
 
   it('opens with Version and Environment filled and the consequence; blank fields and no proof send nothing', async () => {
@@ -461,6 +463,8 @@ describe('log an observation (AC 13)', () => {
     });
     await waitFor(() => expect(posts('/evidence')).toHaveLength(1));
     await waitFor(() => expect(screen.queryByText(/Uploading…/)).toBeNull());
+    // the upload's answer has reached the form once its file chip shows
+    await screen.findByText(/screenshot\.pdf/);
     expect(posts('/evidence')[0].body).toMatchObject({ kind: 'hypercare_observation' });
     await act(async () => {
       fireEvent.submit(ws().getByRole('form'));

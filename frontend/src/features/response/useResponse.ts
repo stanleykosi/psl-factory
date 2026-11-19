@@ -28,6 +28,8 @@ export type Entries = {
   team: string;
   estimate: string;
   what: string;
+  /** Support handover (F-40): the gaps Support listed, one per line. */
+  gaps: string;
 };
 
 export type ResponseView =
@@ -49,7 +51,7 @@ export type Notice =
   | { kind: 'problem'; message: string; forbidden?: boolean }
   | { kind: 'claim_failed' };
 
-const EMPTY: Entries = { who: '', when: '', action: '', version: '', channel: '', note: '', attested: false, team: '', estimate: '', what: '' };
+const EMPTY: Entries = { who: '', when: '', action: '', version: '', channel: '', note: '', attested: false, team: '', estimate: '', what: '', gaps: '' };
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 const ACCESS_LOST = new Set<ApiError['kind']>(['unauthenticated', 'not_found']);
 
@@ -76,6 +78,9 @@ export function teamAction(e: Entries, response: TaskResponse): ResponseActionVa
 export const teamInputOpen = (response: TaskResponse) =>
   (response.teams?.length ?? 0) > 0 && response.actions.some((a) => a.value === 'input' || a.value === 'estimate');
 
+/** Support handover (F-40) is open only with an action the API labels. */
+export const handoverOpen = (response: TaskResponse) => offeredActions(response).length > 0;
+
 /** A person-days estimate: a positive number, or undefined. */
 export function estimateDays(text: string): number | undefined {
   const value = text.trim() === '' ? NaN : Number(text);
@@ -98,9 +103,13 @@ export function effectiveEntries(entries: Entries, response: TaskResponse): Entr
   };
 }
 
+/** Support handover: each non-blank line of the gaps box is one gap, trimmed, in order. */
+export const gapLines = (text: string) => text.split('\n').map((line) => line.trim()).filter(Boolean);
+
 /** The alert beside a disabled Record, or null when nothing is missing. */
 export function missingLine(e: Entries, response: TaskResponse, proofCount: number): string | null {
   if (response.variant === 'team_input') return teamMissingLine(e, response, proofCount);
+  if (response.variant === 'support_handover') return handoverMissingLine(e, proofCount);
   const parts: string[] = [];
   if (!e.who) parts.push('who responded');
   if (!e.when) parts.push('when');
@@ -108,6 +117,17 @@ export function missingLine(e: Entries, response: TaskResponse, proofCount: numb
   if ((response.versions?.length ?? 0) > 0 && !e.version) parts.push('which version');
   if ((response.channels?.length ?? 0) > 1 && !e.channel) parts.push('how they responded');
   if (parts.length) return `Choose ${listWords(parts)} to record this.`;
+  if (proofCount === 0 || !e.attested) return 'Add the proof and confirm it’s genuine to record this.';
+  return null;
+}
+
+function handoverMissingLine(e: Entries, proofCount: number): string | null {
+  const parts: string[] = [];
+  if (!e.who) parts.push('who replied');
+  if (!e.when) parts.push('when');
+  if (!e.action) parts.push('what Support said');
+  if (parts.length) return `Choose ${listWords(parts)} to record this.`;
+  if (e.action === 'changes_requested' && gapLines(e.gaps).length === 0) return 'Add at least one gap to record this.';
   if (proofCount === 0 || !e.attested) return 'Add the proof and confirm it’s genuine to record this.';
   return null;
 }
@@ -278,6 +298,7 @@ export function useResponse(id: string, taskId: string | undefined) {
         if (estimateShown(e, response)) body.estimate_person_days = estimateDays(e.estimate);
         body.what = e.what.trim();
       }
+      if (response.variant === 'support_handover' && body.action === 'changes_requested') body.gaps = gapLines(e.gaps);
       if (ids.length > 1) body.evidence_ids = ids.slice(1);
       const caseRevision = proof.caseRevision();
       if (caseRevision !== undefined) body.case_revision = caseRevision;

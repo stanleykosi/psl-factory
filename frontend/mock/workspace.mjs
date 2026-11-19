@@ -14,6 +14,7 @@
 // request schema and the 2000-character note (422 naming the fields), the step key in the served item's workspace.steps (404), a key seen
 // before (the stored reply again, logged as a replay, no second send), expected_revision (409), then the fixture's
 // script. fixtures/work/<id>.steps.json (loaded with the other work fixtures) maps a step key to {status, body, next}; the default is 200 `done`.
+// A step with its own result (F-41, F-37) takes <id>.next.<step> when present; an item id the served item does not offer that step for is a 422 naming item_ids.
 // A 200 swaps in <id>.next.json when present, else serves the item with its
 // revision and workspace.revision one higher; a scripted failure with next: true swaps it in once
 // (the step then succeeds on that version). Overrides live in the shared map, cleared by POST /__mock/reset.
@@ -195,6 +196,13 @@ function handle({ req, url, raw, cookies, me, work, overrides, operationId }) {
   if (!workspace?.steps?.some((s) => s.key === body.step)) {
     log.push({ ...entry, status: 404, replay: false });
     return { status: 404, body: NO_STEP };
+  }
+  // F-37 (the RFP requirements lines only; older fixtures name ids loosely): an item id that is not in the served item, or that does not list this step, is a 422 naming item_ids
+  const offered = new Map();
+  for (const section of workspace.sections ?? []) for (const row of section.items) offered.set(row.id, [...(offered.get(row.id) ?? []), ...(row.steps ?? [])]);
+  if (workspace.line_key === 'rfp_response' && (body.item_ids ?? []).some((rowId) => !offered.get(rowId)?.includes(body.step))) {
+    log.push({ ...entry, status: 422, replay: false });
+    return { status: 422, body: { code: 'invalid', message: 'Check these fields: item_ids.', fields: [{ name: 'item_ids', message: 'That item does not offer this step.' }] } };
   }
   if (body.expected_revision !== workspace.revision) {
     log.push({ ...entry, status: 409, replay: false });

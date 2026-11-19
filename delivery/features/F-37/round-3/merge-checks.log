@@ -1,0 +1,27 @@
+F-37 merge prep (D-126). Head: 435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f (merge of origin/dlv-00-delivery-setup; handoff commit before it)
+
+Commits: handoff section "Added during F-37" in delivery/BACKEND-HANDOFF.md; merge commit (no AI footer).
+
+Conflicts and resolutions
+- delivery/BACKEND-HANDOFF.md: both appended sections at the end; kept both (F-36/F-35/F-39/F-43/F-45 sections, then F-37's).
+- frontend/src/features/rfp/rfp.css: kept F-37 History/title rules and F-36 .rfp-assign rules.
+- frontend/src/features/work-item/WorkItemOverview.tsx (settled/shownTasks): dlv-00's AGENT_BESIDE_LINES rule and escalation rule kept; scheduleLine dropped (AGENT_BESIDE_LINES now contains SCHEDULE_LINES); F-37's rfpPage team_input exclusion added to shownTasks.
+- frontend/src/features/workspace/Workspace.tsx (4 hunks): kept LEDGER_LINE, REPORT_LINE, ESCALATION_LINE, drawsAgentCard, forecastLine/beside, STATION_LINES; added RFP_LINE, noteAfter, RFP_LINE in inDrawer; sideNote/rfpSideNote scoped to RFP_LINE; agentSide = drawsAgentCard; ws-side condition = dlv-00's (forecast && !phone) OR F-37's RFP note on desktop. Removed unused 'schedule' const.
+- Test files: no conflicts; both sides' tests present.
+
+Results
+- tsc --noEmit: clean. eslint src: clean.
+- delivery/checks.sh (under shared lock, released): lint, typecheck, build ran; vitest 3027 passed, 1 failed of 3028: tests/rfp-assign.test.tsx "a 422 naming acting_role ... focus on it" (focus assertion, run under machine load; file identical to dlv-00). Re-run alone twice: 35/35 passed both times. Checks.sh not re-run in full after that.
+- Playwright e2e (escalation, leadership-report, rfp, rfp-assign, rfp-requirements): 152 passed, 0 failed.
+- Pushed to origin/fe-rfp-response-requirements-answers.
+coordinator re-run on 435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f, load { 7.70 41.03 49.92 }
+checks exit 1
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/ledger-source.test.tsx > holds (AC 5, 6) > W-4208: Unknown with proof sends one step with inputs.found unknown; the re-read draws the CHECK HELD hold with no step and no Decide panel
+ FAIL  tests/start-work.test.tsx > the main button and the chooser > Esc closes and focus returns to the button that opened it; Tab stays inside
+ Test Files  2 failed | 126 passed (128)
+      Tests  2 failed | 3069 passed (3071)
+coordinator re-run 2 on 435ef7d9d8d5d407902dffba40b1efcb8bc9bc7f, load { 5.11 14.23 25.49 }
+checks exit 0
+ Test Files  128 passed (128)
+      Tests  3071 passed (3071)

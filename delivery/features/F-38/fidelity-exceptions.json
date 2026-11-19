@@ -1,0 +1,326 @@
+{
+ "exceptions": [
+  {
+   "role": "tablist",
+   "name": "RFP",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts; the Submission tab is current text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Requirements 64",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts; the Submission tab is current text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Pricing",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts; the Submission tab is current text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Submission",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts; the Submission tab is current text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "tab",
+   "name": "Outcome",
+   "category": "component",
+   "conflicts": 17,
+   "reason": "Conflicts 17: F-18's RFP frame draws its tabs as a nav of links and plain text (not a tablist), with the returned labels and counts; the Submission tab is current text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Tola · PMO agent · done",
+   "category": "component",
+   "conflicts": 18,
+   "reason": "Conflicts 18: the shared agent card draws 'Tola' with a DONE tag and the agent's own note; the returned agent has a name and a status, no role line or version label.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Drafted 22 Nov 10:15 Ask Tola",
+   "category": "component",
+   "conflicts": 22,
+   "reason": "Conflicts 22: the shared agent card footer reads 'Started <time>' from agent.started_at; the contract has no finished time ('Drafted 22 Nov 10:15'), so none is invented (BACKEND-HANDOFF F-38).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Overview",
+   "category": "frame item",
+   "conflicts": 21,
+   "reason": "Conflicts 21: the PMO Lead's extra nav items belong to the shell, which draws no per-role nav; the mock has no PMO Lead persona.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Setup",
+   "category": "frame item",
+   "conflicts": 21,
+   "reason": "Conflicts 21: the PMO Lead's extra nav items belong to the shell, which draws no per-role nav; the mock has no PMO Lead persona.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Kemi Adebayo · PMO Lead",
+   "category": "sample data",
+   "conflicts": 21,
+   "reason": "Conflicts 21: the person's name and role come from /me, which this page never reads; all fixtures open as the mock persona 'pm' (Tunde Bello · PM).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Note (needed to return)",
+   "category": "component",
+   "conflicts": 9,
+   "reason": "Conflicts 9: F-33's composed label reads 'Note (needed to return or reject)', because Reject also needs a note.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "(needed to return)",
+   "category": "component",
+   "conflicts": 9,
+   "reason": "Conflicts 9: the label's hint reads '(needed to return or reject)', because Reject also needs a note.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Emailed to procurement@tamarindloans.example, the address the RFP gives on p.2. Their mail server accepted it (ref TL-SUB-0091), so the response is verified as sent.",
+   "category": "layout",
+   "conflicts": 23,
+   "reason": "Conflicts 23: the sentence is on the page (a returned text item) but sits in a panel row with its 'Receipt confirmed' tag, not in a green band; the tool reads the row's text as one element. Its verified look comes only from the returned tag tone.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "The client's portal confirmed it received this exact pack (receipt TL-SUB-0091). The response is verified as submitted.",
+   "category": "layout",
+   "conflicts": 23,
+   "reason": "Conflicts 23: the sentence is on the page (a returned text item) but sits in a panel row with its 'Receipt confirmed' tag, not in a green band; the tool reads the row's text as one element.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "If delivery hadn't been confirmed (a bounce, or no answer from their mail server), this would show \"Effect uncertain\" and someone would check with the client before anything is sent again.",
+   "category": "missing",
+   "conflicts": 7,
+   "reason": "Conflicts 7: a design note about a state the page is not in; not drawn and not in the fixtures.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "If the portal hadn't sent a receipt, this would show \"Effect uncertain\" and someone would check the portal before anything is sent again.",
+   "category": "missing",
+   "conflicts": 7,
+   "reason": "Conflicts 7: a design note about a state the page is not in; not drawn and not in the fixtures.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← RFP",
+   "category": "frame item",
+   "conflicts": 19,
+   "reason": "Conflicts 19 (phone wording): the phone bar's back link is the shell's own 'Back to RFP' to the first other tab with a page (W-2101), not the board's '← RFP' text.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "v1",
+   "category": "frame item",
+   "conflicts": 20,
+   "reason": "Conflicts 20: the contract has one title and one status; the phone bar tag 'v1' is not drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DEADLINE 28 NOV · 6 DAYS",
+   "category": "frame item",
+   "conflicts": 19,
+   "reason": "Conflicts 19: the RFP frame is not drawn on a phone (F-18); the deadline label is the frame's returned rfp.status and has no phone place.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "DONE",
+   "category": "frame item",
+   "conflicts": 20,
+   "reason": "Conflicts 20: the phone bar tag 'DONE' is not drawn; there is no phone-only status field. The submitted state is the title and the returned banner.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Email delivered · ref TL-SUB-0091.",
+   "category": "frame item",
+   "conflicts": 20,
+   "reason": "Conflicts 20: the phone board's one-line receipt summary has no field; the same facts are in the returned banner sentence, the timeline and Sent to rows.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Portal receipt TL-SUB-0091 confirmed.",
+   "category": "frame item",
+   "conflicts": 20,
+   "reason": "Conflicts 20: the phone board's one-line receipt summary has no field; the same facts are in the returned banner sentence, the timeline and Sent to rows.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "← My work",
+   "category": "frame item",
+   "conflicts": 19,
+   "reason": "Conflicts 19 (phone wording): the review item goes back to the queue with the shell's 'Back to Queue'; no tab with a page is returned on a review read.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Approving lets the factory submit this exact pack.",
+   "category": "extra element",
+   "conflicts": 2,
+   "reason": "Conflicts 2: the consequence sentence is the returned step text; the shared step note adds 'This sends to the client.' to a step that sends, so the tool reads one longer line.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Goes to procurement@tamarindloans.example",
+   "category": "extra element",
+   "conflicts": 2,
+   "reason": "Conflicts 2: the Decide panel names where the approved pack goes, from the returned decision.recipient. Absent when no recipient is returned.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "Cannot approve, send or pay.",
+   "category": "extra element",
+   "conflicts": 18,
+   "reason": "Conflicts 18: a fixed line the shared agent card draws for every agent, not the backend's; it is not on the board.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "button",
+   "name": "Open the full pack (PDF, 6.1 MB)",
+   "category": "extra element",
+   "conflicts": 24,
+   "reason": "Conflicts 24 (phone): the returned link label opens the document panel in place, so it is a button here; the phone board draws no such control.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "button",
+   "name": "Edit cover letter",
+   "category": "extra element",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the phone draft board draws no Edit cover letter; the step is returned, so it is drawn (the controls come from the response only).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "Ask Tola",
+   "category": "extra element",
+   "conflicts": 8,
+   "reason": "Conflicts 8: the phone draft board draws no Ask Tola; the assistant link is returned, so it is drawn.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "A document reviewer checks the pack. After that it's sent the way the RFP asks: here, by email to procurement@tamarindloans.example.",
+   "category": "extra element",
+   "conflicts": 19,
+   "reason": "Conflicts 19: the phone boards drop the Next sentence; the returned next lines are drawn with the same words as desktop (D-111).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "When the client announces the result, record it here: won, lost or still pending.",
+   "category": "extra element",
+   "conflicts": 19,
+   "reason": "Conflicts 19: the phone boards drop the Next heading; the returned next line is drawn with the same words as desktop (D-111).",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "text",
+   "name": "IN REVIEW",
+   "category": "extra element",
+   "conflicts": 16,
+   "reason": "Conflicts 16: the returned workspace.status, drawn at the end of the title line; the board's review state draws no status tag.",
+   "approved_by": "builder proposal, pending design engineer"
+  },
+  {
+   "role": "link",
+   "name": "History",
+   "category": "extra element",
+   "conflicts": 21,
+   "reason": "Conflicts 21: the shared line header's History link, on every line item; not on the SCR-40 boards.",
+   "approved_by": "builder proposal, pending design engineer"
+  }
+ ],
+ "visual_waivers": [
+  {
+   "board": "SCR-40-desktop-draft",
+   "width": 1440,
+   "visual": 89,
+   "reason": "D-83: measured once on a production build in round 1. Remaining gaps: the shared frame (top bar, alerts bell, name position; D-99, D-107, D-112); the banner drawn as a panel row with its tag, not a green band (Conflicts 23); 'Record the outcome' sits above Next as the shared outcome link, not inside the Next card as a primary button; the checks drawn with a Done word per row; the shared agent card; the phone bar tags and extras listed in the exceptions.",
+   "approved_by": "builder proposal, pending design engineer (not signed)"
+  },
+  {
+   "board": "SCR-40-desktop-review",
+   "width": 1440,
+   "visual": 80.2,
+   "reason": "D-83: measured once on a production build in round 1. Remaining gaps: the shared frame (top bar, alerts bell, name position; D-99, D-107, D-112); the banner drawn as a panel row with its tag, not a green band (Conflicts 23); 'Record the outcome' sits above Next as the shared outcome link, not inside the Next card as a primary button; the checks drawn with a Done word per row; the shared agent card; the phone bar tags and extras listed in the exceptions.",
+   "approved_by": "builder proposal, pending design engineer (not signed)"
+  },
+  {
+   "board": "SCR-40-desktop-submitted",
+   "width": 1440,
+   "visual": 74.2,
+   "reason": "D-83: measured once on a production build in round 1. Remaining gaps: the shared frame (top bar, alerts bell, name position; D-99, D-107, D-112); the banner drawn as a panel row with its tag, not a green band (Conflicts 23); 'Record the outcome' sits above Next as the shared outcome link, not inside the Next card as a primary button; the checks drawn with a Done word per row; the shared agent card; the phone bar tags and extras listed in the exceptions.",
+   "approved_by": "builder proposal, pending design engineer (not signed)"
+  },
+  {
+   "board": "SCR-40-desktop-submitted-portal",
+   "width": 1440,
+   "visual": 78,
+   "reason": "D-83: measured once on a production build in round 1. Remaining gaps: the shared frame (top bar, alerts bell, name position; D-99, D-107, D-112); the banner drawn as a panel row with its tag, not a green band (Conflicts 23); 'Record the outcome' sits above Next as the shared outcome link, not inside the Next card as a primary button; the checks drawn with a Done word per row; the shared agent card; the phone bar tags and extras listed in the exceptions.",
+   "approved_by": "builder proposal, pending design engineer (not signed)"
+  },
+  {
+   "board": "SCR-40-mobile-draft",
+   "width": 390,
+   "visual": 78.1,
+   "reason": "D-83: measured once on a production build in round 1. Remaining gaps: the shared frame (top bar, alerts bell, name position; D-99, D-107, D-112); the banner drawn as a panel row with its tag, not a green band (Conflicts 23); 'Record the outcome' sits above Next as the shared outcome link, not inside the Next card as a primary button; the checks drawn with a Done word per row; the shared agent card; the phone bar tags and extras listed in the exceptions.",
+   "approved_by": "builder proposal, pending design engineer (not signed)"
+  },
+  {
+   "board": "SCR-40-mobile-review",
+   "width": 390,
+   "visual": 79.3,
+   "reason": "D-83: measured once on a production build in round 1. Remaining gaps: the shared frame (top bar, alerts bell, name position; D-99, D-107, D-112); the banner drawn as a panel row with its tag, not a green band (Conflicts 23); 'Record the outcome' sits above Next as the shared outcome link, not inside the Next card as a primary button; the checks drawn with a Done word per row; the shared agent card; the phone bar tags and extras listed in the exceptions.",
+   "approved_by": "builder proposal, pending design engineer (not signed)"
+  },
+  {
+   "board": "SCR-40-mobile-submitted",
+   "width": 390,
+   "visual": 83.1,
+   "reason": "D-83: measured once on a production build in round 1. Remaining gaps: the shared frame (top bar, alerts bell, name position; D-99, D-107, D-112); the banner drawn as a panel row with its tag, not a green band (Conflicts 23); 'Record the outcome' sits above Next as the shared outcome link, not inside the Next card as a primary button; the checks drawn with a Done word per row; the shared agent card; the phone bar tags and extras listed in the exceptions.",
+   "approved_by": "builder proposal, pending design engineer (not signed)"
+  },
+  {
+   "board": "SCR-40-mobile-submitted-portal",
+   "width": 390,
+   "visual": 82.2,
+   "reason": "D-83: measured once on a production build in round 1. Remaining gaps: the shared frame (top bar, alerts bell, name position; D-99, D-107, D-112); the banner drawn as a panel row with its tag, not a green band (Conflicts 23); 'Record the outcome' sits above Next as the shared outcome link, not inside the Next card as a primary button; the checks drawn with a Done word per row; the shared agent card; the phone bar tags and extras listed in the exceptions.",
+   "approved_by": "builder proposal, pending design engineer (not signed)"
+  }
+ ]
+}
