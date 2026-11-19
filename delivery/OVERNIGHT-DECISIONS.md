@@ -226,3 +226,6 @@ After the weekly usage limit ran out (reset Sun 22 Nov 03:00), five changes. The
 3. One fidelity run per round, strictly. At 70 or above, write a waiver; don't iterate on the score.
 4. Builders work through delivery/builder-checklist.md before handing in. A bug that recurs across features is fixed once in shared code.
 5. 2–3 builds at a time, not 4. Features that change the same shared files (Workspace.tsx, InlineDecide.tsx, WorkItemOverview.tsx, labels.ts, Sections.tsx, mock-contract tests) go one after another.
+
+## D-124 · F-43 waivers, floor exceptions, wording and product acceptance signed (19 Nov 2026, design engineer: "Sign F-43 as is")
+F-43 Finance cash forecast review, part 1 (Sign-off list 3): the 8 visual waivers, including the two floor exceptions on the verified boards (55.6, 51.9; frame offset), and the 28 exceptions. The approved option wording "It arrived… received" is kept as the board draws it, and spec AC 12's ban on "received" is relaxed for that option label. The shared facts-tag change on the income and fixed-asset "NOT SET" facts (TECH-2-1) is accepted. Product acceptance is given on the contract mock. Before merging: take in dlv-00 (the shared stale fix) and add a two-reviewer test.
