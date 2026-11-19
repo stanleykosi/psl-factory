@@ -438,6 +438,61 @@ describe('uncertain and refused decides (AC 10, 11)', () => {
   });
 });
 
+describe('QA-3-1: another reviewer decided first', () => {
+  // Reviewer A's escalate lands before B's don't escalate: the task is decided, so the re-read has no decide steps left.
+  const lostRace = () => {
+    onDecide = () => {
+      served = item('W-3602.approve');
+      return json(409, { code: 'stale_revision', message: 'Someone changed this since you opened it.' });
+    };
+  };
+
+  it('desktop: the 409 re-read shows MESSAGE DRAFTED, the stale sentence and the unsent note', async () => {
+    lostRace();
+    await open(item('W-3602'));
+    await ready();
+    fireEvent.change(note(), { target: { value: '  Wait for their reply first.  ' } });
+    await click("Don't escalate");
+    await waitFor(() => expect(status().textContent).toBe('MESSAGE DRAFTED'));
+    expect(await ws().findByText('This review changed while you were reading it, so nothing was recorded.')).toBeTruthy();
+    expect(ws().getByText('Your note wasn’t sent: “Wait for their reply first.”')).toBeTruthy();
+    expect(document.querySelector('.ws-idecide')).toBeNull();
+    expect(said()).not.toMatch(/NOT ESCALATED|was rejected|is approved/i);
+    expect(posts('/decision')).toHaveLength(1);
+  });
+
+  it('phone: the note typed in the Drawer is named as not sent once the Drawer and the panel go', async () => {
+    phone();
+    lostRace();
+    await open(item('W-3602'));
+    await ready();
+    await click("Don't escalate");
+    const dialog = await screen.findByRole('dialog', { name: "Don't escalate" });
+    fireEvent.change(within(dialog).getByLabelText(/^Note/), { target: { value: 'Wait for their reply first.' } });
+    await act(async () => {
+      fireEvent.click(within(dialog).getByRole('button', { name: "Don't escalate" }));
+    });
+    await waitFor(() => expect(status().textContent).toBe('MESSAGE DRAFTED'));
+    expect(await ws().findByText('This review changed while you were reading it, so nothing was recorded.')).toBeTruthy();
+    expect(ws().getByText('Your note wasn’t sent: “Wait for their reply first.”')).toBeTruthy();
+    expect(posts('/decision')).toHaveLength(1);
+  });
+
+  it('an escalate that loses the race says nothing was recorded and names no note', async () => {
+    onDecide = () => {
+      served = item('W-3602.reject');
+      return json(409, { code: 'stale_revision', message: 'Someone changed this since you opened it.' });
+    };
+    await open(item('W-3602'));
+    await ready();
+    await click('Escalate to the client');
+    await waitFor(() => expect(status().textContent).toBe('NOT ESCALATED'));
+    expect(await ws().findByText('This review changed while you were reading it, so nothing was recorded.')).toBeTruthy();
+    expect(said()).not.toMatch(/note wasn’t sent|MESSAGE DRAFTED/i);
+    expect(posts('/decision')).toHaveLength(1);
+  });
+});
+
 describe('send for review (AC 12, 13)', () => {
   it('one step with CSRF, expected_revision, inputs {} and a UUID key; a retry after a 500 reuses it; WAITING FOR REVIEW only from the re-read', async () => {
     onStep = () => json(500, { code: 'server_error', message: 'Down.' });

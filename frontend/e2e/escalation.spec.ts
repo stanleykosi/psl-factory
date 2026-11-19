@@ -137,6 +137,32 @@ for (const [label, viewport] of [
       await expect(page.getByText('NO RESPONSE · 15 DAYS')).toBeVisible();
     });
 
+    test('QA-3-1: two reviewers, A escalates first; B’s don’t escalate gets 409 and B sees MESSAGE DRAFTED, the stale sentence and the unsent note', async ({ page, context }) => {
+      const other = await context.newPage();
+      await other.goto('/work/W-3602');
+      await page.goto('/work/W-3602');
+      await loaded(other);
+      await loaded(page);
+      await readyToDecide(other);
+      await readyToDecide(page);
+      await other.getByRole('button', { name: 'Escalate to the client' }).click();
+      await expect(other.locator('.work-state')).toHaveText('MESSAGE DRAFTED');
+      const writes = recordWrites(page);
+      await page.getByRole('button', { name: "Don't escalate" }).click();
+      const scope = phone ? page.getByRole('dialog', { name: "Don't escalate" }) : page;
+      await scope.getByLabel(/^Note/).fill('Second reviewer: wait for their reply first.');
+      await scope.getByRole('button', { name: "Don't escalate" }).click();
+      await expect(page.locator('.work-state')).toHaveText('MESSAGE DRAFTED');
+      await expect(page.getByText('This review changed while you were reading it, so nothing was recorded.')).toBeVisible();
+      await expect(page.getByText('Your note wasn’t sent: “Second reviewer: wait for their reply first.”')).toBeVisible();
+      // still there once the page has settled, not a flash before the re-read removes it
+      await page.waitForTimeout(1500);
+      await expect(page.getByText('This review changed while you were reading it, so nothing was recorded.')).toBeVisible();
+      expect(writes.filter((w) => w.path.endsWith('/decision')).map((w) => w.body)).toEqual([{ verdict: 'reject', expected_revision: 1, note: 'Second reviewer: wait for their reply first.' }]);
+      await expectNoAxeViolations(page);
+      await other.close();
+    });
+
     test('Send for review sends one step with a UUID key and shows WAITING FOR REVIEW from the re-read', async ({ page }) => {
       const writes = recordWrites(page);
       await page.goto('/work/W-3604');
