@@ -218,3 +218,11 @@ F-35 leadership report (Sign-off list 3): the 8 visual waivers (71.9–86.6) and
 
 ## D-122 · F-39 waivers, exceptions, shared fix and product acceptance signed (19 Nov 2026, design engineer: "Sign F-39")
 F-39 emergency escalation (Sign-off list 3): the 8 visual waivers (75.5–87.1) and 34 exceptions; the shared stale-decision fix in InlineDecide/Workspace, which also changes F-33's income line and goes beyond spec AC 22 (PMO-4-2); the round-1 coordinator decisions (the backend's question drawn, no empty inputs, the time-only footer exception, the F-16 eyebrow wording); and product acceptance on the contract mock (part 2 and the CTO pre-authorisation held). Follow-ups: F-33 two-reviewer test; W-3602 send-for-review fixture (QA-4-1). Merge into dlv-00 approved.
+
+## D-123 · Cost plan adopted (19 Nov 2026, design engineer: "Adopt all five")
+After the weekly usage limit ran out (reset Sun 22 Nov 03:00), five changes. They replace D-64's model choices and keep every gate and the user's sign-off.
+1. Builders run on Sonnet. Use Opus only after a fix has failed twice.
+2. Reviewers: UI and QA on Sonnet. Opus only for security and technical review on high-risk (money/security) features. PMO acceptance and the approver run as one Sonnet pass; the coordinator writes decision.md from it.
+3. One fidelity run per round, strictly. At 70 or above, write a waiver; don't iterate on the score.
+4. Builders work through delivery/builder-checklist.md before handing in. A bug that recurs across features is fixed once in shared code.
+5. 2–3 builds at a time, not 4. Features that change the same shared files (Workspace.tsx, InlineDecide.tsx, WorkItemOverview.tsx, labels.ts, Sections.tsx, mock-contract tests) go one after another.
