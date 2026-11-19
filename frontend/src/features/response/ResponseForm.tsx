@@ -32,10 +32,10 @@ export type FormProps = {
 
 const CHOOSE = 'Choose…';
 
-export function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; text: string }[] }) {
+export function Select({ label, value, onChange, options, hideLabel }: { label: string; value: string; onChange: (v: string) => void; options: { value: string; text: string }[]; hideLabel?: boolean }) {
   return (
     <label className="resp-field">
-      <span className="resp-label">{label}</span>
+      <span className={hideLabel ? 'resp-label cmp-sr' : 'resp-label'}>{label}</span>
       <select className="psl-input resp-select" value={value} onChange={(e) => onChange(e.target.value)}>
         {options.length !== 1 && <option value="">{CHOOSE}</option>}
         {options.map((o) => (
@@ -48,10 +48,10 @@ export function Select({ label, value, onChange, options }: { label: string; val
   );
 }
 
-export function WhenField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+export function WhenField({ label, value, onChange, hideLabel }: { label: string; value: string; onChange: (v: string) => void; hideLabel?: boolean }) {
   return (
     <label className="resp-field">
-      <span className="resp-label">{label}</span>
+      <span className={hideLabel ? 'resp-label cmp-sr' : 'resp-label'}>{label}</span>
       <input type="datetime-local" className="psl-input" value={value} onChange={(e) => onChange(e.target.value)} />
     </label>
   );
@@ -71,12 +71,12 @@ function ChannelSelect({ response, entries, setEntry }: Pick<FormProps, 'respons
   );
 }
 
-function Actions({ response, entries, setEntry, segmented }: Pick<FormProps, 'response' | 'entries' | 'setEntry'> & { segmented: boolean }) {
+export function Actions({ response, entries, setEntry, segmented, label = 'What they did' }: Pick<FormProps, 'response' | 'entries' | 'setEntry'> & { segmented: boolean; label?: string }) {
   const labelId = useId();
   return (
     <div className="resp-field">
       <span id={labelId} className="resp-label">
-        What they did
+        {label}
       </span>
       <div role="radiogroup" aria-labelledby={labelId} className={segmented ? 'psl-seg resp-seg' : 'resp-pills'}>
         {offeredActions(response).map((a) => (
@@ -117,7 +117,7 @@ export function Note({ entries, setEntry }: Pick<FormProps, 'entries' | 'setEntr
   );
 }
 
-function Attest({ entries, setEntry, short }: Pick<FormProps, 'entries' | 'setEntry'> & { short: boolean }) {
+export function Attest({ entries, setEntry, short }: Pick<FormProps, 'entries' | 'setEntry'> & { short: boolean }) {
   return (
     <label className="psl-check resp-attest">
       <input type="checkbox" checked={entries.attested} onChange={(e) => setEntry('attested', e.target.checked)} />
@@ -263,7 +263,7 @@ export function ClientResponseForm(props: FormProps) {
   );
 }
 
-function Fixed({ label, text, note }: { label: string; text: string; note?: string }) {
+export function Fixed({ label, text, note }: { label: string; text: string; note?: string }) {
   return (
     <div className="resp-field">
       <span className="resp-label resp-label--strong">{label}</span>

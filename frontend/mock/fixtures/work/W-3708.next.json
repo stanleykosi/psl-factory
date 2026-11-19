@@ -1,0 +1,209 @@
+{
+  "id": "W-3708",
+  "title": "Lagoon Health · patient app",
+  "line": "Handover to Support",
+  "reference": "HND-0048",
+  "state": "action_needed",
+  "revision": 2,
+  "stations": [
+    {
+      "name": "Plan",
+      "status": "done"
+    },
+    {
+      "name": "Build",
+      "status": "done"
+    },
+    {
+      "name": "Go-live",
+      "status": "done"
+    },
+    {
+      "name": "Handover",
+      "status": "current_person"
+    },
+    {
+      "name": "Closure",
+      "status": "not_started"
+    }
+  ],
+  "facts": [
+    {
+      "name": "drafted",
+      "status": "earned",
+      "at": "2026-04-08T13:30:00Z"
+    },
+    {
+      "name": "reviewed",
+      "status": "current"
+    },
+    {
+      "name": "approved",
+      "status": "not_yet"
+    },
+    {
+      "name": "sent",
+      "status": "not_yet"
+    },
+    {
+      "name": "receipt_recorded",
+      "status": "not_yet"
+    },
+    {
+      "name": "verified",
+      "status": "not_yet"
+    }
+  ],
+  "tasks": [],
+  "agent": {
+    "name": "Tola",
+    "status": "done",
+    "steps": [
+      {
+        "text": "Drafted the support handover",
+        "status": "done"
+      }
+    ]
+  },
+  "next_step": "A person takes the next step on this page.",
+  "sample": true,
+  "case_id": "P-0101",
+  "case_revision": 2,
+  "workspace": {
+    "line_key": "delivery_handover",
+    "screen": "SCR-48",
+    "view": "handover",
+    "context": {
+      "project": {
+        "case_id": "P-0101",
+        "title": "Lagoon Health · patient app"
+      },
+      "crumbs": [
+        {
+          "value": "projects",
+          "label": "Projects"
+        },
+        {
+          "value": "P-0101",
+          "label": "Lagoon Health"
+        },
+        {
+          "value": "delivery",
+          "label": "Delivery"
+        },
+        {
+          "value": "HND-0048",
+          "label": "HND-0048"
+        }
+      ]
+    },
+    "subtitle": "PM Tunde Bello",
+    "revision": 2,
+    "status": {
+      "label": "Handover · published 08 Apr",
+      "tone": "uncertain"
+    },
+    "sections": [
+      {
+        "key": "handover",
+        "kind": "checklist",
+        "title": "Handover to Support",
+        "items": [
+          {
+            "id": "H-1",
+            "text": "Support handover v1",
+            "tag": {
+              "label": "DRAFT",
+              "tone": "agent"
+            },
+            "cites": [
+              {
+                "label": "Support handover v1",
+                "document_id": "D-3701"
+              }
+            ]
+          },
+          {
+            "id": "H-2",
+            "text": "Review needed?",
+            "tag": {
+              "label": "No · below the rule’s threshold",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "H-3",
+            "text": "Runbook and escalation contacts",
+            "tag": {
+              "label": "ATTACHED",
+              "tone": "neutral"
+            },
+            "cites": [
+              {
+                "label": "Runbook",
+                "document_id": "D-3702"
+              },
+              {
+                "label": "Escalation contacts",
+                "document_id": "D-3703"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "tola",
+        "kind": "checklist",
+        "title": "Support handover v1",
+        "agent": "tola",
+        "items": [
+          {
+            "id": "T-1",
+            "text": "Read the release, go-live and archive records",
+            "status": "done",
+            "tag": {
+              "label": "REL-0091 · GLV-0104 · ARC-0130",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "T-2",
+            "text": "Drafted the support handover",
+            "status": "done",
+            "tag": {
+              "label": "TEST TEMPLATE",
+              "tone": "neutral"
+            }
+          },
+          {
+            "id": "T-3",
+            "text": "Attached the escalation contacts and runbook",
+            "status": "done",
+            "tag": {
+              "label": "2 ATTACHMENTS",
+              "tone": "neutral"
+            }
+          }
+        ],
+        "as_of": "2026-04-08T13:30:00Z"
+      }
+    ],
+    "links": [
+      {
+        "key": "ask_tola",
+        "label": "Ask Tola",
+        "target": {
+          "kind": "assistant"
+        }
+      }
+    ],
+    "next": [
+      "Publishing sends it to Support. Then you record whether they received it or found gaps."
+    ],
+    "version": {
+      "label": "Support handover v1",
+      "document_id": "D-3701"
+    },
+    "title": "Support's reply"
+  }
+}
