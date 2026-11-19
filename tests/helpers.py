@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -17,6 +18,14 @@ def setup_case(kind='project', synthetic=True, username='human',case_id=None):
     case = Case.objects.create(**({'id':case_id} if case_id else {}),tenant='test-tenant',title='Test engagement',kind=kind,synthetic=synthetic)
     Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in ACTIONS])
     return actor,case
+
+
+def worker_test_environment(connection):
+    database = connection.settings_dict['NAME']
+    if connection.vendor != 'postgresql' or not database.startswith('test_'):
+        raise RuntimeError('A subprocess test requires an isolated PostgreSQL test database.')
+    # A worker connects to the database that its parent already prepared.
+    return {**os.environ, 'PGDATABASE': database, 'DJANGO_SETTINGS_MODULE': 'config.settings'}
 
 
 def check_investigation_progress(test, actor, work, label):

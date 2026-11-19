@@ -16,7 +16,9 @@ Use the [screen inventory](screen-state-inventory.csv) as the design checklist a
 
 The runner `python scripts/design_acceptance_batch.py --audit` verifies that the inventory, boards, acceptance ledger and backlog agree. Its output lists open and unseen states. `--list` shows the PostgreSQL test modules. Run all four groups together with `python scripts/design_acceptance_batch.py --settings config.acceptance_settings` in the configured Railway checks container. Add `--suite` to select groups for focused development. The composed run continues through test failures and returns the Django test process result.
 
-The Railway runner can also use `--parallel-groups 2` in place of `--settings`. Each group gets a separate retained test database and a separate exit result. Start the parallel run after any current acceptance job exits. The original retained test database and the preview database stay separate from the group databases.
+The Railway runner can also use `--parallel-groups 2` in place of `--settings`. Each group gets a separate retained test database and a separate exit result. The larger project and Finance groups start first. Finance uses the exact `test_psl` database required by the invoice crash fixture. Subprocess workers connect only to their parent's already prepared PostgreSQL test database and retain their own scope checks. The original retained test database and the preview database stay separate from the group databases.
+
+For the current candidate, `python scripts/design_acceptance_batch.py --candidate-gate` runs the reported failure cases and the new workflow and browser-fixture checks first. Use `--candidate-gate --list` to see the exact selection. After it and the read-only probes pass, the matching source can be deployed to the synthetic preview while the broader regression continues. Keep the gate and full-suite results separate.
 
 After the grouped PostgreSQL result and deployment of the same application source, prepare the synthetic starting records in the Railway design acceptance project and environment:
 

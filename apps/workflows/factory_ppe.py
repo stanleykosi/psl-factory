@@ -2,7 +2,7 @@
 import hashlib,json,re
 from datetime import timedelta
 from django.core.exceptions import ValidationError,PermissionDenied
-from django.db import transaction
+from django.db import connections, transaction
 from django.db.models import Q
 from django.utils import timezone
 from apps.core.models import Audit
@@ -123,6 +123,12 @@ def verify(work,actor):
         gaps=analysis.certification_findings(w.parent)
         if gaps:raise ValidationError(gaps)
         if w.parent.kind!='mapping':raise ValidationError('Native PPE requires an exact Finance mapping note')
+        # The handoff owns the complete linked note authority, including roles not used by its reviewer.
+        # Use the same check as the PostgreSQL guard for marking the schedule verified.
+        with connections[w.parent._state.db].cursor() as cursor:
+            cursor.execute('SELECT psl_ppe_mapping_current(%s)', [w.parent_id])
+            if cursor.fetchone() != (True,):
+                raise ValidationError('The linked Finance mapping note and its authority need fresh verification.')
         ledger_reviews={'source':w.parent.snapshot['source_review'],'rules':w.parent.snapshot['reviews']}
     return {'verified':True,'verification_scope':'selected_supplied_ppe_register_reviewed_schedule_and_read_only_note','head':work.source_head_id,'register':r.pk,'register_review':register_review.pk,'schedule':w.pk,'schedule_sha256':w.sha256,'schedule_review':review.pk,'ledger':w.parent_id,'ledger_reviews':ledger_reviews,'ledger_posted':False,'native_source_verified':False,'full_owner_oracle_acceptance':'unresolved'}
 

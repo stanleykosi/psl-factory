@@ -1,5 +1,9 @@
 # Build progress log
 
+19 November 2026. Frozen Railway 201 completed 487 PostgreSQL tests with seven failing cases. Grouped all seven fixes in 202, including the fixed-asset linked-note verification mismatch. Prepared the 22-test preview gate and parallel regression. The existing application stays hosted until the gate passes.
+
+19 November 2026. Grouped the late invoice test failures with the earlier corrections. Matched the test database to the invoice crash guard and kept every child test process on its parent's isolated database. Added the current synthetic identity prerequisite to the two pending-reservation fixtures. The five guard checks passed without a database; the final Railway traces and grouped rerun are pending.
+
 19 November 2026. Grouped hosted phone checks of five Finance and reporting outcomes. Recorded the original escalation and monthly leadership receipts and the correct revalidation holds in the older fixed-asset and cash forecast cases. Updated direct browser evidence without changing sample records or historical approvals.
 
 19 November 2026. Reused the exact claim-based investigation display for income and schedules, fixed assets and forecasts. Extended each existing connected test to check before, during and after the real planning claim. Corrected the design checklist so the fixed-asset and income-schedule states point to the right workflow. Railway baseline 201 reached 433 test starts while the new views passed Django and template checks. The changes await the grouped PostgreSQL result.

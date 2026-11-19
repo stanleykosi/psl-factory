@@ -14,7 +14,8 @@ group = os.environ.get('PSL_DESIGN_TEST_GROUP')
 if group not in {'commercial', 'project_delivery', 'finance_reporting', 'shared'}:
     raise ImproperlyConfigured('Specify one supported acceptance group.')
 
-test_database = f'test_psl_design_{group}'
+# The invoice crash fixture accepts the exact default isolated test database.
+test_database = 'test_psl' if group == 'finance_reporting' else f'test_psl_design_{group}'
 if DATABASES['default']['NAME'] == test_database:
     raise ImproperlyConfigured('The test database must differ from the configured application database.')
 

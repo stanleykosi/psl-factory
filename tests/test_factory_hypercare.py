@@ -16,7 +16,7 @@ from apps.pmo.delivery_documents import draft_delivery_document
 from apps.workflows import factory,factory_hypercare
 from apps.workflows.models import FactoryWork,HumanTask
 from tests.test_delivery import DeliveryFixture
-from tests.helpers import rev
+from tests.helpers import rev,worker_test_environment
 
 
 def setup(configure=True):
@@ -275,8 +275,8 @@ class FactoryHypercareConcurrencyTests(TransactionTestCase):
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='hypercare').exists())
 
     def test_real_process_exit_rolls_back_assessment_and_recovers_without_resetting_allowance(self):
-        import os,sys,subprocess
-        f=setup();f.accepted();f.criteria();f.observations();env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME'])
+        import sys,subprocess
+        f=setup();f.accepted();f.criteria();f.observations();env=worker_test_environment(connection)
         result=subprocess.run([sys.executable,'-m','tests.factory_worker_scenario',str(f.work.pk),'interrupt_after_action'],env=env,capture_output=True,timeout=90)
         self.assertEqual(result.returncode,38,result.stderr.decode());f.work.refresh_from_db();spent=f.work.budget_used
         self.assertGreater(spent,0);self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='hypercare').exists())

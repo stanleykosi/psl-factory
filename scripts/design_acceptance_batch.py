@@ -36,6 +36,28 @@ SUITES = {
     ),
 }
 LEDGER_ROW = re.compile(r'^\| `(SCR-[^\x60]+)` \| [^\n]+ \| (.+) \|$', re.MULTILINE)
+PARALLEL_ORDER = ('project_delivery', 'finance_reporting', 'commercial', 'shared')
+CANDIDATE_GATE = (
+    'factory_rfp_outcome_console.FactoryRFPOutcomeConsoleTests.test_outcome_form_explicitly_targets_each_actual_submission_without_a_method',
+    'factory_rfp_pricing',
+    'standard_changes.StandardChangeTests.test_new_preapproval_or_pm_match_invalidates_authorization_snapshot',
+    'standard_changes.StandardChangeTests.test_revoked_preapprover_grant_holds_queued_publication',
+    'factory_invoice_recovery_priority.InvoiceRecoveryRealClockTests.test_process_exit_after_acceptance_and_actual_native_lease_expiry_recover_original_job',
+    'factory_review_authority.FactoryReviewAuthorityTests.test_pending_original_reservation_precedes_review_update_and_get_does_not_dispatch',
+    'factory_review_authority.FactoryReviewAuthorityTests.test_restored_approval_does_not_override_current_original_pending_job',
+    'project_archive_files.ArchiveFileTests.test_interrupted_copy_recovers_original_receipt_without_another_copy',
+    'factory_hypercare.FactoryHypercareTests.test_release_stability_progress_follows_an_actual_claim_and_stops_at_observed_result',
+    'commercial_rework.CommercialReworkTests.test_rework_browser_fixture_is_additive_and_does_not_create_responses_or_model_jobs',
+    'design_batch_walkthrough',
+    'factory_accounting.FactoryAccountingTests.test_controlled_trial_balance_reaches_reviewed_report_and_native_recipient_receipt',
+    'factory_accounting.AccountingRecoveryTests.test_missing_receipt_remains_uncertain_without_a_second_delivery',
+    'factory_accounting_intake.AccountingSuppliedIntakeTests.test_http_confirm_units_starts_successor_from_the_same_unchanged_file',
+    'factory_accounting_intake.AccountingSuppliedIntakeTests.test_confirming_thousands_records_evidence_but_keeps_calculation_on_hold',
+    'factory_schedules.FactorySchedulesTests.test_income_native_chain_and_read_only_metadata',
+    'factory_ppe.FactoryPPETests.test_native_chain_exact_reviews_note_and_read_only_console',
+    'factory_ppe.FactoryPPETests.test_unused_linked_note_role_assignee_inactivity_invalidates_policy_gate',
+    'factory_forecast.ForecastFactoryTests.test_complete_native_review_and_aggregate_receipt_chain',
+)
 
 
 def audit():
@@ -74,12 +96,24 @@ def main():
     parser.add_argument('--suite', action='append', choices=SUITES, help='Include a workflow suite. Defaults to all.')
     parser.add_argument('--settings', help='Django settings module for the isolated test database.')
     parser.add_argument('--list', action='store_true', help='Print the selected test labels without running them.')
+    parser.add_argument('--candidate-gate', action='store_true', help='Check the staged corrections and browser fixtures before deployment.')
     parser.add_argument('--parallel-groups', type=int, choices=(2, 3, 4),
                         help='Run acceptance groups on separate PostgreSQL test databases on Railway.')
     args = parser.parse_args()
     if args.audit:
         audit()
         return 0
+    if args.candidate_gate:
+        if args.suite or args.settings or args.parallel_groups:
+            parser.error('The candidate gate has a fixed test selection and Railway database settings.')
+        labels = [f'tests.test_{name}' for name in CANDIDATE_GATE]
+        if args.list:
+            print('\n'.join(labels))
+            return 0
+        if os.environ.get('RAILWAY_ENVIRONMENT_NAME') != 'design-acceptance':
+            parser.error('The candidate gate requires the Railway design-acceptance environment.')
+        env = {**os.environ, 'PSL_DESIGN_TEST_GROUP': 'finance_reporting'}
+        return run_tests(labels, settings='config.design_batch_settings', env=env)
     suites = list(dict.fromkeys(args.suite or SUITES))
     labels = list(dict.fromkeys(f'tests.test_{name}' for suite in suites for name in SUITES[suite]))
     missing = [label for label in labels if not (ROOT / (label.replace('.', '/') + '.py')).is_file()]
@@ -93,9 +127,10 @@ def main():
             parser.error('Parallel groups use their own guarded Railway test settings.')
         if os.environ.get('RAILWAY_ENVIRONMENT_NAME') != 'design-acceptance':
             parser.error('Parallel groups require the Railway design-acceptance environment.')
+        scheduled = [name for name in PARALLEL_ORDER if name in suites]
         with ThreadPoolExecutor(max_workers=args.parallel_groups) as pool:
-            results = list(pool.map(run_group, suites))
-        print('PSL_GROUPED_TEST_RESULTS=' + json.dumps(dict(zip(suites, results))), flush=True)
+            results = list(pool.map(run_group, scheduled))
+        print('PSL_GROUPED_TEST_RESULTS=' + json.dumps(dict(zip(scheduled, results))), flush=True)
         return int(any(results))
     return run_tests(labels, settings=args.settings)
 

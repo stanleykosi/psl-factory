@@ -14,7 +14,7 @@ from apps.pmo.models import DeliveryRecord,DeliveryDocumentBinding
 from apps.documents.models import Publication,PublicationReceipt
 from apps.workflows import factory,factory_go_live as go_live
 from apps.workflows.models import FactoryWork,HumanTask
-from tests.helpers import rev
+from tests.helpers import rev,worker_test_environment
 from tests.test_delivery import DeliveryFixture
 
 def configure(f,preparer=True,publisher=True,tokens=20000):
@@ -99,11 +99,11 @@ class FactoryGoLiveConcurrencyTests(TransactionTestCase):
         self.assertEqual(Evidence.objects.filter(case=f.case,kind=go_live.KIND).count(),1)
 
     def test_real_process_exit_after_delivery_recovers_original_receipt_before_human_signoff(self):
-        import os,sys,subprocess
+        import sys,subprocess
         from datetime import timedelta
         from apps.documents.models import PublicationJob
         f=setup();factory.run_until_wait(f.work.pk);review(f)
-        env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME'])
+        env=worker_test_environment(connection)
         result=subprocess.run([sys.executable,'-m','tests.factory_worker_scenario',str(f.work.pk),'go_live_interrupt_after_delivery'],env=env,capture_output=True,timeout=180)
         self.assertEqual(result.returncode,39,result.stderr.decode());f.work.refresh_from_db();spent=f.work.budget_used
         receipt=PublicationReceipt.objects.get(publication__factory_work=f.work);job=PublicationJob.objects.get(publication=receipt.publication)

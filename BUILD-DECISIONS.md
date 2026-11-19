@@ -1,5 +1,7 @@
 # Build decisions
 
+19 November 2026. The fixed-asset verification read uses the same linked Finance mapping check as the terminal PostgreSQL guard. It holds verification for the affected note and preserves unrelated role-controlled workflows. The synthetic deployment gate runs the discovered failures and new workflow checks first, with the full regression result recorded separately.
+
 19 November 2026. Finance close shows live activity only for a matching, unsettled claim on the current accounting observation or an actual native publication job. An expired delivery claim or unknown response points to the original delivery receipt lookup. The work queue keeps its existing status and query path. A submitter with current Finance intake rights can record the stated units on the exact held file and create a linked successor. This uses the existing evidence and import guards. Unsupported scales remain held for a reviewed conversion.
 
 19 November 2026. Concurrent acceptance groups use separate fixed-name Railway test databases. The original retained test database remains reserved for the baseline. The synthetic walkthrough pack supplies starting records and leaves human decisions and receipts for real browser actions. Bid-costing amounts require the current selected plan and estimates, current source authority and an exact native calculation binding. A supplied costing reference without a calculation remains visible as a reference. Live receipt lookup and live copying are distinct worker operations.

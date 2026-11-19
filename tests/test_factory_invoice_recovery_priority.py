@@ -1,6 +1,6 @@
 """Uncertain original invoice effects precede any source-driven replacement draft."""
 import tempfile
-import os,sys,subprocess,time,json
+import sys,subprocess,time,json
 from pathlib import Path
 from django.test import TransactionTestCase
 from django.db import connection
@@ -16,7 +16,7 @@ from apps.finance.models import Invoice,InvoiceJob,InvoiceIssue,InvoiceDelivery
 from adapters.factory_invoices import MockFactoryInvoiceAdapter
 from tests.factory_helpers import fixture
 from tests.billing_helpers import policy
-from tests.helpers import rev,activate
+from tests.helpers import rev,activate,worker_test_environment
 from adapters.invoices import InternalInvoiceAdapter
 
 class InvoiceRecoveryPriorityTests(TransactionTestCase):
@@ -52,7 +52,7 @@ class InvoiceRecoveryRealClockTests(TransactionTestCase):
         job=InvoiceJob.objects.get(kind='issue')
         with tempfile.TemporaryDirectory() as directory:
             result=subprocess.run([sys.executable,'-m','tests.factory_invoice_receipt_crash',str(job.pk),directory],
-                env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME']),capture_output=True,text=True,timeout=60)
+                env=worker_test_environment(connection),capture_output=True,text=True,timeout=60)
             self.assertEqual(result.returncode,53,result.stderr);job.refresh_from_db()
             self.assertEqual(job.status,'leased');self.assertEqual(len(list(Path(directory).glob('*.json'))),1)
             self.assertFalse(InvoiceIssue.objects.exists());w.refresh_from_db();spent=w.budget_used
