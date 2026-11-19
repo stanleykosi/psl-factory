@@ -176,7 +176,11 @@
           {
             "id": "V-6",
             "label": "VERIFIED",
-            "value": "14 Nov"
+            "value": "14 Nov",
+            "tag": {
+              "label": "VERIFIED",
+              "tone": "verified"
+            }
           }
         ]
       },
