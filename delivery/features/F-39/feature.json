@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-39",
   "outcome": "Escalation: Tola checks a raised escalation, the PMO Lead decides \"Escalate to the client\" or \"Don't escalate\", and Tola drafts Message v1 for internal review, in four states (contract mock only)",
-  "state": "INTEGRATED_QA",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-EMERGENCY-ESCALATION"
   ],
@@ -112,13 +112,11 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "delivery technical review",
-      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
-      "evidence_refs": [
-        "delivery/features/F-39/round-3/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
       "status": "pending",
@@ -144,22 +142,18 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "delivery UX review",
-      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
-      "evidence_refs": [
-        "delivery/features/F-39/round-3/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "passed",
-      "reviewer": "reviewer-ui",
-      "authority": "delivery UI review",
-      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
-      "evidence_refs": [
-        "delivery/features/F-39/round-3/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -759,6 +753,75 @@
           "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
         }
       ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "A stale decide by a second reviewer is not shown honestly, and the typed note is lost without warning. Steps (`qa/stale.cjs`, reproduced 3 times at 1440 and 390): reset; context A (persona pm) and context B (persona ceo) both open /work/W-3602, and both claim (200). B types \"Second reviewer: wait for their reply first.\" in the note (on the phone, inside the Drawer). A presses \"Escalate to the client\", and A's page shows MESSAGE DRAFTED. B presses \"Don't escalate\". The mock answers B's `POST /api/v1/tasks/T-3602/decision` with 409 stale_revision. Expected (spec AC 11, and the brief): B sees a stale message that stays until B acts on it, and B's note is kept or shown back to B; B is never left looking at an outcome they did not choose. Actual: B's DOM timeline at 1440 is +307 ms \"This review changed while you were reading it, so nothing was recorded. Review the latest\", then at +411 ms the stale alert is gone and the status tag reads MESSAGE DRAFTED. There is no alert, no live region and no textarea. At 390 the Drawer closes and the stale message never renders: +145 ms goes straight to MESSAGE DRAFTED. B pressed \"Don't escalate\" and now sees MESSAGE DRAFTED with a \"Send for review\" button, with nothing saying that someone else escalated it or that B's note was not sent. The second variant (B presses \"Escalate to the client\") also loses the stale message, though the outcome happens to match. Cause: on `view.kind === 'stale'` InlineDecide reloads the page at once (frontend/src/features/workspace/InlineDecide.tsx:97-104). The re-read item has T-3602 `already_decided`, so the escalation rule removes the panel (frontend/src/features/work-item/WorkItemOverview.tsx:730). The stale view (InlineDecide.tsx:265-276) and the note state unmount with it. Note: with the scenario cookie 409 (where the re-read still serves the decide state), the stale view does stay, and \"Review the latest\" brings the note back (desktop textarea; phone, when the Drawer is reopened). So the existing component tests and the mock 409 test do not catch the real two-reviewer case. Fix direction: keep a page-level notice after a stale decide whose re-read removes the panel. For example: \"Someone else decided this while you were reading it. Your decision and note were not recorded.\" Show the unsent note text, or keep it copyable. Add an e2e test with two contexts.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T01:19:58Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec's 404 journey (`/work/W-3699`, no fixture) cannot be run on the live mock. `curl -H 'Cookie: psl_mock_persona=pm' http://127.0.0.1:4936/api/v1/work/W-3699` returns 200 with the default fixture W-1001 (\"Lagoon Health \u00b7 Milestone 2 invoice\"), and the page draws that item. This is existing mock behaviour (mock/server.mjs header: \"else the default fixture\"), not F-39 code. I proved 403 = 404 by routing the item read to 404 and to 403: both show \"You can't open this work item\" and no item data, at 1440 and 390. Correct the spec or the mock in a later round.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T01:19:58Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-3",
+      "round": 3,
+      "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried from UX-1-3: after \"Don't escalate\" the notice still reads \"Escalation ESC-0012 was rejected\" (seen live at 1440 and 390). Plain wording would be \"not escalated\".",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-39/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-19T01:19:58Z",
+          "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -871,6 +934,63 @@
           ]
         }
       }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "delivery technical review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-3/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa",
+          "authority": "delivery integrated QA",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-3/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-39/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "delivery UX review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-3/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "delivery UI review",
+          "snapshot_ref": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+          "evidence_refs": [
+            "delivery/features/F-39/round-3/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -965,7 +1085,7 @@
     }
   },
   "created_at": "2026-11-18T05:16:05Z",
-  "round": 3,
+  "round": 4,
   "round_limit": 5,
   "history": [
     {
@@ -1047,6 +1167,22 @@
       "round": 3,
       "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
       "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-19T01:19:58Z",
+      "round": 3,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-19T01:19:59Z",
+      "round": 4,
+      "head": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3",
+      "reason": null
     }
   ],
   "routing": {
@@ -1062,10 +1198,10 @@
     ]
   },
   "gate": {
-    "round": 3,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "c706d6a7df4ca8eef92acd420d371e5ab484f7b3"
+    "round": 4,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
